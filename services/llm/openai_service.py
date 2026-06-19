@@ -2,6 +2,7 @@ import os
 
 from openai import OpenAI
 from dotenv import load_dotenv
+from langsmith.wrappers import wrap_openai
 
 from services.llm.schemas.student_profile import (
     StudentProfile
@@ -13,11 +14,11 @@ load_dotenv()
 class OpenAIService:
 
     def __init__(self):
-        self.client = OpenAI(
+        self.client = wrap_openai(OpenAI(
             api_key=os.getenv(
                 "OPENAI_API_KEY"
             )
-        )
+        ))
 
     def extract_skills(
         self,

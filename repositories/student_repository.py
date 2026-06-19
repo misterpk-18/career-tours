@@ -11,6 +11,25 @@ class StudentRepository:
 
     @staticmethod
     def create(student):
+        # Provide default None values for all optional fields to prevent bind parameter errors
+        student_data = {
+            "full_name": None,
+            "email": None,
+            "phone": None,
+            "college_name": None,
+            "degree_name": None,
+            "branch_name": None,
+            "current_year_semester": None,
+            "graduation_year": None,
+            "preferred_job_location": None,
+            "target_role": None,
+            "career_interest": None,
+            "learning_hours_per_week": None,
+            "internship_preference": None,
+            "work_mode_preference": None,
+        }
+        student_data.update(student)
+
         result = db.session.execute(
             text("""
                 INSERT INTO students (
@@ -47,7 +66,7 @@ class StudentRepository:
                 )
                 RETURNING *
             """),
-            student
+            student_data
         )
 
         db.session.commit()
@@ -100,6 +119,17 @@ class StudentRepository:
 
     @staticmethod
     def update(student_id, data):
+        existing = StudentRepository.get_by_id(student_id)
+        if not existing:
+            return None
+
+        # Convert the existing student dataclass to a dictionary
+        from dataclasses import asdict
+        existing_data = asdict(existing)
+
+        # Merge with updated fields to ensure all bind parameters are populated
+        update_params = {**existing_data, **data, "student_id": student_id}
+
         result = db.session.execute(
             text("""
                 UPDATE students
@@ -121,10 +151,7 @@ class StudentRepository:
                 WHERE student_id = :student_id
                 RETURNING *
             """),
-            {
-                **data,
-                "student_id": student_id
-            }
+            update_params
         )
 
         db.session.commit()

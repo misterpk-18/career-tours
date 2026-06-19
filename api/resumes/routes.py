@@ -9,6 +9,7 @@ from repositories.resume_repository import ResumeRepository
 from repositories.student_repository import StudentRepository
 from services.resume.extractor import ResumeSkillExtractor
 from services.resume.parser import ResumeParser
+from services.storage.s3_service import S3Service
 
 resume_bp = Blueprint(
     "resume",
@@ -117,15 +118,24 @@ def upload_resume():
         return jsonify({"error": "failed to parse resume file"}), 400
 
     try:
+        s3_service = S3Service()
+        s3_url = s3_service.upload_file(str(file_path), stored_name)
+    except Exception as exc:
+        _remove_file(file_path)
+        return jsonify({"error": f"failed to upload file to S3: {str(exc)}"}), 500
+
+    try:
         resume = ResumeRepository.create(
             student_id=student_uuid,
-            file_url=str(file_path),
+            file_url=s3_url,
             raw_text=raw_text,
         )
     except Exception:
         db.session.rollback()
         _remove_file(file_path)
         return jsonify({"error": "failed to save resume record"}), 500
+
+    _remove_file(file_path)
 
     return jsonify({
         "resume_id": str(resume.resume_id),
