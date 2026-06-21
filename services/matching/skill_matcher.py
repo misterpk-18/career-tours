@@ -1,3 +1,4 @@
+from typing import Any, cast
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -32,8 +33,8 @@ class SkillMatcher:
         )
 
         similarity = cosine_similarity(
-            [occupation_embedding],
-            [student_embedding]
+            cast(Any, [occupation_embedding]),
+            cast(Any, [student_embedding])
         )[0][0]
 
         return float(similarity)

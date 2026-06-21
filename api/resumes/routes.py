@@ -5,8 +5,8 @@ from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
 
 from config.database import db
+from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
-from repositories.student_repository import StudentRepository
 from services.resume.extractor import ResumeSkillExtractor
 from services.resume.parser import ResumeParser
 from services.storage.s3_service import S3Service
@@ -46,6 +46,7 @@ def _serialize_resume(resume) -> dict:
     return {
         "resume_id": str(resume.resume_id),
         "student_id": str(resume.student_id),
+        "project_id": str(resume.project_id),
         "file_url": resume.file_url,
         "raw_text": resume.raw_text,
         "parsed_at": resume.parsed_at.isoformat() if resume.parsed_at else None,
@@ -55,22 +56,24 @@ def _serialize_resume(resume) -> dict:
 
 @resume_bp.route("/upload", methods=["POST"])
 def upload_resume():
-    student_id = request.form.get("student_id")
+    project_id = request.form.get("project_id")
     file = request.files.get("resume_file")
 
-    if not student_id:
-        return jsonify({"error": "student_id is required"}), 400
+    if not project_id:
+        return jsonify({"error": "project_id is required"}), 400
 
     if not file:
         return jsonify({"error": "resume_file is required"}), 400
 
     try:
-        student_uuid = UUID(student_id)
+        project_uuid = UUID(project_id)
     except ValueError:
-        return jsonify({"error": "student_id must be a valid UUID"}), 400
+        return jsonify({"error": "project_id must be a valid UUID"}), 400
 
-    if StudentRepository.get_by_id(student_uuid) is None:
-        return jsonify({"error": "student not found"}), 404
+    project = ProjectRepository.get_by_id(project_uuid)
+
+    if project is None:
+        return jsonify({"error": "project not found"}), 404
 
     if not file.filename:
         return jsonify({"error": "resume_file must have a filename"}), 400
@@ -126,7 +129,8 @@ def upload_resume():
 
     try:
         resume = ResumeRepository.create(
-            student_id=student_uuid,
+            student_id=project.student_id,
+            project_id=project.project_id,
             file_url=s3_url,
             raw_text=raw_text,
         )
@@ -140,6 +144,7 @@ def upload_resume():
     return jsonify({
         "resume_id": str(resume.resume_id),
         "student_id": str(resume.student_id),
+        "project_id": str(resume.project_id),
         "file_url": resume.file_url,
         "text_length": len(raw_text),
     }), 201
@@ -180,7 +185,7 @@ def extract_skills(resume_id: str):
 
     try:
         result = ResumeSkillExtractor.extract_and_save(
-            resume.student_id,
+            resume.project_id,
             resume.raw_text,
             questionnaire_answers,
         )

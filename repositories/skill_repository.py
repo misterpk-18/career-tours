@@ -24,7 +24,7 @@ class SkillRepository:
             """)
         )
 
-        return [Skill(**row._mapping) for row in result]
+        return [Skill(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def get_by_id(skill_id):
@@ -43,7 +43,7 @@ class SkillRepository:
         )
 
         row = result.fetchone()
-        return Skill(**row._mapping) if row else None
+        return Skill(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_by_name(skill_name):
@@ -62,7 +62,7 @@ class SkillRepository:
         )
 
         row = result.fetchone()
-        return Skill(**row._mapping) if row else None
+        return Skill(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def create(skill_name, skill_category=None, description=None):
@@ -92,13 +92,13 @@ class SkillRepository:
             }
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
         if row is None:
             raise RuntimeError("Failed to create skill")
 
-        return Skill(**row._mapping)
+        return Skill(**cast(Any, row._mapping))
 
     @staticmethod
     def delete(skill_id):

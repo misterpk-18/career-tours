@@ -65,9 +65,9 @@ class OccupationRepository:
             }
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
         if row is None:
             raise RuntimeError("Failed to create occupation")
 

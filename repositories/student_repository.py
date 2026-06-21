@@ -69,13 +69,13 @@ class StudentRepository:
             student_data
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
         if row is None:
             raise RuntimeError("Failed to create student")
 
-        return Student(**row._mapping)
+        return Student(**cast(Any, row._mapping))
 
     @staticmethod
     def get_by_id(student_id):
@@ -89,7 +89,7 @@ class StudentRepository:
         )
 
         row = result.fetchone()
-        return Student(**row._mapping) if row else None
+        return Student(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_by_email(email):
@@ -103,7 +103,7 @@ class StudentRepository:
         )
 
         row = result.fetchone()
-        return Student(**row._mapping) if row else None
+        return Student(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_all():
@@ -115,7 +115,7 @@ class StudentRepository:
             """)
         )
 
-        return [Student(**row._mapping) for row in result]
+        return [Student(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def update(student_id, data):
@@ -135,6 +135,7 @@ class StudentRepository:
                 UPDATE students
                 SET
                     full_name = :full_name,
+                    email = :email,
                     phone = :phone,
                     college_name = :college_name,
                     degree_name = :degree_name,
@@ -154,10 +155,10 @@ class StudentRepository:
             update_params
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
-        return Student(**row._mapping) if row else None
+        return Student(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def delete(student_id):

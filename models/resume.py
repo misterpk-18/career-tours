@@ -7,6 +7,7 @@ from uuid import UUID
 class Resume:
     resume_id: UUID
     student_id: UUID
+    project_id: UUID
     file_url: str
     raw_text: str | None
     parsed_at: datetime | None

@@ -12,6 +12,7 @@ class ResumeRepository:
     @staticmethod
     def create(
         student_id,
+        project_id,
         file_url,
         raw_text=None
     ):
@@ -19,12 +20,14 @@ class ResumeRepository:
             text("""
                 INSERT INTO resumes (
                     student_id,
+                    project_id,
                     file_url,
                     raw_text,
                     parsed_at
                 )
                 VALUES (
                     :student_id,
+                    :project_id,
                     :file_url,
                     :raw_text,
                     CURRENT_TIMESTAMP
@@ -33,18 +36,19 @@ class ResumeRepository:
             """),
             {
                 "student_id": student_id,
+                "project_id": project_id,
                 "file_url": file_url,
                 "raw_text": raw_text
             }
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
         if row is None:
             raise RuntimeError("Failed to create resume")
 
-        return Resume(**row._mapping)
+        return Resume(**cast(Any, row._mapping))
 
     @staticmethod
     def get_by_id(resume_id):
@@ -58,7 +62,7 @@ class ResumeRepository:
         )
 
         row = result.fetchone()
-        return Resume(**row._mapping) if row else None
+        return Resume(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_by_student_id(student_id):
@@ -73,7 +77,24 @@ class ResumeRepository:
         )
 
         return [
-            Resume(**row._mapping)
+            Resume(**cast(Any, row._mapping))
+            for row in result
+        ]
+
+    @staticmethod
+    def get_by_project_id(project_id):
+        result = db.session.execute(
+            text("""
+                SELECT *
+                FROM resumes
+                WHERE project_id = :project_id
+                ORDER BY created_at DESC
+            """),
+            {"project_id": project_id}
+        )
+
+        return [
+            Resume(**cast(Any, row._mapping))
             for row in result
         ]
 
@@ -97,10 +118,10 @@ class ResumeRepository:
             }
         )
 
+        row = result.fetchone()
         db.session.commit()
 
-        row = result.fetchone()
-        return Resume(**row._mapping) if row else None
+        return Resume(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def delete(resume_id):

@@ -102,3 +102,43 @@ Return plain text only.
         )
 
         return response.output_text
+
+    def generate_course_summary(
+        self,
+        course_name: str,
+        occupation_name: str,
+        covered_skills: list[str],
+    ) -> str:
+
+        skills_text = ", ".join(
+            covered_skills[:10]
+        )
+
+        prompt = f"""
+You are a career guidance expert.
+
+Target Career:
+{occupation_name}
+
+Recommended Course:
+{course_name}
+
+Skills Covered:
+{skills_text}
+
+Write a concise explanation (2-4 sentences) explaining:
+
+1. Why this course is recommended.
+2. How it helps the student move closer to the target career.
+3. Which important skills it covers.
+
+Keep the tone professional and student-friendly.
+Do not use bullet points.
+"""
+
+        response = self.client.responses.create(
+            model="gpt-5",
+            input=prompt
+        )
+
+        return response.output_text
