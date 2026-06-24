@@ -38,14 +38,16 @@ class CareerSkillGapRepository:
                         skill_id
                     )
                     DO UPDATE SET
-                        gap_percentage = EXCLUDED.gap_percentage
+                        gap_percentage =
+                            EXCLUDED.gap_percentage
                 """),
                 {
                     "student_id": student_id,
                     "project_id": project_id,
                     "occupation_id": occupation_id,
                     "skill_id": skill_gap["skill_id"],
-                    "gap_percentage": skill_gap["gap_percentage"],
+                    "gap_percentage":
+                        skill_gap["gap_percentage"],
                 }
             )
 
@@ -60,6 +62,7 @@ class CareerSkillGapRepository:
                     csg.student_id,
                     csg.project_id,
                     csg.occupation_id,
+                    o.occupation_name,
                     csg.skill_id,
                     s.skill_name,
                     csg.gap_percentage,
@@ -67,8 +70,14 @@ class CareerSkillGapRepository:
                 FROM career_skill_gaps csg
                 JOIN skills s
                     ON s.skill_id = csg.skill_id
-                WHERE csg.project_id = :project_id
-                ORDER BY csg.gap_percentage DESC
+                JOIN occupations o
+                    ON o.occupation_id =
+                        csg.occupation_id
+                WHERE csg.project_id =
+                    :project_id
+                ORDER BY
+                    csg.occupation_id,
+                    csg.gap_percentage DESC
             """),
             {"project_id": project_id}
         )
@@ -90,6 +99,7 @@ class CareerSkillGapRepository:
                     csg.student_id,
                     csg.project_id,
                     csg.occupation_id,
+                    o.occupation_name,
                     csg.skill_id,
                     s.skill_name,
                     csg.gap_percentage,
@@ -97,13 +107,61 @@ class CareerSkillGapRepository:
                 FROM career_skill_gaps csg
                 JOIN skills s
                     ON s.skill_id = csg.skill_id
-                WHERE csg.project_id = :project_id
-                  AND csg.occupation_id = :occupation_id
-                ORDER BY csg.gap_percentage DESC
+                JOIN occupations o
+                    ON o.occupation_id =
+                        csg.occupation_id
+                WHERE csg.project_id =
+                    :project_id
+                  AND csg.occupation_id =
+                    :occupation_id
+                ORDER BY
+                    csg.gap_percentage DESC,
+                    s.skill_name
             """),
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
+            }
+        )
+
+        return [
+            dict(cast(Any, row._mapping))
+            for row in result
+        ]
+
+    @staticmethod
+    def get_by_skill_id(
+        project_id,
+        skill_id
+    ):
+        result = db.session.execute(
+            text("""
+                SELECT
+                    csg.gap_id,
+                    csg.student_id,
+                    csg.project_id,
+                    csg.occupation_id,
+                    o.occupation_name,
+                    csg.skill_id,
+                    s.skill_name,
+                    csg.gap_percentage,
+                    csg.created_at
+                FROM career_skill_gaps csg
+                JOIN skills s
+                    ON s.skill_id = csg.skill_id
+                JOIN occupations o
+                    ON o.occupation_id =
+                        csg.occupation_id
+                WHERE csg.project_id =
+                    :project_id
+                  AND csg.skill_id =
+                    :skill_id
+                ORDER BY
+                    csg.gap_percentage DESC
+            """),
+            {
+                "project_id": project_id,
+                "skill_id": skill_id,
             }
         )
 
@@ -124,7 +182,11 @@ class CareerSkillGapRepository:
 
         db.session.commit()
 
-        cursor_result = cast(CursorResult[Any], result)
+        cursor_result = cast(
+            CursorResult[Any],
+            result
+        )
+
         return cursor_result.rowcount or 0
 
     @staticmethod
@@ -146,5 +208,9 @@ class CareerSkillGapRepository:
 
         db.session.commit()
 
-        cursor_result = cast(CursorResult[Any], result)
+        cursor_result = cast(
+            CursorResult[Any],
+            result
+        )
+
         return cursor_result.rowcount or 0

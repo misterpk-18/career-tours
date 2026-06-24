@@ -61,6 +61,9 @@ class CareerMatchRepository:
                     scm.project_id,
                     scm.occupation_id,
                     o.occupation_name,
+                    o.description,
+                    o.average_salary,
+                    o.growth_outlook,
                     scm.match_percentage,
                     scm.rank_position,
                     scm.generated_at
@@ -77,6 +80,45 @@ class CareerMatchRepository:
             dict(cast(Any, row._mapping))
             for row in result
         ]
+
+    @staticmethod
+    def get_by_project_and_occupation(
+        project_id,
+        occupation_id
+    ):
+        result = db.session.execute(
+            text("""
+                SELECT
+                    scm.match_id,
+                    scm.student_id,
+                    scm.project_id,
+                    scm.occupation_id,
+                    o.occupation_name,
+                    o.description,
+                    o.average_salary,
+                    o.growth_outlook,
+                    scm.match_percentage,
+                    scm.rank_position,
+                    scm.generated_at
+                FROM student_career_matches scm
+                JOIN occupations o
+                    ON o.occupation_id = scm.occupation_id
+                WHERE scm.project_id = :project_id
+                  AND scm.occupation_id = :occupation_id
+                LIMIT 1
+            """),
+            {
+                "project_id": project_id,
+                "occupation_id": occupation_id,
+            }
+        )
+
+        row = result.fetchone()
+
+        return (
+            dict(cast(Any, row._mapping))
+            if row else None
+        )
 
     @staticmethod
     def get_by_match_id(match_id):

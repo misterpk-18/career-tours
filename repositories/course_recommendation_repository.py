@@ -70,6 +70,9 @@ class CourseRecommendationRepository:
                     cr.occupation_id,
                     cr.course_id,
                     c.course_name,
+                    c.description,
+                    c.duration_hours,
+                    c.level,
                     cr.coverage_percentage,
                     cr.recommendation_rank,
                     cr.created_at
@@ -82,6 +85,44 @@ class CourseRecommendationRepository:
                     cr.recommendation_rank
             """),
             {"project_id": project_id}
+        )
+
+        return [
+            dict(cast(Any, row._mapping))
+            for row in result
+        ]
+
+    @staticmethod
+    def get_by_project_and_occupation(
+        project_id,
+        occupation_id
+    ):
+        result = db.session.execute(
+            text("""
+                SELECT
+                    cr.recommendation_id,
+                    cr.student_id,
+                    cr.project_id,
+                    cr.occupation_id,
+                    cr.course_id,
+                    c.course_name,
+                    c.description,
+                    c.duration_hours,
+                    c.level,
+                    cr.coverage_percentage,
+                    cr.recommendation_rank,
+                    cr.created_at
+                FROM course_recommendations cr
+                JOIN courses c
+                    ON c.course_id = cr.course_id
+                WHERE cr.project_id = :project_id
+                  AND cr.occupation_id = :occupation_id
+                ORDER BY cr.recommendation_rank
+            """),
+            {
+                "project_id": project_id,
+                "occupation_id": occupation_id,
+            }
         )
 
         return [
@@ -103,6 +144,9 @@ class CourseRecommendationRepository:
                     cr.occupation_id,
                     cr.course_id,
                     c.course_name,
+                    c.description,
+                    c.duration_hours,
+                    c.level,
                     cr.coverage_percentage,
                     cr.recommendation_rank,
                     cr.created_at
