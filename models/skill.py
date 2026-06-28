@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 
@@ -7,6 +8,6 @@ from uuid import UUID
 class Skill:
     skill_id: UUID
     skill_name: str
-    skill_category: str | None
-    description: str | None
+    skill_category: Optional[str]
+    description: Optional[str]
     created_at: datetime

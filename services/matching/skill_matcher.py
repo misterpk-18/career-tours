@@ -1,11 +1,11 @@
-from typing import Any, cast
+from typing import Any, Optional, cast
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 class SkillMatcher:
 
-    _model: SentenceTransformer | None = None
+    _model: Optional[SentenceTransformer] = None
 
     @classmethod
     def _get_model(cls) -> SentenceTransformer:

@@ -1,3 +1,4 @@
+from typing import List, Dict
 from uuid import UUID
 
 from repositories.occupation_repository import OccupationRepository
@@ -12,7 +13,7 @@ class CareerRankingService:
     DEFAULT_TOP_N = 5
 
     @staticmethod
-    def get_project_skill_names(project_id: UUID) -> list[str]:
+    def get_project_skill_names(project_id: UUID) -> List[str]:
         skills = ProjectSkillRepository.get_by_project_id(project_id)
         return [skill["skill_name"] for skill in skills]
 
@@ -21,7 +22,7 @@ class CareerRankingService:
         project_id: UUID,
         top_n: int = DEFAULT_TOP_N,
         include_summary: bool = False,
-    ) -> dict:
+    ) -> Dict:
         project_skills = CareerRankingService.get_project_skill_names(
             project_id
         )
@@ -30,7 +31,7 @@ class CareerRankingService:
             raise ValueError("No skills found for project. Extract skills first.")
 
         occupations = OccupationRepository.get_all()
-        matches: list[dict] = []
+        matches: List[Dict] = []
 
         for occupation in occupations:
             occupation_skills = OccupationRepository.get_skills(

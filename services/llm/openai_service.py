@@ -1,4 +1,5 @@
 import os
+from typing import Dict, List, Optional
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ class OpenAIService:
     def extract_skills(
         self,
         resume_text: str,
-        questionnaire_answers: dict | None = None
+        questionnaire_answers: Optional[Dict] = None
     ) -> StudentProfile:
 
         questionnaire_answers = (
@@ -71,8 +72,8 @@ Return structured data.
         self,
         occupation: str,
         score: float,
-        matched_skills: list[str],
-        missing_skills: list[str]
+        matched_skills: List[str],
+        missing_skills: List[str]
     ) -> str:
 
         prompt = f"""
@@ -97,7 +98,7 @@ Return plain text only.
 """
 
         response = self.client.responses.create(
-            model="gpt-5",
+            model="gpt-4o-mini",
             input=prompt
         )
 
@@ -107,7 +108,7 @@ Return plain text only.
         self,
         course_name: str,
         occupation_name: str,
-        covered_skills: list[str],
+        covered_skills: List[str],
     ) -> str:
 
         skills_text = ", ".join(

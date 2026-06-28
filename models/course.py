@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 
@@ -7,8 +8,8 @@ from uuid import UUID
 class Course:
     course_id: UUID
     course_name: str
-    description: str | None
-    duration_hours: int | None
-    level: str | None
+    description: Optional[str]
+    duration_hours: Optional[int]
+    level: Optional[str]
     is_active: bool
     created_at: datetime

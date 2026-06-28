@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from repositories.project_skill_repository import ProjectSkillRepository
@@ -11,7 +12,7 @@ class ResumeSkillExtractor:
     def extract_and_save(
         project_id: UUID,
         resume_text: str,
-        questionnaire_answers: dict | None = None,
+        questionnaire_answers: Optional[dict] = None,
     ) -> dict:
         llm = OpenAIService()
 

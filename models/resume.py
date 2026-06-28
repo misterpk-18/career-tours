@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 
@@ -9,6 +10,6 @@ class Resume:
     student_id: UUID
     project_id: UUID
     file_url: str
-    raw_text: str | None
-    parsed_at: datetime | None
+    raw_text: Optional[str]
+    parsed_at: Optional[datetime]
     created_at: datetime

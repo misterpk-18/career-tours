@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ class S3Service:
             region_name=self.region,
         )
 
-    def upload_file(self, file_path: str, object_name: str | None = None) -> str:
+    def upload_file(self, file_path: str, object_name: Optional[str] = None) -> str:
         """Uploads a file to the S3 bucket and returns its S3 URL.
 
         Args:
