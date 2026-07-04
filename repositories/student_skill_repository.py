@@ -7,15 +7,8 @@ from config.database import db
 
 
 class StudentSkillRepository:
-
     @staticmethod
-    def create(
-        student_id,
-        skill_id,
-        proficiency_level,
-        confidence_score,
-        source
-    ):
+    def create(student_id, skill_id, proficiency_level, confidence_score, source):
         result = db.session.execute(
             text("""
                 INSERT INTO student_skills (
@@ -39,8 +32,8 @@ class StudentSkillRepository:
                 "skill_id": skill_id,
                 "proficiency_level": proficiency_level,
                 "confidence_score": confidence_score,
-                "source": source
-            }
+                "source": source,
+            },
         )
 
         row = result.fetchone()
@@ -52,10 +45,7 @@ class StudentSkillRepository:
         return dict(row._mapping)
 
     @staticmethod
-    def bulk_create(
-        student_id,
-        skills
-    ):
+    def bulk_create(student_id, skills):
         for skill in skills:
             db.session.execute(
                 text("""
@@ -87,16 +77,14 @@ class StudentSkillRepository:
                     "skill_id": skill["skill_id"],
                     "proficiency_level": skill["proficiency_level"],
                     "confidence_score": skill["confidence_score"],
-                    "source": skill["source"]
-                }
+                    "source": skill["source"],
+                },
             )
 
         db.session.commit()
 
     @staticmethod
-    def get_by_student_id(
-        student_id
-    ):
+    def get_by_student_id(student_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -114,31 +102,20 @@ class StudentSkillRepository:
                 WHERE ss.student_id = :student_id
                 ORDER BY s.skill_name
             """),
-            {
-                "student_id": student_id
-            }
+            {"student_id": student_id},
         )
 
-        return [
-            dict(row._mapping)
-            for row in result
-        ]
+        return [dict(row._mapping) for row in result]
 
     @staticmethod
-    def delete(
-        student_id,
-        skill_id
-    ):
+    def delete(student_id, skill_id):
         result = db.session.execute(
             text("""
                 DELETE FROM student_skills
                 WHERE student_id = :student_id
                   AND skill_id = :skill_id
             """),
-            {
-                "student_id": student_id,
-                "skill_id": skill_id
-            }
+            {"student_id": student_id, "skill_id": skill_id},
         )
 
         db.session.commit()
@@ -147,17 +124,13 @@ class StudentSkillRepository:
         return (cursor_result.rowcount or 0) > 0
 
     @staticmethod
-    def delete_all_by_student(
-        student_id
-    ):
+    def delete_all_by_student(student_id):
         result = db.session.execute(
             text("""
                 DELETE FROM student_skills
                 WHERE student_id = :student_id
             """),
-            {
-                "student_id": student_id
-            }
+            {"student_id": student_id},
         )
 
         db.session.commit()

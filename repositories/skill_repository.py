@@ -8,7 +8,6 @@ from models.skill import Skill
 
 
 class SkillRepository:
-
     @staticmethod
     def get_all():
         result = db.session.execute(
@@ -39,7 +38,7 @@ class SkillRepository:
                 FROM skills
                 WHERE skill_id = :skill_id
             """),
-            {"skill_id": skill_id}
+            {"skill_id": skill_id},
         )
 
         row = result.fetchone()
@@ -58,7 +57,7 @@ class SkillRepository:
                 FROM skills
                 WHERE LOWER(skill_name) = LOWER(:skill_name)
             """),
-            {"skill_name": skill_name}
+            {"skill_name": skill_name},
         )
 
         row = result.fetchone()
@@ -85,11 +84,7 @@ class SkillRepository:
                     description,
                     created_at
             """),
-            {
-                "skill_name": skill_name,
-                "skill_category": skill_category,
-                "description": description
-            }
+            {"skill_name": skill_name, "skill_category": skill_category, "description": description},
         )
 
         row = result.fetchone()
@@ -107,7 +102,7 @@ class SkillRepository:
                 DELETE FROM skills
                 WHERE skill_id = :skill_id
             """),
-            {"skill_id": skill_id}
+            {"skill_id": skill_id},
         )
 
         db.session.commit()

@@ -1,3 +1,4 @@
+
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -31,9 +32,9 @@ def _remove_file(file_path: Path) -> None:
 
 def _serialize_skill(skill: dict) -> dict:
     return {
-        "student_skill_id": str(skill["student_skill_id"]),
-        "student_id": str(skill["student_id"]),
-        "skill_id": str(skill["skill_id"]),
+        "project_skill_id": str(skill["project_skill_id"]),
+        "project_id": str(skill["project_id"]),
+        "skill_id": str(skill["skill_id"]) if skill["skill_id"] is not None else None,
         "skill_name": skill["skill_name"],
         "proficiency_level": skill["proficiency_level"],
         "confidence_score": float(skill["confidence_score"]),
@@ -86,19 +87,23 @@ def upload_resume():
     extension = Path(original_name).suffix.lower()
 
     if extension not in ALLOWED_EXTENSIONS:
-        return jsonify({
-            "error": "unsupported file type",
-            "allowed_types": sorted(ALLOWED_EXTENSIONS),
-        }), 400
+        return jsonify(
+            {
+                "error": "unsupported file type",
+                "allowed_types": sorted(ALLOWED_EXTENSIONS),
+            }
+        ), 400
 
     file.seek(0, 2)
     file_size = file.tell()
     file.seek(0)
 
     if file_size > MAX_FILE_SIZE_BYTES:
-        return jsonify({
-            "error": f"file size exceeds {MAX_FILE_SIZE_MB}MB limit",
-        }), 400
+        return jsonify(
+            {
+                "error": f"file size exceeds {MAX_FILE_SIZE_MB}MB limit",
+            }
+        ), 400
 
     if file_size == 0:
         return jsonify({"error": "resume_file is empty"}), 400
@@ -134,20 +139,24 @@ def upload_resume():
             file_url=s3_url,
             raw_text=raw_text,
         )
-    except Exception:
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         db.session.rollback()
         _remove_file(file_path)
-        return jsonify({"error": "failed to save resume record"}), 500
+        return jsonify({"error": "failed to save resume record", "detail": str(e)}), 500
 
     _remove_file(file_path)
 
-    return jsonify({
-        "resume_id": str(resume.resume_id),
-        "student_id": str(resume.student_id),
-        "project_id": str(resume.project_id),
-        "file_url": resume.file_url,
-        "text_length": len(raw_text),
-    }), 201
+    return jsonify(
+        {
+            "resume_id": str(resume.resume_id),
+            "student_id": str(resume.student_id),
+            "project_id": str(resume.project_id),
+            "file_url": resume.file_url,
+            "text_length": len(raw_text),
+        }
+    ), 201
 
 
 @resume_bp.route("/<resume_id>", methods=["GET"])
@@ -183,26 +192,33 @@ def extract_skills(resume_id: str):
     payload = request.get_json(silent=True) or {}
     questionnaire_answers = payload.get("questionnaire_answers")
 
+    if not resume.project_id:
+        return jsonify({"error": "resume has no associated project"}), 400
+
     try:
         result = ResumeSkillExtractor.extract_and_save(
             resume.project_id,
+            resume.student_id,
             resume.raw_text,
             questionnaire_answers,
         )
     except RuntimeError as exc:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(exc)}), 500
-    except Exception:
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         db.session.rollback()
-        return jsonify({"error": "failed to extract skills"}), 500
+        return jsonify({"error": "failed to extract skills", "detail": str(e)}), 500
 
-    return jsonify({
-        "resume_id": str(resume.resume_id),
-        "student_id": str(resume.student_id),
-        "summary": result["summary"],
-        "skills_saved": result["skills_saved"],
-        "skills_skipped": result["skills_skipped"],
-        "skills": [
-            _serialize_skill(skill)
-            for skill in result["skills"]
-        ],
-    })
+    return jsonify(
+        {
+            "resume_id": str(resume.resume_id),
+            "student_id": str(resume.student_id),
+            "summary": result["summary"],
+            "skills_saved": result["skills_saved"],
+            "additional_skills_saved": result["additional_skills_saved"],
+            "skills": [_serialize_skill(skill) for skill in result["skills"]],
+        }
+    )

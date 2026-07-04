@@ -1,7 +1,7 @@
 from typing import List, Dict
 
-class GapAnalyzer:
 
+class GapAnalyzer:
     SIMILARITY_THRESHOLD = 0.75
 
     @staticmethod

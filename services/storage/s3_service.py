@@ -9,7 +9,6 @@ load_dotenv()
 
 
 class S3Service:
-
     def __init__(self):
         self.access_key = os.getenv("AWS_ACCESS_KEY")
         self.secret_key = os.getenv("AWS_SECRET_KEY")
@@ -45,11 +44,7 @@ class S3Service:
         try:
             # We don't set ACL='public-read' unless required, as modern S3 buckets block public ACLs by default.
             # Instead, we just upload the file. We construct a standard virtual-host style URL.
-            self.client.upload_file(
-                Filename=str(path),
-                Bucket=self.bucket_name,
-                Key=object_name
-            )
+            self.client.upload_file(Filename=str(path), Bucket=self.bucket_name, Key=object_name)
 
             # Construct the S3 URL
             # Note: For some regions, the format is s3.amazonaws.com or s3-{region}.amazonaws.com.

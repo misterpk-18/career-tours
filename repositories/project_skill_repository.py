@@ -7,21 +7,15 @@ from config.database import db
 
 
 class ProjectSkillRepository:
-
     @staticmethod
-    def bulk_create(
-        project_id,
-        skill_ids,
-        proficiency_level=5,
-        confidence_score=1.0,
-        source="resume"
-    ):
-        for skill_id in skill_ids:
+    def bulk_create(project_id, skills):
+        for skill in skills:
             db.session.execute(
                 text("""
                     INSERT INTO project_skills (
                         project_id,
                         skill_id,
+                        skill_name,
                         proficiency_level,
                         confidence_score,
                         source
@@ -29,6 +23,7 @@ class ProjectSkillRepository:
                     VALUES (
                         :project_id,
                         :skill_id,
+                        :skill_name,
                         :proficiency_level,
                         :confidence_score,
                         :source
@@ -37,11 +32,12 @@ class ProjectSkillRepository:
                 """),
                 {
                     "project_id": project_id,
-                    "skill_id": skill_id,
-                    "proficiency_level": proficiency_level,
-                    "confidence_score": confidence_score,
-                    "source": source,
-                }
+                    "skill_id": skill.get("skill_id"),
+                    "skill_name": skill.get("skill_name"),
+                    "proficiency_level": skill.get("proficiency_level", 5),
+                    "confidence_score": skill.get("confidence_score", 1.0),
+                    "source": skill.get("source", "resume"),
+                },
             )
 
         db.session.commit()
@@ -54,24 +50,21 @@ class ProjectSkillRepository:
                     ps.project_skill_id,
                     ps.project_id,
                     ps.skill_id,
-                    s.skill_name,
+                    COALESCE(s.skill_name, ps.skill_name) AS skill_name,
                     ps.proficiency_level,
                     ps.confidence_score,
                     ps.source,
                     ps.created_at
                 FROM project_skills ps
-                JOIN skills s
+                LEFT JOIN skills s
                     ON s.skill_id = ps.skill_id
                 WHERE ps.project_id = :project_id
-                ORDER BY s.skill_name
+                ORDER BY skill_name
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def delete_by_project_id(project_id):
@@ -80,7 +73,7 @@ class ProjectSkillRepository:
                 DELETE FROM project_skills
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         db.session.commit()
@@ -96,10 +89,7 @@ class ProjectSkillRepository:
                 FROM project_skills
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            row.skill_id
-            for row in result
-        ]
+        return [row.skill_id for row in result]

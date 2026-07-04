@@ -4,7 +4,8 @@
 CREATE TABLE public.project_skills (
     project_skill_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     project_id uuid NOT NULL,
-    skill_id uuid NOT NULL,
+    skill_id uuid,
+    skill_name character varying(255),
     proficiency_level integer,
     confidence_score numeric(5,2),
     source character varying(100),

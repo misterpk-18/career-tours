@@ -7,7 +7,6 @@ from config.database import db
 
 
 class CourseRepository:
-
     @staticmethod
     def get_all():
         result = db.session.execute(
@@ -29,19 +28,14 @@ class CourseRepository:
                 FROM courses
                 WHERE course_id = :course_id
             """),
-            {"course_id": course_id}
+            {"course_id": course_id},
         )
 
         row = result.fetchone()
         return dict(row._mapping) if row else None
 
     @staticmethod
-    def create(
-        course_name,
-        description=None,
-        duration_hours=None,
-        level=None
-    ):
+    def create(course_name, description=None, duration_hours=None, level=None):
         result = db.session.execute(
             text("""
                 INSERT INTO courses (
@@ -58,12 +52,7 @@ class CourseRepository:
                 )
                 RETURNING *
             """),
-            {
-                "course_name": course_name,
-                "description": description,
-                "duration_hours": duration_hours,
-                "level": level
-            }
+            {"course_name": course_name, "description": description, "duration_hours": duration_hours, "level": level},
         )
 
         row = result.fetchone()
@@ -81,7 +70,7 @@ class CourseRepository:
                 DELETE FROM courses
                 WHERE course_id = :course_id
             """),
-            {"course_id": course_id}
+            {"course_id": course_id},
         )
 
         db.session.commit()
@@ -102,7 +91,7 @@ class CourseRepository:
                     ON s.skill_id = cs.skill_id
                 WHERE cs.course_id = :course_id
             """),
-            {"course_id": course_id}
+            {"course_id": course_id},
         )
 
         return [dict(row._mapping) for row in result]

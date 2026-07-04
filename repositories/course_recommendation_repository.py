@@ -7,14 +7,8 @@ from config.database import db
 
 
 class CourseRecommendationRepository:
-
     @staticmethod
-    def bulk_create(
-        student_id,
-        project_id,
-        occupation_id,
-        recommendations
-    ):
+    def bulk_create(student_id, project_id, occupation_id, recommendations):
         for recommendation in recommendations:
             db.session.execute(
                 text("""
@@ -50,11 +44,9 @@ class CourseRecommendationRepository:
                     "project_id": project_id,
                     "occupation_id": occupation_id,
                     "course_id": recommendation["course_id"],
-                    "coverage_percentage":
-                        recommendation["coverage_percentage"],
-                    "recommendation_rank":
-                        recommendation["rank"],
-                }
+                    "coverage_percentage": recommendation["coverage_percentage"],
+                    "recommendation_rank": recommendation["rank"],
+                },
             )
 
         db.session.commit()
@@ -84,19 +76,13 @@ class CourseRecommendationRepository:
                     cr.occupation_id,
                     cr.recommendation_rank
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_by_project_and_occupation(
-        project_id,
-        occupation_id
-    ):
+    def get_by_project_and_occupation(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -122,19 +108,13 @@ class CourseRecommendationRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_by_occupation_id(
-        project_id,
-        occupation_id
-    ):
+    def get_by_occupation_id(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -160,13 +140,10 @@ class CourseRecommendationRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def delete_by_project_id(project_id):
@@ -175,7 +152,7 @@ class CourseRecommendationRepository:
                 DELETE FROM course_recommendations
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         db.session.commit()
@@ -184,10 +161,7 @@ class CourseRecommendationRepository:
         return cursor_result.rowcount or 0
 
     @staticmethod
-    def delete_by_occupation_id(
-        project_id,
-        occupation_id
-    ):
+    def delete_by_occupation_id(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 DELETE FROM course_recommendations
@@ -197,7 +171,7 @@ class CourseRecommendationRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
         db.session.commit()

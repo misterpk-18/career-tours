@@ -21,6 +21,7 @@ app.register_blueprint(resume_bp, url_prefix="/api/resumes")
 app.register_blueprint(recommendations_bp, url_prefix="/api/recommendations")
 app.register_blueprint(projects_bp, url_prefix="/api/projects")
 
+
 @app.route("/")
 def health():
     return {"status": "ok"}
@@ -28,12 +29,10 @@ def health():
 
 @app.route("/db-test")
 def db_test():
-    result = db.session.execute(
-        text("SELECT current_database()")
-    )
+    result = db.session.execute(text("SELECT current_database()"))
 
-    return {
-        "database": result.scalar()
-    }
+    return {"database": result.scalar()}
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,31 +5,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from langsmith.wrappers import wrap_openai
 
-from services.llm.schemas.student_profile import (
-    StudentProfile
-)
+from services.llm.schemas.student_profile import StudentProfile
 
 load_dotenv()
 
 
 class OpenAIService:
-
     def __init__(self):
-        self.client = wrap_openai(OpenAI(
-            api_key=os.getenv(
-                "OPENAI_API_KEY"
-            )
-        ))
+        self.client = wrap_openai(OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
 
-    def extract_skills(
-        self,
-        resume_text: str,
-        questionnaire_answers: Optional[Dict] = None
-    ) -> StudentProfile:
-
-        questionnaire_answers = (
-            questionnaire_answers or {}
-        )
+    def extract_skills(self, resume_text: str, questionnaire_answers: Optional[Dict] = None) -> StudentProfile:
+        questionnaire_answers = questionnaire_answers or {}
 
         prompt = f"""
 Analyze the student's profile.
@@ -56,11 +42,7 @@ For each skill return:
 Return structured data.
 """
 
-        response = self.client.responses.parse(
-            model="gpt-5",
-            input=prompt,
-            text_format=StudentProfile
-        )
+        response = self.client.responses.parse(model="gpt-5", input=prompt, text_format=StudentProfile)
 
         parsed = response.output_parsed
         if parsed is None:
@@ -69,13 +51,8 @@ Return structured data.
         return parsed
 
     def generate_career_summary(
-        self,
-        occupation: str,
-        score: float,
-        matched_skills: List[str],
-        missing_skills: List[str]
+        self, occupation: str, score: float, matched_skills: List[str], missing_skills: List[str]
     ) -> str:
-
         prompt = f"""
 Occupation: {occupation}
 
@@ -97,10 +74,7 @@ Generate:
 Return plain text only.
 """
 
-        response = self.client.responses.create(
-            model="gpt-4o-mini",
-            input=prompt
-        )
+        response = self.client.responses.create(model="gpt-4o-mini", input=prompt)
 
         return response.output_text
 
@@ -110,10 +84,7 @@ Return plain text only.
         occupation_name: str,
         covered_skills: List[str],
     ) -> str:
-
-        skills_text = ", ".join(
-            covered_skills[:10]
-        )
+        skills_text = ", ".join(covered_skills[:10])
 
         prompt = f"""
 You are a career guidance expert.
@@ -137,9 +108,6 @@ Keep the tone professional and student-friendly.
 Do not use bullet points.
 """
 
-        response = self.client.responses.create(
-            model="gpt-5",
-            input=prompt
-        )
+        response = self.client.responses.create(model="gpt-4o-mini", input=prompt)
 
         return response.output_text

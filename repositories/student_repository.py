@@ -8,13 +8,13 @@ from models.student import Student
 
 
 class StudentRepository:
-
     @staticmethod
     def create(student):
         # Provide default None values for all optional fields to prevent bind parameter errors
         student_data = {
             "full_name": None,
             "email": None,
+            "password_hash": None,
             "phone": None,
             "college_name": None,
             "degree_name": None,
@@ -30,11 +30,18 @@ class StudentRepository:
         }
         student_data.update(student)
 
+        # Hash password if provided in input
+        if "password" in student:
+            from werkzeug.security import generate_password_hash
+
+            student_data["password_hash"] = generate_password_hash(student["password"])
+
         result = db.session.execute(
             text("""
                 INSERT INTO students (
                     full_name,
                     email,
+                    password_hash,
                     phone,
                     college_name,
                     degree_name,
@@ -51,6 +58,7 @@ class StudentRepository:
                 VALUES (
                     :full_name,
                     :email,
+                    :password_hash,
                     :phone,
                     :college_name,
                     :degree_name,
@@ -66,7 +74,7 @@ class StudentRepository:
                 )
                 RETURNING *
             """),
-            student_data
+            student_data,
         )
 
         row = result.fetchone()
@@ -85,7 +93,7 @@ class StudentRepository:
                 FROM students
                 WHERE student_id = :student_id
             """),
-            {"student_id": student_id}
+            {"student_id": student_id},
         )
 
         row = result.fetchone()
@@ -99,7 +107,7 @@ class StudentRepository:
                 FROM students
                 WHERE email = :email
             """),
-            {"email": email}
+            {"email": email},
         )
 
         row = result.fetchone()
@@ -125,10 +133,17 @@ class StudentRepository:
 
         # Convert the existing student dataclass to a dictionary
         from dataclasses import asdict
+
         existing_data = asdict(existing)
 
         # Merge with updated fields to ensure all bind parameters are populated
         update_params = {**existing_data, **data, "student_id": student_id}
+
+        # Hash password if provided in update data
+        if "password" in data:
+            from werkzeug.security import generate_password_hash
+
+            update_params["password_hash"] = generate_password_hash(data["password"])
 
         result = db.session.execute(
             text("""
@@ -136,6 +151,7 @@ class StudentRepository:
                 SET
                     full_name = :full_name,
                     email = :email,
+                    password_hash = :password_hash,
                     phone = :phone,
                     college_name = :college_name,
                     degree_name = :degree_name,
@@ -152,7 +168,7 @@ class StudentRepository:
                 WHERE student_id = :student_id
                 RETURNING *
             """),
-            update_params
+            update_params,
         )
 
         row = result.fetchone()
@@ -167,7 +183,7 @@ class StudentRepository:
                 DELETE FROM students
                 WHERE student_id = :student_id
             """),
-            {"student_id": student_id}
+            {"student_id": student_id},
         )
 
         db.session.commit()

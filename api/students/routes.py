@@ -47,8 +47,10 @@ def create_student():
 
     try:
         student = StudentRepository.create(data)
-    except Exception:
-        return jsonify({"error": "failed to create student"}), 500
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "failed to create student", "detail": str(e)}), 500
 
     return jsonify(_serialize_student(student)), 201
 

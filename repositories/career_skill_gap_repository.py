@@ -7,14 +7,8 @@ from config.database import db
 
 
 class CareerSkillGapRepository:
-
     @staticmethod
-    def bulk_create(
-        student_id,
-        project_id,
-        occupation_id,
-        skill_gaps
-    ):
+    def bulk_create(student_id, project_id, occupation_id, skill_gaps):
         for skill_gap in skill_gaps:
             db.session.execute(
                 text("""
@@ -46,9 +40,8 @@ class CareerSkillGapRepository:
                     "project_id": project_id,
                     "occupation_id": occupation_id,
                     "skill_id": skill_gap["skill_id"],
-                    "gap_percentage":
-                        skill_gap["gap_percentage"],
-                }
+                    "gap_percentage": skill_gap["gap_percentage"],
+                },
             )
 
         db.session.commit()
@@ -79,19 +72,13 @@ class CareerSkillGapRepository:
                     csg.occupation_id,
                     csg.gap_percentage DESC
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_by_occupation_id(
-        project_id,
-        occupation_id
-    ):
+    def get_by_occupation_id(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -121,19 +108,13 @@ class CareerSkillGapRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_by_skill_id(
-        project_id,
-        skill_id
-    ):
+    def get_by_skill_id(project_id, skill_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -162,13 +143,10 @@ class CareerSkillGapRepository:
             {
                 "project_id": project_id,
                 "skill_id": skill_id,
-            }
+            },
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def delete_by_project_id(project_id):
@@ -177,23 +155,17 @@ class CareerSkillGapRepository:
                 DELETE FROM career_skill_gaps
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         db.session.commit()
 
-        cursor_result = cast(
-            CursorResult[Any],
-            result
-        )
+        cursor_result = cast(CursorResult[Any], result)
 
         return cursor_result.rowcount or 0
 
     @staticmethod
-    def delete_by_occupation_id(
-        project_id,
-        occupation_id
-    ):
+    def delete_by_occupation_id(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 DELETE FROM career_skill_gaps
@@ -203,14 +175,11 @@ class CareerSkillGapRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
         db.session.commit()
 
-        cursor_result = cast(
-            CursorResult[Any],
-            result
-        )
+        cursor_result = cast(CursorResult[Any], result)
 
         return cursor_result.rowcount or 0

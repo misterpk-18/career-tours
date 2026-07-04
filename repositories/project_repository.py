@@ -9,15 +9,9 @@ from models.project import Project
 
 
 class ProjectRepository:
-
     @staticmethod
     def create(project):
-        project_data = {
-            "student_id": None,
-            "project_name": None,
-            "description": None,
-            "status": "active"
-        }
+        project_data = {"student_id": None, "project_name": None, "description": None, "status": "active"}
         project_data.update(project)
 
         result = db.session.execute(
@@ -36,7 +30,7 @@ class ProjectRepository:
                 )
                 RETURNING *
             """),
-            project_data
+            project_data,
         )
 
         row = result.fetchone()
@@ -55,15 +49,12 @@ class ProjectRepository:
                 FROM projects
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         row = result.fetchone()
 
-        return (
-            Project(**cast(Any, row._mapping))
-            if row else None
-        )
+        return Project(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_by_student_id(student_id):
@@ -74,13 +65,10 @@ class ProjectRepository:
                 WHERE student_id = :student_id
                 ORDER BY created_at DESC
             """),
-            {"student_id": student_id}
+            {"student_id": student_id},
         )
 
-        return [
-            Project(**cast(Any, row._mapping))
-            for row in result
-        ]
+        return [Project(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def get_all():
@@ -92,10 +80,7 @@ class ProjectRepository:
             """)
         )
 
-        return [
-            Project(**cast(Any, row._mapping))
-            for row in result
-        ]
+        return [Project(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def update(project_id, data):
@@ -106,11 +91,7 @@ class ProjectRepository:
 
         existing_data = asdict(existing)
 
-        update_params = {
-            **existing_data,
-            **data,
-            "project_id": project_id
-        }
+        update_params = {**existing_data, **data, "project_id": project_id}
 
         result = db.session.execute(
             text("""
@@ -123,16 +104,13 @@ class ProjectRepository:
                 WHERE project_id = :project_id
                 RETURNING *
             """),
-            update_params
+            update_params,
         )
 
         row = result.fetchone()
         db.session.commit()
 
-        return (
-            Project(**cast(Any, row._mapping))
-            if row else None
-        )
+        return Project(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def delete(project_id):
@@ -141,16 +119,11 @@ class ProjectRepository:
                 DELETE FROM projects
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         db.session.commit()
 
-        cursor_result = cast(
-            CursorResult[Any],
-            result
-        )
+        cursor_result = cast(CursorResult[Any], result)
 
-        return (
-            cursor_result.rowcount or 0
-        ) > 0
+        return (cursor_result.rowcount or 0) > 0

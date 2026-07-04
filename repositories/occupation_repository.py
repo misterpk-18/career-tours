@@ -7,7 +7,6 @@ from config.database import db
 
 
 class OccupationRepository:
-
     @staticmethod
     def get_all():
         result = db.session.execute(
@@ -28,19 +27,14 @@ class OccupationRepository:
                 FROM occupations
                 WHERE occupation_id = :occupation_id
             """),
-            {"occupation_id": occupation_id}
+            {"occupation_id": occupation_id},
         )
 
         row = result.fetchone()
         return dict(row._mapping) if row else None
 
     @staticmethod
-    def create(
-        occupation_name,
-        description=None,
-        average_salary=None,
-        growth_outlook=None
-    ):
+    def create(occupation_name, description=None, average_salary=None, growth_outlook=None):
         result = db.session.execute(
             text("""
                 INSERT INTO occupations (
@@ -61,8 +55,8 @@ class OccupationRepository:
                 "occupation_name": occupation_name,
                 "description": description,
                 "average_salary": average_salary,
-                "growth_outlook": growth_outlook
-            }
+                "growth_outlook": growth_outlook,
+            },
         )
 
         row = result.fetchone()
@@ -80,7 +74,7 @@ class OccupationRepository:
                 DELETE FROM occupations
                 WHERE occupation_id = :occupation_id
             """),
-            {"occupation_id": occupation_id}
+            {"occupation_id": occupation_id},
         )
 
         db.session.commit()
@@ -101,7 +95,7 @@ class OccupationRepository:
                     ON s.skill_id = os.skill_id
                 WHERE os.occupation_id = :occupation_id
             """),
-            {"occupation_id": occupation_id}
+            {"occupation_id": occupation_id},
         )
 
         return [dict(row._mapping) for row in result]

@@ -5,6 +5,7 @@ CREATE TABLE public.students (
     student_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     full_name character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
+    password_hash character varying(255),
     phone character varying(20),
     college_name character varying(255),
     degree_name character varying(255),

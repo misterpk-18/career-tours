@@ -6,7 +6,6 @@ from config.database import db
 
 
 class LLMSummaryRepository:
-
     @staticmethod
     def create(
         student_id,
@@ -43,7 +42,7 @@ class LLMSummaryRepository:
                 "course_id": course_id,
                 "summary_type": summary_type,
                 "summary_text": summary_text,
-            }
+            },
         )
 
         row = result.fetchone()
@@ -63,19 +62,13 @@ class LLMSummaryRepository:
                 WHERE project_id = :project_id
                 ORDER BY created_at DESC
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_career_summary(
-        project_id,
-        occupation_id
-    ):
+    def get_career_summary(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT *
@@ -89,22 +82,15 @@ class LLMSummaryRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
         row = result.fetchone()
 
-        return (
-            dict(cast(Any, row._mapping))
-            if row else None
-        )
+        return dict(cast(Any, row._mapping)) if row else None
 
     @staticmethod
-    def get_course_summary(
-        project_id,
-        occupation_id,
-        course_id
-    ):
+    def get_course_summary(project_id, occupation_id, course_id):
         result = db.session.execute(
             text("""
                 SELECT *
@@ -120,21 +106,15 @@ class LLMSummaryRepository:
                 "project_id": project_id,
                 "occupation_id": occupation_id,
                 "course_id": course_id,
-            }
+            },
         )
 
         row = result.fetchone()
 
-        return (
-            dict(cast(Any, row._mapping))
-            if row else None
-        )
+        return dict(cast(Any, row._mapping)) if row else None
 
     @staticmethod
-    def get_course_summaries(
-        project_id,
-        occupation_id
-    ):
+    def get_course_summaries(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT *
@@ -147,13 +127,10 @@ class LLMSummaryRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def delete_by_project_id(project_id):
@@ -161,9 +138,9 @@ class LLMSummaryRepository:
             text("""
                 DELETE FROM llm_summaries
                 WHERE project_id = :project_id
-                RETURNING id
+                RETURNING summary_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         deleted_rows = result.fetchall()

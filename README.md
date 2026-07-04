@@ -6,8 +6,8 @@ A Flask-based API application that powers an AI-driven career matching engine. T
 
 ## Tech Stack
 
-- **Framework**: Python 3, Flask, Flask-SQLAlchemy
-- **Database**: PostgreSQL (with SQLAlchemy and `psycopg2`)
+- **Framework**: Python 3, Flask
+- **Database**: PostgreSQL, accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
 - **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (pre-downloaded locally for offline use), `scikit-learn`, `langchain`, **LangSmith**
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
@@ -16,18 +16,18 @@ A Flask-based API application that powers an AI-driven career matching engine. T
 ## Project Structure
 
 - `api/`: API blueprints and route definitions (`students`, `resumes`, `recommendations`, `projects`)
-- `config/`: Configuration files (e.g., database connection)
-- `models/`: SQLAlchemy database models
-- `repositories/`: Data access layer handling database interactions
+- `config/`: Database connection configuration
+- `models/`: Plain dataclass DTOs representing domain entities
+- `repositories/`: Data access layer handling raw-SQL database interactions
 - `services/`: Business logic, AI integration, and file processing
   - `resume/`: PDF/DOCX text parsing and OpenAI skill extraction pipelines
   - `skills/`: Skill normalization and mapping engines
   - `matching/`: Embedding-based skill matching and occupational ranking models
-  - `reccomendations/`: Generation of student career tracks, skill gaps, and course recommenders
+  - `recommendations/`: Generation of student career tracks, skill gaps, and course recommendations
+  - `storage/`: AWS S3 upload/retrieval for resume files
 - `migrations/`: Database migrations
-- `tests/`: Extensive test suite covering unit tests and live integration tests
+- `table_schemas/`: SQL DDL for each table (source of truth for the schema)
 - `uploads/`: Temporary local directory for processing resumes
-- `utils/`: Helper functions and utilities
 
 ---
 

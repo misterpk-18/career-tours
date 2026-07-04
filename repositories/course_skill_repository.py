@@ -4,7 +4,6 @@ from config.database import db
 
 
 class CourseSkillRepository:
-
     @staticmethod
     def get_by_course_id(course_id):
         result = db.session.execute(
@@ -20,13 +19,10 @@ class CourseSkillRepository:
                     ON s.skill_id = cs.skill_id
                 WHERE cs.course_id = :course_id
             """),
-            {"course_id": course_id}
+            {"course_id": course_id},
         )
 
-        return [
-            dict(row._mapping)
-            for row in result
-        ]
+        return [dict(row._mapping) for row in result]
 
     @staticmethod
     def get_by_skill_id(skill_id):
@@ -43,10 +39,7 @@ class CourseSkillRepository:
                 WHERE cs.skill_id = :skill_id
                   AND c.is_active = TRUE
             """),
-            {"skill_id": skill_id}
+            {"skill_id": skill_id},
         )
 
-        return [
-            dict(row._mapping)
-            for row in result
-        ]
+        return [dict(row._mapping) for row in result]

@@ -68,10 +68,7 @@ def get_student_projects(student_id: str):
 
     projects = ProjectRepository.get_by_student_id(student_uuid)
 
-    return jsonify([
-        _serialize_project(project)
-        for project in projects
-    ])
+    return jsonify([_serialize_project(project) for project in projects])
 
 
 @projects_bp.route("/<project_id>", methods=["PUT"])
@@ -86,10 +83,7 @@ def update_project(project_id: str):
     if not data:
         return jsonify({"error": "request body is required"}), 400
 
-    project = ProjectRepository.update(
-        project_uuid,
-        data
-    )
+    project = ProjectRepository.update(project_uuid, data)
 
     if project is None:
         return jsonify({"error": "project not found"}), 404
@@ -109,6 +103,4 @@ def delete_project(project_id: str):
     if not deleted:
         return jsonify({"error": "project not found"}), 404
 
-    return jsonify({
-        "message": "project deleted successfully"
-    })
+    return jsonify({"message": "project deleted successfully"})

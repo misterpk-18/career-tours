@@ -23,3 +23,4 @@ class Student:
     work_mode_preference: Optional[str]
     created_at: datetime
     updated_at: datetime
+    password_hash: Optional[str] = None

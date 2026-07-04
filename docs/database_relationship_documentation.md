@@ -226,6 +226,7 @@ erDiagram
         uuid student_id PK
         varchar full_name
         varchar email UK
+        varchar password_hash
         varchar phone
         varchar college_name
         varchar degree_name

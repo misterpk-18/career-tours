@@ -7,13 +7,8 @@ from config.database import db
 
 
 class CareerMatchRepository:
-
     @staticmethod
-    def bulk_create(
-        student_id,
-        project_id,
-        recommendations
-    ):
+    def bulk_create(student_id, project_id, recommendations):
         for recommendation in recommendations:
             db.session.execute(
                 text("""
@@ -46,7 +41,7 @@ class CareerMatchRepository:
                     "occupation_id": recommendation["occupation_id"],
                     "match_percentage": recommendation["score"],
                     "rank_position": recommendation["rank"],
-                }
+                },
             )
 
         db.session.commit()
@@ -73,19 +68,13 @@ class CareerMatchRepository:
                 WHERE scm.project_id = :project_id
                 ORDER BY scm.rank_position
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            dict(cast(Any, row._mapping))
-            for row in result
-        ]
+        return [dict(cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def get_by_project_and_occupation(
-        project_id,
-        occupation_id
-    ):
+    def get_by_project_and_occupation(project_id, occupation_id):
         result = db.session.execute(
             text("""
                 SELECT
@@ -110,15 +99,12 @@ class CareerMatchRepository:
             {
                 "project_id": project_id,
                 "occupation_id": occupation_id,
-            }
+            },
         )
 
         row = result.fetchone()
 
-        return (
-            dict(cast(Any, row._mapping))
-            if row else None
-        )
+        return dict(cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def get_by_match_id(match_id):
@@ -128,15 +114,12 @@ class CareerMatchRepository:
                 FROM student_career_matches
                 WHERE match_id = :match_id
             """),
-            {"match_id": match_id}
+            {"match_id": match_id},
         )
 
         row = result.fetchone()
 
-        return (
-            dict(cast(Any, row._mapping))
-            if row else None
-        )
+        return dict(cast(Any, row._mapping)) if row else None
 
     @staticmethod
     def delete_by_project_id(project_id):
@@ -145,7 +128,7 @@ class CareerMatchRepository:
                 DELETE FROM student_career_matches
                 WHERE project_id = :project_id
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
         db.session.commit()

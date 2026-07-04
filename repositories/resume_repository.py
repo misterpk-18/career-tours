@@ -8,14 +8,8 @@ from models.resume import Resume
 
 
 class ResumeRepository:
-
     @staticmethod
-    def create(
-        student_id,
-        project_id,
-        file_url,
-        raw_text=None
-    ):
+    def create(student_id, project_id, file_url, raw_text=None):
         result = db.session.execute(
             text("""
                 INSERT INTO resumes (
@@ -34,12 +28,7 @@ class ResumeRepository:
                 )
                 RETURNING *
             """),
-            {
-                "student_id": student_id,
-                "project_id": project_id,
-                "file_url": file_url,
-                "raw_text": raw_text
-            }
+            {"student_id": student_id, "project_id": project_id, "file_url": file_url, "raw_text": raw_text},
         )
 
         row = result.fetchone()
@@ -58,7 +47,7 @@ class ResumeRepository:
                 FROM resumes
                 WHERE resume_id = :resume_id
             """),
-            {"resume_id": resume_id}
+            {"resume_id": resume_id},
         )
 
         row = result.fetchone()
@@ -73,13 +62,10 @@ class ResumeRepository:
                 WHERE student_id = :student_id
                 ORDER BY created_at DESC
             """),
-            {"student_id": student_id}
+            {"student_id": student_id},
         )
 
-        return [
-            Resume(**cast(Any, row._mapping))
-            for row in result
-        ]
+        return [Resume(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
     def get_by_project_id(project_id):
@@ -90,19 +76,13 @@ class ResumeRepository:
                 WHERE project_id = :project_id
                 ORDER BY created_at DESC
             """),
-            {"project_id": project_id}
+            {"project_id": project_id},
         )
 
-        return [
-            Resume(**cast(Any, row._mapping))
-            for row in result
-        ]
+        return [Resume(**cast(Any, row._mapping)) for row in result]
 
     @staticmethod
-    def update_raw_text(
-        resume_id,
-        raw_text
-    ):
+    def update_raw_text(resume_id, raw_text):
         result = db.session.execute(
             text("""
                 UPDATE resumes
@@ -112,10 +92,7 @@ class ResumeRepository:
                 WHERE resume_id = :resume_id
                 RETURNING *
             """),
-            {
-                "resume_id": resume_id,
-                "raw_text": raw_text
-            }
+            {"resume_id": resume_id, "raw_text": raw_text},
         )
 
         row = result.fetchone()
@@ -130,7 +107,7 @@ class ResumeRepository:
                 DELETE FROM resumes
                 WHERE resume_id = :resume_id
             """),
-            {"resume_id": resume_id}
+            {"resume_id": resume_id},
         )
 
         db.session.commit()

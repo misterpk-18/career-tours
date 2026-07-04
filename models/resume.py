@@ -8,8 +8,10 @@ from uuid import UUID
 class Resume:
     resume_id: UUID
     student_id: UUID
-    project_id: UUID
+    file_name: Optional[str]
     file_url: str
     raw_text: Optional[str]
     parsed_at: Optional[datetime]
     created_at: datetime
+    project_id: Optional[UUID] = None
+
