@@ -8,7 +8,7 @@ A Flask-based API application that powers an AI-driven career matching engine. T
 
 - **Framework**: Python 3, Flask
 - **Database**: PostgreSQL, accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
-- **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (pre-downloaded locally for offline use), `scikit-learn`, `langchain`, **LangSmith**
+- **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (currently accessed using Hugging Face API), `scikit-learn`, `langchain`, **LangSmith**
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
 ---
