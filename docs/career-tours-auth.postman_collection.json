@@ -1,0 +1,210 @@
+{
+  "info": {
+    "name": "Career Tours - Auth & Resumes API",
+    "description": "Registration/login plus authenticated resume-viewing endpoints for the Career Tours career-matching engine. Login/Register return a JWT (HS256) auto-saved to the `token` collection variable; the resume requests send it as a Bearer token. 'List My Resumes' also auto-saves the first resume's id to `resume_id` so the Preview request works out of the box.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://13.204.83.160",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "resume_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        },
+        "body": {
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "raw": "{\n  \"full_name\": \"Manoj Tungala\",\n  \"email\": \"manoj@example.com\",\n  \"password\": \"s3cret-passphrase\",\n  \"phone\": \"+1234567890\"\n}"
+        },
+        "description": "Registers a new student and returns an access token.\n\nRequired: `full_name`, `email`, `password`.\nOptional profile fields (same as POST /api/students): `phone`, `college_name`, `degree_name`, `branch_name`, `current_year_semester`, `graduation_year`, `preferred_job_location`, `target_role`, `career_interest`, `learning_hours_per_week`, `internship_preference`, `work_mode_preference`.\n\nResponses:\n- 201 Created: `{ token, student }`\n- 400 Bad Request: a required field is missing\n- 409 Conflict: email or phone already registered"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const body = pm.response.json();",
+              "    pm.collectionVariables.set('token', body.token);",
+              "    pm.test('registered and token saved', function () {",
+              "        pm.expect(body.token).to.be.a('string').and.not.empty;",
+              "        pm.expect(body.student).to.have.property('student_id');",
+              "        pm.expect(body.student).to.not.have.property('password_hash');",
+              "    });",
+              "} else {",
+              "    pm.test('error response has message', function () {",
+              "        pm.expect(pm.response.json()).to.have.property('error');",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "body": {
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "raw": "{\n  \"email\": \"manoj@example.com\",\n  \"password\": \"s3cret-passphrase\"\n}"
+        },
+        "description": "Authenticates a student by email and password and returns an access token.\n\nRequired: `email`, `password`.\n\nResponses:\n- 200 OK: `{ token, student }`\n- 400 Bad Request: `email` or `password` missing\n- 401 Unauthorized: invalid credentials (same message whether the email is unknown or the password is wrong)"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const body = pm.response.json();",
+              "    pm.collectionVariables.set('token', body.token);",
+              "    pm.test('logged in and token saved', function () {",
+              "        pm.expect(body.token).to.be.a('string').and.not.empty;",
+              "        pm.expect(body.student).to.have.property('student_id');",
+              "    });",
+              "} else {",
+              "    pm.test('error response has message', function () {",
+              "        pm.expect(pm.response.json()).to.have.property('error');",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List My Resumes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/resumes/mine",
+          "host": ["{{base_url}}"],
+          "path": ["api", "resumes", "mine"]
+        },
+        "description": "Returns the authenticated student's resumes (newest first), each with a time-limited presigned `preview_url` for viewing the document. Requires a Bearer token (run Login first).\n\nResponses:\n- 200 OK: `{ resumes: [ { resume_id, project_id, file_name, file_url, preview_url, parsed_at, created_at } ] }`\n- 401 Unauthorized: missing/invalid/expired token"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const body = pm.response.json();",
+              "    pm.test('returns a resumes array', function () {",
+              "        pm.expect(body.resumes).to.be.an('array');",
+              "    });",
+              "    if (body.resumes && body.resumes.length) {",
+              "        pm.collectionVariables.set('resume_id', body.resumes[0].resume_id);",
+              "    }",
+              "} else {",
+              "    pm.test('error response has message', function () {",
+              "        pm.expect(pm.response.json()).to.have.property('error');",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preview Resume",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/resumes/{{resume_id}}/preview?expires_in=3600",
+          "host": ["{{base_url}}"],
+          "path": ["api", "resumes", "{{resume_id}}", "preview"],
+          "query": [
+            {
+              "key": "expires_in",
+              "value": "3600",
+              "description": "Seconds until the presigned link expires. Default and max 3600."
+            }
+          ]
+        },
+        "description": "Returns a fresh presigned `preview_url` plus the extracted `raw_text` for a single resume owned by the authenticated student. Use to re-open a resume after an earlier link expired. `resume_id` is auto-filled by the 'List My Resumes' request.\n\nResponses:\n- 200 OK: `{ resume_id, file_name, file_url, preview_url, expires_in, raw_text, parsed_at }`\n- 401 Unauthorized: missing/invalid/expired token\n- 404 Not Found: resume does not exist or belongs to another student"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    pm.test('returns a preview_url', function () {",
+              "        pm.expect(pm.response.json().preview_url).to.be.a('string').and.not.empty;",
+              "    });",
+              "} else {",
+              "    pm.test('error response has message', function () {",
+              "        pm.expect(pm.response.json()).to.have.property('error');",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

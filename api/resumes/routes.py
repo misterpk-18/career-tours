@@ -2,9 +2,10 @@
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from werkzeug.utils import secure_filename
 
+from api.auth.utils import require_auth
 from config.database import db
 from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
@@ -48,8 +49,21 @@ def _serialize_resume(resume) -> dict:
         "resume_id": str(resume.resume_id),
         "student_id": str(resume.student_id),
         "project_id": str(resume.project_id),
+        "file_name": resume.file_name,
         "file_url": resume.file_url,
         "raw_text": resume.raw_text,
+        "parsed_at": resume.parsed_at.isoformat() if resume.parsed_at else None,
+        "created_at": resume.created_at.isoformat(),
+    }
+
+
+def _serialize_resume_list_item(resume, preview_url) -> dict:
+    return {
+        "resume_id": str(resume.resume_id),
+        "project_id": str(resume.project_id) if resume.project_id else None,
+        "file_name": resume.file_name,
+        "file_url": resume.file_url,
+        "preview_url": preview_url,
         "parsed_at": resume.parsed_at.isoformat() if resume.parsed_at else None,
         "created_at": resume.created_at.isoformat(),
     }
@@ -138,6 +152,7 @@ def upload_resume():
             project_id=project.project_id,
             file_url=s3_url,
             raw_text=raw_text,
+            file_name=original_name,
         )
     except Exception as e:
         import traceback
@@ -159,6 +174,25 @@ def upload_resume():
     ), 201
 
 
+@resume_bp.route("/mine", methods=["GET"])
+@require_auth
+def list_my_resumes():
+    resumes = ResumeRepository.get_by_student_id(g.student_id)
+
+    s3_service = S3Service()
+    items = []
+    for resume in resumes:
+        preview_url = None
+        try:
+            key = S3Service.key_from_url(resume.file_url)
+            preview_url = s3_service.generate_presigned_url(key)
+        except (ValueError, RuntimeError):
+            preview_url = None
+        items.append(_serialize_resume_list_item(resume, preview_url))
+
+    return jsonify({"resumes": items})
+
+
 @resume_bp.route("/<resume_id>", methods=["GET"])
 def get_resume(resume_id: str):
     try:
@@ -172,6 +206,45 @@ def get_resume(resume_id: str):
         return jsonify({"error": "resume not found"}), 404
 
     return jsonify(_serialize_resume(resume))
+
+
+@resume_bp.route("/<resume_id>/preview", methods=["GET"])
+@require_auth
+def preview_resume(resume_id: str):
+    try:
+        resume_uuid = UUID(resume_id)
+    except ValueError:
+        return jsonify({"error": "resume_id must be a valid UUID"}), 400
+
+    resume = ResumeRepository.get_by_id(resume_uuid)
+
+    # 404 (not 403) when the resume belongs to another student, so we don't
+    # reveal that a resume with that id exists.
+    if resume is None or resume.student_id != g.student_id:
+        return jsonify({"error": "resume not found"}), 404
+
+    try:
+        expires_in = min(int(request.args.get("expires_in", 3600)), 3600)
+    except ValueError:
+        expires_in = 3600
+
+    try:
+        key = S3Service.key_from_url(resume.file_url)
+        preview_url = S3Service().generate_presigned_url(key, expires_in=expires_in)
+    except (ValueError, RuntimeError):
+        return jsonify({"error": "failed to generate preview url"}), 500
+
+    return jsonify(
+        {
+            "resume_id": str(resume.resume_id),
+            "file_name": resume.file_name,
+            "file_url": resume.file_url,
+            "preview_url": preview_url,
+            "expires_in": expires_in,
+            "raw_text": resume.raw_text,
+            "parsed_at": resume.parsed_at.isoformat() if resume.parsed_at else None,
+        }
+    )
 
 
 @resume_bp.route("/<resume_id>/extract-skills", methods=["POST"])

@@ -9,12 +9,13 @@ from models.resume import Resume
 
 class ResumeRepository:
     @staticmethod
-    def create(student_id, project_id, file_url, raw_text=None):
+    def create(student_id, project_id, file_url, raw_text=None, file_name=None):
         result = db.session.execute(
             text("""
                 INSERT INTO resumes (
                     student_id,
                     project_id,
+                    file_name,
                     file_url,
                     raw_text,
                     parsed_at
@@ -22,13 +23,20 @@ class ResumeRepository:
                 VALUES (
                     :student_id,
                     :project_id,
+                    :file_name,
                     :file_url,
                     :raw_text,
                     CURRENT_TIMESTAMP
                 )
                 RETURNING *
             """),
-            {"student_id": student_id, "project_id": project_id, "file_url": file_url, "raw_text": raw_text},
+            {
+                "student_id": student_id,
+                "project_id": project_id,
+                "file_name": file_name,
+                "file_url": file_url,
+                "raw_text": raw_text,
+            },
         )
 
         row = result.fetchone()

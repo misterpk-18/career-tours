@@ -382,6 +382,34 @@ Uploads a resume file (PDF or DOCX), extracts text, uploads it to S3, and create
   }
   ```
 
+#### **GET /api/resumes/mine**
+Returns the resumes uploaded by the **currently authenticated student**, newest first. The student is identified from the JWT, so a student can only ever see their own resumes. Each resume includes a `preview_url` — a time-limited (1 hour) presigned S3 link the browser can open to view/download the actual document (the stored `file_url` itself is private and not directly accessible).
+- **Request Headers**:
+  - `Authorization: Bearer <token>` (required) — the JWT from `/api/auth/login` or `/api/auth/register`.
+- **Response (200 OK)**:
+  ```json
+  {
+    "resumes": [
+      {
+        "resume_id": "a9d6bbd1-1fdc-4223-820a-3db7e3ab5ad8",
+        "project_id": "0d4988d6-0e82-4717-bb9f-ae3f9f783a1c",
+        "file_name": "manoj_resume.pdf",
+        "file_url": "https://your-s3-bucket.s3.ap-south-1.amazonaws.com/6edb7eff-....docx",
+        "preview_url": "https://your-s3-bucket.s3.amazonaws.com/6edb7eff-....docx?X-Amz-Algorithm=...&X-Amz-Signature=...",
+        "parsed_at": "2026-07-12T10:07:11.384250",
+        "created_at": "2026-07-12T10:07:11.384250"
+      }
+    ]
+  }
+  ```
+  Note: `file_name` is `null` for resumes uploaded before filename tracking was added. `preview_url` may be `null` if a signed link could not be generated for that row.
+- **Response (401 Unauthorized)** — missing, invalid, or expired token:
+  ```json
+  {
+    "error": "authorization token required"
+  }
+  ```
+
 #### **GET /api/resumes/<resume_id>**
 Retrieves an uploaded resume's metadata and its extracted raw text content.
 - **Path Parameters**:
@@ -392,12 +420,36 @@ Retrieves an uploaded resume's metadata and its extracted raw text content.
     "resume_id": "0d61fb19-6ab7-47b2-bd75-47e2a9b6b801",
     "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
     "project_id": "90e66ad3-8b77-4c7b-a3ee-851f89bc101a",
+    "file_name": "manoj_resume.pdf",
     "file_url": "https://your-s3-bucket.s3.amazonaws.com/0d61fb19-6ab7-47b2-bd75-47e2a9b6b801.pdf",
     "raw_text": "Manoj Tungala\nCloud and GenAI Engineer...\n...",
     "parsed_at": "2026-06-24T14:42:00.123456",
     "created_at": "2026-06-24T14:41:55.789012"
   }
   ```
+
+#### **GET /api/resumes/<resume_id>/preview**
+Returns a fresh presigned `preview_url` (plus the extracted `raw_text`) for a single resume owned by the authenticated student. Use this to re-open a resume after an earlier `preview_url` has expired.
+- **Request Headers**:
+  - `Authorization: Bearer <token>` (required).
+- **Path Parameters**:
+  - `resume_id` (string, required): The UUID of the resume.
+- **Query Parameters**:
+  - `expires_in` (integer, optional): Seconds until the link expires. Default and maximum `3600`.
+- **Response (200 OK)**:
+  ```json
+  {
+    "resume_id": "a9d6bbd1-1fdc-4223-820a-3db7e3ab5ad8",
+    "file_name": "manoj_resume.pdf",
+    "file_url": "https://your-s3-bucket.s3.ap-south-1.amazonaws.com/6edb7eff-....docx",
+    "preview_url": "https://your-s3-bucket.s3.amazonaws.com/6edb7eff-....docx?X-Amz-Signature=...",
+    "expires_in": 3600,
+    "raw_text": "Manoj Tungala\nCloud and GenAI Engineer...\n...",
+    "parsed_at": "2026-07-12T10:07:11.384250"
+  }
+  ```
+- **Response (401 Unauthorized)** — missing/invalid/expired token.
+- **Response (404 Not Found)** — the resume does not exist, or belongs to another student.
 
 #### **POST /api/resumes/<resume_id>/extract-skills**
 Triggers OpenAI to extract technical, soft, and domain skills from the resume text. It maps them to master database skills, checks for existing associations, saves them, and returns a structured profile.

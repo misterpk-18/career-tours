@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta, timezone
+from functools import wraps
+from uuid import UUID
 
 import jwt
+from flask import g, jsonify, request
 
 from config.database import JWT_EXPIRY_HOURS, SECRET_KEY
 
@@ -21,6 +24,39 @@ def generate_token(student_id) -> str:
 def decode_token(token: str) -> dict:
     """Decode and validate a JWT. Raises jwt.PyJWTError on failure."""
     return jwt.decode(token, SECRET_KEY, algorithms=[_ALGORITHM])
+
+
+def require_auth(view):
+    """Protect a route: require a valid Bearer JWT and expose the student id.
+
+    On success, sets ``g.student_id`` (a UUID) for the wrapped view. On any
+    failure, returns a 401 JSON error consistent with the app's error shape.
+    """
+
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        header = request.headers.get("Authorization", "")
+
+        if not header.startswith("Bearer "):
+            return jsonify({"error": "authorization token required"}), 401
+
+        token = header[len("Bearer "):].strip()
+
+        try:
+            claims = decode_token(token)
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "token expired"}), 401
+        except jwt.PyJWTError:
+            return jsonify({"error": "invalid token"}), 401
+
+        try:
+            g.student_id = UUID(claims["sub"])
+        except (KeyError, ValueError):
+            return jsonify({"error": "invalid token"}), 401
+
+        return view(*args, **kwargs)
+
+    return wrapper
 
 
 def serialize_student(student) -> dict:

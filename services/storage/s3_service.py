@@ -54,3 +54,45 @@ class S3Service:
 
         except ClientError as e:
             raise RuntimeError(f"Failed to upload file to S3: {e}")
+
+    def generate_presigned_url(
+        self, object_name: str, expires_in: int = 3600, inline: bool = True
+    ) -> str:
+        """Generate a time-limited presigned GET URL for a private S3 object.
+
+        Args:
+            object_name: The S3 object key (e.g. "<uuid>.pdf").
+            expires_in: Seconds until the URL expires (default 1 hour).
+            inline: If True, the browser renders the file (e.g. PDF) inline;
+                    otherwise it is served as an attachment/download.
+
+        Returns:
+            A signed URL that grants temporary read access to the object.
+        """
+        disposition = "inline" if inline else "attachment"
+
+        try:
+            return self.client.generate_presigned_url(
+                "get_object",
+                Params={
+                    "Bucket": self.bucket_name,
+                    "Key": object_name,
+                    "ResponseContentDisposition": disposition,
+                },
+                ExpiresIn=expires_in,
+            )
+        except ClientError as e:
+            raise RuntimeError(f"Failed to generate presigned URL: {e}")
+
+    @staticmethod
+    def key_from_url(file_url: str) -> str:
+        """Extract the S3 object key from a stored file URL.
+
+        The DB stores the full virtual-host URL, not the bare key, so we take
+        everything after the ".amazonaws.com/" marker.
+        """
+        marker = ".amazonaws.com/"
+        idx = file_url.find(marker)
+        if idx == -1:
+            raise ValueError(f"Cannot extract S3 key from URL: {file_url}")
+        return file_url[idx + len(marker):]
