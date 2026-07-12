@@ -114,6 +114,20 @@ class StudentRepository:
         return Student(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
+    def get_by_phone(phone):
+        result = db.session.execute(
+            text("""
+                SELECT *
+                FROM students
+                WHERE phone = :phone
+            """),
+            {"phone": phone},
+        )
+
+        row = result.fetchone()
+        return Student(**cast(Any, row._mapping)) if row else None
+
+    @staticmethod
     def get_all():
         result = db.session.execute(
             text("""

@@ -1,6 +1,7 @@
 from flask import Flask
 from sqlalchemy import text
 
+from api.auth.routes import auth_bp
 from api.recommendations.routes import recommendations_bp
 from api.resumes.routes import resume_bp
 from api.students.routes import students_bp
@@ -16,6 +17,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(students_bp, url_prefix="/api/students")
 app.register_blueprint(resume_bp, url_prefix="/api/resumes")
 app.register_blueprint(recommendations_bp, url_prefix="/api/recommendations")

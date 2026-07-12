@@ -14,6 +14,10 @@ DATABASE_URL = (
     f"{os.getenv('DB_NAME')}"
 )
 
+# JWT / auth configuration
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
+JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
+
 db = SQLAlchemy()
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)

@@ -36,6 +36,14 @@ ALTER TABLE ONLY public.students
 
 
 --
+-- Name: students students_phone_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
+--
+
+ALTER TABLE ONLY public.students
+    ADD CONSTRAINT students_phone_key UNIQUE (phone);
+
+
+--
 -- Name: students students_pkey; Type: CONSTRAINT; Schema: public; Owner: manojtungala
 --
 

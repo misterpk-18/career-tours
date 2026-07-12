@@ -15,7 +15,7 @@ A Flask-based API application that powers an AI-driven career matching engine. T
 
 ## Project Structure
 
-- `api/`: API blueprints and route definitions (`students`, `resumes`, `recommendations`, `projects`)
+- `api/`: API blueprints and route definitions (`auth`, `students`, `resumes`, `recommendations`, `projects`)
 - `config/`: Database connection configuration
 - `models/`: Plain dataclass DTOs representing domain entities
 - `repositories/`: Data access layer handling raw-SQL database interactions
@@ -37,10 +37,11 @@ All requests and responses use the `application/json` content type unless specif
 
 ### Table of Contents
 1. [Base & Health Check](#1-base--health-check)
-2. [Student Management API (`/api/students`)](#2-student-management-api-apistudents)
-3. [Project Management API (`/api/projects`)](#3-project-management-api-apiprojects)
-4. [Resume Parsing & Skill Extraction API (`/api/resumes`)](#4-resume-parsing--skill-extraction-api-apiresumes)
-5. [Recommendation Engine API (`/api/recommendations`)](#5-recommendation-engine-api-apirecommendations)
+2. [Authentication API (`/api/auth`)](#2-authentication-api-apiauth)
+3. [Student Management API (`/api/students`)](#3-student-management-api-apistudents)
+4. [Project Management API (`/api/projects`)](#4-project-management-api-apiprojects)
+5. [Resume Parsing & Skill Extraction API (`/api/resumes`)](#5-resume-parsing--skill-extraction-api-apiresumes)
+6. [Recommendation Engine API (`/api/recommendations`)](#6-recommendation-engine-api-apirecommendations)
 
 ---
 
@@ -74,7 +75,82 @@ Tests active connectivity to the PostgreSQL database.
 
 ---
 
-### 2. Student Management API (`/api/students`)
+### 2. Authentication API (`/api/auth`)
+
+JWT-based authentication for students. On success, both endpoints return a signed **JWT** (HS256) alongside the student profile. The token encodes the `student_id` in its `sub` claim and expires after `JWT_EXPIRY_HOURS` (default 24). Registered users are stored in the same `students` table; `email` and `phone` are both **unique**, and passwords are stored only as salted hashes (`werkzeug`), never returned in responses.
+
+#### **POST /api/auth/register**
+Registers a new student and returns an access token. Accepts the same optional profile fields as `POST /api/students` (`phone`, `college_name`, etc.); only `full_name`, `email`, and `password` are required.
+- **Request Body**:
+  ```json
+  {
+    "full_name": "Manoj Tungala",
+    "email": "manoj@example.com",
+    "password": "s3cret-passphrase",
+    "phone": "+1234567890"
+  }
+  ```
+- **Response (201 Created)**:
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "student": {
+      "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
+      "full_name": "Manoj Tungala",
+      "email": "manoj@example.com",
+      "phone": "+1234567890",
+      "created_at": "2026-07-12T14:32:10.123456",
+      "updated_at": "2026-07-12T14:32:10.123456"
+    }
+  }
+  ```
+- **Response (400 Bad Request)** — a required field is missing:
+  ```json
+  {
+    "error": "password is required"
+  }
+  ```
+- **Response (409 Conflict)** — the email or phone is already registered:
+  ```json
+  {
+    "error": "email already registered"
+  }
+  ```
+
+#### **POST /api/auth/login**
+Authenticates a student by email and password and returns an access token.
+- **Request Body**:
+  ```json
+  {
+    "email": "manoj@example.com",
+    "password": "s3cret-passphrase"
+  }
+  ```
+- **Response (200 OK)**:
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "student": {
+      "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
+      "full_name": "Manoj Tungala",
+      "email": "manoj@example.com",
+      "phone": "+1234567890",
+      "created_at": "2026-07-12T14:32:10.123456",
+      "updated_at": "2026-07-12T14:32:10.123456"
+    }
+  }
+  ```
+- **Response (400 Bad Request)** — `email` or `password` missing.
+- **Response (401 Unauthorized)** — invalid credentials:
+  ```json
+  {
+    "error": "invalid email or password"
+  }
+  ```
+
+---
+
+### 3. Student Management API (`/api/students`)
 
 #### **POST /api/students**
 Registers a new student profile in the system.
@@ -167,7 +243,7 @@ Retrieves details of an existing student profile by UUID.
 
 ---
 
-### 3. Project Management API (`/api/projects`)
+### 4. Project Management API (`/api/projects`)
 
 Projects represent specific career-matching tracks, goals, or workflows created for a student.
 
@@ -275,7 +351,7 @@ Deletes a project record from the database.
 
 ---
 
-### 4. Resume Parsing & Skill Extraction API (`/api/resumes`)
+### 5. Resume Parsing & Skill Extraction API (`/api/resumes`)
 
 Processes physical CV documents, uploads them to AWS S3, extracts the raw text, and triggers GenAI-powered skill extraction.
 
@@ -372,7 +448,7 @@ Triggers OpenAI to extract technical, soft, and domain skills from the resume te
 
 ---
 
-### 5. Recommendation Engine API (`/api/recommendations`)
+### 6. Recommendation Engine API (`/api/recommendations`)
 
 Computes matching scores against active occupational profiles and suggests career paths, bridges gaps, and aligns courses.
 
@@ -572,6 +648,10 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
    DB_NAME=career_tours
    DB_USER=your_db_user
    DB_PASSWORD=your_db_password
+
+   # Authentication (JWT)
+   SECRET_KEY=your_long_random_secret   # e.g. python -c "import secrets; print(secrets.token_urlsafe(32))"
+   JWT_EXPIRY_HOURS=24
 
    # OpenAI API Configuration
    OPENAI_API_KEY=your_openai_api_key
