@@ -247,8 +247,10 @@ Retrieves details of an existing student profile by UUID.
 
 Projects represent specific career-matching tracks, goals, or workflows created for a student.
 
+Every project response includes a **`resume_id`** field — the project's linked resume. It is `null` when a project is first created and is populated automatically once a resume is uploaded for that project via `POST /api/resumes/upload` (see the Resume API). This gives each project a direct pointer to its current resume. Deleting the linked resume resets `resume_id` back to `null`.
+
 #### **POST /api/projects**
-Creates a new project track for a student.
+Creates a new project track for a student. The project starts with `resume_id: null`.
 - **Request Body**:
   ```json
   {
@@ -266,6 +268,7 @@ Creates a new project track for a student.
     "project_name": "Summer Internship 2026 prep",
     "description": "Matching resume skills to Cloud Data Engineering and GenAI roles",
     "status": "active",
+    "resume_id": null,
     "created_at": "2026-06-24T14:35:00.111222",
     "updated_at": "2026-06-24T14:35:00.111222"
   }
@@ -278,7 +281,7 @@ Creates a new project track for a student.
   ```
 
 #### **GET /api/projects/<project_id>**
-Retrieves a project's details by its UUID.
+Retrieves a project's details by its UUID. After a resume has been uploaded, `resume_id` points to it.
 - **Path Parameters**:
   - `project_id` (string, required): The UUID of the project.
 - **Response (200 OK)**:
@@ -289,6 +292,7 @@ Retrieves a project's details by its UUID.
     "project_name": "Summer Internship 2026 prep",
     "description": "Matching resume skills to Cloud Data Engineering and GenAI roles",
     "status": "active",
+    "resume_id": "0d61fb19-6ab7-47b2-bd75-47e2a9b6b801",
     "created_at": "2026-06-24T14:35:00.111222",
     "updated_at": "2026-06-24T14:35:00.111222"
   }

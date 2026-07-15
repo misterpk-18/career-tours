@@ -113,6 +113,25 @@ class ProjectRepository:
         return Project(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
+    def set_resume_id(project_id, resume_id):
+        result = db.session.execute(
+            text("""
+                UPDATE projects
+                SET
+                    resume_id = :resume_id,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE project_id = :project_id
+                RETURNING *
+            """),
+            {"project_id": project_id, "resume_id": resume_id},
+        )
+
+        row = result.fetchone()
+        db.session.commit()
+
+        return Project(**cast(Any, row._mapping)) if row else None
+
+    @staticmethod
     def delete(project_id):
         result = db.session.execute(
             text("""

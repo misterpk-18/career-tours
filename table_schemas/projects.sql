@@ -8,7 +8,8 @@ CREATE TABLE public.projects (
     description text,
     status character varying(50) DEFAULT 'active'::character varying,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    resume_id uuid
 );
 
 
@@ -28,6 +29,14 @@ ALTER TABLE ONLY public.projects
 
 ALTER TABLE ONLY public.projects
     ADD CONSTRAINT projects_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.students(student_id) ON DELETE CASCADE;
+
+
+--
+-- Name: projects projects_resume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: manojtungala
+--
+
+ALTER TABLE ONLY public.projects
+    ADD CONSTRAINT projects_resume_id_fkey FOREIGN KEY (resume_id) REFERENCES public.resumes(resume_id) ON DELETE SET NULL;
 
 
 --

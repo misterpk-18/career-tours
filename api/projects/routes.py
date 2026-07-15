@@ -18,6 +18,7 @@ def _serialize_project(project) -> dict:
         "project_name": project.project_name,
         "description": project.description,
         "status": project.status,
+        "resume_id": str(project.resume_id) if project.resume_id else None,
         "created_at": project.created_at.isoformat(),
         "updated_at": project.updated_at.isoformat(),
     }

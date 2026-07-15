@@ -161,6 +161,15 @@ def upload_resume():
         _remove_file(file_path)
         return jsonify({"error": "failed to save resume record", "detail": str(e)}), 500
 
+    # Point the project at its (current) resume. Non-fatal if it fails: the
+    # resume is already saved and reachable via resumes.project_id.
+    try:
+        ProjectRepository.set_resume_id(project.project_id, resume.resume_id)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        db.session.rollback()
+
     _remove_file(file_path)
 
     return jsonify(
