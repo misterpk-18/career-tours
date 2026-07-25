@@ -1,39 +1,100 @@
 # Career Tours - Career Matching Engine
 
-A Flask-based API application that powers an AI-driven career matching engine. The system manages student profiles, processes resumes, matches student skills to occupations, and provides intelligent career and course recommendations using natural language processing, vector embeddings, and LLM-powered summarization.
+An AI-driven career matching platform. It manages student profiles, processes resumes, matches student skills to occupations, and produces career and course recommendations using natural language processing, vector embeddings, and LLM-powered summarization.
+
+The repository is a monorepo with two applications:
+
+| App | Path | Stack |
+|---|---|---|
+| **Backend** — REST API and the matching engine | [`backend/`](backend/) | Python 3, Flask, PostgreSQL |
+| **Frontend** — student-facing web client | [`frontend/`](frontend/) | React 18, Vite, Tailwind CSS |
+
+---
+
+## Documentation
+
+| Doc | Contents |
+|---|---|
+| [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
+| [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
+| [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
+| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx |
+| [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
 
 ---
 
 ## Tech Stack
 
+**Backend**
 - **Framework**: Python 3, Flask
 - **Database**: PostgreSQL, accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
 - **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (currently accessed using Hugging Face API), `scikit-learn`, `langchain`, **LangSmith**
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
+**Frontend**
+- **Framework**: React 18 with plain JSX (no TypeScript), built by Vite 5
+- **Routing / HTTP**: `react-router-dom` v6, `axios`
+- **Styling**: Tailwind CSS 3 with a small set of shared glass/gradient utility classes; dark theme only
+- **Icons**: `lucide-react`
+
 ---
 
 ## Project Structure
 
-- `api/`: API blueprints and route definitions (`auth`, `students`, `resumes`, `recommendations`, `projects`)
-- `config/`: Database connection configuration
-- `models/`: Plain dataclass DTOs representing domain entities
-- `repositories/`: Data access layer handling raw-SQL database interactions
-- `services/`: Business logic, AI integration, and file processing
-  - `resume/`: PDF/DOCX text parsing and OpenAI skill extraction pipelines
-  - `skills/`: Skill normalization and mapping engines
-  - `matching/`: Embedding-based skill matching and occupational ranking models
-  - `recommendations/`: Generation of student career tracks, skill gaps, and course recommendations
-  - `storage/`: AWS S3 upload/retrieval for resume files
-- `migrations/`: Database migrations
-- `table_schemas/`: SQL DDL for each table (source of truth for the schema)
-- `uploads/`: Temporary local directory for processing resumes
+```text
+career-tours/
+├── backend/                  # Flask API and matching engine
+│   ├── app.py                # app factory, blueprint registration, health endpoints
+│   ├── api/                  # blueprints: auth, students, resumes, recommendations, projects
+│   ├── config/               # database connection configuration
+│   ├── models/               # plain dataclass DTOs representing domain entities
+│   ├── repositories/         # data access layer — raw-SQL database interactions
+│   ├── services/             # business logic, AI integration, file processing
+│   │   ├── resume/           # PDF/DOCX text parsing and OpenAI skill extraction
+│   │   ├── skills/           # skill normalization and mapping engines
+│   │   ├── matching/         # embedding-based skill matching and occupation ranking
+│   │   ├── recommendations/  # career tracks, skill gaps, course recommendations
+│   │   └── storage/          # AWS S3 upload/retrieval for resume files
+│   ├── migrations/           # incremental schema migrations
+│   ├── table_schemas/        # SQL DDL for each table (source of truth for the schema)
+│   └── uploads/              # temporary local directory for processing resumes
+│
+├── frontend/                 # React + Vite web client
+│   ├── src/
+│   │   ├── App.jsx           # all routes + auth route guards
+│   │   ├── pages/            # Login, Register, Home, ProjectDetails, Career/Course recs
+│   │   ├── components/       # Navbar and modals
+│   │   ├── context/          # AuthContext (JWT + student in localStorage)
+│   │   ├── services/api.js   # the single axios module — every API call lives here
+│   │   └── index.css         # Tailwind directives + shared .glass-* / .gradient-* classes
+│   └── dist/                 # production build output (served by Nginx)
+│
+├── docs/                     # all project documentation
+├── requirements.txt          # Python dependencies (repo root, not backend/)
+└── nginx.conf                # reference reverse-proxy config
+```
+
+> The Python packages use bare imports (`from api.auth.routes import auth_bp`), so the backend must be run with `backend/` as the working directory or on `sys.path`.
+
+---
+
+## Frontend
+
+| Route | Access | Page |
+|---|---|---|
+| `/login`, `/register` | public | Authentication |
+| `/` | protected | Dashboard — project list |
+| `/projects/:projectId` | protected | Project workspace — resume upload, skill extraction, generate recommendations |
+| `/projects/:projectId/careers` | protected | Top 5 career matches with AI insights and skill gaps |
+| `/projects/:projectId/courses` | protected | Gap-filling course recommendations, grouped by career |
+
+See [docs/frontend.md](docs/frontend.md) for the full guide.
 
 ---
 
 ## API Reference
 
-All requests and responses use the `application/json` content type unless specified otherwise. URL paths are relative to the root URL (e.g., `http://127.0.0.1:5000`).
+All requests and responses use the `application/json` content type unless specified otherwise. URL paths are relative to the root URL (e.g., `http://127.0.0.1:5000` in local development, or your host in production).
 
 ### Table of Contents
 1. [Base & Health Check](#1-base--health-check)
@@ -678,25 +739,34 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
 
 ## Setup Instructions
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd career-tours
-   ```
+### Prerequisites
 
-2. **Set up a virtual environment**:
+- Python 3.10+
+- PostgreSQL 15+
+- Node.js 18+ (for the frontend)
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd career-tours
+```
+
+### Backend
+
+1. **Set up a virtual environment** (at the repo root, not inside `backend/`):
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
 
-3. **Install dependencies**:
+2. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Environment Configuration**:
-   Create a `.env` file in the root directory and configure the necessary environment variables:
+3. **Environment Configuration**:
+   Create a `.env` file in the repo root and configure the necessary environment variables:
    ```env
    # Database Configuration
    DB_HOST=localhost
@@ -725,11 +795,33 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
    AWS_BUCKET_NAME=your_s3_bucket_name
    ```
 
-5. **Database Initialization**:
-   Run the database migrations or setup SQL scripts to configure the schema.
+4. **Database Initialization**:
+   Apply the SQL DDL in `backend/table_schemas/` in dependency order, then the incremental scripts in `backend/migrations/`. The import loop used in production is in [docs/deployment.md](docs/deployment.md#step-3-configure-local-postgresql).
 
-6. **Run the application**:
+5. **Run the API** on port 5001, which is what the frontend dev proxy expects:
    ```bash
-   python app.py
+   cd backend && flask --app app run --port 5001 --debug
    ```
+   `python backend/app.py` also works but binds Flask's default port **5000** — on macOS that port is already taken by the AirPlay Receiver, and the frontend proxy does not point there. See the note under [Frontend](#frontend-1) below.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev                      # http://localhost:3000
+```
+
+The dev server proxies `/api` to `http://127.0.0.1:5001`, so the backend must be listening on **5001**. Note that `python backend/app.py` starts Flask on its default port **5000**, which on macOS is also occupied by the AirPlay Receiver — use the `flask --app app run --port 5001` command above, or change the proxy `target` in `frontend/vite.config.js` to match whatever port you run.
+
+To produce a production bundle:
+
+```bash
+npm run build                    # emits frontend/dist/
+npm run preview                  # serve the built bundle locally
+```
+
+There is no linter or test suite configured in the frontend; a successful `npm run build` is the quality gate.
+
+For production (Gunicorn + Nginx serving `frontend/dist` and proxying `/api`), see [docs/deployment.md](docs/deployment.md).
    The application will run on `http://127.0.0.1:5000` by default.
