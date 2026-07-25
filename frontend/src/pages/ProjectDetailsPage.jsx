@@ -282,47 +282,49 @@ export const ProjectDetailsPage = () => {
               </div>
             )}
 
-            {/* Career button: toggle between "Recommend Careers" and "View Recommended Careers" */}
-            {skills.length > 0 && (
-              careersAlreadyGenerated ? (
-                <>
-                  <button
-                    onClick={handleViewCareers}
-                    className="gradient-button-emerald px-6 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-xl"
-                  >
-                    <Compass className="w-4 h-4" />
-                    <span>View Recommended Careers</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={handleViewCourses}
-                    className="glass-card px-6 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 border border-slate-700"
-                  >
-                    <GraduationCap className="w-4 h-4" />
-                    <span>View Recommended Courses</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </>
-              ) : (
+            {/* Recommendation buttons. The "view" pair is gated on
+                careersAlreadyGenerated (fetched from the API) rather than on
+                `skills`, which is only ever hydrated from localStorage — on a
+                fresh browser the cache is empty even though recommendations
+                exist server-side, which used to hide these buttons entirely. */}
+            {careersAlreadyGenerated ? (
+              <>
                 <button
-                  onClick={handleRecommendCareers}
-                  disabled={recommending}
+                  onClick={handleViewCareers}
                   className="gradient-button-emerald px-6 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-xl"
                 >
-                  {recommending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Analyzing Careers...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Compass className="w-4 h-4" />
-                      <span>Recommend Careers ✨</span>
-                    </>
-                  )}
+                  <Compass className="w-4 h-4" />
+                  <span>View Recommended Careers</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-              )
-            )}
+                <button
+                  onClick={handleViewCourses}
+                  className="glass-card px-6 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 border border-slate-700"
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  <span>View Recommended Courses</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </>
+            ) : skills.length > 0 ? (
+              <button
+                onClick={handleRecommendCareers}
+                disabled={recommending}
+                className="gradient-button-emerald px-6 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-xl"
+              >
+                {recommending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Analyzing Careers...</span>
+                  </>
+                ) : (
+                  <>
+                    <Compass className="w-4 h-4" />
+                    <span>Recommend Careers ✨</span>
+                  </>
+                )}
+              </button>
+            ) : null}
           </div>
         </div>
 
