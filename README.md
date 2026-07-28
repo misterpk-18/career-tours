@@ -18,7 +18,7 @@ The repository is a monorepo with two applications:
 | [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
 | [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
 | [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
-| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx |
+| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx + HTTPS |
 | [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
 
 ---
@@ -823,5 +823,5 @@ npm run preview                  # serve the built bundle locally
 
 There is no linter or test suite configured in the frontend; a successful `npm run build` is the quality gate.
 
-For production (Gunicorn + Nginx serving `frontend/dist` and proxying `/api`), see [docs/deployment.md](docs/deployment.md).
+For production (Gunicorn + Nginx serving `frontend/dist` and proxying `/api`), see [docs/deployment.md](docs/deployment.md). The live deployment is **https://career-tours.duckdns.org**.
    The application will run on `http://127.0.0.1:5000` by default.

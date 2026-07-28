@@ -1,6 +1,9 @@
 # Production Deployment Guide (EC2 & Nginx)
 
-This guide documents the complete step-by-step process used to deploy **Career Tours** on an Amazon Linux 2023 EC2 instance: the Flask API behind **Gunicorn**, the React frontend as a static build, both fronted by an **Nginx** reverse proxy.
+This guide documents the complete step-by-step process used to deploy **Career Tours** on an Amazon Linux 2023 EC2 instance: the Flask API behind **Gunicorn**, the React frontend as a static build, both fronted by an **Nginx** reverse proxy with a Let's Encrypt certificate.
+
+Live deployment: **https://career-tours.duckdns.org** (instance `13.203.206.148`).
+Always use the hostname — the certificate cannot cover a bare IP.
 
 ### Repository layout on the server
 
@@ -26,7 +29,8 @@ The Python packages use bare imports (`from api.auth.routes import auth_bp`), so
 
 ```text
 [Client / Web Browser]
-          │ (Port 80 / HTTP)
+          │ https://career-tours.duckdns.org  (Port 443, Let's Encrypt)
+          │ Port 80 → 301 redirect to HTTPS
           ▼
    [Nginx]
      ├── /            → static files from frontend/dist (SPA fallback)
@@ -47,9 +51,14 @@ The Python packages use bare imports (`from api.auth.routes import auth_bp`), so
 
 Ensure your EC2 Security Group permits incoming traffic on:
 - **Port 22** (SSH)
-- **Port 80** (HTTP)
+- **Port 80** (HTTP) — also required permanently for TLS certificate renewal, see Step 8
+- **Port 443** (HTTPS) — see Step 8
 
-Node.js 18+ is also required on the instance to build the frontend (Step 6). Alternatively, build `frontend/dist` locally and rsync it up.
+For HTTPS you need a **hostname**: public certificate authorities will not issue
+for a bare IP address. A free DuckDNS subdomain works (the current deployment uses
+`career-tours.duckdns.org`); so does any domain you own.
+
+Node.js 18+ is also required on the instance to build the frontend (Step 6). Alternatively, build `frontend/dist` locally and rsync it up — the live instance has neither Node nor Git installed, so it is deployed that way (see [Redeploying](#redeploying)).
 
 ---
 
@@ -106,10 +115,15 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    ```
 
 4. **Create Users and Databases**:
-   Log in as the superuser `postgres` and set up the application roles:
+   Log in as the superuser `postgres` and set up the application roles. Choose a
+   real password — the deployed instance uses a generated one, and the only
+   authoritative copy is `DB_PASSWORD` in the server's `.env`:
    ```bash
+   # Pick a password once and reuse it for the rest of this guide
+   read -rs DB_PASSWORD && export DB_PASSWORD
+
    # Create database user and set superuser permissions
-   sudo -u postgres psql -c "CREATE USER manojtungala WITH PASSWORD '12345678' SUPERUSER;"
+   sudo -u postgres psql -c "CREATE USER manojtungala WITH PASSWORD '$DB_PASSWORD' SUPERUSER;"
    
    # Create the database owned by the application user
    sudo -u postgres psql -c "CREATE DATABASE career_tours OWNER manojtungala;"
@@ -123,7 +137,19 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    ```bash
    cd /home/ec2-user/career-tours/backend/table_schemas
    for f in students.sql skills.sql occupations.sql questionnaires.sql courses.sql projects.sql resumes.sql skill_aliases.sql student_skills.sql occupation_skills.sql questionnaire_responses.sql course_skills.sql student_career_matches.sql career_skill_gaps.sql course_recommendations.sql llm_summaries.sql project_skills.sql; do
-       PGPASSWORD=12345678 psql -h 127.0.0.1 -U manojtungala -d career_tours -f "$f"
+       PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -f "$f"
+   done
+   ```
+
+6. **Apply Migrations**:
+   `backend/table_schemas/` holds the original DDL; every schema change made since
+   then lives in `backend/migrations/`, applied in filename order. They are
+   idempotent enough to re-run, except `002` which fails if the constraint already
+   exists — harmless:
+   ```bash
+   cd /home/ec2-user/career-tours/backend/migrations
+   for f in $(ls *.sql | sort); do
+       PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -f "$f"
    done
    ```
 
@@ -161,7 +187,11 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    DB_PORT=5432
    DB_NAME=career_tours
    DB_USER=manojtungala
-   DB_PASSWORD=12345678
+   DB_PASSWORD=your_db_password
+
+   # Auth
+   SECRET_KEY=your_jwt_signing_secret
+   JWT_EXPIRY_HOURS=24
 
    # External Integrations
    LANGSMITH_TRACING=true
@@ -175,6 +205,11 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    AWS_REGION=ap-south-1
    AWS_BUCKET_NAME=career-tours-data
    ```
+
+   > systemd's `EnvironmentFile` parser is not a shell: write `KEY=value` with no
+   > `export`, and quote any value containing spaces. A value that happens to be
+   > valid-looking shell will still break `source .env` in bash even though systemd
+   > accepts it, so prefer quoting throughout.
 
 ---
 
@@ -205,10 +240,14 @@ WantedBy=multi-user.target
 >
 > If you are upgrading an existing deployment that predates the `backend/` restructure, this line is the one change that will otherwise break the service with `ModuleNotFoundError: No module named 'app'`.
 
-Create logging folders and enable the service:
+Create logging folders and enable the service. Resume uploads resolve against the
+Gunicorn working directory (`UPLOAD_DIR = Path("uploads/resumes")` in
+`backend/api/resumes/routes.py`), so that directory must exist under `backend/`:
 ```bash
 sudo mkdir -p /var/log/career-tours
 sudo chown ec2-user:ec2-user /var/log/career-tours
+
+mkdir -p /home/ec2-user/career-tours/backend/uploads/resumes
 
 sudo systemctl daemon-reload
 sudo systemctl enable career-tours --now
@@ -255,7 +294,7 @@ rsync -avz --delete dist/ ec2-user@<host>:/home/ec2-user/career-tours/frontend/d
    server {
        listen 80 default_server;
        listen [::]:80 default_server;
-       server_name 13.126.175.239; # Replace with your Domain or Public IP
+       server_name career-tours.duckdns.org 13.203.206.148; # your hostname, then the public IP
 
        # Allow large payloads (resume file uploads up to 10MB)
        client_max_body_size 10M;
@@ -302,7 +341,10 @@ rsync -avz --delete dist/ ec2-user@<host>:/home/ec2-user/career-tours/frontend/d
 
    > The Flask `GET /` health check is no longer reachable at `/` — that path now serves the frontend. Use `/db-test` for health checks, or query Gunicorn directly on the instance with `curl -i http://127.0.0.1:5000/`.
 
-   A copy of this server block is kept at the repo root in `nginx.conf` for reference. Note that the committed `nginx.conf` still reflects the older API-only setup; prefer the block above.
+   The repo-root `nginx.conf` mirrors what is actually deployed, including the
+   Certbot-managed TLS lines added in Step 8. Certbot rewrites those on the server
+   during renewal, so treat the instance as the source of truth and copy changes
+   back into `nginx.conf`, not the other way round.
 
 3. **Start Nginx**:
    ```bash
@@ -312,7 +354,70 @@ rsync -avz --delete dist/ ec2-user@<host>:/home/ec2-user/career-tours/frontend/d
 
 ---
 
+## Step 8: Enable HTTPS (Let's Encrypt)
+
+Served over plain HTTP, browsers mark the site "Not secure" and login passwords
+cross the network in cleartext. Fixing that needs a **hostname** — Let's Encrypt
+will not issue a certificate for a bare IP, so `https://13.203.206.148` can never
+be trusted no matter what is configured.
+
+1. **Point a hostname at the instance.** The deployment uses DuckDNS: register a
+   subdomain at [duckdns.org](https://www.duckdns.org) and set its IP to the
+   instance's public address. DuckDNS pre-fills the IP of whatever machine you are
+   browsing from, so this almost always needs correcting. Verify before continuing —
+   certbot's HTTP-01 challenge must reach *this* server:
+   ```bash
+   dig +short career-tours.duckdns.org      # must print the instance's public IP
+   ```
+
+2. **Add the hostname to `server_name`** in `/etc/nginx/conf.d/career-tours.conf`
+   (Step 7) and reload, so the certbot nginx plugin can find the right block.
+
+3. **Issue and install the certificate.** Port 443 must be open in the security
+   group first:
+   ```bash
+   sudo dnf install -y certbot python3-certbot-nginx
+
+   sudo certbot --nginx -d career-tours.duckdns.org \
+       --agree-tos -m you@example.com --no-eff-email \
+       --redirect --non-interactive
+   ```
+   Certbot rewrites the Nginx block in place: it adds the `listen 443 ssl` server,
+   wires in the certificate paths, and (from `--redirect`) adds a port-80 server
+   that 301s the hostname to HTTPS. Keep port 80 open — renewals validate over it.
+
+   Certbot's generated port-80 block ends in `return 404` for any Host it does not
+   recognise, which **breaks existing links that used the bare IP**. Replace the
+   generated `if ($host = ...)` / `return 404` pair with an unconditional redirect
+   to the canonical origin (see the repo-root `nginx.conf`):
+   ```nginx
+   return 301 https://career-tours.duckdns.org$request_uri;
+   ```
+
+4. **Enable the renewal timer — certbot does not do this for you.** On Amazon
+   Linux 2023 the package ships `certbot-renew.timer` but leaves it disabled, while
+   certbot's success message still claims "Certbot has set up a scheduled task to
+   automatically renew this certificate." It has not. Unless you enable the timer,
+   the certificate expires 90 days later with no warning:
+   ```bash
+   sudo systemctl enable --now certbot-renew.timer
+   systemctl list-timers certbot-renew.timer   # must list one timer
+   sudo certbot renew --dry-run                # must report success
+   ```
+   The renewal config records `installer = nginx`, so Nginx is reloaded
+   automatically once a renewal lands.
+
+> **The DNS record is static.** Stopping and starting an EC2 instance assigns a new
+> public IP, and the hostname will keep pointing at the old one — breaking the site
+> and every future renewal. Attach an **Elastic IP**, or run a DuckDNS updater on
+> the box (`curl "https://www.duckdns.org/update?domains=<sub>&token=<token>&ip="`
+> on a timer; an empty `ip=` makes DuckDNS use the caller's address).
+
+---
+
 ## Redeploying
+
+If the instance has Git and Node:
 
 ```bash
 cd /home/ec2-user/career-tours
@@ -326,6 +431,34 @@ sudo systemctl restart career-tours
 cd frontend && npm ci && npm run build
 # static files are picked up immediately; no Nginx reload needed
 ```
+
+**The live instance has neither**, so it is deployed by pushing from a workstation.
+Build the bundle locally and rsync both halves up:
+
+```bash
+# from a local clone, at the repo root
+cd frontend && npm ci && npm run build && cd ..
+
+HOST=ec2-user@13.203.206.148
+KEY=~/Downloads/career_tours_key_pair.pem
+
+# backend code — never sync uploads/ (server-owned user data) or the venv/.env
+rsync -az --delete -e "ssh -i $KEY" \
+    --exclude __pycache__ --exclude '*.pyc' --exclude uploads \
+    backend/ $HOST:/home/ec2-user/career-tours/backend/
+
+# built frontend
+rsync -az --delete -e "ssh -i $KEY" \
+    frontend/dist/ $HOST:/home/ec2-user/career-tours/frontend/dist/
+
+rsync -az -e "ssh -i $KEY" requirements.txt README.md docs $HOST:/home/ec2-user/career-tours/
+
+ssh -i $KEY $HOST 'sudo systemctl restart career-tours'
+```
+
+`--delete` is scoped to `backend/` and `frontend/dist/` deliberately: the repo-root
+`.env`, `.venv/`, and `backend/uploads/` live only on the server and must survive a
+deploy. Apply any new `backend/migrations/*.sql` before restarting.
 
 ---
 
@@ -345,7 +478,7 @@ cd frontend && npm ci && npm run build
   tail -f /var/log/nginx/career_tours_access.log
   ```
 
-- **Query Endpoints**:
+- **Query Endpoints** (on the instance):
   ```bash
   # Frontend shell (should return HTML, not JSON)
   curl -i http://localhost/
@@ -360,6 +493,19 @@ cd frontend && npm ci && npm run build
   curl -i -o /dev/null -w '%{http_code}\n' http://localhost/projects/abc/courses
   ```
 
+- **Verify TLS from outside** (from any machine). `ssl_verify_result` must be `0` —
+  anything else means browsers will still warn:
+  ```bash
+  D=career-tours.duckdns.org
+  curl -s -o /dev/null -w '%{http_code} verify=%{ssl_verify_result}\n' https://$D/
+  curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' http://$D/   # expect 301
+  curl -s https://$D/db-test
+
+  # Certificate subject and expiry
+  echo | openssl s_client -connect $D:443 -servername $D 2>/dev/null \
+      | openssl x509 -noout -subject -dates
+  ```
+
 - **Common failure modes**:
 
   | Symptom | Cause |
@@ -368,3 +514,7 @@ cd frontend && npm ci && npm run build
   | Nginx `403 Forbidden` on `/` | `nginx` user cannot traverse into `/home/ec2-user/...` (see the `chmod o+x` in Step 6) |
   | Deep links 404 but `/` works | `try_files ... /index.html` fallback missing from the `location /` block |
   | Frontend loads but every API call 404s | requests are hitting the static `root` instead of the proxy — check the `location ~ ^/(api|db-test)` regex block |
+  | "Not secure" in the browser | the site was opened over `http://`, or by IP — the certificate only covers the hostname (Step 8) |
+  | Certificate expired unnoticed | `certbot-renew.timer` was never enabled; certbot's success message wrongly claims it was (Step 8.4) |
+  | Renewal fails with a challenge error | port 80 was closed after setup, or the hostname now resolves to a stale IP (see the Elastic IP note in Step 8) |
+  | `password authentication failed for user "manojtungala"` | the real password is `DB_PASSWORD` in the server's `.env`; no password is committed to this repo |
