@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
+import { clearSession, getStudent, getToken, setSession } from '../lib/storage';
 
 const AuthContext = createContext(null);
 
@@ -9,50 +10,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Rehydrate user session from localStorage
-    const savedToken = localStorage.getItem('career_tours_token');
-    const savedStudent = localStorage.getItem('career_tours_student');
+    // Rehydrate the session. storage.getStudent() clears a corrupt entry itself,
+    // so a bad payload can't wedge the app on every load.
+    const savedToken = getToken();
+    const savedStudent = getStudent();
 
     if (savedToken && savedStudent) {
-      try {
-        setToken(savedToken);
-        setStudent(JSON.parse(savedStudent));
-      } catch (err) {
-        console.error('Failed to parse saved student session:', err);
-        localStorage.removeItem('career_tours_token');
-        localStorage.removeItem('career_tours_student');
-      }
+      setToken(savedToken);
+      setStudent(savedStudent);
     }
+
     setLoading(false);
   }, []);
 
-  const login = async (credentials) => {
-    const data = await authAPI.login(credentials);
-    if (data.token && data.student) {
+  const applySession = (data) => {
+    if (data?.token && data?.student) {
       setToken(data.token);
       setStudent(data.student);
-      localStorage.setItem('career_tours_token', data.token);
-      localStorage.setItem('career_tours_student', JSON.stringify(data.student));
+      setSession(data.token, data.student);
     }
     return data;
   };
 
-  const register = async (studentData) => {
-    const data = await authAPI.register(studentData);
-    if (data.token && data.student) {
-      setToken(data.token);
-      setStudent(data.student);
-      localStorage.setItem('career_tours_token', data.token);
-      localStorage.setItem('career_tours_student', JSON.stringify(data.student));
-    }
-    return data;
-  };
+  const login = async (credentials) => applySession(await authAPI.login(credentials));
+
+  const register = async (studentData) => applySession(await authAPI.register(studentData));
 
   const logout = () => {
     setToken(null);
     setStudent(null);
-    localStorage.removeItem('career_tours_token');
-    localStorage.removeItem('career_tours_student');
+    // Clears only the auth keys — the theme preference outlives a logout.
+    clearSession();
   };
 
   const value = {

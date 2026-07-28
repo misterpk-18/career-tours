@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from '../lib/storage';
 
 const API_BASE_URL = '/api';
 
@@ -12,7 +13,7 @@ const api = axios.create({
 // Interceptor to attach Authorization Bearer token to requests
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('career_tours_token');
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

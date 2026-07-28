@@ -2,96 +2,424 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   1. TOKENS
+   Values are space-separated RGB channels so Tailwind opacity modifiers work
+   (see the `ch()` helper in tailwind.config.js). Non-channel values (shadows,
+   blur radii, glass fills) are plain CSS and consumed via var() directly.
+
+   Kept in ONE file deliberately: Vite runs PostCSS per-file before resolving
+   @import, so Tailwind's @layer inside an imported partial leaks out as native
+   CSS @layer and loses its ordering guarantees.
+   ========================================================================= */
 @layer base {
+  :root {
+    color-scheme: light;
+
+    --canvas: 250 251 253;
+    --surface: 255 255 255;
+    --surface-2: 248 250 252;
+    --surface-3: 241 245 249;
+    --surface-inverse: 15 23 42;
+
+    --overlay: 15 23 42;
+    --overlay-alpha: 0.45;
+
+    --line: 226 232 240;
+    /* slate-500: 4.7:1 on white, 3.6:1 on the dark surface — one value clears
+       the 3:1 non-text minimum in both themes. */
+    --line-strong: 100 116 139;
+
+    --fg: 15 23 42;
+    --fg-secondary: 51 65 85;
+    /* Replaces text-slate-500 (3.75:1) and text-slate-600 (2.37:1). */
+    --fg-muted: 71 85 105;
+    --fg-on-solid: 255 255 255;
+
+    --brand-solid: 79 70 229;
+    --brand-solid-hover: 67 56 202;
+    --brand-fg: 67 56 202;
+    --brand-subtle: 238 242 255;
+    --brand-subtle-fg: 55 48 163;
+
+    --accent-solid: 168 85 247;
+    --accent-fg: 126 34 206;
+    --accent-subtle: 250 245 255;
+
+    --success-solid: 5 150 105;
+    --success-fg: 4 120 87;
+    --success-subtle: 236 253 245;
+
+    --warning-solid: 217 119 6;
+    --warning-fg: 180 83 9;
+    --warning-subtle: 255 251 235;
+
+    --danger-solid: 220 38 38;
+    --danger-fg: 185 28 28;
+    --danger-subtle: 254 242 242;
+
+    --focus: 79 70 229;
+
+    /* Glass, LIGHT recipe. On a near-white canvas a translucent white fill has
+       nothing to separate it from the page, a white hairline is invisible, and
+       an inset top highlight is meaningless. So: elevation moves to the shadow,
+       the hairline flips to dark-alpha, and saturate() amplifies the aura
+       bleeding through — that saturation boost is what makes light glass read
+       as translucent material rather than grey haze. */
+    --glass-bg: rgb(255 255 255 / 0.72);
+    --glass-bg-hover: rgb(255 255 255 / 0.9);
+    --glass-border: rgb(15 23 42 / 0.08);
+    --glass-border-hover: rgb(79 70 229 / 0.45);
+    --glass-blur: 20px;
+    --glass-highlight: 0 0 0 0 transparent;
+    --glass-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px -8px rgb(15 23 42 / 0.1);
+    --glass-shadow-hover: 0 2px 4px rgb(15 23 42 / 0.07), 0 16px 36px -12px rgb(79 70 229 / 0.22);
+
+    --shadow-e1: 0 1px 2px rgb(15 23 42 / 0.06);
+    --shadow-e2: 0 4px 12px -4px rgb(15 23 42 / 0.1);
+    --shadow-e3: 0 16px 40px -12px rgb(15 23 42 / 0.16);
+
+    --aura-1: rgb(99 102 241 / 0.1);
+    --aura-2: rgb(168 85 247 / 0.08);
+    --aura-3: rgb(16 185 129 / 0.07);
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark;
+
+    --canvas: 9 13 22;
+    --surface: 15 23 42;
+    --surface-2: 30 41 59;
+    --surface-3: 20 28 46;
+    --surface-inverse: 241 245 249;
+
+    --overlay: 2 6 23;
+    --overlay-alpha: 0.78;
+
+    --line: 30 41 59;
+    --line-strong: 100 116 139;
+
+    --fg: 241 245 249;
+    --fg-secondary: 203 213 225;
+    --fg-muted: 148 163 184;
+    --fg-on-solid: 255 255 255;
+
+    --brand-solid-hover: 99 102 241;
+    --brand-fg: 165 180 252;
+    --brand-subtle: 30 27 75;
+    --brand-subtle-fg: 199 210 254;
+
+    --accent-fg: 216 180 254;
+    --accent-subtle: 43 20 66;
+
+    --success-solid: 16 185 129;
+    --success-fg: 52 211 153;
+    --success-subtle: 2 44 34;
+
+    --warning-solid: 245 158 11;
+    --warning-fg: 251 191 36;
+    --warning-subtle: 69 26 3;
+
+    --danger-solid: 239 68 68;
+    --danger-fg: 248 113 113;
+    --danger-subtle: 69 10 10;
+
+    --focus: 129 140 248;
+
+    /* Glass, DARK recipe: the white hairline plus an inset highlight carry the
+       elevation, and the shadow is barely visible against a near-black canvas. */
+    --glass-bg: rgb(15 23 42 / 0.72);
+    --glass-bg-hover: rgb(30 41 59 / 0.88);
+    --glass-border: rgb(255 255 255 / 0.1);
+    --glass-border-hover: rgb(99 102 241 / 0.45);
+    --glass-blur: 16px;
+    --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.07);
+    --glass-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.6);
+    --glass-shadow-hover: 0 16px 36px -12px rgb(79 70 229 / 0.35);
+
+    --shadow-e1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-e2: 0 6px 16px -6px rgb(0 0 0 / 0.5);
+    --shadow-e3: 0 20px 48px -16px rgb(0 0 0 / 0.65);
+  }
+
+  /* ---------------------------------------------------------------- base --- */
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    background-color: #090d16;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
-    background-attachment: fixed;
-    color: #f1f5f9;
+    /* Single source of truth for page colour. index.html no longer carries
+       bg-slate-950/text-slate-100 — a utility on <body> beats @layer base and
+       would have pinned the page dark in light mode. */
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--fg));
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+  }
+
+  ::selection {
+    background: rgb(var(--brand-solid));
+    color: rgb(var(--fg-on-solid));
+  }
+
+  /* Global focus floor. `outline` rather than box-shadow: it is the only focus
+     style that survives forced-colors mode, and the offset guarantees contrast
+     against both the control and the canvas. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--focus));
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: rgb(var(--fg));
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  * {
+    scrollbar-color: rgb(var(--line-strong) / 0.6) transparent;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--line-strong) / 0.5);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--line-strong) / 0.8);
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Suppresses transitions for one frame while the theme swaps, so switching
+     doesn't animate every colour on the page independently. */
+  html[data-theme-switching] *,
+  html[data-theme-switching] *::before,
+  html[data-theme-switching] *::after {
+    transition: none !important;
   }
 }
 
-/* Custom Utilities */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* ============================================================================
+   2. COMPONENTS
+   Inside @layer components so JSX utilities reliably override them. Previously
+   these were bare CSS after the Tailwind directives, giving unpredictable
+   precedence against utilities.
+   ========================================================================= */
+@layer components {
+  /* Page-wide ambient gradient. Moved off <body> so it no longer needs
+     background-attachment: fixed, which repaints per scroll on iOS Safari and
+     interacts badly with backdrop-filter. */
+  .app-aura {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(at 0% 0%, var(--aura-1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, var(--aura-2) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, var(--aura-3) 0px, transparent 50%);
+  }
+
+  .surface-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), var(--glass-highlight);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .surface-glass {
+      background: rgb(var(--surface));
+    }
+  }
+
+  .surface-glass-interactive {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), var(--glass-highlight);
+    transition:
+      background-color 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .surface-glass-interactive {
+      background: rgb(var(--surface));
+    }
+  }
+
+  /* Hover-lift only on devices with a real pointer. On touch, :hover sticks
+     after a tap, leaving cards permanently raised. */
+  @media (hover: hover) and (pointer: fine) {
+    .surface-glass-interactive:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-hover);
+      box-shadow: var(--glass-shadow-hover), var(--glass-highlight);
+      transform: translateY(-2px);
+    }
+  }
+
+  .field {
+    background: rgb(var(--surface-3));
+    border: 1px solid rgb(var(--line-strong));
+    color: rgb(var(--fg));
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s,
+      background-color 0.15s;
+  }
+
+  .field::placeholder {
+    color: rgb(var(--fg-muted));
+  }
+
+  .field:focus-visible {
+    outline: 2px solid rgb(var(--focus));
+    outline-offset: 2px;
+    border-color: rgb(var(--brand-solid));
+    background: rgb(var(--surface));
+  }
+
+  /* Real colour first, then the clip. Previously -webkit-text-fill-color:
+     transparent had no fallback, so the page h1s and the brand wordmark
+     rendered INVISIBLE wherever background-clip:text was unsupported or
+     overridden (notably forced-colors mode). */
+  .text-gradient {
+    color: rgb(var(--brand-fg));
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--brand-solid)) 0%,
+      rgb(var(--accent-solid)) 50%,
+      rgb(var(--success-solid)) 100%
+    );
+  }
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .text-gradient {
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .btn-brand {
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--brand-solid)) 0%,
+      rgb(var(--brand-solid-hover)) 100%
+    );
+    color: rgb(var(--fg-on-solid));
+    box-shadow: 0 4px 14px -4px rgb(var(--brand-solid) / 0.45);
+    transition:
+      filter 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+
+  .btn-success {
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--success-solid)) 0%,
+      rgb(var(--success-fg)) 100%
+    );
+    color: rgb(var(--fg-on-solid));
+    box-shadow: 0 4px 14px -4px rgb(var(--success-solid) / 0.45);
+    transition:
+      filter 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-brand:hover:not(:disabled),
+    .btn-success:hover:not(:disabled) {
+      filter: saturate(1.1) brightness(0.94);
+      transform: translateY(-1px);
+    }
+  }
+
+  .scrim {
+    background: rgb(var(--overlay) / var(--overlay-alpha));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ============================================================================
+   3. FORCED COLORS
+   System colours must win outright: translucency and blur convey nothing in
+   high-contrast mode, and the gradient text would be unreadable.
+   ========================================================================= */
+@media (forced-colors: active) {
+  .surface-glass,
+  .surface-glass-interactive,
+  .scrim {
+    background: Canvas !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-color: CanvasText !important;
+    box-shadow: none !important;
+  }
 
-.glass-card:hover {
-  background: rgba(30, 41, 59, 0.85);
-  border-color: rgba(99, 102, 241, 0.35);
-  box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.25);
-  transform: translateY(-2px);
-}
+  .text-gradient {
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: CanvasText !important;
+  }
 
-.glass-input {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  transition: all 0.2s ease;
-}
+  .btn-brand,
+  .btn-success {
+    background-image: none !important;
+    background: ButtonFace !important;
+    color: ButtonText !important;
+    border: 1px solid ButtonText !important;
+    box-shadow: none !important;
+  }
 
-.glass-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-  background: rgba(15, 23, 42, 0.85);
-}
+  .field {
+    border-color: CanvasText !important;
+  }
 
-.gradient-text {
-  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #34d399 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+  :focus-visible {
+    outline-color: Highlight !important;
+  }
 
-.gradient-button {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35);
-}
-
-.gradient-button:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 50%, #3730a3 100%);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-  transform: translateY(-1px);
-}
-
-.gradient-button-emerald {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
-}
-
-.gradient-button-emerald:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-  transform: translateY(-1px);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #090d16;
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  .app-aura {
+    display: none !important;
+  }
 }

@@ -1,21 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { recommendationsAPI, projectsAPI } from '../services/api';
 import {
   Compass,
   Award,
   TrendingUp,
   DollarSign,
   ArrowLeft,
-  Loader2,
-  Sparkles,
+  RefreshCw,
+  AlertTriangle,
   CheckCircle2,
   BookOpen,
-  Briefcase,
-  Layers,
   GraduationCap,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
+import { recommendationsAPI, projectsAPI } from '../services/api';
+import PageShell, { NarrowShell } from '../components/ui/PageShell';
+import PageSpinner from '../components/ui/PageSpinner';
+import PaneSpinner from '../components/ui/PaneSpinner';
+import HeroBanner from '../components/ui/HeroBanner';
+import Card from '../components/ui/Card';
+import Alert from '../components/ui/Alert';
+import Badge from '../components/ui/Badge';
+import Button from '../components/ui/Button';
+import Chip from '../components/ui/Chip';
+import EmptyState from '../components/ui/EmptyState';
+import MetricTile from '../components/ui/MetricTile';
+import ProgressBar from '../components/ui/ProgressBar';
+import RankBadge from '../components/ui/RankBadge';
+import SectionHeading from '../components/ui/SectionHeading';
+import SectionLabel from '../components/ui/SectionLabel';
+import AiInsightBox from '../components/ui/AiInsightBox';
+import SelectableCard, { SelectableList } from '../components/ui/SelectableCard';
+import { toPct, formatCurrency } from '../lib/format';
+import { apiErrorMessage } from '../lib/apiError';
 
 export const CareerRecommendationsPage = () => {
   const { projectId } = useParams();
@@ -28,6 +45,10 @@ export const CareerRecommendationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState('');
+  // Detail failures used to be swallowed into a console.warn, leaving the pane
+  // on the "select a career" placeholder after the user had already clicked one.
+  const [detailError, setDetailError] = useState('');
+  const [selectedOccupationId, setSelectedOccupationId] = useState(null);
 
   useEffect(() => {
     if (projectId) {
@@ -39,270 +60,267 @@ export const CareerRecommendationsPage = () => {
     setLoading(true);
     setError('');
     try {
-      // Fetch project info
-      const projData = await projectsAPI.getById(projectId);
+      const [projData, overview] = await Promise.all([
+        projectsAPI.getById(projectId),
+        recommendationsAPI.getProjectOverview(projectId),
+      ]);
+
       setProject(projData);
-
-      // Fetch career recommendations overview
-      const overview = await recommendationsAPI.getProjectOverview(projectId);
       const careerList = overview.careers || [];
-
       setCareers(careerList);
 
       if (careerList.length > 0) {
-        // Automatically inspect top #1 career recommendation
-        loadCareerDetail(projectId, careerList[0].occupation_id);
+        const firstId = careerList[0].occupation_id;
+        setSelectedOccupationId(firstId);
+        loadCareerDetail(firstId);
       }
     } catch (err) {
       console.error('Failed to load career recommendations:', err);
-      setError('Unable to load career recommendations. Ensure skill extraction was performed.');
+      setError(apiErrorMessage(err, 'Unable to load career recommendations right now.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const loadCareerDetail = async (projId, occupationId) => {
+  const loadCareerDetail = async (occupationId) => {
     setDetailLoading(true);
+    setDetailError('');
     try {
-      const detail = await recommendationsAPI.getCareerDetails(projId, occupationId);
+      const detail = await recommendationsAPI.getCareerDetails(projectId, occupationId);
       setCareerDetail(detail);
       setSelectedCareer(detail.career);
     } catch (err) {
-      console.warn('Failed to load career detail breakdown:', err);
+      console.error('Failed to load career detail breakdown:', err);
+      setDetailError(apiErrorMessage(err, 'Unable to load the breakdown for this career.'));
     } finally {
       setDetailLoading(false);
     }
   };
 
-  const formatCurrency = (val) => {
-    if (!val) return 'Competitive';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+  const handleSelectCareer = (occupationId) => {
+    setSelectedOccupationId(occupationId);
+    loadCareerDetail(occupationId);
   };
 
   if (loading) {
+    return <PageSpinner message="Computing top 5 career match percentages…" />;
+  }
+
+  // A real failure and "nothing generated yet" were previously the same branch,
+  // so a network error was reported as "you haven't extracted skills".
+  if (error) {
     return (
-      <div className="py-24 flex flex-col items-center justify-center text-slate-400">
-        <Loader2 className="w-10 h-10 animate-spin text-brand-400 mb-4" />
-        <p className="text-sm font-medium">Computing top 5 career match percentages...</p>
-      </div>
+      <NarrowShell>
+        <EmptyState
+          icon={AlertTriangle}
+          iconTone="danger"
+          title="Could Not Load Career Recommendations"
+          titleAs="h1"
+          description={error}
+          action={
+            <>
+              <Button icon={RefreshCw} onClick={fetchRecommendations}>
+                Try Again
+              </Button>
+              <Button as={Link} to={`/projects/${projectId}`} variant="secondary" icon={ArrowLeft}>
+                Back to Project
+              </Button>
+            </>
+          }
+        />
+      </NarrowShell>
     );
   }
 
-  if (error || careers.length === 0) {
+  if (careers.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="glass-panel rounded-3xl p-8 text-center border border-slate-800">
-          <Compass className="w-12 h-12 text-brand-400 mx-auto mb-3" />
-          <h2 className="text-xl font-bold text-white">No Career Recommendations Found</h2>
-          <p className="text-xs text-slate-400 mt-2 mb-6">
-            Please run skill extraction on your project resume first to compute top career matches.
-          </p>
-          <Link
-            to={`/projects/${projectId}`}
-            className="gradient-button px-6 py-3 rounded-xl text-white font-semibold text-xs inline-flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" /> Return to Project & Extract Skills
-          </Link>
-        </div>
-      </div>
+      <NarrowShell>
+        <EmptyState
+          icon={Compass}
+          title="No Career Recommendations Yet"
+          titleAs="h1"
+          description="Run skill extraction on your project resume first, then generate recommendations to see your top career matches."
+          action={
+            <Button as={Link} to={`/projects/${projectId}`} icon={ArrowLeft}>
+              Return to Project &amp; Extract Skills
+            </Button>
+          }
+        />
+      </NarrowShell>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
-      {/* Navigation Breadcrumb */}
+    <PageShell>
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Link
-          to={`/projects/${projectId}`}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Project Workspace
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
+        <Button as={Link} to={`/projects/${projectId}`} variant="ghost" size="xs" icon={ArrowLeft}>
+          Back to Project Workspace
+        </Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button
+            as={Link}
             to={`/projects/${projectId}/courses`}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+            variant="ghost"
+            size="xs"
+            icon={GraduationCap}
+            iconRight={ChevronRight}
           >
-            <GraduationCap className="w-4 h-4" /> View Recommended Courses
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-          <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
+            View Recommended Courses
+          </Button>
+          <Badge tone="success" mono>
             AI Career Matching Complete
-          </span>
+          </Badge>
         </div>
       </div>
 
-      {/* Hero Banner */}
-      <div className="glass-panel rounded-3xl p-8 relative overflow-hidden border border-slate-800">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <HeroBanner
+        eyebrow="Recommended Careers Summary"
+        eyebrowIcon={Compass}
+        eyebrowTone="success"
+        orbTone="success"
+        title={
+          <>
+            Top 5 Career Matches for{' '}
+            <span className="text-gradient">{project?.project_name}</span>
+          </>
+        }
+        description="Based on your extracted project skills, experience and domain profile, these are the five highest-fitting career paths."
+      />
 
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
-            <Compass className="w-3.5 h-3.5" /> Recommended Careers Summary
-          </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Top 5 Career Matches for <span className="gradient-text">{project?.project_name}</span>
-          </h1>
-          <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
-            Based on your extracted project skills, experience, and domain profiles, our AI engine has matched you with the top 5 highest-fitting career paths.
-          </p>
-        </div>
-      </div>
-
-      {/* Main Grid Layout: Left List of Top 5, Right Detail View */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Top 5 Careers Cards */}
+        {/* Left: ranked careers */}
         <div className="lg:col-span-5 space-y-4">
-          <h2 className="text-base font-bold text-white flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-amber-400" /> Top 5 Ranked Careers
-            </span>
-            <span className="text-xs text-slate-400 font-normal">Sorted by Match Score</span>
-          </h2>
+          <SectionHeading as="h2" icon={Award} iconClassName="text-warning-fg" right="Sorted by match score">
+            Top 5 Ranked Careers
+          </SectionHeading>
 
-          <div className="space-y-3">
+          <SelectableList label="Recommended careers">
             {careers.slice(0, 5).map((item, idx) => {
               const rank = item.rank_position || idx + 1;
-              const matchPct = Math.round(item.match_percentage || 0);
-              const isSelected = selectedCareer?.occupation_id === item.occupation_id;
+              const matchPct = toPct(item.match_percentage);
+              const isSelected = selectedOccupationId === item.occupation_id;
 
               return (
-                <div
+                <SelectableCard
                   key={item.match_id || item.occupation_id || idx}
-                  onClick={() => loadCareerDetail(projectId, item.occupation_id)}
-                  className={`glass-card p-5 rounded-2xl cursor-pointer border transition-all ${
-                    isSelected
-                      ? 'border-brand-500 bg-slate-800/90 shadow-xl scale-[1.01]'
-                      : 'border-slate-800 hover:border-slate-700'
-                  }`}
+                  selected={isSelected}
+                  onSelect={() => handleSelectCareer(item.occupation_id)}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 font-extrabold text-sm flex items-center justify-center border border-brand-500/30">
-                        #{rank}
-                      </div>
-                      <div>
-                        <h3 className="text-base font-bold text-white">{item.occupation_name}</h3>
-                        <p className="text-xs text-slate-400 line-clamp-1">{item.description}</p>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <RankBadge rank={rank} />
+                      <div className="min-w-0">
+                        <h3 className="text-base font-bold text-fg">{item.occupation_name}</h3>
+                        <p className="text-sm text-fg-muted line-clamp-1">{item.description}</p>
                       </div>
                     </div>
-
-                    <ChevronRight className={`w-5 h-5 transition-transform ${isSelected ? 'text-brand-400 translate-x-1' : 'text-slate-600'}`} />
+                    <ChevronRight
+                      className={`w-5 h-5 shrink-0 transition-transform ${
+                        isSelected ? 'text-brand-fg translate-x-1' : 'text-fg-muted'
+                      }`}
+                      aria-hidden="true"
+                    />
                   </div>
 
-                  {/* Match Percentage Progress Bar */}
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-semibold">
-                      <span className="text-slate-400">Match Compatibility</span>
-                      <span className="text-emerald-400 font-bold">{matchPct}% Match</span>
-                    </div>
-                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                      <div
-                        className="bg-gradient-to-r from-brand-500 via-indigo-500 to-emerald-400 h-full rounded-full transition-all duration-500"
-                        style={{ width: `${matchPct}%` }}
-                      ></div>
-                    </div>
+                  <div className="mt-4 pt-3 border-t border-line">
+                    <ProgressBar
+                      value={matchPct}
+                      label="Match compatibility"
+                      valueLabel={`${matchPct}% Match`}
+                    />
                   </div>
-                </div>
+                </SelectableCard>
               );
             })}
-          </div>
+          </SelectableList>
         </div>
 
-        {/* Right Column: Active Selected Career Detail & Skill Gaps */}
+        {/* Right: selected career detail */}
         <div className="lg:col-span-7 space-y-6">
           {detailLoading ? (
-            <div className="glass-panel rounded-3xl p-16 text-center text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-400 mb-3" />
-              <p className="text-sm">Loading career breakdown & skill gaps...</p>
-            </div>
+            <PaneSpinner message="Loading career breakdown & skill gaps…" />
+          ) : detailError ? (
+            <Alert
+              tone="error"
+              action={
+                <Button
+                  size="xs"
+                  variant="secondary"
+                  icon={RefreshCw}
+                  onClick={() => loadCareerDetail(selectedOccupationId)}
+                >
+                  Retry
+                </Button>
+              }
+            >
+              {detailError}
+            </Alert>
           ) : selectedCareer ? (
-            <div className="glass-panel rounded-3xl p-8 border border-slate-800 space-y-6">
-              {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+            <Card radius="3xl" padding="lg" className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-line">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">
-                    <CheckCircle2 className="w-4 h-4" /> Top Recommendation #{selectedCareer.rank_position || 1}
+                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-success-fg uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> Recommendation #
+                    {selectedCareer.rank_position || 1}
                   </div>
-                  <h2 className="text-2xl font-extrabold text-white">{selectedCareer.occupation_name}</h2>
+                  <h3 className="text-2xl font-extrabold text-fg">{selectedCareer.occupation_name}</h3>
                 </div>
 
-                <div className="px-4 py-2 rounded-2xl bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-extrabold text-lg text-center shrink-0">
-                  {Math.round(selectedCareer.match_percentage || 0)}% Match
+                <div className="px-4 py-2 rounded-2xl bg-success-subtle border border-success-fg/40 text-success-fg font-extrabold text-lg text-center shrink-0">
+                  {toPct(selectedCareer.match_percentage)}% Match
                 </div>
               </div>
 
-              {/* Key Salary & Growth Metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase">Average Salary</div>
-                    <div className="text-base font-bold text-white">{formatCurrency(selectedCareer.average_salary)} / yr</div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase">Growth Outlook</div>
-                    <div className="text-base font-bold text-emerald-400">{selectedCareer.growth_outlook || 'High Demand'}</div>
-                  </div>
-                </div>
+                <MetricTile
+                  icon={DollarSign}
+                  iconTone="success"
+                  label="Average Salary"
+                  value={`${formatCurrency(selectedCareer.average_salary)} / yr`}
+                />
+                <MetricTile
+                  icon={TrendingUp}
+                  iconTone="accent"
+                  label="Growth Outlook"
+                  value={selectedCareer.growth_outlook || 'High demand'}
+                  valueTone="text-success-fg"
+                />
               </div>
 
-              {/* Description */}
               <div>
-                <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Occupation Overview</h4>
-                <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                <SectionLabel>Occupation Overview</SectionLabel>
+                <p className="text-sm text-fg-secondary leading-relaxed bg-surface-3 p-4 rounded-xl border border-line">
                   {selectedCareer.description}
                 </p>
               </div>
 
-              {/* AI Strategic Summary */}
-              {careerDetail?.summary && (
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" /> AI Strategic Insights
-                  </h4>
-                  <div className="text-xs text-slate-300 leading-relaxed bg-brand-950/30 p-4 rounded-xl border border-brand-800/40">
-                    {careerDetail.summary.summary_text}
-                  </div>
-                </div>
-              )}
+              {careerDetail?.summary ? (
+                <AiInsightBox>{careerDetail.summary.summary_text}</AiInsightBox>
+              ) : null}
 
-              {/* Skill Gap Analysis */}
-              {careerDetail?.skill_gaps && careerDetail.skill_gaps.length > 0 && (
+              {careerDetail?.skill_gaps?.length > 0 ? (
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5 text-brand-400" /> Skill Gaps to Bridge
-                  </h4>
+                  <SectionLabel icon={BookOpen} iconClassName="text-brand-fg">
+                    Skill Gaps to Bridge
+                  </SectionLabel>
                   <div className="flex flex-wrap gap-2">
                     {careerDetail.skill_gaps.map((gap, gIdx) => (
-                      <span
-                        key={gIdx}
-                        className="px-3 py-1.5 rounded-lg bg-amber-950/60 border border-amber-800/60 text-amber-300 text-xs font-medium flex items-center gap-1.5"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        {gap.skill_name || `Gap Skill #${gIdx + 1}`}
-                      </span>
+                      <Chip key={gap.gap_id || gIdx} tone="warning" dot>
+                        {gap.skill_name || `Gap skill #${gIdx + 1}`}
+                      </Chip>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
+              ) : null}
+            </Card>
           ) : (
-            <div className="glass-panel rounded-3xl p-12 text-center text-slate-400">
-              Select a career from the top 5 list to inspect salary metrics and skill gaps.
-            </div>
+            <Card radius="3xl" padding="lg" className="text-center text-fg-muted">
+              Select a career from the list to inspect salary metrics and skill gaps.
+            </Card>
           )}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

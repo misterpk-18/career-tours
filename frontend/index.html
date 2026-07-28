@@ -4,13 +4,51 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#090d16" />
+    <meta
+      name="description"
+      content="Career Tours matches your resume skills to career paths and recommends courses that close the gaps."
+    />
     <title>Career Tours - AI-Powered Career Guidance & Resume Analysis</title>
+
+    <!--
+      Resolve and commit the theme BEFORE the stylesheet applies, otherwise the
+      page paints in the wrong theme and then corrects itself.
+
+      This duplicates the resolution logic in src/context/ThemeContext.jsx by
+      necessity: it must run before any module loads, so it cannot import from
+      src/lib/storage.js. Keep the key name and accepted values in sync with both.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('career_tours_theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          var root = document.documentElement;
+          root.setAttribute('data-theme', theme);
+          root.style.colorScheme = theme;
+        } catch (e) {
+          // localStorage unavailable (private mode). Fall back to dark, matching
+          // the app's original appearance.
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-slate-950 text-slate-100 antialiased font-sans min-h-screen selection:bg-brand-500 selection:text-white">
+  <!-- Colour utilities deliberately removed from <body>: a utility there beats
+       @layer base and would pin the page dark. Colour comes from index.css. -->
+  <body class="antialiased font-sans min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
