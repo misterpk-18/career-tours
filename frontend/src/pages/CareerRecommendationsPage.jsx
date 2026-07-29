@@ -30,6 +30,7 @@ import RankBadge from '../components/ui/RankBadge';
 import SectionHeading from '../components/ui/SectionHeading';
 import SectionLabel from '../components/ui/SectionLabel';
 import AiInsightBox from '../components/ui/AiInsightBox';
+import SummarySections from '../components/ui/SummarySections';
 import SelectableCard, { SelectableList } from '../components/ui/SelectableCard';
 import { toPct, formatCurrency } from '../lib/format';
 import { apiErrorMessage } from '../lib/apiError';
@@ -295,7 +296,29 @@ export const CareerRecommendationsPage = () => {
               </div>
 
               {careerDetail?.summary ? (
-                <AiInsightBox>{careerDetail.summary.summary_text}</AiInsightBox>
+                <AiInsightBox>
+                  {careerDetail.summary.structured ? (
+                    <SummarySections
+                      sections={[
+                        { label: 'Why this fits', text: careerDetail.summary.structured.why_it_fits },
+                        {
+                          label: 'Strengths',
+                          items: careerDetail.summary.structured.strengths,
+                          tone: 'success',
+                        },
+                        {
+                          label: 'Skill gaps',
+                          items: careerDetail.summary.structured.skill_gaps,
+                          tone: 'warning',
+                        },
+                        { label: 'Career outlook', text: careerDetail.summary.structured.outlook },
+                      ]}
+                    />
+                  ) : (
+                    // Summaries generated before the output was structured are prose.
+                    careerDetail.summary.summary_text
+                  )}
+                </AiInsightBox>
               ) : null}
 
               {careerDetail?.skill_gaps?.length > 0 ? (

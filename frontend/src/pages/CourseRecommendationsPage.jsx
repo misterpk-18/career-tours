@@ -27,6 +27,7 @@ import ProgressBar from '../components/ui/ProgressBar';
 import RankBadge from '../components/ui/RankBadge';
 import SectionHeading from '../components/ui/SectionHeading';
 import AiInsightBox from '../components/ui/AiInsightBox';
+import SummarySections from '../components/ui/SummarySections';
 import SelectableCard, { SelectableList } from '../components/ui/SelectableCard';
 import { toPct, toHours, sumBy } from '../lib/format';
 import { levelTone } from '../lib/courseLevel';
@@ -369,7 +370,25 @@ export const CourseRecommendationsPage = () => {
                     {/* AI rationale — absent when no summary row was generated */}
                     {course.summary?.summary_text && (
                       <AiInsightBox label="Why This Course" labelAs="h5">
-                        {course.summary.summary_text}
+                        {course.summary.structured ? (
+                          <SummarySections
+                            sections={[
+                              {
+                                label: 'Why recommended',
+                                text: course.summary.structured.why_recommended,
+                              },
+                              { label: 'How it helps', text: course.summary.structured.how_it_helps },
+                              {
+                                label: 'Key skills covered',
+                                items: course.summary.structured.key_skills,
+                                tone: 'brand',
+                              },
+                            ]}
+                          />
+                        ) : (
+                          // Pre-structured summaries are a single paragraph.
+                          course.summary.summary_text
+                        )}
                       </AiInsightBox>
                     )}
                   </Card>

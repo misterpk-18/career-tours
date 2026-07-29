@@ -5,9 +5,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from langsmith.wrappers import wrap_openai
 
+from services.llm.schemas.career_summary import CareerSummary
+from services.llm.schemas.course_summary import CourseSummary
 from services.llm.schemas.student_profile import StudentProfile
 
 load_dotenv()
+
+# Model for the recommendation summaries. These were on gpt-4o-mini while returning
+# free prose; structured output is a harder ask, so they run a tier up. Extraction
+# stays on gpt-5 (a single call per resume); summaries are many calls per project,
+# so they use the cheaper sibling.
+SUMMARY_MODEL = "gpt-5-mini"
 
 
 class OpenAIService:
@@ -52,8 +60,10 @@ Return structured data.
 
     def generate_career_summary(
         self, occupation: str, score: float, matched_skills: List[str], missing_skills: List[str]
-    ) -> str:
+    ) -> CareerSummary:
         prompt = f"""
+You are a career guidance expert advising a student.
+
 Occupation: {occupation}
 
 Match Score: {score}
@@ -64,30 +74,41 @@ Matched Skills:
 Missing Skills:
 {missing_skills}
 
-Generate:
+Produce:
 
-- Why this career fits
-- Strengths
-- Skill gaps
-- Career outlook
+- why_it_fits: 2-3 sentences on why this career suits the student, grounded in the
+  matched skills above. Address the student as "you".
+- strengths: the specific strengths that support this career, one short phrase each.
+- skill_gaps: what the student still needs, one short phrase each. Draw these from
+  the missing skills.
+- outlook: 1-2 sentences on demand for this role and the likely next step up.
 
-Return plain text only.
+Keep the tone professional and student-friendly. Do not repeat the section names
+inside the values, and do not use markdown.
 """
 
-        response = self.client.responses.create(model="gpt-4o-mini", input=prompt)
+        response = self.client.responses.parse(
+            model=SUMMARY_MODEL,
+            input=prompt,
+            text_format=CareerSummary,
+        )
 
-        return response.output_text
+        parsed = response.output_parsed
+        if parsed is None:
+            raise RuntimeError("Failed to parse career summary from LLM response")
+
+        return parsed
 
     def generate_course_summary(
         self,
         course_name: str,
         occupation_name: str,
         covered_skills: List[str],
-    ) -> str:
+    ) -> CourseSummary:
         skills_text = ", ".join(covered_skills[:10])
 
         prompt = f"""
-You are a career guidance expert.
+You are a career guidance expert advising a student.
 
 Target Career:
 {occupation_name}
@@ -98,16 +119,26 @@ Recommended Course:
 Skills Covered:
 {skills_text}
 
-Write a concise explanation (2-4 sentences) explaining:
+Produce:
 
-1. Why this course is recommended.
-2. How it helps the student move closer to the target career.
-3. Which important skills it covers.
+- why_recommended: 1-2 sentences on why this course is recommended, referring to the
+  gap it closes. Address the student as "you".
+- how_it_helps: 1-2 sentences on how it moves you closer to the target career.
+- key_skills: the important skills it covers, drawn from the list above, one short
+  phrase each.
 
-Keep the tone professional and student-friendly.
-Do not use bullet points.
+Keep the tone professional and student-friendly. Do not repeat the section names
+inside the values, and do not use markdown.
 """
 
-        response = self.client.responses.create(model="gpt-4o-mini", input=prompt)
+        response = self.client.responses.parse(
+            model=SUMMARY_MODEL,
+            input=prompt,
+            text_format=CourseSummary,
+        )
 
-        return response.output_text
+        parsed = response.output_parsed
+        if parsed is None:
+            raise RuntimeError("Failed to parse course summary from LLM response")
+
+        return parsed

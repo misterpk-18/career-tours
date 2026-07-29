@@ -1,5 +1,7 @@
 from uuid import UUID
 
+import json
+
 from flask import Blueprint, current_app, jsonify
 
 from config.database import db
@@ -26,6 +28,32 @@ recommendations_bp = Blueprint(
     "recommendations",
     __name__,
 )
+
+
+def _with_structured_summary(summary):
+    """Expose the summary's typed sections as `structured`.
+
+    llm_summaries.summary_text now holds the JSON of a CareerSummary/CourseSummary.
+    Rows written before the summaries were structured hold prose instead, and rows
+    are only rewritten when recommendations are regenerated, so `structured` is None
+    for those and the client falls back to rendering summary_text as a paragraph.
+    """
+    if summary is None:
+        return None
+
+    structured = None
+    summary_text = summary.get("summary_text")
+
+    if isinstance(summary_text, str):
+        try:
+            candidate = json.loads(summary_text)
+        except ValueError:
+            candidate = None
+
+        if isinstance(candidate, dict):
+            structured = candidate
+
+    return {**summary, "structured": structured}
 
 
 @recommendations_bp.route("/projects/<project_id>/generate", methods=["POST"])
@@ -137,7 +165,7 @@ def get_career_details(project_id: str, occupation_id: str):
             "project_id": project_id,
             "occupation_id": occupation_id,
             "career": career,
-            "summary": summary,
+            "summary": _with_structured_summary(summary),
             "skill_gaps": skill_gaps,
         }
     )
@@ -166,7 +194,12 @@ def get_career_courses(project_id: str, occupation_id: str):
     response_courses = []
 
     for course in courses:
-        response_courses.append({**course, "summary": summary_map.get(course["course_id"])})
+        response_courses.append(
+            {
+                **course,
+                "summary": _with_structured_summary(summary_map.get(course["course_id"])),
+            }
+        )
 
     return jsonify(
         {
