@@ -1,7 +1,9 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
+from sqlalchemy.exc import IntegrityError
 
+from config.database import db
 from repositories.student_repository import StudentRepository
 
 students_bp = Blueprint(
@@ -47,10 +49,16 @@ def create_student():
 
     try:
         student = StudentRepository.create(data)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": "failed to create student", "detail": str(e)}), 500
+    except IntegrityError:
+        db.session.rollback()
+        current_app.logger.warning("create_student: unique violation", exc_info=True)
+        return jsonify({"error": "email or phone already registered"}), 409
+    except Exception:
+        # str(e) here would return the INSERT and its bound parameters -- including
+        # the password hash -- to the caller.
+        db.session.rollback()
+        current_app.logger.exception("create_student: failed to create student")
+        return jsonify({"error": "failed to create student"}), 500
 
     return jsonify(_serialize_student(student)), 201
 

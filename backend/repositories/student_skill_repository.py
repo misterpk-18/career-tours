@@ -7,6 +7,17 @@ from config.database import db
 
 
 class StudentSkillRepository:
+    # Width of student_skills.source. The LLM writes a free-text provenance note
+    # there, and an over-long one used to abort the whole extraction, so clip it to
+    # what the column accepts -- the value is descriptive, never matched on.
+    SOURCE_MAX_LENGTH = 100
+
+    @staticmethod
+    def _clip_source(source):
+        if isinstance(source, str):
+            return source[: StudentSkillRepository.SOURCE_MAX_LENGTH]
+        return source
+
     @staticmethod
     def create(student_id, skill_id, proficiency_level, confidence_score, source):
         result = db.session.execute(
@@ -32,7 +43,7 @@ class StudentSkillRepository:
                 "skill_id": skill_id,
                 "proficiency_level": proficiency_level,
                 "confidence_score": confidence_score,
-                "source": source,
+                "source": StudentSkillRepository._clip_source(source),
             },
         )
 
@@ -46,6 +57,9 @@ class StudentSkillRepository:
 
     @staticmethod
     def bulk_create(student_id, skills):
+        """Insert catalog-matched skills. Does NOT commit -- the caller owns the
+        transaction, so a failure here cannot leave project_skills already written
+        with student_skills missing."""
         for skill in skills:
             db.session.execute(
                 text("""
@@ -77,11 +91,9 @@ class StudentSkillRepository:
                     "skill_id": skill["skill_id"],
                     "proficiency_level": skill["proficiency_level"],
                     "confidence_score": skill["confidence_score"],
-                    "source": skill["source"],
+                    "source": StudentSkillRepository._clip_source(skill["source"]),
                 },
             )
-
-        db.session.commit()
 
     @staticmethod
     def get_by_student_id(student_id):

@@ -125,7 +125,13 @@ export const ProjectDetailsPage = () => {
         setSkills(unique);
         setSkillsAlreadyExtracted(true);
         setCachedSkills(projectId, unique);
-        setExtractSuccess(`Successfully extracted ${unique.length} skills from resume!`);
+        // The API returns stored skills instead of re-running the extraction when
+        // this project already has them, so don't claim a fresh parse.
+        setExtractSuccess(
+          res.reused
+            ? `Loaded ${unique.length} skills already extracted from this resume.`
+            : `Successfully extracted ${unique.length} skills from resume!`
+        );
       }
     } catch (err) {
       console.error('Skill extraction failed:', err);

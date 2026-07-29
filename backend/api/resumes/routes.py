@@ -2,7 +2,7 @@
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from flask import Blueprint, g, jsonify, request
+from flask import Blueprint, current_app, g, jsonify, request
 from werkzeug.utils import secure_filename
 
 from api.auth.utils import require_auth
@@ -154,12 +154,11 @@ def upload_resume():
             raw_text=raw_text,
             file_name=original_name,
         )
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
+    except Exception:
         db.session.rollback()
         _remove_file(file_path)
-        return jsonify({"error": "failed to save resume record", "detail": str(e)}), 500
+        current_app.logger.exception("upload_resume: failed to save resume record")
+        return jsonify({"error": "failed to save resume record"}), 500
 
     # Point the project at its (current) resume. Non-fatal if it fails: the
     # resume is already saved and reachable via resumes.project_id.
@@ -277,6 +276,35 @@ def extract_skills(resume_id: str):
     if not resume.project_id:
         return jsonify({"error": "resume has no associated project"}), 400
 
+    # Check the database before parsing anything: if this project's skills are
+    # already stored, return them instead of paying for another LLM extraction.
+    # Pass {"force": true} to re-extract deliberately.
+    if not payload.get("force"):
+        try:
+            existing = ResumeSkillExtractor.existing_result(
+                resume.project_id,
+                resume.student_id,
+            )
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("extract_skills: failed to read stored skills")
+            return jsonify({"error": "failed to extract skills"}), 500
+
+        if existing is not None:
+            return jsonify(
+                {
+                    "resume_id": str(resume.resume_id),
+                    "student_id": str(resume.student_id),
+                    "summary": existing["summary"],
+                    "skills_saved": existing["skills_saved"],
+                    "additional_skills_saved": existing["additional_skills_saved"],
+                    "skills": [
+                        _serialize_skill(skill) for skill in existing["skills"]
+                    ],
+                    "reused": True,
+                }
+            )
+
     try:
         result = ResumeSkillExtractor.extract_and_save(
             resume.project_id,
@@ -285,14 +313,15 @@ def extract_skills(resume_id: str):
             questionnaire_answers,
         )
     except RuntimeError as exc:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": str(exc)}), 500
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
         db.session.rollback()
-        return jsonify({"error": "failed to extract skills", "detail": str(e)}), 500
+        current_app.logger.exception("extract_skills: extraction failed")
+        return jsonify({"error": str(exc)}), 500
+    except Exception:
+        # Never echo the exception back: SQLAlchemy errors carry the full statement
+        # and bound parameters, which is user data.
+        db.session.rollback()
+        current_app.logger.exception("extract_skills: failed to extract skills")
+        return jsonify({"error": "failed to extract skills"}), 500
 
     return jsonify(
         {
@@ -302,5 +331,6 @@ def extract_skills(resume_id: str):
             "skills_saved": result["skills_saved"],
             "additional_skills_saved": result["additional_skills_saved"],
             "skills": [_serialize_skill(skill) for skill in result["skills"]],
+            "reused": False,
         }
     )

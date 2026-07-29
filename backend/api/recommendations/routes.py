@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, current_app, jsonify
 
+from config.database import db
 from repositories.career_match_repository import (
     CareerMatchRepository,
 )
@@ -43,10 +44,10 @@ def generate_recommendations(project_id: str):
         result = RecommendationGenerator.generate(project_uuid)
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": "failed to generate recommendations", "detail": str(e)}), 500
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("generate: failed to generate recommendations")
+        return jsonify({"error": "failed to generate recommendations"}), 500
 
     return jsonify(result), 200
 
