@@ -24,7 +24,7 @@ export const SummarySections = ({ sections = [], className }) => {
     <div className={cn('space-y-4', className)}>
       {filled.map(({ label, text, items, tone }) => (
         <div key={label}>
-          <div className="text-2xs font-semibold uppercase tracking-wider text-fg-muted mb-1.5">
+          <div className="text-xs font-semibold text-fg-secondary mb-1.5">
             {label}
           </div>
           {Array.isArray(items) ? (

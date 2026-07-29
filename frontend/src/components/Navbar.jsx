@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Compass, LogOut, User, FolderKanban, Sparkles } from 'lucide-react';
+import { Compass, LogOut, User, FolderKanban } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export const Navbar = () => {
@@ -16,7 +16,7 @@ export const Navbar = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <header className="sticky top-0 z-40 surface-glass border-b border-line/80 px-4 lg:px-8 py-3.5 transition-all">
+    <header className="sticky top-0 z-40 surface-panel border-b border-line/80 px-4 lg:px-8 py-3.5 transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-3 group">
@@ -24,11 +24,10 @@ export const Navbar = () => {
             <Compass className="w-6 h-6 text-fg-on-solid" aria-hidden="true" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5 font-extrabold text-xl tracking-tight text-fg">
-              Career<span className="text-gradient">Tours</span>
-              <Sparkles className="w-4 h-4 text-warning-fg" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 font-bold text-xl tracking-tight text-fg">
+              CareerTours
             </div>
-            <p className="text-2xs text-fg-muted font-medium tracking-wide uppercase">AI Skill & Career Guidance</p>
+            <p className="text-2xs text-fg-muted font-medium">Skills, careers and courses</p>
           </div>
         </Link>
 

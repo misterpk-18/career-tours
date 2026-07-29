@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, ArrowRight, UserPlus } from 'lucide-react';
 import AuthShell from '../components/ui/AuthShell';
 import Alert from '../components/ui/Alert';
 import Button from '../components/ui/Button';
@@ -30,15 +30,15 @@ export const LoginPage = () => {
     <AuthShell
       title={
         <>
-          Welcome Back to <span className="text-gradient">CareerTours</span>
+          Welcome Back to CareerTours
         </>
       }
       description="Sign in to manage your projects, analyse skills, and discover top career paths."
       footer={
         <>
           <p className="text-sm text-fg-muted mb-3">Don&apos;t have a student account yet?</p>
-          <Button as={Link} to="/register" variant="secondary" size="md" icon={Sparkles}>
-            Create a New Student Account
+          <Button as={Link} to="/register" variant="secondary" size="md" icon={UserPlus}>
+            Create an account
           </Button>
         </>
       }
@@ -53,7 +53,7 @@ export const LoginPage = () => {
           Without it the browser's own bubble fires first and setError never runs. */}
       <form onSubmit={submit} noValidate className="space-y-5">
         <TextField
-          label="Email Address"
+          label="Email address"
           type="email"
           name="email"
           autoComplete="email"
@@ -86,7 +86,7 @@ export const LoginPage = () => {
           iconRight={ArrowRight}
           className="mt-2"
         >
-          Sign In to Dashboard
+          Sign in
         </Button>
       </form>
     </AuthShell>

@@ -104,7 +104,7 @@ export const CareerRecommendationsPage = () => {
   };
 
   if (loading) {
-    return <PageSpinner message="Computing top 5 career match percentages…" />;
+    return <PageSpinner message="Loading career matches…" />;
   }
 
   // A real failure and "nothing generated yet" were previously the same branch,
@@ -114,7 +114,6 @@ export const CareerRecommendationsPage = () => {
       <NarrowShell>
         <EmptyState
           icon={AlertTriangle}
-          iconTone="danger"
           title="Could Not Load Career Recommendations"
           titleAs="h1"
           description={error}
@@ -143,7 +142,7 @@ export const CareerRecommendationsPage = () => {
           description="Run skill extraction on your project resume first, then generate recommendations to see your top career matches."
           action={
             <Button as={Link} to={`/projects/${projectId}`} icon={ArrowLeft}>
-              Return to Project &amp; Extract Skills
+              Back to project
             </Button>
           }
         />
@@ -177,12 +176,10 @@ export const CareerRecommendationsPage = () => {
       <HeroBanner
         eyebrow="Recommended Careers Summary"
         eyebrowIcon={Compass}
-        eyebrowTone="success"
-        orbTone="success"
         title={
           <>
             Top 5 Career Matches for{' '}
-            <span className="text-gradient">{project?.project_name}</span>
+            {project?.project_name}
           </>
         }
         description="Based on your extracted project skills, experience and domain profile, these are the five highest-fitting career paths."
@@ -239,7 +236,7 @@ export const CareerRecommendationsPage = () => {
         {/* Right: selected career detail */}
         <div className="lg:col-span-7 space-y-6">
           {detailLoading ? (
-            <PaneSpinner message="Loading career breakdown & skill gaps…" />
+            <PaneSpinner message="Loading details…" />
           ) : detailError ? (
             <Alert
               tone="error"
@@ -257,17 +254,17 @@ export const CareerRecommendationsPage = () => {
               {detailError}
             </Alert>
           ) : selectedCareer ? (
-            <Card radius="3xl" padding="lg" className="space-y-6">
+            <Card padding="lg" className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-line">
                 <div>
                   <div className="inline-flex items-center gap-1.5 text-xs font-bold text-success-fg uppercase tracking-wider mb-1">
                     <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> Recommendation #
                     {selectedCareer.rank_position || 1}
                   </div>
-                  <h3 className="text-2xl font-extrabold text-fg">{selectedCareer.occupation_name}</h3>
+                  <h3 className="text-2xl font-bold text-fg">{selectedCareer.occupation_name}</h3>
                 </div>
 
-                <div className="px-4 py-2 rounded-2xl bg-success-subtle border border-success-fg/40 text-success-fg font-extrabold text-lg text-center shrink-0">
+                <div className="px-4 py-2 rounded-xl bg-success-subtle border border-success-fg/40 text-success-fg font-bold text-lg text-center shrink-0">
                   {toPct(selectedCareer.match_percentage)}% Match
                 </div>
               </div>
@@ -275,13 +272,11 @@ export const CareerRecommendationsPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <MetricTile
                   icon={DollarSign}
-                  iconTone="success"
                   label="Average Salary"
                   value={`${formatCurrency(selectedCareer.average_salary)} / yr`}
                 />
                 <MetricTile
                   icon={TrendingUp}
-                  iconTone="accent"
                   label="Growth Outlook"
                   value={selectedCareer.growth_outlook || 'High demand'}
                   valueTone="text-success-fg"
@@ -328,7 +323,7 @@ export const CareerRecommendationsPage = () => {
                   </SectionLabel>
                   <div className="flex flex-wrap gap-2">
                     {careerDetail.skill_gaps.map((gap, gIdx) => (
-                      <Chip key={gap.gap_id || gIdx} tone="warning" dot>
+                      <Chip key={gap.gap_id || gIdx} tone="warning">
                         {gap.skill_name || `Gap skill #${gIdx + 1}`}
                       </Chip>
                     ))}
@@ -337,7 +332,7 @@ export const CareerRecommendationsPage = () => {
               ) : null}
             </Card>
           ) : (
-            <Card radius="3xl" padding="lg" className="text-center text-fg-muted">
+            <Card padding="lg" className="text-center text-fg-muted">
               Select a career from the list to inspect salary metrics and skill gaps.
             </Card>
           )}

@@ -96,6 +96,23 @@ See [docs/frontend.md](docs/frontend.md) for the full guide.
 
 All requests and responses use the `application/json` content type unless specified otherwise. URL paths are relative to the root URL (e.g., `http://127.0.0.1:5000` in local development, or your host in production).
 
+### Authentication
+
+**Every endpoint below requires a bearer token except `GET /`, `GET /db-test`, `POST /api/auth/register` and `POST /api/auth/login`.**
+
+```http
+Authorization: Bearer <token>
+```
+
+The token comes from `register` or `login`. Missing or malformed → `401 {"error": "authorization token required"}`; expired → `401 {"error": "token expired"}`; invalid signature → `401 {"error": "invalid token"}`.
+
+Authentication alone is not the whole check. Every id in this API is a UUID in a URL, and UUIDs travel — they show up in the UI, in logs and in shared links — so each route also verifies that the row belongs to the caller (`backend/api/guards.py`):
+
+- A project, resume, student or recommendation belonging to **another** student returns **`404`, not `403`**. A 403 would confirm the id exists, which is the one thing an enumerating caller wants.
+- The owner is always taken from the token, never the request body. `POST /api/projects` ignores a body-supplied `student_id`, and `PUT /api/projects/<id>` cannot reassign ownership.
+
+> Prior to this, only `GET /api/resumes/mine` and `GET /api/resumes/<id>/preview` enforced auth. Every other route served any caller who knew an id, including student PII, resume-derived profiles, project deletion, and the billed LLM endpoints.
+
 ### Table of Contents
 1. [Base & Health Check](#1-base--health-check)
 2. [Authentication API (`/api/auth`)](#2-authentication-api-apiauth)
@@ -141,7 +158,7 @@ Tests active connectivity to the PostgreSQL database.
 JWT-based authentication for students. On success, both endpoints return a signed **JWT** (HS256) alongside the student profile. The token encodes the `student_id` in its `sub` claim and expires after `JWT_EXPIRY_HOURS` (default 24). Registered users are stored in the same `students` table; `email` and `phone` are both **unique**, and passwords are stored only as salted hashes (`werkzeug`), never returned in responses.
 
 #### **POST /api/auth/register**
-Registers a new student and returns an access token. Accepts the same optional profile fields as `POST /api/students` (`phone`, `college_name`, etc.); only `full_name`, `email`, and `password` are required.
+Registers a new student and returns an access token. Optional profile fields (`phone`, `college_name`, `degree_name`, `target_role`, …) may be included; only `full_name`, `email`, and `password` are required. Blank strings are stored as NULL.
 - **Request Body**:
   ```json
   {
@@ -213,60 +230,17 @@ Authenticates a student by email and password and returns an access token.
 
 ### 3. Student Management API (`/api/students`)
 
-#### **POST /api/students**
-Registers a new student profile in the system.
-- **Request Body**:
-  ```json
-  {
-    "full_name": "Manoj Tungala",
-    "email": "manoj@example.com",
-    "phone": "+1234567890",
-    "college_name": "State University",
-    "degree_name": "Bachelor of Science",
-    "branch_name": "Computer Science",
-    "current_year_semester": "4th Year / 8th Semester",
-    "graduation_year": 2026,
-    "preferred_job_location": "San Francisco, CA",
-    "target_role": "GenAI / Cloud Data Engineer",
-    "career_interest": "Software Development, Machine Learning",
-    "learning_hours_per_week": 15,
-    "internship_preference": "Remote/Hybrid",
-    "work_mode_preference": "Hybrid"
-  }
-  ```
-- **Response (201 Created)**:
-  ```json
-  {
-    "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
-    "full_name": "Manoj Tungala",
-    "email": "manoj@example.com",
-    "phone": "+1234567890",
-    "college_name": "State University",
-    "degree_name": "Bachelor of Science",
-    "branch_name": "Computer Science",
-    "current_year_semester": "4th Year / 8th Semester",
-    "graduation_year": 2026,
-    "preferred_job_location": "San Francisco, CA",
-    "target_role": "GenAI / Cloud Data Engineer",
-    "career_interest": "Software Development, Machine Learning",
-    "learning_hours_per_week": 15,
-    "internship_preference": "Remote/Hybrid",
-    "work_mode_preference": "Hybrid",
-    "created_at": "2026-06-24T14:32:10.123456",
-    "updated_at": "2026-06-24T14:32:10.123456"
-  }
-  ```
-- **Response (400 Bad Request)**:
-  ```json
-  {
-    "error": "full_name is required"
-  }
-  ```
+> `POST /api/students` has been **removed**. It was an unauthenticated second way
+> to create an account that skipped the password rules in `POST /api/auth/register`,
+> so it could create a student with no password and therefore no way to sign in.
+> Registration has exactly one entry point: `POST /api/auth/register`.
 
 #### **GET /api/students/<student_id>**
-Retrieves details of an existing student profile by UUID.
+Retrieves a student profile by UUID. Only the authenticated student's own profile is
+reachable — any other `student_id` returns `404`.
+- **Headers**: `Authorization: Bearer <token>` (required).
 - **Path Parameters**:
-  - `student_id` (string, required): The UUID of the student.
+  - `student_id` (string, required): The UUID of the student. Must match the token.
 - **Response (200 OK)**:
   ```json
   {
@@ -312,10 +286,10 @@ Every project response includes a **`resume_id`** field — the project's linked
 
 #### **POST /api/projects**
 Creates a new project track for a student. The project starts with `resume_id: null`.
+- **Headers**: `Authorization: Bearer <token>` (required). The project owner is taken from the token; a `student_id` in the body is ignored.
 - **Request Body**:
   ```json
   {
-    "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
     "project_name": "Summer Internship 2026 prep",
     "description": "Matching resume skills to Cloud Data Engineering and GenAI roles",
     "status": "active"

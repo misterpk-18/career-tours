@@ -30,7 +30,6 @@ import AiInsightBox from '../components/ui/AiInsightBox';
 import SummarySections from '../components/ui/SummarySections';
 import SelectableCard, { SelectableList } from '../components/ui/SelectableCard';
 import { toPct, toHours, sumBy } from '../lib/format';
-import { levelTone } from '../lib/courseLevel';
 import { apiErrorMessage } from '../lib/apiError';
 
 export const CourseRecommendationsPage = () => {
@@ -123,7 +122,7 @@ export const CourseRecommendationsPage = () => {
 
   // 1. Page-level loading
   if (loading) {
-    return <PageSpinner message="Loading your personalised course roadmap…" />;
+    return <PageSpinner message="Loading courses…" />;
   }
 
   // 2. Page-level error — distinct from "nothing generated yet"
@@ -132,7 +131,6 @@ export const CourseRecommendationsPage = () => {
       <NarrowShell>
         <EmptyState
           icon={AlertTriangle}
-          iconTone="danger"
           title="Could Not Load Course Recommendations"
           titleAs="h1"
           description={error}
@@ -162,7 +160,7 @@ export const CourseRecommendationsPage = () => {
           description="Courses are generated alongside your career matches. Head back to the project workspace, extract your resume skills, and run the recommendation engine first."
           action={
             <Button as={Link} to={`/projects/${projectId}`} icon={ArrowLeft}>
-              Return to Project & Generate
+              Back to project
             </Button>
           }
         />
@@ -194,7 +192,7 @@ export const CourseRecommendationsPage = () => {
         title={
           <>
             Courses to Close Your Gaps in{' '}
-            <span className="text-gradient">{project?.project_name}</span>
+            {project?.project_name}
           </>
         }
         description="For every career we matched you with, these are the courses that cover the skills you are missing — ranked by how much of the gap each one closes."
@@ -204,7 +202,6 @@ export const CourseRecommendationsPage = () => {
       {noCoursesAnywhere && (
         <EmptyState
           icon={BookOpen}
-          iconTone="warning"
           size="sm"
           title="No Courses Matched Your Skill Gaps"
           titleAs="h2"
@@ -270,7 +267,7 @@ export const CourseRecommendationsPage = () => {
               career and the request registering, so the header never flashes
               with an empty course list. */}
           {coursesLoading || (selectedCareer && !coursesLoaded && !coursesError) ? (
-            <PaneSpinner message="Loading courses & AI summaries…" />
+            <PaneSpinner message="Loading courses…" />
           ) : /* 6. Right-pane error, with retry */
           coursesError ? (
             <Alert
@@ -290,14 +287,13 @@ export const CourseRecommendationsPage = () => {
             </Alert>
           ) : /* 8. Nothing selected */
           !selectedCareer ? (
-            <Card radius="3xl" padding="lg" className="text-center text-fg-muted">
+            <Card padding="lg" className="text-center text-fg-muted">
               Select a career from the list to view its recommended courses.
             </Card>
           ) : /* 7. Loaded, but this career has no courses */
           coursesLoaded && activeCourses.length === 0 ? (
             <EmptyState
               icon={BookOpen}
-              iconTone="neutral"
               size="sm"
               title="No Courses for This Career Yet"
               titleAs="h3"
@@ -306,14 +302,14 @@ export const CourseRecommendationsPage = () => {
           ) : (
             <div className="space-y-4">
               {/* Selected career header */}
-              <Card radius="3xl">
+              <Card>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="min-w-0">
                     <div className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-fg uppercase tracking-wider mb-1">
                       <Compass className="w-4 h-4" aria-hidden="true" /> Career #
                       {selectedCareer.rank_position || 1}
                     </div>
-                    <h3 className="text-2xl font-extrabold text-fg">
+                    <h3 className="text-2xl font-bold text-fg">
                       {selectedCareer.occupation_name}
                     </h3>
                   </div>
@@ -355,7 +351,7 @@ export const CourseRecommendationsPage = () => {
 
                     {/* Level & duration chips */}
                     <div className="flex flex-wrap items-center gap-2">
-                      <Chip tone={null} icon={Layers} className={levelTone(course.level)}>
+                      <Chip icon={Layers}>
                         {course.level || 'All levels'}
                       </Chip>
                       <Chip icon={Clock}>{toHours(course.duration_hours)}</Chip>

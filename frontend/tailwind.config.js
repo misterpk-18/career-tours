@@ -35,27 +35,17 @@ export default {
           muted: ch('--fg-muted'),
           'on-solid': ch('--fg-on-solid'),
         },
+        // Semantic aliases only. The raw 50-950 indigo ramp was removed: it had
+        // zero users, and its presence invited `bg-brand-400` in place of a token
+        // that means something. `accent` (purple) is gone entirely — see the
+        // colour contract at the top of index.css.
         brand: {
-          // The full indigo ramp stays available for gradients and one-offs.
-          50: '#f0f3ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
-          // Semantic aliases — prefer these in components.
           solid: ch('--brand-solid'),
           'solid-hover': ch('--brand-solid-hover'),
           fg: ch('--brand-fg'),
           subtle: ch('--brand-subtle'),
           'subtle-fg': ch('--brand-subtle-fg'),
         },
-        accent: { solid: ch('--accent-solid'), fg: ch('--accent-fg'), subtle: ch('--accent-subtle') },
         success: { solid: ch('--success-solid'), fg: ch('--success-fg'), subtle: ch('--success-subtle') },
         warning: { solid: ch('--warning-solid'), fg: ch('--warning-fg'), subtle: ch('--warning-subtle') },
         danger: { solid: ch('--danger-solid'), fg: ch('--danger-fg'), subtle: ch('--danger-subtle') },
@@ -83,27 +73,34 @@ export default {
         '5xl': ['2.625rem', { lineHeight: '2.875rem', letterSpacing: '-0.025em' }],
         '6xl': ['3.25rem', { lineHeight: '3.5rem', letterSpacing: '-0.03em' }],
       },
+      // Two structural radii plus pills. `md`, `2xl` and `3xl` are deliberately
+      // absent: a card previously nested 3xl -> 2xl -> xl -> lg -> full, and
+      // dropping the keys means `rounded-2xl` compiles to nothing rather than
+      // quietly creeping back in.
+      borderRadius: {
+        none: '0',
+        sm: '0.25rem',
+        DEFAULT: '0.5rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+        full: '9999px',
+      },
       boxShadow: {
-        glass: 'var(--glass-shadow)',
-        'glass-hover': 'var(--glass-shadow-hover)',
         e1: 'var(--shadow-e1)',
         e2: 'var(--shadow-e2)',
         e3: 'var(--shadow-e3)',
       },
       ringColor: { DEFAULT: 'rgb(var(--focus))' },
       ringOffsetColor: { DEFAULT: 'rgb(var(--canvas))' },
+      // `float` was dead code and `pulse-slow` drove a decorative 2px dot on
+      // every skill-gap chip. `fade-in` is the app's only animation now, and it
+      // is covered by the prefers-reduced-motion block in index.css.
       animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        float: 'float 6s ease-in-out infinite',
         // The three modals already referenced `animate-fade-in`; without this
         // entry the class was a silent no-op and they appeared instantly.
         'fade-in': 'fade-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-8px)' },
-        },
         'fade-in': {
           from: { opacity: '0', transform: 'translateY(4px) scale(0.985)' },
           to: { opacity: '1', transform: 'none' },

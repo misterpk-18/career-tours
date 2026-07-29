@@ -24,7 +24,7 @@ export const PasswordField = React.forwardRef(
       <div className={cn('space-y-1.5', className)}>
         <label
           htmlFor={inputId}
-          className="block text-xs font-semibold text-fg-secondary uppercase tracking-wider"
+          className="block text-sm font-medium text-fg-secondary"
         >
           {label}
           {required ? (

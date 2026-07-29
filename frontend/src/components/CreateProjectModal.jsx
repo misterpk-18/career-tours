@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { FolderPlus, Sparkles } from 'lucide-react';
+import { FolderPlus } from 'lucide-react';
 import { projectsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Modal from './ui/Modal';
@@ -50,7 +50,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
             type="submit"
             form="create-project-form"
             size="md"
-            icon={Sparkles}
+            icon={FolderPlus}
             loading={submitting}
             loadingText="Creating…"
           >

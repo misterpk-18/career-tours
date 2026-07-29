@@ -39,7 +39,7 @@ export const SelectableCard = ({ selected = false, onSelect, disabled = false, c
         }
       }}
       className={cn(
-        'surface-glass-interactive p-5 rounded-2xl border transition-all',
+        'surface-panel-interactive p-5 rounded-xl border transition-all',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
         disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
         selected ? 'border-brand-solid bg-surface-2 shadow-e2' : 'border-line',

@@ -12,7 +12,7 @@ export const PaneSpinner = ({ message = 'Loading…', className }) => (
     role="status"
     aria-live="polite"
     className={cn(
-      'surface-glass rounded-3xl p-16 text-center text-fg-muted border border-line',
+      'surface-panel rounded-xl p-16 text-center text-fg-muted border border-line',
       className
     )}
   >

@@ -49,7 +49,7 @@ export const RegisterPage = () => {
       width="xl"
       title={
         <>
-          Join <span className="text-gradient">CareerTours</span>
+          Join CareerTours
         </>
       }
       description="Create your student account to analyse resumes and discover matching career paths."
@@ -57,7 +57,7 @@ export const RegisterPage = () => {
         <>
           <p className="text-sm text-fg-muted mb-3">Already have an account?</p>
           <Button as={Link} to="/login" variant="secondary" size="md" icon={LogIn}>
-            Sign In Instead
+            Sign in instead
           </Button>
         </>
       }
@@ -71,7 +71,7 @@ export const RegisterPage = () => {
       <form onSubmit={submit} noValidate className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField
-            label="Full Name"
+            label="Full name"
             name="full_name"
             autoComplete="name"
             required
@@ -82,7 +82,7 @@ export const RegisterPage = () => {
             disabled={submitting}
           />
           <TextField
-            label="Email Address"
+            label="Email address"
             type="email"
             name="email"
             autoComplete="email"
@@ -145,7 +145,7 @@ export const RegisterPage = () => {
         </div>
 
         <TextField
-          label="Target Role"
+          label="Target role"
           name="target_role"
           value={formData.target_role}
           onChange={handleChange}
@@ -166,7 +166,7 @@ export const RegisterPage = () => {
           iconRight={ArrowRight}
           className="mt-2"
         >
-          Create Student Account
+          Create account
         </Button>
       </form>
     </AuthShell>

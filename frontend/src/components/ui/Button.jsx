@@ -2,9 +2,12 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 
+// One filled style. The `success` variant was removed: all three of its callers
+// were navigation ("View recommended careers", "Download"), not confirmation, so
+// a green fill competed with the primary action for the eye while signalling
+// nothing. `danger` stays because destructive really is a state.
 const VARIANTS = {
   primary: 'btn-brand',
-  success: 'btn-success',
   secondary:
     'bg-surface-2 hover:bg-surface-3 text-fg-secondary hover:text-fg border border-line-strong',
   ghost: 'text-fg-muted hover:text-fg hover:bg-surface-2 border border-transparent',
@@ -18,7 +21,7 @@ const SIZES = {
   xs: 'px-3 py-2 text-xs gap-1.5 rounded-lg',
   sm: 'px-4 py-2.5 text-sm gap-2 rounded-xl',
   md: 'px-5 py-2.5 text-sm gap-2 rounded-xl',
-  lg: 'px-6 py-3.5 text-sm gap-2 rounded-2xl',
+  lg: 'px-6 py-3.5 text-sm gap-2 rounded-xl',
 };
 
 /**

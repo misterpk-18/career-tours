@@ -130,7 +130,7 @@ export const ProjectDetailsPage = () => {
         setExtractSuccess(
           res.reused
             ? `Loaded ${unique.length} skills already extracted from this resume.`
-            : `Successfully extracted ${unique.length} skills from resume!`
+            : `Extracted ${unique.length} skills from your resume.`
         );
       }
     } catch (err) {
@@ -175,7 +175,6 @@ export const ProjectDetailsPage = () => {
       <NarrowShell>
         <EmptyState
           icon={AlertTriangle}
-          iconTone="danger"
           title="Could Not Load This Project"
           titleAs="h1"
           description={error}
@@ -217,7 +216,7 @@ export const ProjectDetailsPage = () => {
               icon={Eye}
               onClick={() => setViewResumeId(project.resume_id)}
             >
-              Review &amp; Download Resume
+              View resume
             </Button>
           ) : (
             <Button
@@ -232,11 +231,11 @@ export const ProjectDetailsPage = () => {
         }
       />
 
-      <Card radius="2xl" className="space-y-6">
+      <Card className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="min-w-0">
             <SectionHeading as="h2" size="sm" icon={Zap} iconClassName="text-warning-fg">
-              AI Skill Extraction Engine
+              Skills from your resume
             </SectionHeading>
             <p className="text-sm text-fg-muted mt-1">
               {skillsAlreadyExtracted
@@ -251,10 +250,10 @@ export const ProjectDetailsPage = () => {
                 icon={Sparkles}
                 onClick={handleExtractSkills}
                 loading={extracting}
-                loadingText="Extracting Skills…"
+                loadingText="Extracting skills…"
                 disabled={!project.resume_id}
               >
-                Extract Skills
+                Extract skills
               </Button>
             ) : (
               <Badge tone="success" icon={CheckCircle2}>
@@ -269,7 +268,7 @@ export const ProjectDetailsPage = () => {
                 buttons entirely. */}
             {careersAlreadyGenerated ? (
               <>
-                <Button variant="success" icon={Compass} iconRight={ArrowRight} onClick={handleViewCareers}>
+                <Button icon={Compass} onClick={handleViewCareers}>
                   View Recommended Careers
                 </Button>
                 <Button
@@ -283,11 +282,10 @@ export const ProjectDetailsPage = () => {
               </>
             ) : skills.length > 0 ? (
               <Button
-                variant="success"
                 icon={Compass}
                 onClick={handleRecommendCareers}
                 loading={recommending}
-                loadingText="Analyzing Careers…"
+                loadingText="Analysing…"
               >
                 Recommend Careers
               </Button>
@@ -326,7 +324,7 @@ export const ProjectDetailsPage = () => {
                 iconRight={Compass}
                 onClick={careersAlreadyGenerated ? handleViewCareers : handleRecommendCareers}
                 loading={recommending}
-                loadingText="Analyzing…"
+                loadingText="Analysing…"
               >
                 {careersAlreadyGenerated ? 'View Career Recommendations' : 'Go to Career Page'}
               </Button>
@@ -338,8 +336,7 @@ export const ProjectDetailsPage = () => {
 
         {skills.length === 0 ? (
           <EmptyState
-            icon={Sparkles}
-            iconTone="neutral"
+            icon={Tag}
             size="sm"
             title="No skills extracted yet"
             titleAs="h3"
@@ -359,7 +356,6 @@ export const ProjectDetailsPage = () => {
                 as="li"
                 key={skill.project_skill_id || index}
                 variant="solid"
-                radius="xl"
                 padding="sm"
                 className="flex flex-col justify-between"
               >

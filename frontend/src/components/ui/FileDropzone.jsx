@@ -37,7 +37,7 @@ export const FileDropzone = ({ accept, onFileSelected, file, onClear, hint, erro
           handleFiles(e.dataTransfer?.files);
         }}
         className={cn(
-          'rounded-2xl border-2 border-dashed p-8 text-center transition-colors',
+          'rounded-xl border-2 border-dashed p-8 text-center transition-colors',
           'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus',
           dragging ? 'border-brand-solid bg-brand-subtle/60' : 'border-line-strong bg-surface-3/60',
           error && 'border-danger-fg'

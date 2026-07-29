@@ -69,7 +69,6 @@ export const App = () => {
             <div className="min-h-screen flex flex-col bg-canvas text-fg font-sans">
               {/* Ambient page gradient, moved off <body> so it no longer needs
                   background-attachment: fixed. */}
-              <div className="app-aura" aria-hidden="true" />
 
               {/* A second boundary inside the router so a page-level throw shows
                   the fallback while leaving the app shell mounted. */}
