@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
 
 from api.auth.utils import generate_token, serialize_student
+from config.database import db
 from repositories.student_repository import StudentRepository
 
 auth_bp = Blueprint(
@@ -34,11 +36,18 @@ def register():
 
     try:
         student = StudentRepository.create(data)
-    except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-        return jsonify({"error": "failed to register", "detail": str(e)}), 500
+    except IntegrityError:
+        # The checks above race: two concurrent signups with the same email or phone
+        # both pass them and one loses at the unique index. Report it the same way.
+        db.session.rollback()
+        current_app.logger.warning("register: unique violation", exc_info=True)
+        return jsonify({"error": "email or phone already registered"}), 409
+    except Exception:
+        # Roll back before returning, or this connection stays poisoned and every
+        # later request served by the same worker fails on the aborted transaction.
+        db.session.rollback()
+        current_app.logger.exception("register: failed to create student")
+        return jsonify({"error": "failed to register"}), 500
 
     token = generate_token(student.student_id)
     return jsonify({"token": token, "student": serialize_student(student)}), 201

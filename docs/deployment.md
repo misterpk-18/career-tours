@@ -228,7 +228,7 @@ Group=ec2-user
 WorkingDirectory=/home/ec2-user/career-tours/backend
 Environment="PATH=/home/ec2-user/career-tours/.venv/bin"
 EnvironmentFile=/home/ec2-user/career-tours/.env
-ExecStart=/home/ec2-user/career-tours/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --timeout 300 --access-logfile /var/log/career-tours/access.log --error-logfile /var/log/career-tours/error.log app:app
+ExecStart=/home/ec2-user/career-tours/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --timeout 300 --access-logfile /var/log/career-tours/access.log --error-logfile /var/log/career-tours/error.log --capture-output app:app
 Restart=always
 RestartSec=5
 
@@ -472,8 +472,15 @@ deploy. Apply any new `backend/migrations/*.sql` before restarting.
 
 - **Inspect Logs**:
   ```bash
-  # Gunicorn error log
+  # Gunicorn error log — application tracebacks land here only because of
+  # --capture-output (Step 5). Without that flag Gunicorn leaves the app's
+  # stdout/stderr alone and tracebacks go to the journal instead, so this file
+  # shows nothing but worker lifecycle noise.
   tail -f /var/log/career-tours/error.log
+
+  # Everything the service wrote, regardless of Gunicorn's log routing
+  sudo journalctl -u career-tours -f
+
   # Nginx access log
   tail -f /var/log/nginx/career_tours_access.log
   ```
