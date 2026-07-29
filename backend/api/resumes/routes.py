@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, g, jsonify, request
 from werkzeug.utils import secure_filename
 
 from api.auth.utils import require_auth
+from api.guards import owned_project
 from config.database import db
 from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
@@ -70,6 +71,7 @@ def _serialize_resume_list_item(resume, preview_url) -> dict:
 
 
 @resume_bp.route("/upload", methods=["POST"])
+@require_auth
 def upload_resume():
     project_id = request.form.get("project_id")
     file = request.files.get("resume_file")
@@ -80,15 +82,11 @@ def upload_resume():
     if not file:
         return jsonify({"error": "resume_file is required"}), 400
 
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
-    project = ProjectRepository.get_by_id(project_uuid)
-
-    if project is None:
-        return jsonify({"error": "project not found"}), 404
+    project_uuid = project.project_id
 
     if not file.filename:
         return jsonify({"error": "resume_file must have a filename"}), 400
@@ -202,6 +200,7 @@ def list_my_resumes():
 
 
 @resume_bp.route("/<resume_id>", methods=["GET"])
+@require_auth
 def get_resume(resume_id: str):
     try:
         resume_uuid = UUID(resume_id)
@@ -210,7 +209,9 @@ def get_resume(resume_id: str):
 
     resume = ResumeRepository.get_by_id(resume_uuid)
 
-    if resume is None:
+    # 404 rather than 403 for another student's resume — see api/guards.py. This
+    # response carries raw_text, i.e. the entire contents of the CV.
+    if resume is None or resume.student_id != g.student_id:
         return jsonify({"error": "resume not found"}), 404
 
     return jsonify(_serialize_resume(resume))
@@ -256,6 +257,7 @@ def preview_resume(resume_id: str):
 
 
 @resume_bp.route("/<resume_id>/extract-skills", methods=["POST"])
+@require_auth
 def extract_skills(resume_id: str):
     try:
         resume_uuid = UUID(resume_id)
@@ -264,7 +266,9 @@ def extract_skills(resume_id: str):
 
     resume = ResumeRepository.get_by_id(resume_uuid)
 
-    if resume is None:
+    # Unauthenticated, this endpoint let anyone with a resume id spend money on
+    # the OpenAI account and read the extracted profile back.
+    if resume is None or resume.student_id != g.student_id:
         return jsonify({"error": "resume not found"}), 404
 
     if not resume.raw_text:

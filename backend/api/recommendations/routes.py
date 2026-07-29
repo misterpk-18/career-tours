@@ -4,6 +4,8 @@ import json
 
 from flask import Blueprint, current_app, jsonify
 
+from api.auth.utils import require_auth
+from api.guards import owned_project
 from config.database import db
 from repositories.career_match_repository import (
     CareerMatchRepository,
@@ -57,16 +59,13 @@ def _with_structured_summary(summary):
 
 
 @recommendations_bp.route("/projects/<project_id>/generate", methods=["POST"])
+@require_auth
 def generate_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
-    project = ProjectRepository.get_by_id(project_uuid)
-
-    if project is None:
-        return jsonify({"error": "project not found"}), 404
+    project_uuid = project.project_id
 
     try:
         result = RecommendationGenerator.generate(project_uuid)
@@ -81,11 +80,13 @@ def generate_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/careers", methods=["GET"])
+@require_auth
 def get_career_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     careers = CareerMatchRepository.get_by_project_id(project_uuid)
 
@@ -98,11 +99,13 @@ def get_career_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/courses", methods=["GET"])
+@require_auth
 def get_course_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     courses = CourseRecommendationRepository.get_by_project_id(project_uuid)
 
@@ -115,11 +118,13 @@ def get_course_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>", methods=["GET"])
+@require_auth
 def get_project_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     careers = CareerMatchRepository.get_by_project_id(project_uuid)
 
@@ -135,9 +140,15 @@ def get_project_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/careers/<occupation_id>", methods=["GET"])
+@require_auth
 def get_career_details(project_id: str, occupation_id: str):
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
+
     try:
-        project_uuid = UUID(project_id)
         occupation_uuid = UUID(occupation_id)
     except ValueError:
         return jsonify({"error": "invalid UUID supplied"}), 400
@@ -172,9 +183,15 @@ def get_career_details(project_id: str, occupation_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/careers/<occupation_id>/courses", methods=["GET"])
+@require_auth
 def get_career_courses(project_id: str, occupation_id: str):
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
+
     try:
-        project_uuid = UUID(project_id)
         occupation_uuid = UUID(occupation_id)
     except ValueError:
         return jsonify({"error": "invalid UUID supplied"}), 400

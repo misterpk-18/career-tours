@@ -1,9 +1,8 @@
 from uuid import UUID
 
-from flask import Blueprint, current_app, jsonify, request
-from sqlalchemy.exc import IntegrityError
+from flask import Blueprint, g, jsonify
 
-from config.database import db
+from api.auth.utils import require_auth
 from repositories.student_repository import StudentRepository
 
 students_bp = Blueprint(
@@ -34,41 +33,25 @@ def _serialize_student(student) -> dict:
     }
 
 
-@students_bp.route("", methods=["POST"])
-def create_student():
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "request body is required"}), 400
-
-    if not data.get("full_name"):
-        return jsonify({"error": "full_name is required"}), 400
-
-    if not data.get("email"):
-        return jsonify({"error": "email is required"}), 400
-
-    try:
-        student = StudentRepository.create(data)
-    except IntegrityError:
-        db.session.rollback()
-        current_app.logger.warning("create_student: unique violation", exc_info=True)
-        return jsonify({"error": "email or phone already registered"}), 409
-    except Exception:
-        # str(e) here would return the INSERT and its bound parameters -- including
-        # the password hash -- to the caller.
-        db.session.rollback()
-        current_app.logger.exception("create_student: failed to create student")
-        return jsonify({"error": "failed to create student"}), 500
-
-    return jsonify(_serialize_student(student)), 201
+# NOTE: `POST /api/students` used to live here. It was an unauthenticated second
+# way to create an account that skipped the password requirement enforced by
+# `POST /api/auth/register`, so a student could be created with no password at
+# all and no way to sign in. Registration has exactly one entry point now:
+# api/auth/routes.py:register.
 
 
 @students_bp.route("/<student_id>", methods=["GET"])
+@require_auth
 def get_student(student_id: str):
     try:
         student_uuid = UUID(student_id)
     except ValueError:
         return jsonify({"error": "student_id must be a valid UUID"}), 400
+
+    # This response is the student's full profile — name, email, phone, college.
+    # Unauthenticated it was a PII endpoint keyed on a guessable id.
+    if student_uuid != g.student_id:
+        return jsonify({"error": "student not found"}), 404
 
     student = StudentRepository.get_by_id(student_uuid)
 
