@@ -25,11 +25,11 @@ ALTER TABLE ONLY public.course_recommendations
 
 
 --
--- Name: course_recommendations course_recommendations_student_id_occupation_id_course_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
+-- Name: course_recommendations course_recommendations_project_id_occupation_id_course_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
 --
 
 ALTER TABLE ONLY public.course_recommendations
-    ADD CONSTRAINT course_recommendations_student_id_occupation_id_course_id_key UNIQUE (student_id, occupation_id, course_id);
+    ADD CONSTRAINT course_recommendations_project_id_occupation_id_course_id_key UNIQUE (project_id, occupation_id, course_id);
 
 
 --
