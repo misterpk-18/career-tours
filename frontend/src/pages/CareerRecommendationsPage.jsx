@@ -297,9 +297,14 @@ export const CareerRecommendationsPage = () => {
                       sections={[
                         { label: 'Why this fits', text: careerDetail.summary.structured.why_it_fits },
                         {
+                          // Neutral, not a success tone: per Chip's tone contract a
+                          // strength is a category rather than a state. `success` was
+                          // removed from Chip when the template skin was stripped, but
+                          // this call site kept passing it — and Chip throws on an
+                          // unknown tone, so the whole page hit the error boundary as
+                          // soon as a summary came back with any strengths.
                           label: 'Strengths',
                           items: careerDetail.summary.structured.strengths,
-                          tone: 'success',
                         },
                         {
                           label: 'Skill gaps',
