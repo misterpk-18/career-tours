@@ -4,7 +4,9 @@ from flask import Blueprint, g, jsonify, request
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
+from api.serializers import serialize_project_skill
 from repositories.project_repository import ProjectRepository
+from repositories.project_skill_repository import ProjectSkillRepository
 
 
 projects_bp = Blueprint(
@@ -57,6 +59,25 @@ def get_project(project_id: str):
         return error
 
     return jsonify(_serialize_project(project))
+
+
+@projects_bp.route("/<project_id>/skills", methods=["GET"])
+@require_auth
+def get_project_skills(project_id: str):
+    """The stored skills for a project, or an empty list if none were extracted.
+
+    The page needs this to decide which step of the pipeline the project is on.
+    Without it the client had no way to ask, so it cached the extraction response
+    in localStorage and guessed — which read as "no skills extracted" in any
+    other browser.
+    """
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    skills = ProjectSkillRepository.get_by_project_id(project.project_id)
+
+    return jsonify([serialize_project_skill(skill) for skill in skills])
 
 
 @projects_bp.route("/student/<student_id>", methods=["GET"])

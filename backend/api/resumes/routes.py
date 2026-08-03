@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
+from api.serializers import serialize_project_skill
 from config.database import db
 from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
@@ -32,17 +33,7 @@ def _remove_file(file_path: Path) -> None:
         file_path.unlink()
 
 
-def _serialize_skill(skill: dict) -> dict:
-    return {
-        "project_skill_id": str(skill["project_skill_id"]),
-        "project_id": str(skill["project_id"]),
-        "skill_id": str(skill["skill_id"]) if skill["skill_id"] is not None else None,
-        "skill_name": skill["skill_name"],
-        "proficiency_level": skill["proficiency_level"],
-        "confidence_score": float(skill["confidence_score"]),
-        "source": skill["source"],
-        "created_at": skill["created_at"].isoformat(),
-    }
+_serialize_skill = serialize_project_skill
 
 
 def _serialize_resume(resume) -> dict:
