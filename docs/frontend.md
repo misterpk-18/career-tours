@@ -161,7 +161,7 @@ Each method is `async` and returns `response.data` directly (not the axios respo
 | Group | Methods |
 |---|---|
 | `authAPI` | `login`, `register` |
-| `projectsAPI` | `create`, `getById`, `getByStudentId`, `update`, `delete` |
+| `projectsAPI` | `create`, `getById`, `getByStudentId`, `getSkills`, `update`, `delete` |
 | `resumesAPI` | `upload` (multipart override), `getById`, `getPreview`, `extractSkills`, `listMine` |
 | `recommendationsAPI` | `generate`, `getCareers`, `getProjectOverview`, `getCareerDetails`, `getCourses`, `getCareerCourses` |
 
@@ -175,7 +175,7 @@ err.response?.data?.error || err.response?.data?.detail || 'Something went wrong
 
 No data-fetching library. Pages hand-roll it: a `data` / `loading` / `error` state trio, an `async` fetch function, and a `useEffect` that calls it. `HomePage.jsx` is the cleanest example of the four-branch render (`loading` → `error` → empty → content); `CourseRecommendationsPage.jsx` extends it with a per-pane loading/error state plus a response cache keyed by occupation.
 
-`ProjectDetailsPage.jsx` additionally caches extracted skills in `localStorage` under `ct_skills_${projectId}`.
+`ProjectDetailsPage.jsx` fetches a project's stored skills from `projectsAPI.getSkills` on mount. It used to cache them in `localStorage` under `ct_skills_${projectId}` instead, because no endpoint could answer "does this project have skills yet?". That cache is gone: it was server data in `localStorage`, which [`lib/storage.js`](../frontend/src/lib/storage.js) forbids, and it was wrong in any second browser — the cache was empty there, so a project whose skills were already in the database presented as though nothing had been extracted.
 
 ### Gotcha: numeric columns arrive as strings
 
@@ -263,6 +263,14 @@ There is no linter in this project, so the rules are enforced where they can fai
 
 - `Chip` and `Badge` **throw** on an unknown `tone`; `SectionHeading` and `EmptyState`
   throw when the heading level is omitted.
+
+  Know the cost of that choice: a throw during render reaches `ErrorBoundary`, so a
+  wrong tone string replaces the **entire page** with "Something went wrong" — not a
+  mis-coloured chip. `CareerRecommendationsPage` passed the removed `tone="success"`
+  for its "Strengths" list and took the careers page down completely. When a tone is
+  deleted from a primitive, grep every call site in the same commit; and note that
+  `Badge` and `Chip` do *not* accept the same tones (`Badge` has `success`, `Chip`
+  deliberately does not), so a tone valid on one is a page-killer on the other.
 - `Card` has no `radius` or `bordered` prop, `StatTile` no `tone`, `MetricTile` no
   `iconTone`, `HeroBanner` no `orbTone`/`eyebrowTone`, `Chip` no `dot`. Deleting the
   prop is what prevents the drift; a convention note would not.
@@ -295,7 +303,18 @@ control, the one that actually calls the model.
 ## Page Notes
 
 ### `ProjectDetailsPage.jsx`
-The workspace hub. Resume upload, skill extraction, and the "Recommend Careers" trigger (`recommendationsAPI.generate`) — a single call that generates career matches, skill gaps, **and** course recommendations server-side. Once generated, the action row offers "View Recommended Careers" and "View Recommended Courses".
+The workspace hub. Resume upload, skill extraction, and the "Recommend Careers" trigger (`recommendationsAPI.generate`) — a single call that generates career matches, skill gaps, **and** course recommendations server-side.
+
+The pipeline is strictly sequential, and the action row shows only the step that is actually available. Both inputs to that decision come from the server — `projectsAPI.getSkills` and `recommendationsAPI.getProjectOverview` — never from client state:
+
+| Project state | Controls shown |
+|---|---|
+| no resume | upload only (banner + warning alert) |
+| resume, no skills | "Extract skills" |
+| skills extracted | *Skills Extracted* badge, "Recommend Careers" |
+| recommendations exist | "View Recommended Careers", "View Recommended Courses" |
+
+"Extract skills" is **removed** rather than rendered disabled when there is no resume: a dead button invites the click it then refuses, and the upload affordance already appears twice on the page.
 
 ### `CareerRecommendationsPage.jsx`
 Master–detail over the top 5 career matches. The left list comes from `getProjectOverview`; selecting a career lazily calls `getCareerDetails` for its AI summary and skill gaps.

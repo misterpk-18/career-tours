@@ -2,8 +2,15 @@
 
 This guide documents the complete step-by-step process used to deploy **Career Tours** on an Amazon Linux 2023 EC2 instance: the Flask API behind **Gunicorn**, the React frontend as a static build, both fronted by an **Nginx** reverse proxy with a Let's Encrypt certificate.
 
-Live deployment: **https://career-tours.duckdns.org** (instance `13.203.206.148`).
-Always use the hostname — the certificate cannot cover a bare IP.
+Live deployment: **https://career-tours.duckdns.org** (instance `3.110.122.199`).
+Always use the hostname — the certificate cannot cover a bare IP. Nginx `301`s
+everything on port 80, the bare IP included, to that hostname, so a `curl` against
+`http://3.110.122.199` needs `-L` or it returns only the redirect body and looks
+broken.
+
+> The instance has **no Elastic IP**: stopping and starting it changes the public
+> address, which then has to be repointed at DuckDNS and is why earlier hosts
+> (`13.203.206.148`, `13.204.83.160`) appear in this document's history.
 
 ### Repository layout on the server
 
@@ -153,6 +160,60 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    done
    ```
 
+7. **Seed the reference tables** — *required; the app is not functional without this.*
+
+   Steps 5 and 6 create empty tables. Five of them are **reference (catalog) data**
+   rather than user data, and nothing in the app ever writes them: `skills`,
+   `courses`, `occupations`, `course_skills`, `occupation_skills`.
+
+   The matching engine scores a student's skills against `occupation_skills`. With no
+   occupations, `POST /recommendations/projects/<id>/generate` **succeeds and returns
+   zero matches**, which the UI renders as "No Career Recommendations Yet" — the same
+   screen it shows when no skills have been extracted. There is no error anywhere, in
+   any log. Verify with a row count before blaming anything else:
+
+   ```bash
+   PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -c "
+     SELECT 'courses' t, count(*) FROM courses
+     UNION ALL SELECT 'occupations', count(*) FROM occupations
+     UNION ALL SELECT 'skills', count(*) FROM skills
+     UNION ALL SELECT 'course_skills', count(*) FROM course_skills
+     UNION ALL SELECT 'occupation_skills', count(*) FROM occupation_skills ORDER BY 1;"
+   ```
+
+   Copy them from a populated database. `skills` is not optional even if only the
+   other four are wanted — `course_skills` and `occupation_skills` have `NOT NULL`
+   FKs to it. From a workstation with a populated local database:
+
+   ```bash
+   # Dump as column-level INSERTs, NOT -Fc: a newer pg_dump archive will not restore
+   # into an older server, and this box runs PostgreSQL 15.
+   pg_dump -h "$DB_HOST" -U "$DB_USER" -d career_tours \
+       --data-only --column-inserts --no-owner --no-privileges \
+       -t public.skills -t public.courses -t public.occupations \
+       -t public.course_skills -t public.occupation_skills > ref_data.sql
+
+   # PG 17+ emits `SET transaction_timeout = 0`, which PG 15 rejects outright.
+   sed -i '' '/SET transaction_timeout/d' ref_data.sql
+   ```
+
+   Then rewrite each `INSERT` to end `ON CONFLICT DO NOTHING` before loading, so the
+   file is additive and re-runnable. **Do not `TRUNCATE` to re-seed:**
+   `course_recommendations`, `career_skill_gaps` and `student_career_matches` cascade
+   off these tables and would take real user output with them. Copy the UUIDs
+   verbatim rather than regenerating, so the FK graph stays intact and ids line up
+   across environments.
+
+   ```bash
+   scp -i $KEY ref_data.sql $HOST:/tmp/
+   ssh -i $KEY $HOST 'PGPASSWORD=... psql -h 127.0.0.1 -U manojtungala -d career_tours \
+       -v ON_ERROR_STOP=1 --single-transaction -f /tmp/ref_data.sql'
+   ```
+
+   `pg_dump` emits these five tables parent-before-child already, so no manual
+   ordering is needed. Confirm afterwards that the counts are non-zero and that no
+   orphan rows exist in the two junction tables.
+
 ---
 
 ## Step 4: Python Environment Setup
@@ -294,7 +355,7 @@ rsync -avz --delete dist/ ec2-user@<host>:/home/ec2-user/career-tours/frontend/d
    server {
        listen 80 default_server;
        listen [::]:80 default_server;
-       server_name career-tours.duckdns.org 13.203.206.148; # your hostname, then the public IP
+       server_name career-tours.duckdns.org 3.110.122.199; # your hostname, then the public IP
 
        # Allow large payloads (resume file uploads up to 10MB)
        client_max_body_size 10M;
@@ -358,7 +419,7 @@ rsync -avz --delete dist/ ec2-user@<host>:/home/ec2-user/career-tours/frontend/d
 
 Served over plain HTTP, browsers mark the site "Not secure" and login passwords
 cross the network in cleartext. Fixing that needs a **hostname** — Let's Encrypt
-will not issue a certificate for a bare IP, so `https://13.203.206.148` can never
+will not issue a certificate for a bare IP, so `https://3.110.122.199` can never
 be trusted no matter what is configured.
 
 1. **Point a hostname at the instance.** The deployment uses DuckDNS: register a
@@ -439,12 +500,13 @@ Build the bundle locally and rsync both halves up:
 # from a local clone, at the repo root
 cd frontend && npm ci && npm run build && cd ..
 
-HOST=ec2-user@13.203.206.148
-KEY=~/Downloads/career_tours_key_pair.pem
+HOST=ec2-user@3.110.122.199
+KEY=~/Downloads/my_first_key_pair_ct.pem   # the older career_tours_key_pair.pem is NOT valid on this instance
 
-# backend code — never sync uploads/ (server-owned user data) or the venv/.env
+# backend code — never sync uploads/ (server-owned user data) or the venv/.env.
+# data/imports is untracked local staging (~4MB) and the box has little free disk.
 rsync -az --delete -e "ssh -i $KEY" \
-    --exclude __pycache__ --exclude '*.pyc' --exclude uploads \
+    --exclude __pycache__ --exclude '*.pyc' --exclude uploads --exclude 'data/imports' \
     backend/ $HOST:/home/ec2-user/career-tours/backend/
 
 # built frontend
@@ -483,6 +545,15 @@ deploy. Apply any new `backend/migrations/*.sql` before restarting.
 
   # Nginx access log
   tail -f /var/log/nginx/career_tours_access.log
+  ```
+
+- **Open a psql session on the instance**:
+  ```bash
+  # The OS user `ec2-user` is NOT a Postgres role, so a bare `psql -d career_tours`
+  # fails with: FATAL: role "ec2-user" does not exist.
+  # Source the server's own .env instead of hardcoding credentials anywhere.
+  set -a; . /home/ec2-user/career-tours/.env; set +a
+  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"
   ```
 
 - **Query Endpoints** (on the instance):
