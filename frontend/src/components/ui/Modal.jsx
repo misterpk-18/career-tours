@@ -74,7 +74,7 @@ export const Modal = ({
         aria-describedby={description ? descId : undefined}
         tabIndex={-1}
         className={cn(
-          'w-full surface-glass rounded-2xl p-6 shadow-e3 border border-line relative',
+          'w-full surface-panel rounded-xl p-6 shadow-e3 border border-line relative',
           // Every modal scrolls internally instead of overflowing the viewport —
           // two of the three previously had no max height at all.
           'max-h-[90vh] flex flex-col',

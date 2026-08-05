@@ -46,6 +46,10 @@ export const projectsAPI = {
     const response = await api.get(`/projects/student/${studentId}`);
     return response.data;
   },
+  getSkills: async (projectId) => {
+    const response = await api.get(`/projects/${projectId}/skills`);
+    return response.data;
+  },
   update: async (projectId, projectData) => {
     const response = await api.put(`/projects/${projectId}`, projectData);
     return response.data;

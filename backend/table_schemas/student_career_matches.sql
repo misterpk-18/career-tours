@@ -24,11 +24,11 @@ ALTER TABLE ONLY public.student_career_matches
 
 
 --
--- Name: student_career_matches student_career_matches_student_id_occupation_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
+-- Name: student_career_matches student_career_matches_project_id_occupation_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
 --
 
 ALTER TABLE ONLY public.student_career_matches
-    ADD CONSTRAINT student_career_matches_student_id_occupation_id_key UNIQUE (student_id, occupation_id);
+    ADD CONSTRAINT student_career_matches_project_id_occupation_id_key UNIQUE (project_id, occupation_id);
 
 
 --

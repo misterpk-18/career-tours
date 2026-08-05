@@ -1,7 +1,12 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify
+import json
 
+from flask import Blueprint, current_app, jsonify
+
+from api.auth.utils import require_auth
+from api.guards import owned_project
+from config.database import db
 from repositories.career_match_repository import (
     CareerMatchRepository,
 )
@@ -27,36 +32,61 @@ recommendations_bp = Blueprint(
 )
 
 
+def _with_structured_summary(summary):
+    """Expose the summary's typed sections as `structured`.
+
+    llm_summaries.summary_text now holds the JSON of a CareerSummary/CourseSummary.
+    Rows written before the summaries were structured hold prose instead, and rows
+    are only rewritten when recommendations are regenerated, so `structured` is None
+    for those and the client falls back to rendering summary_text as a paragraph.
+    """
+    if summary is None:
+        return None
+
+    structured = None
+    summary_text = summary.get("summary_text")
+
+    if isinstance(summary_text, str):
+        try:
+            candidate = json.loads(summary_text)
+        except ValueError:
+            candidate = None
+
+        if isinstance(candidate, dict):
+            structured = candidate
+
+    return {**summary, "structured": structured}
+
+
 @recommendations_bp.route("/projects/<project_id>/generate", methods=["POST"])
+@require_auth
 def generate_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
-    project = ProjectRepository.get_by_id(project_uuid)
-
-    if project is None:
-        return jsonify({"error": "project not found"}), 404
+    project_uuid = project.project_id
 
     try:
         result = RecommendationGenerator.generate(project_uuid)
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": "failed to generate recommendations", "detail": str(e)}), 500
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("generate: failed to generate recommendations")
+        return jsonify({"error": "failed to generate recommendations"}), 500
 
     return jsonify(result), 200
 
 
 @recommendations_bp.route("/projects/<project_id>/careers", methods=["GET"])
+@require_auth
 def get_career_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     careers = CareerMatchRepository.get_by_project_id(project_uuid)
 
@@ -69,11 +99,13 @@ def get_career_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/courses", methods=["GET"])
+@require_auth
 def get_course_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     courses = CourseRecommendationRepository.get_by_project_id(project_uuid)
 
@@ -86,11 +118,13 @@ def get_course_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>", methods=["GET"])
+@require_auth
 def get_project_recommendations(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
 
     careers = CareerMatchRepository.get_by_project_id(project_uuid)
 
@@ -106,9 +140,15 @@ def get_project_recommendations(project_id: str):
 
 
 @recommendations_bp.route("/projects/<project_id>/careers/<occupation_id>", methods=["GET"])
+@require_auth
 def get_career_details(project_id: str, occupation_id: str):
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
+
     try:
-        project_uuid = UUID(project_id)
         occupation_uuid = UUID(occupation_id)
     except ValueError:
         return jsonify({"error": "invalid UUID supplied"}), 400
@@ -136,16 +176,22 @@ def get_career_details(project_id: str, occupation_id: str):
             "project_id": project_id,
             "occupation_id": occupation_id,
             "career": career,
-            "summary": summary,
+            "summary": _with_structured_summary(summary),
             "skill_gaps": skill_gaps,
         }
     )
 
 
 @recommendations_bp.route("/projects/<project_id>/careers/<occupation_id>/courses", methods=["GET"])
+@require_auth
 def get_career_courses(project_id: str, occupation_id: str):
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    project_uuid = project.project_id
+
     try:
-        project_uuid = UUID(project_id)
         occupation_uuid = UUID(occupation_id)
     except ValueError:
         return jsonify({"error": "invalid UUID supplied"}), 400
@@ -165,7 +211,12 @@ def get_career_courses(project_id: str, occupation_id: str):
     response_courses = []
 
     for course in courses:
-        response_courses.append({**course, "summary": summary_map.get(course["course_id"])})
+        response_courses.append(
+            {
+                **course,
+                "summary": _with_structured_summary(summary_map.get(course["course_id"])),
+            }
+        )
 
     return jsonify(
         {

@@ -24,11 +24,11 @@ ALTER TABLE ONLY public.career_skill_gaps
 
 
 --
--- Name: career_skill_gaps career_skill_gaps_student_id_occupation_id_skill_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
+-- Name: career_skill_gaps career_skill_gaps_project_id_occupation_id_skill_id_key; Type: CONSTRAINT; Schema: public; Owner: manojtungala
 --
 
 ALTER TABLE ONLY public.career_skill_gaps
-    ADD CONSTRAINT career_skill_gaps_student_id_occupation_id_skill_id_key UNIQUE (student_id, occupation_id, skill_id);
+    ADD CONSTRAINT career_skill_gaps_project_id_occupation_id_skill_id_key UNIQUE (project_id, occupation_id, skill_id);
 
 
 --

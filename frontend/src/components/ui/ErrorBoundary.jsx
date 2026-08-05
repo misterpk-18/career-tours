@@ -31,7 +31,7 @@ export class ErrorBoundary extends React.Component {
 
     return (
       <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-12">
-        <div className="surface-glass rounded-3xl border border-line p-8 text-center max-w-lg">
+        <div className="surface-panel rounded-xl border border-line p-8 text-center max-w-lg">
           <AlertTriangle className="w-12 h-12 text-danger-fg mx-auto mb-3" aria-hidden="true" />
           <h1 className="text-xl font-bold text-fg">Something went wrong</h1>
           <p className="text-sm text-fg-muted mt-2 mb-6">

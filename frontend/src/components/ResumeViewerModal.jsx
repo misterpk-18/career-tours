@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Download, ExternalLink, Sparkles, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+import { FileText, Download, ExternalLink, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import { resumesAPI } from '../services/api';
 import Modal from './ui/Modal';
 import Alert from './ui/Alert';
@@ -94,7 +94,7 @@ export const ResumeViewerModal = ({ isOpen, onClose, resumeId }) => {
                 download={resume?.file_name || 'resume'}
                 target="_blank"
                 rel="noopener noreferrer"
-                variant="success"
+                variant="primary"
                 size="sm"
                 icon={Download}
               >
@@ -114,19 +114,16 @@ export const ResumeViewerModal = ({ isOpen, onClose, resumeId }) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <MetricTile
               icon={FileText}
-              iconTone="brand"
               label="Document Name"
               value={resume?.file_name || '—'}
             />
             <MetricTile
               icon={Calendar}
-              iconTone="accent"
               label="Parsed Date"
               value={formatDate(resume?.parsed_at)}
             />
             <MetricTile
               icon={hasText ? CheckCircle : AlertCircle}
-              iconTone={hasText ? 'success' : 'warning'}
               label="Parse Status"
               value={hasText ? 'Text Extracted' : 'No Text Extracted'}
               valueTone={hasText ? 'text-success-fg' : 'text-warning-fg'}
@@ -135,7 +132,7 @@ export const ResumeViewerModal = ({ isOpen, onClose, resumeId }) => {
 
           <div>
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <SectionLabel icon={Sparkles} iconClassName="text-warning-fg" className="mb-0">
+              <SectionLabel className="mb-0">
                 Parsed Text Extract
               </SectionLabel>
               <span className="text-xs text-fg-muted">

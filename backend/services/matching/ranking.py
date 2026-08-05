@@ -50,12 +50,14 @@ class CareerRankingService:
             llm = OpenAIService()
             
             def _gen_summary(match):
+                # Stored as JSON in llm_summaries.summary_text; the API parses it back
+                # out for the client.
                 match["summary"] = llm.generate_career_summary(
                     match["occupation_name"],
                     match["score"],
                     match["matched_skills"],
                     match["missing_skills"],
-                )
+                ).model_dump_json()
             
             with ThreadPoolExecutor(max_workers=5) as executor:
                 executor.map(_gen_summary, top_matches)

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FolderPlus,
-  Sparkles,
   ArrowRight,
   UploadCloud,
   Eye,
@@ -10,7 +9,6 @@ import {
   CheckCircle2,
   Clock,
   Layers,
-  Compass,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { projectsAPI } from '../services/api';
@@ -81,38 +79,31 @@ export const HomePage = () => {
   return (
     <PageShell>
       <HeroBanner
-        eyebrow="Student Career Dashboard"
-        eyebrowIcon={Sparkles}
+        eyebrow="Dashboard"
         title={
           <>
-            Hello, <span className="text-gradient">{student?.full_name || 'Student'}</span> 👋
+            Hello, {student?.full_name || 'Student'}
           </>
         }
-        description="Create student projects, upload your resumes, extract AI skill insights, and get match percentages for top career paths."
+        description="Upload a resume to a project, extract your skills, and see which careers they match."
         actions={
           <Button size="lg" icon={FolderPlus} onClick={() => setIsCreateModalOpen(true)}>
             Create New Project
           </Button>
         }
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-line">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 pt-6 border-t border-line">
           <StatTile
             value={projects.length}
             tone="brand"
             label="Total Projects"
-            sublabel="Active Portfolios"
+            sublabel="Projects"
           />
           <StatTile
             value={resumeCount}
             tone="success"
             label="Resumes Uploaded"
-            sublabel="Ready for Extraction"
-          />
-          <StatTile
-            value={<Compass className="w-6 h-6" aria-hidden="true" />}
-            tone="accent"
-            label="AI Recommendation Engine"
-            sublabel="Top 5 Matching"
+            sublabel="Resumes"
           />
         </div>
       </HeroBanner>
@@ -127,7 +118,7 @@ export const HomePage = () => {
           </Button>
         }
       >
-        My Student Projects
+        Your projects
       </SectionHeading>
 
       {/* Non-blocking: a project created after a failed fetch stays visible. */}
@@ -205,7 +196,7 @@ export const HomePage = () => {
                     icon={Eye}
                     onClick={() => setViewResumeId(project.resume_id)}
                   >
-                    Review &amp; Download Resume
+                    View resume
                   </Button>
                 ) : (
                   <Button
@@ -225,7 +216,7 @@ export const HomePage = () => {
                   iconRight={ArrowRight}
                   onClick={() => navigate(`/projects/${project.project_id}`)}
                 >
-                  Open Project Page &amp; Extract Skills
+                  Open project
                 </Button>
               </div>
             </Card>

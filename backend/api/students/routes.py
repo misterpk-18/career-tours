@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify
 
+from api.auth.utils import require_auth
 from repositories.student_repository import StudentRepository
 
 students_bp = Blueprint(
@@ -32,35 +33,25 @@ def _serialize_student(student) -> dict:
     }
 
 
-@students_bp.route("", methods=["POST"])
-def create_student():
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "request body is required"}), 400
-
-    if not data.get("full_name"):
-        return jsonify({"error": "full_name is required"}), 400
-
-    if not data.get("email"):
-        return jsonify({"error": "email is required"}), 400
-
-    try:
-        student = StudentRepository.create(data)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": "failed to create student", "detail": str(e)}), 500
-
-    return jsonify(_serialize_student(student)), 201
+# NOTE: `POST /api/students` used to live here. It was an unauthenticated second
+# way to create an account that skipped the password requirement enforced by
+# `POST /api/auth/register`, so a student could be created with no password at
+# all and no way to sign in. Registration has exactly one entry point now:
+# api/auth/routes.py:register.
 
 
 @students_bp.route("/<student_id>", methods=["GET"])
+@require_auth
 def get_student(student_id: str):
     try:
         student_uuid = UUID(student_id)
     except ValueError:
         return jsonify({"error": "student_id must be a valid UUID"}), 400
+
+    # This response is the student's full profile — name, email, phone, college.
+    # Unauthenticated it was a PII endpoint keyed on a guessable id.
+    if student_uuid != g.student_id:
+        return jsonify({"error": "student not found"}), 404
 
     student = StudentRepository.get_by_id(student_uuid)
 

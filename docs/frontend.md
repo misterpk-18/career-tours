@@ -62,22 +62,27 @@ Production does not use this proxy at all: Nginx serves `dist/` statically and r
 
 ```text
 frontend/
-├── index.html              # app shell; sets the dark body background + Google Fonts
+├── index.html              # app shell; pre-paint theme script + Google Fonts
 ├── vite.config.js          # dev server port + /api proxy
-├── tailwind.config.js      # brand palette, fonts, custom animations
+├── tailwind.config.js      # semantic colour aliases, type scale, two radii
 ├── postcss.config.js
 ├── dist/                   # build output (served by Nginx in production)
 └── src/
     ├── main.jsx            # ReactDOM.createRoot -> <App />, imports index.css
     ├── App.jsx             # ALL routes + ProtectedRoute / PublicRoute wrappers
-    ├── index.css           # Tailwind directives + shared .glass-* / .gradient-* classes
+    ├── index.css           # design tokens, the colour contract, shared component classes
     ├── context/
-    │   └── AuthContext.jsx
+    │   ├── AuthContext.jsx
+    │   └── ThemeContext.jsx               # light | dark | system
     ├── components/
+    │   ├── ui/                            # the design system (~25 primitives)
     │   ├── Navbar.jsx
+    │   ├── ThemeToggle.jsx
     │   ├── CreateProjectModal.jsx
     │   ├── ResumeUploadModal.jsx
     │   └── ResumeViewerModal.jsx
+    ├── hooks/              # useSubmit, useFocusTrap, useBodyScrollLock
+    ├── lib/                # cn, storage, format, apiError
     ├── pages/
     │   ├── LoginPage.jsx
     │   ├── RegisterPage.jsx
@@ -89,7 +94,19 @@ frontend/
         └── api.js          # the single axios module — every API call lives here
 ```
 
-There are no `hooks/`, `utils/`, `layouts/`, or barrel `index.js` files, and no path aliases — imports are relative (`../services/api`).
+`components/ui/` is the design system: `Button`, `Card`, `TextField`, `Modal`,
+`Chip`, `Badge`, `Alert`, `ProgressBar`, `StatTile`, `MetricTile`, `EmptyState`,
+`SelectableCard`, `HeroBanner`, `PageShell` and friends. Build pages out of these
+rather than raw Tailwind — the primitives own the a11y wiring (label/id association,
+`role="listbox"` on selectable lists, focus trapping in modals, `aria-live` on
+spinners), and several of them throw at runtime if misused.
+
+`lib/storage.js` is the **only** module permitted to touch `localStorage`, and it
+documents the rule: no server data in localStorage. Server-owned state is fetched
+on mount.
+
+There are no barrel `index.js` files and no path aliases — imports are relative
+(`../services/api`).
 
 ---
 
@@ -144,7 +161,7 @@ Each method is `async` and returns `response.data` directly (not the axios respo
 | Group | Methods |
 |---|---|
 | `authAPI` | `login`, `register` |
-| `projectsAPI` | `create`, `getById`, `getByStudentId`, `update`, `delete` |
+| `projectsAPI` | `create`, `getById`, `getByStudentId`, `getSkills`, `update`, `delete` |
 | `resumesAPI` | `upload` (multipart override), `getById`, `getPreview`, `extractSkills`, `listMine` |
 | `recommendationsAPI` | `generate`, `getCareers`, `getProjectOverview`, `getCareerDetails`, `getCourses`, `getCareerCourses` |
 
@@ -158,7 +175,7 @@ err.response?.data?.error || err.response?.data?.detail || 'Something went wrong
 
 No data-fetching library. Pages hand-roll it: a `data` / `loading` / `error` state trio, an `async` fetch function, and a `useEffect` that calls it. `HomePage.jsx` is the cleanest example of the four-branch render (`loading` → `error` → empty → content); `CourseRecommendationsPage.jsx` extends it with a per-pane loading/error state plus a response cache keyed by occupation.
 
-`ProjectDetailsPage.jsx` additionally caches extracted skills in `localStorage` under `ct_skills_${projectId}`.
+`ProjectDetailsPage.jsx` fetches a project's stored skills from `projectsAPI.getSkills` on mount. It used to cache them in `localStorage` under `ct_skills_${projectId}` instead, because no endpoint could answer "does this project have skills yet?". That cache is gone: it was server data in `localStorage`, which [`lib/storage.js`](../frontend/src/lib/storage.js) forbids, and it was wrong in any second browser — the cache was empty there, so a project whose skills were already in the database presented as though nothing had been extracted.
 
 ### Gotcha: numeric columns arrive as strings
 
@@ -181,43 +198,123 @@ const toPct = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
 - `isAuthenticated` is `!!token && !!student`.
 - `logout()` clears state and both keys. There is no token-expiry check on the client — the backend rejects expired tokens with `{"error": "token expired"}`.
 
-> **Backend caveat:** only `GET /api/resumes/mine` and `GET /api/resumes/<id>/preview` actually enforce `@require_auth`. The other routes accept ids from the URL or body without verifying ownership, so the frontend's auth is presentation-level for those paths.
+Every request carries the token: the axios instance in `src/services/api.js` attaches
+`Authorization: Bearer <token>` from `lib/storage.js` in a request interceptor, and
+nothing in `src/` calls `fetch` or bare `axios`, so there is no path that bypasses it.
+
+**The API enforces this.** Every route except `POST /api/auth/register` and
+`POST /api/auth/login` requires `@require_auth` *and* checks that the row belongs to
+the caller — see `backend/api/guards.py`. A row owned by another student returns
+**404, not 403**, because a 403 confirms the id exists. Two consequences for frontend
+work:
+
+- Any new endpoint must be called with the shared `api` instance, or it gets a 401.
+- Passing a `student_id` in a request body is pointless; the server takes the owner
+  from the token. `POST /api/projects` ignores a body-supplied `student_id`.
+
+There is still no client-side expiry check and no 401 response interceptor, so an
+expired token currently surfaces as a generic "unable to load" error on every page
+rather than a redirect to login.
 
 ---
 
 ## Styling Conventions
 
-Dark theme only — there is no light mode or theme toggle. `index.html` sets the base classes and loads Plus Jakarta Sans + Inter from Google Fonts; `src/index.css` sets a fixed radial-gradient body background.
+Light and dark, driven by `data-theme` on `<html>` (see `ThemeContext` + the
+pre-paint script in `index.html`). All colour, elevation and radius comes from CSS
+custom properties defined once in `src/index.css` and exposed to Tailwind through
+`tailwind.config.js`. `index.html` loads Plus Jakarta Sans only.
 
-Shared classes defined in `src/index.css` (use these instead of re-inventing the look):
+### The colour contract
+
+This is the rule that keeps the UI from drifting back into a template, and it is
+repeated at the top of both `src/index.css` and `src/lib/cn.js`:
+
+> `brand` (indigo) is the **only** decorative colour — identity, selection, primary
+> action, links, model-generated content. `success` / `warning` / `danger` are
+> **state only**: legal iff the thing they label can be good, at-risk, or failed.
+> A category, a rank, a difficulty and a percentage are none of those.
+
+Concretely, this is why a match percentage renders in `text-fg` rather than green, why
+course difficulty is a neutral chip rather than a purple/amber/green traffic light, and
+why the three dashboard counters share one colour.
+
+Two structural radii: **`rounded-xl`** for any box, **`rounded-lg`** for a box nested
+inside a box, `rounded-full` for pills. `md`, `2xl` and `3xl` are deliberately absent
+from the `borderRadius` config, so `rounded-2xl` compiles to nothing rather than
+creeping back in.
+
+### Shared classes in `src/index.css`
 
 | Class | Use |
 |---|---|
-| `.glass-panel` | Large translucent containers — page heroes, detail panels |
-| `.glass-card` | Interactive cards; includes a hover lift + brand-tinted border |
-| `.glass-input` | Text inputs, with a brand focus ring |
-| `.gradient-text` | Indigo → purple → emerald text gradient for headline accents |
-| `.gradient-button` | Primary indigo CTA |
-| `.gradient-button-emerald` | Secondary/confirm emerald CTA |
+| `.surface-panel` | Static containers — page heroes, detail panels (opaque) |
+| `.surface-panel-interactive` | Clickable cards; hover changes border + elevation |
+| `.field` | Text inputs, with a brand focus border |
+| `.btn-brand` | The one filled button |
+| `.scrim` | Modal backdrop |
 
-From `tailwind.config.js`: the `brand` palette (indigo 50–950), `font-sans` → Plus Jakarta Sans, and the `pulse-slow` / `float` animations. Tailwind's default `emerald`, `amber`, `slate`, and `purple` scales remain available (`extend` merges rather than replaces).
+Reach for the primitives in `src/components/ui/` before these — a raw class usually
+means a component is missing.
 
-Recurring composition patterns, worth copying verbatim for visual consistency:
+### Enforced by code, not convention
 
-- Page shell: `max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8`
-- Master–detail: `grid grid-cols-1 lg:grid-cols-12 gap-8` with `lg:col-span-5` + `lg:col-span-7`
-- Hero banner: `glass-panel rounded-3xl p-8 relative overflow-hidden` plus an absolutely-positioned `blur-3xl` glow div
-- Progress bar: `w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800` wrapping a `bg-gradient-to-r from-brand-500 via-indigo-500 to-emerald-400` fill
-- Loading: `<Loader2 className="w-10 h-10 animate-spin text-brand-400" />`
-- Error alert: `bg-red-950/60 border border-red-800/60 text-red-200`
-- AI-generated content: `bg-brand-950/30 border border-brand-800/40` with a `Sparkles` heading
+There is no linter in this project, so the rules are enforced where they can fail loudly:
+
+- `Chip` and `Badge` **throw** on an unknown `tone`; `SectionHeading` and `EmptyState`
+  throw when the heading level is omitted.
+
+  Know the cost of that choice: a throw during render reaches `ErrorBoundary`, so a
+  wrong tone string replaces the **entire page** with "Something went wrong" — not a
+  mis-coloured chip. `CareerRecommendationsPage` passed the removed `tone="success"`
+  for its "Strengths" list and took the careers page down completely. When a tone is
+  deleted from a primitive, grep every call site in the same commit; and note that
+  `Badge` and `Chip` do *not* accept the same tones (`Badge` has `success`, `Chip`
+  deliberately does not), so a tone valid on one is a page-killer on the other.
+- `Card` has no `radius` or `bordered` prop, `StatTile` no `tone`, `MetricTile` no
+  `iconTone`, `HeroBanner` no `orbTone`/`eyebrowTone`, `Chip` no `dot`. Deleting the
+  prop is what prevents the drift; a convention note would not.
+- `tailwind.config.js` no longer defines `accent`, the raw `brand.50–950` ramp,
+  `shadow-glass`, `animate-float` or `animate-pulse-slow`.
+
+### Deliberately absent
+
+Gone in the restraint pass, and not to be re-added without a reason that beats the one
+for removing them: the tri-hue `.text-gradient` (it was on every page's `h1`, the
+wordmark, *and* every progress-bar fill, so a bar's hue changed with its value while
+meaning nothing); `backdrop-filter` glass (nothing behind it to blur on a near-white
+canvas); the blurred decorative orbs and the page-wide `.app-aura`; coloured glow
+shadows and hover translate; `font-extrabold`; uppercase `tracking-wider` form labels;
+and `Sparkles` as a generic "AI happened here" glyph — it survives on exactly one
+control, the one that actually calls the model.
+
+### Composition patterns
+
+- Page shell: `<PageShell>` → `max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8`
+- Master–detail: `grid grid-cols-1 lg:grid-cols-12 gap-8` with `lg:col-span-5` +
+  `lg:col-span-7`. **Known gap:** below `lg` the detail pane stacks below the list and
+  nothing scrolls to it, so on a phone tapping a card looks like nothing happened.
+- Model-generated content: `<AiInsightBox>` — a left rule, not a nested tinted box
+- Loading: `<PageSpinner>` / `<PaneSpinner>` / `<Button loading>`; there are no skeletons
+- Errors: `<Alert tone="error">` (`role="alert"`); other tones are `role="status"`
 
 ---
 
 ## Page Notes
 
 ### `ProjectDetailsPage.jsx`
-The workspace hub. Resume upload, skill extraction, and the "Recommend Careers" trigger (`recommendationsAPI.generate`) — a single call that generates career matches, skill gaps, **and** course recommendations server-side. Once generated, the action row offers "View Recommended Careers" and "View Recommended Courses".
+The workspace hub. Resume upload, skill extraction, and the "Recommend Careers" trigger (`recommendationsAPI.generate`) — a single call that generates career matches, skill gaps, **and** course recommendations server-side.
+
+The pipeline is strictly sequential, and the action row shows only the step that is actually available. Both inputs to that decision come from the server — `projectsAPI.getSkills` and `recommendationsAPI.getProjectOverview` — never from client state:
+
+| Project state | Controls shown |
+|---|---|
+| no resume | upload only (banner + warning alert) |
+| resume, no skills | "Extract skills" |
+| skills extracted | *Skills Extracted* badge, "Recommend Careers" |
+| recommendations exist | "View Recommended Careers", "View Recommended Courses" |
+
+"Extract skills" is **removed** rather than rendered disabled when there is no resume: a dead button invites the click it then refuses, and the upload affordance already appears twice on the page.
 
 ### `CareerRecommendationsPage.jsx`
 Master–detail over the top 5 career matches. The left list comes from `getProjectOverview`; selecting a career lazily calls `getCareerDetails` for its AI summary and skill gaps.

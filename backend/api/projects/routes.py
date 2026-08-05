@@ -1,8 +1,12 @@
 from uuid import UUID
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 
+from api.auth.utils import require_auth
+from api.guards import owned_project
+from api.serializers import serialize_project_skill
 from repositories.project_repository import ProjectRepository
+from repositories.project_skill_repository import ProjectSkillRepository
 
 
 projects_bp = Blueprint(
@@ -25,20 +29,22 @@ def _serialize_project(project) -> dict:
 
 
 @projects_bp.route("", methods=["POST"])
+@require_auth
 def create_project():
     data = request.get_json()
 
     if not data:
         return jsonify({"error": "request body is required"}), 400
 
-    if not data.get("student_id"):
-        return jsonify({"error": "student_id is required"}), 400
-
     if not data.get("project_name"):
         return jsonify({"error": "project_name is required"}), 400
 
+    # The owner comes from the token, never the body. Trusting a body-supplied
+    # student_id would let any caller file a project under someone else's account.
+    project_data = {**data, "student_id": g.student_id}
+
     try:
-        project = ProjectRepository.create(data)
+        project = ProjectRepository.create(project_data)
     except Exception:
         return jsonify({"error": "failed to create project"}), 500
 
@@ -46,26 +52,44 @@ def create_project():
 
 
 @projects_bp.route("/<project_id>", methods=["GET"])
+@require_auth
 def get_project(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
-
-    project = ProjectRepository.get_by_id(project_uuid)
-
-    if project is None:
-        return jsonify({"error": "project not found"}), 404
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
     return jsonify(_serialize_project(project))
 
 
+@projects_bp.route("/<project_id>/skills", methods=["GET"])
+@require_auth
+def get_project_skills(project_id: str):
+    """The stored skills for a project, or an empty list if none were extracted.
+
+    The page needs this to decide which step of the pipeline the project is on.
+    Without it the client had no way to ask, so it cached the extraction response
+    in localStorage and guessed — which read as "no skills extracted" in any
+    other browser.
+    """
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    skills = ProjectSkillRepository.get_by_project_id(project.project_id)
+
+    return jsonify([serialize_project_skill(skill) for skill in skills])
+
+
 @projects_bp.route("/student/<student_id>", methods=["GET"])
+@require_auth
 def get_student_projects(student_id: str):
     try:
         student_uuid = UUID(student_id)
     except ValueError:
         return jsonify({"error": "student_id must be a valid UUID"}), 400
+
+    if student_uuid != g.student_id:
+        return jsonify({"error": "student not found"}), 404
 
     projects = ProjectRepository.get_by_student_id(student_uuid)
 
@@ -73,33 +97,37 @@ def get_student_projects(student_id: str):
 
 
 @projects_bp.route("/<project_id>", methods=["PUT"])
+@require_auth
 def update_project(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
     data = request.get_json()
 
     if not data:
         return jsonify({"error": "request body is required"}), 400
 
-    project = ProjectRepository.update(project_uuid, data)
+    # Ownership is not editable: a PUT carrying student_id must not reassign the
+    # project, and project_id in the body must not redirect the update.
+    payload = {key: value for key, value in data.items() if key not in ("student_id", "project_id")}
 
-    if project is None:
+    updated = ProjectRepository.update(project.project_id, payload)
+
+    if updated is None:
         return jsonify({"error": "project not found"}), 404
 
-    return jsonify(_serialize_project(project))
+    return jsonify(_serialize_project(updated))
 
 
 @projects_bp.route("/<project_id>", methods=["DELETE"])
+@require_auth
 def delete_project(project_id: str):
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
-    deleted = ProjectRepository.delete(project_uuid)
+    deleted = ProjectRepository.delete(project.project_id)
 
     if not deleted:
         return jsonify({"error": "project not found"}), 404

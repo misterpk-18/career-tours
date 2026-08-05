@@ -5,14 +5,22 @@
 /* ============================================================================
    1. TOKENS
    Values are space-separated RGB channels so Tailwind opacity modifiers work
-   (see the `ch()` helper in tailwind.config.js). Non-channel values (shadows,
-   blur radii, glass fills) are plain CSS and consumed via var() directly.
+   (see the `ch()` helper in tailwind.config.js). Non-channel values (shadows)
+   are plain CSS and consumed via var() directly.
 
    Kept in ONE file deliberately: Vite runs PostCSS per-file before resolving
    @import, so Tailwind's @layer inside an imported partial leaks out as native
    CSS @layer and loses its ordering guarantees.
    ========================================================================= */
 @layer base {
+  /* COLOUR CONTRACT
+     `brand` (indigo) is the ONLY decorative colour: identity, selection, primary
+     action, links, model-generated content.
+     `success` / `warning` / `danger` are STATE ONLY — legal iff the thing they
+     label can be good, at-risk, or failed. A category, a rank, a difficulty and
+     a percentage are none of those, so they are neutral.
+     No gradients. Two structural radii (xl, lg) plus `full` for pills. One
+     filled button style. */
   :root {
     color-scheme: light;
 
@@ -42,10 +50,6 @@
     --brand-subtle: 238 242 255;
     --brand-subtle-fg: 55 48 163;
 
-    --accent-solid: 168 85 247;
-    --accent-fg: 126 34 206;
-    --accent-subtle: 250 245 255;
-
     --success-solid: 5 150 105;
     --success-fg: 4 120 87;
     --success-subtle: 236 253 245;
@@ -60,28 +64,9 @@
 
     --focus: 79 70 229;
 
-    /* Glass, LIGHT recipe. On a near-white canvas a translucent white fill has
-       nothing to separate it from the page, a white hairline is invisible, and
-       an inset top highlight is meaningless. So: elevation moves to the shadow,
-       the hairline flips to dark-alpha, and saturate() amplifies the aura
-       bleeding through — that saturation boost is what makes light glass read
-       as translucent material rather than grey haze. */
-    --glass-bg: rgb(255 255 255 / 0.72);
-    --glass-bg-hover: rgb(255 255 255 / 0.9);
-    --glass-border: rgb(15 23 42 / 0.08);
-    --glass-border-hover: rgb(79 70 229 / 0.45);
-    --glass-blur: 20px;
-    --glass-highlight: 0 0 0 0 transparent;
-    --glass-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px -8px rgb(15 23 42 / 0.1);
-    --glass-shadow-hover: 0 2px 4px rgb(15 23 42 / 0.07), 0 16px 36px -12px rgb(79 70 229 / 0.22);
-
     --shadow-e1: 0 1px 2px rgb(15 23 42 / 0.06);
     --shadow-e2: 0 4px 12px -4px rgb(15 23 42 / 0.1);
     --shadow-e3: 0 16px 40px -12px rgb(15 23 42 / 0.16);
-
-    --aura-1: rgb(99 102 241 / 0.1);
-    --aura-2: rgb(168 85 247 / 0.08);
-    --aura-3: rgb(16 185 129 / 0.07);
   }
 
   [data-theme='dark'] {
@@ -109,9 +94,6 @@
     --brand-subtle: 30 27 75;
     --brand-subtle-fg: 199 210 254;
 
-    --accent-fg: 216 180 254;
-    --accent-subtle: 43 20 66;
-
     --success-solid: 16 185 129;
     --success-fg: 52 211 153;
     --success-subtle: 2 44 34;
@@ -125,17 +107,6 @@
     --danger-subtle: 69 10 10;
 
     --focus: 129 140 248;
-
-    /* Glass, DARK recipe: the white hairline plus an inset highlight carry the
-       elevation, and the shadow is barely visible against a near-black canvas. */
-    --glass-bg: rgb(15 23 42 / 0.72);
-    --glass-bg-hover: rgb(30 41 59 / 0.88);
-    --glass-border: rgb(255 255 255 / 0.1);
-    --glass-border-hover: rgb(99 102 241 / 0.45);
-    --glass-blur: 16px;
-    --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.07);
-    --glass-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.6);
-    --glass-shadow-hover: 0 16px 36px -12px rgb(79 70 229 / 0.35);
 
     --shadow-e1: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-e2: 0 6px 16px -6px rgb(0 0 0 / 0.5);
@@ -236,61 +207,33 @@
    precedence against utilities.
    ========================================================================= */
 @layer components {
-  /* Page-wide ambient gradient. Moved off <body> so it no longer needs
-     background-attachment: fixed, which repaints per scroll on iOS Safari and
-     interacts badly with backdrop-filter. */
-  .app-aura {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image:
-      radial-gradient(at 0% 0%, var(--aura-1) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, var(--aura-2) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, var(--aura-3) 0px, transparent 50%);
+  /* Opaque, deliberately. These were `.surface-glass` — a translucent fill plus
+     backdrop-filter blur(20px) saturate(1.6) — which on a near-white canvas had
+     nothing behind it to blur, so the effect cost a compositor layer per card
+     and returned grey haze. The name changed with the implementation: a class
+     called "glass" invites the blur straight back. */
+  .surface-panel {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--line));
+    box-shadow: var(--shadow-e1);
   }
 
-  .surface-glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), var(--glass-highlight);
-  }
-
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .surface-glass {
-      background: rgb(var(--surface));
-    }
-  }
-
-  .surface-glass-interactive {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), var(--glass-highlight);
+  .surface-panel-interactive {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--line));
+    box-shadow: var(--shadow-e1);
     transition:
-      background-color 0.2s,
-      border-color 0.2s,
-      box-shadow 0.2s,
-      transform 0.2s;
+      border-color 0.15s,
+      box-shadow 0.15s;
   }
 
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .surface-glass-interactive {
-      background: rgb(var(--surface));
-    }
-  }
-
-  /* Hover-lift only on devices with a real pointer. On touch, :hover sticks
-     after a tap, leaving cards permanently raised. */
+  /* Hover only on devices with a real pointer. On touch, :hover sticks after a
+     tap, leaving cards permanently in the hover state. Elevation and border
+     carry it now — no translate, and no coloured glow. */
   @media (hover: hover) and (pointer: fine) {
-    .surface-glass-interactive:hover {
-      background: var(--glass-bg-hover);
-      border-color: var(--glass-border-hover);
-      box-shadow: var(--glass-shadow-hover), var(--glass-highlight);
-      transform: translateY(-2px);
+    .surface-panel-interactive:hover {
+      border-color: rgb(var(--line-strong));
+      box-shadow: var(--shadow-e2);
     }
   }
 
@@ -315,61 +258,23 @@
     background: rgb(var(--surface));
   }
 
-  /* Real colour first, then the clip. Previously -webkit-text-fill-color:
-     transparent had no fallback, so the page h1s and the brand wordmark
-     rendered INVISIBLE wherever background-clip:text was unsupported or
-     overridden (notably forced-colors mode). */
-  .text-gradient {
-    color: rgb(var(--brand-fg));
-    background-image: linear-gradient(
-      135deg,
-      rgb(var(--brand-solid)) 0%,
-      rgb(var(--accent-solid)) 50%,
-      rgb(var(--success-solid)) 100%
-    );
-  }
+  /* `.text-gradient` lived here: an indigo->purple->emerald clip applied to
+     every page h1 and the wordmark, which is why the whole app read as one
+     rainbow smear. It needed a colour fallback and a forced-colors override to
+     avoid rendering invisible; deleting it retires all three.
 
-  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    .text-gradient {
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
-
+     `.btn-success` lived here too. Its callers were all navigation, not
+     confirmation, so green had stopped meaning anything. One filled button. */
   .btn-brand {
-    background-image: linear-gradient(
-      135deg,
-      rgb(var(--brand-solid)) 0%,
-      rgb(var(--brand-solid-hover)) 100%
-    );
+    background: rgb(var(--brand-solid));
     color: rgb(var(--fg-on-solid));
-    box-shadow: 0 4px 14px -4px rgb(var(--brand-solid) / 0.45);
-    transition:
-      filter 0.2s,
-      box-shadow 0.2s,
-      transform 0.2s;
-  }
-
-  .btn-success {
-    background-image: linear-gradient(
-      135deg,
-      rgb(var(--success-solid)) 0%,
-      rgb(var(--success-fg)) 100%
-    );
-    color: rgb(var(--fg-on-solid));
-    box-shadow: 0 4px 14px -4px rgb(var(--success-solid) / 0.45);
-    transition:
-      filter 0.2s,
-      box-shadow 0.2s,
-      transform 0.2s;
+    transition: background-color 0.15s;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .btn-brand:hover:not(:disabled),
-    .btn-success:hover:not(:disabled) {
-      filter: saturate(1.1) brightness(0.94);
-      transform: translateY(-1px);
+    .btn-brand:hover:not(:disabled) {
+      /* Darker in light, lighter in dark — one rule reads correctly in both. */
+      background: rgb(var(--brand-solid-hover));
     }
   }
 
@@ -386,8 +291,10 @@
    high-contrast mode, and the gradient text would be unreadable.
    ========================================================================= */
 @media (forced-colors: active) {
-  .surface-glass,
-  .surface-glass-interactive,
+  /* Selectors must track the .surface-panel* -> .surface-panel* rename. If they
+     drift, high-contrast users silently lose these overrides. */
+  .surface-panel,
+  .surface-panel-interactive,
   .scrim {
     background: Canvas !important;
     backdrop-filter: none !important;
@@ -396,15 +303,7 @@
     box-shadow: none !important;
   }
 
-  .text-gradient {
-    background-image: none !important;
-    -webkit-text-fill-color: currentColor !important;
-    color: CanvasText !important;
-  }
-
-  .btn-brand,
-  .btn-success {
-    background-image: none !important;
+  .btn-brand {
     background: ButtonFace !important;
     color: ButtonText !important;
     border: 1px solid ButtonText !important;
@@ -417,9 +316,5 @@
 
   :focus-visible {
     outline-color: Highlight !important;
-  }
-
-  .app-aura {
-    display: none !important;
   }
 }

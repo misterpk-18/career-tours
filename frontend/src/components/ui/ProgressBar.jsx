@@ -9,7 +9,7 @@ import { cn } from '../../lib/cn';
  * from the API can no longer overflow the track — the careers page previously
  * fed an unclamped Math.round straight into the inline width.
  */
-export const ProgressBar = ({ value, label, valueLabel, valueTone = 'text-success-fg', className }) => {
+export const ProgressBar = ({ value, label, valueLabel, valueTone = 'text-fg', className }) => {
   const pct = toPct(value);
 
   return (
@@ -29,7 +29,7 @@ export const ProgressBar = ({ value, label, valueLabel, valueTone = 'text-succes
         className="w-full bg-surface-3 h-2 rounded-full overflow-hidden border border-line"
       >
         <div
-          className="bg-gradient-to-r from-brand-solid via-accent-solid to-success-solid h-full rounded-full transition-all duration-500"
+          className="bg-brand-solid h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>

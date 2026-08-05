@@ -18,7 +18,7 @@ The repository is a monorepo with two applications:
 | [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
 | [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
 | [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
-| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx |
+| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx + HTTPS |
 | [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
 
 ---
@@ -27,7 +27,8 @@ The repository is a monorepo with two applications:
 
 **Backend**
 - **Framework**: Python 3, Flask
-- **Database**: PostgreSQL, accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
+- **Runtime**: Gunicorn on EC2 (currently live) and AWS Lambda. `backend/app.py` exposes both — `app` for a WSGI server, and `handler` for Lambda via Mangum. Mangum is an ASGI adapter and Flask is a WSGI app, so `asgiref.wsgi.WsgiToAsgi` bridges the two; the Flask app and its blueprints are identical on both runtimes.
+- **Database**: PostgreSQL hosted on **Neon** — every environment, local included, connects to that one endpoint over TLS. Accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
 - **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (currently accessed using Hugging Face API), `scikit-learn`, `langchain`, **LangSmith**
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
@@ -44,7 +45,7 @@ The repository is a monorepo with two applications:
 ```text
 career-tours/
 ├── backend/                  # Flask API and matching engine
-│   ├── app.py                # app factory, blueprint registration, health endpoints
+│   ├── app.py                # app factory, blueprint registration, health endpoints, Lambda handler
 │   ├── api/                  # blueprints: auth, students, resumes, recommendations, projects
 │   ├── config/               # database connection configuration
 │   ├── models/               # plain dataclass DTOs representing domain entities
@@ -96,6 +97,23 @@ See [docs/frontend.md](docs/frontend.md) for the full guide.
 
 All requests and responses use the `application/json` content type unless specified otherwise. URL paths are relative to the root URL (e.g., `http://127.0.0.1:5000` in local development, or your host in production).
 
+### Authentication
+
+**Every endpoint below requires a bearer token except `GET /`, `GET /db-test`, `POST /api/auth/register` and `POST /api/auth/login`.**
+
+```http
+Authorization: Bearer <token>
+```
+
+The token comes from `register` or `login`. Missing or malformed → `401 {"error": "authorization token required"}`; expired → `401 {"error": "token expired"}`; invalid signature → `401 {"error": "invalid token"}`.
+
+Authentication alone is not the whole check. Every id in this API is a UUID in a URL, and UUIDs travel — they show up in the UI, in logs and in shared links — so each route also verifies that the row belongs to the caller (`backend/api/guards.py`):
+
+- A project, resume, student or recommendation belonging to **another** student returns **`404`, not `403`**. A 403 would confirm the id exists, which is the one thing an enumerating caller wants.
+- The owner is always taken from the token, never the request body. `POST /api/projects` ignores a body-supplied `student_id`, and `PUT /api/projects/<id>` cannot reassign ownership.
+
+> Prior to this, only `GET /api/resumes/mine` and `GET /api/resumes/<id>/preview` enforced auth. Every other route served any caller who knew an id, including student PII, resume-derived profiles, project deletion, and the billed LLM endpoints.
+
 ### Table of Contents
 1. [Base & Health Check](#1-base--health-check)
 2. [Authentication API (`/api/auth`)](#2-authentication-api-apiauth)
@@ -124,7 +142,7 @@ Tests active connectivity to the PostgreSQL database.
 - **Response (200 OK)**:
   ```json
   {
-    "database": "career_tours"
+    "database": "neondb"
   }
   ```
 - **Response (500 Internal Server Error)**:
@@ -141,7 +159,7 @@ Tests active connectivity to the PostgreSQL database.
 JWT-based authentication for students. On success, both endpoints return a signed **JWT** (HS256) alongside the student profile. The token encodes the `student_id` in its `sub` claim and expires after `JWT_EXPIRY_HOURS` (default 24). Registered users are stored in the same `students` table; `email` and `phone` are both **unique**, and passwords are stored only as salted hashes (`werkzeug`), never returned in responses.
 
 #### **POST /api/auth/register**
-Registers a new student and returns an access token. Accepts the same optional profile fields as `POST /api/students` (`phone`, `college_name`, etc.); only `full_name`, `email`, and `password` are required.
+Registers a new student and returns an access token. Optional profile fields (`phone`, `college_name`, `degree_name`, `target_role`, …) may be included; only `full_name`, `email`, and `password` are required. Blank strings are stored as NULL.
 - **Request Body**:
   ```json
   {
@@ -213,60 +231,17 @@ Authenticates a student by email and password and returns an access token.
 
 ### 3. Student Management API (`/api/students`)
 
-#### **POST /api/students**
-Registers a new student profile in the system.
-- **Request Body**:
-  ```json
-  {
-    "full_name": "Manoj Tungala",
-    "email": "manoj@example.com",
-    "phone": "+1234567890",
-    "college_name": "State University",
-    "degree_name": "Bachelor of Science",
-    "branch_name": "Computer Science",
-    "current_year_semester": "4th Year / 8th Semester",
-    "graduation_year": 2026,
-    "preferred_job_location": "San Francisco, CA",
-    "target_role": "GenAI / Cloud Data Engineer",
-    "career_interest": "Software Development, Machine Learning",
-    "learning_hours_per_week": 15,
-    "internship_preference": "Remote/Hybrid",
-    "work_mode_preference": "Hybrid"
-  }
-  ```
-- **Response (201 Created)**:
-  ```json
-  {
-    "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
-    "full_name": "Manoj Tungala",
-    "email": "manoj@example.com",
-    "phone": "+1234567890",
-    "college_name": "State University",
-    "degree_name": "Bachelor of Science",
-    "branch_name": "Computer Science",
-    "current_year_semester": "4th Year / 8th Semester",
-    "graduation_year": 2026,
-    "preferred_job_location": "San Francisco, CA",
-    "target_role": "GenAI / Cloud Data Engineer",
-    "career_interest": "Software Development, Machine Learning",
-    "learning_hours_per_week": 15,
-    "internship_preference": "Remote/Hybrid",
-    "work_mode_preference": "Hybrid",
-    "created_at": "2026-06-24T14:32:10.123456",
-    "updated_at": "2026-06-24T14:32:10.123456"
-  }
-  ```
-- **Response (400 Bad Request)**:
-  ```json
-  {
-    "error": "full_name is required"
-  }
-  ```
+> `POST /api/students` has been **removed**. It was an unauthenticated second way
+> to create an account that skipped the password rules in `POST /api/auth/register`,
+> so it could create a student with no password and therefore no way to sign in.
+> Registration has exactly one entry point: `POST /api/auth/register`.
 
 #### **GET /api/students/<student_id>**
-Retrieves details of an existing student profile by UUID.
+Retrieves a student profile by UUID. Only the authenticated student's own profile is
+reachable — any other `student_id` returns `404`.
+- **Headers**: `Authorization: Bearer <token>` (required).
 - **Path Parameters**:
-  - `student_id` (string, required): The UUID of the student.
+  - `student_id` (string, required): The UUID of the student. Must match the token.
 - **Response (200 OK)**:
   ```json
   {
@@ -312,10 +287,10 @@ Every project response includes a **`resume_id`** field — the project's linked
 
 #### **POST /api/projects**
 Creates a new project track for a student. The project starts with `resume_id: null`.
+- **Headers**: `Authorization: Bearer <token>` (required). The project owner is taken from the token; a `student_id` in the body is ignored.
 - **Request Body**:
   ```json
   {
-    "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
     "project_name": "Summer Internship 2026 prep",
     "description": "Matching resume skills to Cloud Data Engineering and GenAI roles",
     "status": "active"
@@ -742,8 +717,9 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
 ### Prerequisites
 
 - Python 3.10+
-- PostgreSQL 15+
 - Node.js 18+ (for the frontend)
+- Access to the project's Neon Postgres database (no local Postgres server is
+  needed; the `psql` client is still useful for applying DDL by hand)
 
 ### 1. Clone the repository
 
@@ -768,12 +744,15 @@ cd career-tours
 3. **Environment Configuration**:
    Create a `.env` file in the repo root and configure the necessary environment variables:
    ```env
-   # Database Configuration
-   DB_HOST=localhost
+   # Database Configuration (Neon-hosted Postgres — see your Neon project's
+   # connection details. There is no local Postgres; every environment,
+   # including local development, talks to Neon.)
+   DB_HOST=ep-your-endpoint.region.aws.neon.tech
    DB_PORT=5432
-   DB_NAME=career_tours
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
+   DB_NAME=neondb
+   DB_USER=neondb_owner
+   DB_PASSWORD=your_neon_password
+   DB_SSLMODE=require   # Neon rejects plaintext connections
 
    # Authentication (JWT)
    SECRET_KEY=your_long_random_secret   # e.g. python -c "import secrets; print(secrets.token_urlsafe(32))"
@@ -823,5 +802,5 @@ npm run preview                  # serve the built bundle locally
 
 There is no linter or test suite configured in the frontend; a successful `npm run build` is the quality gate.
 
-For production (Gunicorn + Nginx serving `frontend/dist` and proxying `/api`), see [docs/deployment.md](docs/deployment.md).
+For production (Gunicorn + Nginx serving `frontend/dist` and proxying `/api`), see [docs/deployment.md](docs/deployment.md). The live deployment is **https://career-tours.duckdns.org**.
    The application will run on `http://127.0.0.1:5000` by default.

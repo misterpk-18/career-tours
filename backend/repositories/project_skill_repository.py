@@ -7,8 +7,13 @@ from config.database import db
 
 
 class ProjectSkillRepository:
+    # Width of project_skills.source; see StudentSkillRepository.SOURCE_MAX_LENGTH.
+    SOURCE_MAX_LENGTH = 100
+
     @staticmethod
     def bulk_create(project_id, skills):
+        """Insert every extracted skill. Does NOT commit -- the caller owns the
+        transaction so project and student skills land together or not at all."""
         for skill in skills:
             db.session.execute(
                 text("""
@@ -36,11 +41,11 @@ class ProjectSkillRepository:
                     "skill_name": skill.get("skill_name"),
                     "proficiency_level": skill.get("proficiency_level", 5),
                     "confidence_score": skill.get("confidence_score", 1.0),
-                    "source": skill.get("source", "resume"),
+                    "source": (skill.get("source") or "resume")[
+                        : ProjectSkillRepository.SOURCE_MAX_LENGTH
+                    ],
                 },
             )
-
-        db.session.commit()
 
     @staticmethod
     def get_by_project_id(project_id):

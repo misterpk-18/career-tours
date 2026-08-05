@@ -2,10 +2,12 @@
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from flask import Blueprint, g, jsonify, request
+from flask import Blueprint, current_app, g, jsonify, request
 from werkzeug.utils import secure_filename
 
 from api.auth.utils import require_auth
+from api.guards import owned_project
+from api.serializers import serialize_project_skill
 from config.database import db
 from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
@@ -31,17 +33,7 @@ def _remove_file(file_path: Path) -> None:
         file_path.unlink()
 
 
-def _serialize_skill(skill: dict) -> dict:
-    return {
-        "project_skill_id": str(skill["project_skill_id"]),
-        "project_id": str(skill["project_id"]),
-        "skill_id": str(skill["skill_id"]) if skill["skill_id"] is not None else None,
-        "skill_name": skill["skill_name"],
-        "proficiency_level": skill["proficiency_level"],
-        "confidence_score": float(skill["confidence_score"]),
-        "source": skill["source"],
-        "created_at": skill["created_at"].isoformat(),
-    }
+_serialize_skill = serialize_project_skill
 
 
 def _serialize_resume(resume) -> dict:
@@ -70,6 +62,7 @@ def _serialize_resume_list_item(resume, preview_url) -> dict:
 
 
 @resume_bp.route("/upload", methods=["POST"])
+@require_auth
 def upload_resume():
     project_id = request.form.get("project_id")
     file = request.files.get("resume_file")
@@ -80,15 +73,11 @@ def upload_resume():
     if not file:
         return jsonify({"error": "resume_file is required"}), 400
 
-    try:
-        project_uuid = UUID(project_id)
-    except ValueError:
-        return jsonify({"error": "project_id must be a valid UUID"}), 400
+    project, error = owned_project(project_id)
+    if error:
+        return error
 
-    project = ProjectRepository.get_by_id(project_uuid)
-
-    if project is None:
-        return jsonify({"error": "project not found"}), 404
+    project_uuid = project.project_id
 
     if not file.filename:
         return jsonify({"error": "resume_file must have a filename"}), 400
@@ -154,12 +143,11 @@ def upload_resume():
             raw_text=raw_text,
             file_name=original_name,
         )
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
+    except Exception:
         db.session.rollback()
         _remove_file(file_path)
-        return jsonify({"error": "failed to save resume record", "detail": str(e)}), 500
+        current_app.logger.exception("upload_resume: failed to save resume record")
+        return jsonify({"error": "failed to save resume record"}), 500
 
     # Point the project at its (current) resume. Non-fatal if it fails: the
     # resume is already saved and reachable via resumes.project_id.
@@ -203,6 +191,7 @@ def list_my_resumes():
 
 
 @resume_bp.route("/<resume_id>", methods=["GET"])
+@require_auth
 def get_resume(resume_id: str):
     try:
         resume_uuid = UUID(resume_id)
@@ -211,7 +200,9 @@ def get_resume(resume_id: str):
 
     resume = ResumeRepository.get_by_id(resume_uuid)
 
-    if resume is None:
+    # 404 rather than 403 for another student's resume — see api/guards.py. This
+    # response carries raw_text, i.e. the entire contents of the CV.
+    if resume is None or resume.student_id != g.student_id:
         return jsonify({"error": "resume not found"}), 404
 
     return jsonify(_serialize_resume(resume))
@@ -257,6 +248,7 @@ def preview_resume(resume_id: str):
 
 
 @resume_bp.route("/<resume_id>/extract-skills", methods=["POST"])
+@require_auth
 def extract_skills(resume_id: str):
     try:
         resume_uuid = UUID(resume_id)
@@ -265,7 +257,9 @@ def extract_skills(resume_id: str):
 
     resume = ResumeRepository.get_by_id(resume_uuid)
 
-    if resume is None:
+    # Unauthenticated, this endpoint let anyone with a resume id spend money on
+    # the OpenAI account and read the extracted profile back.
+    if resume is None or resume.student_id != g.student_id:
         return jsonify({"error": "resume not found"}), 404
 
     if not resume.raw_text:
@@ -277,6 +271,35 @@ def extract_skills(resume_id: str):
     if not resume.project_id:
         return jsonify({"error": "resume has no associated project"}), 400
 
+    # Check the database before parsing anything: if this project's skills are
+    # already stored, return them instead of paying for another LLM extraction.
+    # Pass {"force": true} to re-extract deliberately.
+    if not payload.get("force"):
+        try:
+            existing = ResumeSkillExtractor.existing_result(
+                resume.project_id,
+                resume.student_id,
+            )
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("extract_skills: failed to read stored skills")
+            return jsonify({"error": "failed to extract skills"}), 500
+
+        if existing is not None:
+            return jsonify(
+                {
+                    "resume_id": str(resume.resume_id),
+                    "student_id": str(resume.student_id),
+                    "summary": existing["summary"],
+                    "skills_saved": existing["skills_saved"],
+                    "additional_skills_saved": existing["additional_skills_saved"],
+                    "skills": [
+                        _serialize_skill(skill) for skill in existing["skills"]
+                    ],
+                    "reused": True,
+                }
+            )
+
     try:
         result = ResumeSkillExtractor.extract_and_save(
             resume.project_id,
@@ -285,14 +308,15 @@ def extract_skills(resume_id: str):
             questionnaire_answers,
         )
     except RuntimeError as exc:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": str(exc)}), 500
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
         db.session.rollback()
-        return jsonify({"error": "failed to extract skills", "detail": str(e)}), 500
+        current_app.logger.exception("extract_skills: extraction failed")
+        return jsonify({"error": str(exc)}), 500
+    except Exception:
+        # Never echo the exception back: SQLAlchemy errors carry the full statement
+        # and bound parameters, which is user data.
+        db.session.rollback()
+        current_app.logger.exception("extract_skills: failed to extract skills")
+        return jsonify({"error": "failed to extract skills"}), 500
 
     return jsonify(
         {
@@ -302,5 +326,6 @@ def extract_skills(resume_id: str):
             "skills_saved": result["skills_saved"],
             "additional_skills_saved": result["additional_skills_saved"],
             "skills": [_serialize_skill(skill) for skill in result["skills"]],
+            "reused": False,
         }
     )

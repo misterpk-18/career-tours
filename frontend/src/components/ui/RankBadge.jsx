@@ -13,7 +13,7 @@ const SIZES = {
 export const RankBadge = ({ rank, size = 'md', className }) => (
   <div
     className={cn(
-      'rounded-xl bg-brand-subtle text-brand-subtle-fg font-extrabold flex items-center justify-center border border-brand-solid/30 shrink-0',
+      'rounded-xl bg-brand-subtle text-brand-subtle-fg font-bold flex items-center justify-center border border-brand-solid/30 shrink-0',
       SIZES[size] || SIZES.md,
       className
     )}

@@ -131,14 +131,14 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Primary Key:** `match_id` (uuid)
 **Foreign Keys:** `student_id` → `students.student_id` (CASCADE); `occupation_id` → `occupations.occupation_id` (CASCADE); `project_id` → `projects.project_id` (CASCADE, **NOT NULL**)
 **Referenced By:** none
-**Relationships:** Junction/fact table realizing **students ↔ occupations (M:N)**, scoped to a specific project. `UNIQUE(student_id, occupation_id)` — note this unique constraint does **not** include `project_id`, meaning a student can only have one match row per occupation across *all* their projects (see Section 8). CHECK: `match_percentage` 0–100.
+**Relationships:** Junction/fact table realizing **students ↔ occupations (M:N)**, scoped to a specific project. `UNIQUE(project_id, occupation_id)` — the upsert in `CareerMatchRepository` targets exactly this, and re-running generate for a project updates its rows in place. Was `UNIQUE(student_id, occupation_id)` until migration `006`; see Section 8. CHECK: `match_percentage` 0–100.
 
 ## career_skill_gaps
 **Purpose:** For a given student/occupation pairing, records the percentage gap for each specific missing/weak skill — the diagnostic detail behind a career match.
 **Primary Key:** `gap_id` (uuid)
 **Foreign Keys:** `student_id` → `students.student_id` (CASCADE); `occupation_id` → `occupations.occupation_id` (CASCADE); `skill_id` → `skills.skill_id` (CASCADE); `project_id` → `projects.project_id` (CASCADE, nullable)
 **Referenced By:** none
-**Relationships:** Three-way junction/fact table: **students ↔ occupations ↔ skills**. `UNIQUE(student_id, occupation_id, skill_id)` (project-independent uniqueness — see Section 8). CHECK: `gap_percentage` 0–100.
+**Relationships:** Three-way junction/fact table: **students ↔ occupations ↔ skills**. `UNIQUE(project_id, occupation_id, skill_id)`, matching the upsert in `CareerSkillGapRepository`. Was `UNIQUE(student_id, occupation_id, skill_id)` until migration `006`; see Section 8. CHECK: `gap_percentage` 0–100.
 
 ## courses
 **Purpose:** Catalog of learning courses (LMS content) with duration, level, and active flag, used to remediate skill gaps.
@@ -159,7 +159,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Primary Key:** `recommendation_id` (uuid)
 **Foreign Keys:** `student_id` → `students.student_id` (CASCADE); `occupation_id` → `occupations.occupation_id` (CASCADE); `course_id` → `courses.course_id` (CASCADE); `project_id` → `projects.project_id` (CASCADE, nullable)
 **Referenced By:** none
-**Relationships:** Three-way junction/fact table: **students ↔ occupations ↔ courses**. `UNIQUE(student_id, occupation_id, course_id)` (project-independent — see Section 8). CHECK: `coverage_percentage` 0–100.
+**Relationships:** Three-way junction/fact table: **students ↔ occupations ↔ courses**. `UNIQUE(project_id, occupation_id, course_id)`, matching the upsert in `CourseRecommendationRepository`. Was `UNIQUE(student_id, occupation_id, course_id)` until migration `006`; see Section 8. CHECK: `coverage_percentage` 0–100.
 
 ## llm_summaries
 **Purpose:** Stores AI/LLM-generated narrative text (e.g., resume summary, match explanation, gap explanation, course rationale) — `summary_type` differentiates the kind of summary, scoped to a project and optionally an occupation/course.
@@ -487,7 +487,11 @@ Supporting/parallel tables that feed signal into this pipeline without being on 
 **Missing Unique Constraints**
 - `project_skills` has **no** `UNIQUE(project_id, skill_id)`, unlike its siblings `student_skills`, `occupation_skills`, and `course_skills` which all enforce this pattern. This allows duplicate skill rows for the same project (e.g., "Python" extracted twice with different confidence scores), which could double-count in matching calculations.
 - `questionnaire_responses` has no `UNIQUE(student_id, question_id)`, allowing a student to have multiple answers stored for the same question with no clear "current answer" semantics.
-- `student_career_matches.UNIQUE(student_id, occupation_id)` does **not** include `project_id`, even though `project_id` is NOT NULL. This means a student can only ever have one match row per occupation **across all their projects combined** — a second project re-matching against the same occupation would violate this constraint (or silently overwrite, depending on app logic). This looks like an unintended gap, since `career_skill_gaps` and `course_recommendations` use a *project-independent* unique key pattern too (`student_id, occupation_id, skill_id` / `student_id, occupation_id, course_id`), reinforcing that the model treats "student+occupation" as the canonical scope but `project_id` is still stored as NOT NULL/required — an inconsistency worth resolving.
+- ~~The three recommendation tables key their unique constraints on `student_id` rather than `project_id`.~~ **Resolved by migration `006_recommendation_uniques_by_project.sql`.** All three are now project-scoped: `student_career_matches UNIQUE(project_id, occupation_id)`, `career_skill_gaps UNIQUE(project_id, occupation_id, skill_id)`, `course_recommendations UNIQUE(project_id, occupation_id, course_id)`.
+
+  This was worse than the latent inconsistency described here originally. All three repositories were *already* upserting with `ON CONFLICT (project_id, ...)`, and Postgres resolves an `ON CONFLICT` target against a real constraint — so on any database created from `table_schemas/` the first insert of a generate run raised `there is no unique or exclusion constraint matching the ON CONFLICT specification` and the endpoint returned 500. It was not a future data-modelling risk; it was a hard failure of the whole recommendation feature on every fresh deployment.
+
+  It stayed hidden because the local development database had been corrected by hand without a migration, so the schema files, and every environment built from them, disagreed with local. **The lesson generalises: `table_schemas/` is the original DDL and is not self-evidently in sync with any running database.** Before trusting it, diff `pg_constraint` between the two databases directly. When comparing across PostgreSQL versions, ignore `contype='n'` rows (PG 17+ records `NOT NULL` there and older versions do not) and expect cosmetic re-rendering of `ANY(ARRAY[...])` CHECK bodies.
 
 **Redundant Tables / Columns**
 - `student_id` is duplicated in `resumes`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, and `llm_summaries` even though each also carries `project_id`, and `project_id` already implies `student_id` via `projects.student_id`. This is denormalization for query convenience but creates a risk of a row's `student_id` and `project_id`→`projects.student_id` going out of sync, since no CHECK/trigger enforces consistency between them.

@@ -8,7 +8,7 @@ import { cn } from '../../lib/cn';
 export const SectionLabel = ({ as: Tag = 'h4', icon: Icon, iconClassName, className, children, ...rest }) => (
   <Tag
     className={cn(
-      'text-xs font-semibold text-fg-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5',
+      'text-xs font-semibold text-fg-secondary uppercase tracking-wide mb-2 flex items-center gap-1.5',
       className
     )}
     {...rest}

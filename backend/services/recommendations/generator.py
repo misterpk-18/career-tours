@@ -126,7 +126,7 @@ class RecommendationGenerator:
                     course_name=course_name,
                     occupation_name=recommendation["occupation_name"],
                     covered_skills=covered_skills,
-                )
+                ).model_dump_json()
                 coverage_pct = min(score, 100.0)
                 return {
                     "course_id": course_id,

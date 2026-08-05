@@ -30,26 +30,6 @@ import SectionHeading from '../components/ui/SectionHeading';
 import { deduplicateSkills } from '../lib/format';
 import { apiErrorMessage } from '../lib/apiError';
 
-// localStorage cache of extracted skills per project. Temporary: it exists only
-// because there is no GET endpoint for a project's skills yet, and it is the one
-// place the client stores server data. Removed once
-// GET /api/projects/<id>/skills lands.
-const SKILLS_CACHE_KEY = (projectId) => `ct_skills_${projectId}`;
-
-const getCachedSkills = (projectId) => {
-  try {
-    const raw = localStorage.getItem(SKILLS_CACHE_KEY(projectId));
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return null;
-};
-
-const setCachedSkills = (projectId, skills) => {
-  try {
-    localStorage.setItem(SKILLS_CACHE_KEY(projectId), JSON.stringify(skills));
-  } catch { /* ignore */ }
-};
-
 export const ProjectDetailsPage = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
@@ -60,7 +40,6 @@ export const ProjectDetailsPage = () => {
 
   // Skills state
   const [skills, setSkills] = useState([]);
-  const [skillsAlreadyExtracted, setSkillsAlreadyExtracted] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [extractSuccess, setExtractSuccess] = useState('');
 
@@ -85,10 +64,14 @@ export const ProjectDetailsPage = () => {
       const data = await projectsAPI.getById(projectId);
       setProject(data);
 
-      const cached = getCachedSkills(projectId);
-      if (cached && cached.length > 0) {
-        setSkills(deduplicateSkills(cached));
-        setSkillsAlreadyExtracted(true);
+      // Which pipeline step this project is on is decided here, from the server.
+      // Both of these must resolve before the action buttons render, otherwise
+      // the page briefly offers a step the project has already completed.
+      try {
+        const stored = await projectsAPI.getSkills(projectId);
+        setSkills(deduplicateSkills(stored || []));
+      } catch (err) {
+        console.error('Failed to load stored project skills:', err);
       }
 
       try {
@@ -123,9 +106,13 @@ export const ProjectDetailsPage = () => {
       if (res.skills) {
         const unique = deduplicateSkills(res.skills);
         setSkills(unique);
-        setSkillsAlreadyExtracted(true);
-        setCachedSkills(projectId, unique);
-        setExtractSuccess(`Successfully extracted ${unique.length} skills from resume!`);
+        // The API returns stored skills instead of re-running the extraction when
+        // this project already has them, so don't claim a fresh parse.
+        setExtractSuccess(
+          res.reused
+            ? `Loaded ${unique.length} skills already extracted from this resume.`
+            : `Extracted ${unique.length} skills from your resume.`
+        );
       }
     } catch (err) {
       console.error('Skill extraction failed:', err);
@@ -160,6 +147,15 @@ export const ProjectDetailsPage = () => {
   // flag gates both destinations.
   const handleViewCourses = () => navigate(`/projects/${projectId}/courses`);
 
+  // The pipeline is strictly sequential: upload a resume, extract skills from it,
+  // then generate recommendations. Each step's control appears only once the step
+  // before it is done and disappears once the step itself is, so the page never
+  // offers an action that cannot succeed. All three flags come from the server.
+  const hasResume = Boolean(project?.resume_id);
+  const hasSkills = skills.length > 0;
+  const canExtractSkills = hasResume && !hasSkills;
+  const canRecommendCareers = hasSkills && !careersAlreadyGenerated;
+
   if (loading) {
     return <PageSpinner message="Loading project workspace…" />;
   }
@@ -169,7 +165,6 @@ export const ProjectDetailsPage = () => {
       <NarrowShell>
         <EmptyState
           icon={AlertTriangle}
-          iconTone="danger"
           title="Could Not Load This Project"
           titleAs="h1"
           description={error}
@@ -211,7 +206,7 @@ export const ProjectDetailsPage = () => {
               icon={Eye}
               onClick={() => setViewResumeId(project.resume_id)}
             >
-              Review &amp; Download Resume
+              View resume
             </Button>
           ) : (
             <Button
@@ -226,44 +221,43 @@ export const ProjectDetailsPage = () => {
         }
       />
 
-      <Card radius="2xl" className="space-y-6">
+      <Card className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="min-w-0">
             <SectionHeading as="h2" size="sm" icon={Zap} iconClassName="text-warning-fg">
-              AI Skill Extraction Engine
+              Skills from your resume
             </SectionHeading>
             <p className="text-sm text-fg-muted mt-1">
-              {skillsAlreadyExtracted
-                ? 'Skills have been successfully extracted from your resume.'
-                : 'Extract technical and domain skills from your uploaded resume to power career match recommendations.'}
+              {!hasResume
+                ? 'Upload a resume to this project to extract the skills that power career matching.'
+                : hasSkills
+                  ? 'Skills have been successfully extracted from your resume.'
+                  : 'Extract technical and domain skills from your uploaded resume to power career match recommendations.'}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {!skillsAlreadyExtracted ? (
+            {/* No resume means no step to offer here: the upload control lives in
+                the banner and the warning below, so rendering a dead "Extract
+                skills" button as well only invited the click it then refused. */}
+            {canExtractSkills ? (
               <Button
                 icon={Sparkles}
                 onClick={handleExtractSkills}
                 loading={extracting}
-                loadingText="Extracting Skills…"
-                disabled={!project.resume_id}
+                loadingText="Extracting skills…"
               >
-                Extract Skills
+                Extract skills
               </Button>
-            ) : (
+            ) : hasSkills ? (
               <Badge tone="success" icon={CheckCircle2}>
                 Skills Extracted
               </Badge>
-            )}
+            ) : null}
 
-            {/* The "view" pair is gated on careersAlreadyGenerated (from the API)
-                rather than on `skills`, which is only ever hydrated from
-                localStorage — on a fresh browser the cache is empty even though
-                recommendations exist server-side, which used to hide these
-                buttons entirely. */}
             {careersAlreadyGenerated ? (
               <>
-                <Button variant="success" icon={Compass} iconRight={ArrowRight} onClick={handleViewCareers}>
+                <Button icon={Compass} onClick={handleViewCareers}>
                   View Recommended Careers
                 </Button>
                 <Button
@@ -275,13 +269,12 @@ export const ProjectDetailsPage = () => {
                   View Recommended Courses
                 </Button>
               </>
-            ) : skills.length > 0 ? (
+            ) : canRecommendCareers ? (
               <Button
-                variant="success"
                 icon={Compass}
                 onClick={handleRecommendCareers}
                 loading={recommending}
-                loadingText="Analyzing Careers…"
+                loadingText="Analysing…"
               >
                 Recommend Careers
               </Button>
@@ -292,7 +285,7 @@ export const ProjectDetailsPage = () => {
         {error ? <Alert tone="error">{error}</Alert> : null}
         {extractSuccess ? <Alert tone="success">{extractSuccess}</Alert> : null}
 
-        {!project.resume_id ? (
+        {!hasResume ? (
           <Alert
             tone="warning"
             action={
@@ -313,14 +306,14 @@ export const ProjectDetailsPage = () => {
           icon={Tag}
           iconClassName="text-brand-fg"
           right={
-            skills.length > 0 ? (
+            hasSkills ? (
               <Button
                 variant="ghost"
                 size="xs"
                 iconRight={Compass}
                 onClick={careersAlreadyGenerated ? handleViewCareers : handleRecommendCareers}
                 loading={recommending}
-                loadingText="Analyzing…"
+                loadingText="Analysing…"
               >
                 {careersAlreadyGenerated ? 'View Career Recommendations' : 'Go to Career Page'}
               </Button>
@@ -332,14 +325,17 @@ export const ProjectDetailsPage = () => {
 
         {skills.length === 0 ? (
           <EmptyState
-            icon={Sparkles}
-            iconTone="neutral"
+            icon={Tag}
             size="sm"
             title="No skills extracted yet"
             titleAs="h3"
-            description='Use the "Extract Skills" button above to run AI parsing on your uploaded resume.'
+            description={
+              hasResume
+                ? 'Use the "Extract Skills" button above to run AI parsing on your uploaded resume.'
+                : 'Upload a resume to this project first — skill extraction runs on the uploaded file.'
+            }
             action={
-              project.resume_id && !skillsAlreadyExtracted ? (
+              canExtractSkills ? (
                 <Button icon={Zap} onClick={handleExtractSkills} loading={extracting} loadingText="Extracting…">
                   Extract Skills Now
                 </Button>
@@ -353,7 +349,6 @@ export const ProjectDetailsPage = () => {
                 as="li"
                 key={skill.project_skill_id || index}
                 variant="solid"
-                radius="xl"
                 padding="sm"
                 className="flex flex-col justify-between"
               >

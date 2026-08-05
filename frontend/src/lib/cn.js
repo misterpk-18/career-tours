@@ -1,6 +1,14 @@
 import { clsx } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
+/*
+ * COLOUR CONTRACT (full version at the top of index.css)
+ *   `brand` (indigo) is the ONLY decorative colour.
+ *   `success` / `warning` / `danger` are STATE ONLY — legal iff the thing they
+ *   label can be good, at-risk, or failed. A category, a rank, a difficulty and
+ *   a percentage are none of those.
+ */
+
 /**
  * tailwind-merge validates against Tailwind's DEFAULT theme, so it does not know
  * about this project's custom scale and semantic colour names. Two collisions
@@ -25,7 +33,6 @@ const twMerge = extendTailwindMerge({
             'fg-on-solid',
             'brand-fg',
             'brand-subtle-fg',
-            'accent-fg',
             'success-fg',
             'warning-fg',
             'danger-fg',
@@ -41,7 +48,7 @@ const twMerge = extendTailwindMerge({
  * ones in the same group.
  *
  * Note twMerge knows nothing about the hand-written component classes in
- * index.css (`surface-glass`, `btn-brand`, `field`, …). Passing two of those
+ * index.css (`surface-panel`, `btn-brand`, `field`, …). Passing two of those
  * together produces a real cascade conflict it cannot resolve, so components
  * should expose a prop for that choice rather than accepting it via className.
  */

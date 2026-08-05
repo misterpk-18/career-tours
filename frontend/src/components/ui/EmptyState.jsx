@@ -4,7 +4,6 @@ import { cn } from '../../lib/cn';
 
 const ICON_TONES = {
   brand: 'text-brand-fg',
-  success: 'text-success-fg',
   warning: 'text-warning-fg',
   danger: 'text-danger-fg',
   neutral: 'text-fg-muted',
@@ -24,7 +23,7 @@ const SIZES = {
  */
 export const EmptyState = ({
   icon: Icon,
-  iconTone = 'brand',
+  iconTone = 'neutral',
   title,
   titleAs: Title,
   description,
@@ -39,9 +38,9 @@ export const EmptyState = ({
   const s = SIZES[size] || SIZES.md;
 
   return (
-    <Card radius="3xl" padding={s.padding} className={cn('text-center', className)}>
+    <Card padding={s.padding} className={cn('text-center', className)}>
       {Icon ? (
-        <Icon className={cn(s.icon, 'mx-auto mb-3', ICON_TONES[iconTone] || ICON_TONES.brand)} aria-hidden="true" />
+        <Icon className={cn(s.icon, 'mx-auto mb-3', ICON_TONES[iconTone] || ICON_TONES.neutral)} aria-hidden="true" />
       ) : null}
       <Title className={cn('font-bold text-fg', s.title)}>{title}</Title>
       {description ? (

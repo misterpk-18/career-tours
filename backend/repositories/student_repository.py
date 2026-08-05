@@ -8,6 +8,32 @@ from models.student import Student
 
 
 class StudentRepository:
+    # The registration and profile forms post every field they render, so fields the
+    # user left blank arrive as "" rather than being absent. They have to be stored
+    # as NULL: `phone` carries a UNIQUE constraint, and Postgres treats "" as an
+    # ordinary value (only NULLs are mutually distinct), so the second student to
+    # submit an empty phone would collide with the first. The same applies to the
+    # columns with CHECK constraints, which "" does not satisfy.
+    NULLABLE_TEXT_FIELDS = (
+        "phone",
+        "college_name",
+        "degree_name",
+        "branch_name",
+        "preferred_job_location",
+        "target_role",
+        "career_interest",
+        "internship_preference",
+        "work_mode_preference",
+    )
+
+    @staticmethod
+    def _blank_to_none(params):
+        for field in StudentRepository.NULLABLE_TEXT_FIELDS:
+            value = params.get(field)
+            if isinstance(value, str) and not value.strip():
+                params[field] = None
+        return params
+
     @staticmethod
     def create(student):
         # Provide default None values for all optional fields to prevent bind parameter errors
@@ -29,6 +55,7 @@ class StudentRepository:
             "work_mode_preference": None,
         }
         student_data.update(student)
+        StudentRepository._blank_to_none(student_data)
 
         # Hash password if provided in input
         if "password" in student:
@@ -151,7 +178,9 @@ class StudentRepository:
         existing_data = asdict(existing)
 
         # Merge with updated fields to ensure all bind parameters are populated
-        update_params = {**existing_data, **data, "student_id": student_id}
+        update_params = StudentRepository._blank_to_none(
+            {**existing_data, **data, "student_id": student_id}
+        )
 
         # Hash password if provided in update data
         if "password" in data:
