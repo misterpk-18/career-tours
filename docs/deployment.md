@@ -76,9 +76,13 @@ Node.js 18+ is also required on the instance to build the frontend (Step 6). Alt
 
 ---
 
-## Step 1: System Optimization (Swap Space)
+## Step 1: System Optimization (Swap Space) — *optional*
 
-To run NLP embedding models (`sentence-transformers`) on a resource-constrained instance (like a `t2.micro` or `t3.micro` with 1GB RAM), configure a **2GB swap file** to prevent Out Of Memory (OOM) crashes:
+This step existed because `sentence-transformers` loaded an embedding model
+in-process and would OOM on a 1GB instance. Embeddings now come from the Hugging
+Face Inference API and no model is loaded locally, so **swap is no longer
+required**. It is still harmless insurance on a `t2.micro`/`t3.micro`; skip it
+otherwise.
 
 ```bash
 # Allocate 2GB file
@@ -241,19 +245,18 @@ endpoint over TLS.
    .venv/bin/pip install --upgrade pip --no-cache-dir
    ```
 
-3. **Install CPU-only PyTorch**:
-   To fit inside typical EC2 disk space limits, install the lightweight, CPU-only PyTorch wheel (~200MB vs the standard ~900MB CUDA wheel):
-   ```bash
-   .venv/bin/pip install --no-cache-dir torch==2.4.0+cpu --index-url https://download.pytorch.org/whl/cpu
-   ```
-
-4. **Install Remaining Packages**:
+3. **Install Packages**:
    Install Gunicorn and other requirements (`requirements.txt` is at the repo root):
    ```bash
    .venv/bin/pip install --no-cache-dir -r requirements.txt
    ```
 
-5. **Environment Configuration**:
+   There is no longer a separate CPU-only PyTorch step. `sentence-transformers`
+   pulled in `torch` (~900MB of transitive dependencies) purely to embed skills
+   in-process; that now goes through the Hugging Face Inference API, and the
+   whole dependency set installs to ~220MB.
+
+4. **Environment Configuration**:
    Create `/home/ec2-user/career-tours/.env` (repo root — the systemd unit loads it via `EnvironmentFile`) and add:
    ```env
    DB_HOST=ep-your-endpoint.region.aws.neon.tech
@@ -274,6 +277,11 @@ endpoint over TLS.
    LANGSMITH_PROJECT=your_project_name
 
    OPENAI_API_KEY=your_openai_key
+
+   # Required — skill embeddings come from the Hugging Face Inference API.
+   # Recommendation generation fails without it.
+   HF_TOKEN=your_hugging_face_token
+
    AWS_ACCESS_KEY=your_aws_access_key
    AWS_SECRET_KEY=your_aws_secret_key
    AWS_REGION=ap-south-1

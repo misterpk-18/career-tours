@@ -29,7 +29,7 @@ The repository is a monorepo with two applications:
 - **Framework**: Python 3, Flask
 - **Runtime**: Gunicorn on EC2 (currently live) and AWS Lambda. `backend/app.py` exposes both — `app` for a WSGI server, and `handler` for Lambda via Mangum. Mangum is an ASGI adapter and Flask is a WSGI app, so `asgiref.wsgi.WsgiToAsgi` bridges the two; the Flask app and its blueprints are identical on both runtimes.
 - **Database**: PostgreSQL hosted on **Neon** — every environment, local included, connects to that one endpoint over TLS. Accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
-- **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (currently accessed using Hugging Face API), `scikit-learn`, `langchain`, **LangSmith**
+- **AI & ML & Tracing**: OpenAI API, skill embeddings from `sentence-transformers/all-MiniLM-L6-v2` via the **Hugging Face Inference API** (`huggingface-hub`; requires `HF_TOKEN`), `numpy` for the cosine similarity, `langchain`, **LangSmith**. Nothing runs a model in-process — there is no `torch` dependency.
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
 **Frontend**
@@ -761,6 +761,11 @@ cd career-tours
    # OpenAI API Configuration
    OPENAI_API_KEY=your_openai_api_key
 
+   # Hugging Face Inference API — required: skill embeddings come from
+   # sentence-transformers/all-MiniLM-L6-v2 over the API. Without this,
+   # recommendation generation fails.
+   HF_TOKEN=your_hugging_face_token
+
    # LangSmith Tracing Configuration
    LANGSMITH_TRACING=true
    LANGSMITH_ENDPOINT=https://api.smith.langchain.com
@@ -775,7 +780,7 @@ cd career-tours
    ```
 
 4. **Database Initialization**:
-   Apply the SQL DDL in `backend/table_schemas/` in dependency order, then the incremental scripts in `backend/migrations/`. The import loop used in production is in [docs/deployment.md](docs/deployment.md#step-3-configure-local-postgresql).
+   Apply the SQL DDL in `backend/table_schemas/` in dependency order, then the incremental scripts in `backend/migrations/`. The import loop used in production is in [docs/deployment.md](docs/deployment.md#step-3-connect-to-neon-postgres).
 
 5. **Run the API** on port 5001, which is what the frontend dev proxy expects:
    ```bash

@@ -20,7 +20,11 @@ resume_bp = Blueprint(
     __name__,
 )
 
-UPLOAD_DIR = Path("uploads/resumes")
+# Scratch space for an upload between `file.save()` and the S3 upload — every
+# code path below removes the file again. On Lambda only /tmp is writable, and a
+# relative path would resolve under the read-only /var/task and fail this mkdir
+# at import time, taking the whole app down with it.
+UPLOAD_DIR = Path("/tmp/uploads/resumes")
 ALLOWED_EXTENSIONS = {".pdf", ".docx"}
 MAX_FILE_SIZE_MB = 10
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
