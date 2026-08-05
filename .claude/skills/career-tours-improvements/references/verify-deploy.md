@@ -93,12 +93,16 @@ rsync -az -e "ssh -i $K" docs README.md requirements.txt $H:/home/ec2-user/caree
 ssh -i $K $H 'sudo systemctl restart career-tours && sleep 7 && systemctl is-active career-tours'
 ```
 
-Apply any new migration **before** the restart:
+Apply any new migration **before** the restart. Postgres is on Neon, reachable
+from anywhere, so apply it directly — no `scp` to the instance, no SSH hop. Note
+this hits the same database local development uses, so the schema change lands
+everywhere at once:
 
 ```bash
-scp -i $K backend/migrations/00N_*.sql $H:/tmp/
-ssh -i $K $H 'PGPASSWORD=$(grep ^DB_PASSWORD /home/ec2-user/career-tours/.env | cut -d= -f2) \
-  psql -h 127.0.0.1 -U manojtungala -d career_tours -f /tmp/00N_*.sql'
+set -a; . .env; set +a
+PGPASSWORD="$DB_PASSWORD" PGSSLMODE="${DB_SSLMODE:-require}" \
+  psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" \
+  -v ON_ERROR_STOP=1 --single-transaction -f backend/migrations/00N_*.sql
 ```
 
 Post-deploy smoke test:
@@ -106,7 +110,7 @@ Post-deploy smoke test:
 ```bash
 D=https://career-tours.duckdns.org
 curl -s -o /dev/null -w "site:%{http_code}\n" $D/
-curl -s $D/db-test                      # {"database":"career_tours"}
+curl -s $D/db-test                      # {"database":"neondb"}
 ssh -i $K $H 'tail -20 /var/log/career-tours/error.log'
 ```
 
