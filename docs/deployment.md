@@ -2,6 +2,13 @@
 
 This guide documents the complete step-by-step process used to deploy **Career Tours** on an Amazon Linux 2023 EC2 instance: the Flask API behind **Gunicorn**, the React frontend as a static build, both fronted by an **Nginx** reverse proxy with a Let's Encrypt certificate.
 
+> **Migration in progress.** The API is being moved to AWS Lambda. `backend/app.py`
+> already exports a Lambda entrypoint (`handler`, via Mangum) alongside the WSGI
+> `app` object, so both runtimes work from the same code. The EC2 deployment
+> described below is still the live one; the Lambda packaging and cutover steps are
+> not written yet. Postgres is already fully migrated — it is hosted on Neon and no
+> longer runs on the instance.
+
 Live deployment: **https://career-tours.duckdns.org** (instance `3.110.122.199`).
 Always use the hostname — the certificate cannot cover a bare IP. Nginx `301`s
 everything on port 80, the bare IP included, to that hostname, so a `curl` against
@@ -94,61 +101,58 @@ echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
 
 ## Step 2: Install System Packages
 
-Install Git, Nginx, PostgreSQL 15 server, and the PostgreSQL contrib extensions:
+Install Git, Nginx, and the PostgreSQL **client**. The server package is not
+needed — Postgres is hosted on Neon, not on this instance — but `psql` is still
+required for applying DDL and inspecting the database:
 
 ```bash
-sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
+sudo dnf install -y nginx git postgresql15
 ```
 
 ---
 
-## Step 3: Configure Local PostgreSQL
+## Step 3: Connect to Neon Postgres
 
-1. **Initialize the Database**:
-   ```bash
-   sudo postgresql-setup --initdb
-   ```
+There is no Postgres server on this instance. The database is hosted on Neon, and
+every environment — local development, EC2, Lambda — connects to that same
+endpoint over TLS.
 
-2. **Configure Authentication Method**:
-   By default, loopback TCP connections use `ident` matching which requires OS users to match DB users. We change this to password-based authentication (`scram-sha-256`):
+1. **Collect the connection details** from the Neon console (Project → Connection
+   Details). Export them for the rest of this guide; these are the same five
+   values that go into the server's `.env`, plus the required SSL mode:
    ```bash
-   # Update pg_hba.conf
-   sudo sed -i 's/ident/scram-sha-256/g' /var/lib/pgsql/data/pg_hba.conf
-   ```
-
-3. **Start and Enable PostgreSQL**:
-   ```bash
-   sudo systemctl enable postgresql --now
-   ```
-
-4. **Create Users and Databases**:
-   Log in as the superuser `postgres` and set up the application roles. Choose a
-   real password — the deployed instance uses a generated one, and the only
-   authoritative copy is `DB_PASSWORD` in the server's `.env`:
-   ```bash
-   # Pick a password once and reuse it for the rest of this guide
+   export DB_HOST=ep-your-endpoint.region.aws.neon.tech
+   export DB_PORT=5432
+   export DB_NAME=neondb
+   export DB_USER=neondb_owner
    read -rs DB_PASSWORD && export DB_PASSWORD
-
-   # Create database user and set superuser permissions
-   sudo -u postgres psql -c "CREATE USER manojtungala WITH PASSWORD '$DB_PASSWORD' SUPERUSER;"
-   
-   # Create the database owned by the application user
-   sudo -u postgres psql -c "CREATE DATABASE career_tours OWNER manojtungala;"
-   
-   # Enable the UUID extension in the target database
-   sudo -u postgres psql -d career_tours -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+   export PGSSLMODE=require
    ```
 
-5. **Initialize Database Tables**:
+   Neon **rejects plaintext connections** — a client with `sslmode=disable` fails
+   to connect at all. `PGSSLMODE` above covers the `psql` commands in this guide;
+   the application reads `DB_SSLMODE` from `.env` instead.
+
+2. **Verify connectivity and enable the UUID extension**. Neon provisions the
+   database and owner role for you, so there is no user or database to create —
+   but `uuid-ossp` is not enabled by default and every table's primary key
+   default depends on it:
+   ```bash
+   PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" \
+     -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' \
+     -c 'SELECT current_database(), current_user;'
+   ```
+
+3. **Initialize Database Tables**:
    Import the SQL tables under `backend/table_schemas/` in their dependency order:
    ```bash
    cd /home/ec2-user/career-tours/backend/table_schemas
    for f in students.sql skills.sql occupations.sql questionnaires.sql courses.sql projects.sql resumes.sql skill_aliases.sql student_skills.sql occupation_skills.sql questionnaire_responses.sql course_skills.sql student_career_matches.sql career_skill_gaps.sql course_recommendations.sql llm_summaries.sql project_skills.sql; do
-       PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -f "$f"
+       PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$f"
    done
    ```
 
-6. **Apply Migrations**:
+4. **Apply Migrations**:
    `backend/table_schemas/` holds the original DDL; every schema change made since
    then lives in `backend/migrations/`, applied in filename order. They are
    idempotent enough to re-run, except `002` which fails if the constraint already
@@ -156,15 +160,18 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    ```bash
    cd /home/ec2-user/career-tours/backend/migrations
    for f in $(ls *.sql | sort); do
-       PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -f "$f"
+       PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$f"
    done
    ```
 
-7. **Seed the reference tables** — *required; the app is not functional without this.*
+5. **Seed the reference tables** — *required; the app is not functional without this.*
 
-   Steps 5 and 6 create empty tables. Five of them are **reference (catalog) data**
+   Steps 3 and 4 create empty tables. Five of them are **reference (catalog) data**
    rather than user data, and nothing in the app ever writes them: `skills`,
    `courses`, `occupations`, `course_skills`, `occupation_skills`.
+
+   Because all environments share the one Neon database, this seeding is done
+   **once** — not per deploy. Check the counts below before re-running any of it.
 
    The matching engine scores a student's skills against `occupation_skills`. With no
    occupations, `POST /recommendations/projects/<id>/generate` **succeeds and returns
@@ -173,7 +180,7 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    any log. Verify with a row count before blaming anything else:
 
    ```bash
-   PGPASSWORD="$DB_PASSWORD" psql -h 127.0.0.1 -U manojtungala -d career_tours -c "
+   PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "
      SELECT 'courses' t, count(*) FROM courses
      UNION ALL SELECT 'occupations', count(*) FROM occupations
      UNION ALL SELECT 'skills', count(*) FROM skills
@@ -181,21 +188,24 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
      UNION ALL SELECT 'occupation_skills', count(*) FROM occupation_skills ORDER BY 1;"
    ```
 
-   Copy them from a populated database. `skills` is not optional even if only the
-   other four are wanted — `course_skills` and `occupation_skills` have `NOT NULL`
-   FKs to it. From a workstation with a populated local database:
+   If the counts come back zero, copy the rows in from a populated database (for
+   the initial Neon load this was the old local `career_tours` database). `skills`
+   is not optional even if only the other four are wanted — `course_skills` and
+   `occupation_skills` have `NOT NULL` FKs to it.
 
    ```bash
-   # Dump as column-level INSERTs, NOT -Fc: a newer pg_dump archive will not restore
-   # into an older server, and this box runs PostgreSQL 15.
-   pg_dump -h "$DB_HOST" -U "$DB_USER" -d career_tours \
+   # Dump as column-level INSERTs, NOT -Fc: a version-specific archive is fragile
+   # across servers, and plain INSERTs let you add ON CONFLICT below.
+   pg_dump -h "$SOURCE_HOST" -U "$SOURCE_USER" -d "$SOURCE_DB" \
        --data-only --column-inserts --no-owner --no-privileges \
        -t public.skills -t public.courses -t public.occupations \
        -t public.course_skills -t public.occupation_skills > ref_data.sql
-
-   # PG 17+ emits `SET transaction_timeout = 0`, which PG 15 rejects outright.
-   sed -i '' '/SET transaction_timeout/d' ref_data.sql
    ```
+
+   Neon runs PostgreSQL 18, so the old `SET transaction_timeout` strip needed for
+   the PostgreSQL 15 server on EC2 no longer applies — Neon accepts it. If the
+   source is *newer* than the target you will still need that kind of workaround;
+   check the server versions before assuming.
 
    Then rewrite each `INSERT` to end `ON CONFLICT DO NOTHING` before loading, so the
    file is additive and re-runnable. **Do not `TRUNCATE` to re-seed:**
@@ -204,10 +214,12 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
    verbatim rather than regenerating, so the FK graph stays intact and ids line up
    across environments.
 
+   Neon is reachable from anywhere, so load it directly — no `scp` to the instance
+   and no SSH hop:
+
    ```bash
-   scp -i $KEY ref_data.sql $HOST:/tmp/
-   ssh -i $KEY $HOST 'PGPASSWORD=... psql -h 127.0.0.1 -U manojtungala -d career_tours \
-       -v ON_ERROR_STOP=1 --single-transaction -f /tmp/ref_data.sql'
+   PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" \
+       -v ON_ERROR_STOP=1 --single-transaction -f ref_data.sql
    ```
 
    `pg_dump` emits these five tables parent-before-child already, so no manual
@@ -244,11 +256,12 @@ sudo dnf install -y nginx git postgresql15-server postgresql15-contrib
 5. **Environment Configuration**:
    Create `/home/ec2-user/career-tours/.env` (repo root — the systemd unit loads it via `EnvironmentFile`) and add:
    ```env
-   DB_HOST=127.0.0.1
+   DB_HOST=ep-your-endpoint.region.aws.neon.tech
    DB_PORT=5432
-   DB_NAME=career_tours
-   DB_USER=manojtungala
-   DB_PASSWORD=your_db_password
+   DB_NAME=neondb
+   DB_USER=neondb_owner
+   DB_PASSWORD=your_neon_password
+   DB_SSLMODE=require
 
    # Auth
    SECRET_KEY=your_jwt_signing_secret
@@ -298,6 +311,10 @@ WantedBy=multi-user.target
 ```
 
 > **Important:** `WorkingDirectory` must be `.../career-tours/backend` (not the repo root). `app.py` lives in `backend/` and imports its packages with bare names (`from api.auth.routes import auth_bp`), so `app:app` only resolves when Gunicorn is started from inside `backend/`. The virtualenv, `.env`, and log paths still point at the repo root.
+>
+> The same bare-import constraint applies to Lambda: the handler is `app.handler`,
+> and `backend/` must be the root of the deployment package (or the Docker
+> `WORKDIR`) or the import fails the same way.
 >
 > If you are upgrading an existing deployment that predates the `backend/` restructure, this line is the one change that will otherwise break the service with `ModuleNotFoundError: No module named 'app'`.
 
@@ -547,13 +564,15 @@ deploy. Apply any new `backend/migrations/*.sql` before restarting.
   tail -f /var/log/nginx/career_tours_access.log
   ```
 
-- **Open a psql session on the instance**:
+- **Open a psql session against Neon** (from the instance or any workstation —
+  Neon is not instance-local, so there is nothing special about running this on
+  EC2):
   ```bash
-  # The OS user `ec2-user` is NOT a Postgres role, so a bare `psql -d career_tours`
-  # fails with: FATAL: role "ec2-user" does not exist.
-  # Source the server's own .env instead of hardcoding credentials anywhere.
+  # There is no local Postgres and no local socket: host/user must always be
+  # given explicitly. Source the .env instead of hardcoding credentials anywhere.
   set -a; . /home/ec2-user/career-tours/.env; set +a
-  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"
+  PGPASSWORD="$DB_PASSWORD" PGSSLMODE="${DB_SSLMODE:-require}" \
+    psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"
   ```
 
 - **Query Endpoints** (on the instance):

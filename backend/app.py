@@ -1,4 +1,6 @@
+from asgiref.wsgi import WsgiToAsgi
 from flask import Flask
+from mangum import Mangum
 from sqlalchemy import text
 
 from api.auth.routes import auth_bp
@@ -34,6 +36,13 @@ def db_test():
     result = db.session.execute(text("SELECT current_database()"))
 
     return {"database": result.scalar()}
+
+
+# Lambda entrypoint. Mangum speaks ASGI and Flask is a WSGI app, so WsgiToAsgi
+# adapts between them — `app` itself, and every blueprint on it, is unchanged.
+# api_gateway_base_path stays None: the blueprint url_prefixes already carry the
+# /api segment, so no path stripping is wanted.
+handler = Mangum(WsgiToAsgi(app), lifespan="off")
 
 
 if __name__ == "__main__":

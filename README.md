@@ -27,7 +27,8 @@ The repository is a monorepo with two applications:
 
 **Backend**
 - **Framework**: Python 3, Flask
-- **Database**: PostgreSQL, accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
+- **Runtime**: Gunicorn on EC2 (currently live) and AWS Lambda. `backend/app.py` exposes both — `app` for a WSGI server, and `handler` for Lambda via Mangum. Mangum is an ASGI adapter and Flask is a WSGI app, so `asgiref.wsgi.WsgiToAsgi` bridges the two; the Flask app and its blueprints are identical on both runtimes.
+- **Database**: PostgreSQL hosted on **Neon** — every environment, local included, connects to that one endpoint over TLS. Accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
 - **AI & ML & Tracing**: OpenAI API, `sentence-transformers` (currently accessed using Hugging Face API), `scikit-learn`, `langchain`, **LangSmith**
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
 
@@ -44,7 +45,7 @@ The repository is a monorepo with two applications:
 ```text
 career-tours/
 ├── backend/                  # Flask API and matching engine
-│   ├── app.py                # app factory, blueprint registration, health endpoints
+│   ├── app.py                # app factory, blueprint registration, health endpoints, Lambda handler
 │   ├── api/                  # blueprints: auth, students, resumes, recommendations, projects
 │   ├── config/               # database connection configuration
 │   ├── models/               # plain dataclass DTOs representing domain entities
@@ -141,7 +142,7 @@ Tests active connectivity to the PostgreSQL database.
 - **Response (200 OK)**:
   ```json
   {
-    "database": "career_tours"
+    "database": "neondb"
   }
   ```
 - **Response (500 Internal Server Error)**:
@@ -716,8 +717,9 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
 ### Prerequisites
 
 - Python 3.10+
-- PostgreSQL 15+
 - Node.js 18+ (for the frontend)
+- Access to the project's Neon Postgres database (no local Postgres server is
+  needed; the `psql` client is still useful for applying DDL by hand)
 
 ### 1. Clone the repository
 
@@ -742,12 +744,15 @@ cd career-tours
 3. **Environment Configuration**:
    Create a `.env` file in the repo root and configure the necessary environment variables:
    ```env
-   # Database Configuration
-   DB_HOST=localhost
+   # Database Configuration (Neon-hosted Postgres — see your Neon project's
+   # connection details. There is no local Postgres; every environment,
+   # including local development, talks to Neon.)
+   DB_HOST=ep-your-endpoint.region.aws.neon.tech
    DB_PORT=5432
-   DB_NAME=career_tours
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
+   DB_NAME=neondb
+   DB_USER=neondb_owner
+   DB_PASSWORD=your_neon_password
+   DB_SSLMODE=require   # Neon rejects plaintext connections
 
    # Authentication (JWT)
    SECRET_KEY=your_long_random_secret   # e.g. python -c "import secrets; print(secrets.token_urlsafe(32))"
