@@ -2,12 +2,14 @@
 
 This guide documents the complete step-by-step process used to deploy **Career Tours** on an Amazon Linux 2023 EC2 instance: the Flask API behind **Gunicorn**, the React frontend as a static build, both fronted by an **Nginx** reverse proxy with a Let's Encrypt certificate.
 
-> **Migration in progress.** The API is being moved to AWS Lambda. `backend/app.py`
-> already exports a Lambda entrypoint (`handler`, via Mangum) alongside the WSGI
-> `app` object, so both runtimes work from the same code. The EC2 deployment
-> described below is still the live one; the Lambda packaging and cutover steps are
-> not written yet. Postgres is already fully migrated — it is hosted on Neon and no
-> longer runs on the instance.
+> **The API now runs on AWS Lambda.** See **[docs/architecture.md](architecture.md)** for the
+> current runtime shape, the live AWS inventory, and the build-and-deploy commands. That
+> document is the source of truth; this one is the EC2 procedure it replaced.
+>
+> `backend/app.py` exports both entrypoints from the same code — `app` for a WSGI server and
+> `handler` for Lambda via Mangum — so the steps below still work against an instance. Keep
+> them only for as long as the EC2 box exists. Postgres is fully migrated either way: it is
+> hosted on Neon and no longer runs on the instance.
 
 Live deployment: **https://career-tours.duckdns.org** (instance `3.110.122.199`).
 Always use the hostname — the certificate cannot cover a bare IP. Nginx `301`s
@@ -41,6 +43,12 @@ The Python packages use bare imports (`from api.auth.routes import auth_bp`), so
 
 ## Architecture Overview
 
+**The current architecture is documented in [docs/architecture.md](architecture.md)** —
+API Gateway → Lambda (container image) → Neon + S3 + OpenAI. Read that first.
+
+The diagram below is the **EC2 architecture**, kept because the instance still exists. Note
+that Postgres no longer runs on it; even here, the database is Neon.
+
 ```text
 [Client / Web Browser]
           │ https://career-tours.duckdns.org  (Port 443, Let's Encrypt)
@@ -54,10 +62,13 @@ The Python packages use bare imports (`from api.auth.routes import auth_bp`), so
               [Gunicorn WSGI Server] (Port 5000)
                           │ (Flask Application)
                           ▼
-              [PostgreSQL Database] (Port 5432)
+              [Neon PostgreSQL] (TLS, off-instance)
 ```
 
 > **Port note:** production Gunicorn listens on **5000**. Local development is different — see `docs/frontend.md`; the Vite dev proxy targets **5001**.
+>
+> **On Lambda there is no port at all** — the function is invoked, not listened to. Anything
+> below that tunes Gunicorn workers, Nginx timeouts or systemd is EC2-only.
 
 ---
 
@@ -326,18 +337,22 @@ WantedBy=multi-user.target
 >
 > If you are upgrading an existing deployment that predates the `backend/` restructure, this line is the one change that will otherwise break the service with `ModuleNotFoundError: No module named 'app'`.
 
-Create logging folders and enable the service. Resume uploads resolve against the
-Gunicorn working directory (`UPLOAD_DIR = Path("uploads/resumes")` in
-`backend/api/resumes/routes.py`), so that directory must exist under `backend/`:
+Create logging folders and enable the service:
 ```bash
 sudo mkdir -p /var/log/career-tours
 sudo chown ec2-user:ec2-user /var/log/career-tours
 
-mkdir -p /home/ec2-user/career-tours/backend/uploads/resumes
-
 sudo systemctl daemon-reload
 sudo systemctl enable career-tours --now
 ```
+
+> **No upload directory is needed.** `UPLOAD_DIR = Path("/tmp/uploads/resumes")` in
+> `backend/api/resumes/routes.py`, and it is created at import time. It is an absolute path
+> on both runtimes — Lambda's `/tmp` is the only writable filesystem there, and a relative
+> path would resolve under the read-only `/var/task` and kill the app before it served a
+> request. Earlier versions of this guide told you to `mkdir backend/uploads/resumes`; that
+> directory is no longer used by anything. The file is deleted after being pushed to S3 on
+> every code path, so `/tmp` does not accumulate.
 
 ---
 
@@ -502,6 +517,11 @@ be trusted no matter what is configured.
 ---
 
 ## Redeploying
+
+> **Deploying the Lambda is a different procedure entirely** — `docker buildx` for arm64,
+> push to ECR, `aws lambda update-function-code`. It is in
+> [docs/architecture.md § Deploying](architecture.md#deploying). The rsync flow below only
+> updates the EC2 instance.
 
 If the instance has Git and Node:
 

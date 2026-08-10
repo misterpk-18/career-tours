@@ -18,7 +18,8 @@ The repository is a monorepo with two applications:
 | [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
 | [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
 | [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
-| [docs/deployment.md](docs/deployment.md) | Production deployment on EC2 with Gunicorn + Nginx + HTTPS |
+| [docs/architecture.md](docs/architecture.md) | **Current runtime**: API Gateway → Lambda (container image) → Neon + S3 + OpenAI. Live AWS inventory, request path, env vars, build & deploy |
+| [docs/deployment.md](docs/deployment.md) | The EC2 procedure the Lambda deployment replaced — Gunicorn + Nginx + HTTPS. Kept while the instance exists |
 | [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
 
 ---
@@ -27,7 +28,7 @@ The repository is a monorepo with two applications:
 
 **Backend**
 - **Framework**: Python 3, Flask
-- **Runtime**: Gunicorn on EC2 (currently live) and AWS Lambda. `backend/app.py` exposes both — `app` for a WSGI server, and `handler` for Lambda via Mangum. Mangum is an ASGI adapter and Flask is a WSGI app, so `asgiref.wsgi.WsgiToAsgi` bridges the two; the Flask app and its blueprints are identical on both runtimes.
+- **Runtime**: **AWS Lambda**, deployed as an arm64 container image from ECR — see [docs/architecture.md](docs/architecture.md). `backend/app.py` exposes both entrypoints from the same code: `app` for a WSGI server (Gunicorn on the legacy EC2 instance) and `handler` for Lambda via Mangum. Mangum is an ASGI adapter and Flask is a WSGI app, so `asgiref.wsgi.WsgiToAsgi` bridges the two; the Flask app and its blueprints are identical on both runtimes.
 - **Database**: PostgreSQL hosted on **Neon** — every environment, local included, connects to that one endpoint over TLS. Accessed via raw SQL (`sqlalchemy.text`) in the repository layer — not an ORM. `flask-sqlalchemy` is only used to manage the `db.session`/engine; domain objects are plain `dataclasses`, not `db.Model` classes.
 - **AI & ML & Tracing**: OpenAI API, skill embeddings from `sentence-transformers/all-MiniLM-L6-v2` via the **Hugging Face Inference API** (`huggingface-hub`; requires `HF_TOKEN`), `numpy` for the cosine similarity, `langchain`, **LangSmith**. Nothing runs a model in-process — there is no `torch` dependency.
 - **Document & Cloud Storage**: `pypdf`, `docx2txt`, **AWS S3** (`boto3`)
@@ -57,8 +58,8 @@ career-tours/
 │   │   ├── recommendations/  # career tracks, skill gaps, course recommendations
 │   │   └── storage/          # AWS S3 upload/retrieval for resume files
 │   ├── migrations/           # incremental schema migrations
-│   ├── table_schemas/        # SQL DDL for each table (source of truth for the schema)
-│   └── uploads/              # temporary local directory for processing resumes
+│   └── table_schemas/        # SQL DDL for each table (source of truth for the schema)
+│                             # (no uploads/ dir — resumes are staged in /tmp, then S3)
 │
 ├── frontend/                 # React + Vite web client
 │   ├── src/

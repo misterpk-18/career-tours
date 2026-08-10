@@ -1,6 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 import os
@@ -28,8 +26,7 @@ JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 db = SQLAlchemy()
 
 # Neon autosuspends idle compute and drops the TCP connection with it, which a
-# local Postgres never did. pool_pre_ping catches an already-dead connection;
-# pool_recycle retires them first so the ping rarely has to.
-engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# local Postgres never did. The pooling that guards against that lives in
+# SQLALCHEMY_ENGINE_OPTIONS in app.py, because `db` builds its own engine from
+# the Flask config — a create_engine() call here would produce a second engine
+# that nothing uses, which is exactly the trap this file previously fell into.

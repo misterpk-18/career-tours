@@ -1,0 +1,258 @@
+# Architecture
+
+How Career Tours is deployed and how a request travels through it. This is the
+source of truth for the runtime shape; [docs/deployment.md](deployment.md) holds the
+step-by-step operational procedures, and much of it still describes the EC2
+deployment that this architecture replaces (see [EC2 remnants](#ec2-remnants-retained-but-stale)).
+
+Verified against the live AWS account on **2026-08-08**.
+
+---
+
+## Target architecture
+
+```text
+                    Users
+                      │
+                      ▼
+        React (Vercel / S3 + CloudFront)
+                      │
+                 HTTPS Requests
+                      │
+                      ▼
+              API Gateway (HTTP API)
+                      │
+                      ▼
+                 AWS Lambda
+                      │
+      Flask + Mangum + SQLAlchemy
+                      │
+      ┌───────────────┴────────────────┐
+      ▼                                ▼
+   Neon PostgreSQL                  Amazon S3
+      │                                │
+      └───────────────┬────────────────┘
+                      ▼
+                  OpenAI API
+```
+
+**API Gateway is not deployed yet.** Today the Lambda is reached directly through a
+Lambda **Function URL**. The reason is a hard constraint, not an oversight — see
+[The 30-second wall](#the-30-second-wall) below. Everything else in the diagram is live.
+
+---
+
+## What is actually deployed
+
+AWS account **307857432997**, region **ap-south-1** (Mumbai).
+
+| Component | Value |
+|---|---|
+| Lambda function | `career-tours-api` |
+| Package type | **Image** (not zip) — ECR `307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest`, ~324 MB |
+| Architecture | **arm64** — builds must target it explicitly (`docker buildx --platform linux/arm64`) |
+| Memory / timeout | 1024 MB / **300 s** |
+| Execution role | `career-tours-lambda-role-kpgs1hwq` |
+| Log group | **`/aws/lambda/career-tours-lambda`** — overridden, so the default `/aws/lambda/career-tours-api` group is empty |
+| Public entry point | Lambda Function URL, `AuthType: NONE`, CORS `*`, BUFFERED |
+| API Gateway | **none** |
+| Database | Neon Postgres, `ep-restless-math-aznw9s4g.c-3.ap-southeast-1.aws.neon.tech`, database `neondb` |
+| Object storage | S3 bucket `career-tours-bkt` (resume files) |
+| Ephemeral disk | 512 MB at `/tmp` — the only writable path |
+
+The Function URL is
+`https://m2542kqtvzbylgowv66f72grwe0gxifg.lambda-url.ap-south-1.on.aws`.
+`GET /` returns `{"status": "ok"}` and `GET /db-test` returns `{"database": "neondb"}`.
+
+### Two facts about the database worth knowing before you debug anything
+
+1. **The Neon endpoint is unpooled.** The host has no `-pooler` suffix, so every
+   connection is a direct one. Moving to the pooler endpoint is an env-var-only change
+   and is safe for this codebase — every repository is plain `text()` SQL followed by
+   `commit()`, with no `LISTEN`, no advisory locks and no server-side cursors.
+2. **It is cross-region.** Neon is in `ap-southeast-1` (Singapore) while the Lambda is in
+   `ap-south-1` (Mumbai) — roughly 60–75 ms round trip per query. This is not academic:
+   `services/matching/ranking.py` issues one `get_skills()` query *per occupation* in a
+   Python loop, so that N+1 costs N × ~65 ms of pure network before any LLM call runs.
+
+---
+
+## The request path
+
+1. The browser calls a **relative** `/api/...` URL. `frontend/src/services/api.js` sets
+   `API_BASE_URL = '/api'` and there are **no `import.meta.env` variables anywhere in the
+   frontend** — there is deliberately no per-environment build.
+2. Whatever fronts the static bundle must therefore route `/api` to the Lambda on the
+   **same origin** (a Vercel rewrite, or a CloudFront `/api/*` behaviour). This is what
+   keeps CORS out of the picture entirely; `flask-cors` is not a dependency and the Flask
+   app sets no CORS headers of its own. The Function URL's wildcard CORS config is the
+   only thing answering preflight today.
+3. Lambda invokes `app.handler`. `backend/app.py` builds `Mangum(WsgiToAsgi(app))` —
+   Mangum speaks ASGI, Flask is WSGI, and `asgiref` bridges them. The same `app` object
+   and the same blueprints serve every runtime.
+4. Blueprints already carry the `/api` prefix (`/api/auth`, `/api/students`, `/api/resumes`,
+   `/api/recommendations`, `/api/projects`), so Mangum's `api_gateway_base_path` is left at
+   its default `"/"` and no path stripping happens. When API Gateway lands it must use the
+   **`$default` stage**, which serves paths with no stage prefix, so this stays true.
+5. The handler reads and writes Neon over TLS, puts resume files in S3, and calls the
+   OpenAI and Hugging Face APIs over the internet. The function is **not in a VPC**, which
+   is what makes those outbound calls work without a NAT gateway.
+
+### File uploads
+
+`/tmp` is the only writable filesystem. `backend/api/resumes/routes.py` sets
+`UPLOAD_DIR = Path("/tmp/uploads/resumes")` and creates it **at import time** — a relative
+path would resolve under the read-only `/var/task` and take down the whole app before a
+single request was served. Files are parsed, pushed to S3, and deleted on every code path.
+
+Two size limits apply, and the smaller one is not the one in the code:
+
+- `MAX_FILE_SIZE_MB = 10` is the application check.
+- A **synchronous Lambda invocation payload caps at 6 MB**, and both Function URLs and
+  API Gateway base64-encode binary bodies (~1.33× expansion). The real ceiling is ≈4.4 MB,
+  and a file over it fails at the platform edge with an opaque error before Flask sees it.
+
+---
+
+## The 30-second wall
+
+**API Gateway HTTP API caps its integration timeout at 30 seconds, and that limit cannot be
+raised.** Two endpoints exceed it:
+
+| Endpoint | Duration | Why |
+|---|---|---|
+| `POST /api/recommendations/projects/<id>/generate` | **~73 s** (measured in production) | HF embeddings + a fan-out of `gpt-5` summary calls across careers and courses |
+| `POST /api/resumes/<id>/extract-skills` | **~30 s** | one `gpt-5` `responses.parse` call |
+
+Putting an HTTP API in front of the Lambda as it stands would return 504 on the first and
+make the second fail *intermittently*, which is worse than failing consistently. The
+Function URL has no such cap, which is the only reason the current deployment works.
+
+The fix is not a bigger timeout — it is **submit-then-poll async jobs**: the request path
+writes a job row and returns `202` with a `job_id` in well under a second, the Lambda
+invokes *itself* with `InvocationType='Event'` to do the work out of band, and the frontend
+polls `GET /api/jobs/<job_id>` until a terminal status arrives. Once no request path can
+exceed 30 s, API Gateway can be cut over safely.
+
+One Lambda-specific trap that rules out the obvious shortcut: **a background thread does not
+work here.** Lambda freezes the execution environment the moment the handler returns — CPU
+drops to approximately zero, and the sandbox is only thawed by a later invocation that may
+not even be the same sandbox. A 73-second thread would make partial, unpredictable progress
+and hold a Neon connection open while frozen.
+
+---
+
+## Configuration
+
+Everything is supplied as Lambda environment variables. There is no `.env` file in the image,
+so a missing variable is a runtime failure, not a fallback.
+
+| Variable | Notes |
+|---|---|
+| `DB_USER`, `DB_PASSWORD` | default to `""` |
+| `DB_HOST`, `DB_PORT`, `DB_NAME` | **no defaults** — a missing one yields the literal string `None` inside the URL |
+| `DB_SSLMODE` | defaults to `require`; Neon rejects plaintext |
+| `SECRET_KEY` | JWT signing; defaults to `dev-secret-change-me` |
+| `JWT_EXPIRY_HOURS` | defaults to `24` |
+| `OPENAI_API_KEY` | models are hardcoded: `gpt-5` for extraction, `gpt-5-mini` for summaries |
+| `HF_TOKEN` | Hugging Face Inference API, `sentence-transformers/all-MiniLM-L6-v2` |
+| `AWS_BUCKET_NAME` | **no default** — `S3Service` raises rather than guess a bucket |
+| `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` | note the **non-standard names**; the reserved `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` cannot be set as Lambda env vars |
+| `AWS_REGION` | defaults to `ap-south-1` |
+| `LANGSMITH_*` | read by the `langsmith` SDK itself, not by any code in this repo |
+
+`S3Service` passes its keys to `boto3.client` explicitly. If both are `None`, boto3 falls
+through to its default credential chain and picks up the **execution role** — so dropping the
+static keys later is an env-var change with no code change, once the role has
+`s3:PutObject`/`s3:GetObject` on `arn:aws:s3:::career-tours-bkt/*`.
+
+### Known risk: secrets are plaintext
+
+Every secret above — including `OPENAI_API_KEY`, `HF_TOKEN`, `LANGSMITH_API_KEY`,
+`DB_PASSWORD` and `SECRET_KEY` — is stored in plaintext in the Lambda's environment
+configuration, readable by anyone holding `lambda:GetFunctionConfiguration`. The Function URL
+in front of it is entirely unauthenticated (`AuthType: NONE`). Moving these to Secrets Manager
+or SSM Parameter Store requires an execution-role policy change.
+
+---
+
+## IAM: what the deploy user cannot do
+
+Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`. It can push to ECR and
+update the function, but it is **denied**:
+
+`apigateway:GET` (all of it) · `iam:*` · `s3:ListAllMyBuckets` · `s3:ListBucket` ·
+`s3:GetBucketLocation` · `cloudfront:ListDistributions` · `ec2:DescribeInstances`
+
+Practical consequences: this user **cannot create or even read an API Gateway**, cannot attach
+policies to the execution role, and cannot inspect CloudFront or the S3 bucket. Anything in
+those categories is an admin action. Because CloudFront and EC2 are unreadable from here, this
+document cannot state whether either exists — that has to be confirmed from an admin account.
+
+---
+
+## Deploying
+
+```bash
+docker buildx build --platform linux/arm64 -t career-tours-api:local .
+
+aws ecr get-login-password --region ap-south-1 \
+  | docker login --username AWS --password-stdin 307857432997.dkr.ecr.ap-south-1.amazonaws.com
+docker tag career-tours-api:local \
+  307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+docker push 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+
+aws lambda update-function-code --function-name career-tours-api --region ap-south-1 \
+  --image-uri 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+aws lambda wait function-updated --function-name career-tours-api --region ap-south-1
+```
+
+The `Dockerfile` copies `backend/` **into** `${LAMBDA_TASK_ROOT}` rather than alongside it,
+because the Python packages use bare imports (`from api.auth.routes import auth_bp`) and so
+`backend/` must be the package root. `CMD ["app.handler"]` is a handler string, not a shell
+command.
+
+Logs — remember the group override:
+
+```bash
+aws logs tail /aws/lambda/career-tours-lambda --region ap-south-1 --since 15m --follow
+```
+
+### Testing the image locally
+
+The AWS base image ships the runtime interface emulator, so the exact event shape API Gateway
+will send can be replayed before deploying:
+
+```bash
+docker run --rm -p 9000:8080 --env-file .env career-tours-api:local
+
+curl -s localhost:9000/2015-03-31/functions/function/invocations -d '{
+  "version":"2.0","routeKey":"$default","rawPath":"/db-test","headers":{},
+  "requestContext":{"http":{"method":"GET","path":"/db-test","sourceIp":"1.2.3.4"}},
+  "isBase64Encoded":false }'
+```
+
+If you ever see `"The adapter was unable to infer a handler to use for the event"`, the event
+you sent matched none of Mangum's four recognised shapes (ALB, API Gateway v1/v2, Lambda@Edge).
+That is a malformed test payload, not a broken function.
+
+---
+
+## EC2 remnants, retained but stale
+
+The application ran on an Amazon Linux EC2 instance behind Nginx and Gunicorn before this
+migration. Several artifacts of that deployment are still in the repository **on purpose** —
+they are not to be deleted until the instance is confirmed decommissioned. None of them affect
+the Lambda runtime:
+
+| Artifact | Status |
+|---|---|
+| `nginx.conf` | Reference copy of the instance's Nginx config — static `dist/` serving, `/api` → `127.0.0.1:5000`, Certbot TLS, a 10 MB body cap and a 300 s read timeout. Listed in `.gitignore` yet tracked, so it shows as permanently modified. Unused by Lambda. |
+| `gunicorn` in `requirements.txt` | Dead weight in the image; harmless. |
+| The rsync deploy recipe in [deployment.md](deployment.md) | Describes `rsync` over SSH plus `systemctl restart career-tours`. Superseded by the ECR flow above. |
+| `backend/uploads/`, `uploads/` | Old on-disk upload directories. Uploads now go to `/tmp` and then S3. |
+
+Two of Nginx's behaviours have **no equivalent** in the Lambda setup and are worth remembering:
+the 10 MB `client_max_body_size` (the platform limit is stricter — see [File uploads](#file-uploads))
+and the 300 s `proxy_read_timeout` (API Gateway's 30 s cap is far stricter — see
+[The 30-second wall](#the-30-second-wall)).
