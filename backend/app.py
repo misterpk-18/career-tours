@@ -63,9 +63,30 @@ def db_test():
 
 # Lambda entrypoint. Mangum speaks ASGI and Flask is a WSGI app, so WsgiToAsgi
 # adapts between them — `app` itself, and every blueprint on it, is unchanged.
-# api_gateway_base_path stays None: the blueprint url_prefixes already carry the
-# /api segment, so no path stripping is wanted.
-handler = Mangum(WsgiToAsgi(app), lifespan="off")
+# api_gateway_base_path is left at its default "/": the blueprint url_prefixes
+# already carry the /api segment, so no path stripping is wanted.
+_http = Mangum(WsgiToAsgi(app), lifespan="off")
+
+
+def handler(event, context):
+    """One image, two entry points.
+
+    HTTP requests go to Mangum. Background jobs arrive because the function
+    invoked *itself* with InvocationType='Event' and a `ct_task` key — a shape
+    that matches none of Mangum's four infer() predicates. Mangum raises rather
+    than ignoring an event it cannot classify ("unable to infer a handler"), so
+    the task branch has to come first.
+
+    The app context pushed here is what lets the worker use every existing
+    repository unchanged; they all reach for `db.session`.
+    """
+    if isinstance(event, dict) and "ct_task" in event:
+        from services.jobs.worker import run_task
+
+        with app.app_context():
+            return run_task(event, context)
+
+    return _http(event, context)
 
 
 if __name__ == "__main__":

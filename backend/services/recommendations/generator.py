@@ -6,6 +6,7 @@ from repositories.course_skill_repository import CourseSkillRepository
 from repositories.llm_summary_repository import LLMSummaryRepository
 from repositories.project_repository import ProjectRepository
 from repositories.skill_repository import SkillRepository
+from services.jobs.progress import NULL_PROGRESS
 from services.llm.openai_service import OpenAIService
 from services.matching.ranking import CareerRankingService
 
@@ -15,7 +16,17 @@ class RecommendationGenerator:
     TOP_COURSES = 5
 
     @staticmethod
-    def generate(project_id):
+    def generate(project_id, progress=NULL_PROGRESS):
+        """Rebuild a project's recommendations from its extracted skills.
+
+        `progress` is a ProgressReporter when this runs as a background job and
+        a no-op otherwise, so the two paths execute identical code.
+
+        Note that this is destructive before it is constructive: the four
+        deletes below clear the project's existing recommendations before
+        anything replaces them. An interrupted run therefore leaves the project
+        with nothing, which is why every failure message says so.
+        """
         project = ProjectRepository.get_by_id(project_id)
         if not project:
             raise ValueError("Project not found")
@@ -24,8 +35,11 @@ class RecommendationGenerator:
             project_id=project_id,
             top_n=RecommendationGenerator.TOP_CAREERS,
             include_summary=True,
+            progress=progress,
         )
         recommendations = ranking_result["recommendations"]
+
+        progress.stage("persisting", total=1)
 
         CareerMatchRepository.delete_by_project_id(project_id)
         CareerSkillGapRepository.delete_by_project_id(project_id)
@@ -38,6 +52,9 @@ class RecommendationGenerator:
             recommendations=recommendations,
         )
 
+        progress.advance()
+        progress.stage("courses", total=len(recommendations))
+
         for recommendation in recommendations:
             if recommendation.get("summary"):
                 LLMSummaryRepository.create(
@@ -49,6 +66,9 @@ class RecommendationGenerator:
                 )
             RecommendationGenerator._save_skill_gaps(project, recommendation)
             RecommendationGenerator._save_course_recommendations(project, recommendation)
+            progress.advance(
+                message=f"Courses for {recommendation['occupation_name']}"
+            )
 
         return {
             "project_id": str(project_id),
