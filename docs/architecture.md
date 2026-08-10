@@ -194,18 +194,38 @@ document cannot state whether either exists — that has to be confirmed from an
 ## Deploying
 
 ```bash
-docker buildx build --platform linux/arm64 -t career-tours-api:local .
+ECR=307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api
 
 aws ecr get-login-password --region ap-south-1 \
   | docker login --username AWS --password-stdin 307857432997.dkr.ecr.ap-south-1.amazonaws.com
-docker tag career-tours-api:local \
-  307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
-docker push 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+
+docker buildx build --platform linux/arm64 \
+  --provenance=false --sbom=false \
+  --output type=image,oci-mediatypes=false,push=true \
+  -t "$ECR:latest" .
 
 aws lambda update-function-code --function-name career-tours-api --region ap-south-1 \
-  --image-uri 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+  --image-uri "$ECR:latest"
 aws lambda wait function-updated --function-name career-tours-api --region ap-south-1
 ```
+
+> **The three build flags are not optional.** Since Buildx 0.10 the default is to
+> attach provenance and SBOM attestations, which wraps the image in an
+> `application/vnd.oci.image.index.v1+json` manifest. Lambda accepts only
+> `application/vnd.docker.distribution.manifest.v2+json` and rejects the update with:
+>
+> ```
+> InvalidParameterValueException: The image manifest, config or layer media type
+> for the source image ... is not supported.
+> ```
+>
+> The image pushes to ECR perfectly happily first, so the failure surfaces one step
+> later than its cause. Check what actually landed with:
+>
+> ```bash
+> aws ecr describe-images --repository-name career-tours-api --region ap-south-1 \
+>   --query 'sort_by(imageDetails,&imagePushedAt)[-1].imageManifestMediaType'
+> ```
 
 The `Dockerfile` copies `backend/` **into** `${LAMBDA_TASK_ROOT}` rather than alongside it,
 because the Python packages use bare imports (`from api.auth.routes import auth_bp`) and so
