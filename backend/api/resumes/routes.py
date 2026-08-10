@@ -20,7 +20,11 @@ resume_bp = Blueprint(
     __name__,
 )
 
-UPLOAD_DIR = Path("uploads/resumes")
+# Scratch space for an upload between `file.save()` and the S3 upload — every
+# code path below removes the file again. On Lambda only /tmp is writable, and a
+# relative path would resolve under the read-only /var/task and fail this mkdir
+# at import time, taking the whole app down with it.
+UPLOAD_DIR = Path("/tmp/uploads/resumes")
 ALLOWED_EXTENSIONS = {".pdf", ".docx"}
 MAX_FILE_SIZE_MB = 10
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -176,15 +180,25 @@ def upload_resume():
 def list_my_resumes():
     resumes = ResumeRepository.get_by_student_id(g.student_id)
 
-    s3_service = S3Service()
+    # Preview URLs are a nice-to-have here — the loop below already degrades to
+    # None when one can't be signed. Constructing the client is misconfiguration,
+    # not a per-resume failure, so it degrades the same way instead of 500ing the
+    # whole list.
+    try:
+        s3_service = S3Service()
+    except Exception:
+        current_app.logger.exception("list_my_resumes: S3 unavailable, omitting previews")
+        s3_service = None
+
     items = []
     for resume in resumes:
         preview_url = None
-        try:
-            key = S3Service.key_from_url(resume.file_url)
-            preview_url = s3_service.generate_presigned_url(key)
-        except (ValueError, RuntimeError):
-            preview_url = None
+        if s3_service is not None:
+            try:
+                key = S3Service.key_from_url(resume.file_url)
+                preview_url = s3_service.generate_presigned_url(key)
+            except (ValueError, RuntimeError):
+                preview_url = None
         items.append(_serialize_resume_list_item(resume, preview_url))
 
     return jsonify({"resumes": items})

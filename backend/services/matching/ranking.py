@@ -3,6 +3,7 @@ from uuid import UUID
 
 from repositories.occupation_repository import OccupationRepository
 from repositories.project_skill_repository import ProjectSkillRepository
+from services.jobs.progress import NULL_PROGRESS
 from services.matching.gap_analysis import GapAnalyzer
 from services.matching.skill_matcher import SkillMatcher
 
@@ -16,7 +17,12 @@ class CareerRankingService:
         return [skill["skill_name"] for skill in skills]
 
     @staticmethod
-    def recommend(project_id: UUID, top_n: int = DEFAULT_TOP_N, include_summary: bool = False) -> Dict:
+    def recommend(
+        project_id: UUID,
+        top_n: int = DEFAULT_TOP_N,
+        include_summary: bool = False,
+        progress=NULL_PROGRESS,
+    ) -> Dict:
         project_skills = CareerRankingService.get_project_skill_names(project_id)
 
         if not project_skills:
@@ -25,7 +31,11 @@ class CareerRankingService:
         occupations = OccupationRepository.get_all()
         matches: List[Dict] = []
 
+        progress.stage("matching", total=len(occupations))
+
         for occupation in occupations:
+            progress.advance()
+
             occupation_skills = OccupationRepository.get_skills(occupation["occupation_id"])
 
             if not occupation_skills:
@@ -45,10 +55,12 @@ class CareerRankingService:
             match["rank"] = index
 
         if include_summary:
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor, as_completed
             from services.llm.openai_service import OpenAIService
             llm = OpenAIService()
-            
+
+            progress.stage("career_summaries", total=len(top_matches))
+
             def _gen_summary(match):
                 # Stored as JSON in llm_summaries.summary_text; the API parses it back
                 # out for the client.
@@ -58,9 +70,18 @@ class CareerRankingService:
                     match["matched_skills"],
                     match["missing_skills"],
                 ).model_dump_json()
-            
+
+            # submit/as_completed rather than executor.map: map returns a lazy
+            # iterator, and this one was never consumed, so an exception inside
+            # _gen_summary was discarded silently and the career shipped with no
+            # summary and no log line. as_completed also lets progress advance
+            # as each summary lands instead of all at once at the end.
             with ThreadPoolExecutor(max_workers=5) as executor:
-                executor.map(_gen_summary, top_matches)
+                futures = [executor.submit(_gen_summary, match) for match in top_matches]
+
+                for future in as_completed(futures):
+                    future.result()
+                    progress.advance()
 
         return {
             "project_id": project_id,

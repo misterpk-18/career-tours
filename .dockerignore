@@ -1,0 +1,31 @@
+# The Dockerfile does `COPY backend/ .`, which without this file also copies the
+# local __pycache__ trees, the stale on-disk upload dirs and the CSV import
+# staging data into the image — none of which the Lambda ever reads.
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.venv/
+venv/
+
+# Uploads are staged in /tmp at runtime and pushed to S3; these are EC2-era leftovers.
+uploads/
+backend/uploads/
+
+# Local-only seed/import staging, several MB and never read at runtime.
+backend/data/imports/
+
+# The frontend is served separately (Vercel / S3+CloudFront), never from the image.
+frontend/
+
+.git/
+.gitignore
+.env
+*.pem
+docs/
+.claude/
+.playwright-mcp/
+nginx.conf
+response.json
+README.md

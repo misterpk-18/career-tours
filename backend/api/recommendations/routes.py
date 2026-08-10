@@ -2,11 +2,14 @@ from uuid import UUID
 
 import json
 
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app, jsonify, request
+from sqlalchemy.exc import IntegrityError
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
+from api.serializers import serialize_job
 from config.database import db
+from repositories.job_repository import JobRepository
 from repositories.career_match_repository import (
     CareerMatchRepository,
 )
@@ -22,6 +25,8 @@ from repositories.llm_summary_repository import (
 from repositories.project_repository import (
     ProjectRepository,
 )
+from services.jobs.dispatch import EnqueueFailed, enqueue
+from services.jobs.worker import JOB_GENERATE_RECOMMENDATIONS
 from services.recommendations.generator import (
     RecommendationGenerator,
 )
@@ -58,12 +63,60 @@ def _with_structured_summary(summary):
     return {**summary, "structured": structured}
 
 
+def _job_response(job, status_code):
+    return jsonify({**serialize_job(job), "poll_url": f"/api/jobs/{job['job_id']}"}), status_code
+
+
+def _enqueue_generate(project):
+    """Start a generate run in the background and return 202 immediately.
+
+    Generation takes ~73 seconds, which no API Gateway integration will wait
+    for. The client gets a job id and polls GET /api/jobs/<id>.
+    """
+    try:
+        job = JobRepository.create(
+            student_id=project.student_id,
+            project_id=project.project_id,
+            job_type=JOB_GENERATE_RECOMMENDATIONS,
+        )
+    except IntegrityError:
+        # The partial unique index rejected a second active job for this
+        # project. That is a double submit, not an error — hand back the run
+        # already in flight so the client attaches to it rather than starting
+        # another 73 seconds of paid work.
+        db.session.rollback()
+        existing = JobRepository.get_active(
+            project.project_id, JOB_GENERATE_RECOMMENDATIONS
+        )
+
+        if existing is not None:
+            return _job_response(existing, 202)
+
+        # The job finished between our INSERT and this SELECT. Rare, and the
+        # user can simply press it again.
+        return jsonify({"error": "a run just finished; please try again"}), 409
+
+    try:
+        enqueue(JOB_GENERATE_RECOMMENDATIONS, job["job_id"])
+    except EnqueueFailed:
+        # The row holds the active-job index, so leaving it would block every
+        # later submit behind a job nobody is running.
+        JobRepository.delete(job["job_id"])
+        current_app.logger.exception("generate: could not enqueue background job")
+        return jsonify({"error": "could not start the run; please try again"}), 503
+
+    return _job_response(job, 202)
+
+
 @recommendations_bp.route("/projects/<project_id>/generate", methods=["POST"])
 @require_auth
 def generate_recommendations(project_id: str):
     project, error = owned_project(project_id)
     if error:
         return error
+
+    if request.args.get("async") == "1":
+        return _enqueue_generate(project)
 
     project_uuid = project.project_id
 
