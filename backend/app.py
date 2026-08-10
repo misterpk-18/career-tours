@@ -4,6 +4,7 @@ from mangum import Mangum
 from sqlalchemy import text
 
 from api.auth.routes import auth_bp
+from api.jobs.routes import jobs_bp
 from api.recommendations.routes import recommendations_bp
 from api.resumes.routes import resume_bp
 from api.students.routes import students_bp
@@ -45,6 +46,7 @@ app.register_blueprint(students_bp, url_prefix="/api/students")
 app.register_blueprint(resume_bp, url_prefix="/api/resumes")
 app.register_blueprint(recommendations_bp, url_prefix="/api/recommendations")
 app.register_blueprint(projects_bp, url_prefix="/api/projects")
+app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
 
 
 @app.route("/")

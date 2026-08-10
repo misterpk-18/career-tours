@@ -4,7 +4,8 @@ from flask import Blueprint, g, jsonify, request
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
-from api.serializers import serialize_project_skill
+from api.serializers import serialize_job, serialize_project_skill
+from repositories.job_repository import JobRepository
 from repositories.project_repository import ProjectRepository
 from repositories.project_skill_repository import ProjectSkillRepository
 
@@ -78,6 +79,36 @@ def get_project_skills(project_id: str):
     skills = ProjectSkillRepository.get_by_project_id(project.project_id)
 
     return jsonify([serialize_project_skill(skill) for skill in skills])
+
+
+@projects_bp.route("/<project_id>/jobs/latest", methods=["GET"])
+@require_auth
+def get_latest_project_job(project_id: str):
+    """The most recent job of a given type for this project, or null.
+
+    This is how a page re-attaches to a run already in progress after a reload,
+    a navigation, or a switch to another device — without the client having
+    stored a job id anywhere. The same reasoning as `get_project_skills` above:
+    if the server cannot be asked, the client caches and guesses, and the guess
+    is wrong in every other browser.
+    """
+    job_type = request.args.get("type")
+
+    if not job_type:
+        return jsonify({"error": "type query parameter is required"}), 400
+
+    project, error = owned_project(project_id)
+    if error:
+        return error
+
+    # Same reasoning as GET /api/jobs/<id>: resolve dead workers before reading,
+    # so a page reloaded after a deploy sees `failed` rather than a job stuck
+    # `running` forever.
+    JobRepository.reap_stale()
+
+    job = JobRepository.get_latest(project.project_id, job_type)
+
+    return jsonify({"job": serialize_job(job) if job else None})
 
 
 @projects_bp.route("/student/<student_id>", methods=["GET"])
