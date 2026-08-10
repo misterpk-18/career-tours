@@ -194,20 +194,24 @@ document cannot state whether either exists — that has to be confirmed from an
 ## Deploying
 
 ```bash
-ECR=307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api
-
 aws ecr get-login-password --region ap-south-1 \
   | docker login --username AWS --password-stdin 307857432997.dkr.ecr.ap-south-1.amazonaws.com
 
 docker buildx build --platform linux/arm64 \
   --provenance=false --sbom=false \
   --output type=image,oci-mediatypes=false,push=true \
-  -t "$ECR:latest" .
+  -t 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest .
 
 aws lambda update-function-code --function-name career-tours-api --region ap-south-1 \
-  --image-uri "$ECR:latest"
+  --image-uri 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
 aws lambda wait function-updated --function-name career-tours-api --region ap-south-1
 ```
+
+> The image URI is written out in full rather than held in a variable on purpose.
+> In zsh, `$ECR:latest` applies `:l` as a parameter modifier — it lowercases the
+> value and leaves `atest` behind, so the push goes to a repository named
+> `career-tours-apiatest` and fails with "repository does not exist". Braces
+> (`${ECR}:latest`) also work; the literal cannot be got wrong.
 
 > **The three build flags are not optional.** Since Buildx 0.10 the default is to
 > attach provenance and SBOM attestations, which wraps the image in an
