@@ -13,7 +13,18 @@ class S3Service:
         self.access_key = os.getenv("AWS_ACCESS_KEY")
         self.secret_key = os.getenv("AWS_SECRET_KEY")
         self.region = os.getenv("AWS_REGION", "ap-south-1")
-        self.bucket_name = os.getenv("AWS_BUCKET_NAME", "career-tours-data")
+
+        # No default bucket. The old fallback was `career-tours-data`, a bucket
+        # this account cannot touch, so a missing AWS_BUCKET_NAME surfaced as a
+        # 500 with S3's opaque `AllAccessDisabled` instead of a config error.
+        # Deployments must set the bucket explicitly; the real one is
+        # `career-tours-bkt`.
+        self.bucket_name = os.getenv("AWS_BUCKET_NAME")
+
+        if not self.bucket_name:
+            raise RuntimeError(
+                "AWS_BUCKET_NAME is not set; refusing to guess an S3 bucket"
+            )
 
         # Initialize boto3 client
         self.client = boto3.client(

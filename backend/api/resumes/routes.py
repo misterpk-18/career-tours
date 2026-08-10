@@ -180,15 +180,25 @@ def upload_resume():
 def list_my_resumes():
     resumes = ResumeRepository.get_by_student_id(g.student_id)
 
-    s3_service = S3Service()
+    # Preview URLs are a nice-to-have here — the loop below already degrades to
+    # None when one can't be signed. Constructing the client is misconfiguration,
+    # not a per-resume failure, so it degrades the same way instead of 500ing the
+    # whole list.
+    try:
+        s3_service = S3Service()
+    except Exception:
+        current_app.logger.exception("list_my_resumes: S3 unavailable, omitting previews")
+        s3_service = None
+
     items = []
     for resume in resumes:
         preview_url = None
-        try:
-            key = S3Service.key_from_url(resume.file_url)
-            preview_url = s3_service.generate_presigned_url(key)
-        except (ValueError, RuntimeError):
-            preview_url = None
+        if s3_service is not None:
+            try:
+                key = S3Service.key_from_url(resume.file_url)
+                preview_url = s3_service.generate_presigned_url(key)
+            except (ValueError, RuntimeError):
+                preview_url = None
         items.append(_serialize_resume_list_item(resume, preview_url))
 
     return jsonify({"resumes": items})
