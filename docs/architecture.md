@@ -52,7 +52,7 @@ AWS account **307857432997**, region **ap-south-1** (Mumbai).
 | Component | Value |
 |---|---|
 | Lambda function | `career-tours-api` |
-| Package type | **Image** (not zip) — ECR `307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest`, ~324 MB |
+| Package type | **Image** (not zip) — ECR `307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest`, ~237 MB compressed / 1.07 GB on disk |
 | Architecture | **arm64** — builds must target it explicitly (`docker buildx --platform linux/arm64`) |
 | Memory / timeout | 1024 MB / **300 s** |
 | Execution role | `career-tours-lambda-role-kpgs1hwq` |
