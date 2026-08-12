@@ -7,7 +7,6 @@ from repositories.llm_summary_repository import LLMSummaryRepository
 from repositories.project_repository import ProjectRepository
 from repositories.skill_repository import SkillRepository
 from services.jobs.progress import NULL_PROGRESS
-from services.llm.openai_service import OpenAIService
 from services.matching.ranking import CareerRankingService
 
 
@@ -105,6 +104,12 @@ class RecommendationGenerator:
         occupation_id = recommendation["occupation_id"]
         missing_skill_names = recommendation["missing_skills"]
         course_scores = {}
+
+        # Deferred for the same reason as in ResumeSkillExtractor: importing
+        # openai and the langsmith wrapper costs ~1.3s on a Lambda cold start,
+        # and no read endpoint needs it.
+        from services.llm.openai_service import OpenAIService
+
         llm = OpenAIService()
 
         for skill_name in missing_skill_names:

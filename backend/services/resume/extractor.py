@@ -4,7 +4,6 @@ from uuid import UUID
 from config.database import db
 from repositories.project_skill_repository import ProjectSkillRepository
 from repositories.student_skill_repository import StudentSkillRepository
-from services.llm.openai_service import OpenAIService
 from services.skills.normalizer import SkillNormalizer
 
 
@@ -71,6 +70,14 @@ class ResumeSkillExtractor:
         resume_text: str,
         questionnaire_answers: Optional[dict] = None,
     ) -> dict:
+        # Imported here rather than at module scope. openai and the langsmith
+        # wrapper cost ~1.3s to import on Lambda, and that was paid by every
+        # cold start of every endpoint — including the read paths and the cached
+        # branch of this very function, none of which call an LLM. Now only a
+        # request that genuinely reaches OpenAI pays it, and against a ~30s
+        # extraction it is noise. Matches what ranking.py already does.
+        from services.llm.openai_service import OpenAIService
+
         llm = OpenAIService()
 
         profile = llm.extract_skills(
