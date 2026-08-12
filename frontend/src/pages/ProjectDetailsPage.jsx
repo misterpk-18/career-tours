@@ -27,6 +27,9 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import SectionHeading from '../components/ui/SectionHeading';
+import JobProgress from '../components/ui/JobProgress';
+import useJob from '../hooks/useJob';
+import { JOB_GENERATE_RECOMMENDATIONS } from '../lib/jobStages';
 import { deduplicateSkills } from '../lib/format';
 import { apiErrorMessage } from '../lib/apiError';
 
@@ -43,9 +46,26 @@ export const ProjectDetailsPage = () => {
   const [extracting, setExtracting] = useState(false);
   const [extractSuccess, setExtractSuccess] = useState('');
 
-  // Career recommendation state
+  // Career recommendation state. The run itself lives in useJob, which also
+  // re-attaches to one already in progress when this page mounts — so a reload
+  // or a second tab picks the same run back up with nothing stored client-side.
   const [careersAlreadyGenerated, setCareersAlreadyGenerated] = useState(false);
-  const [recommending, setRecommending] = useState(false);
+  const {
+    job: generateJob,
+    start: startGenerate,
+    starting: submittingGenerate,
+    error: generateError,
+    active: generateActive,
+  } = useJob({
+    projectId,
+    jobType: JOB_GENERATE_RECOMMENDATIONS,
+    // Only a succeeded run has recommendations to show. A failed one must not
+    // set this flag: the generator clears the old recommendations before
+    // writing new ones, so the project genuinely has none to view.
+    onSucceeded: () => setCareersAlreadyGenerated(true),
+  });
+
+  const recommending = submittingGenerate || generateActive;
 
   // Modals state
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -122,24 +142,18 @@ export const ProjectDetailsPage = () => {
     }
   };
 
-  // Guarded: this handler is reachable from two triggers, and without the
-  // early return a fast double-click fired two concurrent generate requests.
-  const handleRecommendCareers = async () => {
-    if (recommending) return;
-
-    setRecommending(true);
-    setError('');
-    try {
-      await recommendationsAPI.generate(projectId);
-      setCareersAlreadyGenerated(true);
-      navigate(`/projects/${projectId}/careers`);
-    } catch (err) {
-      console.error('Failed to generate career recommendations:', err);
-      setError(apiErrorMessage(err, 'Failed to generate recommendations.'));
-    } finally {
-      setRecommending(false);
-    }
-  };
+  // Submit and poll rather than await. Generation takes ~2 minutes, which is far
+  // longer than any HTTP request should be held open, and it used to be spent
+  // behind a spinning button that said nothing.
+  //
+  // Deliberately does NOT navigate on success any more: the user has been on
+  // this page for two minutes and may well have started reading something else.
+  // Yanking them to another route at an unpredictable moment is worse than
+  // showing them a button. The double-click guard is gone too — the server now
+  // returns the in-flight job for a second submit, which also holds across
+  // browser tabs, which no client-side flag could.
+  const handleRecommendCareers = () =>
+    startGenerate(() => recommendationsAPI.generateAsync(projectId));
 
   const handleViewCareers = () => navigate(`/projects/${projectId}/careers`);
 
@@ -283,7 +297,26 @@ export const ProjectDetailsPage = () => {
         </div>
 
         {error ? <Alert tone="error">{error}</Alert> : null}
+        {generateError ? <Alert tone="error">{generateError}</Alert> : null}
         {extractSuccess ? <Alert tone="success">{extractSuccess}</Alert> : null}
+
+        {/* Renders the live bar while running and the reason on failure. Returns
+            null once the run has succeeded, at which point the buttons above
+            have already switched to the View actions. */}
+        <JobProgress job={generateJob} />
+
+        {generateJob?.status === 'succeeded' ? (
+          <Alert
+            tone="success"
+            action={
+              <Button variant="ghost" size="xs" iconRight={ArrowRight} onClick={handleViewCareers}>
+                View Careers
+              </Button>
+            }
+          >
+            Your career recommendations are ready.
+          </Alert>
+        ) : null}
 
         {!hasResume ? (
           <Alert
