@@ -89,9 +89,36 @@ export const resumesAPI = {
   },
 };
 
+export const jobsAPI = {
+  // `signal` comes from an AbortController so an in-flight poll is dropped when
+  // the component unmounts, rather than resolving into a dead component.
+  get: async (jobId, { signal } = {}) => {
+    const response = await api.get(`/jobs/${jobId}`, { signal });
+    return response.data;
+  },
+  // How a reloaded page re-attaches to a run already in progress. Nothing about
+  // the job is kept client-side, so this works in another tab or on another
+  // device too.
+  latestForProject: async (projectId, type, { signal } = {}) => {
+    const response = await api.get(`/projects/${projectId}/jobs/latest`, {
+      params: { type },
+      signal,
+    });
+    return response.data;
+  },
+};
+
 export const recommendationsAPI = {
   generate: async (projectId) => {
     const response = await api.post(`/recommendations/projects/${projectId}/generate`);
+    return response.data;
+  },
+  // Returns 202 with a job_id in about a second instead of holding the request
+  // open for the ~2 minutes the work actually takes. Poll jobsAPI.get from there.
+  generateAsync: async (projectId) => {
+    const response = await api.post(
+      `/recommendations/projects/${projectId}/generate?async=1`
+    );
     return response.data;
   },
   getCareers: async (projectId) => {
