@@ -36,9 +36,12 @@ Verified against the live AWS account on **2026-08-08**.
                   OpenAI API
 ```
 
-**API Gateway is not deployed yet.** Today the Lambda is reached directly through a
-Lambda **Function URL**. The reason is a hard constraint, not an oversight — see
-[The 30-second wall](#the-30-second-wall) below. Everything else in the diagram is live.
+This is now what is deployed. API Gateway became viable only once the long endpoints were
+converted to background jobs — see [The 30-second wall](#the-30-second-wall).
+
+The Lambda **Function URL** still exists and still works. It is kept deliberately as a
+fallback while the CloudFront path beds in; retiring it means setting its `AuthType` to
+`AWS_IAM` or deleting it, and that should wait until real traffic has proven the new route.
 
 ---
 
@@ -54,8 +57,10 @@ AWS account **307857432997**, region **ap-south-1** (Mumbai).
 | Memory / timeout | 1024 MB / **300 s** |
 | Execution role | `career-tours-lambda-role-kpgs1hwq` |
 | Log group | **`/aws/lambda/career-tours-lambda`** — overridden, so the default `/aws/lambda/career-tours-api` group is empty |
-| Public entry point | Lambda Function URL, `AuthType: NONE`, CORS `*`, BUFFERED |
-| API Gateway | **none** |
+| Public entry point | **CloudFront `d2g1lg63sloe7m.cloudfront.net`** (`E1TW6HR68G4A7T`) |
+| API Gateway | HTTP API `722dql67f0`, `$default` route + `$default` stage, payload format 2.0, 30s integration timeout |
+| Frontend | S3 `career-tours-web`, private, readable only by that distribution via OAC `E2L96DF7Q3K1VQ` |
+| Fallback entry point | Lambda Function URL, `AuthType: NONE` — still live, kept until CloudFront is proven |
 | Database | Neon Postgres, `ep-restless-math-aznw9s4g.c-3.ap-southeast-1.aws.neon.tech`, database `neondb` |
 | Object storage | S3 bucket `career-tours-bkt` (resume files) |
 | Ephemeral disk | 512 MB at `/tmp` — the only writable path |
@@ -261,6 +266,41 @@ you sent matched none of Mangum's four recognised shapes (ALB, API Gateway v1/v2
 That is a malformed test payload, not a broken function.
 
 ---
+
+## Publishing the frontend
+
+CloudFront serves the SPA from S3 and routes `/api/*` to the HTTP API, so `/api` stays
+same-origin and `frontend/src/services/api.js` needs no base URL and no CORS.
+
+```bash
+cd frontend && npm run build && cd ..
+
+# hashed filenames make immutable caching safe
+aws s3 sync frontend/dist/ s3://career-tours-web/ --delete --exclude index.html \
+  --cache-control "public,max-age=31536000,immutable"
+
+# index.html must never be cached, or users keep booting the previous build
+aws s3 cp frontend/dist/index.html s3://career-tours-web/index.html \
+  --cache-control "no-store" --content-type "text/html"
+
+aws cloudfront create-invalidation --distribution-id E1TW6HR68G4A7T --paths "/index.html"
+```
+
+Only `/index.html` needs invalidating: every other asset carries a content hash in its
+filename, so a new build writes new objects rather than replacing cached ones.
+
+`403` and `404` from S3 are rewritten to `/index.html` with a `200`, which is what makes a
+deep link like `/projects/<id>` work — React Router owns that path, and S3 has no such object.
+
+## The EC2 instance
+
+`i-0b0e7c50c03dc9933` (`3.110.122.199`, `career-tours.duckdns.org`) is **still running and
+still serving**, and it is deliberately left alone. Do not assume it is the same system.
+
+**It is on a different database.** Its `/db-test` returns `{"database": "career_tours"}`,
+not `neondb`. Older text in `docs/deployment.md` claiming Postgres was fully migrated off the
+instance is not true of the running box. The two stacks do not share data, so a job, project
+or recommendation created on one is invisible to the other.
 
 ## EC2 remnants, retained but stale
 
