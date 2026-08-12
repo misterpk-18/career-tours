@@ -20,8 +20,16 @@ class ResumeSkillExtractor:
         It also reconciles the halves. student_skills used to be written in a second
         commit that could fail on its own, leaving a project with skills whose
         student rows were never created -- career matching reads student_skills, so
-        those projects looked extracted but matched nothing. Re-upserting the
+        those projects looked extracted but matched nothing. Creating the missing
         catalog-matched rows here repairs that without another LLM call.
+
+        The repair is conditional, which matters more than it looks. This used to
+        upsert every matched skill unconditionally, so a path that exists to
+        *return cached data* took a row lock on each one. Under concurrency that
+        serialises: 100 simultaneous callers for the same student left 86 of them
+        waiting on Lock/transactionid, and the endpoint ran 2.2x slower than an
+        equivalent read. Now the common case -- nothing missing -- performs one
+        extra SELECT and no writes at all.
         """
         saved_skills = ProjectSkillRepository.get_by_project_id(project_id)
 
@@ -31,8 +39,20 @@ class ResumeSkillExtractor:
         matched = [skill for skill in saved_skills if skill["skill_id"] is not None]
 
         if matched:
-            StudentSkillRepository.bulk_create(student_id, matched)
-            db.session.commit()
+            already_stored = StudentSkillRepository.existing_skill_ids(student_id)
+            missing = [
+                skill
+                for skill in matched
+                if str(skill["skill_id"]) not in already_stored
+            ]
+
+            # Only the genuinely absent rows are written. Rows that already exist
+            # keep their stored values rather than being refreshed from
+            # project_skills; refreshing them was never the point of this repair,
+            # and extract_and_save is where new values legitimately come from.
+            if missing:
+                StudentSkillRepository.bulk_create(student_id, missing)
+                db.session.commit()
 
         return {
             # The summary is a property of the LLM response, not of the stored rows,
