@@ -1,0 +1,85 @@
+{
+  "course_code": "NT-C-028",
+  "source_pdf": "NT-C-028_Cloud_Computing.pdf",
+  "course_name": "Cloud Computing",
+  "description": "A Cloud Foundations course for learners who need vendor-neutral cloud concepts before platform specialisation. It covers core compute, storage, networking, security, reliability and operations so that by the end you can design and operate a secure, resilient cloud solution using core compute, storage, network and automation concepts.",
+  "duration_hours": 100,
+  "level": "Beginner to Intermediate",
+  "skills": [
+    {
+      "skill_name": "Cloud service models (IaaS, PaaS, SaaS)",
+      "coverage_weight": 85.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Cloud deployment models",
+      "coverage_weight": 75.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Shared responsibility model",
+      "coverage_weight": 80.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Virtual machines and images",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Containers",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "IP addressing and subnets",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Firewalls and security groups",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Object storage",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Identity and Access Management (IAM)",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Encryption",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Scaling and high availability",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Backup and disaster recovery",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Monitoring and logging",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Infrastructure automation",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Cloud architecture design (deployable architecture)",
+      "coverage_weight": 80.0,
+      "category": "domain"
+    }
+  ]
+}

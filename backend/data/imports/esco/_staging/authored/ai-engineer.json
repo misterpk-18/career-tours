@@ -1,0 +1,57 @@
+{
+  "career_title": "AI Engineer",
+  "career_source": "market",
+  "domain": "AI and Generative AI",
+  "skills": [
+    {
+      "skill_id": "machine-learning",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "python-computer-programming",
+      "relation_type": "essential",
+      "weight": 88
+    },
+    {
+      "skill_id": "deep-learning",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "algorithms",
+      "relation_type": "essential",
+      "weight": 80
+    },
+    {
+      "skill_id": "statistics",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "build-predictive-models",
+      "relation_type": "optional",
+      "weight": 72
+    },
+    {
+      "skill_id": "sql",
+      "relation_type": "optional",
+      "weight": 68
+    },
+    {
+      "skill_id": "natural-language-processing",
+      "relation_type": "optional",
+      "weight": 65
+    },
+    {
+      "skill_id": "distributed-computing",
+      "relation_type": "optional",
+      "weight": 62
+    },
+    {
+      "skill_id": "computer-vision",
+      "relation_type": "optional",
+      "weight": 60
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+# O*NET 15-1254.00 "Web Developers" in the proposed role-family format.
+# Skill names are VERBATIM from O*NET -- no canonicalisation (deliberately deferred).
+# `base_weight` = real O*NET Importance rescaled from the 1-5 IM scale to 0-100.
+# `weight` on technology skills is AUTHORED -- O*NET supplies no importance for them.
+
+family_key: frontend.web-developer
+domain: frontend
+family_name: Web Developer
+reference_level: mid
+
+source:
+  dataset: onet
+  version: "30.3"
+  soc_code: 15-1254.00
+  license: CC BY 4.0
+  attribution: O*NET 30.3 Database, U.S. Department of Labor
+
+skills:
+
+  # ---- carried from O*NET with a real Importance value -------------------
+  - {skill: Programming,             weight: 78, role: core,    base_weight: 78, weight_source: onet, onet_file: transferable}
+  - {skill: Critical Thinking,       weight: 69, role: soft,    base_weight: 69, weight_source: onet, onet_file: essential}
+  - {skill: Complex Problem Solving, weight: 66, role: breadth, base_weight: 66, weight_source: onet, onet_file: transferable}
+  - {skill: Operations Analysis,     weight: 66, role: breadth, base_weight: 66, weight_source: onet, onet_file: transferable}
+  - {skill: Systems Analysis,        weight: 53, role: breadth, base_weight: 53, weight_source: onet, onet_file: transferable}
+  - {skill: Troubleshooting,         weight: 28, role: core,    base_weight: 28, weight_source: onet, onet_file: transferable}
+
+  # ---- technology skills: names from O*NET, weights AUTHORED -------------
+  # O*NET lists 251 of these for this occupation, unranked. Note the verbose
+  # spellings -- these are exactly as the dataset writes them.
+  - {skill: JavaScript,                     weight: 90, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Hypertext markup language HTML, weight: 85, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Cascading style sheets CSS,     weight: 85, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: React,                          weight: 70, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Node.js,                        weight: 55, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Git,                            weight: 65, role: tooling, weight_source: authored, onet_hot: true}
+
+dropped:
+  generic_competencies:
+    reason: Present in O*NET with real weights, but not resume-matchable.
+    count: 21
+  physical_and_irrelevant:
+    reason: >-
+      Non-zero importance for a desk job. Note Equipment Maintenance and Repairing
+      score 0 here but 6 and 3 for Software Developers -- the noise is visible.
+    count: 8

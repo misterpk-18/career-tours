@@ -1,0 +1,57 @@
+{
+  "career_title": "Data Modeler",
+  "career_source": "market",
+  "domain": "Data Engineering",
+  "skills": [
+    {
+      "skill_id": "create-data-models",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "design-database-scheme",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "sql",
+      "relation_type": "essential",
+      "weight": 79
+    },
+    {
+      "skill_id": "normalise-data",
+      "relation_type": "essential",
+      "weight": 76
+    },
+    {
+      "skill_id": "define-database-physical-structure",
+      "relation_type": "essential",
+      "weight": 74
+    },
+    {
+      "skill_id": "create-database-diagrams",
+      "relation_type": "optional",
+      "weight": 68
+    },
+    {
+      "skill_id": "database-management-systems",
+      "relation_type": "optional",
+      "weight": 67
+    },
+    {
+      "skill_id": "information-architecture",
+      "relation_type": "optional",
+      "weight": 64
+    },
+    {
+      "skill_id": "data-warehouse",
+      "relation_type": "optional",
+      "weight": 62
+    },
+    {
+      "skill_id": "data-quality-assessment",
+      "relation_type": "optional",
+      "weight": 60
+    }
+  ]
+}

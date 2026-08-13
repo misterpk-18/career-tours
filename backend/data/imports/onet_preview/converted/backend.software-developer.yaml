@@ -1,0 +1,56 @@
+# O*NET 15-1252.00 "Software Developers" in the proposed role-family format.
+# Skill names are VERBATIM from O*NET -- no canonicalisation (deliberately deferred).
+# `base_weight` = real O*NET Importance rescaled from the 1-5 IM scale to 0-100.
+# `weight` on technology skills is AUTHORED -- O*NET supplies no importance for them.
+
+family_key: backend.software-developer
+domain: backend
+family_name: Software Developer
+reference_level: mid
+
+source:
+  dataset: onet
+  version: "30.3"
+  soc_code: 15-1252.00
+  license: CC BY 4.0
+  attribution: O*NET 30.3 Database, U.S. Department of Labor
+
+skills:
+
+  # ---- carried from O*NET with a real Importance value -------------------
+  # Kept: the handful that plausibly appear on a student resume.
+  - {skill: Programming,             weight: 75, role: core,    base_weight: 75, weight_source: onet, onet_file: transferable}
+  - {skill: Critical Thinking,       weight: 72, role: soft,    base_weight: 72, weight_source: onet, onet_file: essential}
+  - {skill: Systems Analysis,        weight: 62, role: breadth, base_weight: 62, weight_source: onet, onet_file: transferable}
+  - {skill: Complex Problem Solving, weight: 60, role: breadth, base_weight: 60, weight_source: onet, onet_file: transferable}
+  - {skill: Technology Design,       weight: 60, role: breadth, base_weight: 60, weight_source: onet, onet_file: transferable}
+  - {skill: Troubleshooting,         weight: 40, role: core,    base_weight: 40, weight_source: onet, onet_file: transferable}
+
+  # ---- technology skills: names from O*NET, weights AUTHORED -------------
+  # O*NET lists 430 of these for this occupation, unranked, with no importance
+  # value. The subset below was hand-picked; see ../NOTES.md.
+  - {skill: Python,                              weight: 90, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Microsoft SQL Server,                weight: 80, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Git,                                 weight: 70, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Docker,                              weight: 60, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Apache Kafka,                        weight: 45, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Kubernetes,                          weight: 45, role: tooling, weight_source: authored, onet_hot: true}
+
+# ---- dropped from O*NET, with reasons -----------------------------------
+# Real data, but nothing a resume matches on. 29 of the 35 weighted skills.
+dropped:
+  generic_competencies:
+    reason: Present in O*NET with real weights, but not resume-matchable.
+    skills: [Reading Comprehension (62), Active Learning (62), Active Listening (60),
+             Writing (56), Speaking (53), Monitoring (50), Coordination (50),
+             Time Management (53), Operations Analysis (56), Systems Evaluation (60),
+             Judgment and Decision Making (66), Social Perceptiveness (47),
+             Instructing (47), Service Orientation (47), Mathematics (44),
+             Persuasion (44), Negotiation (40), Learning Strategies (40),
+             Quality Control Analysis (44), Operations Monitoring (44), Science (28)]
+  physical_and_irrelevant:
+    reason: Non-zero importance for a desk job, which is itself a signal about the data.
+    skills: [Equipment Selection (28), Operation and Control (25), Installation (22),
+             Equipment Maintenance (6), Repairing (3),
+             Management of Personnel Resources (31), Management of Financial Resources (19),
+             Management of Material Resources (16)]

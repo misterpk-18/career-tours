@@ -1,0 +1,80 @@
+{
+  "course_code": "NT-C-016",
+  "source_pdf": "NT-C-016_C_Programming.pdf",
+  "course_name": "C Programming",
+  "description": "A Programming Foundations course for beginners needing procedural programming and memory fundamentals. By the end, learners can develop and debug modular C programs using arrays, pointers, structures and files.",
+  "duration_hours": 60,
+  "level": "Beginner",
+  "skills": [
+    {
+      "skill_name": "C programming language",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "GCC (GNU Compiler Collection)",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "C Standard Library",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Make",
+      "coverage_weight": 55.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Git",
+      "coverage_weight": 55.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Control flow in C (conditions and loops)",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Functions and header files in C",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Arrays and strings in C",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Pointers and memory addresses in C",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Dynamic memory management in C",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Structures and enums in C",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "File I/O in C",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Input validation and error handling with return codes (C)",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Modular design, testing and debugging in C",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    }
+  ]
+}

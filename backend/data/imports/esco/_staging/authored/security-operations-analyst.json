@@ -1,0 +1,57 @@
+{
+  "career_title": "Security Operations Analyst",
+  "career_source": "market",
+  "domain": "Cybersecurity",
+  "skills": [
+    {
+      "skill_id": "cyber-security",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "ensure-information-security",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "identify-ict-security-risks",
+      "relation_type": "essential",
+      "weight": 82
+    },
+    {
+      "skill_id": "collect-cyber-defence-data",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "wireshark",
+      "relation_type": "optional",
+      "weight": 74
+    },
+    {
+      "skill_id": "respond-to-incidents-in-cloud",
+      "relation_type": "optional",
+      "weight": 73
+    },
+    {
+      "skill_id": "implement-a-firewall",
+      "relation_type": "optional",
+      "weight": 71
+    },
+    {
+      "skill_id": "web-application-security-threats",
+      "relation_type": "optional",
+      "weight": 69
+    },
+    {
+      "skill_id": "perform-ict-security-testing",
+      "relation_type": "optional",
+      "weight": 67
+    },
+    {
+      "skill_id": "nessus",
+      "relation_type": "optional",
+      "weight": 66
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "course_code": "NT-C-023",
+  "source_pdf": "NT-C-023_SQL.pdf",
+  "course_name": "SQL",
+  "description": "A Data & Databases course for learners seeking database, reporting and analytics foundations. It covers the design and querying of relational databases, including schema design, joins, analytics, transactions and performance basics. By the end, learners can accurately design relational schemas and write reliable analytical and operational queries.",
+  "duration_hours": 60,
+  "level": "Beginner",
+  "skills": [
+    {
+      "skill_name": "SQL",
+      "coverage_weight": 92.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Relational database design (tables, keys, normalization)",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SELECT queries, filtering and sorting",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Joins (inner and outer)",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Set operations (UNION/INTERSECT/EXCEPT)",
+      "coverage_weight": 68.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Aggregation with GROUP BY and HAVING",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Subqueries",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data definition (DDL) and constraints",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data modification (INSERT/UPDATE/DELETE)",
+      "coverage_weight": 76.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Common table expressions (CTEs)",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Window functions",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Date/time analysis in SQL",
+      "coverage_weight": 72.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Transactions",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Views and permissions",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Indexes and basic query optimization",
+      "coverage_weight": 68.0,
+      "category": "technical"
+    }
+  ]
+}

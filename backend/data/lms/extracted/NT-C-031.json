@@ -1,0 +1,85 @@
+{
+  "course_code": "NT-C-031",
+  "source_pdf": "NT-C-031_CCNA.pdf",
+  "course_name": "CCNA",
+  "description": "A Networking course for learners preparing for junior networking and NOC support roles. It builds the ability to configure and troubleshoot routed and switched networks using secure foundational practices. Graduates can demonstrate these competencies through authorised labs and practical evidence.",
+  "duration_hours": 140,
+  "level": "Beginner to Intermediate",
+  "skills": [
+    {
+      "skill_name": "Cisco IOS",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "IPv4 and IPv6 addressing",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Subnetting",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "VLANs",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "802.1Q trunking",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Spanning Tree Protocol (STP)",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Static routing",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "OSPF (single-area)",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "DHCP",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "NAT",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Wireless LAN (WLAN) fundamentals",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "WLAN security",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Access Control Lists (ACLs)",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Device hardening",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Network troubleshooting and verification",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    }
+  ]
+}

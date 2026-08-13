@@ -18,6 +18,7 @@ The repository is a monorepo with two applications:
 | [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
 | [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
 | [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
+| [docs/data-pipelines.md](docs/data-pipelines.md) | How the catalog tables get filled: the course-corpus and ESCO career imports, and how to re-run them |
 | [docs/architecture.md](docs/architecture.md) | **Current runtime**: API Gateway → Lambda (container image) → Neon + S3 + OpenAI. Live AWS inventory, request path, env vars, build & deploy |
 | [docs/deployment.md](docs/deployment.md) | The EC2 procedure the Lambda deployment replaced — Gunicorn + Nginx + HTTPS. Kept while the instance exists |
 | [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
@@ -57,6 +58,11 @@ career-tours/
 │   │   ├── matching/         # embedding-based skill matching and occupation ranking
 │   │   ├── recommendations/  # career tracks, skill gaps, course recommendations
 │   │   └── storage/          # AWS S3 upload/retrieval for resume files
+│   ├── scripts/              # one-off catalog imports — see docs/data-pipelines.md
+│   ├── data/                 # reference data the matching engine reads
+│   │   ├── lms/              # course knowledge corpus: 40 split PDFs + extracted JSON
+│   │   ├── imports/esco/     # careers.csv, skills.csv, career_skills.csv + validate.py
+│   │   └── skill_taxonomy.json  # canonical skill vocabulary (repo-owned)
 │   ├── migrations/           # incremental schema migrations
 │   └── table_schemas/        # SQL DDL for each table (source of truth for the schema)
 │                             # (no uploads/ dir — resumes are staged in /tmp, then S3)

@@ -1,0 +1,62 @@
+{
+  "career_title": "Back End Developer",
+  "career_source": "market",
+  "domain": "Backend Development",
+  "skills": [
+    {
+      "skill_id": "computer-programming",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "sql",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "database-management-systems",
+      "relation_type": "essential",
+      "weight": 80
+    },
+    {
+      "skill_id": "define-software-architecture",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "web-programming",
+      "relation_type": "essential",
+      "weight": 75
+    },
+    {
+      "skill_id": "debug-software",
+      "relation_type": "essential",
+      "weight": 72
+    },
+    {
+      "skill_id": "create-data-models",
+      "relation_type": "optional",
+      "weight": 68
+    },
+    {
+      "skill_id": "design-database-scheme",
+      "relation_type": "optional",
+      "weight": 66
+    },
+    {
+      "skill_id": "software-frameworks",
+      "relation_type": "optional",
+      "weight": 60
+    },
+    {
+      "skill_id": "devops",
+      "relation_type": "optional",
+      "weight": 58
+    },
+    {
+      "skill_id": "cloud-technologies",
+      "relation_type": "optional",
+      "weight": 55
+    }
+  ]
+}
