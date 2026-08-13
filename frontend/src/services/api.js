@@ -83,6 +83,15 @@ export const resumesAPI = {
     });
     return response.data;
   },
+  // Returns either a finished result with `reused: true` (the server short-circuits
+  // when this project's skills are already stored, which is one SELECT) or a 202
+  // with a job_id for the ~30s LLM extraction. Callers must branch on `job_id`.
+  extractSkillsAsync: async (resumeId, questionnaireData = {}) => {
+    const response = await api.post(`/resumes/${resumeId}/extract-skills?async=1`, {
+      questionnaire_answers: questionnaireData,
+    });
+    return response.data;
+  },
   listMine: async () => {
     const response = await api.get('/resumes/mine');
     return response.data;

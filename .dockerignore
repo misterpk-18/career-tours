@@ -2,9 +2,11 @@
 # local __pycache__ trees, the stale on-disk upload dirs and the CSV import
 # staging data into the image — none of which the Lambda ever reads.
 
-__pycache__/
-*.py[cod]
-*.egg-info/
+# Leading **/ is required: a bare `__pycache__/` only matches the context root,
+# so every nested backend/*/__pycache__ was still being copied into the image.
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/
 
 .venv/
 venv/

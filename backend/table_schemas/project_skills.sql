@@ -40,3 +40,15 @@ ALTER TABLE ONLY public.project_skills
 
 
 --
+-- Name: project_skills_project_id_name_key; Type: INDEX; Schema: public; Owner: manojtungala
+--
+-- One row per skill name per project. On lower(skill_name) because the
+-- normalizer only canonicalises names it has an alias for, so "Flask" and
+-- "flask" can both arrive. Partial because a NULL name has no identity to
+-- deduplicate on. This is the conflict target ProjectSkillRepository.bulk_create
+-- upserts against; without it every re-extraction appended a duplicate set.
+
+CREATE UNIQUE INDEX project_skills_project_id_name_key ON public.project_skills (project_id, lower(skill_name)) WHERE skill_name IS NOT NULL;
+
+
+--

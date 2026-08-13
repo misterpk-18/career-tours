@@ -121,6 +121,22 @@ class StudentSkillRepository:
         )
 
     @staticmethod
+    def existing_skill_ids(student_id):
+        """The skill_ids this student already has, as a set of strings.
+
+        Deliberately not get_by_student_id: that joins `skills` and returns every
+        column, where callers deciding whether a repair is needed only need
+        identity. Strings rather than UUID objects so a caller comparing against
+        ids from another query cannot miss on type.
+        """
+        result = db.session.execute(
+            text("SELECT skill_id FROM student_skills WHERE student_id = :student_id"),
+            {"student_id": student_id},
+        )
+
+        return {str(row[0]) for row in result}
+
+    @staticmethod
     def get_by_student_id(student_id):
         result = db.session.execute(
             text("""

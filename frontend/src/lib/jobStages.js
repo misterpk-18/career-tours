@@ -7,6 +7,7 @@
  */
 
 export const JOB_GENERATE_RECOMMENDATIONS = 'generate_recommendations';
+export const JOB_EXTRACT_SKILLS = 'extract_skills';
 
 const STAGE_LABELS = {
   matching: 'Matching your skills against careers',
@@ -14,6 +15,7 @@ const STAGE_LABELS = {
   persisting: 'Saving your matches',
   courses: 'Finding courses to close your gaps',
   extracting: 'Reading your resume',
+  saving_skills: 'Saving your skills',
 };
 
 export const stageLabel = (stage, fallback = 'Working…') =>

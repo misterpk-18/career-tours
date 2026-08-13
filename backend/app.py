@@ -1,17 +1,71 @@
-from asgiref.wsgi import WsgiToAsgi
-from flask import Flask
-from mangum import Mangum
-from sqlalchemy import text
+import os
+import time
 
-from api.auth.routes import auth_bp
-from api.jobs.routes import jobs_bp
-from api.recommendations.routes import recommendations_bp
-from api.resumes.routes import resume_bp
-from api.students.routes import students_bp
-from api.projects.routes import projects_bp
+# Cold-start instrumentation. Lambda's REPORT line gives one Init Duration for
+# the whole module, which is enough to know init is slow but not which import
+# made it slow — and the import graph here reaches OpenAI, huggingface_hub,
+# SQLAlchemy and Mangum, any of which could dominate.
+#
+# Only ever runs once per sandbox, and writes a handful of lines. Set
+# CT_TRACE_INIT=0 to silence it.
+_INIT_T0 = time.perf_counter()
+_TRACE_INIT = os.getenv("CT_TRACE_INIT", "1") != "0"
+_last_mark = _INIT_T0
 
 
-from config.database import DATABASE_URL, db
+def _mark(label):
+    """Log wall time for the step since the previous mark."""
+    global _last_mark
+    now = time.perf_counter()
+
+    if _TRACE_INIT:
+        print(
+            f"[init] {label:<28} {(now - _last_mark) * 1000:7.0f}ms"
+            f"  (cumulative {(now - _INIT_T0) * 1000:7.0f}ms)",
+            flush=True,
+        )
+
+    _last_mark = now
+
+
+from asgiref.wsgi import WsgiToAsgi  # noqa: E402
+from flask import Flask  # noqa: E402
+
+_mark("flask + asgiref")
+
+from mangum import Mangum  # noqa: E402
+
+_mark("mangum")
+
+from sqlalchemy import text  # noqa: E402
+
+from config.database import DATABASE_URL, db  # noqa: E402
+
+_mark("sqlalchemy + config")
+
+from api.auth.routes import auth_bp  # noqa: E402
+
+_mark("api.auth")
+
+from api.jobs.routes import jobs_bp  # noqa: E402
+
+_mark("api.jobs")
+
+from api.students.routes import students_bp  # noqa: E402
+
+_mark("api.students")
+
+from api.projects.routes import projects_bp  # noqa: E402
+
+_mark("api.projects")
+
+from api.resumes.routes import resume_bp  # noqa: E402
+
+_mark("api.resumes (pypdf, boto3)")
+
+from api.recommendations.routes import recommendations_bp  # noqa: E402
+
+_mark("api.recommendations")
 
 app = Flask(__name__)
 
@@ -41,6 +95,8 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 db.init_app(app)
 
+_mark("db.init_app")
+
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(students_bp, url_prefix="/api/students")
 app.register_blueprint(resume_bp, url_prefix="/api/resumes")
@@ -65,7 +121,17 @@ def db_test():
 # adapts between them — `app` itself, and every blueprint on it, is unchanged.
 # api_gateway_base_path is left at its default "/": the blueprint url_prefixes
 # already carry the /api segment, so no path stripping is wanted.
+_mark("blueprints + routes")
+
 _http = Mangum(WsgiToAsgi(app), lifespan="off")
+
+_mark("mangum adapter")
+
+# True whenever this sandbox has not served a request yet, which is the only
+# invocation that pays for the first database connection — a cross-region TLS
+# handshake Lambda's Init Duration does not cover, because it happens on demand
+# inside the handler rather than at import.
+_first_invocation = True
 
 
 def handler(event, context):
@@ -80,13 +146,29 @@ def handler(event, context):
     The app context pushed here is what lets the worker use every existing
     repository unchanged; they all reach for `db.session`.
     """
-    if isinstance(event, dict) and "ct_task" in event:
-        from services.jobs.worker import run_task
+    global _first_invocation
 
-        with app.app_context():
-            return run_task(event, context)
+    started = time.perf_counter()
 
-    return _http(event, context)
+    try:
+        if isinstance(event, dict) and "ct_task" in event:
+            from services.jobs.worker import run_task
+
+            with app.app_context():
+                return run_task(event, context)
+
+        return _http(event, context)
+    finally:
+        if _first_invocation:
+            _first_invocation = False
+
+            if _TRACE_INIT:
+                print(
+                    f"[init] {'first invocation':<28} "
+                    f"{(time.perf_counter() - started) * 1000:7.0f}ms"
+                    "  (includes the first DB connection)",
+                    flush=True,
+                )
 
 
 if __name__ == "__main__":

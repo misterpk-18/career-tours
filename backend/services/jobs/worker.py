@@ -10,17 +10,22 @@ exception — the row reaches a terminal status with a message written for a
 person, because the client polls this row and has nothing else to go on.
 """
 
+from uuid import UUID
+
 from flask import current_app
 
 from config.database import db
 from repositories.job_repository import JobRepository
 from services.jobs.progress import (
+    EXTRACT_WEIGHTS,
+    GENERATE_WEIGHTS,
     JobCancelled,
     JobDeadlineExceeded,
     ProgressReporter,
 )
 
 JOB_GENERATE_RECOMMENDATIONS = "generate_recommendations"
+JOB_EXTRACT_SKILLS = "extract_skills"
 
 
 def run_task(event, context):
@@ -52,10 +57,13 @@ def run_task(event, context):
         )
         return {"ok": True, "skipped": True}
 
-    progress = ProgressReporter(job_id, context=context)
+    progress = ProgressReporter(job_id, context=context, weights=_WEIGHTS[task])
 
     try:
-        result = handler(job, progress)
+        # The event is passed through because a task may need arguments that do
+        # not live on the job row — extract_skills needs the resume id, since a
+        # project can have had more than one resume.
+        result = handler(job, progress, event)
         JobRepository.mark_succeeded(job_id, result)
         return {"ok": True, "job_id": str(job_id)}
 
@@ -106,12 +114,52 @@ def run_task(event, context):
         )
 
 
-def _generate_recommendations(job, progress):
+def _generate_recommendations(job, progress, event):
     from services.recommendations.generator import RecommendationGenerator
 
     return RecommendationGenerator.generate(job["project_id"], progress=progress)
 
 
+def _extract_skills(job, progress, event):
+    from repositories.resume_repository import ResumeRepository
+    from services.resume.extractor import ResumeSkillExtractor
+
+    resume = ResumeRepository.get_by_id(UUID(event["resume_id"]))
+
+    # The route validated all of this before enqueueing, so reaching any of these
+    # means the row changed underneath us — a deleted resume, most likely. Raised
+    # as ValueError because run_task shows that message to the user verbatim.
+    if resume is None or str(resume.student_id) != str(job["student_id"]):
+        raise ValueError("That resume is no longer available. Please upload it again.")
+
+    if not resume.raw_text:
+        raise ValueError("That resume has no readable text. Please upload it again.")
+
+    result = ResumeSkillExtractor.extract_and_save(
+        resume.project_id,
+        resume.student_id,
+        resume.raw_text,
+        event.get("questionnaire_answers"),
+        progress=progress,
+    )
+
+    # Only counts go in the job row. The skills themselves are read back from
+    # GET /api/projects/<id>/skills, which the page already calls — putting them
+    # here would duplicate the read model into a jsonb column and bloat every
+    # poll response with the full list.
+    return {
+        "resume_id": str(resume.resume_id),
+        "skills_saved": result["skills_saved"],
+        "additional_skills_saved": result["additional_skills_saved"],
+    }
+
+
 _TASKS = {
     JOB_GENERATE_RECOMMENDATIONS: _generate_recommendations,
+    JOB_EXTRACT_SKILLS: _extract_skills,
+}
+
+_WEIGHTS = {
+    JOB_GENERATE_RECOMMENDATIONS: GENERATE_WEIGHTS,
+    JOB_EXTRACT_SKILLS: EXTRACT_WEIGHTS,
 }
