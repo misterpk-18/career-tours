@@ -33,6 +33,16 @@ GENERATE_WEIGHTS = {
     "courses": 55,
 }
 
+#: Stage weights for `extract_skills`, summing to 100. The single OpenAI call is
+#: almost the whole job, and its duration is unknown until it returns — so
+#: `extracting` is entered with no total and the bar sits at 0 through it. That
+#: is deliberate: an indeterminate bar is honest, and inventing movement for a
+#: call that could take five seconds or forty is not.
+EXTRACT_WEIGHTS = {
+    "extracting": 85,
+    "saving_skills": 15,
+}
+
 #: Human-readable stage labels. The client can render its own, but a job row
 #: should be legible on its own in psql when something has gone wrong.
 STAGE_MESSAGES = {
@@ -41,6 +51,7 @@ STAGE_MESSAGES = {
     "persisting": "Saving matches",
     "courses": "Finding and summarising courses",
     "extracting": "Reading your resume",
+    "saving_skills": "Saving your skills",
 }
 
 #: Minimum gap between progress writes. Stage transitions ignore this — they are

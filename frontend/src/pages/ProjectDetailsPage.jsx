@@ -29,7 +29,7 @@ import EmptyState from '../components/ui/EmptyState';
 import SectionHeading from '../components/ui/SectionHeading';
 import JobProgress from '../components/ui/JobProgress';
 import useJob from '../hooks/useJob';
-import { JOB_GENERATE_RECOMMENDATIONS } from '../lib/jobStages';
+import { JOB_EXTRACT_SKILLS, JOB_GENERATE_RECOMMENDATIONS } from '../lib/jobStages';
 import { deduplicateSkills } from '../lib/format';
 import { apiErrorMessage } from '../lib/apiError';
 
@@ -43,8 +43,36 @@ export const ProjectDetailsPage = () => {
 
   // Skills state
   const [skills, setSkills] = useState([]);
-  const [extracting, setExtracting] = useState(false);
   const [extractSuccess, setExtractSuccess] = useState('');
+
+  const {
+    job: extractJob,
+    start: startExtract,
+    starting: submittingExtract,
+    error: extractError,
+    active: extractActive,
+  } = useJob({
+    projectId,
+    jobType: JOB_EXTRACT_SKILLS,
+    // The job result carries counts, not the skills themselves, so read them
+    // back from the endpoint that owns that shape rather than duplicating it
+    // into the job row.
+    onSucceeded: async (job) => {
+      try {
+        const stored = await projectsAPI.getSkills(projectId);
+        const unique = deduplicateSkills(stored || []);
+        setSkills(unique);
+        setExtractSuccess(`Extracted ${unique.length} skills from your resume.`);
+      } catch (err) {
+        console.error('Extraction finished but reloading skills failed:', err);
+        setExtractSuccess(
+          `Extracted ${job.result?.skills_saved ?? ''} skills. Reload to see them.`
+        );
+      }
+    },
+  });
+
+  const extracting = submittingExtract || extractActive;
 
   // Career recommendation state. The run itself lives in useJob, which also
   // re-attaches to one already in progress when this page mounts — so a reload
@@ -110,36 +138,34 @@ export const ProjectDetailsPage = () => {
     }
   };
 
-  const handleExtractSkills = async () => {
-    if (extracting) return;
+  // Two possible responses, and the caller has to tell them apart. The server
+  // short-circuits to the stored skills when this project already has them —
+  // one SELECT, so it stays synchronous. Otherwise it is a ~30s LLM call that
+  // comes back as a 202 with a job id to poll.
+  const handleExtractSkills = () => {
     if (!project?.resume_id) {
       setError('Please upload a resume first before extracting skills.');
       return;
     }
 
-    setExtracting(true);
     setError('');
     setExtractSuccess('');
 
-    try {
-      const res = await resumesAPI.extractSkills(project.resume_id);
-      if (res.skills) {
-        const unique = deduplicateSkills(res.skills);
-        setSkills(unique);
-        // The API returns stored skills instead of re-running the extraction when
-        // this project already has them, so don't claim a fresh parse.
-        setExtractSuccess(
-          res.reused
-            ? `Loaded ${unique.length} skills already extracted from this resume.`
-            : `Extracted ${unique.length} skills from your resume.`
-        );
-      }
-    } catch (err) {
-      console.error('Skill extraction failed:', err);
-      setError(apiErrorMessage(err, 'Failed to extract skills from resume.'));
-    } finally {
-      setExtracting(false);
-    }
+    startExtract(async () => {
+      const res = await resumesAPI.extractSkillsAsync(project.resume_id);
+
+      if (res.job_id) return res;
+
+      const unique = deduplicateSkills(res.skills || []);
+      setSkills(unique);
+      setExtractSuccess(
+        `Loaded ${unique.length} skills already extracted from this resume.`
+      );
+
+      // Nothing to track: returning null leaves the hook idle rather than
+      // polling for a job that was never created.
+      return null;
+    });
   };
 
   // Submit and poll rather than await. Generation takes ~2 minutes, which is far
@@ -298,7 +324,10 @@ export const ProjectDetailsPage = () => {
 
         {error ? <Alert tone="error">{error}</Alert> : null}
         {generateError ? <Alert tone="error">{generateError}</Alert> : null}
+        {extractError ? <Alert tone="error">{extractError}</Alert> : null}
         {extractSuccess ? <Alert tone="success">{extractSuccess}</Alert> : null}
+
+        <JobProgress job={extractJob} />
 
         {/* Renders the live bar while running and the reason on failure. Returns
             null once the run has succeeded, at which point the buttons above

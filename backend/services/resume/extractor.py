@@ -4,6 +4,7 @@ from uuid import UUID
 from config.database import db
 from repositories.project_skill_repository import ProjectSkillRepository
 from repositories.student_skill_repository import StudentSkillRepository
+from services.jobs.progress import NULL_PROGRESS
 from services.skills.normalizer import SkillNormalizer
 
 
@@ -69,6 +70,7 @@ class ResumeSkillExtractor:
         student_id: UUID,
         resume_text: str,
         questionnaire_answers: Optional[dict] = None,
+        progress=NULL_PROGRESS,
     ) -> dict:
         # Imported here rather than at module scope. openai and the langsmith
         # wrapper cost ~1.3s to import on Lambda, and that was paid by every
@@ -78,12 +80,18 @@ class ResumeSkillExtractor:
         # extraction it is noise. Matches what ranking.py already does.
         from services.llm.openai_service import OpenAIService
 
+        # No total: one OpenAI call of unknowable duration, so the bar stays
+        # indeterminate rather than inventing movement it cannot justify.
+        progress.stage("extracting")
+
         llm = OpenAIService()
 
         profile = llm.extract_skills(
             resume_text,
             questionnaire_answers,
         )
+
+        progress.stage("saving_skills", total=1)
 
         all_skills = profile.technical_skills + profile.soft_skills + profile.domain_skills
 
@@ -110,6 +118,8 @@ class ResumeSkillExtractor:
             db.session.commit()
 
         saved_skills = ProjectSkillRepository.get_by_project_id(project_id)
+
+        progress.advance()
 
         return {
             "summary": profile.summary,

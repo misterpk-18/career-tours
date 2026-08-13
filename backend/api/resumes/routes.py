@@ -7,10 +7,12 @@ from werkzeug.utils import secure_filename
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
+from api.job_submission import submit_job
 from api.serializers import serialize_project_skill
 from config.database import db
 from repositories.project_repository import ProjectRepository
 from repositories.resume_repository import ResumeRepository
+from services.jobs.worker import JOB_EXTRACT_SKILLS
 from services.resume.extractor import ResumeSkillExtractor
 from services.resume.parser import ResumeParser
 from services.storage.s3_service import S3Service
@@ -313,6 +315,26 @@ def extract_skills(resume_id: str):
                     "reused": True,
                 }
             )
+
+    # Past the cached branch, this is a single ~30s gpt-5 call — right on API
+    # Gateway's non-raisable 30s integration cap, so synchronously it fails
+    # *intermittently*, which is worse than failing consistently. Async returns
+    # a job id in about a second and the client polls.
+    #
+    # The cached branch above deliberately stays synchronous either way: it is
+    # one SELECT and returns in well under a second, and making the common
+    # re-press go through a job would be slower and more complex for nothing.
+    if request.args.get("async") == "1":
+        return submit_job(
+            student_id=resume.student_id,
+            project_id=resume.project_id,
+            job_type=JOB_EXTRACT_SKILLS,
+            # The resume id travels on the event rather than being derived from
+            # the job's project_id: a project can have had more than one resume,
+            # and the worker must extract from the one the caller named.
+            resume_id=str(resume.resume_id),
+            questionnaire_answers=questionnaire_answers,
+        )
 
     try:
         result = ResumeSkillExtractor.extract_and_save(
