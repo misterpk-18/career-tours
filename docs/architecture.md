@@ -122,22 +122,31 @@ Two size limits apply, and the smaller one is not the one in the code:
 ## The 30-second wall
 
 **API Gateway HTTP API caps its integration timeout at 30 seconds, and that limit cannot be
-raised.** Two endpoints exceed it:
+raised.** Two endpoints exceed it, and **both are now async jobs** — which is what made the
+API Gateway front door viable at all:
 
-| Endpoint | Duration | Why |
-|---|---|---|
-| `POST /api/recommendations/projects/<id>/generate` | **~73 s** (measured in production) | HF embeddings + a fan-out of `gpt-5` summary calls across careers and courses |
-| `POST /api/resumes/<id>/extract-skills` | **~30 s** | one `gpt-5` `responses.parse` call |
+| Endpoint | Duration | Why | Async |
+|---|---|---|---|
+| `POST /api/recommendations/projects/<id>/generate` | **~73-110 s** | HF embeddings + a fan-out of `gpt-5` summary calls | `?async=1` |
+| `POST /api/resumes/<id>/extract-skills` | **~25-41 s** | one `gpt-5` `responses.parse` call | `?async=1`, except the cached branch |
 
-Putting an HTTP API in front of the Lambda as it stands would return 504 on the first and
-make the second fail *intermittently*, which is worse than failing consistently. The
-Function URL has no such cap, which is the only reason the current deployment works.
+Synchronously, the first would 504 and the second would fail *intermittently* — harder to
+diagnose than failing every time, because it straddles the limit rather than clearing it.
 
 The fix is not a bigger timeout — it is **submit-then-poll async jobs**: the request path
-writes a job row and returns `202` with a `job_id` in well under a second, the Lambda
-invokes *itself* with `InvocationType='Event'` to do the work out of band, and the frontend
-polls `GET /api/jobs/<job_id>` until a terminal status arrives. Once no request path can
-exceed 30 s, API Gateway can be cut over safely.
+writes a job row and returns `202` with a `job_id` in well under a second (measured: 0.72s
+and 0.99s), the Lambda invokes *itself* with `InvocationType='Event'` to do the work out of
+band, and the frontend polls `GET /api/jobs/<job_id>` until a terminal status arrives.
+
+Both routes keep their synchronous behaviour when `?async=1` is absent, for Postman and ops.
+`extract-skills` additionally stays synchronous **even with `?async=1`** when the project's
+skills are already stored: that branch is one SELECT and answers in well under a second, so
+routing it through a job would be slower for nothing. The route therefore returns either a
+finished result or a 202, and clients branch on the presence of `job_id`.
+
+Job submission — create the row, treat the partial unique index's `IntegrityError` as a
+double submit and return the in-flight job, delete the row if the enqueue fails — lives once
+in `backend/api/job_submission.py`.
 
 One Lambda-specific trap that rules out the obvious shortcut: **a background thread does not
 work here.** Lambda freezes the execution environment the moment the handler returns — CPU
