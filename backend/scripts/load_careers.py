@@ -18,6 +18,10 @@ Choices worth knowing about:
   existing 38 are not in ``careers.csv``; ``occupations`` has no ``is_active``
   column to retire them with, and deleting them would cascade into
   ``student_career_matches``.
+* **``relation_type`` is carried through, not dropped.** It is what lets the
+  scorer rank a career on the skills it actually requires; see
+  ``migrations/010_occupation_skills_relation_type.sql`` for why weight alone
+  cannot substitute for it. Run that migration before this script.
 * **``occupation_skills`` is rebuilt only for the occupations being loaded.**
   Emptying the whole table would strip the skills off those 32 untouched
   occupations, which career matching still reads — leaving them present but
@@ -249,12 +253,23 @@ def main() -> int:
 
                     weight = max(0.0, min(100.0, float(pair["weight"])))
 
+                    # Anything the CSV does not mark as optional is treated as
+                    # essential, matching how the scorer reads a NULL.
+                    relation = "optional" if (pair.get("relation_type") or "").strip().lower() == "optional" else "essential"
+
                     # Deduplicated here rather than with ON CONFLICT: two ESCO
                     # names can canonicalize onto one catalog skill, and Postgres
                     # rejects an executemany batch that hits the same conflict
-                    # target twice. Strongest weight wins.
+                    # target twice. Strongest weight wins, and essential wins
+                    # over optional independently of it — a skill that is
+                    # required under one ESCO spelling is required, even if the
+                    # optional spelling happens to carry the higher weight.
                     key = (occupation_id, skill_id)
-                    rows[key] = max(rows.get(key, 0.0), weight)
+                    previous_weight, previous_relation = rows.get(key, (0.0, "optional"))
+                    rows[key] = (
+                        max(previous_weight, weight),
+                        "essential" if "essential" in (relation, previous_relation) else "optional",
+                    )
 
             occupation_ids = [occupations[c["career_title"].casefold()] for c in loadable]
 
@@ -268,17 +283,25 @@ def main() -> int:
             if rows:
                 bulk_insert(
                     "occupation_skills",
-                    ("occupation_id", "skill_id", "weight"),
+                    ("occupation_id", "skill_id", "weight", "relation_type"),
                     [
-                        {"occupation_id": occupation_id, "skill_id": skill_id, "weight": weight}
-                        for (occupation_id, skill_id), weight in rows.items()
+                        {
+                            "occupation_id": occupation_id,
+                            "skill_id": skill_id,
+                            "weight": weight,
+                            "relation_type": relation,
+                        }
+                        for (occupation_id, skill_id), (weight, relation) in rows.items()
                     ],
                 )
 
             after_links = db.session.execute(text("SELECT count(*) FROM occupation_skills")).scalar()
 
+            essential = sum(1 for _, relation in rows.values() if relation == "essential")
+
             print(f"occupations:  {inserted} inserted, {adopted} adopted by name")
             print(f"occupation_skills: {len(rows)} links written ({len(pairs)} CSV pairs), {after_links} rows total")
+            print(f"  of those: {essential} essential, {len(rows) - essential} optional")
             print(f"new skills created: {len(created_skills)}")
 
             if unresolved:

@@ -26,6 +26,52 @@ CATEGORIES = ("technical", "soft", "domain")
 
 _WHITESPACE = re.compile(r"\s+")
 
+# Wrapper wording that models put around a skill without changing which skill it
+# is: "experience with Django", "strong Python skills", "Docker (containers)".
+# Stripping it before lookup is what lets an extracted phrase land on the
+# canonical name instead of drifting off to an embedding comparison.
+#
+# The list is deliberately short and made only of words that are never part of a
+# skill name here. Anything more aggressive starts destroying real names —
+# "development" would turn "Web Development" into "Web", and "programming" would
+# turn "Programming Fundamentals" into nothing.
+_LEADING_FILLER = (
+    "hands-on experience with",
+    "hands on experience with",
+    "working knowledge of",
+    "practical knowledge of",
+    "experience with",
+    "experience in",
+    "experience using",
+    "knowledge of",
+    "understanding of",
+    "familiarity with",
+    "proficiency in",
+    "proficiency with",
+    "proficient in",
+    "expertise in",
+    "competency in",
+    "ability to use",
+    "skilled in",
+    "strong",
+    "solid",
+    "good",
+    "basic",
+    "advanced",
+    "intermediate",
+)
+
+_TRAILING_FILLER = (
+    "skills",
+    "skill",
+    "experience",
+    "knowledge",
+    "expertise",
+    "proficiency",
+)
+
+_PARENTHETICAL = re.compile(r"\s*\([^)]*\)\s*$")
+
 
 def _key(name: str) -> str:
     """Lookup key for a skill name: casefolded with whitespace collapsed.
@@ -35,6 +81,35 @@ def _key(name: str) -> str:
     ``TCP/IP``. Genuinely different wording belongs in ``aliases``.
     """
     return _WHITESPACE.sub(" ", name).strip().casefold()
+
+
+def _stripped_key(name: str) -> str:
+    """:func:`_key` with wrapper wording removed from both ends.
+
+    Applied repeatedly, so "strong hands-on experience with Docker skills"
+    collapses the same way a single wrapper does. Returns ``""`` when there is
+    nothing left, which callers must treat as "no usable name" rather than as a
+    lookup key.
+    """
+    key = _key(_PARENTHETICAL.sub("", name))
+
+    changed = True
+    while changed and key:
+        changed = False
+
+        for filler in _LEADING_FILLER:
+            if key.startswith(filler + " "):
+                key = key[len(filler) + 1:].lstrip()
+                changed = True
+                break
+
+        for filler in _TRAILING_FILLER:
+            if key.endswith(" " + filler):
+                key = key[: -len(filler) - 1].rstrip()
+                changed = True
+                break
+
+    return key.strip(" -–—:,")
 
 
 class SkillTaxonomy:
@@ -142,6 +217,11 @@ class SkillTaxonomy:
     def canonical(cls, name: Optional[str]) -> Optional[str]:
         """Resolve a raw name to its canonical form via exact or alias match.
 
+        The exact key is tried first, then the same key with wrapper wording
+        stripped, so "experience with Django" resolves to "Django" without
+        needing an alias for every phrasing a model might produce. The order
+        matters: a name that *is* canonical is never put through the stripper.
+
         Returns ``None`` when the name is empty or unknown to the taxonomy.
         Callers decide what to do with a miss — embedding-based snapping and
         the novel-skill path are handled by the normalizer, not here.
@@ -150,7 +230,38 @@ class SkillTaxonomy:
             return None
 
         cls._load()
-        return cls._lookup.get(_key(name))
+
+        exact = cls._lookup.get(_key(name))
+        if exact is not None:
+            return exact
+
+        stripped = _stripped_key(name)
+        return cls._lookup.get(stripped) if stripped else None
+
+    @classmethod
+    def identity(cls, name: Optional[str]) -> Optional[str]:
+        """A comparison key for "are these two strings the same skill?".
+
+        Canonical name when the taxonomy knows it, otherwise the stripped
+        lookup key. Two names share an identity exactly when they name the same
+        skill as far as the repo-owned vocabulary can tell — no embeddings
+        involved. The 369-name taxonomy covers only part of the catalog, so the
+        stripped-key fallback is what keeps "Kubernetes administration" and
+        "experience with Kubernetes administration" together even though
+        neither is canonical.
+
+        Returns ``None`` when nothing usable is left, which callers must not
+        treat as a match against another ``None``.
+        """
+        canonical = cls.canonical(name)
+        if canonical is not None:
+            return canonical.casefold()
+
+        if not name:
+            return None
+
+        stripped = _stripped_key(name)
+        return stripped or None
 
     @classmethod
     def is_canonical(cls, name: str) -> bool:

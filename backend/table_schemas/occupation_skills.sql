@@ -6,8 +6,10 @@ CREATE TABLE public.occupation_skills (
     occupation_id uuid NOT NULL,
     skill_id uuid NOT NULL,
     weight numeric(5,2) NOT NULL,
+    relation_type character varying(16),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT occupation_skills_weight_check CHECK (((weight >= (0)::numeric) AND (weight <= (100)::numeric)))
+    CONSTRAINT occupation_skills_weight_check CHECK (((weight >= (0)::numeric) AND (weight <= (100)::numeric))),
+    CONSTRAINT occupation_skills_relation_type_check CHECK (((relation_type IS NULL) OR ((relation_type)::text = ANY ((ARRAY['essential'::character varying, 'optional'::character varying])::text[]))))
 );
 
 
@@ -27,6 +29,14 @@ ALTER TABLE ONLY public.occupation_skills
 
 ALTER TABLE ONLY public.occupation_skills
     ADD CONSTRAINT occupation_skills_pkey PRIMARY KEY (occupation_skill_id);
+
+
+--
+-- Name: occupation_skills_occupation_relation_idx; Type: INDEX; Schema: public; Owner: manojtungala
+--
+
+CREATE INDEX occupation_skills_occupation_relation_idx
+    ON public.occupation_skills (occupation_id, relation_type);
 
 
 --

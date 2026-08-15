@@ -89,7 +89,8 @@ class OccupationRepository:
                 SELECT
                     s.skill_id,
                     s.skill_name,
-                    os.weight
+                    os.weight,
+                    os.relation_type
                 FROM occupation_skills os
                 JOIN skills s
                     ON s.skill_id = os.skill_id
@@ -99,3 +100,37 @@ class OccupationRepository:
         )
 
         return [dict(row._mapping) for row in result]
+
+    @staticmethod
+    def get_skills_by_occupation():
+        """Every occupation's skills, keyed by ``occupation_id``.
+
+        One statement for the whole table instead of one per occupation. Career
+        ranking needs all 267 occupations on every request, and against a
+        cross-region Neon database that was 267 round trips — the query itself
+        returns ~8,400 rows and takes milliseconds. Scoring also needs the full
+        set at once now: the per-student floor is measured against the union of
+        every occupation skill, which cannot be computed one occupation at a
+        time.
+        """
+        result = db.session.execute(
+            text("""
+                SELECT
+                    os.occupation_id,
+                    s.skill_id,
+                    s.skill_name,
+                    os.weight,
+                    os.relation_type
+                FROM occupation_skills os
+                JOIN skills s
+                    ON s.skill_id = os.skill_id
+            """)
+        )
+
+        by_occupation: dict = {}
+
+        for row in result:
+            skill = dict(row._mapping)
+            by_occupation.setdefault(skill.pop("occupation_id"), []).append(skill)
+
+        return by_occupation

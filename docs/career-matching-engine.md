@@ -559,3 +559,99 @@ Benefits:
 * Scales easily as occupations, skills and courses grow
 
 This approach combines deterministic scoring with LLM intelligence and should provide highly accurate career recommendations, skill-gap analysis and LMS course suggestions.
+
+---
+
+# Implementation Notes: What the Scorer Actually Does
+
+The steps above are the product design. The sections below describe the code as
+it stands, which departs from the design in the places the design turned out to
+be wrong. `services/matching/` is the source of truth.
+
+## The final score is not a blend
+
+Step 6's `0.7 × skill + 0.2 × embedding + 0.1 × interest` was never built, and
+is not planned. The embedding *is* the skill score — every skill comparison is a
+cosine — so the first two terms measure the same thing twice, and there is no
+interest signal in the data model to supply the third.
+
+What runs is one number per occupation:
+
+```text
+score = 100 × Σ(w² × adjusted_similarity) / Σ(w²)
+```
+
+over the occupation's **essential** skills only, where `w = weight / 100` and
+
+```text
+adjusted_similarity = max(0, (similarity − floor) / (1 − floor))
+similarity          = best cosine against any one of the student's skills
+floor               = the student's mean similarity across every skill
+                      any occupation asks for
+```
+
+## Why each piece is there
+
+**Essential skills only.** ESCO marks 5,150 of its 8,114 career/skill pairs
+optional. They average weight 31, so they carried 44% of every career's total
+weight and the ranking largely followed skills nobody needs to have. Optional
+skills still appear in the breakdown and still produce gaps — they just do not
+move the score. A NULL `relation_type` counts as essential, which is what keeps
+the 32 occupations predating the ESCO import scoring at all.
+
+**Squared weights.** ESCO's weights are bunched closely enough that dividing by
+their sum makes a linear weighting behave like an unweighted mean. Squaring
+spreads them back out without a hand-tuned curve.
+
+**The floor.** `similarity` is a max over the student's skills, and a max over
+more draws is systematically larger — 40 unrelated padding skills used to lift
+every career from ~30% to ~50% with the student's real fit unchanged. Measuring
+the student's background similarity across the whole catalog and subtracting it
+holds that drift to under half a point, and makes 0 mean "no overlap": a
+six-nonsense-word control now scores 10-13 where real students score 52-95.
+
+Because the floor is defined over the union of all occupation skills, an
+occupation cannot be scored on its own. `SkillMatcher.match_all` scores all of
+them in one pass, and `OccupationRepository.get_skills_by_occupation` fetches
+the whole table in one statement to feed it.
+
+## Gaps are decided by identity, not by cosine
+
+Step 8's set subtraction is right; doing it with a distance threshold was not.
+At the old 0.75 cutoff only 0-4 of a career's 10-35 skills ever matched, so
+`missing_skills` was effectively the career's whole skill list — the same list
+for every student, which is why a nurse and a nonsense control drew the same
+course recommendations as a real developer.
+
+`GapAnalyzer.is_same_skill` asks identity first: both names go through
+`SkillTaxonomy.identity`, which resolves canonical names and aliases and strips
+wrapper wording ("experience with Django" → `django`, "Python (computer
+programming)" → `python`). Cosine at **0.60** is the fallback for what identity
+cannot reach — the value the reference open-source ESCO extractor uses with this
+same MiniLM model.
+
+The trade-off is real and visible: at 0.60, "Business Intelligence" and "web
+analytics" sit at 0.612 and count as the same skill. Raising the threshold does
+not fix that without re-breaking everything identity now handles; adding the
+missing alias to `skill_taxonomy.json` does.
+
+## Course coverage uses the same rule
+
+Step 9's `matched / total` counted missing skills equally and joined courses to
+gaps on `skill_id`. Only 168 of the 1,231 skills occupations ask for are taught
+by a course under that same catalog row, so the exact join answered a much
+narrower question than the one being asked, and it went unnoticed only because
+the gap list was a constant that always hit enough of the 168 to fill five
+slots.
+
+`RecommendationGenerator._rank_courses` compares gaps to the whole active
+syllabus with `GapAnalyzer.is_same_skill` — deliberately the same predicate, so
+a skill cannot be simultaneously missing from a career and untaught by the
+course that teaches it. Each gap carries its scoring weight (optional gaps at
+`OPTIONAL_GAP_WEIGHT`, currently 0.25), a course gets credit for a gap once from
+whichever of its skills covers it best, and `coverage_percentage` is the share
+of the career's total gap weight the course closes.
+
+A well-matched student can now legitimately get fewer than five courses, or
+none. That is the correct answer to "what should I study next" when there is
+very little left, not a failure to find anything.

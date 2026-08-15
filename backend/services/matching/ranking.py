@@ -29,6 +29,14 @@ class CareerRankingService:
             raise ValueError("No skills found for project. Extract skills first.")
 
         occupations = OccupationRepository.get_all()
+
+        # Every occupation's skills in one statement, and every occupation
+        # scored in one pass. The scorer subtracts a per-student floor measured
+        # across the whole catalog, so occupations cannot be scored one at a
+        # time and still land on a comparable scale.
+        skills_by_occupation = OccupationRepository.get_skills_by_occupation()
+        scores = SkillMatcher.match_all(project_skills, skills_by_occupation)
+
         matches: List[Dict] = []
 
         progress.stage("matching", total=len(occupations))
@@ -36,17 +44,23 @@ class CareerRankingService:
         for occupation in occupations:
             progress.advance()
 
-            occupation_skills = OccupationRepository.get_skills(occupation["occupation_id"])
+            result = scores.get(occupation["occupation_id"])
 
-            if not occupation_skills:
+            if not result or not result["skill_breakdown"]:
                 continue
 
-            match = SkillMatcher.match_occupation(project_skills, occupation, occupation_skills)
-            gaps = GapAnalyzer.analyze(match["skill_breakdown"])
+            gaps = GapAnalyzer.analyze(result["skill_breakdown"], project_skills)
 
-            match["matched_skills"] = gaps["matched_skills"]
-            match["missing_skills"] = gaps["missing_skills"]
-            matches.append(match)
+            matches.append(
+                {
+                    "occupation_id": occupation["occupation_id"],
+                    "occupation_name": occupation["occupation_name"],
+                    "score": result["score"],
+                    "skill_breakdown": result["skill_breakdown"],
+                    "matched_skills": gaps["matched_skills"],
+                    "missing_skills": gaps["missing_skills"],
+                }
+            )
 
         matches.sort(key=lambda item: item["score"], reverse=True)
         top_matches = matches[:top_n]
