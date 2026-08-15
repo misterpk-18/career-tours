@@ -9,6 +9,10 @@ import FullPageLoader from './components/ui/FullPageLoader';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
+import CoursesPage from './pages/CoursesPage';
+import CourseJourneyPage from './pages/CourseJourneyPage';
+import CareersPage from './pages/CareersPage';
+import ProfilePage from './pages/ProfilePage';
 import ProjectDetailsPage from './pages/ProjectDetailsPage';
 import CareerRecommendationsPage from './pages/CareerRecommendationsPage';
 import CourseRecommendationsPage from './pages/CourseRecommendationsPage';
@@ -93,6 +97,50 @@ export const App = () => {
                     element={
                       <ProtectedRoute>
                         <HomePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Same component as "/" for now: the dashboard IS the
+                      project list today. Two routes so the rail can highlight
+                      Home and Projects independently, and so splitting them
+                      later needs no nav change. */}
+                  <Route
+                    path="/projects"
+                    element={
+                      <ProtectedRoute>
+                        <HomePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/courses"
+                    element={
+                      <ProtectedRoute>
+                        <CoursesPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/courses/:courseId"
+                    element={
+                      <ProtectedRoute>
+                        <CourseJourneyPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/careers"
+                    element={
+                      <ProtectedRoute>
+                        <CareersPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <ProfilePage />
                       </ProtectedRoute>
                     }
                   />

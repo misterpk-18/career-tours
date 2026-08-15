@@ -1,6 +1,15 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Compass, FolderKanban, GraduationCap, LayoutDashboard, Loader2, Search } from 'lucide-react';
+import {
+  Compass,
+  FolderKanban,
+  GraduationCap,
+  Home,
+  LayoutDashboard,
+  Loader2,
+  Search,
+  UserCircle,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { projectsAPI } from '../services/api';
 import { projectNav, resolveRoute } from '../lib/nav';
@@ -9,10 +18,15 @@ import { cn } from '../lib/cn';
 const MAX_RESULTS = 8;
 
 const ICONS = {
-  dashboard: LayoutDashboard,
+  home: Home,
+  projects: FolderKanban,
   project: FolderKanban,
   careers: Compass,
+  'careers-project': Compass,
   courses: GraduationCap,
+  'courses-project': GraduationCap,
+  profile: UserCircle,
+  overview: LayoutDashboard,
 };
 
 /**
@@ -75,27 +89,62 @@ export const GlobalSearch = ({ className }) => {
 
   const entries = useMemo(() => {
     const items = [
+      // The global sections, always reachable. Detail lines double as search
+      // text, which is why they name what the page contains rather than repeat
+      // the label.
       {
-        id: 'nav-dashboard',
-        kind: 'dashboard',
-        label: 'Dashboard',
-        detail: 'All of your projects',
+        id: 'nav-home',
+        kind: 'home',
+        label: 'Home',
+        detail: 'Dashboard and your projects',
         to: '/',
-        keywords: 'home projects overview',
+        keywords: 'dashboard overview start',
       },
-      // The project pages are route-scoped, so they are only offered while a
-      // project is open. Offering them otherwise would mean guessing an id.
+      {
+        id: 'nav-projects',
+        kind: 'projects',
+        label: 'Projects',
+        detail: 'Your resumes and extracted skills',
+        to: '/projects',
+        keywords: 'resume upload extract',
+      },
+      {
+        id: 'nav-courses',
+        kind: 'courses',
+        label: 'Courses',
+        detail: 'The whole course catalogue',
+        to: '/courses',
+        keywords: 'catalogue learning syllabus training study modules',
+      },
+      {
+        id: 'nav-careers',
+        kind: 'careers',
+        label: 'Careers',
+        detail: 'The whole career directory',
+        to: '/careers',
+        keywords: 'directory jobs roles occupations',
+      },
+      {
+        id: 'nav-profile',
+        kind: 'profile',
+        label: 'Profile',
+        detail: 'Your personal and academic details',
+        to: '/profile',
+        keywords: 'account settings college degree preferences me',
+      },
+      // The per-project pages are route-scoped, so they are only offered while
+      // a project is open. Offering them otherwise would mean guessing an id.
       ...projectNav(route.projectId).map((item) => ({
         id: `nav-${item.key}`,
-        kind: item.key,
+        kind: item.key === 'project' ? 'overview' : item.key,
         label: item.label,
         detail: 'Current project',
         to: item.to,
         keywords:
-          item.key === 'careers'
+          item.key === 'careers-project'
             ? 'career matches jobs occupations gaps skills'
-            : item.key === 'courses'
-              ? 'courses learning path syllabus training'
+            : item.key === 'courses-project'
+              ? 'recommended learning path syllabus training'
               : 'project workspace resume skills',
       })),
       ...(projects || []).map((project) => ({

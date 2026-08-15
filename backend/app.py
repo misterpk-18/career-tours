@@ -67,6 +67,10 @@ from api.recommendations.routes import recommendations_bp  # noqa: E402
 
 _mark("api.recommendations")
 
+from api.catalogue.routes import catalogue_bp  # noqa: E402
+
+_mark("api.catalogue")
+
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
@@ -103,6 +107,9 @@ app.register_blueprint(resume_bp, url_prefix="/api/resumes")
 app.register_blueprint(recommendations_bp, url_prefix="/api/recommendations")
 app.register_blueprint(projects_bp, url_prefix="/api/projects")
 app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
+# No prefix of its own: the blueprint owns two unrelated top-level collections
+# (/api/courses and /api/careers), so the routes carry their own paths.
+app.register_blueprint(catalogue_bp, url_prefix="/api")
 
 
 @app.route("/")

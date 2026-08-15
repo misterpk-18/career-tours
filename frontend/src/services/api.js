@@ -33,6 +33,37 @@ export const authAPI = {
   },
 };
 
+export const studentsAPI = {
+  getById: async (studentId) => {
+    const response = await api.get(`/students/${studentId}`);
+    return response.data;
+  },
+  // Accepts a partial profile — the server allow-lists the editable fields and
+  // merges the rest, so sending only what changed is safe.
+  update: async (studentId, profile) => {
+    const response = await api.put(`/students/${studentId}`, profile);
+    return response.data;
+  },
+};
+
+// The catalogue: what exists, as opposed to what was recommended. Both list
+// endpoints return the whole table in one response (40 courses, 267 careers)
+// because the browsing UI filters client-side — see api/catalogue/routes.py.
+export const catalogueAPI = {
+  listCourses: async () => {
+    const response = await api.get('/courses');
+    return response.data;
+  },
+  getCourse: async (courseId) => {
+    const response = await api.get(`/courses/${courseId}`);
+    return response.data;
+  },
+  listCareers: async () => {
+    const response = await api.get('/careers');
+    return response.data;
+  },
+};
+
 export const projectsAPI = {
   create: async (projectData) => {
     const response = await api.post('/projects', projectData);

@@ -36,6 +36,19 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (studentData) => applySession(await authAPI.register(studentData));
 
+  /**
+   * Replace the cached session identity after the student edits their profile.
+   *
+   * The token is untouched — nothing editable is part of it. Without this the
+   * sidebar would keep showing the old name until the next login, because the
+   * session copy in storage is what the app reads on every load.
+   */
+  const updateStudent = (next) => {
+    if (!next || !token) return;
+    setStudent(next);
+    setSession(token, next);
+  };
+
   const logout = () => {
     setToken(null);
     setStudent(null);
@@ -51,6 +64,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateStudent,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

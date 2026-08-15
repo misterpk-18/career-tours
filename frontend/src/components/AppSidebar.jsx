@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronsLeft, ChevronsRight, Compass, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { PRIMARY_NAV, projectNav, resolveRoute } from '../lib/nav';
+import { FOOTER_NAV, PRIMARY_NAV, activeNavKey, projectNav, resolveRoute } from '../lib/nav';
 import { cn } from '../lib/cn';
 
 const SectionLabel = ({ collapsed, children }) =>
@@ -16,10 +16,13 @@ const SectionLabel = ({ collapsed, children }) =>
     </div>
   );
 
+// Link, not NavLink. Active state comes from lib/nav.js, which knows that
+// /courses/<id> is still the Courses section — NavLink only knows whether the
+// path equals its own `to`, and it overwrites aria-current with that answer, so
+// every detail route announced itself as belonging to no section.
 const NavItem = ({ item, active, collapsed, onNavigate }) => (
-  <NavLink
+  <Link
     to={item.to}
-    end
     onClick={onNavigate}
     // `title` is the only affordance left when the label is hidden, and
     // aria-current is what tells a screen reader which one is open — the visual
@@ -37,7 +40,7 @@ const NavItem = ({ item, active, collapsed, onNavigate }) => (
   >
     <item.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
     {collapsed ? <span className="sr-only">{item.label}</span> : <span className="truncate">{item.label}</span>}
-  </NavLink>
+  </Link>
 );
 
 /**
@@ -54,6 +57,7 @@ export const AppSidebar = ({ collapsed, onToggleCollapse, onNavigate }) => {
 
   const route = resolveRoute(pathname);
   const contextual = projectNav(route.projectId);
+  const section = activeNavKey(route.key);
 
   const handleLogout = () => {
     logout();
@@ -104,7 +108,7 @@ export const AppSidebar = ({ collapsed, onToggleCollapse, onNavigate }) => {
             <li key={item.key}>
               <NavItem
                 item={item}
-                active={route.key === item.key}
+                active={section === item.key}
                 collapsed={collapsed}
                 onNavigate={onNavigate}
               />
@@ -147,8 +151,22 @@ export const AppSidebar = ({ collapsed, onToggleCollapse, onNavigate }) => {
         </div>
       ) : null}
 
-      {/* Account */}
+      {/* Account. Profile sits with it rather than in the nav list above: it is
+          about the person signed in, which is what this whole block is. */}
       <div className={cn('shrink-0 border-t border-line py-3', collapsed ? 'px-2' : 'px-3')}>
+        <ul className="mb-3 space-y-1">
+          {FOOTER_NAV.map((item) => (
+            <li key={item.key}>
+              <NavItem
+                item={item}
+                active={section === item.key}
+                collapsed={collapsed}
+                onNavigate={onNavigate}
+              />
+            </li>
+          ))}
+        </ul>
+
         <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-2.5')}>
           <span
             className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line-strong bg-surface-2 text-sm font-bold text-brand-fg"

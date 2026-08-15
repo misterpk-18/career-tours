@@ -19,6 +19,9 @@ class StudentRepository:
         "college_name",
         "degree_name",
         "branch_name",
+        # Was missing, so a cleared "Current year / semester" was stored as ""
+        # rather than NULL — the only profile text column that behaved that way.
+        "current_year_semester",
         "preferred_job_location",
         "target_role",
         "career_interest",
