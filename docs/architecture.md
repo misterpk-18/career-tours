@@ -57,7 +57,10 @@ AWS account **307857432997**, region **ap-south-1** (Mumbai).
 | Memory / timeout | 1024 MB / **300 s** |
 | Execution role | `career-tours-lambda-role-kpgs1hwq` |
 | Log group | **`/aws/lambda/career-tours-lambda`** — overridden, so the default `/aws/lambda/career-tours-api` group is empty |
-| Public entry point | **CloudFront `d2g1lg63sloe7m.cloudfront.net`** (`E1TW6HR68G4A7T`) |
+| Public entry point | **`https://nipunacareers.com`** (and `www.`) → CloudFront `E1TW6HR68G4A7T` |
+| Origin URL | `d2g1lg63sloe7m.cloudfront.net` — still serves, unaliased |
+| DNS | Route53 zone `Z0520838K2KUFGOJETR5`, A + AAAA alias records on apex and `www` |
+| TLS | ACM `190bc4f6-c33a-4885-a3d5-5d025297da21` in **us-east-1** — CloudFront accepts certificates from that region only, regardless of where the distribution serves. `sni-only`, TLSv1.2_2021 |
 | API Gateway | HTTP API `722dql67f0`, `$default` route + `$default` stage, payload format 2.0, 30s integration timeout |
 | Frontend | S3 `career-tours-web`, private, readable only by that distribution via OAC `E2L96DF7Q3K1VQ` |
 | Fallback entry point | Lambda Function URL, `AuthType: NONE` — still live, kept until CloudFront is proven |
@@ -298,8 +301,30 @@ aws cloudfront create-invalidation --distribution-id E1TW6HR68G4A7T --paths "/in
 Only `/index.html` needs invalidating: every other asset carries a content hash in its
 filename, so a new build writes new objects rather than replacing cached ones.
 
-`403` and `404` from S3 are rewritten to `/index.html` with a `200`, which is what makes a
-deep link like `/projects/<id>` work — React Router owns that path, and S3 has no such object.
+### How a deep link finds the SPA
+
+A path like `/projects/<id>` is React Router's, not S3's, so the bucket has no such object. The
+CloudFront function **`career-tours-spa-fallback`** rewrites any URI whose last segment has no
+file extension to `/index.html`. It is attached as **viewer-request on the default behaviour
+only**, so `/api/*` — a separate behaviour — never sees it, and `/assets/index-<hash>.js` is
+served as itself.
+
+This deliberately replaced two distribution-wide `CustomErrorResponses` mapping `403`/`404` to
+`/index.html` with a `200`. Custom error responses cannot be scoped to one behaviour, so they
+also rewrote genuine API errors: `GET /api/nope` returned `200 text/html`, and an unknown id
+returned the SPA shell instead of `404 {"error": "…"}` — which made `useJob` poll forever on an
+undefined status, and would have made the course page report the wrong failure.
+
+**Both halves are required.** The function existed and was published LIVE for a while with
+nothing attached, while the error responses stayed in place — so the bug was live even though
+everything looked configured. Check `DefaultCacheBehavior.FunctionAssociations`, not just
+`list-functions`:
+
+```bash
+aws cloudfront get-distribution-config --id E1TW6HR68G4A7T \
+  --query 'DistributionConfig.{Fn:DefaultCacheBehavior.FunctionAssociations,Errors:CustomErrorResponses.Quantity}'
+# want: Fn.Quantity == 1, Errors == 0
+```
 
 ## The EC2 instance
 
