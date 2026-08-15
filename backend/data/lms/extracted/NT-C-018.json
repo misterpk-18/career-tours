@@ -2,83 +2,83 @@
   "course_code": "NT-C-018",
   "source_pdf": "NT-C-018_Data_Structures_and_Algorithms.pdf",
   "course_name": "Data Structures & Algorithms",
-  "description": "A Programming & Problem Solving course for programming learners preparing for software-development interviews and stronger implementation skills. By the end, learners can select, implement, and explain appropriate data structures and algorithms with complexity analysis.",
+  "description": "This Programming & Problem Solving course is for programming learners preparing for software-development interviews and aiming to build stronger implementation skills. By the end, learners can select, implement and explain appropriate data structures and algorithms and justify choices with clear complexity analysis.",
   "duration_hours": 140,
   "level": "Intermediate",
   "skills": [
     {
-      "skill_name": "Big-O complexity analysis",
-      "coverage_weight": 92.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Algorithmic trade-offs",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Two-pointer technique",
-      "coverage_weight": 88.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Sliding window technique",
-      "coverage_weight": 88.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Linked lists",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Stacks and queues",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Recursion",
-      "coverage_weight": 82.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Binary search trees (BST)",
-      "coverage_weight": 78.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Tree traversal",
-      "coverage_weight": 78.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Priority queues (heaps)",
-      "coverage_weight": 76.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Hash maps",
+      "skill_name": "Data Structures",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Graph traversal (BFS and DFS)",
+      "skill_name": "Algorithms",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Complexity analysis (Big-O)",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Arrays and strings",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Two-pointer and sliding-window patterns",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Linked lists",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Stacks and queues",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Recursion and backtracking",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Divide-and-conquer",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Trees and BST",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Priority queues and heaps",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Hashing",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Shortest-path basics",
-      "coverage_weight": 72.0,
+      "skill_name": "Graphs (representation, BFS, DFS, shortest-path basics)",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Sorting algorithms",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
       "skill_name": "Dynamic programming",
-      "coverage_weight": 86.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Sorting and searching algorithms",
-      "coverage_weight": 84.0,
+      "coverage_weight": 80.0,
       "category": "technical"
     }
   ]

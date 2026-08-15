@@ -2,7 +2,7 @@
   "course_code": "NT-C-011",
   "source_pdf": "NT-C-011_NET_Full_Stack.pdf",
   "course_name": ".NET Full Stack",
-  "description": "This course is for learners targeting Microsoft-stack web application roles in Programming & Full Stack. Learners build skills across back end, databases, APIs, and modern user interfaces on the .NET ecosystem. By the end, they can build, test and deploy a secure database-backed application with ASP.NET Core APIs and a modern user interface.",
+  "description": ".NET Full Stack is a Programming & Full Stack course for learners targeting Microsoft-stack web application roles. It covers C#, SQL and schema design, ASP.NET Core with MVC, REST and security, and a modern front end to prepare you for full‑stack development on the Microsoft platform. By the end, you can build, test and deploy a secure database‑backed application with ASP.NET Core APIs and a modern user interface.",
   "duration_hours": 240,
   "level": "Beginner to Intermediate",
   "skills": [
@@ -12,13 +12,8 @@
       "category": "technical"
     },
     {
-      "skill_name": "Object-Oriented Programming (C#)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "LINQ",
-      "coverage_weight": 75.0,
+      "skill_name": "Object-Oriented Programming",
+      "coverage_weight": 82.0,
       "category": "technical"
     },
     {
@@ -27,57 +22,62 @@
       "category": "technical"
     },
     {
-      "skill_name": "Database Schema Design",
+      "skill_name": "Entity Framework Core",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "ASP.NET Core",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "MVC",
       "coverage_weight": 78.0,
       "category": "technical"
     },
     {
-      "skill_name": "Entity Framework Core",
-      "coverage_weight": 88.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "ASP.NET Core MVC",
-      "coverage_weight": 88.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Dependency Injection (ASP.NET Core)",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "RESTful API Design",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Authentication and Authorization",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "JavaScript (ES6+)",
+      "skill_name": "Dependency Injection",
       "coverage_weight": 72.0,
       "category": "technical"
     },
     {
-      "skill_name": "Responsive Web Design",
+      "skill_name": "REST API",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Authentication",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Authorization",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "HTML",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "JavaScript",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "React or Angular",
+      "skill_name": "React",
       "coverage_weight": 65.0,
       "category": "technical"
     },
     {
       "skill_name": "Git",
-      "coverage_weight": 75.0,
+      "coverage_weight": 68.0,
       "category": "technical"
     },
     {
-      "skill_name": "Software Testing in .NET",
+      "skill_name": "Testing",
       "coverage_weight": 78.0,
       "category": "technical"
     }

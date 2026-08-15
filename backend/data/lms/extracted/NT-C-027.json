@@ -2,33 +2,33 @@
   "course_code": "NT-C-027",
   "source_pdf": "NT-C-027_Azure_Cloud.pdf",
   "course_name": "Azure Cloud",
-  "description": "A Cloud course for learners targeting Azure support, administration and junior cloud roles. Prerequisites are basic networking and operating-system knowledge, and the curriculum focuses on identity, network, compute and data services. By the end, learners can deploy, secure and monitor an Azure application environment using core Azure services.",
+  "description": "A Cloud course for learners targeting Azure support, administration and junior cloud roles. It prepares learners to deploy, secure and monitor an Azure application environment using identity, network, compute and data services. By the end, learners can apply least privilege access, implement governed resources, and operate a resilient, monitored Azure setup.",
   "duration_hours": 140,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Azure subscriptions and resource groups",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Microsoft Entra ID (Azure AD)",
+      "skill_name": "Microsoft Azure",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Azure RBAC",
-      "coverage_weight": 88.0,
+      "skill_name": "Microsoft Entra ID",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Least privilege access",
-      "coverage_weight": 85.0,
-      "category": "domain"
+      "skill_name": "RBAC",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Least Privilege",
+      "coverage_weight": 80.0,
+      "category": "technical"
     },
     {
       "skill_name": "Azure Virtual Machines",
-      "coverage_weight": 82.0,
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
@@ -37,47 +37,42 @@
       "category": "technical"
     },
     {
-      "skill_name": "Azure Storage Accounts",
-      "coverage_weight": 78.0,
-      "category": "technical"
-    },
-    {
       "skill_name": "Azure Blob Storage",
-      "coverage_weight": 72.0,
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Azure Virtual Network (VNet)",
-      "coverage_weight": 82.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Network Security Groups (NSG)",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Azure DNS",
+      "skill_name": "Subnetting",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Azure SQL",
-      "coverage_weight": 78.0,
+      "skill_name": "DNS",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Backup and disaster recovery",
+      "skill_name": "SQL",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Backup and Recovery",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Azure Monitor",
-      "coverage_weight": 85.0,
+      "skill_name": "manage disaster recovery plans",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Cost management",
+      "skill_name": "Monitoring and Observability",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "implement cloud security and compliance",
       "coverage_weight": 70.0,
       "category": "technical"
     }

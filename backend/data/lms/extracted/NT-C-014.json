@@ -2,84 +2,74 @@
   "course_code": "NT-C-014",
   "source_pdf": "NT-C-014_Core_Python.pdf",
   "course_name": "Core Python",
-  "description": "Core Python is a programming course for beginners and learners who need Python foundations for software, data or automation. By the end, learners can write structured, tested Python programs that work with files, databases and HTTP/JSON APIs.",
+  "description": "Core Python is a Programming course for beginners and learners who need Python foundations for software, data or automation. By the end, you can write structured, tested Python programs that work with files, databases and APIs.",
   "duration_hours": 80,
   "level": "Beginner",
   "skills": [
     {
       "skill_name": "Python",
-      "coverage_weight": 95.0,
+      "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Control flow (conditions and loops)",
+      "skill_name": "Data Structures",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Comprehensions",
+      "skill_name": "Object-Oriented Programming",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "file-based workflow",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Python data structures (lists, tuples, dictionaries, sets)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Functions and modules",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Object-Oriented Programming (Python)",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "File I/O and file formats",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Exception handling",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Logging (Python)",
+      "skill_name": "Logging",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "SQL (basics)",
+      "skill_name": "Unit Testing",
       "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SQL",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
       "skill_name": "JSON",
-      "coverage_weight": 70.0,
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "HTTP API consumption",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Unit testing (unittest/pytest)",
-      "coverage_weight": 80.0,
+      "skill_name": "REST API",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
       "skill_name": "Git",
-      "coverage_weight": 70.0,
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Documentation",
+      "skill_name": "PyTest",
       "coverage_weight": 60.0,
       "category": "technical"
+    },
+    {
+      "skill_name": "Debugging",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Technical Writing",
+      "coverage_weight": 55.0,
+      "category": "soft"
     }
   ]
 }

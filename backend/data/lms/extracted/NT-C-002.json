@@ -2,7 +2,7 @@
   "course_code": "NT-C-002",
   "source_pdf": "NT-C-002_Java_Full_Stack.pdf",
   "course_name": "Java Full Stack",
-  "description": "Java Full Stack is a Programming & Full Stack course for learners targeting enterprise Java and web-application roles. It builds back-end and front-end capability around Java, Spring Boot and React with SQL persistence, REST services and security. By the end, learners can develop and deploy a Java/Spring Boot application with tested APIs, data persistence, authentication/authorization and a responsive front end.",
+  "description": "A Programming & Full Stack course for learners targeting enterprise Java and web-application roles. By the end, learners can develop and deploy a Java/Spring Boot application with REST services, persistence, security, and a responsive front end.",
   "duration_hours": 240,
   "level": "Beginner to Intermediate",
   "skills": [
@@ -12,58 +12,48 @@
       "category": "technical"
     },
     {
-      "skill_name": "Object-Oriented Programming (OOP)",
+      "skill_name": "Object-Oriented Programming",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Java Collections",
+      "skill_name": "SQL",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "SQL",
+      "skill_name": "Database Design",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Database Schema Design",
+      "skill_name": "JavaScript",
       "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "JavaScript",
-      "coverage_weight": 60.0,
+      "skill_name": "React",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "React",
+      "skill_name": "Responsive Design",
       "coverage_weight": 65.0,
       "category": "technical"
     },
     {
       "skill_name": "Spring Boot",
-      "coverage_weight": 90.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Spring MVC",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "RESTful APIs",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "JPA/Hibernate",
-      "coverage_weight": 80.0,
+      "skill_name": "REST API",
+      "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Spring Security",
-      "coverage_weight": 70.0,
+      "skill_name": "ORM",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
@@ -73,12 +63,17 @@
     },
     {
       "skill_name": "API Testing",
-      "coverage_weight": 65.0,
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Deployment",
-      "coverage_weight": 70.0,
+      "skill_name": "Application Deployment",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Authentication",
+      "coverage_weight": 65.0,
       "category": "technical"
     }
   ]

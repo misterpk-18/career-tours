@@ -2,18 +2,13 @@
   "course_code": "NT-C-031",
   "source_pdf": "NT-C-031_CCNA.pdf",
   "course_name": "CCNA",
-  "description": "A Networking course for learners preparing for junior networking and NOC support roles. It builds the ability to configure and troubleshoot routed and switched networks using secure foundational practices. Graduates can demonstrate these competencies through authorised labs and practical evidence.",
+  "description": "A Networking course for learners preparing for junior networking and NOC support roles. Learners build core routing, switching, IP services and wireless skills in guided labs. By the end, they can configure and troubleshoot routed and switched networks using secure foundational practices.",
   "duration_hours": 140,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Cisco IOS",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "IPv4 and IPv6 addressing",
-      "coverage_weight": 90.0,
+      "skill_name": "TCP/IP",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
@@ -22,27 +17,17 @@
       "category": "technical"
     },
     {
-      "skill_name": "VLANs",
+      "skill_name": "Switching",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "802.1Q trunking",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Spanning Tree Protocol (STP)",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Static routing",
+      "skill_name": "VLAN",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "OSPF (single-area)",
+      "skill_name": "Routing",
       "coverage_weight": 80.0,
       "category": "technical"
     },
@@ -52,23 +37,33 @@
       "category": "technical"
     },
     {
+      "skill_name": "DNS",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
       "skill_name": "NAT",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Wireless LAN (WLAN) fundamentals",
+      "skill_name": "WLAN components",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "WLAN security",
-      "coverage_weight": 65.0,
+      "skill_name": "Wireless configuration",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Access Control Lists (ACLs)",
-      "coverage_weight": 80.0,
+      "skill_name": "Wireless security",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "ACLs",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
@@ -77,8 +72,13 @@
       "category": "technical"
     },
     {
-      "skill_name": "Network troubleshooting and verification",
-      "coverage_weight": 90.0,
+      "skill_name": "Network Troubleshooting",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Cisco",
+      "coverage_weight": 65.0,
       "category": "technical"
     }
   ]

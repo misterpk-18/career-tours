@@ -2,7 +2,7 @@
   "course_code": "NT-C-017",
   "source_pdf": "NT-C-017_Cplusplus_Programming.pdf",
   "course_name": "C++ Programming",
-  "description": "C++ Programming is a Programming course for learners targeting C++ application or embedded-software foundations. It builds practical skills in modern C++ covering OOP, STL, memory/resource management, algorithms, testing, build and Git. By the end, learners can build tested C++ applications using OOP, STL, memory management and algorithms.",
+  "description": "A Programming course for learners targeting C++ application or embedded-software foundations. By the end, learners can build tested C++ applications using OOP, STL, memory management and algorithms. Learners demonstrate practical competence through projects, testing, and version control.",
   "duration_hours": 80,
   "level": "Beginner to Intermediate",
   "skills": [
@@ -12,53 +12,58 @@
       "category": "technical"
     },
     {
-      "skill_name": "Object-Oriented Programming (C++)",
-      "coverage_weight": 88.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Memory Management (RAII, smart pointers)",
+      "skill_name": "Object-Oriented Programming",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "STL Containers (vector, map, set) and Iterators",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "STL Algorithms",
+      "skill_name": "STL containers",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Templates and Generic Programming",
-      "coverage_weight": 82.0,
+      "skill_name": "Algorithms",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Exception Handling (C++)",
-      "coverage_weight": 78.0,
+      "skill_name": "Pointers",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "File I/O (C++)",
+      "skill_name": "RAII",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Unit Testing (C++)",
-      "coverage_weight": 72.0,
+      "skill_name": "Smart pointers",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Debugging (C++)",
-      "coverage_weight": 68.0,
+      "skill_name": "C++ templates",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "CMake",
-      "coverage_weight": 60.0,
+      "skill_name": "Exception handling",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "File I/O",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Unit Testing",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Debugging",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
@@ -67,13 +72,8 @@
       "category": "technical"
     },
     {
-      "skill_name": "Software Architecture (C++ Projects)",
+      "skill_name": "CMake",
       "coverage_weight": 60.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Searching and Sorting Algorithms",
-      "coverage_weight": 75.0,
       "category": "technical"
     }
   ]

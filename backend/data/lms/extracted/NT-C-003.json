@@ -2,7 +2,7 @@
   "course_code": "NT-C-003",
   "source_pdf": "NT-C-003_Data_Science.pdf",
   "course_name": "Data Science",
-  "description": "This Data & AI course is for graduates and professionals aiming for entry-level data-science or machine-learning roles. By the end, learners can prepare data, build and evaluate machine-learning models, and communicate evidence-based findings through a reproducible project.",
+  "description": "A Data & AI course for graduates and professionals seeking entry-level data-science or machine-learning roles. Learners progress from data preparation and exploratory analysis to building and evaluating machine-learning models. By the end, they can prepare data, build and assess models, and communicate evidence-based findings through a reproducible project.",
   "duration_hours": 220,
   "level": "Beginner to Intermediate",
   "skills": [
@@ -17,7 +17,7 @@
       "category": "technical"
     },
     {
-      "skill_name": "pandas",
+      "skill_name": "Pandas",
       "coverage_weight": 85.0,
       "category": "technical"
     },
@@ -27,58 +27,58 @@
       "category": "technical"
     },
     {
-      "skill_name": "Jupyter Notebooks",
+      "skill_name": "Matplotlib",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data visualization with matplotlib/seaborn",
+      "skill_name": "Seaborn",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Scikit-learn",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Exploratory Data Analysis",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Statistics",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "scikit-learn",
+      "skill_name": "Feature Engineering",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Descriptive statistics",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Missing data handling",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Regression",
+      "skill_name": "Model Evaluation",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Classification",
-      "coverage_weight": 80.0,
+      "skill_name": "perform dimensionality reduction",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Feature engineering",
-      "coverage_weight": 75.0,
+      "skill_name": "Model Deployment",
+      "coverage_weight": 60.0,
       "category": "technical"
     },
     {
-      "skill_name": "Cross-validation",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Clustering",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Pipelines",
-      "coverage_weight": 70.0,
+      "skill_name": "build predictive models",
+      "coverage_weight": 85.0,
       "category": "technical"
     }
   ]

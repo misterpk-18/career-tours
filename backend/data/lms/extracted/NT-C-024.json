@@ -2,84 +2,84 @@
   "course_code": "NT-C-024",
   "source_pdf": "NT-C-024_AI_and_Machine_Learning.pdf",
   "course_name": "AI & Machine Learning",
-  "description": "A Data & AI course for learners seeking entry-level applied machine-learning roles. By the end, learners can prepare data, train and evaluate machine-learning models, and deliver a documented responsible AI solution. The program emphasizes reproducibility, appropriate metrics and responsible interpretation throughout the workflow.",
+  "description": "A Data & AI course for learners seeking entry-level applied machine-learning roles. By the end, learners can prepare data, train and evaluate machine-learning models, and deliver a documented responsible AI solution.",
   "duration_hours": 220,
   "level": "Beginner to Intermediate",
   "skills": [
     {
       "skill_name": "Python",
-      "coverage_weight": 82.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "NumPy",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "pandas",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "scikit-learn",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data cleaning",
+      "skill_name": "NumPy",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Pandas",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Feature engineering",
-      "coverage_weight": 80.0,
+      "skill_name": "Scikit-learn",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Train/test splitting",
-      "coverage_weight": 78.0,
+      "skill_name": "Statistics",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Supervised learning",
-      "coverage_weight": 88.0,
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Clustering",
+      "skill_name": "Feature Engineering",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Hyperparameter tuning",
-      "coverage_weight": 75.0,
+      "skill_name": "Exploratory Data Analysis",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Model validation",
+      "skill_name": "Model Evaluation",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Machine learning pipelines",
-      "coverage_weight": 75.0,
+      "skill_name": "perform dimensionality reduction",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Deployment basics",
+      "skill_name": "Natural Language Processing",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Computer Vision",
       "coverage_weight": 60.0,
       "category": "technical"
     },
     {
-      "skill_name": "Responsible AI",
-      "coverage_weight": 75.0,
+      "skill_name": "Data Pipeline Development",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Model Deployment",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Privacy and Compliance",
+      "coverage_weight": 60.0,
       "category": "domain"
-    },
-    {
-      "skill_name": "NLP",
-      "coverage_weight": 60.0,
-      "category": "technical"
     }
   ]
 }

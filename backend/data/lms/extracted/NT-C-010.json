@@ -2,84 +2,74 @@
   "course_code": "NT-C-010",
   "source_pdf": "NT-C-010_Video_Editing.pdf",
   "course_name": "Video Editing",
-  "description": "A Design & Creative course for learners targeting digital-content, social-media and multimedia editing roles. You will learn to organise, edit, finish and export engaging video content with clean audio, colour, titles and platform-appropriate delivery. By the end, you can produce platform-ready videos that demonstrate sound storytelling and technical quality.",
+  "description": "A Design & Creative course for learners targeting digital-content, social-media and multimedia editing roles. By the end, you can organise, edit, finish and export engaging video content with clean audio, colour, titles and platform-appropriate delivery.",
   "duration_hours": 140,
-  "level": "Beginner",
+  "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Adobe Premiere Pro",
-      "coverage_weight": 90.0,
+      "skill_name": "Video Editing",
+      "coverage_weight": 92.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Premiere Pro",
+      "coverage_weight": 88.0,
       "category": "technical"
     },
     {
-      "skill_name": "Adobe After Effects (basics)",
+      "skill_name": "After Effects",
       "coverage_weight": 60.0,
       "category": "technical"
     },
     {
-      "skill_name": "Storytelling and continuity",
-      "coverage_weight": 85.0,
+      "skill_name": "Color Correction",
+      "coverage_weight": 78.0,
       "category": "domain"
     },
     {
-      "skill_name": "Media management in NLEs (import, bins, sync, backups)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Proxy workflows",
+      "skill_name": "Motion Graphics",
       "coverage_weight": 70.0,
-      "category": "technical"
+      "category": "domain"
     },
     {
-      "skill_name": "Cuts and trimming tools",
-      "coverage_weight": 85.0,
-      "category": "technical"
+      "skill_name": "Typography",
+      "coverage_weight": 58.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Pacing and B-roll",
+      "skill_name": "file-based workflow",
       "coverage_weight": 75.0,
       "category": "domain"
     },
     {
-      "skill_name": "Dialogue cleanup",
-      "coverage_weight": 75.0,
-      "category": "technical"
+      "skill_name": "synchronise sound with images",
+      "coverage_weight": 74.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Audio mixing and levels",
-      "coverage_weight": 80.0,
-      "category": "technical"
+      "skill_name": "audio post-production",
+      "coverage_weight": 76.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Colour correction and grading",
-      "coverage_weight": 80.0,
-      "category": "technical"
+      "skill_name": "Storytelling",
+      "coverage_weight": 68.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Video scopes",
-      "coverage_weight": 70.0,
-      "category": "technical"
+      "skill_name": "convert different audiovisual formats",
+      "coverage_weight": 67.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Title design and typography",
-      "coverage_weight": 75.0,
-      "category": "technical"
+      "skill_name": "conduct quality control analysis",
+      "coverage_weight": 62.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Keyframing and motion basics",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Captions and aspect ratios",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Export and delivery QC for platforms",
-      "coverage_weight": 85.0,
-      "category": "technical"
+      "skill_name": "follow a brief",
+      "coverage_weight": 60.0,
+      "category": "soft"
     }
   ]
 }

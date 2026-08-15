@@ -2,84 +2,84 @@
   "course_code": "NT-C-032",
   "source_pdf": "NT-C-032_Cyber_Security.pdf",
   "course_name": "Cyber Security",
-  "description": "A Cybersecurity course for learners targeting entry-level security operations and support roles. It builds core foundations across networks, systems, identity, vulnerabilities, monitoring, incident response and governance. By the end, learners can identify, monitor and respond to common security risks using authorised labs and documented controls.",
+  "description": "A Cybersecurity course designed for learners targeting entry-level security operations and support roles. By the end, learners can identify, monitor and respond to common security risks using authorised labs and documented controls.",
   "duration_hours": 180,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "CIA triad",
-      "coverage_weight": 70.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Security controls",
-      "coverage_weight": 72.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Risk management",
-      "coverage_weight": 72.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Network segmentation",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Firewalls",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Windows/Linux hardening",
+      "skill_name": "Firewall",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Patch management",
-      "coverage_weight": 75.0,
+      "skill_name": "VPN",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "TCP/IP",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Linux Security",
+      "coverage_weight": 72.0,
       "category": "technical"
     },
     {
       "skill_name": "Authentication",
+      "coverage_weight": 78.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "User Management",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Vulnerability Assessment",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Logging",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SIEM Basics",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "perform escalation procedure",
       "coverage_weight": 72.0,
       "category": "domain"
     },
     {
-      "skill_name": "Multi-factor Authentication (MFA)",
-      "coverage_weight": 70.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Vulnerability scanning",
-      "coverage_weight": 80.0,
+      "skill_name": "Backup and Recovery",
+      "coverage_weight": 62.0,
       "category": "technical"
     },
     {
-      "skill_name": "SIEM (Security Information and Event Management)",
-      "coverage_weight": 85.0,
+      "skill_name": "define security policies",
+      "coverage_weight": 72.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "cloud technologies",
+      "coverage_weight": 58.0,
       "category": "technical"
     },
     {
-      "skill_name": "Log management",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Alert triage",
-      "coverage_weight": 80.0,
+      "skill_name": "ethics",
+      "coverage_weight": 55.0,
       "category": "domain"
     },
     {
-      "skill_name": "Incident response",
-      "coverage_weight": 82.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Security policies",
-      "coverage_weight": 70.0,
-      "category": "domain"
+      "skill_name": "Report Writing",
+      "coverage_weight": 60.0,
+      "category": "soft"
     }
   ]
 }

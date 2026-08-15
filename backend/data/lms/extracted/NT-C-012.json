@@ -2,27 +2,27 @@
   "course_code": "NT-C-012",
   "source_pdf": "NT-C-012_MERN_Stack.pdf",
   "course_name": "MERN Stack",
-  "description": "A Programming & Full Stack course for learners seeking JavaScript full‑stack development roles. It teaches the MERN stack with hands‑on client, server, database and deployment practice. By the end, learners can build and deploy a secure MongoDB, Express, React and Node.js application.",
+  "description": "This course is for learners seeking JavaScript full-stack development roles. It covers full‑stack JavaScript with responsive UI development, React, Node.js and Express, RESTful APIs, MongoDB, authentication, testing, Git and deployment practices. By the end, learners can build and deploy a secure MongoDB, Express, React and Node.js application.",
   "duration_hours": 220,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "JavaScript (ES6+)",
-      "coverage_weight": 88.0,
+      "skill_name": "JavaScript",
+      "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Semantic HTML",
-      "coverage_weight": 65.0,
+      "skill_name": "HTML",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
       "skill_name": "CSS",
-      "coverage_weight": 65.0,
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Responsive Web Design",
+      "skill_name": "Responsive Design",
       "coverage_weight": 70.0,
       "category": "technical"
     },
@@ -32,18 +32,13 @@
       "category": "technical"
     },
     {
-      "skill_name": "SPA Routing",
-      "coverage_weight": 75.0,
+      "skill_name": "Routing",
+      "coverage_weight": 78.0,
       "category": "technical"
     },
     {
-      "skill_name": "Form Handling and Validation",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "RESTful APIs",
-      "coverage_weight": 85.0,
+      "skill_name": "API Integration",
+      "coverage_weight": 78.0,
       "category": "technical"
     },
     {
@@ -53,22 +48,27 @@
     },
     {
       "skill_name": "Express.js",
-      "coverage_weight": 88.0,
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "REST API",
+      "coverage_weight": 82.0,
       "category": "technical"
     },
     {
       "skill_name": "MongoDB",
-      "coverage_weight": 88.0,
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Authentication and Authorization",
-      "coverage_weight": 80.0,
+      "skill_name": "Authentication",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Testing",
-      "coverage_weight": 78.0,
+      "skill_name": "Unit Testing",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
@@ -77,8 +77,8 @@
       "category": "technical"
     },
     {
-      "skill_name": "Deployment and Hosting",
-      "coverage_weight": 82.0,
+      "skill_name": "Application Deployment",
+      "coverage_weight": 80.0,
       "category": "technical"
     }
   ]

@@ -2,18 +2,43 @@
   "course_code": "NT-C-006",
   "source_pdf": "NT-C-006_AWS_with_DevOps.pdf",
   "course_name": "AWS with DevOps",
-  "description": "AWS with DevOps is a Cloud & DevOps course for learners targeting cloud support, infrastructure automation and junior DevOps roles. It covers core AWS services, containers, CI/CD and infrastructure as code with monitoring and operations. By the end, learners can deploy and operate a secure cloud application on AWS.",
+  "description": "A Cloud & DevOps course for learners targeting cloud support, infrastructure automation and junior DevOps roles. By the end, learners can deploy and operate a secure cloud application using AWS services, containers, CI/CD, infrastructure as code and monitoring.",
   "duration_hours": 180,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Linux",
-      "coverage_weight": 75.0,
+      "skill_name": "AWS IAM",
+      "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "Networking",
-      "coverage_weight": 70.0,
+      "skill_name": "Amazon VPC",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Amazon EC2",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Amazon S3",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Amazon RDS",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Amazon CloudWatch",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Docker",
+      "coverage_weight": 82.0,
       "category": "technical"
     },
     {
@@ -22,64 +47,34 @@
       "category": "technical"
     },
     {
-      "skill_name": "AWS Identity and Access Management (IAM)",
+      "skill_name": "CI/CD",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Terraform",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Infrastructure as Code",
       "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Amazon VPC",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Amazon EC2",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Amazon S3",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Amazon RDS",
+      "skill_name": "Shell Scripting",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Load balancing",
-      "coverage_weight": 70.0,
+      "skill_name": "Load Balancing",
+      "coverage_weight": 72.0,
       "category": "technical"
     },
     {
-      "skill_name": "Auto Scaling",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Docker",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Amazon ECR",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "CI/CD Pipelines",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Infrastructure as Code (Terraform/CloudFormation)",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Amazon CloudWatch",
-      "coverage_weight": 80.0,
-      "category": "technical"
+      "skill_name": "cloud security and compliance",
+      "coverage_weight": 78.0,
+      "category": "domain"
     }
   ]
 }

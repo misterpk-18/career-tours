@@ -2,28 +2,18 @@
   "course_code": "NT-C-004",
   "source_pdf": "NT-C-004_Data_Analytics.pdf",
   "course_name": "Data Analytics",
-  "description": "A Data & Business Intelligence course for learners targeting reporting, MIS, business-data and junior analyst roles. It trains learners to clean, analyse and present business data using spreadsheets, SQL, Python (pandas) and Power BI dashboards. By the end, learners can deliver decision-ready analyses and dashboards with reproducible work.",
+  "description": "Data Analytics sits in the Data & Business Intelligence category and is designed for learners targeting reporting, MIS, business-data and junior analyst roles. By the end of the course, learners can clean, analyse and present business data using spreadsheets, SQL, Python and BI dashboards.",
   "duration_hours": 160,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Excel",
-      "coverage_weight": 90.0,
+      "skill_name": "Microsoft Excel",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
       "skill_name": "SQL",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "SQL Window Functions",
-      "coverage_weight": 65.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data Cleaning & Quality",
-      "coverage_weight": 85.0,
+      "coverage_weight": 80.0,
       "category": "technical"
     },
     {
@@ -32,22 +22,27 @@
       "category": "technical"
     },
     {
-      "skill_name": "pandas",
+      "skill_name": "Pandas",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data Transformation",
-      "coverage_weight": 75.0,
+      "skill_name": "Power BI",
+      "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Automation with Python",
-      "coverage_weight": 65.0,
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Descriptive Statistics",
+      "skill_name": "Data Quality",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Statistics",
       "coverage_weight": 80.0,
       "category": "technical"
     },
@@ -57,29 +52,34 @@
       "category": "technical"
     },
     {
-      "skill_name": "Power BI",
+      "skill_name": "Dashboard Design",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data Storytelling",
-      "coverage_weight": 70.0,
+      "skill_name": "Exploratory Data Analysis",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Business Intelligence",
+      "coverage_weight": 65.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Git",
+      "coverage_weight": 50.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "track key performance indicators",
+      "coverage_weight": 60.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Storytelling",
+      "coverage_weight": 60.0,
       "category": "soft"
-    },
-    {
-      "skill_name": "Business Problem Framing",
-      "coverage_weight": 75.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "KPI Design & Mapping",
-      "coverage_weight": 75.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Version Control with Git",
-      "coverage_weight": 55.0,
-      "category": "technical"
     }
   ]
 }

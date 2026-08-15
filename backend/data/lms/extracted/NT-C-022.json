@@ -2,23 +2,43 @@
   "course_code": "NT-C-022",
   "source_pdf": "NT-C-022_Advanced_Excel.pdf",
   "course_name": "Advanced Excel",
-  "description": "This Data & Office Productivity course is for learners needing advanced spreadsheet, MIS and reporting skills. By the end, learners can build accurate, auditable Excel models, reports and dashboards using advanced formulas and data tools.",
+  "description": "A Data & Office Productivity course for learners needing advanced spreadsheet, MIS and reporting skills. By the end, learners can build accurate, auditable Excel models, reports and dashboards using advanced formulas and data tools.",
   "duration_hours": 50,
   "level": "Intermediate to Advanced",
   "skills": [
     {
-      "skill_name": "Advanced Excel formulas (logic, text, date, error handling)",
-      "coverage_weight": 85.0,
+      "skill_name": "Advanced Excel",
+      "coverage_weight": 92.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "coverage_weight": 88.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Power Query",
+      "coverage_weight": 82.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "PivotTables",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "PivotCharts",
+      "coverage_weight": 72.0,
       "category": "technical"
     },
     {
       "skill_name": "XLOOKUP",
-      "coverage_weight": 85.0,
+      "coverage_weight": 80.0,
       "category": "technical"
     },
     {
       "skill_name": "INDEX/MATCH",
-      "coverage_weight": 75.0,
+      "coverage_weight": 76.0,
       "category": "technical"
     },
     {
@@ -27,59 +47,34 @@
       "category": "technical"
     },
     {
-      "skill_name": "Excel Tables (Structured References)",
-      "coverage_weight": 70.0,
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data Validation",
-      "coverage_weight": 70.0,
+      "skill_name": "Data Quality",
+      "coverage_weight": 68.0,
       "category": "technical"
     },
     {
-      "skill_name": "Data Quality Checks in Excel",
-      "coverage_weight": 65.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "PivotTables",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Slicers",
-      "coverage_weight": 60.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Charts in Excel",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Dashboard Design and Layout in Excel",
+      "skill_name": "Dashboard Design",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Power Query (Get & Transform)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Macros/VBA Basics",
-      "coverage_weight": 55.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Model Audit and Documentation",
-      "coverage_weight": 60.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "KPI Design and Definition",
-      "coverage_weight": 65.0,
+      "skill_name": "MIS Reporting",
+      "coverage_weight": 72.0,
       "category": "domain"
+    },
+    {
+      "skill_name": "track key performance indicators",
+      "coverage_weight": 66.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "VBA",
+      "coverage_weight": 58.0,
+      "category": "technical"
     }
   ]
 }

@@ -2,83 +2,83 @@
   "course_code": "NT-C-033",
   "source_pdf": "NT-C-033_Ethical_Hacking.pdf",
   "course_name": "Ethical Hacking",
-  "description": "A cybersecurity course for learners seeking authorised security-testing foundations. By the end, you can plan and document an authorised security assessment, validate findings safely, and recommend remediation aligned to approved scope and rules of engagement.",
+  "description": "A Cybersecurity course for learners seeking authorised security-testing foundations. By the end of the program, learners can plan and document an authorised security assessment, validate findings safely, and recommend remediation.",
   "duration_hours": 160,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Lawful authorization and scope definition",
+      "skill_name": "Penetration Testing",
       "coverage_weight": 90.0,
       "category": "domain"
     },
     {
-      "skill_name": "Rules of engagement",
+      "skill_name": "Vulnerability Assessment",
+      "coverage_weight": 90.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Reconnaissance",
       "coverage_weight": 85.0,
       "category": "domain"
     },
     {
-      "skill_name": "Lab safety and safe testing practices",
+      "skill_name": "Web application security threats",
       "coverage_weight": 80.0,
       "category": "domain"
     },
     {
-      "skill_name": "Passive information gathering",
-      "coverage_weight": 85.0,
-      "category": "technical"
+      "skill_name": "OWASP Top 10",
+      "coverage_weight": 75.0,
+      "category": "domain"
     },
     {
-      "skill_name": "Asset mapping",
+      "skill_name": "Technical Writing",
       "coverage_weight": 80.0,
-      "category": "technical"
+      "category": "soft"
     },
     {
-      "skill_name": "Port scanning",
+      "skill_name": "ICT security legislation",
       "coverage_weight": 75.0,
-      "category": "technical"
+      "category": "domain"
     },
     {
-      "skill_name": "Service enumeration",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Input validation testing (OWASP)",
+      "skill_name": "Linux Security",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Session management testing",
+      "skill_name": "TCP/IP",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Authentication",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "proxy servers",
       "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Access control testing",
-      "coverage_weight": 75.0,
+      "skill_name": "Risk management",
+      "coverage_weight": 65.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Network Troubleshooting",
+      "coverage_weight": 60.0,
       "category": "technical"
     },
     {
-      "skill_name": "Configuration assessment",
-      "coverage_weight": 75.0,
+      "skill_name": "Subnetting",
+      "coverage_weight": 60.0,
       "category": "technical"
     },
     {
-      "skill_name": "Network segmentation testing",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Traffic analysis",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Security assessment reporting (executive and technical)",
-      "coverage_weight": 90.0,
-      "category": "soft"
-    },
-    {
-      "skill_name": "Retesting and verification",
-      "coverage_weight": 80.0,
+      "skill_name": "DNS",
+      "coverage_weight": 55.0,
       "category": "technical"
     }
   ]

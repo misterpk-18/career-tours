@@ -2,7 +2,7 @@
   "course_code": "NT-C-023",
   "source_pdf": "NT-C-023_SQL.pdf",
   "course_name": "SQL",
-  "description": "A Data & Databases course for learners seeking database, reporting and analytics foundations. It covers the design and querying of relational databases, including schema design, joins, analytics, transactions and performance basics. By the end, learners can accurately design relational schemas and write reliable analytical and operational queries.",
+  "description": "This course in the Data & Databases category is for learners seeking database, reporting and analytics foundations. Over 6–8 weeks, learners build the skills to design and query relational databases accurately. Graduates can use joins, analytics, transactions and performance basics to deliver reliable SQL solutions.",
   "duration_hours": 60,
   "level": "Beginner",
   "skills": [
@@ -12,73 +12,73 @@
       "category": "technical"
     },
     {
-      "skill_name": "Relational database design (tables, keys, normalization)",
-      "coverage_weight": 88.0,
+      "skill_name": "Database Design",
+      "coverage_weight": 86.0,
       "category": "technical"
     },
     {
-      "skill_name": "SELECT queries, filtering and sorting",
-      "coverage_weight": 85.0,
+      "skill_name": "Database Normalization",
+      "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Joins (inner and outer)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Set operations (UNION/INTERSECT/EXCEPT)",
-      "coverage_weight": 68.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Aggregation with GROUP BY and HAVING",
-      "coverage_weight": 82.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Subqueries",
-      "coverage_weight": 78.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data definition (DDL) and constraints",
-      "coverage_weight": 78.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data modification (INSERT/UPDATE/DELETE)",
+      "skill_name": "Data Modeling",
       "coverage_weight": 76.0,
       "category": "technical"
     },
     {
-      "skill_name": "Common table expressions (CTEs)",
-      "coverage_weight": 78.0,
+      "skill_name": "Joins (SQL)",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Window functions",
-      "coverage_weight": 82.0,
+      "skill_name": "Aggregation (SQL)",
+      "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Date/time analysis in SQL",
+      "skill_name": "Subqueries (SQL)",
       "coverage_weight": 72.0,
       "category": "technical"
     },
     {
-      "skill_name": "Transactions",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Views and permissions",
+      "skill_name": "CTEs (SQL)",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Indexes and basic query optimization",
+      "skill_name": "Window functions (SQL)",
+      "coverage_weight": 78.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Transactions (SQL)",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Database Indexing",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Query Optimization",
+      "coverage_weight": 62.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "PostgreSQL",
       "coverage_weight": 68.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "MySQL",
+      "coverage_weight": 64.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "User Management",
+      "coverage_weight": 58.0,
       "category": "technical"
     }
   ]

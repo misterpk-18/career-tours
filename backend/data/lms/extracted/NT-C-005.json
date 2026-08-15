@@ -2,23 +2,43 @@
   "course_code": "NT-C-005",
   "source_pdf": "NT-C-005_Power_BI.pdf",
   "course_name": "Power BI",
-  "description": "A Business Intelligence course for students and professionals who need dashboarding, reporting and business-intelligence skills. Learners will prepare data, build a reliable semantic model, write DAX, and publish secure, usable Power BI reports by the end of the program.",
+  "description": "A Business Intelligence course for students and professionals who need dashboarding, reporting and business-intelligence skills. By the end, you will be able to prepare data, build a reliable semantic model, write DAX, and publish secure, usable Power BI reports.",
   "duration_hours": 80,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Power BI Desktop",
-      "coverage_weight": 70.0,
+      "skill_name": "Power BI",
+      "coverage_weight": 90.0,
       "category": "technical"
     },
     {
       "skill_name": "Power Query",
-      "coverage_weight": 90.0,
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
       "skill_name": "DAX",
-      "coverage_weight": 90.0,
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Modeling",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Dashboard Design",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Visualization",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
@@ -27,58 +47,38 @@
       "category": "technical"
     },
     {
-      "skill_name": "Dimensional modeling (star schema)",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Filter context (DAX)",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Time intelligence (DAX)",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data profiling",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data cleaning",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Visual design in Power BI",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Report interactions",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Scheduled refresh (Power BI)",
-      "coverage_weight": 65.0,
-      "category": "technical"
-    },
-    {
       "skill_name": "Row-Level Security (RLS)",
-      "coverage_weight": 80.0,
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Performance optimization in Power BI",
+      "skill_name": "Performance Optimization",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "KPI design",
+      "skill_name": "Requirement Gathering",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "track key performance indicators",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Data Governance",
       "coverage_weight": 65.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Web Accessibility",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Business Intelligence",
+      "coverage_weight": 60.0,
       "category": "domain"
     }
   ]

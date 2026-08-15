@@ -2,38 +2,33 @@
   "course_code": "NT-C-040",
   "source_pdf": "NT-C-040_ServiceNow.pdf",
   "course_name": "ServiceNow",
-  "description": "An Enterprise Platforms & ITSM course for learners targeting ServiceNow administration, ITSM support and junior platform roles. Across foundational configuration, data and access models, ITSM workflows, automation and reporting, learners practice on a ServiceNow instance. By the end, they can configure and support a ServiceNow application using data, roles, ITSM workflows, automation and controlled scripting.",
+  "description": "An Enterprise Platforms & ITSM course for learners targeting ServiceNow administration, ITSM support and junior platform roles. By the end, you can configure and support a ServiceNow application using data, roles, ITSM workflows, automation and controlled scripting.",
   "duration_hours": 160,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "ServiceNow platform fundamentals",
+      "skill_name": "ServiceNow",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "ServiceNow tables and records",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Users, groups and roles administration",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Access Control Lists (ACLs)",
+      "skill_name": "User Management",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Forms, fields, views and UI Policies",
-      "coverage_weight": 78.0,
-      "category": "technical"
+      "skill_name": "Data Quality",
+      "coverage_weight": 65.0,
+      "category": "domain"
     },
     {
-      "skill_name": "ITSM workflows: Incident, Request, Problem, Change",
-      "coverage_weight": 82.0,
+      "skill_name": "apply operations for an ITIL-based environment",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "SLAs",
+      "coverage_weight": 75.0,
       "category": "domain"
     },
     {
@@ -42,43 +37,43 @@
       "category": "technical"
     },
     {
-      "skill_name": "SLA management",
-      "coverage_weight": 75.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Reporting, dashboards and metrics",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Scripting (client/server) in ServiceNow",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "REST API integration with ServiceNow",
+      "skill_name": "No-code Automation",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Update discipline and deployment",
-      "coverage_weight": 72.0,
+      "skill_name": "REST API",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Security model and best practices",
-      "coverage_weight": 75.0,
+      "skill_name": "Dashboard Design",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Testing and validation in ServiceNow",
-      "coverage_weight": 72.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Technical documentation",
+      "skill_name": "Data Security",
       "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Manual Testing",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Application Deployment",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Update discipline",
+      "coverage_weight": 55.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "provide technical documentation",
+      "coverage_weight": 55.0,
       "category": "soft"
     }
   ]

@@ -2,72 +2,82 @@
   "course_code": "NT-C-039",
   "source_pdf": "NT-C-039_SAP_FICO.pdf",
   "course_name": "SAP FICO",
-  "description": "An ERP & Finance course for commerce and finance learners targeting SAP finance support or end-user roles. By the end, learners can execute and explain core SAP financial accounting and controlling processes in a configured training environment.",
+  "description": "An ERP & Finance course for commerce and finance learners aiming for SAP finance support or end-user roles. Learners practice SAP FI and CO processes in an authorised training system with guided labs and projects. By the end, they can execute and explain core SAP financial accounting and controlling processes in a configured training environment.",
   "duration_hours": 180,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "SAP GUI Navigation",
+      "skill_name": "SAP FI",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SAP CO",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "Master Data Management in SAP FI/CO (Company Codes, Chart of Accounts, Customers, Vendors)",
+      "skill_name": "Master data",
       "coverage_weight": 85.0,
       "category": "domain"
     },
     {
-      "skill_name": "General Ledger Posting and Document Control (SAP FI)",
-      "coverage_weight": 90.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Financial Reporting in SAP FI",
-      "coverage_weight": 70.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Accounts Payable (Vendor Invoices, Payments, Reconciliation)",
+      "skill_name": "General ledger",
       "coverage_weight": 85.0,
       "category": "domain"
     },
     {
-      "skill_name": "Accounts Receivable (Billing, Receipts, Dunning)",
-      "coverage_weight": 85.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "SAP Asset Accounting (Asset Master, Acquisition, Depreciation, Retirement)",
-      "coverage_weight": 90.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Period Close Activities (Bank, Accruals, Closing Tasks)",
+      "skill_name": "Accounts payable",
       "coverage_weight": 80.0,
       "category": "domain"
     },
     {
-      "skill_name": "Cost Center Accounting (SAP CO)",
-      "coverage_weight": 78.0,
+      "skill_name": "Accounts receivable",
+      "coverage_weight": 80.0,
       "category": "domain"
     },
     {
-      "skill_name": "Profit Center Accounting (SAP CO)",
+      "skill_name": "Asset accounting",
+      "coverage_weight": 85.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Period close",
       "coverage_weight": 75.0,
       "category": "domain"
     },
     {
-      "skill_name": "Internal Orders (SAP CO)",
+      "skill_name": "Cost centres",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "profit centres",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "internal orders",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "chart of accounts",
       "coverage_weight": 75.0,
       "category": "domain"
     },
     {
-      "skill_name": "SAP FI-CO Integration",
-      "coverage_weight": 78.0,
+      "skill_name": "Company code",
+      "coverage_weight": 70.0,
       "category": "domain"
     },
     {
-      "skill_name": "Spreadsheet Skills for Finance Processes",
+      "skill_name": "dunning concepts",
+      "coverage_weight": 60.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "use spreadsheets software",
       "coverage_weight": 55.0,
       "category": "technical"
     }

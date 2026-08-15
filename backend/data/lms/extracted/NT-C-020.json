@@ -2,54 +2,49 @@
   "course_code": "NT-C-020",
   "source_pdf": "NT-C-020_Business_Analytics.pdf",
   "course_name": "Business Analytics",
-  "description": "This course sits in Data & Business and is designed for graduates and professionals aiming for data‑driven decision roles. Learners progress from business framing through Excel, SQL, statistics, data preparation and Power BI, and finish able to translate business questions into KPIs, analyses, dashboards and actionable recommendations.",
+  "description": "This course in the Data & Business category is designed for graduates and professionals seeking data-driven business decision roles. Learners progress from business framing and spreadsheet analytics to SQL, statistics, data preparation, and Power BI, culminating in an executive-ready capstone. By the end, they can translate business questions into KPIs, analyses, dashboards, and actionable recommendations.",
   "duration_hours": 160,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "KPI Definition and Tracking",
-      "coverage_weight": 85.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Stakeholder Analysis",
-      "coverage_weight": 70.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Excel Functions",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Pivot Tables",
+      "skill_name": "Business Analysis",
       "coverage_weight": 80.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Stakeholder Management",
+      "coverage_weight": 70.0,
+      "category": "soft"
+    },
+    {
+      "skill_name": "track key performance indicators",
+      "coverage_weight": 85.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
       "skill_name": "SQL",
-      "coverage_weight": 80.0,
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Correlation Analysis",
+      "skill_name": "Statistics",
+      "coverage_weight": 70.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data Quality",
       "coverage_weight": 65.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Forecasting Basics",
-      "coverage_weight": 60.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data Quality and Cleaning",
-      "coverage_weight": 75.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Data Transformation",
-      "coverage_weight": 75.0,
-      "category": "technical"
+      "category": "domain"
     },
     {
       "skill_name": "Power BI",
@@ -57,28 +52,33 @@
       "category": "technical"
     },
     {
-      "skill_name": "Data Modeling (Power BI)",
-      "coverage_weight": 80.0,
+      "skill_name": "DAX",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "DAX",
-      "coverage_weight": 80.0,
+      "skill_name": "Data Modeling",
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
       "skill_name": "Dashboard Design",
       "coverage_weight": 80.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "communicate analytical insights",
+      "coverage_weight": 70.0,
+      "category": "soft"
+    },
+    {
+      "skill_name": "Python",
+      "coverage_weight": 50.0,
       "category": "technical"
     },
     {
-      "skill_name": "What‑if Analysis",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Segmentation",
-      "coverage_weight": 70.0,
+      "skill_name": "Pandas",
+      "coverage_weight": 50.0,
       "category": "technical"
     }
   ]

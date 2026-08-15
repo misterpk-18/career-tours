@@ -2,83 +2,83 @@
   "course_code": "NT-C-019",
   "source_pdf": "NT-C-019_Web_Development_Web_Designing.pdf",
   "course_name": "Web Development / Web Designing",
-  "description": "A Web & Creative Technology course designed for learners seeking front-end web development or web-design roles. By the end, learners can design, build, test and deploy responsive, accessible websites with interactive features.",
+  "description": "This Web & Creative Technology course is for learners seeking front-end web development or web-design roles. It covers the foundations of building for the web and guides learners to design, build, test and deploy responsive, accessible websites with interactive features. By the end, learners can produce live, standards-based portfolio sites demonstrating practical capability.",
   "duration_hours": 140,
   "level": "Beginner",
   "skills": [
     {
-      "skill_name": "HTML Semantics",
+      "skill_name": "HTML",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "HTML Page Structure",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "CSS Selectors",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "CSS Box Model",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Responsive Web Design",
+      "skill_name": "CSS",
       "coverage_weight": 88.0,
       "category": "technical"
     },
     {
-      "skill_name": "DOM Manipulation",
+      "skill_name": "JavaScript",
       "coverage_weight": 82.0,
       "category": "technical"
     },
     {
-      "skill_name": "JavaScript Events",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Form Validation",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Fetch API",
-      "coverage_weight": 82.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "JSON",
-      "coverage_weight": 78.0,
+      "skill_name": "Responsive Design",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
       "skill_name": "Web Accessibility",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Web Performance Optimization",
-      "coverage_weight": 72.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "SEO Basics",
-      "coverage_weight": 70.0,
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
       "skill_name": "Git",
-      "coverage_weight": 80.0,
+      "coverage_weight": 72.0,
       "category": "technical"
     },
     {
-      "skill_name": "Web Hosting",
-      "coverage_weight": 78.0,
+      "skill_name": "API Integration",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "JSON",
+      "coverage_weight": 68.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Wireframing",
+      "coverage_weight": 62.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Typography",
+      "coverage_weight": 66.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SEO",
+      "coverage_weight": 60.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Performance Optimization",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "web analytics",
+      "coverage_weight": 55.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Application Deployment",
+      "coverage_weight": 72.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Manual Testing",
+      "coverage_weight": 62.0,
       "category": "technical"
     }
   ]

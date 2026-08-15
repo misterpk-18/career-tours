@@ -2,79 +2,84 @@
   "course_code": "NT-C-021",
   "source_pdf": "NT-C-021_Business_Analysis.pdf",
   "course_name": "Business Analysis",
-  "description": "A Business & Process course for learners targeting requirements, process and solution-analysis roles. Entry requires clear communication and basic business understanding and builds practical competencies across the BA lifecycle. By the end, learners can elicit, document, validate and manage business requirements through solution delivery and UAT.",
+  "description": "This course in the Business & Process category is designed for learners targeting requirements, process and solution-analysis roles. Over 10–14 weeks, learners build practical capability to elicit, document, validate and manage business requirements. By the end, they can carry requirements through solution delivery and UAT with evidence-based outputs.",
   "duration_hours": 100,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Problem definition",
-      "coverage_weight": 78.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Stakeholder analysis",
-      "coverage_weight": 76.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Requirements elicitation",
+      "skill_name": "Business Analysis",
       "coverage_weight": 90.0,
       "category": "domain"
     },
     {
-      "skill_name": "Process modeling (As-Is/To-Be)",
+      "skill_name": "Requirement Gathering",
       "coverage_weight": 85.0,
       "category": "domain"
     },
     {
-      "skill_name": "Root cause analysis",
-      "coverage_weight": 74.0,
-      "category": "domain"
+      "skill_name": "Stakeholder Management",
+      "coverage_weight": 80.0,
+      "category": "soft"
     },
     {
-      "skill_name": "Requirements documentation (Functional & Non-functional)",
-      "coverage_weight": 88.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Requirements traceability",
+      "skill_name": "business requirements techniques",
       "coverage_weight": 80.0,
       "category": "domain"
     },
     {
-      "skill_name": "User stories and acceptance criteria",
-      "coverage_weight": 84.0,
+      "skill_name": "business process modelling",
+      "coverage_weight": 80.0,
       "category": "domain"
     },
     {
-      "skill_name": "Backlog prioritization and management",
+      "skill_name": "User Stories",
       "coverage_weight": 78.0,
       "category": "domain"
     },
     {
-      "skill_name": "Data needs analysis",
-      "coverage_weight": 72.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Basic SQL interpretation",
-      "coverage_weight": 65.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "UAT planning and test scenario design",
-      "coverage_weight": 82.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Defect management",
+      "skill_name": "Agile",
       "coverage_weight": 70.0,
       "category": "domain"
     },
     {
-      "skill_name": "Change management",
-      "coverage_weight": 72.0,
+      "skill_name": "Interview Skills",
+      "coverage_weight": 70.0,
+      "category": "soft"
+    },
+    {
+      "skill_name": "plan software testing",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Test Case Writing",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "track key performance indicators",
+      "coverage_weight": 65.0,
       "category": "domain"
+    },
+    {
+      "skill_name": "Microsoft Visio",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "JIRA",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SQL",
+      "coverage_weight": 60.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Communication",
+      "coverage_weight": 65.0,
+      "category": "soft"
     }
   ]
 }

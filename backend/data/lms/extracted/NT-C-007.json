@@ -2,18 +2,18 @@
   "course_code": "NT-C-007",
   "source_pdf": "NT-C-007_Azure_DevOps.pdf",
   "course_name": "Azure DevOps",
-  "description": "This Cloud & DevOps course is for learners targeting Azure cloud operations and software-delivery automation. Across repositories, boards, pipelines, containers and infrastructure as code, you will plan, build and monitor a secure Azure delivery workflow that demonstrates practical CI/CD and platform operations.",
+  "description": "A Cloud & DevOps course for learners targeting Azure cloud operations and software-delivery automation. It develops the ability to plan, build and monitor a secure Azure delivery workflow using repositories, boards, pipelines, containers and infrastructure as code. Graduates can implement and operate an end-to-end CI/CD platform on Microsoft Azure with security and monitoring baked in.",
   "duration_hours": 180,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Microsoft Azure fundamentals (identity, subscriptions, networking, compute, storage)",
-      "coverage_weight": 70.0,
+      "skill_name": "Microsoft Azure",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Git workflow",
-      "coverage_weight": 80.0,
+      "skill_name": "Git",
+      "coverage_weight": 75.0,
       "category": "technical"
     },
     {
@@ -23,62 +23,62 @@
     },
     {
       "skill_name": "Azure Boards",
-      "coverage_weight": 70.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "YAML for Azure Pipelines",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Azure Pipelines and agents",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Test automation in Azure Pipelines",
       "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Release management with environments and approvals",
-      "coverage_weight": 75.0,
+      "skill_name": "Azure Pipelines",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "Deployment strategies",
+      "skill_name": "CI/CD",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "YAML",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
       "skill_name": "Docker",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Azure Container Registry (ACR)",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Kubernetes",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Azure Kubernetes Service (AKS) foundations",
-      "coverage_weight": 60.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Infrastructure as Code with Bicep/Terraform",
+      "skill_name": "Infrastructure as Code",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
+      "skill_name": "Terraform",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
       "skill_name": "Azure Monitor",
-      "coverage_weight": 75.0,
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
       "skill_name": "Azure Key Vault",
-      "coverage_weight": 75.0,
+      "coverage_weight": 70.0,
       "category": "technical"
     },
     {
       "skill_name": "Azure Policy",
-      "coverage_weight": 65.0,
+      "coverage_weight": 60.0,
       "category": "technical"
     }
   ]

@@ -2,13 +2,13 @@
   "course_code": "NT-C-026",
   "source_pdf": "NT-C-026_AWS_Cloud.pdf",
   "course_name": "AWS Cloud",
-  "description": "This Cloud course is for learners targeting AWS support, administration and junior cloud roles. It covers core AWS services and operations, including IAM, VPC, EC2, S3, RDS, load balancing, Auto Scaling, Lambda and CloudWatch. By the end, learners can deploy, secure, monitor and document a reliable application environment on AWS.",
+  "description": "AWS Cloud is a Cloud course for learners targeting AWS support, administration and junior cloud roles. With basic networking and operating-system knowledge as prerequisites, the program builds hands-on skills across core AWS services. By the end, learners can deploy, secure, monitor and document a reliable application environment on AWS.",
   "duration_hours": 140,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "AWS Identity and Access Management (IAM)",
-      "coverage_weight": 90.0,
+      "skill_name": "AWS IAM",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
@@ -17,13 +17,23 @@
       "category": "technical"
     },
     {
-      "skill_name": "Security Groups",
-      "coverage_weight": 80.0,
+      "skill_name": "Subnetting",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Routing",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "DNS",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
       "skill_name": "Amazon EC2",
-      "coverage_weight": 80.0,
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
@@ -32,12 +42,17 @@
       "category": "technical"
     },
     {
-      "skill_name": "Amazon RDS",
-      "coverage_weight": 70.0,
+      "skill_name": "Amazon EBS",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Elastic Load Balancing (ELB)",
+      "skill_name": "Amazon RDS",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Load Balancing",
       "coverage_weight": 75.0,
       "category": "technical"
     },
@@ -57,29 +72,14 @@
       "category": "technical"
     },
     {
-      "skill_name": "Backups and Recovery on AWS",
+      "skill_name": "Backup and Recovery",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "DNS Fundamentals",
-      "coverage_weight": 65.0,
+      "skill_name": "cloud security and compliance",
+      "coverage_weight": 75.0,
       "category": "technical"
-    },
-    {
-      "skill_name": "AWS Shared Responsibility Model",
-      "coverage_weight": 60.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "AWS Cost and Pricing Fundamentals",
-      "coverage_weight": 60.0,
-      "category": "domain"
-    },
-    {
-      "skill_name": "Operational Documentation and Runbooks",
-      "coverage_weight": 60.0,
-      "category": "soft"
     }
   ]
 }

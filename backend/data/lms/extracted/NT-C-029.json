@@ -2,83 +2,83 @@
   "course_code": "NT-C-029",
   "source_pdf": "NT-C-029_Linux_Administration.pdf",
   "course_name": "Linux Administration",
-  "description": "A Systems & Cloud course for learners targeting Linux, server and cloud-support roles. It builds practical competency across command line, user and permission management, software and services, storage, networking, logging, scripting and security. By the end, learners can install, configure, secure, automate and troubleshoot Linux systems using documented administrative procedures.",
+  "description": "This Systems & Cloud course is for learners targeting Linux, server and cloud-support roles. By the end, learners can install, configure, secure, automate and troubleshoot Linux systems using documented administrative procedures.",
   "duration_hours": 140,
   "level": "Beginner to Intermediate",
   "skills": [
     {
-      "skill_name": "Bash shell and CLI",
+      "skill_name": "Linux",
       "coverage_weight": 90.0,
       "category": "technical"
     },
     {
-      "skill_name": "User and group management",
-      "coverage_weight": 85.0,
+      "skill_name": "Shell Scripting",
+      "coverage_weight": 82.0,
       "category": "technical"
     },
     {
-      "skill_name": "Linux permissions, ACLs and sudo",
-      "coverage_weight": 90.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Linux package management",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "systemd service management",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Linux storage administration (partitions, filesystems, mounts, LVM basics)",
+      "skill_name": "Bash",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Networking and IP configuration",
-      "coverage_weight": 80.0,
+      "skill_name": "User Management",
+      "coverage_weight": 85.0,
       "category": "technical"
     },
     {
-      "skill_name": "SSH administration",
+      "skill_name": "Linux Security",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Firewall",
       "coverage_weight": 75.0,
       "category": "technical"
     },
     {
-      "skill_name": "Firewall configuration",
-      "coverage_weight": 80.0,
+      "skill_name": "DNS",
+      "coverage_weight": 65.0,
       "category": "technical"
     },
     {
-      "skill_name": "Web server administration",
+      "skill_name": "TCP/IP",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "systemd",
       "coverage_weight": 70.0,
       "category": "technical"
     },
     {
-      "skill_name": "Log management and rotation",
-      "coverage_weight": 75.0,
+      "skill_name": "Filesystems",
+      "coverage_weight": 68.0,
       "category": "technical"
     },
     {
-      "skill_name": "Bash scripting and automation",
+      "skill_name": "LVM",
+      "coverage_weight": 62.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "SSH",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Logging",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Backup and Recovery",
       "coverage_weight": 80.0,
       "category": "technical"
     },
     {
-      "skill_name": "System hardening",
-      "coverage_weight": 85.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Backup and recovery",
-      "coverage_weight": 80.0,
-      "category": "technical"
-    },
-    {
-      "skill_name": "Monitoring",
-      "coverage_weight": 75.0,
+      "skill_name": "Monitoring and Observability",
+      "coverage_weight": 70.0,
       "category": "technical"
     }
   ]
