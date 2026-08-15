@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-039",
   "source_pdf": "NT-C-039_SAP_FICO.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-039-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Navigation, organisational structure and integration; Company code, chart of accounts, customers and vendors",
+      "completion_evidence": "Process map; Master-data exercise",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 business scenarios (30) + 1 practical case/workbook (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Process map; Master-data exercise, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-039-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Posting, document control and reporting; Vendor invoices, payments and reconciliation",
+      "completion_evidence": "GL cycle; AP process",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 business scenarios (30) + 1 practical case/workbook (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide GL cycle; AP process, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-039-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Customer billing, receipts and dunning concepts; Asset master, acquisition, depreciation and retirement",
+      "completion_evidence": "AR process; Asset lifecycle",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 business scenarios (30) + 1 practical case/workbook (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide AR process; Asset lifecycle, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-039-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Bank, tax awareness, accruals and closing tasks; Cost centres, profit centres, internal orders and integration",
+      "completion_evidence": "Close checklist; End-to-end finance case",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 business scenarios (30) + 1 practical case/workbook (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Close checklist; End-to-end finance case, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

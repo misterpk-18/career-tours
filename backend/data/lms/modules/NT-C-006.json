@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-006",
   "source_pdf": "NT-C-006_AWS_with_DevOps.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-006-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Linux, networking, Git, delivery lifecycle; IAM, VPC, EC2, S3, RDS",
+      "completion_evidence": "Version-controlled lab; Secure cloud environment",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Version-controlled lab; Secure cloud environment, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-006-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Load balancing, Auto Scaling, DNS basics; Shell/Python basics, configuration tasks",
+      "completion_evidence": "Highly available design; Automation scripts",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Highly available design; Automation scripts, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-006-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Docker, images, registries, ECR; Build, test, deploy pipelines; approvals",
+      "completion_evidence": "Containerised service; Working pipeline",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Containerised service; Working pipeline, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-006-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Terraform/CloudFormation, state, review; CloudWatch, logs, security, cost, EKS intro",
+      "completion_evidence": "Repeatable environment; Monitored capstone",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Repeatable environment; Monitored capstone, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

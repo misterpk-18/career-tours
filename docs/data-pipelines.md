@@ -59,10 +59,11 @@ Courses absent from the corpus are set `is_active = false` rather than deleted.
 `course_skills` is emptied and rebuilt in full, because the corpus is the source
 of truth for what a course teaches.
 
-### Module breakdown
+### Section and module breakdown
 
-A second, independent pass fills `course_modules` — the eight-modules-per-course
-syllabus that the profile extraction reads past and discards.
+A second, independent pass fills `course_sections` and `course_modules` — the
+four-sections, eight-modules-per-course syllabus that the profile extraction
+reads past and discards.
 
 ```bash
 python3 scripts/extract_course_modules.py [--force] [--only NT-C-001] [--dry-run]
@@ -85,12 +86,37 @@ functions" is four topics), so `topics` is the split of it and `objective` keeps
 the raw string — a bad split stays cosmetic instead of losing data. A module
 belongs to the last section id appearing before it in the text.
 
-The loader upserts on `(course_id, module_number)`; the corpus numbers its own
-modules, so a re-run updates the same 320 rows instead of appending a set.
-Unlike `course_skills` nothing is deleted first, because every row in
-`course_modules` came from this script and a partial `--only` run must not empty
-the other 39 courses. A course code with no row in `courses` is reported and
-skipped, not fatal — run `load_course_profiles.py` first.
+The loader writes sections first (`course_modules.section_code` points at them),
+upserting on `section_code` and `(course_id, module_number)`; the corpus names
+its own sections and numbers its own modules, so a re-run updates the same 160
+and 320 rows instead of appending a set. Unlike `course_skills` nothing is
+deleted first, because every row in both tables came from this script and a
+partial run must not empty the other 39 courses. A course code with no row in
+`courses` is reported and skipped, not fatal — run `load_course_profiles.py`
+first.
+
+### What the corpus repeats, and what is therefore not stored or not served
+
+Much of a course PDF is generated from templates, and it is worth knowing which
+parts carry no information before building anything on them:
+
+| Field | Measurement | Consequence |
+|---|---|---|
+| Concept table, "approved knowledge statement" | **1** distinct template across 1,009 rows | not extracted |
+| Concept table, "application behaviour" | **1** distinct template across 1,167 rows | not extracted |
+| Concept table, "evidence" column | repeats the module's `Observable evidence` | not extracted |
+| Concept table, "concept" column | equals the objective's topic list | already `topics` |
+| `sections.competency` | equals its two modules' objectives joined, **160/160** | stored, not served |
+| `sections.completion_evidence` | equals its two modules' evidence joined, **160/160** | stored, not served |
+| `sections.assessment` | identical across all 4 sections of a course, **40/40** | served, rendered once |
+| `sections.weight_pct` | 20/25/25/30 in every course | served |
+| `modules.objective` | the comma-joined form of `topics` | stored, not served |
+
+The four-column concept table under each module is the largest thing here and
+the least worth having: it would add roughly 1,280 rows of generated prose whose
+only real column is already `topics`. `competency` and `completion_evidence` are
+stored because the corpus states them at section level, but omitting them from
+the API cut 29% off the course-list response with nothing lost.
 
 ---
 

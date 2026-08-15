@@ -14,6 +14,9 @@ from repositories.career_match_repository import (
 from repositories.career_skill_gap_repository import (
     CareerSkillGapRepository,
 )
+from repositories.course_module_repository import (
+    CourseModuleRepository,
+)
 from repositories.course_recommendation_repository import (
     CourseRecommendationRepository,
 )
@@ -32,6 +35,32 @@ recommendations_bp = Blueprint(
     "recommendations",
     __name__,
 )
+
+
+def _with_syllabus(courses):
+    """Attach each course's section-and-module breakdown as `syllabus`.
+
+    Served inline rather than behind a lazy per-course endpoint. The breakdown
+    is about 1.6 KB per course and the whole 40-course catalog is under 64 KB,
+    so shipping it with the list costs a few kilobytes on a response the client
+    already has to make; fetching it on expand would cost a fresh round trip to
+    a cross-region database every time a card is opened. One query covers every
+    course on the page, so the join does not scale with the number of cards.
+
+    Courses predating the corpus have no modules and get an empty list, which
+    the client renders as no syllabus section rather than an empty one.
+    """
+    if not courses:
+        return courses
+
+    syllabus = CourseModuleRepository.get_syllabus_for_course_ids(
+        {course["course_id"] for course in courses}
+    )
+
+    return [
+        {**course, "syllabus": syllabus.get(course["course_id"], [])}
+        for course in courses
+    ]
 
 
 def _with_structured_summary(summary):
@@ -130,7 +159,7 @@ def get_course_recommendations(project_id: str):
     return jsonify(
         {
             "project_id": project_id,
-            "courses": courses,
+            "courses": _with_syllabus(courses),
         }
     )
 
@@ -152,7 +181,7 @@ def get_project_recommendations(project_id: str):
         {
             "project_id": project_id,
             "careers": careers,
-            "courses": courses,
+            "courses": _with_syllabus(courses),
         }
     )
 
@@ -240,6 +269,6 @@ def get_career_courses(project_id: str, occupation_id: str):
         {
             "project_id": project_id,
             "occupation_id": occupation_id,
-            "courses": response_courses,
+            "courses": _with_syllabus(response_courses),
         }
     )

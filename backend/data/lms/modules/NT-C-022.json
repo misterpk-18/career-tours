@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-022",
   "source_pdf": "NT-C-022_Advanced_Excel.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-022-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "References, logic, text, date and error handling; XLOOKUP, INDEX/MATCH and dynamic arrays",
+      "completion_evidence": "Formula exercises; Lookup workbook",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Formula exercises; Lookup workbook, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-022-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Structured tables, validation and protection; Text-to-columns, remove duplicates and quality checks",
+      "completion_evidence": "Controlled data sheet; Clean dataset",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Controlled data sheet; Clean dataset, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-022-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "PivotTables, PivotCharts, slicers and grouping; KPIs, charts and layout",
+      "completion_evidence": "Interactive analysis; Management dashboard",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Interactive analysis; Management dashboard, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-022-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Import, transform, combine and refresh; Macros basics, audit and documentation",
+      "completion_evidence": "Repeatable query; Automated reporting workbook",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Repeatable query; Automated reporting workbook, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

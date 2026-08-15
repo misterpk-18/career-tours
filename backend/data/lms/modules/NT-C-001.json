@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-001",
   "source_pdf": "NT-C-001_Python_Full_Stack.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-001-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Syntax, data types, control flow, functions; OOP, files, exceptions, testing, Git",
+      "completion_evidence": "Working command-line programs; Tested Python package",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Working command-line programs; Tested Python package, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-001-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "SQL, schema design, CRUD, joins; HTML, CSS, responsive layouts, JavaScript DOM",
+      "completion_evidence": "Relational database exercise; Responsive front-end",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Relational database exercise; Responsive front-end, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-001-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "URLs, requests, views, templates, forms; ORM, authentication, admin, REST APIs",
+      "completion_evidence": "Server-rendered CRUD app; Secured API and data model",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Server-rendered CRUD app; Secured API and data model, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-001-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "React components, state, routing, API integration; Testing, security basics, deployment, documentation",
+      "completion_evidence": "API-connected interface; Deployed capstone",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide API-connected interface; Deployed capstone, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-025",
   "source_pdf": "NT-C-025_Generative_AI.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-025-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Models, tokens, context, limitations and use cases; Instructions, examples, constraints and structured outputs",
+      "completion_evidence": "Use-case analysis; Prompt test set",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Use-case analysis; Prompt test set, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-025-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Requests, authentication, errors and logging; Documents, chunking, embeddings and vector search",
+      "completion_evidence": "API application; RAG prototype",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide API application; RAG prototype, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-025-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Test sets, relevance, accuracy and human review; Prompt injection, data handling and guardrails",
+      "completion_evidence": "Evaluation report; Risk-control checklist",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Evaluation report; Risk-control checklist, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-025-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Tool use, agents and approval points; Monitoring, cost, documentation and responsible deployment",
+      "completion_evidence": "Controlled workflow; Evaluated GenAI product",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Controlled workflow; Evaluated GenAI product, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

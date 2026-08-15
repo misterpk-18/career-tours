@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-004",
   "source_pdf": "NT-C-004_Data_Analytics.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-004-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Business questions, data types, KPIs; Functions, lookup, pivot, cleaning",
+      "completion_evidence": "Problem statement and KPI map; Excel analysis workbook",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Problem statement and KPI map; Excel analysis workbook, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-004-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Queries, joins, grouping, windows; Missing, duplicate, invalid and inconsistent data",
+      "completion_evidence": "SQL case exercise; Cleaned dataset",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide SQL case exercise; Cleaned dataset, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-004-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "pandas, transformation, automation; Summary, variation, correlation, interpretation",
+      "completion_evidence": "Analysis notebook; Statistical insight note",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Analysis notebook; Statistical insight note, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-004-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Charts, dashboards, filters, storytelling; End-to-end analysis and presentation",
+      "completion_evidence": "Interactive dashboard; Decision-ready report",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Interactive dashboard; Decision-ready report, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

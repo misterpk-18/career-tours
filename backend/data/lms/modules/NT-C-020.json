@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-020",
   "source_pdf": "NT-C-020_Business_Analytics.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-020-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Objectives, stakeholders, KPIs and hypotheses; Functions, pivots and scenario analysis",
+      "completion_evidence": "Analytics brief; Analysis workbook",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Analytics brief; Analysis workbook, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-020-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Business queries, joins and aggregation; Variation, correlation, forecasting basics",
+      "completion_evidence": "SQL case; Insight note",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide SQL case; Insight note, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-020-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Quality, transformation and reproducibility; Modelling, DAX and dashboard design",
+      "completion_evidence": "Clean dataset; Interactive dashboard",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Clean dataset; Interactive dashboard, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-020-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Segmentation, trends and what-if analysis; Executive presentation and implementation plan",
+      "completion_evidence": "Recommendation memo; Business analytics case",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Recommendation memo; Business analytics case, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

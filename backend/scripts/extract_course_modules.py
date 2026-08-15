@@ -1,10 +1,14 @@
-"""Extract the module breakdown from each knowledge-corpus PDF.
+"""Extract the section and module breakdown from each knowledge-corpus PDF.
 
     python scripts/extract_course_modules.py [--force] [--only NT-C-001,NT-C-007] [--dry-run]
 
 Reads ``data/lms/courses/NT-C-*.pdf`` and writes one JSON per course to
 ``data/lms/modules/``. Nothing here touches the database — see
 ``load_course_modules.py`` for that.
+
+Each course yields four sections and eight modules. The sections are the
+assessment structure — competency, completion evidence, weight, assessment
+split and remediation — and each owns two consecutive modules.
 
 Unlike ``extract_course_profiles.py``, this is a parser, not an LLM call.
 
@@ -25,9 +29,17 @@ Two details worth knowing:
   functions" is four topics, not a sentence. ``split_topics`` splits it, but the
   raw string is written out beside the array — a bad split should be a cosmetic
   problem, never data loss.
-* **A course that does not yield exactly eight modules fails.** Silent
-  truncation is the only realistic way a parser like this goes wrong, so the
-  count is asserted rather than trusted.
+* **A course that does not yield exactly four sections and eight modules
+  fails.** Silent truncation is the only realistic way a parser like this goes
+  wrong, so the counts are asserted rather than trusted.
+
+The four-column concept table under each module is deliberately not extracted.
+Three of its columns are generated text — the "approved knowledge statement" is
+one template repeated 1,009 times across the corpus with only the course name
+substituted, the "application behaviour" is a second template taking the concept
+and course name, and the "evidence" column repeats the module's own observable
+evidence. The only column carrying information is the concept name, and that is
+already the objective line, which is what ``topics`` holds.
 """
 
 import argparse
@@ -59,10 +71,32 @@ MODULE_RE = re.compile(
 # ids on page 6 (NT-C-001-SK01), which are a different record type entirely.
 SECTION_RE = re.compile(r"NT-C-\d{3}-S\d{2}")
 
+# The section header block that opens each Deep Knowledge page. The \s+ between
+# "Deep" and "Knowledge" is load-bearing: NT-C-019's title is long enough
+# ("Web Development / Web Designing") that the header wraps mid-phrase, and a
+# literal space silently drops all four of that course's sections.
+SECTION_BLOCK_RE = re.compile(
+    r"(NT-C-\d{3}-S\d{2})\s+Deep\s+Knowledge\s*\n"
+    r"\s*Modules (\d+)\s*[-–]\s*(\d+)\s*\|[^\n]*\n"
+    r"Section competency\s*\n(.*?)\n"
+    r"Completion evidence\s*\n(.*?)\n"
+    r"Section weight\s*\n(\d+)% of the weighted mock-test average\s*\n"
+    r"Assessment\s*\n(.*?)\n(?=Module \d+)",
+    re.S,
+)
+
+# Closes each section, after its two modules.
+REMEDIATION_RE = re.compile(r"Remediation:\s*(.*?)(?=\n\s*\n|NIPUNA TECHNOLOGIES|\Z)", re.S)
+
+# The running page header, which lands inside a captured cell whenever one
+# straddles a page break.
+PAGE_HEADER_RE = re.compile(r"NIPUNA TECHNOLOGIES.*?Page \d+", re.S)
+
 # Each course states eight modules across four sections. Hard-coded because it
 # is a property of the approved template, not of any one file — if a future
 # corpus version changes it, this should stop the run and be looked at.
 MODULES_PER_COURSE = 8
+SECTIONS_PER_COURSE = 4
 
 
 def course_text(pdf_path: Path) -> str:
@@ -105,6 +139,45 @@ def split_topics(objective: str) -> list:
         topics.append(fragment)
 
     return topics
+
+
+def squash(cell: str) -> str:
+    """One cell of the section header, as a single line.
+
+    A cell that wrapped in the PDF arrives with newlines through the middle of a
+    sentence, and one that straddled a page break arrives with the running
+    header embedded in it. Both are artifacts of the typesetting, not content.
+    """
+    return re.sub(r"\s+", " ", PAGE_HEADER_RE.sub(" ", cell)).strip()
+
+
+def parse_sections(text: str) -> list:
+    """The four Deep Knowledge sections, in order.
+
+    Remediation sits at the foot of a section rather than in its header, so it
+    is matched separately and paired by position — both sequences are in
+    document order, and the count of each is checked by the caller.
+    """
+    blocks = SECTION_BLOCK_RE.findall(text)
+    remediations = REMEDIATION_RE.findall(text)
+
+    sections = []
+
+    for index, block in enumerate(blocks):
+        code, module_from, module_to, competency, completion, weight, assessment = block
+
+        sections.append({
+            "section_code": code,
+            "module_from": int(module_from),
+            "module_to": int(module_to),
+            "competency": squash(competency),
+            "completion_evidence": squash(completion),
+            "weight_pct": int(weight),
+            "assessment": squash(assessment),
+            "remediation": squash(remediations[index]) if index < len(remediations) else None,
+        })
+
+    return sections
 
 
 def parse_modules(text: str) -> list:
@@ -151,7 +224,22 @@ def extract_one(code: str, pdf: Path, write: bool) -> str:
         print(f"  !! {code}: no extractable text (scanned PDF?), skipping")
         return "failed"
 
+    sections = parse_sections(text)
     modules = parse_modules(text)
+
+    if len(sections) != SECTIONS_PER_COURSE:
+        print(f"  !! {code}: expected {SECTIONS_PER_COURSE} sections, parsed {len(sections)}")
+        return "failed"
+
+    incomplete = [
+        section["section_code"]
+        for section in sections
+        if not (section["competency"] and section["completion_evidence"] and section["assessment"])
+    ]
+
+    if incomplete:
+        print(f"  !! {code}: section(s) {incomplete} missing competency, evidence or assessment")
+        return "failed"
 
     numbers = [module["module_number"] for module in modules]
 
@@ -165,17 +253,40 @@ def extract_one(code: str, pdf: Path, write: bool) -> str:
         print(f"  !! {code}: module(s) {empty} produced no topics from their objective")
         return "failed"
 
-    payload = {"course_code": code, "source_pdf": pdf.name, "modules": modules}
+    # Every module must land inside one of the sections that claims it, or the
+    # syllabus would render a module under the wrong assessment weight.
+    claimed = {number for section in sections for number in range(section["module_from"], section["module_to"] + 1)}
+
+    if claimed != set(numbers):
+        print(f"  !! {code}: sections claim modules {sorted(claimed)}, parser found {numbers}")
+        return "failed"
+
+    orphans = [
+        module["module_number"]
+        for module in modules
+        if module["section_code"] not in {section["section_code"] for section in sections}
+    ]
+
+    if orphans:
+        print(f"  !! {code}: module(s) {orphans} carry a section code no section header declares")
+        return "failed"
+
+    payload = {
+        "course_code": code,
+        "source_pdf": pdf.name,
+        "sections": sections,
+        "modules": modules,
+    }
 
     if write:
         (OUT_DIR / f"{code}.json").write_text(
             json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
-    sections = len({module["section_code"] for module in modules if module["section_code"]})
     topics = sum(len(module["topics"]) for module in modules)
+    weights = "/".join(str(section["weight_pct"]) for section in sections)
 
-    print(f"  ok {code}  {len(modules)} modules, {sections} sections, {topics} topics")
+    print(f"  ok {code}  {len(sections)} sections ({weights}%), {len(modules)} modules, {topics} topics")
 
     return "ok"
 

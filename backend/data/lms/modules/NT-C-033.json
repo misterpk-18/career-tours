@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-033",
   "source_pdf": "NT-C-033_Ethical_Hacking.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-033-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Lawful authorisation, rules of engagement and lab safety; Passive information gathering and asset mapping",
+      "completion_evidence": "Signed scope exercise; Recon report",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Signed scope exercise; Recon report, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-033-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Ports, services, enumeration and validation; OWASP-oriented input, session and access-control checks",
+      "completion_evidence": "Asset/service inventory; Web assessment notes",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Asset/service inventory; Web assessment notes, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-033-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Configuration, patch and credential-risk assessment; Segmentation, wireless concepts and traffic review",
+      "completion_evidence": "Host findings; Network findings",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Host findings; Network findings, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-033-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Controlled proof, evidence, severity and fixes; Executive/technical report, retest and closure",
+      "completion_evidence": "Finding records; Authorised assessment report",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Finding records; Authorised assessment report, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

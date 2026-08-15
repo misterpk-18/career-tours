@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-029",
   "source_pdf": "NT-C-029_Linux_Administration.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-029-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Shell, paths, text tools and editors; Accounts, groups, ownership, ACL basics and sudo",
+      "completion_evidence": "Command lab; Access lab",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Command lab; Access lab, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-029-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Software management, services and jobs; Partitions, filesystems, mounts and LVM basics",
+      "completion_evidence": "Service lab; Storage exercise",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Service lab; Storage exercise, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-029-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "IP, DNS, SSH, firewall and troubleshooting; systemd, web service, logs and rotation",
+      "completion_evidence": "Network lab; Hosted service",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Network lab; Hosted service, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-029-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Variables, conditions, loops and scheduled jobs; Hardening, backup, monitoring and recovery",
+      "completion_evidence": "Admin scripts; Managed Linux server",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Admin scripts; Managed Linux server, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

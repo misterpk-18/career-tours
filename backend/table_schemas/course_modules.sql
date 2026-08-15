@@ -50,3 +50,11 @@ ALTER TABLE ONLY public.course_modules
 
 
 --
+-- Name: course_modules course_modules_section_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: manojtungala
+--
+
+ALTER TABLE ONLY public.course_modules
+    ADD CONSTRAINT course_modules_section_code_fkey FOREIGN KEY (section_code) REFERENCES public.course_sections(section_code) ON DELETE SET NULL;
+
+
+--

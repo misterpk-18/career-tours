@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-016",
   "source_pdf": "NT-C-016_C_Programming.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-016-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Compiler, variables, types and I/O; Conditions, loops and operators",
+      "completion_evidence": "Basic programs; Logic exercises",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Basic programs; Logic exercises, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-016-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Parameters, return values, scope and headers; Memory layout and text processing",
+      "completion_evidence": "Modular program; Array/string utilities",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Modular program; Array/string utilities, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-016-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Addresses, pointers and dynamic memory; Structs, enums and data organisation",
+      "completion_evidence": "Memory exercises; Record application",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Memory exercises; Record application, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-016-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "File I/O, validation and return codes; Modular design, testing and debugging",
+      "completion_evidence": "Persistent utility; Completed C project",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Persistent utility; Completed C project, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

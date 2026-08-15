@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-014",
   "source_pdf": "NT-C-014_Core_Python.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-014-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Interpreter, variables, types and operators; Conditions, loops and comprehensions",
+      "completion_evidence": "Basic programs; Logic exercises",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Basic programs; Logic exercises, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-014-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Lists, tuples, dictionaries and sets; Functions, scope, packages and reuse",
+      "completion_evidence": "Data-processing tasks; Modular program",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Data-processing tasks; Modular program, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-014-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Classes, objects and inheritance; File formats, exceptions and logging",
+      "completion_evidence": "OOP application; Reliable file utility",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide OOP application; Reliable file utility, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-014-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "SQL basics, JSON and HTTP API use; Unit tests, Git and documentation",
+      "completion_evidence": "API/data exercise; Tested Python project",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide API/data exercise; Tested Python project, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

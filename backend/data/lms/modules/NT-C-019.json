@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-019",
   "source_pdf": "NT-C-019_Web_Development_Web_Designing.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-019-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Internet, HTML semantics and page structure; Selectors, box model, typography and colour",
+      "completion_evidence": "Semantic pages; Styled pages",
+      "weight_pct": 20,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Semantic pages; Styled pages, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-019-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Flexbox, Grid and mobile-first design; Syntax, DOM, events and validation",
+      "completion_evidence": "Responsive site; Interactive page",
+      "weight_pct": 25,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Responsive site; Interactive page, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-019-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Wireframes, hierarchy, components and assets; Fetch, JSON, forms and error states",
+      "completion_evidence": "Design specification; Data-driven page",
+      "weight_pct": 25,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Design specification; Data-driven page, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-019-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Accessibility, performance, SEO basics and testing; Git, hosting, analytics basics and documentation",
+      "completion_evidence": "Audit report; Live portfolio website",
+      "weight_pct": 30,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Audit report; Live portfolio website, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

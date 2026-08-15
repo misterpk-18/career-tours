@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-040",
   "source_pdf": "NT-C-040_ServiceNow.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-040-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Navigation, instances, tables and records; Users, groups, roles and ACL concepts",
+      "completion_evidence": "Configured practice app; Access model",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Configured practice app; Access model, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-040-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Fields, views, UI policies and data quality; Incident, request, problem and change workflows",
+      "completion_evidence": "Configured interface; ITSM case",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Configured interface; ITSM case, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-040-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Flow Designer, approvals, notifications and SLAs; Reports, dashboards, metrics and service visibility",
+      "completion_evidence": "Automated workflow; Service dashboard",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Automated workflow; Service dashboard, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-040-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Client/server concepts, APIs and update discipline; Security, testing, deployment and documentation",
+      "completion_evidence": "Scripted feature; ServiceNow solution",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Scripted feature; ServiceNow solution, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

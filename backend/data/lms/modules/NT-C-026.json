@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-026",
   "source_pdf": "NT-C-026_AWS_Cloud.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-026-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Regions, availability zones, shared responsibility and pricing; IAM users, roles, policies and least privilege",
+      "completion_evidence": "Architecture note; Access lab",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Architecture note; Access lab, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-026-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "EC2, EBS, S3 and lifecycle; VPC, subnets, routing, security groups and DNS",
+      "completion_evidence": "Hosted workload; Network design",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Hosted workload; Network design, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-026-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "RDS and managed data choices; Load balancing, Auto Scaling and backups",
+      "completion_evidence": "Database lab; Resilient design",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Database lab; Resilient design, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-026-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Lambda, events and API basics; CloudWatch, security, cost and documentation",
+      "completion_evidence": "Serverless function; Monitored AWS environment",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Serverless function; Monitored AWS environment, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

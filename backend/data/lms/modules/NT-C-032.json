@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-032",
   "source_pdf": "NT-C-032_Cyber_Security.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-032-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "CIA, threats, controls, risk and ethics; Protocols, segmentation, firewalls and secure access",
+      "completion_evidence": "Risk worksheet; Network-control lab",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Risk worksheet; Network-control lab, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-032-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Windows/Linux hardening, patching and baselines; Authentication, authorization, MFA and privilege",
+      "completion_evidence": "Hardened host; IAM review",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Hardened host; IAM review, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-032-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Asset inventory, scanning, prioritisation and remediation; Logs, SIEM concepts, alerts and triage",
+      "completion_evidence": "Vulnerability report; Detection lab",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Vulnerability report; Detection lab, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-032-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Preparation, containment, evidence and recovery; Policies, cloud basics, awareness and reporting",
+      "completion_evidence": "Incident playbook; Security operations case",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Incident playbook; Security operations case, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

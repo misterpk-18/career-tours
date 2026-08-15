@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-018",
   "source_pdf": "NT-C-018_Data_Structures_and_Algorithms.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-018-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Big-O, trade-offs and measurement; Traversal, two-pointer and sliding-window patterns",
+      "completion_evidence": "Complexity worksheet; Solved problem set",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Complexity worksheet; Solved problem set, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-018-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Linked lists, stacks and queues; Recursion, divide-and-conquer and backtracking",
+      "completion_evidence": "Implementations; Problem set",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Implementations; Problem set, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-018-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Trees, BST, traversal, priority queues; Hash maps, sets and collision concepts",
+      "completion_evidence": "Tree application; Lookup solutions",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Tree application; Lookup solutions, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-018-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Representation, BFS, DFS and shortest-path basics; Sorting, searching, greedy and dynamic programming",
+      "completion_evidence": "Graph problems; Capstone problem portfolio",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Graph problems; Capstone problem portfolio, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

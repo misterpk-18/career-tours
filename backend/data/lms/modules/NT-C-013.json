@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-013",
   "source_pdf": "NT-C-013_MEAN_Stack.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-013-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Language fundamentals and async programming; HTML, CSS and responsive layouts",
+      "completion_evidence": "Typed exercises; Responsive pages",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Typed exercises; Responsive pages, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-013-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Components, templates, binding and directives; Routing, forms, RxJS and API calls",
+      "completion_evidence": "Angular application; Multi-view SPA",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Angular application; Multi-view SPA, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-013-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Middleware, routing and REST; Modelling, CRUD, aggregation and indexes",
+      "completion_evidence": "Backend service; Persistent data layer",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Backend service; Persistent data layer, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-013-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Auth, validation, unit/API tests and Git; Build, environment, logging and documentation",
+      "completion_evidence": "Secured tested solution; Deployed MEAN project",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Secured tested solution; Deployed MEAN project, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

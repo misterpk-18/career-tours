@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-035",
   "source_pdf": "NT-C-035_UI_UX_Design.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-035-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "User-centred design, problem framing and ethics; Interviews, surveys, desk research and synthesis",
+      "completion_evidence": "Design brief; Research summary",
+      "weight_pct": 20,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Design brief; Research summary, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-035-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Needs, pain points, scenarios and journey maps; Content structure, flows and navigation",
+      "completion_evidence": "Persona/journey set; Site map and flow",
+      "weight_pct": 25,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Persona/journey set; Site map and flow, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-035-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Low-fidelity layouts and interaction logic; Typography, colour, grids, components and design systems",
+      "completion_evidence": "Wireframe prototype; High-fidelity screens",
+      "weight_pct": 25,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Wireframe prototype; High-fidelity screens, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-035-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Interactive prototype, usability tasks and iteration; Accessibility, handoff and case-study storytelling",
+      "completion_evidence": "Test report; Product design case",
+      "weight_pct": 30,
+      "assessment": "8 knowledge items (20 marks) + 2 critique/scenario items (20) + 1 timed artifact brief with rubric (60)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Test report; Product design case, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

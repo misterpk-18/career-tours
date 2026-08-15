@@ -28,6 +28,7 @@ import RankBadge from '../components/ui/RankBadge';
 import SectionHeading from '../components/ui/SectionHeading';
 import AiInsightBox from '../components/ui/AiInsightBox';
 import SummarySections from '../components/ui/SummarySections';
+import CourseSyllabus from '../components/ui/CourseSyllabus';
 import SelectableCard, { SelectableList } from '../components/ui/SelectableCard';
 import { toPct, toHours, sumBy } from '../lib/format';
 import { apiErrorMessage } from '../lib/apiError';
@@ -387,6 +388,9 @@ export const CourseRecommendationsPage = () => {
                         )}
                       </AiInsightBox>
                     )}
+
+                    {/* Corpus syllabus — absent for the pre-corpus courses */}
+                    <CourseSyllabus syllabus={course.syllabus} />
                   </Card>
                 );
               })}

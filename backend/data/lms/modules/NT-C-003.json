@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-003",
   "source_pdf": "NT-C-003_Data_Science.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-003-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Python, NumPy, notebooks; pandas, files, SQL, missing values",
+      "completion_evidence": "Data manipulation exercises; Clean analysis dataset",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Data manipulation exercises; Clean analysis dataset, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-003-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Descriptive statistics, probability, sampling; Patterns, outliers, charts, storytelling",
+      "completion_evidence": "Statistical analysis; EDA report",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Statistical analysis; EDA report, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-003-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Regression, classification, preprocessing; Feature engineering, tuning, cross-validation",
+      "completion_evidence": "Baseline predictive model; Compared models",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Baseline predictive model; Compared models, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-003-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Clustering, dimensionality reduction; Pipelines, evaluation, ethics, simple deployment",
+      "completion_evidence": "Segmentation project; Reproducible capstone",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Segmentation project; Reproducible capstone, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

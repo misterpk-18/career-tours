@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-017",
   "source_pdf": "NT-C-017_Cplusplus_Programming.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-017-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Types, control, functions and references; Classes, constructors, inheritance and polymorphism",
+      "completion_evidence": "Basic programs; OOP application",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Basic programs; OOP application, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-017-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Pointers, RAII and smart pointers; Vector, map, set and iterators",
+      "completion_evidence": "Safe resource exercise; Container application",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Safe resource exercise; Container application, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-017-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Searching, sorting and STL algorithms; Generic code and error handling",
+      "completion_evidence": "Algorithm exercises; Reusable component",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Algorithm exercises; Reusable component, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-017-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "I/O, unit testing and debugging; Architecture, build, Git and documentation",
+      "completion_evidence": "Tested utility; Completed C++ project",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 code/design scenarios (30) + 2 practical tasks (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Tested utility; Completed C++ project, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

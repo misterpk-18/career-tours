@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-024",
   "source_pdf": "NT-C-024_AI_and_Machine_Learning.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-024-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "NumPy, pandas and notebooks; Probability, vectors, distributions and metrics",
+      "completion_evidence": "Data exercises; Concept workbook",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Data exercises; Concept workbook, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-024-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Cleaning, encoding, scaling and splitting; Regression, classification and baselines",
+      "completion_evidence": "Prepared pipeline; Compared models",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Prepared pipeline; Compared models, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-024-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Clustering and dimensionality reduction; Features, validation, tuning and imbalance",
+      "completion_evidence": "Segmentation study; Validated model",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Segmentation study; Validated model, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-024-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "NLP and computer-vision foundations; Pipelines, deployment basics, monitoring and responsible use",
+      "completion_evidence": "Applied mini project; Capstone solution",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Applied mini project; Capstone solution, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

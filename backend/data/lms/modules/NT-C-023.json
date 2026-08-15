@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-023",
   "source_pdf": "NT-C-023_SQL.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-023-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Tables, keys, relationships and normalisation; SELECT, filters, sorting and expressions",
+      "completion_evidence": "Schema exercise; Query set",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Schema exercise; Query set, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-023-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Inner/outer joins and set operations; GROUP BY, HAVING and subqueries",
+      "completion_evidence": "Multi-table queries; Summary reports",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Multi-table queries; Summary reports, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-023-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "DDL, constraints and data modification; CTEs, window functions and date analysis",
+      "completion_evidence": "Controlled schema; Analytics queries",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Controlled schema; Analytics queries, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-023-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Transactions, views, permissions and indexes; Business schema, queries and optimisation notes",
+      "completion_evidence": "Reliable database lab; SQL portfolio",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Reliable database lab; SQL portfolio, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

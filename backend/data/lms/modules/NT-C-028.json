@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-028",
   "source_pdf": "NT-C-028_Cloud_Computing.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-028-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "IaaS, PaaS, SaaS, deployment models and shared responsibility; VMs, images, containers and orchestration basics",
+      "completion_evidence": "Concept map; Virtual lab",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Concept map; Virtual lab, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-028-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Addressing, DNS, routing, firewalls and load balancing; Object, block, file and managed databases",
+      "completion_evidence": "Network diagram; Service comparison",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Network diagram; Service comparison, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-028-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "IAM, encryption, secrets and controls; Scaling, availability, backup and disaster recovery",
+      "completion_evidence": "Security checklist; Resilience plan",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Security checklist; Resilience plan, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-028-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Monitoring, logging, automation and cost management; Vendor comparison and deployable architecture",
+      "completion_evidence": "Operations dashboard; Cloud solution design",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Operations dashboard; Cloud solution design, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-031",
   "source_pdf": "NT-C-031_CCNA.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-031-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Models, Ethernet, cabling and device roles; IPv4/IPv6, subnetting and address plans",
+      "completion_evidence": "Topology lab; Subnet workbook",
+      "weight_pct": 20,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Topology lab; Subnet workbook, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-031-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "MAC learning, VLANs, trunks and STP; Static routing and single-area OSPF basics",
+      "completion_evidence": "Switched network; Routed network",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Switched network; Routed network, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-031-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "DHCP, DNS, NTP, NAT and QoS concepts; WLAN components, configuration and security",
+      "completion_evidence": "Services lab; Wireless design",
+      "weight_pct": 25,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Services lab; Wireless design, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-031-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Device hardening, ACLs, management and API concepts; Verification commands, fault isolation and documentation",
+      "completion_evidence": "Secured lab; Integrated network",
+      "weight_pct": 30,
+      "assessment": "10 MCQ (30 marks) + 4 troubleshooting scenarios (30) + 1 authorised practical lab (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Secured lab; Integrated network, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,

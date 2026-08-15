@@ -41,7 +41,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 | **Project Management** | `projects`, `resumes` |
 | **Skills Engine** | `skills`, `skill_aliases`, `student_skills`, `project_skills`, `occupation_skills`, `course_skills` |
 | **Career Matching** | `occupations`, `student_career_matches`, `career_skill_gaps` |
-| **Course Recommendation** | `courses`, `course_modules`, `course_recommendations` |
+| **Course Recommendation** | `courses`, `course_sections`, `course_modules`, `course_recommendations` |
 | **AI/LLM Summaries** | `llm_summaries` |
 
 ---
@@ -156,13 +156,21 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Referenced By:** none
 **Relationships:** Junction table realizing **courses ↔ skills (M:N)**. `UNIQUE(course_id, skill_id)`. CHECK: `coverage_weight` 0–100.
 
+## course_sections
+**Purpose:** The four Deep Knowledge sections per course (160 rows over 40 courses) — the assessment structure the modules hang off. Carries the section's share of the weighted mock-test average (20/25/25/30), the marks split that produces it, the competency and completion evidence, and the remediation path for a learner who fails it.
+**Primary Key:** `section_id` (uuid)
+**Foreign Keys:** `course_id` → `courses.course_id` (CASCADE)
+**Referenced By:** `course_modules` (via `section_code`)
+**Relationships:** Child table of **courses (1:N)**, ordered by `module_from`. `UNIQUE(section_code)` — the code embeds the course code (`NT-C-001-S01`) so it is globally unique on its own, which is what lets `course_modules` keep a plain string column and still carry a real FK. CHECK: `module_from > 0 AND module_to >= module_from`, `weight_pct` 0–100.
+**Note:** Added by migration `012_course_sections.sql`. `competency` and `completion_evidence` are each exactly their two modules' `objective`/`observable_evidence` joined with `"; "` — verified for all 160 — so they are stored for corpus fidelity but deliberately not served by the API. `assessment` is identical across all four sections of a course (40/40), so the client renders it once. See [data-pipelines.md](data-pipelines.md).
+
 ## course_modules
 **Purpose:** The per-course syllabus from the knowledge corpus — eight ordered modules per course (320 rows over 40 courses), each with its title, learning objective, the observable evidence a learner must produce, and the topic list. Display data for the course curriculum view.
 **Primary Key:** `module_id` (uuid)
-**Foreign Keys:** `course_id` → `courses.course_id` (CASCADE)
+**Foreign Keys:** `course_id` → `courses.course_id` (CASCADE); `section_code` → `course_sections.section_code` (SET NULL)
 **Referenced By:** none
-**Relationships:** Child table of **courses (1:N)**, ordered by `module_number`. `UNIQUE(course_id, module_number)`. CHECK: `module_number > 0`, `topics` is a JSON array.
-**Note:** Added by migration `011_course_modules.sql`, populated by `extract_course_modules.py` + `load_course_modules.py` — a **regex parser, not an LLM**, because the corpus PDFs are template-generated and all 320 modules parse exactly. `topics` is `jsonb` rather than a child table: it is derived by splitting the `objective` line, so a topic has no identity and nothing joins on one. `objective` keeps the raw string as the source of truth. `section_code` (`NT-C-001-S01`..`S04`) groups modules into the corpus's four Deep Knowledge sections, two modules each. Not currently read by the matching engine. See [data-pipelines.md](data-pipelines.md).
+**Relationships:** Child table of **courses (1:N)**, ordered by `module_number`, and grouped under **course_sections (N:1)** by `section_code`. `UNIQUE(course_id, module_number)`. CHECK: `module_number > 0`, `topics` is a JSON array.
+**Note:** Added by migration `011_course_modules.sql`, populated by `extract_course_modules.py` + `load_course_modules.py` — a **regex parser, not an LLM**, because the corpus PDFs are template-generated and all 320 modules parse exactly. `topics` is `jsonb` rather than a child table: it is derived by splitting the `objective` line, so a topic has no identity and nothing joins on one. `objective` keeps the raw string as the source of truth but is not served by the API, being the comma-joined form of `topics`. The `section_code` FK was added in `012` as `NOT VALID` and self-validates on a later run of that file, because `011` had already written 320 rows pointing at a table that stays empty until the loader runs. Not read by the matching engine — it is display data for the course syllabus view. See [data-pipelines.md](data-pipelines.md).
 
 ## course_recommendations
 **Purpose:** The recommendation engine's output — which course is recommended to a student for a given occupation target, how much of the gap it covers, and its rank among alternatives.
@@ -188,7 +196,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 | `project_id` | projects (PK), resumes (nullable), project_skills, student_career_matches (NOT NULL), career_skill_gaps (nullable), course_recommendations (nullable), llm_summaries (NOT NULL) |
 | `skill_id` | skills (PK), skill_aliases, student_skills, project_skills, occupation_skills, course_skills, career_skill_gaps |
 | `occupation_id` | occupations (PK), occupation_skills, student_career_matches, career_skill_gaps, course_recommendations, llm_summaries (nullable) |
-| `course_id` | courses (PK), course_skills, course_modules, course_recommendations, llm_summaries (nullable) |
+| `course_id` | courses (PK), course_skills, course_sections, course_modules, course_recommendations, llm_summaries (nullable) |
 | `question_id` | questionnaires (PK), questionnaire_responses |
 
 ---
@@ -552,6 +560,7 @@ flowchart TD
 
     subgraph CR["Course Recommendation"]
         CRS[(courses)]
+        CSEC[(course_sections)]
         CMOD[(course_modules)]
         CREC[(course_recommendations)]
     end
@@ -588,7 +597,9 @@ flowchart TD
 
     CSG -. "inferred: skill_id match" .-> CSKILL
     CRS --> CSKILL
+    CRS --> CSEC
     CRS --> CMOD
+    CSEC --> CMOD
     SKL --> CSKILL
 
     STUDENTS --> CREC

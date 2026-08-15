@@ -1,6 +1,48 @@
 {
   "course_code": "NT-C-005",
   "source_pdf": "NT-C-005_Power_BI.pdf",
+  "sections": [
+    {
+      "section_code": "NT-C-005-S01",
+      "module_from": 1,
+      "module_to": 2,
+      "competency": "Power BI workflow, requirements, KPIs; Sources, Power Query, profiling, cleaning",
+      "completion_evidence": "Dashboard specification; Prepared query set",
+      "weight_pct": 20,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Dashboard specification; Prepared query set, return to Modules 1-2, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-005-S02",
+      "module_from": 3,
+      "module_to": 4,
+      "competency": "Star schema, relationships, dimensions; Measures, filter context, iterators",
+      "completion_evidence": "Validated semantic model; Measure library",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Validated semantic model; Measure library, return to Modules 3-4, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-005-S03",
+      "module_from": 5,
+      "module_to": 6,
+      "competency": "Time intelligence, variables, calculation patterns; Visual choice, interactions, accessibility",
+      "completion_evidence": "Business KPI model; Interactive report",
+      "weight_pct": 25,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Business KPI model; Interactive report, return to Modules 5-6, complete one guided practice and then use a new equivalent test form."
+    },
+    {
+      "section_code": "NT-C-005-S04",
+      "module_from": 7,
+      "module_to": 8,
+      "competency": "Publish, refresh, workspace, sharing; RLS, optimisation, governance, capstone",
+      "completion_evidence": "Published report; Secure optimised dashboard",
+      "weight_pct": 30,
+      "assessment": "10 concept MCQ (30 marks) + 4 interpretation scenarios (30) + 1 data/model practical (40)",
+      "remediation": "If the learner cannot explain the purpose, complete the stated task or provide Published report; Secure optimised dashboard, return to Modules 7-8, complete one guided practice and then use a new equivalent test form."
+    }
+  ],
   "modules": [
     {
       "module_number": 1,
