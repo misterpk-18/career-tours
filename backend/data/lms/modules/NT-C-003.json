@@ -1,0 +1,104 @@
+{
+  "course_code": "NT-C-003",
+  "source_pdf": "NT-C-003_Data_Science.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Python for data",
+      "objective": "Python, NumPy, notebooks",
+      "observable_evidence": "Data manipulation exercises",
+      "topics": [
+        "Python",
+        "NumPy",
+        "notebooks"
+      ],
+      "section_code": "NT-C-003-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Data handling",
+      "objective": "pandas, files, SQL, missing values",
+      "observable_evidence": "Clean analysis dataset",
+      "topics": [
+        "pandas",
+        "files",
+        "SQL",
+        "missing values"
+      ],
+      "section_code": "NT-C-003-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Statistics",
+      "objective": "Descriptive statistics, probability, sampling",
+      "observable_evidence": "Statistical analysis",
+      "topics": [
+        "Descriptive statistics",
+        "probability",
+        "sampling"
+      ],
+      "section_code": "NT-C-003-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "EDA & visualization",
+      "objective": "Patterns, outliers, charts, storytelling",
+      "observable_evidence": "EDA report",
+      "topics": [
+        "Patterns",
+        "outliers",
+        "charts",
+        "storytelling"
+      ],
+      "section_code": "NT-C-003-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Supervised learning",
+      "objective": "Regression, classification, preprocessing",
+      "observable_evidence": "Baseline predictive model",
+      "topics": [
+        "Regression",
+        "classification",
+        "preprocessing"
+      ],
+      "section_code": "NT-C-003-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Model improvement",
+      "objective": "Feature engineering, tuning, cross-validation",
+      "observable_evidence": "Compared models",
+      "topics": [
+        "Feature engineering",
+        "tuning",
+        "cross-validation"
+      ],
+      "section_code": "NT-C-003-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Unsupervised learning",
+      "objective": "Clustering, dimensionality reduction",
+      "observable_evidence": "Segmentation project",
+      "topics": [
+        "Clustering",
+        "dimensionality reduction"
+      ],
+      "section_code": "NT-C-003-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Delivery",
+      "objective": "Pipelines, evaluation, ethics, simple deployment",
+      "observable_evidence": "Reproducible capstone",
+      "topics": [
+        "Pipelines",
+        "evaluation",
+        "ethics",
+        "simple deployment"
+      ],
+      "section_code": "NT-C-003-S04"
+    }
+  ]
+}

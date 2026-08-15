@@ -1,0 +1,108 @@
+{
+  "course_code": "NT-C-006",
+  "source_pdf": "NT-C-006_AWS_with_DevOps.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "DevOps foundation",
+      "objective": "Linux, networking, Git, delivery lifecycle",
+      "observable_evidence": "Version-controlled lab",
+      "topics": [
+        "Linux",
+        "networking",
+        "Git",
+        "delivery lifecycle"
+      ],
+      "section_code": "NT-C-006-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "AWS core",
+      "objective": "IAM, VPC, EC2, S3, RDS",
+      "observable_evidence": "Secure cloud environment",
+      "topics": [
+        "IAM",
+        "VPC",
+        "EC2",
+        "S3",
+        "RDS"
+      ],
+      "section_code": "NT-C-006-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Availability",
+      "objective": "Load balancing, Auto Scaling, DNS basics",
+      "observable_evidence": "Highly available design",
+      "topics": [
+        "Load balancing",
+        "Auto Scaling",
+        "DNS basics"
+      ],
+      "section_code": "NT-C-006-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Automation",
+      "objective": "Shell/Python basics, configuration tasks",
+      "observable_evidence": "Automation scripts",
+      "topics": [
+        "Shell/Python basics",
+        "configuration tasks"
+      ],
+      "section_code": "NT-C-006-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Containers",
+      "objective": "Docker, images, registries, ECR",
+      "observable_evidence": "Containerised service",
+      "topics": [
+        "Docker",
+        "images",
+        "registries",
+        "ECR"
+      ],
+      "section_code": "NT-C-006-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "CI/CD",
+      "objective": "Build, test, deploy pipelines; approvals",
+      "observable_evidence": "Working pipeline",
+      "topics": [
+        "Build",
+        "test",
+        "deploy pipelines",
+        "approvals"
+      ],
+      "section_code": "NT-C-006-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Infrastructure as code",
+      "objective": "Terraform/CloudFormation, state, review",
+      "observable_evidence": "Repeatable environment",
+      "topics": [
+        "Terraform/CloudFormation",
+        "state",
+        "review"
+      ],
+      "section_code": "NT-C-006-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Operations",
+      "objective": "CloudWatch, logs, security, cost, EKS intro",
+      "observable_evidence": "Monitored capstone",
+      "topics": [
+        "CloudWatch",
+        "logs",
+        "security",
+        "cost",
+        "EKS intro"
+      ],
+      "section_code": "NT-C-006-S04"
+    }
+  ]
+}

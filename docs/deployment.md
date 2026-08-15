@@ -162,7 +162,7 @@ endpoint over TLS.
    Import the SQL tables under `backend/table_schemas/` in their dependency order:
    ```bash
    cd /home/ec2-user/career-tours/backend/table_schemas
-   for f in students.sql skills.sql occupations.sql questionnaires.sql courses.sql projects.sql resumes.sql skill_aliases.sql student_skills.sql occupation_skills.sql questionnaire_responses.sql course_skills.sql student_career_matches.sql career_skill_gaps.sql course_recommendations.sql llm_summaries.sql project_skills.sql; do
+   for f in students.sql skills.sql occupations.sql questionnaires.sql courses.sql projects.sql resumes.sql skill_aliases.sql student_skills.sql occupation_skills.sql questionnaire_responses.sql course_skills.sql course_modules.sql student_career_matches.sql career_skill_gaps.sql course_recommendations.sql llm_summaries.sql project_skills.sql; do
        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$f"
    done
    ```

@@ -1,0 +1,110 @@
+{
+  "course_code": "NT-C-032",
+  "source_pdf": "NT-C-032_Cyber_Security.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Security foundation",
+      "objective": "CIA, threats, controls, risk and ethics",
+      "observable_evidence": "Risk worksheet",
+      "topics": [
+        "CIA",
+        "threats",
+        "controls",
+        "risk",
+        "ethics"
+      ],
+      "section_code": "NT-C-032-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Network security",
+      "objective": "Protocols, segmentation, firewalls and secure access",
+      "observable_evidence": "Network-control lab",
+      "topics": [
+        "Protocols",
+        "segmentation",
+        "firewalls",
+        "secure access"
+      ],
+      "section_code": "NT-C-032-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "System security",
+      "objective": "Windows/Linux hardening, patching and baselines",
+      "observable_evidence": "Hardened host",
+      "topics": [
+        "Windows/Linux hardening",
+        "patching",
+        "baselines"
+      ],
+      "section_code": "NT-C-032-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Identity",
+      "objective": "Authentication, authorization, MFA and privilege",
+      "observable_evidence": "IAM review",
+      "topics": [
+        "Authentication",
+        "authorization",
+        "MFA",
+        "privilege"
+      ],
+      "section_code": "NT-C-032-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Vulnerability management",
+      "objective": "Asset inventory, scanning, prioritisation and remediation",
+      "observable_evidence": "Vulnerability report",
+      "topics": [
+        "Asset inventory",
+        "scanning",
+        "prioritisation",
+        "remediation"
+      ],
+      "section_code": "NT-C-032-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Security monitoring",
+      "objective": "Logs, SIEM concepts, alerts and triage",
+      "observable_evidence": "Detection lab",
+      "topics": [
+        "Logs",
+        "SIEM concepts",
+        "alerts",
+        "triage"
+      ],
+      "section_code": "NT-C-032-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Incident response",
+      "objective": "Preparation, containment, evidence and recovery",
+      "observable_evidence": "Incident playbook",
+      "topics": [
+        "Preparation",
+        "containment",
+        "evidence",
+        "recovery"
+      ],
+      "section_code": "NT-C-032-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Governance capstone",
+      "objective": "Policies, cloud basics, awareness and reporting",
+      "observable_evidence": "Security operations case",
+      "topics": [
+        "Policies",
+        "cloud basics",
+        "awareness",
+        "reporting"
+      ],
+      "section_code": "NT-C-032-S04"
+    }
+  ]
+}

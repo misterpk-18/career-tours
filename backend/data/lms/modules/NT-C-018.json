@@ -1,0 +1,105 @@
+{
+  "course_code": "NT-C-018",
+  "source_pdf": "NT-C-018_Data_Structures_and_Algorithms.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Complexity",
+      "objective": "Big-O, trade-offs and measurement",
+      "observable_evidence": "Complexity worksheet",
+      "topics": [
+        "Big-O",
+        "trade-offs",
+        "measurement"
+      ],
+      "section_code": "NT-C-018-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Arrays and strings",
+      "objective": "Traversal, two-pointer and sliding-window patterns",
+      "observable_evidence": "Solved problem set",
+      "topics": [
+        "Traversal",
+        "two-pointer",
+        "sliding-window patterns"
+      ],
+      "section_code": "NT-C-018-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Linked structures",
+      "objective": "Linked lists, stacks and queues",
+      "observable_evidence": "Implementations",
+      "topics": [
+        "Linked lists",
+        "stacks",
+        "queues"
+      ],
+      "section_code": "NT-C-018-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Recursion",
+      "objective": "Recursion, divide-and-conquer and backtracking",
+      "observable_evidence": "Problem set",
+      "topics": [
+        "Recursion",
+        "divide-and-conquer",
+        "backtracking"
+      ],
+      "section_code": "NT-C-018-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Trees and heaps",
+      "objective": "Trees, BST, traversal, priority queues",
+      "observable_evidence": "Tree application",
+      "topics": [
+        "Trees",
+        "BST",
+        "traversal",
+        "priority queues"
+      ],
+      "section_code": "NT-C-018-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Hashing",
+      "objective": "Hash maps, sets and collision concepts",
+      "observable_evidence": "Lookup solutions",
+      "topics": [
+        "Hash maps",
+        "sets",
+        "collision concepts"
+      ],
+      "section_code": "NT-C-018-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Graphs",
+      "objective": "Representation, BFS, DFS and shortest-path basics",
+      "observable_evidence": "Graph problems",
+      "topics": [
+        "Representation",
+        "BFS",
+        "DFS",
+        "shortest-path basics"
+      ],
+      "section_code": "NT-C-018-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Advanced patterns",
+      "objective": "Sorting, searching, greedy and dynamic programming",
+      "observable_evidence": "Capstone problem portfolio",
+      "topics": [
+        "Sorting",
+        "searching",
+        "greedy",
+        "dynamic programming"
+      ],
+      "section_code": "NT-C-018-S04"
+    }
+  ]
+}

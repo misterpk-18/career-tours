@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-013",
+  "source_pdf": "NT-C-013_MEAN_Stack.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "JavaScript and TypeScript",
+      "objective": "Language fundamentals and async programming",
+      "observable_evidence": "Typed exercises",
+      "topics": [
+        "Language fundamentals",
+        "async programming"
+      ],
+      "section_code": "NT-C-013-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Web foundation",
+      "objective": "HTML, CSS and responsive layouts",
+      "observable_evidence": "Responsive pages",
+      "topics": [
+        "HTML",
+        "CSS",
+        "responsive layouts"
+      ],
+      "section_code": "NT-C-013-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Angular core",
+      "objective": "Components, templates, binding and directives",
+      "observable_evidence": "Angular application",
+      "topics": [
+        "Components",
+        "templates",
+        "binding",
+        "directives"
+      ],
+      "section_code": "NT-C-013-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Angular services",
+      "objective": "Routing, forms, RxJS and API calls",
+      "observable_evidence": "Multi-view SPA",
+      "topics": [
+        "Routing",
+        "forms",
+        "RxJS",
+        "API calls"
+      ],
+      "section_code": "NT-C-013-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Node and Express",
+      "objective": "Middleware, routing and REST",
+      "observable_evidence": "Backend service",
+      "topics": [
+        "Middleware",
+        "routing",
+        "REST"
+      ],
+      "section_code": "NT-C-013-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "MongoDB",
+      "objective": "Modelling, CRUD, aggregation and indexes",
+      "observable_evidence": "Persistent data layer",
+      "topics": [
+        "Modelling",
+        "CRUD",
+        "aggregation",
+        "indexes"
+      ],
+      "section_code": "NT-C-013-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Security and testing",
+      "objective": "Auth, validation, unit/API tests and Git",
+      "observable_evidence": "Secured tested solution",
+      "topics": [
+        "Auth",
+        "validation",
+        "unit/API tests",
+        "Git"
+      ],
+      "section_code": "NT-C-013-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Deployment capstone",
+      "objective": "Build, environment, logging and documentation",
+      "observable_evidence": "Deployed MEAN project",
+      "topics": [
+        "Build",
+        "environment",
+        "logging",
+        "documentation"
+      ],
+      "section_code": "NT-C-013-S04"
+    }
+  ]
+}

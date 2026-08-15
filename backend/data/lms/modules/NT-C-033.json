@@ -1,0 +1,103 @@
+{
+  "course_code": "NT-C-033",
+  "source_pdf": "NT-C-033_Ethical_Hacking.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Ethics and scope",
+      "objective": "Lawful authorisation, rules of engagement and lab safety",
+      "observable_evidence": "Signed scope exercise",
+      "topics": [
+        "Lawful authorisation",
+        "rules of engagement",
+        "lab safety"
+      ],
+      "section_code": "NT-C-033-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Reconnaissance",
+      "objective": "Passive information gathering and asset mapping",
+      "observable_evidence": "Recon report",
+      "topics": [
+        "Passive information gathering",
+        "asset mapping"
+      ],
+      "section_code": "NT-C-033-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Scanning",
+      "objective": "Ports, services, enumeration and validation",
+      "observable_evidence": "Asset/service inventory",
+      "topics": [
+        "Ports",
+        "services",
+        "enumeration",
+        "validation"
+      ],
+      "section_code": "NT-C-033-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Web testing",
+      "objective": "OWASP-oriented input, session and access-control checks",
+      "observable_evidence": "Web assessment notes",
+      "topics": [
+        "OWASP-oriented input",
+        "session",
+        "access-control checks"
+      ],
+      "section_code": "NT-C-033-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "System testing",
+      "objective": "Configuration, patch and credential-risk assessment",
+      "observable_evidence": "Host findings",
+      "topics": [
+        "Configuration",
+        "patch",
+        "credential-risk assessment"
+      ],
+      "section_code": "NT-C-033-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Network testing",
+      "objective": "Segmentation, wireless concepts and traffic review",
+      "observable_evidence": "Network findings",
+      "topics": [
+        "Segmentation",
+        "wireless concepts",
+        "traffic review"
+      ],
+      "section_code": "NT-C-033-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Validation and remediation",
+      "objective": "Controlled proof, evidence, severity and fixes",
+      "observable_evidence": "Finding records",
+      "topics": [
+        "Controlled proof",
+        "evidence",
+        "severity",
+        "fixes"
+      ],
+      "section_code": "NT-C-033-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Reporting capstone",
+      "objective": "Executive/technical report, retest and closure",
+      "observable_evidence": "Authorised assessment report",
+      "topics": [
+        "Executive/technical report",
+        "retest",
+        "closure"
+      ],
+      "section_code": "NT-C-033-S04"
+    }
+  ]
+}

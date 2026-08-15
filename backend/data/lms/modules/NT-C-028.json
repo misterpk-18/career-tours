@@ -1,0 +1,110 @@
+{
+  "course_code": "NT-C-028",
+  "source_pdf": "NT-C-028_Cloud_Computing.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Cloud concepts",
+      "objective": "IaaS, PaaS, SaaS, deployment models and shared responsibility",
+      "observable_evidence": "Concept map",
+      "topics": [
+        "IaaS",
+        "PaaS",
+        "SaaS",
+        "deployment models",
+        "shared responsibility"
+      ],
+      "section_code": "NT-C-028-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Virtualisation",
+      "objective": "VMs, images, containers and orchestration basics",
+      "observable_evidence": "Virtual lab",
+      "topics": [
+        "VMs",
+        "images",
+        "containers",
+        "orchestration basics"
+      ],
+      "section_code": "NT-C-028-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Networking",
+      "objective": "Addressing, DNS, routing, firewalls and load balancing",
+      "observable_evidence": "Network diagram",
+      "topics": [
+        "Addressing",
+        "DNS",
+        "routing",
+        "firewalls",
+        "load balancing"
+      ],
+      "section_code": "NT-C-028-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Storage and data",
+      "objective": "Object, block, file and managed databases",
+      "observable_evidence": "Service comparison",
+      "topics": [
+        "Object",
+        "block",
+        "file",
+        "managed databases"
+      ],
+      "section_code": "NT-C-028-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Identity and security",
+      "objective": "IAM, encryption, secrets and controls",
+      "observable_evidence": "Security checklist",
+      "topics": [
+        "IAM",
+        "encryption",
+        "secrets",
+        "controls"
+      ],
+      "section_code": "NT-C-028-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Reliability",
+      "objective": "Scaling, availability, backup and disaster recovery",
+      "observable_evidence": "Resilience plan",
+      "topics": [
+        "Scaling",
+        "availability",
+        "backup",
+        "disaster recovery"
+      ],
+      "section_code": "NT-C-028-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Operations",
+      "objective": "Monitoring, logging, automation and cost management",
+      "observable_evidence": "Operations dashboard",
+      "topics": [
+        "Monitoring",
+        "logging",
+        "automation",
+        "cost management"
+      ],
+      "section_code": "NT-C-028-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Vendor comparison and deployable architecture",
+      "observable_evidence": "Cloud solution design",
+      "topics": [
+        "Vendor comparison",
+        "deployable architecture"
+      ],
+      "section_code": "NT-C-028-S04"
+    }
+  ]
+}

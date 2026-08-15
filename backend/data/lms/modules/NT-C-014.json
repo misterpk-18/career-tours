@@ -1,0 +1,105 @@
+{
+  "course_code": "NT-C-014",
+  "source_pdf": "NT-C-014_Core_Python.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Python setup",
+      "objective": "Interpreter, variables, types and operators",
+      "observable_evidence": "Basic programs",
+      "topics": [
+        "Interpreter",
+        "variables",
+        "types",
+        "operators"
+      ],
+      "section_code": "NT-C-014-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Control flow",
+      "objective": "Conditions, loops and comprehensions",
+      "observable_evidence": "Logic exercises",
+      "topics": [
+        "Conditions",
+        "loops",
+        "comprehensions"
+      ],
+      "section_code": "NT-C-014-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Data structures",
+      "objective": "Lists, tuples, dictionaries and sets",
+      "observable_evidence": "Data-processing tasks",
+      "topics": [
+        "Lists",
+        "tuples",
+        "dictionaries",
+        "sets"
+      ],
+      "section_code": "NT-C-014-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Functions and modules",
+      "objective": "Functions, scope, packages and reuse",
+      "observable_evidence": "Modular program",
+      "topics": [
+        "Functions",
+        "scope",
+        "packages",
+        "reuse"
+      ],
+      "section_code": "NT-C-014-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Object-oriented Python",
+      "objective": "Classes, objects and inheritance",
+      "observable_evidence": "OOP application",
+      "topics": [
+        "Classes",
+        "objects",
+        "inheritance"
+      ],
+      "section_code": "NT-C-014-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Files and errors",
+      "objective": "File formats, exceptions and logging",
+      "observable_evidence": "Reliable file utility",
+      "topics": [
+        "File formats",
+        "exceptions",
+        "logging"
+      ],
+      "section_code": "NT-C-014-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Data and APIs",
+      "objective": "SQL basics, JSON and HTTP API use",
+      "observable_evidence": "API/data exercise",
+      "topics": [
+        "SQL basics",
+        "JSON",
+        "HTTP API use"
+      ],
+      "section_code": "NT-C-014-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Testing and capstone",
+      "objective": "Unit tests, Git and documentation",
+      "observable_evidence": "Tested Python project",
+      "topics": [
+        "Unit tests",
+        "Git",
+        "documentation"
+      ],
+      "section_code": "NT-C-014-S04"
+    }
+  ]
+}

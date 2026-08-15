@@ -1,0 +1,105 @@
+{
+  "course_code": "NT-C-005",
+  "source_pdf": "NT-C-005_Power_BI.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "BI orientation",
+      "objective": "Power BI workflow, requirements, KPIs",
+      "observable_evidence": "Dashboard specification",
+      "topics": [
+        "Power BI workflow",
+        "requirements",
+        "KPIs"
+      ],
+      "section_code": "NT-C-005-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Connect & prepare",
+      "objective": "Sources, Power Query, profiling, cleaning",
+      "observable_evidence": "Prepared query set",
+      "topics": [
+        "Sources",
+        "Power Query",
+        "profiling",
+        "cleaning"
+      ],
+      "section_code": "NT-C-005-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Data modelling",
+      "objective": "Star schema, relationships, dimensions",
+      "observable_evidence": "Validated semantic model",
+      "topics": [
+        "Star schema",
+        "relationships",
+        "dimensions"
+      ],
+      "section_code": "NT-C-005-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "DAX foundation",
+      "objective": "Measures, filter context, iterators",
+      "observable_evidence": "Measure library",
+      "topics": [
+        "Measures",
+        "filter context",
+        "iterators"
+      ],
+      "section_code": "NT-C-005-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Advanced DAX",
+      "objective": "Time intelligence, variables, calculation patterns",
+      "observable_evidence": "Business KPI model",
+      "topics": [
+        "Time intelligence",
+        "variables",
+        "calculation patterns"
+      ],
+      "section_code": "NT-C-005-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Report design",
+      "objective": "Visual choice, interactions, accessibility",
+      "observable_evidence": "Interactive report",
+      "topics": [
+        "Visual choice",
+        "interactions",
+        "accessibility"
+      ],
+      "section_code": "NT-C-005-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Power BI Service",
+      "objective": "Publish, refresh, workspace, sharing",
+      "observable_evidence": "Published report",
+      "topics": [
+        "Publish",
+        "refresh",
+        "workspace",
+        "sharing"
+      ],
+      "section_code": "NT-C-005-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Security & performance",
+      "objective": "RLS, optimisation, governance, capstone",
+      "observable_evidence": "Secure optimised dashboard",
+      "topics": [
+        "RLS",
+        "optimisation",
+        "governance",
+        "capstone"
+      ],
+      "section_code": "NT-C-005-S04"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "course_code": "NT-C-025",
+  "source_pdf": "NT-C-025_Generative_AI.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "GenAI foundation",
+      "objective": "Models, tokens, context, limitations and use cases",
+      "observable_evidence": "Use-case analysis",
+      "topics": [
+        "Models",
+        "tokens",
+        "context",
+        "limitations",
+        "use cases"
+      ],
+      "section_code": "NT-C-025-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Prompt design",
+      "objective": "Instructions, examples, constraints and structured outputs",
+      "observable_evidence": "Prompt test set",
+      "topics": [
+        "Instructions",
+        "examples",
+        "constraints",
+        "structured outputs"
+      ],
+      "section_code": "NT-C-025-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "API integration",
+      "objective": "Requests, authentication, errors and logging",
+      "observable_evidence": "API application",
+      "topics": [
+        "Requests",
+        "authentication",
+        "errors",
+        "logging"
+      ],
+      "section_code": "NT-C-025-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Retrieval",
+      "objective": "Documents, chunking, embeddings and vector search",
+      "observable_evidence": "RAG prototype",
+      "topics": [
+        "Documents",
+        "chunking",
+        "embeddings",
+        "vector search"
+      ],
+      "section_code": "NT-C-025-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Evaluation",
+      "objective": "Test sets, relevance, accuracy and human review",
+      "observable_evidence": "Evaluation report",
+      "topics": [
+        "Test sets",
+        "relevance",
+        "accuracy",
+        "human review"
+      ],
+      "section_code": "NT-C-025-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Safety and privacy",
+      "objective": "Prompt injection, data handling and guardrails",
+      "observable_evidence": "Risk-control checklist",
+      "topics": [
+        "Prompt injection",
+        "data handling",
+        "guardrails"
+      ],
+      "section_code": "NT-C-025-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Workflow automation",
+      "objective": "Tool use, agents and approval points",
+      "observable_evidence": "Controlled workflow",
+      "topics": [
+        "Tool use",
+        "agents",
+        "approval points"
+      ],
+      "section_code": "NT-C-025-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Monitoring, cost, documentation and responsible deployment",
+      "observable_evidence": "Evaluated GenAI product",
+      "topics": [
+        "Monitoring",
+        "cost",
+        "documentation",
+        "responsible deployment"
+      ],
+      "section_code": "NT-C-025-S04"
+    }
+  ]
+}

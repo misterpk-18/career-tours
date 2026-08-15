@@ -1,0 +1,108 @@
+{
+  "course_code": "NT-C-019",
+  "source_pdf": "NT-C-019_Web_Development_Web_Designing.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Web foundation",
+      "objective": "Internet, HTML semantics and page structure",
+      "observable_evidence": "Semantic pages",
+      "topics": [
+        "Internet",
+        "HTML semantics",
+        "page structure"
+      ],
+      "section_code": "NT-C-019-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "CSS design",
+      "objective": "Selectors, box model, typography and colour",
+      "observable_evidence": "Styled pages",
+      "topics": [
+        "Selectors",
+        "box model",
+        "typography",
+        "colour"
+      ],
+      "section_code": "NT-C-019-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Responsive layout",
+      "objective": "Flexbox, Grid and mobile-first design",
+      "observable_evidence": "Responsive site",
+      "topics": [
+        "Flexbox",
+        "Grid",
+        "mobile-first design"
+      ],
+      "section_code": "NT-C-019-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "JavaScript",
+      "objective": "Syntax, DOM, events and validation",
+      "observable_evidence": "Interactive page",
+      "topics": [
+        "Syntax",
+        "DOM",
+        "events",
+        "validation"
+      ],
+      "section_code": "NT-C-019-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Design workflow",
+      "objective": "Wireframes, hierarchy, components and assets",
+      "observable_evidence": "Design specification",
+      "topics": [
+        "Wireframes",
+        "hierarchy",
+        "components",
+        "assets"
+      ],
+      "section_code": "NT-C-019-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "APIs and forms",
+      "objective": "Fetch, JSON, forms and error states",
+      "observable_evidence": "Data-driven page",
+      "topics": [
+        "Fetch",
+        "JSON",
+        "forms",
+        "error states"
+      ],
+      "section_code": "NT-C-019-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Quality",
+      "objective": "Accessibility, performance, SEO basics and testing",
+      "observable_evidence": "Audit report",
+      "topics": [
+        "Accessibility",
+        "performance",
+        "SEO basics",
+        "testing"
+      ],
+      "section_code": "NT-C-019-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Deployment capstone",
+      "objective": "Git, hosting, analytics basics and documentation",
+      "observable_evidence": "Live portfolio website",
+      "topics": [
+        "Git",
+        "hosting",
+        "analytics basics",
+        "documentation"
+      ],
+      "section_code": "NT-C-019-S04"
+    }
+  ]
+}

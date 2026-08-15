@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-031",
+  "source_pdf": "NT-C-031_CCNA.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Network foundation",
+      "objective": "Models, Ethernet, cabling and device roles",
+      "observable_evidence": "Topology lab",
+      "topics": [
+        "Models",
+        "Ethernet",
+        "cabling",
+        "device roles"
+      ],
+      "section_code": "NT-C-031-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "IP addressing",
+      "objective": "IPv4/IPv6, subnetting and address plans",
+      "observable_evidence": "Subnet workbook",
+      "topics": [
+        "IPv4/IPv6",
+        "subnetting",
+        "address plans"
+      ],
+      "section_code": "NT-C-031-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Switching",
+      "objective": "MAC learning, VLANs, trunks and STP",
+      "observable_evidence": "Switched network",
+      "topics": [
+        "MAC learning",
+        "VLANs",
+        "trunks",
+        "STP"
+      ],
+      "section_code": "NT-C-031-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Routing",
+      "objective": "Static routing and single-area OSPF basics",
+      "observable_evidence": "Routed network",
+      "topics": [
+        "Static routing",
+        "single-area OSPF basics"
+      ],
+      "section_code": "NT-C-031-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "IP services",
+      "objective": "DHCP, DNS, NTP, NAT and QoS concepts",
+      "observable_evidence": "Services lab",
+      "topics": [
+        "DHCP",
+        "DNS",
+        "NTP",
+        "NAT",
+        "QoS concepts"
+      ],
+      "section_code": "NT-C-031-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Wireless",
+      "objective": "WLAN components, configuration and security",
+      "observable_evidence": "Wireless design",
+      "topics": [
+        "WLAN components",
+        "configuration",
+        "security"
+      ],
+      "section_code": "NT-C-031-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Security and automation",
+      "objective": "Device hardening, ACLs, management and API concepts",
+      "observable_evidence": "Secured lab",
+      "topics": [
+        "Device hardening",
+        "ACLs",
+        "management",
+        "API concepts"
+      ],
+      "section_code": "NT-C-031-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Troubleshooting capstone",
+      "objective": "Verification commands, fault isolation and documentation",
+      "observable_evidence": "Integrated network",
+      "topics": [
+        "Verification commands",
+        "fault isolation",
+        "documentation"
+      ],
+      "section_code": "NT-C-031-S04"
+    }
+  ]
+}

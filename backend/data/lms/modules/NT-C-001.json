@@ -1,0 +1,112 @@
+{
+  "course_code": "NT-C-001",
+  "source_pdf": "NT-C-001_Python_Full_Stack.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Python foundations",
+      "objective": "Syntax, data types, control flow, functions",
+      "observable_evidence": "Working command-line programs",
+      "topics": [
+        "Syntax",
+        "data types",
+        "control flow",
+        "functions"
+      ],
+      "section_code": "NT-C-001-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Professional Python",
+      "objective": "OOP, files, exceptions, testing, Git",
+      "observable_evidence": "Tested Python package",
+      "topics": [
+        "OOP",
+        "files",
+        "exceptions",
+        "testing",
+        "Git"
+      ],
+      "section_code": "NT-C-001-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Database skills",
+      "objective": "SQL, schema design, CRUD, joins",
+      "observable_evidence": "Relational database exercise",
+      "topics": [
+        "SQL",
+        "schema design",
+        "CRUD",
+        "joins"
+      ],
+      "section_code": "NT-C-001-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Web foundation",
+      "objective": "HTML, CSS, responsive layouts, JavaScript DOM",
+      "observable_evidence": "Responsive front-end",
+      "topics": [
+        "HTML",
+        "CSS",
+        "responsive layouts",
+        "JavaScript DOM"
+      ],
+      "section_code": "NT-C-001-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Django core",
+      "objective": "URLs, requests, views, templates, forms",
+      "observable_evidence": "Server-rendered CRUD app",
+      "topics": [
+        "URLs",
+        "requests",
+        "views",
+        "templates",
+        "forms"
+      ],
+      "section_code": "NT-C-001-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Backend application",
+      "objective": "ORM, authentication, admin, REST APIs",
+      "observable_evidence": "Secured API and data model",
+      "topics": [
+        "ORM",
+        "authentication",
+        "admin",
+        "REST APIs"
+      ],
+      "section_code": "NT-C-001-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Modern front end",
+      "objective": "React components, state, routing, API integration",
+      "observable_evidence": "API-connected interface",
+      "topics": [
+        "React components",
+        "state",
+        "routing",
+        "API integration"
+      ],
+      "section_code": "NT-C-001-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Quality & deployment",
+      "objective": "Testing, security basics, deployment, documentation",
+      "observable_evidence": "Deployed capstone",
+      "topics": [
+        "Testing",
+        "security basics",
+        "deployment",
+        "documentation"
+      ],
+      "section_code": "NT-C-001-S04"
+    }
+  ]
+}

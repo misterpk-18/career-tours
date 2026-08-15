@@ -1,0 +1,104 @@
+{
+  "course_code": "NT-C-023",
+  "source_pdf": "NT-C-023_SQL.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Relational foundation",
+      "objective": "Tables, keys, relationships and normalisation",
+      "observable_evidence": "Schema exercise",
+      "topics": [
+        "Tables",
+        "keys",
+        "relationships",
+        "normalisation"
+      ],
+      "section_code": "NT-C-023-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Query basics",
+      "objective": "SELECT, filters, sorting and expressions",
+      "observable_evidence": "Query set",
+      "topics": [
+        "SELECT",
+        "filters",
+        "sorting",
+        "expressions"
+      ],
+      "section_code": "NT-C-023-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Joins",
+      "objective": "Inner/outer joins and set operations",
+      "observable_evidence": "Multi-table queries",
+      "topics": [
+        "Inner/outer joins",
+        "set operations"
+      ],
+      "section_code": "NT-C-023-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Aggregation",
+      "objective": "GROUP BY, HAVING and subqueries",
+      "observable_evidence": "Summary reports",
+      "topics": [
+        "GROUP BY",
+        "HAVING",
+        "subqueries"
+      ],
+      "section_code": "NT-C-023-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Data definition",
+      "objective": "DDL, constraints and data modification",
+      "observable_evidence": "Controlled schema",
+      "topics": [
+        "DDL",
+        "constraints",
+        "data modification"
+      ],
+      "section_code": "NT-C-023-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Analytical SQL",
+      "objective": "CTEs, window functions and date analysis",
+      "observable_evidence": "Analytics queries",
+      "topics": [
+        "CTEs",
+        "window functions",
+        "date analysis"
+      ],
+      "section_code": "NT-C-023-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Reliability",
+      "objective": "Transactions, views, permissions and indexes",
+      "observable_evidence": "Reliable database lab",
+      "topics": [
+        "Transactions",
+        "views",
+        "permissions",
+        "indexes"
+      ],
+      "section_code": "NT-C-023-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Business schema, queries and optimisation notes",
+      "observable_evidence": "SQL portfolio",
+      "topics": [
+        "Business schema",
+        "queries",
+        "optimisation notes"
+      ],
+      "section_code": "NT-C-023-S04"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "course_code": "NT-C-007",
+  "source_pdf": "NT-C-007_Azure_DevOps.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Azure foundation",
+      "objective": "Identity, subscriptions, network, compute, storage",
+      "observable_evidence": "Azure environment lab",
+      "topics": [
+        "Identity",
+        "subscriptions",
+        "network",
+        "compute",
+        "storage"
+      ],
+      "section_code": "NT-C-007-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Source control",
+      "objective": "Git workflow, Azure Repos, pull requests",
+      "observable_evidence": "Reviewed repository",
+      "topics": [
+        "Git workflow",
+        "Azure Repos",
+        "pull requests"
+      ],
+      "section_code": "NT-C-007-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Work planning",
+      "objective": "Azure Boards, backlogs, sprints, traceability",
+      "observable_evidence": "Delivery board",
+      "topics": [
+        "Azure Boards",
+        "backlogs",
+        "sprints",
+        "traceability"
+      ],
+      "section_code": "NT-C-007-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Build pipelines",
+      "objective": "YAML, agents, tests, artifacts",
+      "observable_evidence": "Continuous integration pipeline",
+      "topics": [
+        "YAML",
+        "agents",
+        "tests",
+        "artifacts"
+      ],
+      "section_code": "NT-C-007-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Release pipelines",
+      "objective": "Environments, approvals, deployment strategies",
+      "observable_evidence": "Controlled deployment",
+      "topics": [
+        "Environments",
+        "approvals",
+        "deployment strategies"
+      ],
+      "section_code": "NT-C-007-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Containers",
+      "objective": "Docker, ACR, AKS foundation",
+      "observable_evidence": "Container deployment",
+      "topics": [
+        "Docker",
+        "ACR",
+        "AKS foundation"
+      ],
+      "section_code": "NT-C-007-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Infrastructure as code",
+      "objective": "Bicep/Terraform, variables, secrets",
+      "observable_evidence": "Repeatable Azure stack",
+      "topics": [
+        "Bicep/Terraform",
+        "variables",
+        "secrets"
+      ],
+      "section_code": "NT-C-007-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Operations & security",
+      "objective": "Monitor, logs, Key Vault, policy, capstone",
+      "observable_evidence": "Observed secure platform",
+      "topics": [
+        "Monitor",
+        "logs",
+        "Key Vault",
+        "policy",
+        "capstone"
+      ],
+      "section_code": "NT-C-007-S04"
+    }
+  ]
+}

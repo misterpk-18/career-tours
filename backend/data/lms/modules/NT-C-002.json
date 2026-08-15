@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-002",
+  "source_pdf": "NT-C-002_Java_Full_Stack.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Java foundations",
+      "objective": "Syntax, control flow, methods, arrays",
+      "observable_evidence": "Console programs",
+      "topics": [
+        "Syntax",
+        "control flow",
+        "methods",
+        "arrays"
+      ],
+      "section_code": "NT-C-002-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Core Java",
+      "objective": "OOP, collections, exceptions, streams",
+      "observable_evidence": "Tested Java application",
+      "topics": [
+        "OOP",
+        "collections",
+        "exceptions",
+        "streams"
+      ],
+      "section_code": "NT-C-002-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Database access",
+      "objective": "SQL, schema design, JDBC",
+      "observable_evidence": "Database-backed exercise",
+      "topics": [
+        "SQL",
+        "schema design",
+        "JDBC"
+      ],
+      "section_code": "NT-C-002-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Front-end skills",
+      "objective": "HTML, CSS, JavaScript, React",
+      "observable_evidence": "Responsive UI",
+      "topics": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React"
+      ],
+      "section_code": "NT-C-002-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Spring Boot",
+      "objective": "Project structure, dependency injection, configuration",
+      "observable_evidence": "Spring Boot service",
+      "topics": [
+        "Project structure",
+        "dependency injection",
+        "configuration"
+      ],
+      "section_code": "NT-C-002-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "REST & persistence",
+      "objective": "Spring MVC, REST, JPA/Hibernate",
+      "observable_evidence": "CRUD REST API",
+      "topics": [
+        "Spring MVC",
+        "REST",
+        "JPA/Hibernate"
+      ],
+      "section_code": "NT-C-002-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Security & testing",
+      "objective": "Validation, Spring Security, JUnit, API testing",
+      "observable_evidence": "Secured tested service",
+      "topics": [
+        "Validation",
+        "Spring Security",
+        "JUnit",
+        "API testing"
+      ],
+      "section_code": "NT-C-002-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Integration & deployment",
+      "objective": "Front/back integration, packaging, deployment",
+      "observable_evidence": "Deployed capstone",
+      "topics": [
+        "Front/back integration",
+        "packaging",
+        "deployment"
+      ],
+      "section_code": "NT-C-002-S04"
+    }
+  ]
+}

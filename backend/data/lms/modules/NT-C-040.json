@@ -1,0 +1,109 @@
+{
+  "course_code": "NT-C-040",
+  "source_pdf": "NT-C-040_ServiceNow.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Platform foundation",
+      "objective": "Navigation, instances, tables and records",
+      "observable_evidence": "Configured practice app",
+      "topics": [
+        "Navigation",
+        "instances",
+        "tables",
+        "records"
+      ],
+      "section_code": "NT-C-040-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Users and access",
+      "objective": "Users, groups, roles and ACL concepts",
+      "observable_evidence": "Access model",
+      "topics": [
+        "Users",
+        "groups",
+        "roles",
+        "ACL concepts"
+      ],
+      "section_code": "NT-C-040-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Forms and lists",
+      "objective": "Fields, views, UI policies and data quality",
+      "observable_evidence": "Configured interface",
+      "topics": [
+        "Fields",
+        "views",
+        "UI policies",
+        "data quality"
+      ],
+      "section_code": "NT-C-040-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "ITSM processes",
+      "objective": "Incident, request, problem and change workflows",
+      "observable_evidence": "ITSM case",
+      "topics": [
+        "Incident",
+        "request",
+        "problem",
+        "change workflows"
+      ],
+      "section_code": "NT-C-040-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Automation",
+      "objective": "Flow Designer, approvals, notifications and SLAs",
+      "observable_evidence": "Automated workflow",
+      "topics": [
+        "Flow Designer",
+        "approvals",
+        "notifications",
+        "SLAs"
+      ],
+      "section_code": "NT-C-040-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Reporting",
+      "objective": "Reports, dashboards, metrics and service visibility",
+      "observable_evidence": "Service dashboard",
+      "topics": [
+        "Reports",
+        "dashboards",
+        "metrics",
+        "service visibility"
+      ],
+      "section_code": "NT-C-040-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Scripting and integration",
+      "objective": "Client/server concepts, APIs and update discipline",
+      "observable_evidence": "Scripted feature",
+      "topics": [
+        "Client/server concepts",
+        "APIs",
+        "update discipline"
+      ],
+      "section_code": "NT-C-040-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Security, testing, deployment and documentation",
+      "observable_evidence": "ServiceNow solution",
+      "topics": [
+        "Security",
+        "testing",
+        "deployment",
+        "documentation"
+      ],
+      "section_code": "NT-C-040-S04"
+    }
+  ]
+}

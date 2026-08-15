@@ -41,7 +41,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 | **Project Management** | `projects`, `resumes` |
 | **Skills Engine** | `skills`, `skill_aliases`, `student_skills`, `project_skills`, `occupation_skills`, `course_skills` |
 | **Career Matching** | `occupations`, `student_career_matches`, `career_skill_gaps` |
-| **Course Recommendation** | `courses`, `course_recommendations` |
+| **Course Recommendation** | `courses`, `course_modules`, `course_recommendations` |
 | **AI/LLM Summaries** | `llm_summaries` |
 
 ---
@@ -145,7 +145,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Purpose:** Catalog of learning courses (LMS content) with duration, level, and active flag, used to remediate skill gaps.
 **Primary Key:** `course_id` (uuid)
 **Foreign Keys:** none
-**Referenced By:** `course_skills`, `course_recommendations`, `llm_summaries`
+**Referenced By:** `course_skills`, `course_modules`, `course_recommendations`, `llm_summaries`
 **Relationships:** Central hub of the Course Recommendation domain.
 **Note:** `course_code` (added by migration `009_courses_course_code.sql`) carries the knowledge corpus's own identifier, `NT-C-001`..`NT-C-040`, under a **partial** unique index — the pre-corpus courses have no code, so several NULLs must coexist. It exists so the importer can upsert on an identifier the corpus will not re-word between versions; `course_name` would silently insert a duplicate instead of updating. Courses retired from the corpus are set `is_active = false`, never deleted, because `course_recommendations` cascades. See [data-pipelines.md](data-pipelines.md).
 
@@ -155,6 +155,14 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Foreign Keys:** `course_id` → `courses.course_id` (CASCADE); `skill_id` → `skills.skill_id` (CASCADE)
 **Referenced By:** none
 **Relationships:** Junction table realizing **courses ↔ skills (M:N)**. `UNIQUE(course_id, skill_id)`. CHECK: `coverage_weight` 0–100.
+
+## course_modules
+**Purpose:** The per-course syllabus from the knowledge corpus — eight ordered modules per course (320 rows over 40 courses), each with its title, learning objective, the observable evidence a learner must produce, and the topic list. Display data for the course curriculum view.
+**Primary Key:** `module_id` (uuid)
+**Foreign Keys:** `course_id` → `courses.course_id` (CASCADE)
+**Referenced By:** none
+**Relationships:** Child table of **courses (1:N)**, ordered by `module_number`. `UNIQUE(course_id, module_number)`. CHECK: `module_number > 0`, `topics` is a JSON array.
+**Note:** Added by migration `011_course_modules.sql`, populated by `extract_course_modules.py` + `load_course_modules.py` — a **regex parser, not an LLM**, because the corpus PDFs are template-generated and all 320 modules parse exactly. `topics` is `jsonb` rather than a child table: it is derived by splitting the `objective` line, so a topic has no identity and nothing joins on one. `objective` keeps the raw string as the source of truth. `section_code` (`NT-C-001-S01`..`S04`) groups modules into the corpus's four Deep Knowledge sections, two modules each. Not currently read by the matching engine. See [data-pipelines.md](data-pipelines.md).
 
 ## course_recommendations
 **Purpose:** The recommendation engine's output — which course is recommended to a student for a given occupation target, how much of the gap it covers, and its rank among alternatives.
@@ -180,7 +188,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 | `project_id` | projects (PK), resumes (nullable), project_skills, student_career_matches (NOT NULL), career_skill_gaps (nullable), course_recommendations (nullable), llm_summaries (NOT NULL) |
 | `skill_id` | skills (PK), skill_aliases, student_skills, project_skills, occupation_skills, course_skills, career_skill_gaps |
 | `occupation_id` | occupations (PK), occupation_skills, student_career_matches, career_skill_gaps, course_recommendations, llm_summaries (nullable) |
-| `course_id` | courses (PK), course_skills, course_recommendations, llm_summaries (nullable) |
+| `course_id` | courses (PK), course_skills, course_modules, course_recommendations, llm_summaries (nullable) |
 | `question_id` | questionnaires (PK), questionnaire_responses |
 
 ---
@@ -544,6 +552,7 @@ flowchart TD
 
     subgraph CR["Course Recommendation"]
         CRS[(courses)]
+        CMOD[(course_modules)]
         CREC[(course_recommendations)]
     end
 
@@ -579,6 +588,7 @@ flowchart TD
 
     CSG -. "inferred: skill_id match" .-> CSKILL
     CRS --> CSKILL
+    CRS --> CMOD
     SKL --> CSKILL
 
     STUDENTS --> CREC

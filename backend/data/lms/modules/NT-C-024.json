@@ -1,0 +1,104 @@
+{
+  "course_code": "NT-C-024",
+  "source_pdf": "NT-C-024_AI_and_Machine_Learning.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Python and data",
+      "objective": "NumPy, pandas and notebooks",
+      "observable_evidence": "Data exercises",
+      "topics": [
+        "NumPy",
+        "pandas",
+        "notebooks"
+      ],
+      "section_code": "NT-C-024-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Math and statistics",
+      "objective": "Probability, vectors, distributions and metrics",
+      "observable_evidence": "Concept workbook",
+      "topics": [
+        "Probability",
+        "vectors",
+        "distributions",
+        "metrics"
+      ],
+      "section_code": "NT-C-024-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Preprocessing",
+      "objective": "Cleaning, encoding, scaling and splitting",
+      "observable_evidence": "Prepared pipeline",
+      "topics": [
+        "Cleaning",
+        "encoding",
+        "scaling",
+        "splitting"
+      ],
+      "section_code": "NT-C-024-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Supervised learning",
+      "objective": "Regression, classification and baselines",
+      "observable_evidence": "Compared models",
+      "topics": [
+        "Regression",
+        "classification",
+        "baselines"
+      ],
+      "section_code": "NT-C-024-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Unsupervised learning",
+      "objective": "Clustering and dimensionality reduction",
+      "observable_evidence": "Segmentation study",
+      "topics": [
+        "Clustering",
+        "dimensionality reduction"
+      ],
+      "section_code": "NT-C-024-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Model improvement",
+      "objective": "Features, validation, tuning and imbalance",
+      "observable_evidence": "Validated model",
+      "topics": [
+        "Features",
+        "validation",
+        "tuning",
+        "imbalance"
+      ],
+      "section_code": "NT-C-024-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Applied AI",
+      "objective": "NLP and computer-vision foundations",
+      "observable_evidence": "Applied mini project",
+      "topics": [
+        "NLP",
+        "computer-vision foundations"
+      ],
+      "section_code": "NT-C-024-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Delivery and ethics",
+      "objective": "Pipelines, deployment basics, monitoring and responsible use",
+      "observable_evidence": "Capstone solution",
+      "topics": [
+        "Pipelines",
+        "deployment basics",
+        "monitoring",
+        "responsible use"
+      ],
+      "section_code": "NT-C-024-S04"
+    }
+  ]
+}

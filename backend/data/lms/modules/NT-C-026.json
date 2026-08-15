@@ -1,0 +1,107 @@
+{
+  "course_code": "NT-C-026",
+  "source_pdf": "NT-C-026_AWS_Cloud.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Cloud foundation",
+      "objective": "Regions, availability zones, shared responsibility and pricing",
+      "observable_evidence": "Architecture note",
+      "topics": [
+        "Regions",
+        "availability zones",
+        "shared responsibility",
+        "pricing"
+      ],
+      "section_code": "NT-C-026-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Identity",
+      "objective": "IAM users, roles, policies and least privilege",
+      "observable_evidence": "Access lab",
+      "topics": [
+        "IAM users",
+        "roles",
+        "policies",
+        "least privilege"
+      ],
+      "section_code": "NT-C-026-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Compute and storage",
+      "objective": "EC2, EBS, S3 and lifecycle",
+      "observable_evidence": "Hosted workload",
+      "topics": [
+        "EC2",
+        "EBS",
+        "S3",
+        "lifecycle"
+      ],
+      "section_code": "NT-C-026-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Networking",
+      "objective": "VPC, subnets, routing, security groups and DNS",
+      "observable_evidence": "Network design",
+      "topics": [
+        "VPC",
+        "subnets",
+        "routing",
+        "security groups",
+        "DNS"
+      ],
+      "section_code": "NT-C-026-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Databases",
+      "objective": "RDS and managed data choices",
+      "observable_evidence": "Database lab",
+      "topics": [
+        "RDS",
+        "managed data choices"
+      ],
+      "section_code": "NT-C-026-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Availability",
+      "objective": "Load balancing, Auto Scaling and backups",
+      "observable_evidence": "Resilient design",
+      "topics": [
+        "Load balancing",
+        "Auto Scaling",
+        "backups"
+      ],
+      "section_code": "NT-C-026-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Serverless",
+      "objective": "Lambda, events and API basics",
+      "observable_evidence": "Serverless function",
+      "topics": [
+        "Lambda",
+        "events",
+        "API basics"
+      ],
+      "section_code": "NT-C-026-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Operations capstone",
+      "objective": "CloudWatch, security, cost and documentation",
+      "observable_evidence": "Monitored AWS environment",
+      "topics": [
+        "CloudWatch",
+        "security",
+        "cost",
+        "documentation"
+      ],
+      "section_code": "NT-C-026-S04"
+    }
+  ]
+}

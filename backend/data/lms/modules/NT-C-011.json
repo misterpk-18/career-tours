@@ -1,0 +1,111 @@
+{
+  "course_code": "NT-C-011",
+  "source_pdf": "NT-C-011_NET_Full_Stack.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "C# foundations",
+      "objective": "Syntax, control flow, methods and types",
+      "observable_evidence": "Working console programs",
+      "topics": [
+        "Syntax",
+        "control flow",
+        "methods",
+        "types"
+      ],
+      "section_code": "NT-C-011-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Professional C#",
+      "objective": "OOP, collections, LINQ, async and testing",
+      "observable_evidence": "Tested C# solution",
+      "topics": [
+        "OOP",
+        "collections",
+        "LINQ",
+        "async",
+        "testing"
+      ],
+      "section_code": "NT-C-011-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Database layer",
+      "objective": "SQL, schema design and Entity Framework Core",
+      "observable_evidence": "Persistent data model",
+      "topics": [
+        "SQL",
+        "schema design",
+        "Entity Framework Core"
+      ],
+      "section_code": "NT-C-011-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Web foundation",
+      "objective": "HTML, CSS, JavaScript and responsive UI",
+      "observable_evidence": "Responsive front end",
+      "topics": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "responsive UI"
+      ],
+      "section_code": "NT-C-011-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "ASP.NET Core",
+      "objective": "MVC, routing, configuration and dependency injection",
+      "observable_evidence": "Server-side application",
+      "topics": [
+        "MVC",
+        "routing",
+        "configuration",
+        "dependency injection"
+      ],
+      "section_code": "NT-C-011-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "APIs and security",
+      "objective": "REST, validation, authentication and authorization",
+      "observable_evidence": "Secured API",
+      "topics": [
+        "REST",
+        "validation",
+        "authentication",
+        "authorization"
+      ],
+      "section_code": "NT-C-011-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Front-end integration",
+      "objective": "React or Angular, forms, state and API calls",
+      "observable_evidence": "Integrated interface",
+      "topics": [
+        "React or Angular",
+        "forms",
+        "state",
+        "API calls"
+      ],
+      "section_code": "NT-C-011-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Quality and deployment",
+      "objective": "Testing, logging, Git, deployment and documentation",
+      "observable_evidence": "Deployed capstone",
+      "topics": [
+        "Testing",
+        "logging",
+        "Git",
+        "deployment",
+        "documentation"
+      ],
+      "section_code": "NT-C-011-S04"
+    }
+  ]
+}

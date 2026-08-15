@@ -1,0 +1,110 @@
+{
+  "course_code": "NT-C-030",
+  "source_pdf": "NT-C-030_Hardware_and_Networking.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Hardware foundation",
+      "objective": "Components, ESD safety, tools and compatibility",
+      "observable_evidence": "Component identification",
+      "topics": [
+        "Components",
+        "ESD safety",
+        "tools",
+        "compatibility"
+      ],
+      "section_code": "NT-C-030-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Assembly and firmware",
+      "objective": "Build, BIOS/UEFI and diagnostics",
+      "observable_evidence": "Working PC build",
+      "topics": [
+        "Build",
+        "BIOS/UEFI",
+        "diagnostics"
+      ],
+      "section_code": "NT-C-030-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Operating systems",
+      "objective": "Install, drivers, users, updates and recovery",
+      "observable_evidence": "Configured workstation",
+      "topics": [
+        "Install",
+        "drivers",
+        "users",
+        "updates",
+        "recovery"
+      ],
+      "section_code": "NT-C-030-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Troubleshooting",
+      "objective": "Boot, performance, storage and peripheral faults",
+      "observable_evidence": "Fault-resolution log",
+      "topics": [
+        "Boot",
+        "performance",
+        "storage",
+        "peripheral faults"
+      ],
+      "section_code": "NT-C-030-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Networking basics",
+      "objective": "Models, media, Ethernet and devices",
+      "observable_evidence": "Network diagram",
+      "topics": [
+        "Models",
+        "media",
+        "Ethernet",
+        "devices"
+      ],
+      "section_code": "NT-C-030-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "IP and cabling",
+      "objective": "IPv4, subnet basics, Wi-Fi and cabling",
+      "observable_evidence": "Connected lab",
+      "topics": [
+        "IPv4",
+        "subnet basics",
+        "Wi-Fi",
+        "cabling"
+      ],
+      "section_code": "NT-C-030-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Network devices",
+      "objective": "Switch/router basics, DHCP, DNS and security",
+      "observable_evidence": "Small network",
+      "topics": [
+        "Switch/router basics",
+        "DHCP",
+        "DNS",
+        "security"
+      ],
+      "section_code": "NT-C-030-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Support capstone",
+      "objective": "Documentation, backup, ticketing and preventive maintenance",
+      "observable_evidence": "Complete support lab",
+      "topics": [
+        "Documentation",
+        "backup",
+        "ticketing",
+        "preventive maintenance"
+      ],
+      "section_code": "NT-C-030-S04"
+    }
+  ]
+}

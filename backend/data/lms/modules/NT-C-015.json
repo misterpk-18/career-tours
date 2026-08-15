@@ -1,0 +1,107 @@
+{
+  "course_code": "NT-C-015",
+  "source_pdf": "NT-C-015_Core_Java.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Java setup",
+      "objective": "JDK, syntax, types and operators",
+      "observable_evidence": "Basic programs",
+      "topics": [
+        "JDK",
+        "syntax",
+        "types",
+        "operators"
+      ],
+      "section_code": "NT-C-015-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Control and methods",
+      "objective": "Conditions, loops, arrays and methods",
+      "observable_evidence": "Logic exercises",
+      "topics": [
+        "Conditions",
+        "loops",
+        "arrays",
+        "methods"
+      ],
+      "section_code": "NT-C-015-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Object-oriented Java",
+      "objective": "Classes, inheritance, interfaces and polymorphism",
+      "observable_evidence": "OOP application",
+      "topics": [
+        "Classes",
+        "inheritance",
+        "interfaces",
+        "polymorphism"
+      ],
+      "section_code": "NT-C-015-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Collections and generics",
+      "objective": "Lists, sets, maps and type safety",
+      "observable_evidence": "Collection-based program",
+      "topics": [
+        "Lists",
+        "sets",
+        "maps",
+        "type safety"
+      ],
+      "section_code": "NT-C-015-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Exceptions and files",
+      "objective": "Error handling, I/O and logging",
+      "observable_evidence": "Reliable file utility",
+      "topics": [
+        "Error handling",
+        "I/O",
+        "logging"
+      ],
+      "section_code": "NT-C-015-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Modern Java",
+      "objective": "Lambdas, streams and date/time",
+      "observable_evidence": "Data-processing task",
+      "topics": [
+        "Lambdas",
+        "streams",
+        "date/time"
+      ],
+      "section_code": "NT-C-015-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "JDBC and SQL",
+      "objective": "Database access, CRUD and transactions",
+      "observable_evidence": "Database-backed app",
+      "topics": [
+        "Database access",
+        "CRUD",
+        "transactions"
+      ],
+      "section_code": "NT-C-015-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Testing and capstone",
+      "objective": "JUnit, build tools, Git and documentation",
+      "observable_evidence": "Tested Java project",
+      "topics": [
+        "JUnit",
+        "build tools",
+        "Git",
+        "documentation"
+      ],
+      "section_code": "NT-C-015-S04"
+    }
+  ]
+}

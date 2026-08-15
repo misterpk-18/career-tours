@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-004",
+  "source_pdf": "NT-C-004_Data_Analytics.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Analytics foundation",
+      "objective": "Business questions, data types, KPIs",
+      "observable_evidence": "Problem statement and KPI map",
+      "topics": [
+        "Business questions",
+        "data types",
+        "KPIs"
+      ],
+      "section_code": "NT-C-004-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Excel analysis",
+      "objective": "Functions, lookup, pivot, cleaning",
+      "observable_evidence": "Excel analysis workbook",
+      "topics": [
+        "Functions",
+        "lookup",
+        "pivot",
+        "cleaning"
+      ],
+      "section_code": "NT-C-004-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "SQL",
+      "objective": "Queries, joins, grouping, windows",
+      "observable_evidence": "SQL case exercise",
+      "topics": [
+        "Queries",
+        "joins",
+        "grouping",
+        "windows"
+      ],
+      "section_code": "NT-C-004-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Data quality",
+      "objective": "Missing, duplicate, invalid and inconsistent data",
+      "observable_evidence": "Cleaned dataset",
+      "topics": [
+        "Missing",
+        "duplicate",
+        "invalid",
+        "inconsistent data"
+      ],
+      "section_code": "NT-C-004-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Python analytics",
+      "objective": "pandas, transformation, automation",
+      "observable_evidence": "Analysis notebook",
+      "topics": [
+        "pandas",
+        "transformation",
+        "automation"
+      ],
+      "section_code": "NT-C-004-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Statistics",
+      "objective": "Summary, variation, correlation, interpretation",
+      "observable_evidence": "Statistical insight note",
+      "topics": [
+        "Summary",
+        "variation",
+        "correlation",
+        "interpretation"
+      ],
+      "section_code": "NT-C-004-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Visualization & BI",
+      "objective": "Charts, dashboards, filters, storytelling",
+      "observable_evidence": "Interactive dashboard",
+      "topics": [
+        "Charts",
+        "dashboards",
+        "filters",
+        "storytelling"
+      ],
+      "section_code": "NT-C-004-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Business capstone",
+      "objective": "End-to-end analysis and presentation",
+      "observable_evidence": "Decision-ready report",
+      "topics": [
+        "End-to-end analysis",
+        "presentation"
+      ],
+      "section_code": "NT-C-004-S04"
+    }
+  ]
+}

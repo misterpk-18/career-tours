@@ -1,0 +1,105 @@
+{
+  "course_code": "NT-C-017",
+  "source_pdf": "NT-C-017_Cplusplus_Programming.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "C++ foundation",
+      "objective": "Types, control, functions and references",
+      "observable_evidence": "Basic programs",
+      "topics": [
+        "Types",
+        "control",
+        "functions",
+        "references"
+      ],
+      "section_code": "NT-C-017-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Object-oriented C++",
+      "objective": "Classes, constructors, inheritance and polymorphism",
+      "observable_evidence": "OOP application",
+      "topics": [
+        "Classes",
+        "constructors",
+        "inheritance",
+        "polymorphism"
+      ],
+      "section_code": "NT-C-017-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Memory and resources",
+      "objective": "Pointers, RAII and smart pointers",
+      "observable_evidence": "Safe resource exercise",
+      "topics": [
+        "Pointers",
+        "RAII",
+        "smart pointers"
+      ],
+      "section_code": "NT-C-017-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "STL containers",
+      "objective": "Vector, map, set and iterators",
+      "observable_evidence": "Container application",
+      "topics": [
+        "Vector",
+        "map",
+        "set",
+        "iterators"
+      ],
+      "section_code": "NT-C-017-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Algorithms",
+      "objective": "Searching, sorting and STL algorithms",
+      "observable_evidence": "Algorithm exercises",
+      "topics": [
+        "Searching",
+        "sorting",
+        "STL algorithms"
+      ],
+      "section_code": "NT-C-017-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Templates and exceptions",
+      "objective": "Generic code and error handling",
+      "observable_evidence": "Reusable component",
+      "topics": [
+        "Generic code",
+        "error handling"
+      ],
+      "section_code": "NT-C-017-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Files and testing",
+      "objective": "I/O, unit testing and debugging",
+      "observable_evidence": "Tested utility",
+      "topics": [
+        "I/O",
+        "unit testing",
+        "debugging"
+      ],
+      "section_code": "NT-C-017-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Architecture, build, Git and documentation",
+      "observable_evidence": "Completed C++ project",
+      "topics": [
+        "Architecture",
+        "build",
+        "Git",
+        "documentation"
+      ],
+      "section_code": "NT-C-017-S04"
+    }
+  ]
+}

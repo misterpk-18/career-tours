@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-022",
+  "source_pdf": "NT-C-022_Advanced_Excel.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Formula foundation",
+      "objective": "References, logic, text, date and error handling",
+      "observable_evidence": "Formula exercises",
+      "topics": [
+        "References",
+        "logic",
+        "text",
+        "date",
+        "error handling"
+      ],
+      "section_code": "NT-C-022-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Lookup methods",
+      "objective": "XLOOKUP, INDEX/MATCH and dynamic arrays",
+      "observable_evidence": "Lookup workbook",
+      "topics": [
+        "XLOOKUP",
+        "INDEX/MATCH",
+        "dynamic arrays"
+      ],
+      "section_code": "NT-C-022-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Tables and controls",
+      "objective": "Structured tables, validation and protection",
+      "observable_evidence": "Controlled data sheet",
+      "topics": [
+        "Structured tables",
+        "validation",
+        "protection"
+      ],
+      "section_code": "NT-C-022-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Data cleaning",
+      "objective": "Text-to-columns, remove duplicates and quality checks",
+      "observable_evidence": "Clean dataset",
+      "topics": [
+        "Text-to-columns",
+        "remove duplicates",
+        "quality checks"
+      ],
+      "section_code": "NT-C-022-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Pivot analysis",
+      "objective": "PivotTables, PivotCharts, slicers and grouping",
+      "observable_evidence": "Interactive analysis",
+      "topics": [
+        "PivotTables",
+        "PivotCharts",
+        "slicers",
+        "grouping"
+      ],
+      "section_code": "NT-C-022-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Dashboard design",
+      "objective": "KPIs, charts and layout",
+      "observable_evidence": "Management dashboard",
+      "topics": [
+        "KPIs",
+        "charts",
+        "layout"
+      ],
+      "section_code": "NT-C-022-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Power Query",
+      "objective": "Import, transform, combine and refresh",
+      "observable_evidence": "Repeatable query",
+      "topics": [
+        "Import",
+        "transform",
+        "combine",
+        "refresh"
+      ],
+      "section_code": "NT-C-022-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Automation capstone",
+      "objective": "Macros basics, audit and documentation",
+      "observable_evidence": "Automated reporting workbook",
+      "topics": [
+        "Macros basics",
+        "audit",
+        "documentation"
+      ],
+      "section_code": "NT-C-022-S04"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "course_code": "NT-C-021",
+  "source_pdf": "NT-C-021_Business_Analysis.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "BA lifecycle",
+      "objective": "Problem definition, scope and stakeholders",
+      "observable_evidence": "Project charter",
+      "topics": [
+        "Problem definition",
+        "scope",
+        "stakeholders"
+      ],
+      "section_code": "NT-C-021-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Elicitation",
+      "objective": "Interviews, workshops, observation and surveys",
+      "observable_evidence": "Elicitation plan",
+      "topics": [
+        "Interviews",
+        "workshops",
+        "observation",
+        "surveys"
+      ],
+      "section_code": "NT-C-021-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Process analysis",
+      "objective": "As-is/to-be maps, gaps and root causes",
+      "observable_evidence": "Process model",
+      "topics": [
+        "As-is/to-be maps",
+        "gaps",
+        "root causes"
+      ],
+      "section_code": "NT-C-021-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Requirements",
+      "objective": "Functional/non-functional requirements and traceability",
+      "observable_evidence": "Requirements document",
+      "topics": [
+        "Functional/non-functional requirements",
+        "traceability"
+      ],
+      "section_code": "NT-C-021-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Agile analysis",
+      "objective": "Epics, user stories and acceptance criteria",
+      "observable_evidence": "Prioritised backlog",
+      "topics": [
+        "Epics",
+        "user stories",
+        "acceptance criteria"
+      ],
+      "section_code": "NT-C-021-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Data and reporting",
+      "objective": "Data needs, KPIs and basic SQL interpretation",
+      "observable_evidence": "Reporting specification",
+      "topics": [
+        "Data needs",
+        "KPIs",
+        "basic SQL interpretation"
+      ],
+      "section_code": "NT-C-021-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Solution validation",
+      "objective": "UAT planning, test scenarios and defects",
+      "observable_evidence": "UAT pack",
+      "topics": [
+        "UAT planning",
+        "test scenarios",
+        "defects"
+      ],
+      "section_code": "NT-C-021-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Capstone",
+      "objective": "Change, communication and benefits tracking",
+      "observable_evidence": "Complete BA case",
+      "topics": [
+        "Change",
+        "communication",
+        "benefits tracking"
+      ],
+      "section_code": "NT-C-021-S04"
+    }
+  ]
+}

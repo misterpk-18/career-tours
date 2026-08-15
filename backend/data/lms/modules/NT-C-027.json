@@ -1,0 +1,106 @@
+{
+  "course_code": "NT-C-027",
+  "source_pdf": "NT-C-027_Azure_Cloud.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Azure foundation",
+      "objective": "Subscriptions, regions, resource groups and governance",
+      "observable_evidence": "Resource plan",
+      "topics": [
+        "Subscriptions",
+        "regions",
+        "resource groups",
+        "governance"
+      ],
+      "section_code": "NT-C-027-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Identity",
+      "objective": "Microsoft Entra ID, RBAC and least privilege",
+      "observable_evidence": "Access lab",
+      "topics": [
+        "Microsoft Entra ID",
+        "RBAC",
+        "least privilege"
+      ],
+      "section_code": "NT-C-027-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Compute",
+      "objective": "Virtual machines, app hosting and scale options",
+      "observable_evidence": "Hosted workload",
+      "topics": [
+        "Virtual machines",
+        "app hosting",
+        "scale options"
+      ],
+      "section_code": "NT-C-027-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Storage",
+      "objective": "Accounts, blobs, files and protection",
+      "observable_evidence": "Storage lab",
+      "topics": [
+        "Accounts",
+        "blobs",
+        "files",
+        "protection"
+      ],
+      "section_code": "NT-C-027-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Networking",
+      "objective": "VNets, subnets, NSGs, DNS and connectivity",
+      "observable_evidence": "Network design",
+      "topics": [
+        "VNets",
+        "subnets",
+        "NSGs",
+        "DNS",
+        "connectivity"
+      ],
+      "section_code": "NT-C-027-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Data services",
+      "objective": "Azure SQL and managed database choices",
+      "observable_evidence": "Database lab",
+      "topics": [
+        "Azure SQL",
+        "managed database choices"
+      ],
+      "section_code": "NT-C-027-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Resilience",
+      "objective": "Availability, backup and disaster recovery",
+      "observable_evidence": "Recovery plan",
+      "topics": [
+        "Availability",
+        "backup",
+        "disaster recovery"
+      ],
+      "section_code": "NT-C-027-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Operations capstone",
+      "objective": "Azure Monitor, security, cost and documentation",
+      "observable_evidence": "Monitored Azure environment",
+      "topics": [
+        "Azure Monitor",
+        "security",
+        "cost",
+        "documentation"
+      ],
+      "section_code": "NT-C-027-S04"
+    }
+  ]
+}

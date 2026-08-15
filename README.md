@@ -60,7 +60,7 @@ career-tours/
 │   │   └── storage/          # AWS S3 upload/retrieval for resume files
 │   ├── scripts/              # one-off catalog imports — see docs/data-pipelines.md
 │   ├── data/                 # reference data the matching engine reads
-│   │   ├── lms/              # course knowledge corpus: 40 split PDFs + extracted JSON
+│   │   ├── lms/              # course knowledge corpus: 40 split PDFs + extracted profiles/modules
 │   │   ├── imports/esco/     # careers.csv, skills.csv, career_skills.csv + validate.py
 │   │   └── skill_taxonomy.json  # canonical skill vocabulary (repo-owned)
 │   ├── migrations/           # incremental schema migrations

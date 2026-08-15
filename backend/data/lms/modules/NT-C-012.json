@@ -1,0 +1,109 @@
+{
+  "course_code": "NT-C-012",
+  "source_pdf": "NT-C-012_MERN_Stack.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "JavaScript foundation",
+      "objective": "Modern syntax, functions, objects and async",
+      "observable_evidence": "JavaScript exercises",
+      "topics": [
+        "Modern syntax",
+        "functions",
+        "objects",
+        "async"
+      ],
+      "section_code": "NT-C-012-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Web UI",
+      "objective": "Semantic HTML, CSS and responsive design",
+      "observable_evidence": "Responsive pages",
+      "topics": [
+        "Semantic HTML",
+        "CSS",
+        "responsive design"
+      ],
+      "section_code": "NT-C-012-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "React core",
+      "objective": "Components, props, state and hooks",
+      "observable_evidence": "Component application",
+      "topics": [
+        "Components",
+        "props",
+        "state",
+        "hooks"
+      ],
+      "section_code": "NT-C-012-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "React application",
+      "objective": "Routing, forms, validation and API integration",
+      "observable_evidence": "Multi-page SPA",
+      "topics": [
+        "Routing",
+        "forms",
+        "validation",
+        "API integration"
+      ],
+      "section_code": "NT-C-012-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Node and Express",
+      "objective": "Server setup, middleware and routing",
+      "observable_evidence": "REST service",
+      "topics": [
+        "Server setup",
+        "middleware",
+        "routing"
+      ],
+      "section_code": "NT-C-012-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "MongoDB",
+      "objective": "Documents, modelling, CRUD, aggregation and indexes",
+      "observable_evidence": "Persistent data layer",
+      "topics": [
+        "Documents",
+        "modelling",
+        "CRUD",
+        "aggregation",
+        "indexes"
+      ],
+      "section_code": "NT-C-012-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Security and quality",
+      "objective": "Authentication, authorization, testing and Git",
+      "observable_evidence": "Secured tested app",
+      "topics": [
+        "Authentication",
+        "authorization",
+        "testing",
+        "Git"
+      ],
+      "section_code": "NT-C-012-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Deployment capstone",
+      "objective": "Environment, logging, hosting and documentation",
+      "observable_evidence": "Deployed MERN project",
+      "topics": [
+        "Environment",
+        "logging",
+        "hosting",
+        "documentation"
+      ],
+      "section_code": "NT-C-012-S04"
+    }
+  ]
+}

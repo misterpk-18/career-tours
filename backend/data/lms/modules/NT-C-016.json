@@ -1,0 +1,103 @@
+{
+  "course_code": "NT-C-016",
+  "source_pdf": "NT-C-016_C_Programming.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "Environment and syntax",
+      "objective": "Compiler, variables, types and I/O",
+      "observable_evidence": "Basic programs",
+      "topics": [
+        "Compiler",
+        "variables",
+        "types",
+        "I/O"
+      ],
+      "section_code": "NT-C-016-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Control flow",
+      "objective": "Conditions, loops and operators",
+      "observable_evidence": "Logic exercises",
+      "topics": [
+        "Conditions",
+        "loops",
+        "operators"
+      ],
+      "section_code": "NT-C-016-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Functions",
+      "objective": "Parameters, return values, scope and headers",
+      "observable_evidence": "Modular program",
+      "topics": [
+        "Parameters",
+        "return values",
+        "scope",
+        "headers"
+      ],
+      "section_code": "NT-C-016-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Arrays and strings",
+      "objective": "Memory layout and text processing",
+      "observable_evidence": "Array/string utilities",
+      "topics": [
+        "Memory layout",
+        "text processing"
+      ],
+      "section_code": "NT-C-016-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Pointers",
+      "objective": "Addresses, pointers and dynamic memory",
+      "observable_evidence": "Memory exercises",
+      "topics": [
+        "Addresses",
+        "pointers",
+        "dynamic memory"
+      ],
+      "section_code": "NT-C-016-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Structures",
+      "objective": "Structs, enums and data organisation",
+      "observable_evidence": "Record application",
+      "topics": [
+        "Structs",
+        "enums",
+        "data organisation"
+      ],
+      "section_code": "NT-C-016-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Files and errors",
+      "objective": "File I/O, validation and return codes",
+      "observable_evidence": "Persistent utility",
+      "topics": [
+        "File I/O",
+        "validation",
+        "return codes"
+      ],
+      "section_code": "NT-C-016-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Debugging capstone",
+      "objective": "Modular design, testing and debugging",
+      "observable_evidence": "Completed C project",
+      "topics": [
+        "Modular design",
+        "testing",
+        "debugging"
+      ],
+      "section_code": "NT-C-016-S04"
+    }
+  ]
+}

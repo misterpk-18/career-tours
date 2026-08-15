@@ -31,7 +31,8 @@ backend/data/lms/
 ├── info.pdf                              # front matter, pages 1-12
 ├── courses/NT-C-001_Python_Full_Stack.pdf  # 40 files, 10 pages each
 │   ...  NT-C-040_ServiceNow.pdf
-└── extracted/NT-C-001.json               # one profile per course
+├── extracted/NT-C-001.json               # one profile per course
+└── modules/NT-C-001.json                 # one module breakdown per course
 ```
 
 Course boundaries were detected by scanning each page for its `NT-C-0NN` code
@@ -57,6 +58,39 @@ its `course_id` — and any `course_recommendations` pointing at it — survives
 Courses absent from the corpus are set `is_active = false` rather than deleted.
 `course_skills` is emptied and rebuilt in full, because the corpus is the source
 of truth for what a course teaches.
+
+### Module breakdown
+
+A second, independent pass fills `course_modules` — the eight-modules-per-course
+syllabus that the profile extraction reads past and discards.
+
+```bash
+python3 scripts/extract_course_modules.py [--force] [--only NT-C-001] [--dry-run]
+python3 scripts/load_course_modules.py --dry-run
+python3 scripts/load_course_modules.py
+```
+
+**This one uses no LLM.** The corpus PDFs are generated from a fixed template
+and it holds across all 40: four `Deep Knowledge` sections, two modules each,
+every module introduced by `Module N - <title>` / `Objective:` /
+`Observable evidence:`. A regex finds all 320 with nothing left over, so the run
+is free, takes about two seconds, and is byte-identical every time. A model
+would have cost 40 full-document calls to re-derive text already in the file,
+and bought the one failure this data cannot absorb — a module silently
+renumbered, retitled or merged. The parser asserts eight modules per course and
+fails loudly rather than writing a short course.
+
+The `Objective:` line *is* the topic list ("Syntax, data types, control flow,
+functions" is four topics), so `topics` is the split of it and `objective` keeps
+the raw string — a bad split stays cosmetic instead of losing data. A module
+belongs to the last section id appearing before it in the text.
+
+The loader upserts on `(course_id, module_number)`; the corpus numbers its own
+modules, so a re-run updates the same 320 rows instead of appending a set.
+Unlike `course_skills` nothing is deleted first, because every row in
+`course_modules` came from this script and a partial `--only` run must not empty
+the other 39 courses. A course code with no row in `courses` is reported and
+skipped, not fatal — run `load_course_profiles.py` first.
 
 ---
 

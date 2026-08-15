@@ -1,0 +1,111 @@
+{
+  "course_code": "NT-C-029",
+  "source_pdf": "NT-C-029_Linux_Administration.pdf",
+  "modules": [
+    {
+      "module_number": 1,
+      "title": "CLI and files",
+      "objective": "Shell, paths, text tools and editors",
+      "observable_evidence": "Command lab",
+      "topics": [
+        "Shell",
+        "paths",
+        "text tools",
+        "editors"
+      ],
+      "section_code": "NT-C-029-S01"
+    },
+    {
+      "module_number": 2,
+      "title": "Users and permissions",
+      "objective": "Accounts, groups, ownership, ACL basics and sudo",
+      "observable_evidence": "Access lab",
+      "topics": [
+        "Accounts",
+        "groups",
+        "ownership",
+        "ACL basics",
+        "sudo"
+      ],
+      "section_code": "NT-C-029-S01"
+    },
+    {
+      "module_number": 3,
+      "title": "Packages and processes",
+      "objective": "Software management, services and jobs",
+      "observable_evidence": "Service lab",
+      "topics": [
+        "Software management",
+        "services",
+        "jobs"
+      ],
+      "section_code": "NT-C-029-S02"
+    },
+    {
+      "module_number": 4,
+      "title": "Storage",
+      "objective": "Partitions, filesystems, mounts and LVM basics",
+      "observable_evidence": "Storage exercise",
+      "topics": [
+        "Partitions",
+        "filesystems",
+        "mounts",
+        "LVM basics"
+      ],
+      "section_code": "NT-C-029-S02"
+    },
+    {
+      "module_number": 5,
+      "title": "Networking",
+      "objective": "IP, DNS, SSH, firewall and troubleshooting",
+      "observable_evidence": "Network lab",
+      "topics": [
+        "IP",
+        "DNS",
+        "SSH",
+        "firewall",
+        "troubleshooting"
+      ],
+      "section_code": "NT-C-029-S03"
+    },
+    {
+      "module_number": 6,
+      "title": "Services and logs",
+      "objective": "systemd, web service, logs and rotation",
+      "observable_evidence": "Hosted service",
+      "topics": [
+        "systemd",
+        "web service",
+        "logs",
+        "rotation"
+      ],
+      "section_code": "NT-C-029-S03"
+    },
+    {
+      "module_number": 7,
+      "title": "Shell scripting",
+      "objective": "Variables, conditions, loops and scheduled jobs",
+      "observable_evidence": "Admin scripts",
+      "topics": [
+        "Variables",
+        "conditions",
+        "loops",
+        "scheduled jobs"
+      ],
+      "section_code": "NT-C-029-S04"
+    },
+    {
+      "module_number": 8,
+      "title": "Security capstone",
+      "objective": "Hardening, backup, monitoring and recovery",
+      "observable_evidence": "Managed Linux server",
+      "topics": [
+        "Hardening",
+        "backup",
+        "monitoring",
+        "recovery"
+      ],
+      "section_code": "NT-C-029-S04"
+    }
+  ]
+}
