@@ -18,6 +18,10 @@ export const KEYS = {
   // on this device, has no server-side record, cannot go stale against any API,
   // is never sent to the API, and survives logout by design.
   theme: 'career_tours_theme',
+  // DEVICE PREFERENCE, same exemption as `theme`: whether the nav rail is
+  // collapsed to icons. A layout choice made with the mouse on this screen —
+  // re-expanding it on every navigation would make the control useless.
+  sidebar: 'career_tours_sidebar',
 };
 
 // localStorage throws in Safari private mode and when the quota is exhausted,
@@ -97,4 +101,18 @@ export const setThemePreference = (preference) => {
     return;
   }
   safeSet(KEYS.theme, preference);
+};
+
+/* ------------------------------------------------------------- sidebar ---- */
+
+/** Whether the nav rail was left collapsed. Defaults to expanded. */
+export const getSidebarCollapsed = () => safeGet(KEYS.sidebar) === 'collapsed';
+
+export const setSidebarCollapsed = (collapsed) => {
+  // Absent means expanded, so the default state stores nothing at all.
+  if (collapsed) {
+    safeSet(KEYS.sidebar, 'collapsed');
+    return;
+  }
+  safeRemove(KEYS.sidebar);
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import Navbar from './components/Navbar';
+import AppLayout from './components/AppLayout';
 import ThemeToggle from './components/ThemeToggle';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import FullPageLoader from './components/ui/FullPageLoader';
@@ -25,12 +25,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <>
-      <Navbar />
-      <main>{children}</main>
-    </>
-  );
+  return <AppLayout>{children}</AppLayout>;
 };
 
 // Public Route wrapper component (redirects to dashboard if already logged in)
@@ -45,7 +40,7 @@ const PublicRoute = ({ children }) => {
     return <Navigate to="/" replace />;
   }
 
-  // Navbar renders only on protected routes, so the auth pages get their own
+  // The shell renders only on protected routes, so the auth pages get their own
   // theme control — otherwise someone who prefers light hits a hard-dark login
   // screen with no way out.
   return (

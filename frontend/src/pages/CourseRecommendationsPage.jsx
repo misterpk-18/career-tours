@@ -171,22 +171,9 @@ export const CourseRecommendationsPage = () => {
 
   return (
     <PageShell>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Button as={Link} to={`/projects/${projectId}`} variant="ghost" size="xs" icon={ArrowLeft}>
-          Back to Project Workspace
-        </Button>
-        <Button
-          as={Link}
-          to={`/projects/${projectId}/careers`}
-          variant="ghost"
-          size="xs"
-          icon={Compass}
-          iconRight={ChevronRight}
-        >
-          View Career Matches
-        </Button>
-      </div>
-
+      {/* This row was two ghost links, "Back to Project Workspace" and "View
+          Career Matches". Both are in the shell now — the breadcrumb's back
+          arrow and the rail's "Current project" section. */}
       <HeroBanner
         eyebrow="Recommended Learning Path"
         eyebrowIcon={GraduationCap}

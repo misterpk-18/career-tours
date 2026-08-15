@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  Folder,
   UploadCloud,
   Eye,
   Sparkles,
@@ -223,19 +222,18 @@ export const ProjectDetailsPage = () => {
 
   return (
     <PageShell>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Button as={Link} to="/" variant="ghost" size="xs" icon={ArrowLeft}>
-          Back to Projects Dashboard
-        </Button>
+      {/* The "Back to Projects Dashboard" button that used to sit here is now
+          the shell's back arrow and breadcrumb — see lib/nav.js. */}
+      <div className="flex items-center justify-end gap-4 flex-wrap">
         {/* break-all: a full UUID overflowed its pill on narrow screens. */}
         <Badge mono className="whitespace-normal break-all max-w-full">
           Project UUID: {project.project_id}
         </Badge>
       </div>
 
+      {/* No eyebrow: it read "Project Workspace", which is verbatim the title in
+          the top bar directly above it. */}
       <HeroBanner
-        eyebrow="Project Workspace"
-        eyebrowIcon={Folder}
         title={project.project_name}
         description={project.description || 'No description provided for this project.'}
         actions={

@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   BookOpen,
-  GraduationCap,
   ChevronRight,
 } from 'lucide-react';
 import { recommendationsAPI, projectsAPI } from '../services/api';
@@ -152,25 +151,12 @@ export const CareerRecommendationsPage = () => {
 
   return (
     <PageShell>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Button as={Link} to={`/projects/${projectId}`} variant="ghost" size="xs" icon={ArrowLeft}>
-          Back to Project Workspace
-        </Button>
-        <div className="flex items-center gap-3 flex-wrap">
-          <Button
-            as={Link}
-            to={`/projects/${projectId}/courses`}
-            variant="ghost"
-            size="xs"
-            icon={GraduationCap}
-            iconRight={ChevronRight}
-          >
-            View Recommended Courses
-          </Button>
-          <Badge tone="success" mono>
-            AI Career Matching Complete
-          </Badge>
-        </div>
+      {/* Back to the project, and across to the courses, are both in the shell
+          now — the rail's "Current project" section and the breadcrumb. */}
+      <div className="flex items-center justify-end gap-4 flex-wrap">
+        <Badge tone="success" mono>
+          AI Career Matching Complete
+        </Badge>
       </div>
 
       <HeroBanner

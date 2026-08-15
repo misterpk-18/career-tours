@@ -78,8 +78,10 @@ export const HomePage = () => {
 
   return (
     <PageShell>
+      {/* No eyebrow: the top bar's breadcrumb already says PORTAL / DASHBOARD
+          two lines above, and repeating it made the page open on the same word
+          three times. */}
       <HeroBanner
-        eyebrow="Dashboard"
         title={
           <>
             Hello, {student?.full_name || 'Student'}
