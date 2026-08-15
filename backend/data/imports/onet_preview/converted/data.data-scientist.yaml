@@ -1,0 +1,57 @@
+# O*NET 15-2051.00 "Data Scientists" in the proposed role-family format.
+#
+# THIS FILE IS THE MOST IMPORTANT ONE IN THE PREVIEW.
+#
+# O*NET has NO skills data for Data Scientists. Zero rows in both Essential
+# Skills.txt and Transferable Skills.txt. The occupation exists in
+# Occupation Data.txt with a title and description, and it has 87 technology
+# skills, but not a single weighted skill.
+#
+# Every `weight` below is authored. O*NET contributed the skill NAMES and
+# nothing else.
+
+family_key: data.data-scientist
+domain: data-science
+family_name: Data Scientist
+reference_level: mid
+
+source:
+  dataset: onet
+  version: "30.3"
+  soc_code: 15-2051.00
+  license: CC BY 4.0
+  attribution: O*NET 30.3 Database, U.S. Department of Labor
+  coverage:
+    essential_skills_rows: 0
+    transferable_skills_rows: 0
+    technology_skills_rows: 87
+
+skills:
+
+  # ---- carried from O*NET with a real Importance value -------------------
+  # None. There are none to carry.
+
+  # ---- technology skills: names from O*NET, weights AUTHORED -------------
+  - {skill: Python,                       weight: 90, role: core,    weight_source: authored, onet_hot: true}
+  - {skill: Structured query language SQL, weight: 85, role: core,   weight_source: authored, onet_hot: true}
+  - {skill: Apache Spark,                 weight: 60, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Tableau,                      weight: 55, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Jupyter software,             weight: 50, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Git,                          weight: 50, role: tooling, weight_source: authored, onet_hot: true}
+  - {skill: Docker,                       weight: 40, role: tooling, weight_source: authored, onet_hot: true}
+
+  # ---- entirely authored, no O*NET origin --------------------------------
+  # A Data Scientist family needs these and O*NET offers nothing to base them on.
+  - {skill: Machine Learning,   weight: 85, role: core,    weight_source: authored, onet_origin: false}
+  - {skill: Statistics,         weight: 80, role: core,    weight_source: authored, onet_origin: false}
+  - {skill: Communication,      weight: 50, role: soft,    weight_source: authored, onet_origin: false}
+
+# Data Scientists is not an isolated gap. 7 of the 38 occupations in SOC major
+# group 15-xxxx have no skills data, and they are the modern ones:
+#   15-1255.00  Web and Digital Interface Designers
+#   15-1299.00  Computer Occupations, All Other
+#   15-1299.04  Penetration Testers
+#   15-1299.06  Digital Forensics Analysts
+#   15-1299.07  Blockchain Engineers
+#   15-2051.00  Data Scientists
+#   15-2099.00  Mathematical Science Occupations, All Other

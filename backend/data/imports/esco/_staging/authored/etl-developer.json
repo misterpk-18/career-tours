@@ -1,0 +1,57 @@
+{
+  "career_title": "ETL Developer",
+  "career_source": "market",
+  "domain": "Data Engineering",
+  "skills": [
+    {
+      "skill_id": "data-extraction-transformation-and-loading-tools",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "sql",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "database-management-systems",
+      "relation_type": "essential",
+      "weight": 75
+    },
+    {
+      "skill_id": "implement-data-warehousing-techniques",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "perform-data-cleansing",
+      "relation_type": "optional",
+      "weight": 72
+    },
+    {
+      "skill_id": "create-data-models",
+      "relation_type": "optional",
+      "weight": 68
+    },
+    {
+      "skill_id": "migrate-existing-data",
+      "relation_type": "optional",
+      "weight": 66
+    },
+    {
+      "skill_id": "data-quality-assessment",
+      "relation_type": "optional",
+      "weight": 64
+    },
+    {
+      "skill_id": "sql-server-integration-services",
+      "relation_type": "optional",
+      "weight": 60
+    },
+    {
+      "skill_id": "informatica-powercenter",
+      "relation_type": "optional",
+      "weight": 58
+    }
+  ]
+}

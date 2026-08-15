@@ -86,6 +86,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 
 ## skills
 **Purpose:** Master catalog of normalized skill names/categories (the "dictionary" of all skills recognized by the system).
+**Note:** Two different matching mechanisms read this table, and confusing them leads to wrong conclusions. **Career match percentage does not use `skill_id` at all** — `SkillMatcher` embeds skill *names* (all-MiniLM-L6-v2) and scores by cosine similarity, so it tolerates naming differences. **Course recommendation does depend on exact names**: `generator.py` resolves each missing skill via `SkillRepository.get_by_name` (case-insensitive, exact) and then joins `course_skills` on the resulting `skill_id`, so a skill spelled differently by the course and occupation importers silently yields no course. That is what `services/skills/taxonomy.py` and `normalizer.py` exist to prevent. Deleting from this table is also more dangerous than it looks: it cascades into `occupation_skills`, `student_skills` and `career_skill_gaps`, and `project_skills` holds a NO ACTION reference that makes a bare `DELETE FROM skills` fail outright.
 **Primary Key:** `skill_id` (uuid)
 **Foreign Keys:** none
 **Referenced By:** `skill_aliases`, `student_skills`, `project_skills`, `occupation_skills`, `course_skills`, `career_skill_gaps`
@@ -146,6 +147,7 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Foreign Keys:** none
 **Referenced By:** `course_skills`, `course_recommendations`, `llm_summaries`
 **Relationships:** Central hub of the Course Recommendation domain.
+**Note:** `course_code` (added by migration `009_courses_course_code.sql`) carries the knowledge corpus's own identifier, `NT-C-001`..`NT-C-040`, under a **partial** unique index — the pre-corpus courses have no code, so several NULLs must coexist. It exists so the importer can upsert on an identifier the corpus will not re-word between versions; `course_name` would silently insert a duplicate instead of updating. Courses retired from the corpus are set `is_active = false`, never deleted, because `course_recommendations` cascades. See [data-pipelines.md](data-pipelines.md).
 
 ## course_skills
 **Purpose:** Defines which skills a course teaches/covers, with a `coverage_weight` indicating how much of that skill the course addresses.

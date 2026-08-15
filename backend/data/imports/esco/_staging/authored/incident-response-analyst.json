@@ -1,0 +1,67 @@
+{
+  "career_title": "Incident Response Analyst",
+  "career_source": "market",
+  "domain": "Cybersecurity",
+  "skills": [
+    {
+      "skill_id": "cyber-security",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "attack-vectors",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "computer-forensics",
+      "relation_type": "essential",
+      "weight": 82
+    },
+    {
+      "skill_id": "perform-forensic-preservations-of-digital-devices",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "collect-cyber-defence-data",
+      "relation_type": "essential",
+      "weight": 75
+    },
+    {
+      "skill_id": "perform-escalation-procedure",
+      "relation_type": "essential",
+      "weight": 72
+    },
+    {
+      "skill_id": "wireshark",
+      "relation_type": "optional",
+      "weight": 68
+    },
+    {
+      "skill_id": "web-application-security-threats",
+      "relation_type": "optional",
+      "weight": 65
+    },
+    {
+      "skill_id": "respond-to-incidents-in-cloud",
+      "relation_type": "optional",
+      "weight": 64
+    },
+    {
+      "skill_id": "write-technical-reports",
+      "relation_type": "optional",
+      "weight": 62
+    },
+    {
+      "skill_id": "use-ict-ticketing-system",
+      "relation_type": "optional",
+      "weight": 55
+    },
+    {
+      "skill_id": "remove-computer-virus-or-malware-from-a-computer",
+      "relation_type": "optional",
+      "weight": 50
+    }
+  ]
+}

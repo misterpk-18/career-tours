@@ -1,0 +1,85 @@
+{
+  "course_code": "NT-C-033",
+  "source_pdf": "NT-C-033_Ethical_Hacking.pdf",
+  "course_name": "Ethical Hacking",
+  "description": "A cybersecurity course for learners seeking authorised security-testing foundations. By the end, you can plan and document an authorised security assessment, validate findings safely, and recommend remediation aligned to approved scope and rules of engagement.",
+  "duration_hours": 160,
+  "level": "Beginner to Intermediate",
+  "skills": [
+    {
+      "skill_name": "Lawful authorization and scope definition",
+      "coverage_weight": 90.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Rules of engagement",
+      "coverage_weight": 85.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Lab safety and safe testing practices",
+      "coverage_weight": 80.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Passive information gathering",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Asset mapping",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Port scanning",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Service enumeration",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Input validation testing (OWASP)",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Session management testing",
+      "coverage_weight": 65.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Access control testing",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Configuration assessment",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Network segmentation testing",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Traffic analysis",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Security assessment reporting (executive and technical)",
+      "coverage_weight": 90.0,
+      "category": "soft"
+    },
+    {
+      "skill_name": "Retesting and verification",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    }
+  ]
+}

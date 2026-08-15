@@ -1,0 +1,57 @@
+{
+  "career_title": "DevOps Engineer",
+  "career_source": "market",
+  "domain": "DevOps and Platform",
+  "skills": [
+    {
+      "skill_id": "devops",
+      "relation_type": "essential",
+      "weight": 88
+    },
+    {
+      "skill_id": "operating-systems",
+      "relation_type": "essential",
+      "weight": 82
+    },
+    {
+      "skill_id": "use-scripting-programming",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "cloud-technologies",
+      "relation_type": "essential",
+      "weight": 76
+    },
+    {
+      "skill_id": "design-cloud-architecture",
+      "relation_type": "optional",
+      "weight": 69
+    },
+    {
+      "skill_id": "deploy-cloud-resource",
+      "relation_type": "optional",
+      "weight": 74
+    },
+    {
+      "skill_id": "jenkins-tools-for-software-configuration-management",
+      "relation_type": "optional",
+      "weight": 59
+    },
+    {
+      "skill_id": "ansible",
+      "relation_type": "optional",
+      "weight": 61
+    },
+    {
+      "skill_id": "manage-software-releases",
+      "relation_type": "optional",
+      "weight": 70
+    },
+    {
+      "skill_id": "monitor-system-performance",
+      "relation_type": "optional",
+      "weight": 64
+    }
+  ]
+}

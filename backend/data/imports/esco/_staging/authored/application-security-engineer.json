@@ -1,0 +1,57 @@
+{
+  "career_title": "Application Security Engineer",
+  "career_source": "market",
+  "domain": "Cybersecurity",
+  "skills": [
+    {
+      "skill_id": "web-application-security-threats",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "perform-ict-security-testing",
+      "relation_type": "essential",
+      "weight": 82
+    },
+    {
+      "skill_id": "conduct-ict-code-review",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "identify-ict-security-risks",
+      "relation_type": "essential",
+      "weight": 75
+    },
+    {
+      "skill_id": "apply-information-security-policies",
+      "relation_type": "essential",
+      "weight": 72
+    },
+    {
+      "skill_id": "owasp-zap",
+      "relation_type": "optional",
+      "weight": 60
+    },
+    {
+      "skill_id": "develop-code-exploits",
+      "relation_type": "optional",
+      "weight": 55
+    },
+    {
+      "skill_id": "cyber-security",
+      "relation_type": "optional",
+      "weight": 62
+    },
+    {
+      "skill_id": "software-architecture-models",
+      "relation_type": "optional",
+      "weight": 64
+    },
+    {
+      "skill_id": "devops",
+      "relation_type": "optional",
+      "weight": 57
+    }
+  ]
+}

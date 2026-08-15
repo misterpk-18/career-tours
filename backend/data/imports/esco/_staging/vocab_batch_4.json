@@ -1,0 +1,2077 @@
+[
+  {
+    "skill_id": "printed-goods-processes",
+    "keep": false,
+    "reason": "print production trade"
+  },
+  {
+    "skill_id": "printing-materials",
+    "keep": false,
+    "reason": "print production trade"
+  },
+  {
+    "skill_id": "printing-on-large-scale-machines",
+    "keep": false,
+    "reason": "industrial printing trade"
+  },
+  {
+    "skill_id": "printing-techniques",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "prioritise-requests",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "process-customer-orders",
+    "keep": false,
+    "reason": "generic order handling"
+  },
+  {
+    "skill_id": "process-customer-requests-based-on-the-reach-regulation-1907-2006",
+    "keep": false,
+    "reason": "chemicals regulation"
+  },
+  {
+    "skill_id": "process-data",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "process-based-management",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "procurement-of-ict-network-equipment",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "produce-sales-reports",
+    "keep": false,
+    "reason": "sales trade"
+  },
+  {
+    "skill_id": "product-comprehension",
+    "keep": false,
+    "reason": "generic sales product knowledge"
+  },
+  {
+    "skill_id": "product-data-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "product-life-cycle",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "product-usage-risks-analysis",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "production-processes",
+    "keep": false,
+    "reason": "manufacturing production"
+  },
+  {
+    "skill_id": "program-a-cnc-controller",
+    "keep": false,
+    "reason": "machining trade"
+  },
+  {
+    "skill_id": "program-firmware",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "program-sound-cues",
+    "keep": false,
+    "reason": "live stage sound"
+  },
+  {
+    "skill_id": "programmable-logic-controller",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "project-anarchy",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "project-configuration-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "project-management",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "projection-equipment",
+    "keep": false,
+    "reason": "venue projection equipment"
+  },
+  {
+    "skill_id": "prolog-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "promote-education-programmes",
+    "keep": false,
+    "reason": "education administration"
+  },
+  {
+    "skill_id": "promote-environmental-awareness",
+    "keep": false,
+    "reason": "environmental advocacy"
+  },
+  {
+    "skill_id": "promote-open-innovation-in-research",
+    "keep": false,
+    "reason": "academic research activity"
+  },
+  {
+    "skill_id": "promote-the-participation-of-citizens-in-scientific-and-research-activities",
+    "keep": false,
+    "reason": "academic outreach"
+  },
+  {
+    "skill_id": "promote-the-transfer-of-knowledge",
+    "keep": false,
+    "reason": "research valorisation"
+  },
+  {
+    "skill_id": "proofread-text",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "properties-of-fabrics",
+    "keep": false,
+    "reason": "textile trade"
+  },
+  {
+    "skill_id": "propose-ict-solutions-to-business-problems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "propose-improvements-to-artistic-production",
+    "keep": false,
+    "reason": "performing arts"
+  },
+  {
+    "skill_id": "prospect-new-customers",
+    "keep": false,
+    "reason": "sales trade"
+  },
+  {
+    "skill_id": "prosthetic-devices",
+    "keep": false,
+    "reason": "medical devices"
+  },
+  {
+    "skill_id": "protect-ict-devices",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "protect-personal-data-and-privacy",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "prototyping-development",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "prototyping-in-the-wearing-apparel-industry",
+    "keep": false,
+    "reason": "apparel manufacturing"
+  },
+  {
+    "skill_id": "provide-assistive-technology",
+    "keep": false,
+    "reason": "healthcare assistive care"
+  },
+  {
+    "skill_id": "provide-cost-benefit-analysis-reports",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "provide-customer-follow-up-services",
+    "keep": false,
+    "reason": "generic after-sales service"
+  },
+  {
+    "skill_id": "provide-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-education-management-support",
+    "keep": false,
+    "reason": "education administration"
+  },
+  {
+    "skill_id": "provide-feedback-to-teachers",
+    "keep": false,
+    "reason": "teaching profession"
+  },
+  {
+    "skill_id": "provide-guidelines-for-content-development",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-ict-consulting-advice",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-ict-support",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-ict-system-training",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-information",
+    "keep": false,
+    "reason": "too generic"
+  },
+  {
+    "skill_id": "provide-legal-advice",
+    "keep": false,
+    "reason": "legal profession"
+  },
+  {
+    "skill_id": "provide-lesson-materials",
+    "keep": false,
+    "reason": "teaching profession"
+  },
+  {
+    "skill_id": "provide-multimedia-content",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-software-testing-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-specialised-instruction-for-special-needs-students",
+    "keep": false,
+    "reason": "special needs teaching"
+  },
+  {
+    "skill_id": "provide-technical-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-technical-training",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-training-on-technological-business-developments",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-user-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "provide-written-content",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "proxy-servers",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "publicity-code",
+    "keep": false,
+    "reason": "advertising regulation"
+  },
+  {
+    "skill_id": "publish-academic-research",
+    "keep": false,
+    "reason": "academia"
+  },
+  {
+    "skill_id": "publishing-industry",
+    "keep": false,
+    "reason": "publishing sector knowledge"
+  },
+  {
+    "skill_id": "publishing-strategy",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "puppet-tools-for-software-configuration-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "purchase-music",
+    "keep": false,
+    "reason": "music rights purchasing"
+  },
+  {
+    "skill_id": "python-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "qlikview-expressor",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "quality-and-cycle-time-optimisation",
+    "keep": false,
+    "reason": "machine cycle optimisation"
+  },
+  {
+    "skill_id": "quality-assurance-methodologies",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "quality-assurance-procedures",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "quality-standards",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "query-languages",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "r",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "rage-digital-game-creation-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "rapid-application-development",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "read-assembly-drawings",
+    "keep": false,
+    "reason": "manufacturing assembly"
+  },
+  {
+    "skill_id": "read-engineering-drawings",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "read-lighting-plans",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "read-musical-score",
+    "keep": false,
+    "reason": "music performance"
+  },
+  {
+    "skill_id": "read-standard-blueprints",
+    "keep": false,
+    "reason": "shop-floor blueprints"
+  },
+  {
+    "skill_id": "real-time-computing",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "recognise-indicators-of-gifted-student",
+    "keep": false,
+    "reason": "teaching profession"
+  },
+  {
+    "skill_id": "record-customers-personal-data",
+    "keep": false,
+    "reason": "rental counter admin"
+  },
+  {
+    "skill_id": "record-multi-track-sound",
+    "keep": false,
+    "reason": "studio audio engineering"
+  },
+  {
+    "skill_id": "record-music",
+    "keep": false,
+    "reason": "music studio work"
+  },
+  {
+    "skill_id": "record-test-data",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "recruit-employees",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "regulations-on-substances",
+    "keep": false,
+    "reason": "chemicals regulation"
+  },
+  {
+    "skill_id": "remove-computer-virus-or-malware-from-a-computer",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "remove-defective-products",
+    "keep": false,
+    "reason": "production line work"
+  },
+  {
+    "skill_id": "render-3d-images",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "repair-equipment-on-site",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "repair-ict-devices",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "replace-machines",
+    "keep": false,
+    "reason": "manufacturing capital equipment"
+  },
+  {
+    "skill_id": "replicate-customer-software-issues",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "report-analysis-results",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "report-on-environmental-issues",
+    "keep": false,
+    "reason": "environmental reporting"
+  },
+  {
+    "skill_id": "report-test-findings",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "reprography",
+    "keep": false,
+    "reason": "copying and reprinting trade"
+  },
+  {
+    "skill_id": "research-equipment-needs",
+    "keep": false,
+    "reason": "machine parts procurement"
+  },
+  {
+    "skill_id": "research-new-ideas",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "research-website-users",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "resolve-equipment-malfunctions",
+    "keep": false,
+    "reason": "general equipment repair"
+  },
+  {
+    "skill_id": "resource-description-framework-query-language",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "respect-data-protection-principles",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "respect-publication-formats",
+    "keep": false,
+    "reason": "print submission"
+  },
+  {
+    "skill_id": "respond-to-customers-inquiries",
+    "keep": false,
+    "reason": "travel and reservations service"
+  },
+  {
+    "skill_id": "respond-to-enquiries",
+    "keep": false,
+    "reason": "generic enquiry handling"
+  },
+  {
+    "skill_id": "respond-to-incidents-in-cloud",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "review-development-process-of-an-organisation",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "review-patient-s-medical-data",
+    "keep": false,
+    "reason": "healthcare"
+  },
+  {
+    "skill_id": "rewrite-musical-scores",
+    "keep": false,
+    "reason": "music arrangement"
+  },
+  {
+    "skill_id": "rig-3d-characters",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "rig-lights",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "risk-management",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "robotic-components",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "robotics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "ruby-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "run-a-media-server",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "run-a-projection",
+    "keep": false,
+    "reason": "cinema projection"
+  },
+  {
+    "skill_id": "saas-service-oriented-modelling",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "safeguard-artistic-quality-of-performance",
+    "keep": false,
+    "reason": "performing arts"
+  },
+  {
+    "skill_id": "safeguard-online-privacy-and-identity",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "safety-engineering",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "sakai",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sales-argumentation",
+    "keep": false,
+    "reason": "sales trade"
+  },
+  {
+    "skill_id": "sales-promotion-techniques",
+    "keep": false,
+    "reason": "sales trade"
+  },
+  {
+    "skill_id": "sales-strategies",
+    "keep": false,
+    "reason": "sales trade"
+  },
+  {
+    "skill_id": "salt-tools-for-software-configuration-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "samurai-web-testing-framework",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sap-data-services",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sap-r3",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sas-data-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sas-language",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sass",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "scala",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "scan-photos",
+    "keep": false,
+    "reason": "basic photo scanning"
+  },
+  {
+    "skill_id": "schoology",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "scientific-research-methodology",
+    "keep": false,
+    "reason": "academic research method"
+  },
+  {
+    "skill_id": "scratch-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "search-databases",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "secondary-school-procedures",
+    "keep": false,
+    "reason": "school administration"
+  },
+  {
+    "skill_id": "secure-sensitive-customer-s-information",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "seek-innovation-in-current-practices",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "select-artistic-materials-to-create-artworks",
+    "keep": false,
+    "reason": "fine art materials"
+  },
+  {
+    "skill_id": "select-camera-apertures",
+    "keep": false,
+    "reason": "photography trade"
+  },
+  {
+    "skill_id": "select-illustration-styles",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "select-recording-source",
+    "keep": false,
+    "reason": "broadcast operations"
+  },
+  {
+    "skill_id": "send-faulty-equipment-back-to-assembly-line",
+    "keep": false,
+    "reason": "assembly line work"
+  },
+  {
+    "skill_id": "sensors",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "service-oriented-modelling",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "set-quality-assurance-objectives",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "set-sales-goals",
+    "keep": false,
+    "reason": "sales management"
+  },
+  {
+    "skill_id": "set-up-a-multi-track-recording",
+    "keep": false,
+    "reason": "studio audio setup"
+  },
+  {
+    "skill_id": "set-up-animation-elements",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "set-up-audiovisual-peripheral-equipment",
+    "keep": false,
+    "reason": "AV equipment setup"
+  },
+  {
+    "skill_id": "set-up-automotive-robot",
+    "keep": false,
+    "reason": "automotive manufacturing"
+  },
+  {
+    "skill_id": "set-up-basic-recording",
+    "keep": false,
+    "reason": "studio audio setup"
+  },
+  {
+    "skill_id": "set-up-broadcast-equipment",
+    "keep": false,
+    "reason": "broadcast equipment trade"
+  },
+  {
+    "skill_id": "set-up-cameras",
+    "keep": false,
+    "reason": "camera operation"
+  },
+  {
+    "skill_id": "set-up-equipment-in-a-timely-manner",
+    "keep": false,
+    "reason": "generic equipment setup"
+  },
+  {
+    "skill_id": "set-up-light-board",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "set-up-machine-controls",
+    "keep": false,
+    "reason": "machine operation"
+  },
+  {
+    "skill_id": "set-up-multimedia-equipment",
+    "keep": false,
+    "reason": "AV equipment setup"
+  },
+  {
+    "skill_id": "set-up-portable-field-transmission-equipment",
+    "keep": false,
+    "reason": "broadcast equipment trade"
+  },
+  {
+    "skill_id": "set-up-projection-equipment",
+    "keep": false,
+    "reason": "venue projection setup"
+  },
+  {
+    "skill_id": "set-up-sound-equipment",
+    "keep": false,
+    "reason": "live sound trade"
+  },
+  {
+    "skill_id": "set-up-sound-reinforcement-system",
+    "keep": false,
+    "reason": "live sound trade"
+  },
+  {
+    "skill_id": "set-up-the-controller-of-a-machine",
+    "keep": false,
+    "reason": "machine operation"
+  },
+  {
+    "skill_id": "shiva-digital-game-creation-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "signal-cues-to-announcers",
+    "keep": false,
+    "reason": "broadcast studio work"
+  },
+  {
+    "skill_id": "signal-processing",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "simulate-mechatronic-design-concepts",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sketchbook-pro",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "smalltalk-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "smart-contract",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "social-media-marketing-techniques",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "software-anomalies",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-architecture-models",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-components-libraries",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-components-suppliers",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "software-design-methodologies",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-frameworks",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-interaction-design",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-metrics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "software-ui-design-patterns",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solder-electronics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solidity",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solution-deployment",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solve-ict-system-problems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solve-location-and-navigation-problems-by-using-gps-tools",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "solve-problems-in-gambling-through-digital-means",
+    "keep": false,
+    "reason": "gambling sector"
+  },
+  {
+    "skill_id": "solve-technical-problems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "source-digital-game-creation-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sparql",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "speak-different-languages",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "special-needs-education",
+    "keep": false,
+    "reason": "special needs teaching"
+  },
+  {
+    "skill_id": "special-needs-learning-equipment",
+    "keep": false,
+    "reason": "special needs teaching"
+  },
+  {
+    "skill_id": "specify-digital-game-scenes",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "spelling",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "spiral-development",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sql",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sql-server",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "sql-server-integration-services",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "staf",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "standard-sizing-systems-for-clothing",
+    "keep": false,
+    "reason": "apparel industry"
+  },
+  {
+    "skill_id": "statistical-analysis-system-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "statistical-process-control",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "statistics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "stimulate-students-independence",
+    "keep": false,
+    "reason": "special needs teaching"
+  },
+  {
+    "skill_id": "store-digital-data-and-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "store-film-reels",
+    "keep": false,
+    "reason": "film handling trade"
+  },
+  {
+    "skill_id": "store-performance-equipment",
+    "keep": false,
+    "reason": "stage crew work"
+  },
+  {
+    "skill_id": "strategies-for-handling-cases-of-elder-abuse",
+    "keep": false,
+    "reason": "social care"
+  },
+  {
+    "skill_id": "structure-information",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "structure-soundtrack",
+    "keep": false,
+    "reason": "film sound production"
+  },
+  {
+    "skill_id": "study-media-sources",
+    "keep": false,
+    "reason": "creative media research"
+  },
+  {
+    "skill_id": "study-relationships-between-characters",
+    "keep": false,
+    "reason": "acting and script work"
+  },
+  {
+    "skill_id": "study-sales-levels-of-products",
+    "keep": false,
+    "reason": "sales analysis trade"
+  },
+  {
+    "skill_id": "study-website-behaviour-patterns",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "style-sheet-languages",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "supervise-brand-management",
+    "keep": false,
+    "reason": "brand marketing"
+  },
+  {
+    "skill_id": "supervise-camera-crew",
+    "keep": false,
+    "reason": "film camera crew supervision"
+  },
+  {
+    "skill_id": "supervise-daily-information-operations",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "supervise-data-entry",
+    "keep": false,
+    "reason": "clerical data entry"
+  },
+  {
+    "skill_id": "supervise-plotting-of-stage-lights",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "supervise-sales-activities",
+    "keep": false,
+    "reason": "retail sales management"
+  },
+  {
+    "skill_id": "supervise-sound-production",
+    "keep": false,
+    "reason": "film and theatre sound"
+  },
+  {
+    "skill_id": "supervise-staff",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "supervise-work",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "supplier-management",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "supply-chain-management",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "supply-machine-with-appropriate-tools",
+    "keep": false,
+    "reason": "machine operation"
+  },
+  {
+    "skill_id": "support-a-designer-in-the-developing-process",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "support-ict-system-users",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "support-managers",
+    "keep": false,
+    "reason": "generic administrative support"
+  },
+  {
+    "skill_id": "swift-computer-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "synchronise-sound-with-images",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "synchronise-with-mouth-movements",
+    "keep": false,
+    "reason": "dubbing trade"
+  },
+  {
+    "skill_id": "synfig",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "synthesise-information",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "synthesise-research-publications",
+    "keep": false,
+    "reason": "academic research"
+  },
+  {
+    "skill_id": "system-backup-best-practice",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "systems-development-life-cycle",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "systems-theory",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "systems-thinking",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "take-measurements-of-performance-space",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "take-pictures",
+    "keep": false,
+    "reason": "portrait photography trade"
+  },
+  {
+    "skill_id": "taleo",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "task-algorithmisation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "teach-computer-science",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "teach-digital-literacy",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "teach-in-academic-or-vocational-contexts",
+    "keep": false,
+    "reason": "general teaching profession"
+  },
+  {
+    "skill_id": "teamwork-principles",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "technical-drawings",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "technically-design-a-sound-system",
+    "keep": false,
+    "reason": "live audio system design"
+  },
+  {
+    "skill_id": "telecommunication-industry",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "telecommunication-trunking",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "tend-lathe",
+    "keep": false,
+    "reason": "machining trade"
+  },
+  {
+    "skill_id": "teradata-database",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-for-behavioural-patterns",
+    "keep": false,
+    "reason": "psychological testing"
+  },
+  {
+    "skill_id": "test-for-emotional-patterns",
+    "keep": false,
+    "reason": "psychological testing"
+  },
+  {
+    "skill_id": "test-hardware",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-ict-queries",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-mechatronic-units",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-microelectronics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-power-electronics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-printed-circuit-boards",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-system-accessibility-for-users-with-special-needs",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "test-wireless-devices",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "thc-hydra",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "think-abstractly",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "tolerate-stress",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "tools-for-ict-test-automation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "tools-for-software-configuration-management",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "track-key-performance-indicators",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "track-price-trends",
+    "keep": false,
+    "reason": "retail pricing"
+  },
+  {
+    "skill_id": "train-employees",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "training-subject-expertise",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "transcribe-ideas-into-musical-notation",
+    "keep": false,
+    "reason": "music notation"
+  },
+  {
+    "skill_id": "transfer-uncut-audiovisual-material-to-computer",
+    "keep": false,
+    "reason": "footage handling task"
+  },
+  {
+    "skill_id": "translate-artistic-concepts-to-technical-designs",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "translate-requirement-concepts-into-content",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "translate-requirements-into-visual-design",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "transmission-technology",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "transpose-music",
+    "keep": false,
+    "reason": "music arrangement"
+  },
+  {
+    "skill_id": "trigonometry",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "triplestore",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "troubleshoot",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "troubleshoot-website",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "tune-a-projector",
+    "keep": false,
+    "reason": "projection equipment trade"
+  },
+  {
+    "skill_id": "tune-up-wireless-audio-systems",
+    "keep": false,
+    "reason": "live audio trade"
+  },
+  {
+    "skill_id": "types-of-audiovisual-formats",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "types-of-electronics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "types-of-pottery-material",
+    "keep": false,
+    "reason": "ceramics trade"
+  },
+  {
+    "skill_id": "typescript",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "typography",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "understand-artistic-concepts",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "unified-modelling-language",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "unity-digital-game-creation-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "unload-equipment",
+    "keep": false,
+    "reason": "manual equipment handling"
+  },
+  {
+    "skill_id": "unreal-engine",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "unstructured-data",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "update-budget",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "update-design-results-during-rehearsals",
+    "keep": false,
+    "reason": "stage production work"
+  },
+  {
+    "skill_id": "upgrade-firmware",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "usability-engineering",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-3d-scanners-for-clothing",
+    "keep": false,
+    "reason": "apparel industry"
+  },
+  {
+    "skill_id": "use-access-control-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-an-application-specific-interface",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-audio-reproduction-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-automatic-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-back-up-and-recovery-tools",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-cad-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-cam-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-clinical-assessment-techniques",
+    "keep": false,
+    "reason": "healthcare"
+  },
+  {
+    "skill_id": "use-communication-equipment",
+    "keep": false,
+    "reason": "telecom equipment trade"
+  },
+  {
+    "skill_id": "use-computer-aided-engineering-systems",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-concurrent-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-consulting-techniques",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "use-content-management-system-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-creative-suite-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-customer-relationship-management-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-data-processing-techniques",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-databases",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-different-communication-channels",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "use-digital-illustration-techniques",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-e-procurement",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "use-e-services",
+    "keep": false,
+    "reason": "generic consumer online services"
+  },
+  {
+    "skill_id": "use-experience-map",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-foreign-languages-for-health-related-research",
+    "keep": false,
+    "reason": "healthcare research"
+  },
+  {
+    "skill_id": "use-functional-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-ict-ticketing-system",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-interface-description-language",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-it-tools",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-logic-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-manual-draughting-techniques",
+    "keep": false,
+    "reason": "manual drafting trade"
+  },
+  {
+    "skill_id": "use-markup-languages",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-measurement-instruments",
+    "keep": false,
+    "reason": "physical measurement trade"
+  },
+  {
+    "skill_id": "use-methodologies-for-user-centered-design",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-object-oriented-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-pattern-cutting-softwares",
+    "keep": false,
+    "reason": "apparel manufacturing"
+  },
+  {
+    "skill_id": "use-personal-organization-software",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "use-personal-protection-equipment",
+    "keep": false,
+    "reason": "workplace safety gear"
+  },
+  {
+    "skill_id": "use-photographic-equipment",
+    "keep": false,
+    "reason": "photography trade"
+  },
+  {
+    "skill_id": "use-polygonal-modelling",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-precision-tools",
+    "keep": false,
+    "reason": "machining trade"
+  },
+  {
+    "skill_id": "use-presentation-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-query-languages",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-repair-manuals",
+    "keep": false,
+    "reason": "maintenance trade"
+  },
+  {
+    "skill_id": "use-scripting-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-session-border-controller",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-software-design-patterns",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-software-for-data-preservation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-software-libraries",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-specialised-design-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-spreadsheets-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-storyboards",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-technical-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-technical-drawing-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-testing-equipment",
+    "keep": false,
+    "reason": "machinery testing trade"
+  },
+  {
+    "skill_id": "use-traditional-illustration-techniques",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "use-word-processing-software",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "utilise-computer-aided-software-engineering-tools",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "utilise-content-types",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "utilise-decision-support-system",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "utilise-machine-learning",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "utilise-regular-expressions",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "vagrant",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "vbscript",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "verify-feasibility",
+    "keep": false,
+    "reason": "artistic production feasibility"
+  },
+  {
+    "skill_id": "verify-formal-ict-specifications",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "visual-presentation-techniques",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "visual-studio-net",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "vocal-techniques",
+    "keep": false,
+    "reason": "voice performance"
+  },
+  {
+    "skill_id": "vyper",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "waste-management",
+    "keep": false,
+    "reason": "waste sector"
+  },
+  {
+    "skill_id": "waste-removal-regulations",
+    "keep": false,
+    "reason": "waste sector regulation"
+  },
+  {
+    "skill_id": "waterfall-development",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "wear-appropriate-protective-gear",
+    "keep": false,
+    "reason": "workplace safety gear"
+  },
+  {
+    "skill_id": "web-analytics",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "web-application-security-threats",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "web-programming",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "web-strategy-assessment",
+    "keep": true,
+    "skill_category": "domain"
+  },
+  {
+    "skill_id": "webcms",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "whitehat-sentinel",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "windows-phone",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "wireshark",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "wiziq",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "wordpress",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "work-closely-with-news-teams",
+    "keep": false,
+    "reason": "journalism"
+  },
+  {
+    "skill_id": "work-ergonomically",
+    "keep": false,
+    "reason": "workplace ergonomics"
+  },
+  {
+    "skill_id": "work-in-an-aviation-team",
+    "keep": false,
+    "reason": "aviation sector"
+  },
+  {
+    "skill_id": "work-safely-with-chemicals",
+    "keep": false,
+    "reason": "chemical handling trade"
+  },
+  {
+    "skill_id": "work-safely-with-machines",
+    "keep": false,
+    "reason": "machine operation safety"
+  },
+  {
+    "skill_id": "work-safely-with-mobile-electrical-systems-under-supervision",
+    "keep": false,
+    "reason": "electrical trade"
+  },
+  {
+    "skill_id": "work-with-an-artistic-team",
+    "keep": false,
+    "reason": "performing arts"
+  },
+  {
+    "skill_id": "work-with-composers",
+    "keep": false,
+    "reason": "music production"
+  },
+  {
+    "skill_id": "work-with-motion-picture-editing-team",
+    "keep": false,
+    "reason": "film production"
+  },
+  {
+    "skill_id": "work-with-respect-for-own-safety",
+    "keep": false,
+    "reason": "workplace safety"
+  },
+  {
+    "skill_id": "work-with-the-director-of-photography",
+    "keep": false,
+    "reason": "film production"
+  },
+  {
+    "skill_id": "work-with-the-lighting-crew",
+    "keep": false,
+    "reason": "stage lighting trade"
+  },
+  {
+    "skill_id": "work-with-virtual-learning-environments",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "world-wide-web-consortium-standards",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "write-database-documentation",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "write-inspection-reports",
+    "keep": false,
+    "reason": "inspection trade"
+  },
+  {
+    "skill_id": "write-research-proposals",
+    "keep": false,
+    "reason": "academic research"
+  },
+  {
+    "skill_id": "write-scientific-publications",
+    "keep": false,
+    "reason": "academic publishing"
+  },
+  {
+    "skill_id": "write-technical-reports",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "write-work-related-reports",
+    "keep": true,
+    "skill_category": "soft"
+  },
+  {
+    "skill_id": "xcode",
+    "keep": true,
+    "skill_category": "technical"
+  },
+  {
+    "skill_id": "xquery",
+    "keep": true,
+    "skill_category": "technical"
+  }
+]

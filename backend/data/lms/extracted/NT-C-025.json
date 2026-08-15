@@ -1,0 +1,85 @@
+{
+  "course_code": "NT-C-025",
+  "source_pdf": "NT-C-025_Generative_AI.pdf",
+  "course_name": "Generative AI",
+  "description": "Generative AI is a Data & AI course for developers, analysts and professionals building evidence-based AI-assisted workflows. It covers prompt design, retrieval, structured outputs, API integration, evaluation and safety practices. By the end, learners can build and evaluate a safe generative AI application using prompts, retrieval, structured outputs and documented controls.",
+  "duration_hours": 100,
+  "level": "Beginner to Intermediate",
+  "skills": [
+    {
+      "skill_name": "Prompt design",
+      "coverage_weight": 90.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Structured outputs (JSON)",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "LLM API integration",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Retrieval-Augmented Generation (RAG)",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Document chunking",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Embeddings",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Vector databases and similarity search",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "LLM evaluation and metrics",
+      "coverage_weight": 85.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Prompt injection defense",
+      "coverage_weight": 80.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Data handling and privacy",
+      "coverage_weight": 75.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Guardrails for generative AI",
+      "coverage_weight": 75.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "AI agents and tool use",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "Logging and monitoring",
+      "coverage_weight": 70.0,
+      "category": "technical"
+    },
+    {
+      "skill_name": "LLM cost estimation and tracking",
+      "coverage_weight": 60.0,
+      "category": "domain"
+    },
+    {
+      "skill_name": "Documentation for AI systems",
+      "coverage_weight": 60.0,
+      "category": "soft"
+    }
+  ]
+}

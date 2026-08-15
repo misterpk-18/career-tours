@@ -1,0 +1,57 @@
+{
+  "career_title": "Data Engineer",
+  "career_source": "market",
+  "domain": "Data Engineering",
+  "skills": [
+    {
+      "skill_id": "sql",
+      "relation_type": "essential",
+      "weight": 90
+    },
+    {
+      "skill_id": "data-warehouse",
+      "relation_type": "essential",
+      "weight": 85
+    },
+    {
+      "skill_id": "data-extraction-transformation-and-loading-tools",
+      "relation_type": "essential",
+      "weight": 80
+    },
+    {
+      "skill_id": "design-database-scheme",
+      "relation_type": "essential",
+      "weight": 78
+    },
+    {
+      "skill_id": "database-management-systems",
+      "relation_type": "essential",
+      "weight": 74
+    },
+    {
+      "skill_id": "python-computer-programming",
+      "relation_type": "optional",
+      "weight": 65
+    },
+    {
+      "skill_id": "distributed-computing",
+      "relation_type": "optional",
+      "weight": 62
+    },
+    {
+      "skill_id": "cloud-technologies",
+      "relation_type": "optional",
+      "weight": 60
+    },
+    {
+      "skill_id": "data-quality-assessment",
+      "relation_type": "optional",
+      "weight": 58
+    },
+    {
+      "skill_id": "nosql",
+      "relation_type": "optional",
+      "weight": 55
+    }
+  ]
+}
