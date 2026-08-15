@@ -60,7 +60,12 @@ Return structured data.
 
         return parsed
 
-    def extract_course_profile(self, course_code: str, course_text: str) -> CourseProfile:
+    def extract_course_profile(
+        self,
+        course_code: str,
+        course_text: str,
+        vocabulary: Optional[List[str]] = None,
+    ) -> CourseProfile:
         """Turn one course's knowledge-corpus pages into a storable profile.
 
         One call per course, deliberately: the 40 profiles are independent
@@ -69,7 +74,33 @@ Return structured data.
         resume extraction does — it is a one-off cost per document, not a
         per-request one, so the cheaper sibling's weaker structure-following is
         not worth the saving.
+
+        ``vocabulary`` is the list of skill names the rest of the system already
+        speaks, and passing it is what makes the output useful. Course
+        recommendation joins a student's gap skills — which come from
+        ``occupation_skills`` — to ``course_skills`` on ``skill_id``, exactly.
+        Extracted without a vocabulary, this prompt produces faithful syllabus
+        phrasing ("Aggregation with GROUP BY and HAVING") that no occupation
+        ever names, and the join finds nothing.
         """
+
+        if vocabulary:
+            # Deliberately not a hard constraint. A course can legitimately teach
+            # something no occupation lists — Tally, GST filing — and forcing
+            # those onto a near-miss from the list would be worse than admitting
+            # a new name. The instruction is "prefer", and the loader
+            # canonicalizes whatever comes back.
+            vocabulary_rule = f"""
+Wherever one of these approved skill names fits, use it EXACTLY as written
+rather than inventing your own wording. This is how the course is linked to the
+careers that need it, so a near-match in your own words is worse than a slightly
+broader name from this list. Coin a new name only when nothing here genuinely
+covers the skill.
+
+{chr(10).join(vocabulary)}
+"""
+        else:
+            vocabulary_rule = ""
 
         prompt = f"""
 You are reading one course profile from the Nipuna CareerTours approved knowledge
@@ -99,6 +130,7 @@ module objectives, section competencies and per-concept knowledge statements.
 Aim for 8-15. Prefer the specific and nameable ("Django REST Framework", "SQL",
 "Responsive Web Design") over the vague ("programming", "problem solving"). Do
 not invent skills the corpus never mentions.
+{vocabulary_rule}
 
 For each skill:
 - skill_name: the common industry name for it, in its usual casing.
