@@ -48,21 +48,20 @@ editing styles:
 
 ## Environment facts that are easy to get wrong
 
-- **Live:** https://career-tours.duckdns.org — EC2 `13.203.206.148`, Let's Encrypt cert
-  (renews via `certbot-renew.timer`, which had to be enabled manually). Always use the
-  hostname; the cert cannot cover the bare IP.
-- **SSH:** `ssh -i ~/Downloads/career_tours_key_pair.pem ec2-user@13.203.206.148`
-- **The DB password in `docs/deployment.md` is a placeholder.** The real one is
-  `DB_PASSWORD` in `/home/ec2-user/career-tours/.env` on the box. One value in that
-  file is unquoted and breaks `source`-ing it in bash — read keys out directly.
-- **No Git and no Node on the instance.** Deploy = rsync `backend/` (excluding
-  `uploads`) plus a locally-built `frontend/dist`.
-- **No Elastic IP.** A stop/start changes the public IP and breaks both DNS and cert
-  renewal. Worth fixing before anything else if the box is ever restarted.
-- **2 gunicorn sync workers, 1 GB RAM**, MiniLM loaded per process. Relevant to Phase 2.
+- **Live:** https://nipunacareers.com (and `www.`) — CloudFront `E1TW6HR68G4A7T` in front of
+  an S3 bucket for the SPA and an API Gateway HTTP API for `/api/*`.
+- **Runtime is AWS Lambda**, `career-tours-api` in `ap-south-1` — an arm64 **container image**
+  from ECR, 1024 MB / 300 s. Deploy = `docker buildx` + `aws lambda update-function-code`.
+  See [docs/architecture.md](../../../../docs/architecture.md) for the exact flags, which are
+  not optional.
+- **Logs are under a group override:** `/aws/lambda/career-tours-lambda`, *not* the default
+  `/aws/lambda/career-tours-api`, which is empty.
+- **API Gateway caps integration timeout at 30 s and it cannot be raised.** Both long
+  endpoints are now async jobs behind `?async=1`; a background thread is not an option
+  because Lambda freezes the sandbox when the handler returns.
+- **The database is Neon**, and every environment including local development talks to that
+  same endpoint over TLS. There is no local Postgres.
 - **No test suite, no linter, no CI.** `npm run build` is the only automated gate.
-- Gunicorn runs with `--capture-output`, so app tracebacks reach
-  `/var/log/career-tours/error.log`. Without it they only go to the journal.
 
 ## Known issues deliberately left open
 

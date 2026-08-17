@@ -56,7 +56,7 @@ careers list (arrow/Enter/Space, visible focus ring, correct announcement).
 ## Auth (re-run after touching any route)
 
 ```bash
-D=https://career-tours.duckdns.org
+D=https://nipunacareers.com
 # Unauthenticated must be 401 everywhere except auth/health:
 curl -s -o /dev/null -w "%{http_code}\n" $D/api/students/<uuid>
 curl -s -o /dev/null -w "%{http_code}\n" $D/api/recommendations/projects/<id>
@@ -75,28 +75,32 @@ DELETE FROM students WHERE email LIKE '%@example.invalid';
 
 ## Deploy
 
-The instance has neither Git nor Node, so push from a workstation:
+Backend is a container image; frontend is static objects in S3. Full flags and the
+reasons they are mandatory are in [docs/architecture.md](../../../../docs/architecture.md).
 
 ```bash
+# backend — arm64, and the three attestation flags are required or Lambda rejects the manifest
+aws ecr get-login-password --region ap-south-1 \
+  | docker login --username AWS --password-stdin 307857432997.dkr.ecr.ap-south-1.amazonaws.com
+docker buildx build --platform linux/arm64 --provenance=false --sbom=false \
+  --output type=image,oci-mediatypes=false,push=true \
+  -t 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest .
+aws lambda update-function-code --function-name career-tours-api --region ap-south-1 \
+  --image-uri 307857432997.dkr.ecr.ap-south-1.amazonaws.com/career-tours-api:latest
+aws lambda wait function-updated --function-name career-tours-api --region ap-south-1
+
+# frontend — hashed assets cache forever, index.html never
 cd frontend && npm run build && cd ..
-K=~/Downloads/career_tours_key_pair.pem
-H=ec2-user@13.203.206.148
-
-# backend — never sync uploads/ (server-owned user data) or the venv/.env
-rsync -az --delete -e "ssh -i $K" \
-  --exclude __pycache__ --exclude '*.pyc' --exclude uploads \
-  backend/ $H:/home/ec2-user/career-tours/backend/
-
-rsync -az --delete -e "ssh -i $K" frontend/dist/ $H:/home/ec2-user/career-tours/frontend/dist/
-rsync -az -e "ssh -i $K" docs README.md requirements.txt $H:/home/ec2-user/career-tours/
-
-ssh -i $K $H 'sudo systemctl restart career-tours && sleep 7 && systemctl is-active career-tours'
+aws s3 sync frontend/dist/ s3://career-tours-web/ --delete --exclude index.html \
+  --cache-control "public,max-age=31536000,immutable"
+aws s3 cp frontend/dist/index.html s3://career-tours-web/index.html \
+  --cache-control "no-store" --content-type "text/html"
+aws cloudfront create-invalidation --distribution-id E1TW6HR68G4A7T --paths "/index.html"
 ```
 
-Apply any new migration **before** the restart. Postgres is on Neon, reachable
-from anywhere, so apply it directly — no `scp` to the instance, no SSH hop. Note
-this hits the same database local development uses, so the schema change lands
-everywhere at once:
+Apply any new migration **before** updating the function code. Postgres is on Neon,
+reachable from anywhere, so apply it directly. Note this hits the same database local
+development uses, so the schema change lands everywhere at once:
 
 ```bash
 set -a; . .env; set +a
@@ -108,10 +112,11 @@ PGPASSWORD="$DB_PASSWORD" PGSSLMODE="${DB_SSLMODE:-require}" \
 Post-deploy smoke test:
 
 ```bash
-D=https://career-tours.duckdns.org
+D=https://nipunacareers.com
 curl -s -o /dev/null -w "site:%{http_code}\n" $D/
-curl -s $D/db-test                      # {"database":"neondb"}
-ssh -i $K $H 'tail -20 /var/log/career-tours/error.log'
+curl -s $D/api/db-test                  # {"database":"neondb"}
+# note the log-group override — the default /aws/lambda/career-tours-api is empty
+aws logs tail /aws/lambda/career-tours-lambda --region ap-south-1 --since 15m
 ```
 
 For complex SQL or JSON payloads, write the file locally and `scp` it — heredocs with

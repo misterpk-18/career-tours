@@ -54,7 +54,7 @@ cd backend && flask --app app run --port 5001 --debug
 
 On macOS, 5000 is also claimed by the AirPlay Receiver service (it answers with `403`), which is the likely reason the proxy was pointed at 5001 in the first place. If you would rather use `python backend/app.py`, either disable AirPlay Receiver in *System Settings → General → AirDrop & Handoff* and change the proxy `target` in `vite.config.js` to `5000`, or change the `app.run()` call to `app.run(debug=True, port=5001)`.
 
-Production does not use this proxy at all: Nginx serves `dist/` statically and routes `/api` to Gunicorn on port 5000. See [deployment.md](./deployment.md).
+Production does not use this proxy at all: CloudFront serves `dist/` from S3 and routes `/api/*` to the API Gateway HTTP API, so `/api` stays same-origin. See [architecture.md](./architecture.md).
 
 ---
 
@@ -66,7 +66,7 @@ frontend/
 ├── vite.config.js          # dev server port + /api proxy
 ├── tailwind.config.js      # semantic colour aliases, type scale, two radii
 ├── postcss.config.js
-├── dist/                   # build output (served by Nginx in production)
+├── dist/                   # build output (synced to S3, served by CloudFront)
 └── src/
     ├── main.jsx            # ReactDOM.createRoot -> <App />, imports index.css
     ├── App.jsx             # ALL routes + ProtectedRoute / PublicRoute wrappers

@@ -1,11 +1,11 @@
 # Architecture
 
 How Career Tours is deployed and how a request travels through it. This is the
-source of truth for the runtime shape; [docs/deployment.md](deployment.md) holds the
-step-by-step operational procedures, and much of it still describes the EC2
-deployment that this architecture replaces (see [EC2 remnants](#ec2-remnants-retained-but-stale)).
+source of truth for the runtime shape and for the build, deploy and publish
+procedures. The API contract those procedures serve is in
+[api-contract.md](api-contract.md).
 
-Verified against the live AWS account on **2026-08-08**.
+Verified against the live AWS account on **2026-08-17**.
 
 ---
 
@@ -193,18 +193,29 @@ or SSM Parameter Store requires an execution-role policy change.
 
 ---
 
-## IAM: what the deploy user cannot do
+## IAM: what the deploy user can do
 
-Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`. It can push to ECR and
-update the function, but it is **denied**:
+Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`.
 
-`apigateway:GET` (all of it) · `iam:*` · `s3:ListAllMyBuckets` · `s3:ListBucket` ·
-`s3:GetBucketLocation` · `cloudfront:ListDistributions` · `ec2:DescribeInstances`
+An earlier revision of this document listed `apigateway:GET`, `iam:*`, `s3:ListAllMyBuckets`,
+`s3:ListBucket`, `s3:GetBucketLocation` and `cloudfront:ListDistributions` as **denied** to this
+user, and drew conclusions from that — that it could not read an API Gateway, attach execution-role
+policies, or inspect CloudFront and the bucket. **That list is wrong.** Every one of those actions
+simulates as `allowed`, along with `ecr:PutImage`, `lambda:UpdateFunctionCode`,
+`route53:ChangeResourceRecordSets` and `ses:SendEmail`. The permissions were presumably widened
+after the note was written and it was never revisited.
 
-Practical consequences: this user **cannot create or even read an API Gateway**, cannot attach
-policies to the execution role, and cannot inspect CloudFront or the S3 bucket. Anything in
-those categories is an admin action. Because CloudFront and EC2 are unreadable from here, this
-document cannot state whether either exists — that has to be confirmed from an admin account.
+Check the real answer rather than trusting a list here, which will drift again:
+
+```bash
+aws iam simulate-principal-policy \
+  --policy-source-arn arn:aws:iam::307857432997:user/career-tours-deployer \
+  --action-names iam:PutRolePolicy cloudfront:ListDistributions apigateway:GET \
+  --query 'EvaluationResults[].{Action:EvalActionName,Decision:EvalDecision}' --output table
+```
+
+Note that `simulate-principal-policy` evaluates policy, not the API call: an action can simulate
+as `allowed` and still fail on a resource-level condition or an SCP.
 
 ---
 
@@ -325,32 +336,3 @@ aws cloudfront get-distribution-config --id E1TW6HR68G4A7T \
   --query 'DistributionConfig.{Fn:DefaultCacheBehavior.FunctionAssociations,Errors:CustomErrorResponses.Quantity}'
 # want: Fn.Quantity == 1, Errors == 0
 ```
-
-## The EC2 instance
-
-`i-0b0e7c50c03dc9933` (`3.110.122.199`, `career-tours.duckdns.org`) is **still running and
-still serving**, and it is deliberately left alone. Do not assume it is the same system.
-
-**It is on a different database.** Its `/db-test` returns `{"database": "career_tours"}`,
-not `neondb`. Older text in `docs/deployment.md` claiming Postgres was fully migrated off the
-instance is not true of the running box. The two stacks do not share data, so a job, project
-or recommendation created on one is invisible to the other.
-
-## EC2 remnants, retained but stale
-
-The application ran on an Amazon Linux EC2 instance behind Nginx and Gunicorn before this
-migration. Several artifacts of that deployment are still in the repository **on purpose** —
-they are not to be deleted until the instance is confirmed decommissioned. None of them affect
-the Lambda runtime:
-
-| Artifact | Status |
-|---|---|
-| `nginx.conf` | Reference copy of the instance's Nginx config — static `dist/` serving, `/api` → `127.0.0.1:5000`, Certbot TLS, a 10 MB body cap and a 300 s read timeout. Listed in `.gitignore` yet tracked, so it shows as permanently modified. Unused by Lambda. |
-| `gunicorn` in `requirements.txt` | Dead weight in the image; harmless. |
-| The rsync deploy recipe in [deployment.md](deployment.md) | Describes `rsync` over SSH plus `systemctl restart career-tours`. Superseded by the ECR flow above. |
-| `backend/uploads/`, `uploads/` | Old on-disk upload directories. Uploads now go to `/tmp` and then S3. |
-
-Two of Nginx's behaviours have **no equivalent** in the Lambda setup and are worth remembering:
-the 10 MB `client_max_body_size` (the platform limit is stricter — see [File uploads](#file-uploads))
-and the 300 s `proxy_read_timeout` (API Gateway's 30 s cap is far stricter — see
-[The 30-second wall](#the-30-second-wall)).

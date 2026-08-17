@@ -16,8 +16,8 @@ Detailed specs for each remaining phase: `references/` in this skill folder.
 
 Read `references/context.md` first. It records what already shipped, the design
 rules now enforced in code, and the environment facts that are easy to get wrong
-(the DB password is not the one in the docs; there is no test suite or linter;
-deploys are rsync-from-local because the box has neither Git nor Node).
+(there is no test suite or linter; the backend deploys as an arm64 container image
+whose build flags are not optional; Lambda's logs are under a group override).
 
 ## The remaining phases
 
@@ -43,16 +43,16 @@ which flips the UI to "Skills Extracted" and **removes the Extract button**, loc
 the user out. The same endpoint also kills a serial waterfall and an empty `catch` that
 hides working features on a transient 500.
 
-### Phase 2 — the 73-second wait (largest)
-See `references/phase-2-jobs.md`. `POST /api/recommendations/projects/<id>/generate`
-blocks for **73 seconds** (measured in production) behind a small spinning button with
-no progress, ETA or cancel, and navigating away silently abandons it. It also occupies
-one of only two gunicorn sync workers.
+### Phase 2 — the 73-second wait (largest) — **SHIPPED**
+See `references/phase-2-jobs.md` for the reasoning, kept as a record. `POST
+/api/recommendations/projects/<id>/generate` blocked for **73 seconds** behind a small
+spinning button with no progress, ETA or cancel, and navigating away silently abandoned it.
 
-Approach: a `jobs` table + a one-slot worker thread per gunicorn process + client
-polling. The alternatives (SSE, client-driven per-career requests, Celery/RQ) were
-considered and rejected — the reasoning is in the reference so it isn't relitigated.
-This is the only phase needing a migration (`006_jobs.sql`).
+Shipped as a `jobs` table (`006_jobs.sql`) plus submit-then-poll: the route returns `202`
+with a `job_id` and the Lambda re-invokes *itself* with `InvocationType='Event'`, because
+Lambda freezes the sandbox when the handler returns and so a worker thread cannot survive.
+The alternatives (SSE, client-driven per-career requests, Celery/RQ) were considered and
+rejected — the reasoning is in the reference so it isn't relitigated.
 
 ### Phase 1.7 — page sameness (cosmetic leftovers)
 See `references/phase-1.7-layout.md`. Deferred from the shipped visual pass: extract
@@ -65,7 +65,7 @@ See `references/phase-1.7-layout.md`. Deferred from the shipped visual pass: ext
 Every phase ends the same way, and there is **no test suite or linter** — so verify
 explicitly. `references/verify-deploy.md` has the exact commands: build, the
 straggler greps, Playwright checks in light/dark at 1440px and 390px, the auth curl
-matrix, and the rsync deploy.
+matrix, and the image build plus S3/CloudFront publish.
 
 Never regress these while working: the a11y layer (focus floor, forced-colors block,
 `prefers-reduced-motion`, listbox semantics, focus trap, the throw-on-misuse guards)

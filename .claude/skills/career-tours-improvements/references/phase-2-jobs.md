@@ -1,6 +1,10 @@
 # Phase 2 — the 73-second wait
 
-Largest phase, and the only one needing a migration.
+**Status: shipped.** Kept as a record of why this shape was chosen. Note that it was
+written against the pre-Lambda runtime, so the worker-thread mechanism below was
+superseded during implementation: Lambda freezes the sandbox the moment the handler
+returns, so the job is run by the function re-invoking *itself* with
+`InvocationType='Event'`. The problem statement and the rejected alternatives still hold.
 
 ## The problem
 
@@ -10,8 +14,10 @@ one `await` behind a spinning button reading "Analysing…" — no progress, no 
 stage breakdown, no cancel. The rest of the page stays interactive, so navigating away
 silently abandons the result: the work completes server-side but the UI never learns.
 
-It also occupies **one of only two gunicorn sync workers** for those 73 seconds. The
-infra papered over it (`nginx.conf`: `proxy_read_timeout 300s`) rather than the UX.
+It also holds a request slot open for those 73 seconds, and the infra papered over that
+with a long read timeout rather than fixing the UX. On the current runtime it cannot be
+papered over at all: API Gateway caps its integration timeout at 30 s and that limit
+cannot be raised, so async is mandatory rather than merely better.
 
 `POST /api/resumes/<id>/extract-skills` is the same shape at ~30s.
 
@@ -42,8 +48,8 @@ intent). Columns: `job_id`, `student_id`, `project_id`, `job_type`, `status`
 `created_at`, `started_at`, `finished_at`.
 
 Include a **partial unique index** on `(project_id, job_type) WHERE status IN
-('queued','running')`. That is the real double-submit guard — it holds across both
-gunicorn workers, which no Python-side flag can. Add `backend/table_schemas/jobs.sql`
+('queued','running')`. That is the real double-submit guard — it holds across every
+concurrent execution, which no Python-side flag can. Add `backend/table_schemas/jobs.sql`
 to match convention.
 
 ### `backend/repositories/job_repository.py`
@@ -101,7 +107,7 @@ the sentence that changes the experience: *"This keeps running if you leave this
 1. Async behind `?async=1`; sync remains the default. Old frontend keeps working.
 2. Frontend switches to `?async=1`. **This is the release that fixes the problem.**
 3. Async becomes the default; keep `?sync=1` for Postman/ops with a comment that it
-   holds a worker for ~73s. Then `nginx.conf`'s `proxy_read_timeout` can drop 300s → 60s.
+   blocks for ~73s and therefore cannot be used through API Gateway's 30 s cap.
 
 Apply the same treatment to `extract-skills` last (single `gpt-5` call, so honestly two
 stages and an indeterminate bar).

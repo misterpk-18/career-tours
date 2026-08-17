@@ -11,7 +11,7 @@
 .venv/
 venv/
 
-# Uploads are staged in /tmp at runtime and pushed to S3; these are EC2-era leftovers.
+# Uploads are staged in /tmp at runtime and pushed to S3; these directories are unused.
 uploads/
 backend/uploads/
 
@@ -28,6 +28,5 @@ frontend/
 docs/
 .claude/
 .playwright-mcp/
-nginx.conf
 response.json
 README.md
