@@ -21,6 +21,7 @@ across them.
 """
 
 import argparse
+import csv
 import json
 import re
 import sys
@@ -35,9 +36,30 @@ sys.path.insert(0, str(BACKEND))
 from pypdf import PdfReader  # noqa: E402
 
 from services.llm.openai_service import OpenAIService  # noqa: E402
+from services.skills.taxonomy import SkillTaxonomy  # noqa: E402
 
 PDF_DIR = BACKEND / "data" / "lms" / "courses"
 OUT_DIR = BACKEND / "data" / "lms" / "extracted"
+
+# The vocabulary the rest of the system speaks, assembled from the two places
+# that already own skill names: the curated ESCO list that occupation_skills was
+# built from, and the repo's own taxonomy that resume extraction snaps onto.
+# Reading the CSV rather than the database keeps this script free of a DB
+# dependency, and both feed through the same canonicalization in the loader, so
+# they resolve to the same skill_id either way.
+ESCO_SKILLS = BACKEND / "data" / "imports" / "esco" / "skills.csv"
+
+
+def skill_vocabulary():
+    names = set()
+
+    if ESCO_SKILLS.exists():
+        with ESCO_SKILLS.open(newline="", encoding="utf-8") as handle:
+            names.update(row["skill_name"] for row in csv.DictReader(handle))
+
+    names.update(SkillTaxonomy.names())
+
+    return sorted(names, key=str.casefold)
 
 CODE_RE = re.compile(r"^(NT-C-\d{3})")
 
@@ -73,7 +95,7 @@ def course_text(pdf_path: Path) -> str:
     return "\n\n".join((page.extract_text() or "") for page in reader.pages)
 
 
-def extract_one(service, code: str, pdf: Path) -> str:
+def extract_one(service, code: str, pdf: Path, vocabulary) -> str:
     """Extract and write one course. Returns "ok" or "failed"; never raises.
 
     A raised exception here would only be re-raised out of the future, and one
@@ -88,7 +110,7 @@ def extract_one(service, code: str, pdf: Path) -> str:
 
     for attempt, delay in enumerate((*RETRY_DELAYS, None)):
         try:
-            profile = service.extract_course_profile(code, text)
+            profile = service.extract_course_profile(code, text, vocabulary=vocabulary)
         except Exception as error:
             if delay is not None and is_rate_limit(error):
                 report(f"  .. {code}: rate limited, retrying in {delay}s (attempt {attempt + 1})")
@@ -128,6 +150,11 @@ def main() -> int:
         type=int,
         default=8,
         help="courses extracted concurrently (default 8; lower it if the key gets rate limited)",
+    )
+    parser.add_argument(
+        "--no-vocabulary",
+        action="store_true",
+        help="let the model name skills freely (produces names nothing else in the system uses)",
     )
     args = parser.parse_args()
 
@@ -173,13 +200,16 @@ def main() -> int:
         print(f"nothing to do — {skipped} course(s) already extracted (use --force to redo them)")
         return 0
 
+    vocabulary = [] if args.no_vocabulary else skill_vocabulary()
+
     workers = min(args.workers, len(pending))
-    print(f"extracting {len(pending)} course(s) with {workers} worker(s), {skipped} already present\n")
+    print(f"extracting {len(pending)} course(s) with {workers} worker(s), {skipped} already present")
+    print(f"vocabulary: {len(vocabulary) or 'none — skills will be named freely'}\n")
 
     started = time.perf_counter()
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = [pool.submit(extract_one, service, code, pdf) for code, pdf in pending]
+        futures = [pool.submit(extract_one, service, code, pdf, vocabulary) for code, pdf in pending]
         results = [future.result() for future in as_completed(futures)]
 
     done = results.count("ok")

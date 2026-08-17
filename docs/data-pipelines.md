@@ -194,15 +194,30 @@ statement per row. The `bulk_insert` helper in `scripts/load_careers.py` builds
 genuine multi-row `VALUES` statements at 1,000 rows each; that is what took the
 run from 16 minutes to 11 seconds.
 
-**Vocabulary decides whether matching fires.** `occupation_skills` and
-`course_skills` join to `skills` on `skill_id`, exactly — there is no fuzzy
-match anywhere in the engine. A generated skill only ever matches a student if
-it resolves to the same `skills` row that resume extraction produces, which is
-why both loaders resolve names through `SkillTaxonomy.canonical` and then
-`SkillNormalizer.normalize` before touching the catalog, and why the career
-prompt picks from a closed vocabulary instead of naming skills freely.
+**Vocabulary decides whether *course recommendation* fires — not career
+matching.** The two work differently, and it is easy to over-generalise from one
+to the other:
 
-The course pipeline predates that constraint being understood, and its skills
-were extracted without a supplied vocabulary: 505 of its 591 `course_skills`
-rows point at names no student profile produces. Re-running
-`extract_course_profiles.py` with the taxonomy in the prompt would fix it.
+* **Career match percentage ignores `skill_id` entirely.** `SkillMatcher` embeds
+  skill *names* with all-MiniLM-L6-v2 and scores by cosine similarity, so
+  "Django ORM" and "ORM" still contribute. Naming drift costs accuracy here, not
+  correctness.
+* **Course recommendation is an exact lookup.** `generator.py` takes each
+  missing skill *name*, resolves it with `SkillRepository.get_by_name`
+  (case-insensitive, exact), and joins `course_skills` on the `skill_id` it gets
+  back. A course skill spelled differently from the occupation skill produces no
+  recommendation at all, silently.
+
+That is why both loaders resolve names through `SkillTaxonomy.canonical` and
+then `SkillNormalizer.normalize`, and why both extraction prompts are handed a
+vocabulary instead of naming skills freely.
+
+The course pipeline originally ran without one, and the cost was measurable:
+only 52 skills appeared in both `course_skills` and `occupation_skills`, leaving
+94 of 267 occupations unable to reach any course. Re-extracting against the
+shared vocabulary (`skills.csv` ∪ `skill_taxonomy.json`, 1,469 names) took that
+to 168 shared skills and 19 unreachable occupations. Roughly 79% of extracted
+course skills now come from the vocabulary; the remainder are genuine gaps in it
+— ESCO does not name `Django REST Framework` or `Azure Key Vault` — which is why
+the vocabulary is a strong preference in the prompt rather than a hard
+constraint.
