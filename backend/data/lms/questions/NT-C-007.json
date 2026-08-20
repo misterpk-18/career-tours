@@ -1,0 +1,1822 @@
+{
+  "course_code": "NT-C-007",
+  "course_name": "Azure DevOps",
+  "sections": [
+    {
+      "section_code": "NT-C-007-S01",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Git",
+        "Azure Repos"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are logged in with Azure CLI and get an authorization error when creating a resource group.\n\n```bash\n$ az account show --output json | jq '{user: .user.name, tenant: .tenantId, subscription: .id}'\n{\n  \"user\": \"dev@contoso.com\",\n  \"tenant\": \"11111111-1111-1111-1111-111111111111\",\n  \"subscription\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\"\n}\n\n$ az account list --output table\nName                         CloudName    SubscriptionId                        TenantId                               IsDefault\n---------------------------  -----------  ------------------------------------  ------------------------------------  ---------\nContoso-Dev                  AzureCloud   aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa  11111111-1111-1111-1111-111111111111  True\nFabricam-Prod                AzureCloud   bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb  22222222-2222-2222-2222-222222222222  False\n\n$ az group create -n rg-test -l eastus\nAuthorizationFailed: The client 'dev@contoso.com' with object id '...' does not have authorization to perform action on scope '/subscriptions/bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb/resourceGroups/rg-test'.\n```\nYou do have Contributor on the Fabricam-Prod subscription (TenantId 2222...). What is the first command you should run to resolve this error before retrying the create?",
+          "options": [
+            "az login --tenant 22222222-2222-2222-2222-222222222222",
+            "az ad signed-in-user show --query objectId -o tsv",
+            "az account set --subscription bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+            "az account clear && az login"
+          ],
+          "correct_option": "A",
+          "explanation": "The token cached is for tenant 1111; switching to a subscription in tenant 2222 requires acquiring a token for that tenant. Running az login --tenant <tenantId> (then optionally az account set) ensures the CLI has a valid token in the correct tenant so the authorization check succeeds.",
+          "distractor_rationale": "A: az account set changes the selected subscription but does not acquire a token for another tenant if none exists; the next call can still fail AuthorizationFailed.\nC: Clearing accounts and logging in without specifying the tenant can reselect the same default tenant 1111 and not fix the error.\nD: Showing your objectId proves identity but does nothing to change the tenant context or token used for authorization.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You attempt to peer two VNets and get an overlap error.\n\n```text\nHubVnet addressSpace: 10.0.0.0/16\n  subnets:\n    GatewaySubnet: 10.0.0.0/24\n    SharedServices: 10.0.1.0/24\nSpokeVnet addressSpace: 10.0.1.0/24\n  subnets:\n    App: 10.0.1.0/26\n    Data: 10.0.1.64/26\n\nPeering create result: \"Failed: The address space of SpokeVnet overlaps with HubVnet.\"\n```\nYou must keep existing Hub subnets and enable peering. What change enables peering with minimal disruption?",
+          "options": [
+            "Use VNet-to-VNet VPN instead of peering; overlapping spaces are allowed there",
+            "Change SpokeVnet address space to 10.1.0.0/16 and re-create its subnets accordingly",
+            "Add a UDR in HubVnet to route 10.0.1.0/24 to SpokeVnet",
+            "Enable \"Allow gateway transit\" on the peering"
+          ],
+          "correct_option": "B",
+          "explanation": "Any overlap between VNet address spaces blocks peering. The minimal viable fix is to move the Spoke to a non-overlapping range (e.g., 10.1.0.0/16) and recreate subnets inside it.",
+          "distractor_rationale": "B: UDRs do not override the peering overlap validation; peering cannot be created while overlapping.\nC: Gateway transit controls propagation of gateway routes, not address space overlap.\nD: VNet-to-VNet VPN also requires non-overlapping address spaces; overlap is not allowed.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A VM in subnet App cannot upload to a Storage account that allows only selected networks. Service endpoints are configured on subnet Data but not on App. NSG rules on App are:\n\n```yaml\noutbound:\n  - name: AllowVnet\n    priority: 100\n    access: Allow\n    protocol: Any\n    source: VirtualNetwork\n    destination: VirtualNetwork\n    destinationPort: Any\n  - name: DenyInternet\n    priority: 120\n    access: Deny\n    protocol: Any\n    source: Any\n    destination: Internet\n    destinationPort: Any\n```\nStorage firewall is set to Selected networks and includes VNet vnet1/subnet Data only. What targeted change will allow the VM in App to upload blobs without opening broad egress?",
+          "options": [
+            "Remove the DenyInternet rule to fall back to default outbound rules",
+            "Add an NSG rule on App to Allow destination ServiceTag Storage on port 443 with higher priority than DenyInternet",
+            "Add AllowAzureLoadBalancer outbound rule to App NSG",
+            "Enable a Private Endpoint for the storage account in subnet App"
+          ],
+          "correct_option": "B",
+          "explanation": "With service endpoints, traffic still targets the public Storage endpoint and is evaluated by NSG. AllowVirtualNetwork does not include Storage. You need an explicit Allow to the Storage service tag before the DenyInternet. Alternatively, add a service endpoint and include that subnet in the storage firewall; the minimal change here is the targeted NSG allow to Storage:443.",
+          "distractor_rationale": "B: Private Endpoint would work but is a larger architectural change and not minimal.\nC: Removing DenyInternet broadly opens egress, violating the constraint.\nD: Azure Load Balancer tag is unrelated to Storage egress and won’t affect blob uploads.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "This ARM template snippet for a VM fails validation:\n\n```json\n{\n  \"type\": \"Microsoft.Compute/virtualMachines\",\n  \"name\": \"vm1\",\n  \"apiVersion\": \"2022-11-01\",\n  \"location\": \"eastus2\",\n  \"zones\": [\"1\",\"2\"],\n  \"properties\": {\n    \"availabilitySet\": {\n      \"id\": \"/subscriptions/.../resourceGroups/rg/providers/Microsoft.Compute/availabilitySets/as1\"\n    },\n    \"hardwareProfile\": { \"vmSize\": \"Standard_D2s_v5\" },\n    \"networkProfile\": { \"networkInterfaces\": [ { \"id\": \"/.../nic1\" } ] }\n  }\n}\n```\nThe plan is to deploy two standalone VMs and pin each to a different zone (no scale sets). What is the minimal change to fix validation and meet the plan?",
+          "options": [
+            "Remove the availabilitySet reference and deploy two separate VM resources, each with a single zone specified",
+            "Keep the availability set, remove zones, and rely on fault domains for zone-level redundancy",
+            "Keep both and set singlePlacementGroup to false on the VM",
+            "Switch to a scale set with capacity 2 and specify zones [\"1\",\"2\"]"
+          ],
+          "correct_option": "A",
+          "explanation": "You cannot combine an availability set with zones. For two standalone VMs spread across zones, remove the availability set and deploy two VM resources pinned to different zones.",
+          "distractor_rationale": "B: Availability sets spread across fault/update domains within one datacenter, not across zones; this does not give zone redundancy.\nC: A scale set could achieve the spread but changes the architecture; the requirement was standalone VMs.\nD: singlePlacementGroup is a scale set property, not valid on a VM; and it doesn’t resolve the mutual exclusion of zones and availability sets.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A repo’s main branch has the following branch policies:\n\n```text\n- Require a minimum number of reviewers: 1 (reset approvals on new push)\n- Check for linked work items: required\n- Limit merge types: Squash only\n- Require pull request to merge: enabled (block direct pushes)\n```\nA hotfix needs to be pushed urgently by a small maintainer group without disabling protections for everyone. A developer’s push fails:\n\n```text\n$ git push origin main\nremote: TF402455: Pushes to this branch are not permitted; you must use a pull request to update this branch.\n```\nWhat is the correct targeted change?",
+          "options": [
+            "Allow 'Fast-forward only' merges in branch policies",
+            "Grant 'Force push (rewrite history, delete branches and tags)' to the developer on main",
+            "Temporarily disable 'Require a minimum number of reviewers' on main",
+            "Grant the 'Bypass policies when pushing' permission to a dedicated Hotfix Maintainers group on this repository"
+          ],
+          "correct_option": "D",
+          "explanation": "'Bypass policies when pushing' allows a specific group to push directly despite the PR requirement, leaving protections intact for everyone else.",
+          "distractor_rationale": "B: Force push does not bypass policy that blocks any direct push; it only controls rewriting if a push were allowed.\nC: Disabling reviewer requirements still leaves 'Require pull request' blocking direct pushes.\nD: Merge type settings affect PR completion, not direct push permissions.",
+          "skills_covered": [
+            "Azure Repos",
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your feature branch is behind origin/main. You ran:\n\n```bash\n# on branch feat/payment\n$ git pull\nMerge made by the 'ort' strategy.\n```\nNow your PR shows a noisy merge commit in the diff. The team wants a linear stack of your feature commits rebased on main to keep PRs clean. Which command should you have used to update your branch before pushing?",
+          "options": [
+            "git pull --ff-only",
+            "git pull --rebase origin main",
+            "git reset --hard origin/main",
+            "git merge --no-ff origin/main"
+          ],
+          "correct_option": "B",
+          "explanation": "git pull --rebase origin main (or fetch + rebase) replays your commits on top of the updated main without creating a merge commit, keeping a linear history suitable for a clean PR.",
+          "distractor_rationale": "B: --no-ff forces a merge commit, the opposite of the desired linear history.\nC: --ff-only would fail if your branch has diverged, and it doesn’t rebase your commits.\nD: reset --hard to main discards your feature commits entirely, not what’s needed.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A user cannot push to a repo. Their memberships and permissions are:\n\n```text\nProject Readers (project level): Contribute = Deny (inherited)\nRepo Writers (repo level): Contribute = Allow\nBranch main: no explicit permissions set\nPush error: TF401019: Git repository or ref not found or access denied.\n```\nWhat change enables the push without granting overly broad rights?",
+          "options": [
+            "Grant 'Exempt from policy enforcement' on the repository",
+            "Change the default branch to develop",
+            "Remove the user from Project Readers or set Contribute to Not set at project scope for that user/group",
+            "Set Contribute = Allow explicitly on branch main"
+          ],
+          "correct_option": "C",
+          "explanation": "In Azure Repos, an explicit Deny at any scope overrides Allow at a narrower scope. Removing the Deny (or changing it to Not set) at project level is required for the repo-level Allow to take effect.",
+          "distractor_rationale": "B: Allow on branch doesn’t override a higher-scope Deny; Deny still wins.\nC: Policy exemptions affect PR policies, not fundamental permission Deny.\nD: Default branch has no bearing on permission Deny vs Allow resolution.",
+          "skills_covered": [
+            "Azure Repos"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Creating a resource group fails with a policy error.\n\n```bash\n$ az group create -n rg-analytics -l eastus\n(RequestDisallowedByPolicy) Resource 'rg-analytics' was disallowed by policy. Policy 'Allowed locations' only permits: westus2, centralus\n```\nWhat action will succeed without changing role assignments or disabling policy?",
+          "options": [
+            "Create the resource group in westus2 instead of eastus",
+            "Set a default location via `az configure --defaults location=westus2` and retry the exact same command using eastus",
+            "Create the resource group from the Portal; policies apply only to ARM templates",
+            "Assign Owner on the subscription to your user, then retry eastus"
+          ],
+          "correct_option": "A",
+          "explanation": "The Allowed locations policy enforces permitted regions regardless of role or client. Creating the group in an allowed region (westus2) complies with the policy and will succeed.",
+          "distractor_rationale": "B: Role elevation doesn’t bypass policy evaluation.\nC: The default location only applies when location is omitted; it doesn’t override an explicit eastus argument.\nD: Azure Policy evaluates all ARM operations; the Portal also sends ARM requests and will be blocked.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A VM in subnet App gets 403 when accessing a Storage account that allows only selected networks. Evidence:\n\n```bash\n$ az storage account network-rule list -g rg -n mystorage --query \"{defaultAction: defaultAction, vnetRules: vnetRules[].subnet.id}\"\n{\n  \"defaultAction\": \"Deny\",\n  \"vnetRules\": [\n    \"/subscriptions/.../virtualNetworks/vnet1/subnets/Data\"\n  ]\n}\n\n$ az network vnet subnet show -g rg --vnet-name vnet1 -n App --query serviceEndpoints\nnull\n\n$ curl -I https://mystorage.blob.core.windows.net/\nHTTP/1.1 403 This request is not authorized to perform this operation.\n```\nWhat change is required for the VM in App to access the storage account via its public endpoint?",
+          "options": [
+            "Enable 'Allow Azure services on the trusted services list' on the storage firewall",
+            "Create a Private Endpoint in subnet App for the storage account",
+            "Enable the Microsoft.Storage service endpoint on subnet App and wait for effective routes to update",
+            "Add the VM's public IP to storage account IP network rules"
+          ],
+          "correct_option": "C",
+          "explanation": "With 'Selected networks' and service endpoints, the subnet accessing the storage must have the Microsoft.Storage service endpoint enabled and be added to the storage firewall. App lacks the endpoint; enabling it is required.",
+          "distractor_rationale": "B: Trusted services refers to specific Azure services, not your VM traffic.\nC: The VM uses a private IP; adding a public IP won’t match traffic sourced from the VNet.\nD: A Private Endpoint would work but is a larger change than necessary when service endpoints suffice.",
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You interactively rebased your feature branch and now need to update the remote safely. New local history:\n\n```text\n* 9f3a2c1 feat: add validation (rebased)\n* 7d8e6b2 refactor: split service (rebased)\n* 3a1b0c4 fix: null guard (rebased)\n|\\\n| * 1a2b3c4 origin/feat/x (old history)\n|/\n* aabbcc0 origin/main\n```\nYou want to avoid overwriting any remote updates made since your last fetch. Which push is correct?",
+          "options": [
+            "git push origin HEAD:main",
+            "git push --recurse-submodules=on-demand",
+            "git push --force origin feat/x",
+            "git push --force-with-lease origin feat/x"
+          ],
+          "correct_option": "D",
+          "explanation": "--force-with-lease updates the remote while protecting against clobbering if the remote moved unexpectedly since your last fetch. It is the safe way to publish a rebased branch.",
+          "distractor_rationale": "B: --force overwrites the remote even if it moved, risking data loss.\nC: Pushing to main is the wrong target and may violate branch protections.\nD: Submodule recursion is irrelevant to rebased branch safety.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Contoso has one Azure AD tenant. Two product teams (Payments and Orders) need isolated workloads but shared connectivity to a central logging VM. Compliance requires: (1) payments engineers cannot deploy resources into orders’ subscription and vice versa, (2) mainline code updates to the central repo must go through PR review with squash merges, (3) only a small Maintainers group can hotfix main without PRs. Network: a Hub VNet (10.10.0.0/16) in subscription Shared contains the logging VM; each team has its own subscription and VNet (Spoke-Pay, Spoke-Ord).",
+          "task": "Design, at a high level, the identity and permissions model plus the Git/Azure Repos controls to satisfy all constraints. Be specific about the Azure AD groups, RBAC assignment scopes, VNet peering, and the exact Azure Repos branch policy and permission settings to enable PR-only merges with squash, while allowing Maintainers to push hotfixes to main. Justify how each choice enforces the requirement and call out any pitfalls.",
+          "expected_answer": "A strong answer proposes: (Identity/RBAC) Create AAD groups: Payments-Engineers, Orders-Engineers, Shared-NetOps, Repo-Maintainers. Create three subscriptions: Shared, Payments, Orders. Assign Payments-Engineers Contributor (or DevTest + specific custom roles if needed) at the Payments subscription or at scoped resource groups, and ensure no role at Orders; similarly for Orders-Engineers. Assign Shared-NetOps Network Contributor on Shared and on peering in each spoke as needed. Use RG-level scopes where least privilege is desired. (Network) Use non-overlapping address spaces. Peer Spoke-Pay and Spoke-Ord to Hub with 'Allow forwarded traffic' as required for logging flows; do not peer the spokes to each other. (Git/Repos) In Azure Repos, set main branch policy: Require PR, minimum 1 reviewer, reset approvals on push, check for linked work items, limit merge types to Squash only. Deny 'Contribute' direct pushes to 'Project Contributors' on main. Grant 'Bypass policies when pushing' to Repo-Maintainers. Ensure Repo-Maintainers is an AAD-group-backed DevOps group for centralized membership. Optional: enable status checks if used. Explain pitfalls: repo-level Allows cannot override higher-scope Deny; ensure no Deny on the Maintainers group. Ensure peering does not use overlapping spaces; AS vs zone trade-offs not relevant here. Hotfix path: Maintainers push directly to main or create a PR and use override; everyone else must PR+review. This meets (1)-(3).",
+          "rubric": [
+            {
+              "criterion": "Proposes correct AAD group structure and maps groups to the right subscription/RG scopes with least privilege",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains VNet peering topology and settings that isolate spokes but connect to hub without overlap",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies Azure Repos branch policy settings to enforce PRs and squash merges",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines targeted permission for Maintainers to bypass policies when pushing and explains Deny vs Allow precedence/pitfalls",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "Azure Repos",
+            "Git"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A VM (vm-app) in subnet App (10.20.1.0/24) cannot upload logs to a Storage account (stlogs) configured with 'Selected networks'. Evidence shows subnet Data (10.20.2.0/24) has Microsoft.Storage service endpoints and is added to stlogs firewall; subnet App does not. App NSG has Deny Internet (priority 120) after Allow VirtualNetwork (priority 100).",
+          "task": "Diagnose the precise cause and propose a minimal-change remediation plan that preserves the current posture of only allowing storage access from selected subnets and not opening broad egress. Include the changes, their order, and how you would verify without exposing the account publicly.",
+          "expected_answer": "Cause: stlogs firewall allows only Data subnet; App subnet lacks a Storage service endpoint, so its traffic to the public blob endpoint is seen as Internet and is blocked by both NSG (Deny Internet) and the storage firewall. Minimal remediation: (1) Enable Microsoft.Storage service endpoint on subnet App. (2) Add vnet1/subnets/App to stlogs network rules. (3) Add an outbound NSG allow rule on App for ServiceTag 'Storage' TCP 443 with priority between 100 and 120 if Deny Internet would still match. Verification: check 'az network vnet subnet show' for serviceEndpoints, 'az storage account network-rule list' to confirm App subnet listed, 'az network watcher test-connectivity' from vm-app to stlogs:443, or attempt a blob list with a SAS; do not set defaultAction Allow or enable public network access broadly. Rollback plan and note propagation delays for service endpoints.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies both storage firewall scope and missing service endpoint as the root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes minimal, ordered changes (enable endpoint, add firewall rule, targeted NSG allow)",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes verification steps that do not require opening public access",
+              "marks": 1
+            },
+            {
+              "criterion": "Calls out propagation delay/side effects and avoids broad egress or public access",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A developer merged main into their feature branch (feat/report) creating a merge commit M. The PR now shows unrelated diffs and the team asks for a clean, linear history rebased on main. The branch is already published and other reviewers have commented on the PR.",
+          "task": "Propose a safe sequence of Git commands to transform feat/report into a linear sequence on top of origin/main without losing any work, and update the PR accordingly. Explain why your approach is safe, how you avoid overwriting others’ changes, and what push flags you will use. Include how you would recover if your rebase encounters conflicts halfway through.",
+          "expected_answer": "Steps: fetch and ensure local knowledge is up to date: 'git fetch origin'. Switch to feat/report. Run 'git rebase --rebase-merges --onto origin/main origin/main feat/report' or simply 'git rebase origin/main' if only M is the divergence. Resolve conflicts as they arise; use 'git rebase --continue'. If stuck, 'git rebase --abort' returns to the pre-rebase state. When finished, verify with 'git log --graph --decorate --oneline' that only linear feature commits remain atop origin/main. Push with 'git push --force-with-lease origin feat/report' to update the remote safely without clobbering any changes made on the server since fetch. The existing PR will update automatically to the rebased commits and show a clean diff. Explain that '--force-with-lease' protects against overwriting remote updates, and that rebase is safe here because the branch is not the default branch and only your branch history is rewritten.",
+          "rubric": [
+            {
+              "criterion": "Presents a correct command sequence to rebase feature branch onto origin/main",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains use of --force-with-lease and why it is safer than --force",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses conflict handling and recovery (continue/abort)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains PR update behavior and why rewriting the feature branch is acceptable",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "Azure Repos"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your repo’s main branch must enforce PRs with squash merges, but critical production hotfixes must be pushable directly by a small team without weakening controls for everyone else. Developers currently receive a push rejection on main due to 'Require pull request to merge'.",
+          "task": "Specify the exact Azure Repos configuration to meet both goals. Include branch policy settings, permission assignments at the right scope, and any constraints to avoid Deny/Allow conflicts. Briefly describe how you would test that regular contributors are still blocked while Maintainers can push. Consider auditability.",
+          "expected_answer": "Configure branch policy on main: Require PR to merge, min 1 reviewer, reset approvals on new push, check for linked work items, limit merge types to Squash only. On main, explicitly set 'Contribute' = Deny for 'Project Contributors' if needed to prevent accidental grants. Create an AAD-backed DevOps group 'Repo-Maintainers'. At repository scope, grant 'Bypass policies when pushing' = Allow to Repo-Maintainers, and ensure there is no Deny inherited at project/repo for this group (avoid placing Maintainers in any group with Contribute = Deny). Do not grant broad 'Force push' unless justified. Test: as a normal contributor, attempt 'git push origin main' (should be rejected) and complete via PR (should succeed, squash). As a Maintainer, push a signed hotfix commit directly (should succeed) and verify that the action is logged in Azure DevOps audit and repo push history. This preserves controls, limits bypass to a small group, and keeps auditability.",
+          "rubric": [
+            {
+              "criterion": "Lists correct branch policy settings enforcing PR + squash",
+              "marks": 2
+            },
+            {
+              "criterion": "Assigns 'Bypass policies when pushing' to a Maintainers group at the correct scope and avoids Deny precedence issues",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes a clear test plan to validate both blocked and allowed behaviors",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses auditability and least-privilege considerations",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Repos",
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Azure environment lab: secure VNet, VM, and storage with selected networks",
+          "brief": "Build a minimal Azure environment demonstrating identity, subscriptions, network, compute, and storage. Create: (1) a resource group RG-Network in your target subscription, (2) a VNet vnet1 (10.50.0.0/16) with subnets App (10.50.1.0/24) and Data (10.50.2.0/24), (3) an NSG for App that allows VirtualNetwork and explicitly allows ServiceTag Storage TCP 443, then denies Internet, (4) a Storage account stlab with 'Selected networks' and a VNet rule for subnet Data, and (5) enable Microsoft.Storage service endpoints on both App and Data subnets. Provision a small Linux VM vm-app in subnet App. Use Azure CLI or ARM/Bicep; do not rely on manual screenshots alone—export resource JSON where possible.",
+          "deliverable": "Azure environment lab",
+          "acceptance_criteria": [
+            "Submission includes a script or template used (bash/PowerShell/ARM/Bicep) and exact commands to deploy, plus a README with steps taken.",
+            "Evidence files show: vnet1 with subnets App and Data in 10.50.0.0/16; serviceEndpoints for Microsoft.Storage present on both subnets (az network vnet subnet show output).",
+            "NSG effective rules for App show an Allow to ServiceTag Storage TCP 443 with higher priority than a Deny to Internet (az network nsg rule list output or equivalent JSON).",
+            "Storage account network rules show defaultAction=Deny and a VNet rule referencing vnet1/Data (az storage account network-rule list output).",
+            "Listing of deployed resources (az resource list -g RG-Network) shows vm-app present and NIC attached to subnet App.",
+            "All artefacts include subscription ID and tenant ID evidence (az account show) and resource IDs to allow verification."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct VNet/subnet IP plan and presence of required subnets with service endpoints",
+              "marks": 5
+            },
+            {
+              "criterion": "NSG rules correctly structured (targeted Storage allow precedes Internet deny) with evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "Storage account firewall correctly restricted and includes Data subnet with evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "VM deployment correctness and complete, reproducible artefacts (scripts/templates + README + resource listings)",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Reviewed repository: branch policies, feature PR, and safe history",
+          "brief": "Create a Git repository in Azure Repos, enforce a PR-based workflow, and complete a reviewed change. Steps: (1) Initialize a repo with a README and a simple src/ file. Push to Azure Repos. (2) Configure branch policies on main: require PR, min 1 reviewer, reset approvals on new push, check for linked work items, and restrict merge types to Squash only. (3) Create a feature branch with at least two commits. (4) Update your branch from main using a rebase workflow (no merge commits). (5) Open a PR to main, obtain a review (an approval or comment resolution), and complete it with Squash. (6) Attempt a direct push to main and capture the rejection message. Provide all evidence artifacts.",
+          "deliverable": "Reviewed repository",
+          "acceptance_criteria": [
+            "A text export of git history showing linear commits on the feature branch (git log --graph --decorate --oneline) and remote configuration (git remote -v).",
+            "Proof of Azure Repos branch policies on main (screenshot or exported settings JSON) showing PR required and Squash-only.",
+            "PR artifact: URL and a PDF/HTML export or screenshot of the PR showing at least one reviewer interaction and 'Completed' with 'Squash' merge type.",
+            "Terminal transcript showing a rejected direct push to main referencing the PR requirement (error message).",
+            "Final repository state evidence: main HEAD commit ID and message produced by squash, and branch cleanup status (feature branch exists or deleted as per policy)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Repository setup and remote to Azure Repos with clear evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct branch policy configuration (PR required, min reviewer, Squash-only) with evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Feature branch workflow uses rebase (linear history) and PR completed as Squash with reviewer activity",
+              "marks": 6
+            },
+            {
+              "criterion": "Evidence of direct push rejection to main and final state verification",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Azure Repos",
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-007-S02",
+      "skills_assessed": [
+        "Azure Boards",
+        "Azure Pipelines",
+        "CI/CD",
+        "YAML"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this pipeline and event sequence:\n\n```yaml\n# azure-pipelines.yml\ntrigger:\n  branches:\n    include:\n    - main\n  paths:\n    include:\n    - src/**\n    exclude:\n    - docs/**\n\npr:\n  branches:\n    include:\n    - main\n  paths:\n    include:\n    - src/**\n    - docs/**\n    exclude:\n    - src/experimental/**\n```\n\nA change edits `docs/README.md` on branch `feature/docs-tweak`. A pull request from `feature/docs-tweak` to `main` is then created. What runs and why?",
+          "options": [
+            "Only the PR validation runs; the push to `feature/docs-tweak` doesn't trigger CI because `docs/**` is excluded from CI, but PR paths explicitly include `docs/**`.",
+            "CI on push runs because the file changed under `docs/**`, but the PR validation is blocked by the CI `exclude` list.",
+            "Both CI on push and PR validation run because `docs/**` is included for PRs and CI ignores the exclude for feature branches.",
+            "Neither runs; path filters only apply to the default branch."
+          ],
+          "correct_option": "A",
+          "explanation": "Push-based CI evaluates the `trigger` block. The change is under `docs/**`, which is excluded, so no CI run starts on the feature branch. PR validation evaluates the `pr` block separately; `docs/**` is included (and not excluded), so the PR run triggers.",
+          "distractor_rationale": "A: CI excludes `docs/**` regardless of branch; include/exclude are evaluated for the trigger that applies. C: PR path filters do include `docs/**`, so PR validation does run. D: The `exclude` list under `trigger` does not govern the `pr` trigger; they are independent.",
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A job targets a self-hosted pool with demands:\n\n```yaml\npool:\n  name: SelfHosted\n  demands:\n  - Agent.Version -gtVersion 3.220.0\n  - python\n```\n\nAgents in pool:\n\n```text\nAgent Alpha: Enabled=true, Version=3.220.1, Capabilities: Python=3.10, java=true\nAgent Beta:  Enabled=true, Version=3.219.1, Capabilities: python=true\n```\n\nWhich agent will pick up the job?",
+          "options": [
+            "Neither; the case mismatch between `python` and `Python` prevents matching any agent",
+            "Agent Alpha",
+            "Agent Beta",
+            "Both; the job will run twice, once per agent"
+          ],
+          "correct_option": "B",
+          "explanation": "Demands require Agent.Version > 3.220.0 and a capability named `python` (name matching is case-insensitive). Only Agent Alpha satisfies the version demand. Therefore Alpha runs the job.",
+          "distractor_rationale": "B: Beta fails the version demand (3.219.1). C: A single job never runs twice; only one matching agent executes it. D: Capability names are case-insensitive; `Python` satisfies `python`.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Examine these steps:\n\n```yaml\n- task: VSTest@2\n  inputs:\n    testSelector: testAssemblies\n    testAssemblyVer2: '**/*test*.dll'\n    searchFolder: '$(System.DefaultWorkingDirectory)'\n    vsTestVersion: toolsInstaller\n\n- task: PublishTestResults@2\n  inputs:\n    testResultsFormat: 'JUnit'\n    testResultsFiles: '**/TEST-*.xml'\n    mergeTestResults: false\n    failTaskOnFailedTests: true\n```\n\nWhat happens to the test reporting in the run?",
+          "options": [
+            "The pipeline succeeds but publishes 0 tests because VSTest outputs TRX, not JUnit XML, so no files match.",
+            "PublishTestResults fails the task because no `TEST-*.xml` files are found and the job fails.",
+            "PublishTestResults auto-detects TRX even if `testResultsFormat` is `JUnit`, so results appear.",
+            "VSTest also writes JUnit by default, so results are published from `TEST-*.xml`."
+          ],
+          "correct_option": "A",
+          "explanation": "VSTest@2 emits `.trx` files. PublishTestResults is configured to look for JUnit XML `TEST-*.xml` and will not find any. It typically logs a warning and publishes 0 tests; `failTaskOnFailedTests` only evaluates when results are found.",
+          "distractor_rationale": "A: Absence of files usually warns, not fails, unless explicitly configured. C/D: VSTest doesn’t emit JUnit without additional conversion, and the task doesn’t auto-switch formats.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "YAML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Stage 1 publishes an artifact; Stage 2 tries to download it:\n\n```yaml\n# Stage 1\n- task: PublishBuildArtifacts@1\n  inputs:\n    PathtoPublish: '$(Build.ArtifactStagingDirectory)'\n    ArtifactName: 'drop'\n\n# Stage 2\n- task: DownloadPipelineArtifact@2\n  inputs:\n    buildType: 'current'\n    artifact: 'drop'\n    targetPath: '$(Pipeline.Workspace)/drop'\n```\n\nWhat is the outcome in Stage 2 and why?",
+          "options": [
+            "The failure is due to the artifact name; `drop` is a reserved name and must be changed.",
+            "The artifact downloads successfully to `$(Pipeline.Workspace)/drop`.",
+            "The download succeeds but produces an empty directory because stages isolate artifacts.",
+            "The download fails to find `drop` because it was published as a Build Artifact; either switch to `PublishPipelineArtifact` or use `DownloadBuildArtifacts`."
+          ],
+          "correct_option": "D",
+          "explanation": "`DownloadPipelineArtifact` retrieves Pipeline Artifacts, not Build Artifacts. `PublishBuildArtifacts` produced a Build Artifact, so the step cannot find it. Use `PublishPipelineArtifact`/`DownloadPipelineArtifact` together, or `PublishBuildArtifacts`/`DownloadBuildArtifacts` together.",
+          "distractor_rationale": "A/C: Artifact type mismatch, not isolation, drives the failure. D: `drop` is a common, valid artifact name.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "YAML",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Review this cache configuration:\n\n```yaml\n- task: Cache@2\n  inputs:\n    key: 'npm | \"$(Agent.OS)\" | package-lock.json'\n    restoreKeys: |\n      npm | \"$(Agent.OS)\"\n    path: $(NPM_CACHE)\n```\n\nAfter a large dependency change updates `package-lock.json`, the team expects a cache miss. What actually happens and why?",
+          "options": [
+            "Cache is skipped on self-hosted agents unless `CacheBeta` is enabled.",
+            "Cache miss occurs because the file timestamp changed, producing a new key.",
+            "Cache hit occurs; the key is a fixed string and doesn’t incorporate file content. Use `hashFiles('package-lock.json')` to vary by content.",
+            "The task fails to run because quotes in the key are invalid."
+          ],
+          "correct_option": "C",
+          "explanation": "The `key` is a literal string that does not hash the lockfile content. The same key will restore the previous cache even after dependency changes. Correct usage hashes file content (for example, `npm | $(Agent.OS) | $(hashFiles('package-lock.json'))`).",
+          "distractor_rationale": "A: Cache keys don’t consider timestamps unless you encode them. C: Cache@2 works on both hosted and self-hosted. D: Quoted segments are valid; the issue is the missing content hash.",
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You set an output variable in Stage `Build` and need it in Stage `Release`:\n\n```yaml\nstages:\n- stage: Build\n  jobs:\n  - job: BuildJob\n    steps:\n    - bash: |\n        echo \"##vso[task.setvariable variable=buildVersion;isOutput=true]1.2.$(Build.BuildId)\"\n      name: setver\n\n- stage: Release\n  dependsOn: Build\n  jobs:\n  - job: Deploy\n    steps:\n    - bash: echo \"version=$(REPLACE_ME)\"\n```\n\nWhich expression correctly references the output variable in Stage `Release`?",
+          "options": [
+            "```text\n$[ variables['BuildJob.setver.buildVersion'] ]\n```",
+            "```text\n$[ stageDependencies.Build.outputs['BuildJob.setver.buildVersion'] ]\n```",
+            "```text\n$[ dependencies.Build.outputs['BuildJob.setver.buildVersion'] ]\n```",
+            "```text\n$(buildVersion)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Across stages you must use `stageDependencies.<stage>.outputs['<job>.<step>.<var>']`. The step is named `setver`, job `BuildJob`, variable `buildVersion`, in stage `Build`.",
+          "distractor_rationale": "A: `dependencies` is for within the same stage. C/D: Neither references the cross-stage output scope.",
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Sprint burndown is flat despite moving three User Stories to Done. Current data:\n\n```text\nIteration: Team/Sprint 1\nUser Stories: 3 (all set to State=Done)\nChild Tasks: 8\n  Remaining Work total: 42h\n  Iteration Path: Team/Sprint 2 (all tasks)\n```\n\nWhich single change will make the burndown drop without altering any estimates?",
+          "options": [
+            "Move the eight child Tasks into `Team/Sprint 1`.",
+            "Set the three User Stories to Done again to reindex analytics.",
+            "Reduce Story Points on the User Stories to zero.",
+            "Remove the WIP limit from the board’s In Progress column."
+          ],
+          "correct_option": "A",
+          "explanation": "Burndown is driven by Remaining Work on Tasks assigned to the sprint’s Iteration Path. Changing parent User Story state or Story Points won’t affect it. Moving Tasks into the sprint aligns the effort with the burndown.",
+          "distractor_rationale": "A: State flips don’t change Remaining Work. C: Story Points aren’t used by the Remaining Work burndown. D: WIP limits don’t affect burndown math.",
+          "skills_covered": [
+            "Azure Boards"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Consider this WIQL used by Team A:\n\n```sql\nSELECT [System.Id]\nFROM WorkItems\nWHERE\n  [System.TeamProject] = @Project\n  AND [System.WorkItemType] IN ('User Story','Bug')\n  AND [System.State] <> 'Closed'\n  AND [System.IterationPath] = @CurrentIteration\n```\n\nTeam A’s current iteration node is `Project\\Team A\\Sprint 1`, which has a child node `Project\\Team A\\Sprint 1\\Hotfix`. A Bug is in the `Hotfix` child node. Will this query return it?",
+          "options": [
+            "The query errors because `@CurrentIteration` can’t be used with `=`.",
+            "Yes; `@CurrentIteration` includes the child nodes of the iteration by default.",
+            "No; `=` matches only the exact node. Use `UNDER @CurrentIteration` to include child nodes.",
+            "It returns only Bugs and excludes User Stories in the current iteration."
+          ],
+          "correct_option": "C",
+          "explanation": "`=` requires an exact path match. To include items in child iteration nodes, WIQL must use the tree operator `UNDER @CurrentIteration`.",
+          "distractor_rationale": "A: Inclusion of children is not implicit with `=`. C: `@CurrentIteration` is valid with `=`, it just matches exactly. D: The `WorkItemType` filter includes both types.",
+          "skills_covered": [
+            "Azure Boards"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A pipeline has two jobs. If Build fails, you still want to publish whatever test results exist. Which configuration guarantees the Test job runs and its publish step executes?\n\n```yaml\n- job: Build\n  steps:\n  - script: exit 1\n\n- job: Test\n  dependsOn: Build\n  steps:\n  - script: echo \"run tests\"\n  - task: PublishTestResults@2\n    condition: succeededOrFailed()\n```",
+          "options": [
+            "Set `continueOnError: true` at the Build job level.",
+            "Keep as-is; adding `condition: succeededOrFailed()` to the publish step is sufficient.",
+            "Use `condition: failed()` on the Build job so Test will run next.",
+            "Add `condition: always()` at the job level for `Test`."
+          ],
+          "correct_option": "D",
+          "explanation": "By default, a job does not run if a dependency failed. Set `condition: always()` (or `succeededOrFailed()`) on the Test job so it runs regardless; then set a suitable condition on the publish step if needed.",
+          "distractor_rationale": "A: The step condition won’t run if the job doesn’t start. C: Build’s condition doesn’t influence the dependent job’s default condition. D: `continueOnError` may mask the failure rather than ensure Test runs as a separate decision.",
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You use a matrix strategy to test two Node versions on Microsoft-hosted agents:\n\n```yaml\npool:\n  vmImage: ubuntu-latest\nstrategy:\n  matrix:\n    node18:\n      NODE_VERSION: 18\n    node20:\n      NODE_VERSION: 20\n```\n\nThe organization has one hosted parallel job. What happens when the run starts?",
+          "options": [
+            "Both jobs queue; none can start without an additional purchased parallel job.",
+            "One job runs immediately; the other queues until the first completes.",
+            "Both matrix jobs start simultaneously.",
+            "The pipeline fails because matrix requires at least two parallel jobs."
+          ],
+          "correct_option": "B",
+          "explanation": "Matrix expands to two jobs. With one hosted parallel job, one runs and the other waits in the queue until capacity is free.",
+          "distractor_rationale": "A: Parallel degree is limited by licensed capacity. C: Matrix does not require a minimum parallelism. D: One job can still run with the available slot.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your team’s Sprint 3 burndown has been flat for four days. The team’s board has columns To Do, Doing, Ready for QA, and Done. The state-category mapping is: New/Proposed -> To Do, Active -> Doing, a custom state ReadyForQA (category InProgress) -> Ready for QA, and Closed/Resolved (category Completed) -> Done. Three User Stories were moved to Done on day 1. Their eight child Tasks still show Remaining Work totaling 34h and are assigned to Iteration Team/Sprint 4 due to carryover planning. The team wants the Sprint 3 burndown to reflect progress as QA completes items in Ready for QA without changing estimates.",
+          "task": "Diagnose why the burndown is flat and propose specific changes to make the chart reflect progress during Sprint 3 while preserving traceability and estimates. Include any board/state mapping, iteration assignment, and work item data entry changes you would make. Justify each change.",
+          "expected_answer": "- Root cause: The burndown is driven by the sum of Remaining Work on Tasks in the current sprint’s Iteration Path. Moving parent User Stories to Done does not reduce Remaining Work. All child Tasks are assigned to Sprint 4, so Sprint 3’s burndown has nothing to burn. Items sitting in Ready for QA are categorized as In Progress, which also suggests work exists but it is not in the sprint’s scope.\n- Changes:\n  1) Move the eight child Tasks’ Iteration Path to Team/Sprint 3 so their Remaining Work contributes to Sprint 3’s burndown. This preserves the 34h estimate and makes the chart responsive.\n  2) Ensure each Task’s Remaining Work is updated to 0h when it is actually done, preferably as part of the Definition of Done for moving to Done. This creates the downward movement on the burndown when QA completes work.\n  3) Keep the state-category mapping but verify that any terminal Task state (e.g., Closed/Resolved) is in category Completed so analytics treats it as completed for the sprint.\n  4) Maintain parent-child links (Story->Task) and do not move the parents’ Iteration if the team plans at the Task level. Use the Parents/Children traceability view to confirm correctness.\n  5) Optionally add a board swimlane or tag for carryover items if any Tasks truly belong to Sprint 4; otherwise split the Task and keep only the Sprint 3 portion in Sprint 3.\n- Justification: Burndown uses Task-level Remaining Work scoped by Iteration Path and Completed state category. Assigning Tasks to the sprint and zeroing Remaining Work on completion makes the metric reflect actual progress without manipulating Story Points or closing parents prematurely.",
+          "rubric": [
+            {
+              "criterion": "Identifies the correct driver of burndown (Remaining Work on Tasks in the sprint’s Iteration Path) and why moving parents to Done didn’t change it",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes moving child Tasks’ Iteration Path into Sprint 3 (not the parents) and explains impact on burndown",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies updating Remaining Work to 0 on Task completion and ensuring Completed-category mapping for terminal Task states",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses preserving traceability (parent-child links, planning at Task level) and optional handling of genuine carryover without estimate distortion",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Boards"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A YAML CI pipeline intermittently fails in the Test stage with “artifact not found.” The pipeline has two stages. Stage Build runs `npm ci && npm run build`, then:\n\n```yaml\n- task: PublishBuildArtifacts@1\n  inputs:\n    PathtoPublish: 'dist'\n    ArtifactName: 'web'\n```\n\nStage Test begins with:\n\n```yaml\n- task: DownloadPipelineArtifact@2\n  inputs:\n    buildType: 'current'\n    artifact: 'web'\n    targetPath: '$(Pipeline.Workspace)/web'\n\n- script: npm test -- --reporters=junit --reporter-options output=reports/junit.xml\n\n- task: PublishTestResults@2\n  inputs:\n    testResultsFormat: 'JUnit'\n    testResultsFiles: 'reports/junit.xml'\n```\n\nSometimes Test cannot download `web`. There are no manual artifact deletions. Explain the failure and propose a robust, minimal-change fix to make the pipeline reliable and keep test results visible on failed tests.",
+          "task": "State the root cause and provide corrected YAML (only the parts that change). Also state any step conditions needed to keep results visible even on failures.",
+          "expected_answer": "- Root cause: Mismatch of artifact types. Stage Build publishes a Build Artifact; Stage Test attempts to download a Pipeline Artifact. When the server attempts to resolve a Pipeline Artifact named `web` from the current run, it doesn’t exist, causing intermittent failures depending on residual state/caching of previous runs.\n- Fix Option A (prefer): Use Pipeline Artifacts end-to-end.\n\n```yaml\n# Build\n- task: PublishPipelineArtifact@1\n  inputs:\n    targetPath: 'dist'\n    artifact: 'web'\n\n# Test\n- task: DownloadPipelineArtifact@2\n  inputs:\n    buildType: 'current'\n    artifact: 'web'\n    targetPath: '$(Pipeline.Workspace)/web'\n```\n\n- Fix Option B: If you prefer Build Artifacts, switch the consumer accordingly.\n\n```yaml\n- task: DownloadBuildArtifacts@0\n  inputs:\n    buildType: 'current'\n    downloadType: 'single'\n    artifactName: 'web'\n    downloadPath: '$(Pipeline.Workspace)/web'\n```\n\n- Ensure test results appear even when tests fail:\n  Add `condition: always()` (or `succeededOrFailed()`) to the `PublishTestResults@2` step so it still runs if the test command exits nonzero.\n\n```yaml\n- task: PublishTestResults@2\n  condition: always()\n  inputs:\n    testResultsFormat: 'JUnit'\n    testResultsFiles: 'reports/junit.xml'\n```",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies artifact type mismatch as the cause and explains why a download occasionally fails",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a precise YAML correction using PublishPipelineArtifact with matching DownloadPipelineArtifact (or the inverse pair)",
+              "marks": 3
+            },
+            {
+              "criterion": "Includes correct path/name wiring so the artifact name and target path align",
+              "marks": 1
+            },
+            {
+              "criterion": "Ensures test results are published on failure via appropriate step condition and explains the intent",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your repo has three top-level folders: `src/`, `infra/`, and `docs/`. You want CI only when `src/**` or `infra/**` change on `main`, and PR validation to `main` when either `src/**` or `infra/**` change, but not for `docs/**`. Current YAML:\n\n```yaml\ntrigger:\n- main\n\npr:\n  branches:\n  - main\n  paths:\n    exclude:\n    - docs/**\n```\n\nPRs that change `infra/` aren’t triggering. Explain why and provide a corrected YAML block that meets the goal without triggering on `docs/**`.",
+          "task": "Diagnose the configuration error and provide the minimal corrected `trigger` and `pr` blocks.",
+          "expected_answer": "- Cause: The `pr` block only has an `exclude` for `docs/**`. By default, the include set is all paths. However, the repo or team project may have path filters elsewhere, and more importantly the CI `trigger` lacks path filters, and the `pr` block omits an explicit include for `infra/**`. Some clients misinterpret the combination, but the robust fix is to declare explicit includes for both `src/**` and `infra/**` under both `trigger` and `pr`, and exclude `docs/**` only where needed.\n- Corrected YAML:\n\n```yaml\ntrigger:\n  branches:\n    include: [ main ]\n  paths:\n    include:\n    - src/**\n    - infra/**\n\npr:\n  branches:\n    include: [ main ]\n  paths:\n    include:\n    - src/**\n    - infra/**\n    exclude:\n    - docs/**\n```\n\nThis configuration runs CI on pushes to `main` that touch `src/**` or `infra/**`, and runs PR validation to `main` for changes under those paths, never for `docs/**`.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that explicit path includes are missing for `infra/**` in PR validation and that CI needs path filters",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides corrected `trigger` block with includes for `src/**` and `infra/**` and no `docs/**`",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides corrected `pr` block with includes for `src/**` and `infra/**` and excludes `docs/**`",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A self-hosted Windows agent is used for a pipeline that builds and tests a web app. The job demands are:\n\n```yaml\ndemands:\n- npm\n- Agent.Version -gtVersion 3.220.0\n```\n\nThe agent’s capabilities show `npm=true`, but tests intermittently fail with `node: command not found` during `npm test`. You also want to split tests into two jobs (API, UI) and merge their results into one view in the run. What should you change to make agent selection reliable and ensure results are visible together?",
+          "task": "Propose changes to demands/capabilities and pipeline steps so the correct agent is targeted and both test result sets are published and discoverable in a single run. Justify the choices.",
+          "expected_answer": "- Agent selection: Add a demand for `Node.js` or a custom capability that proves Node is installed at the required version, not just `npm`. For example, set a user capability on the agent like `Node=true` (or `NodeVersion=20`) and demand it:\n\n```yaml\ndemands:\n- Agent.Version -gtVersion 3.220.0\n- Node\n```\n\nThis avoids matching an agent where `npm` is on PATH but `node` is not correctly installed for service context.\n- Test split and merged reporting: Create two jobs (API, UI) that both publish JUnit (or TRX) with distinct `testRunTitle`s. Azure Pipelines aggregates multiple PublishTestResults steps in the run summary. Ensure each publish step uses a deterministic search folder and add `condition: always()` so results appear even if one job fails.\n\nExample sketch:\n\n```yaml\n- job: API\n  steps:\n  - script: npm run test:api -- --reporters=junit --reporter-options output=reports/api.xml\n  - task: PublishTestResults@2\n    condition: always()\n    inputs:\n      testResultsFormat: JUnit\n      testResultsFiles: 'reports/api.xml'\n      testRunTitle: 'API Tests'\n\n- job: UI\n  steps:\n  - script: npm run test:ui -- --reporters=junit --reporter-options output=reports/ui.xml\n  - task: PublishTestResults@2\n    condition: always()\n    inputs:\n      testResultsFormat: JUnit\n      testResultsFiles: 'reports/ui.xml'\n      testRunTitle: 'UI Tests'\n```\n\n- Justification: Demanding a capability that reliably indicates Node’s presence prevents environment drift issues. Separate publishes with clear titles appear together under Tests in the run, giving a merged view while preserving lineage per job.",
+          "rubric": [
+            {
+              "criterion": "Explains why `npm` demand is insufficient and proposes a robust capability/demand for Node presence/version",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a two-job structure and correct PublishTestResults usage with distinct titles",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures results publish even on failure via appropriate conditions",
+              "marks": 1
+            },
+            {
+              "criterion": "Provides reasoning tying changes to reliability and discoverability in the run summary",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Configure a Delivery Board with Sprint and Traceability",
+          "brief": "In your Azure DevOps project, configure an Azure Boards delivery board that supports planning and execution for one sprint with traceability from User Stories to Tasks and an accurate burndown driven by Remaining Work. Set up the sprint, capacity, WIP limits, and queries to validate structure. Demonstrate that moving a Task to Done with Remaining Work set to 0 changes the burndown.",
+          "deliverable": "Delivery board",
+          "acceptance_criteria": [
+            "Board has columns To Do, In Progress (or equivalent), and Done, with WIP limits set on at least one in-progress column.",
+            "State-category mapping places terminal Task states in Completed so analytics treats them as done.",
+            "Backlog contains at least 3 User Stories, each with at least 2 child Tasks linked via Parent/Child. No orphan Tasks remain.",
+            "A current sprint (iteration) exists with concrete start/end dates; all Tasks are assigned to this sprint. Team capacity is entered for at least two team members.",
+            "Each Task has a numeric value in Remaining Work; at least one Task transitions to Done with Remaining Work set to 0 during the sprint window.",
+            "A saved query named \"Stories without child Tasks\" returns 0 results, and a saved query named \"Tasks without parent\" returns 0 results.",
+            "Evidence (screenshots or exported views) shows the burndown before and after completing at least one Task in the sprint, demonstrating a downward change."
+          ],
+          "rubric": [
+            {
+              "criterion": "Columns, WIP limits, and state-category mapping configured to support delivery (visibly correct on board)",
+              "marks": 5
+            },
+            {
+              "criterion": "Backlog structure and traceability: 3+ User Stories with 2+ Tasks each; no orphan Tasks",
+              "marks": 5
+            },
+            {
+              "criterion": "Sprint and capacity configured; all Tasks assigned to the sprint",
+              "marks": 4
+            },
+            {
+              "criterion": "Remaining Work populated and correctly zeroed on completion; Done transition demonstrated",
+              "marks": 3
+            },
+            {
+              "criterion": "Saved validation queries exist and return 0 results as specified",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Azure Boards"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Author a CI Pipeline with Tests, Caching, and Artifacts",
+          "brief": "Create `azure-pipelines.yml` for a repository that builds and tests a small Node.js or .NET project on Microsoft-hosted Ubuntu. The pipeline must: (1) run CI on pushes to `main` only when files under `src/**` change; (2) run PR validation to `main` when files under `src/**` or `test/**` change; (3) cache dependencies keyed by the lockfile content; (4) run tests and publish JUnit or TRX results so they appear in the Tests tab; (5) publish a Pipeline Artifact named `drop` containing build outputs; and (6) ensure test results publish even if the test step fails. Include any scripts needed to produce test results in the correct format.",
+          "deliverable": "Continuous integration pipeline",
+          "acceptance_criteria": [
+            "`azure-pipelines.yml` includes a `trigger` with `include: [ main ]` and a `paths` include for `src/**` only.",
+            "`pr` block includes branch `main` and path filters to include `src/**` and `test/**` only (excluding other paths).",
+            "A `Cache@2` task uses a key with `hashFiles` over the correct lockfile (e.g., `package-lock.json` or `packages.lock.json`) and restores to the appropriate cache path.",
+            "Tests run and a `PublishTestResults@2` step publishes results in JUnit or TRX format; the step has `condition: always()` or `succeededOrFailed()`.",
+            "A `PublishPipelineArtifact@1` step produces an artifact named `drop` with non-empty build outputs; path and name are consistent.",
+            "Pipeline uses `vmImage: ubuntu-latest` and completes successfully on a sample repository with at least one test detected (>0 tests)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct triggers and path filters for CI and PR as specified",
+              "marks": 4
+            },
+            {
+              "criterion": "Functional dependency caching keyed by lockfile content using `hashFiles`",
+              "marks": 4
+            },
+            {
+              "criterion": "Build and test steps produce valid results; test publishing correctly configured and conditioned to always publish",
+              "marks": 5
+            },
+            {
+              "criterion": "Pipeline Artifact named `drop` published with correct content and consistent naming",
+              "marks": 4
+            },
+            {
+              "criterion": "Overall YAML correctness and use of Microsoft-hosted agent (`ubuntu-latest`)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "YAML",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-007-S03",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Azure Pipelines",
+        "CI/CD",
+        "YAML",
+        "Docker",
+        "Azure Container Registry (ACR)",
+        "Kubernetes"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You configured two approvers on the Azure DevOps environment `prod`. Your YAML pipeline run deployed to AKS without prompting for approval. The job looked like:\n```yaml\nstages:\n- stage: DeployProd\n  jobs:\n  - job: kubeDeploy\n    pool:\n      vmImage: ubuntu-latest\n    steps:\n    - task: KubernetesManifest@0\n      inputs:\n        action: deploy\n        manifests: |\n          k8s/deploy.yaml\n```\nWhy did the approval not trigger?",
+          "options": [
+            "Because approvals/checks on environments only trigger for a YAML deployment job that declares an `environment`, not for a regular `job`.",
+            "Because approvals only work for classic release pipelines, not YAML multi-stage.",
+            "Because approvals must be declared inline in YAML under the stage, not in the environment UI.",
+            "Because the environment name is case-sensitive and must be all lowercase to trigger approvals."
+          ],
+          "correct_option": "A",
+          "explanation": "Approvals and checks on an environment are evaluated when a deployment job targets that environment. A regular job without an `environment:` reference bypasses environment checks entirely.",
+          "distractor_rationale": "B is tempting if you assume approvals are a YAML construct; they are configured on the environment, not in YAML. C is a common hunch, but case alone is not the issue here; the job never referenced an environment at all. D is outdated; YAML pipelines fully support environment approvals via deployment jobs.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You created an environment `prod` with a Kubernetes resource `prod-aks` and placed the approval on the resource (not on the environment). Your deployment job used:\n```yaml\ndeployment: Deploy\nenvironment: prod\nstrategy:\n  runOnce:\n    deploy:\n      steps:\n      - task: KubernetesManifest@0\n        inputs:\n          action: deploy\n          manifests: k8s/prod.yaml\n```\nThe deployment proceeded without approval. What change is required to have the approval enforced?",
+          "options": [
+            "Add `resourceName` as a pipeline variable and reference it in the job.",
+            "Rename the environment to match the Kubernetes cluster name exactly.",
+            "Target the specific environment resource by adding `resourceName: prod-aks` (and `resourceType: Kubernetes`) under `environment`.",
+            "Approvals cannot be set on Kubernetes resources; move the approval to the environment."
+          ],
+          "correct_option": "C",
+          "explanation": "Approvals placed on an environment resource only apply when the deployment job targets that resource. Use the mapping form to specify both environment and resource.",
+          "distractor_rationale": "B confuses display names with resource targeting. C won’t help unless the job actually binds to the resource (mapping form). D is false; resource-level approvals/checks are supported and commonly used.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your `prod` environment has the `Exclusive lock` check enabled. The pipeline runs two parallel stages that both target `prod`:\n```yaml\nstages:\n- stage: DeployAPI\n  jobs:\n  - deployment: api\n    environment: prod\n    strategy: { runOnce: { deploy: { steps: [] } } }\n- stage: DeployWeb\n  jobs:\n  - deployment: web\n    environment: prod\n    strategy: { runOnce: { deploy: { steps: [] } } }\n``` \nWhat actually happens when the run reaches these stages (assuming both get approved)?",
+          "options": [
+            "Both deployments start immediately and run in parallel because they are different deployment jobs.",
+            "Both deployments wait until the lock is released, then both start simultaneously.",
+            "Both deployments are blocked indefinitely until one is manually canceled; the lock causes deadlock in parallel.",
+            "One deployment acquires the environment lock; the other waits until the first completes, then proceeds."
+          ],
+          "correct_option": "D",
+          "explanation": "The environment’s Exclusive lock serializes deployments. After approvals, one job runs while the other queues against the lock and proceeds only after the first completes.",
+          "distractor_rationale": "A ignores the effect of Exclusive lock. C mischaracterizes queuing as deadlock. D is impossible by definition of an exclusive lock; only one can run at a time.",
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider this Dockerfile intended as a multi-stage build:\n```dockerfile\nFROM node:18 AS build\nWORKDIR /src\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:18\nWORKDIR /app\nCOPY . .\nCMD [\"node\",\"server.js\"]\n```\nWhat is the practical outcome for the final image?",
+          "options": [
+            "It copies only the compiled artifacts from the `build` stage, keeping the image small.",
+            "It includes the entire build context (source, dev dependencies, etc.), defeating the purpose of multi-stage and producing a large image.",
+            "The image builds but cannot run because Node.js isn’t present in the final stage.",
+            "The build fails because `.` is not found in the final stage."
+          ],
+          "correct_option": "B",
+          "explanation": "The final stage copies from the build context (`COPY . .`), not from the `build` stage. This carries all sources and dev dependencies into the runtime image.",
+          "distractor_rationale": "B is what a correct `COPY --from=build <dist> <dest>` would do. C is wrong; `.` exists in the context. D is wrong; the base image is node:18 so Node.js is present.",
+          "skills_covered": [
+            "Docker"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your AKS pod cannot pull its image from a private ACR. Events show:\n```text\nFailed to pull image \"myacr.azurecr.io/web:1234\": rpc error: code = Unknown desc = Error response from daemon: Get https://myacr.azurecr.io/v2/web/manifests/1234: unauthorized: authentication required\nBack-off pulling image \"myacr.azurecr.io/web:1234\"\n```\nAKS uses a managed identity, and ACR is in the same tenant and subscription. What single command resolves this without creating imagePullSecrets?",
+          "options": [
+            "```bash\naz aks update -g rg-app -n aks-prod --attach-acr myacr\n```",
+            "```bash\naz acr login --name myacr\nkubectl create secret docker-registry acr --docker-server myacr.azurecr.io\n```",
+            "```bash\nkubectl set image deployment/web web=myacr.azurecr.io/web:latest\n```",
+            "```bash\ndocker login myacr.azurecr.io -u <sp-id> -p <sp-secret>\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`--attach-acr` assigns the `AcrPull` role for the AKS managed identity to the registry so pulls succeed without secrets.",
+          "distractor_rationale": "B works but adds unnecessary secret management given managed identity. C changes the tag but not the auth failure. D logs in the build agent, not the cluster; it does nothing for AKS pull permissions.",
+          "skills_covered": [
+            "Kubernetes",
+            "Azure Container Registry (ACR)",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A build job does:\n```bash\naz acr login -n myacr\ndocker build -t myacr.azurecr.io/web:$(Build.BuildId) .\ndocker push myacr.azurecr.io/web:$(Build.BuildId)\n```\nLogin reports success, but the push fails:\n```text\ndenied: requested access to the resource is denied\n```\nThe service connection uses a service principal. What fix reliably resolves this?",
+          "options": [
+            "Use `docker login` with the service principal’s appId/secret instead of `az acr login`.",
+            "Grant the service principal the AcrPush role on the `myacr` registry scope.",
+            "Enable the ACR admin user and push with those credentials from the pipeline.",
+            "Grant the service principal Reader on the subscription."
+          ],
+          "correct_option": "B",
+          "explanation": "Push requires `AcrPush` (or Owner) on the registry. `az acr login` succeeds only if the principal can obtain a token; role assignment at the registry scope is the correct fix.",
+          "distractor_rationale": "B can work but is discouraged and often blocked by policy. C is insufficient; Reader doesn’t grant push. D won’t work with AAD creds; Docker expects registry-native creds unless you use `az acr login` to broker a token.",
+          "skills_covered": [
+            "Azure Container Registry (ACR)",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This pipeline builds and pushes an image, then deploys it:\n```yaml\nvariables:\n  imageRepository: myacr.azurecr.io/web\nstages:\n- stage: Build\n  jobs:\n  - job: build\n    steps:\n    - script: |\n        docker build -t $(imageRepository):$(Build.BuildId) .\n        docker push $(imageRepository):$(Build.BuildId)\n      displayName: Build and push\n- stage: Deploy\n  dependsOn: Build\n  variables:\n    tag: $(Build.BuildNumber)\n  jobs:\n  - deployment: deploy\n    environment: dev\n    strategy:\n      runOnce:\n        deploy:\n          steps:\n          - script: |\n              kubectl set image deployment/web web=$(imageRepository):$(tag)\n            displayName: Update image\n```\nWhat is the likely runtime outcome?",
+          "options": [
+            "Deployment fails to pull image due to tag mismatch; the pushed tag is `$(Build.BuildId)` but deploy uses `$(Build.BuildNumber)`.",
+            "Deployment succeeds because both variables resolve to the same value in a single run.",
+            "Kubernetes upgrades the deployment to `:latest` because `$(tag)` is empty at runtime.",
+            "The container updates to a different image because `$(imageRepository)` is undefined in the Deploy stage."
+          ],
+          "correct_option": "A",
+          "explanation": "The build pushed `Build.BuildId`, but deploy uses `Build.BuildNumber`. Unless they happen to match, AKS will try to pull a non-existent tag and fail with ImagePullBackOff.",
+          "distractor_rationale": "B is occasionally true in some organizations but not guaranteed; they are distinct variables. C is incorrect; the variable resolves to a non-empty (but wrong) value. D is wrong; variables are global unless explicitly overridden.",
+          "skills_covered": [
+            "YAML",
+            "CI/CD",
+            "Docker",
+            "Azure Container Registry (ACR)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Builds are slow and image layers are huge. The agent uploads hundreds of MB including `.git` and `node_modules`. Project layout and Dockerfile:\n```text\n.\n├─ .git/\n├─ node_modules/\n├─ src/\n├─ package.json\n└─ Dockerfile\n```\n```dockerfile\nFROM node:18\nWORKDIR /app\nCOPY . .\nRUN npm ci --only=production\nCMD [\"node\",\"src/server.js\"]\n```\nWhat change most effectively prevents bloat and speeds up builds?",
+          "options": [
+            "Switch to `alpine` images to reduce layer sizes.",
+            "Add a `.dockerignore` excluding `.git`, `node_modules`, and other non-runtime files.",
+            "Use `--no-cache` on `docker build` to skip the cache.",
+            "Run `docker system prune` before each build."
+          ],
+          "correct_option": "B",
+          "explanation": ".dockerignore prevents shipping unnecessary files into the build context, drastically reducing context upload and image size.",
+          "distractor_rationale": "B disables caching and typically slows builds. C may reduce base size but does not stop context bloat. D cleans the daemon but doesn’t change what’s sent to the daemon.",
+          "skills_covered": [
+            "Docker"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A push to ACR fails with:\n```bash\ndocker push myacr.azurecr.com/Web/App:20240101.1\n# error: name invalid: 400 Bad Request (invalid repository name)\n```\nWhat change fixes the issue?",
+          "options": [
+            "Append `--disable-content-trust` to the push command.",
+            "Pre-create the `Web/App` repository in ACR before pushing.",
+            "Use the correct login server suffix and lowercase repo path, e.g., `myacr.azurecr.io/web/app:20240101.1`.",
+            "Enable the admin user on the registry first."
+          ],
+          "correct_option": "C",
+          "explanation": "ACR uses the `azurecr.io` suffix and enforces lowercase repository names. Using the correct login server and lowercase path resolves the error.",
+          "distractor_rationale": "B is unnecessary; ACR creates repositories on first push. C is unrelated. D concerns image signing and won’t fix an invalid name or wrong endpoint.",
+          "skills_covered": [
+            "Azure Container Registry (ACR)",
+            "Docker",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You need zero-downtime blue/green releases on AKS. Which approach actually shifts traffic without a service break?",
+          "options": [
+            "Scale the existing Deployment to zero and apply the new manifest; kube-proxy will switch traffic instantly.",
+            "Set `strategy: blueGreen` on `KubernetesManifest@0`; it will auto-swap traffic on AKS.",
+            "Use App Service deployment slots and perform a slot swap with AKS.",
+            "Maintain two Deployments (`web-blue`, `web-green`) and one Service; flip the Service selector to the target color during release."
+          ],
+          "correct_option": "D",
+          "explanation": "On AKS, blue/green is implemented by pointing a stable Service to one of two identically shaped Deployments and switching the selector. This preserves connections and allows instant rollback.",
+          "distractor_rationale": "B applies to Azure App Service, not AKS. C is not a supported strategy on the KubernetesManifest task; canary is, blue/green you implement yourself. D induces downtime while pods terminate/start and Service endpoints churn.",
+          "skills_covered": [
+            "Kubernetes",
+            "Azure Pipelines",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must deliver a controlled deployment of a containerized web API to AKS using Azure DevOps. Requirements: use multi-stage YAML; approvals before any production change; serialize prod deployments; perform a canary rollout (20% then 100%) with health checks between steps; provide a simple rollback if the 20% canary fails; ensure the exact image built is what gets deployed.",
+          "task": "Describe the pipeline design and the environment configuration to meet these requirements. Include the key YAML constructs you would use (no need for full files), how you will wire environments/resources so approvals actually trigger, how you will pause and validate between canary steps, how you will serialize deployments, and how you will roll back quickly if the first increment is unhealthy.",
+          "expected_answer": "Use YAML deployment jobs that reference environments. For prod, configure an environment `prod` with a Kubernetes resource `prod-aks`; put approvers and Exclusive lock on the `prod-aks` resource. In YAML, use a deployment job with `environment: name: prod, resourceName: prod-aks, resourceType: Kubernetes` so the resource-level checks trigger. Build stage tags and publishes the image to ACR and exports the tag (or digest) as a pipeline variable. Prod deploy uses `strategy: canary` with increments [20,80]. Use hooks to insert validation between increments, e.g., `preDeploy` for smoke tests, then a manual validation (or gate via REST/Azure Monitor) before `routeTraffic` to 100%. Example skeleton:\n```yaml\n- stage: DeployProd\n  jobs:\n  - deployment: deploy\n    environment:\n      name: prod\n      resourceName: prod-aks\n      resourceType: Kubernetes\n    strategy:\n      canary:\n        increments: [20,80]\n        preDeploy:\n          steps:\n          - script: ./smoke.sh $(imageTag)\n        routeTraffic:\n          steps:\n          - script: echo \"Routing remaining traffic\"\n        on:\n          failure:\n            steps:\n            - script: kubectl rollout undo deploy/web\n```\nExclusive lock serializes prod runs automatically. Rollback uses `kubectl rollout undo` or the task’s `action: reject` when using canary promotion tasks. Ensure the image reference in manifests uses the exact built tag or digest emitted by the Build stage (e.g., `$(imageTag)`), not `latest`.",
+          "rubric": [
+            {
+              "criterion": "Uses deployment job with proper environment mapping (name + resourceName) so approvals/checks fire",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes configuring approvers and Exclusive lock on the prod environment/resource",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines a canary strategy with two increments and a validation pause between 20% and 100%",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains a concrete rollback method (reject/promotion cancel or `kubectl rollout undo`)",
+              "marks": 1
+            },
+            {
+              "criterion": "Ensures artifact immutability (exact image tag/digest from Build is used in Deploy)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML",
+            "Kubernetes",
+            "Azure Container Registry (ACR)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A pipeline builds and pushes images to ACR using a service connection bound to a service principal. `az acr login` reports success, but `docker push myacr.azurecr.io/web:20240201.3` fails with `denied: requested access to the resource is denied`. The repository path is lowercase. The registry’s Admin user is disabled by policy.",
+          "task": "Diagnose the root cause and provide a step-by-step remediation that will make the push succeed in a compliant manner. Include any scope nuances, and how you would validate the fix without changing the pipeline code structure.",
+          "expected_answer": "Root cause: the service principal lacks sufficient permissions on the ACR. `az acr login` can succeed via AAD but pushing requires `AcrPush` or higher on the registry. Remediation: 1) Assign the service principal the `AcrPush` role at the ACR resource scope (`/subscriptions/.../resourceGroups/.../providers/Microsoft.ContainerRegistry/registries/myacr`), not only at subscription RG Reader. 2) Verify the login server is correct (`myacr.azurecr.io`). 3) Keep Admin user disabled (policy-compliant). 4) Re-run pipeline or validate by executing `az acr repository show-tags -n myacr --repository web` after a test push to confirm the new tag appears. No code change needed; the existing `az acr login` and `docker push` will now succeed.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies missing `AcrPush` (or insufficient role) on the service principal as root cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes role assignment at the correct scope (the registry), not just subscription/RG Reader",
+              "marks": 2
+            },
+            {
+              "criterion": "Keeps Admin user disabled and explains why enabling it is non-compliant",
+              "marks": 1
+            },
+            {
+              "criterion": "States how to validate success (e.g., check tags via ACR CLI/portal after rerun)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Container Registry (ACR)",
+            "Azure Pipelines",
+            "CI/CD",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two independent pipelines sometimes deploy to the same AKS production environment within minutes of each other, causing overlapping changes and intermittent incidents. A CAB requires human approval for prod, and business only permits deployments 09:00–17:00 local time on weekdays.",
+          "task": "Propose a configuration in Azure DevOps that prevents overlap, enforces CAB approval, and restricts deployments to the permitted window, without coordinating the two pipelines explicitly. Explain what happens when both pipelines attempt to deploy around the same time, and how emergency out-of-hours changes could be handled with auditability.",
+          "expected_answer": "Use a shared Azure DevOps environment resource `prod-aks` targeted by both pipelines’ deployment jobs. Configure on `prod-aks`: 1) Approvals: require CAB approvers; 2) Exclusive lock: serialize deployments; 3) Schedule check: allow only Mon–Fri, 09:00–17:00 in the desired timezone. Both pipelines must reference the same environment resource in YAML so these checks apply. When both runs reach prod, each requests approval; after approval and within window, one acquires the Exclusive lock and deploys; the other waits until the first completes, then proceeds (still within allowed window) or is blocked by the schedule until the window reopens. For emergencies, temporarily override via a dedicated `Emergency` environment with separate approvers and explicit audit trail, or adjust the Schedule check for a one-time change—both leave an approval history.",
+          "rubric": [
+            {
+              "criterion": "Uses a shared environment resource with CAB approvals configured",
+              "marks": 2
+            },
+            {
+              "criterion": "Enables Exclusive lock and correctly explains the queuing/serialization behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Applies a Schedule check to enforce business hours and explains its effect on queued runs",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains how both independent pipelines can target the same environment without code cross-dependencies",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes an auditable emergency path (separate environment or temporary schedule override)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML",
+            "Kubernetes"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "In your current process, each environment build uses `:latest` and sometimes dev passes while prod fails because a different image was deployed. You want deterministic promotion: build once, verify in lower envs, then deploy the exact same artifact to prod.",
+          "task": "Design the image versioning and promotion approach using ACR and Azure DevOps so that the same artifact flows through environments. Include how you tag or address the image, how deploy stages consume that identity, and how you would retag/promote without rebuild. Mention rollback briefly.",
+          "expected_answer": "Build once, push to ACR with an immutable identifier and capture it for downstream stages. Two options: (a) use a unique tag (e.g., `$(Build.BuildId)`) and export it as a pipeline variable/artifact; (b) better, capture the image digest (`@sha256:...`) from `docker inspect` or `az acr repository show-manifests`). Store this value as a pipeline output variable. In Deploy stages, reference the exact tag/digest (e.g., `myacr.azurecr.io/web@sha256:...`) in manifests or via `kubectl set image`. Promotion is a metadata operation: optionally retag the verified digest (e.g., add `:prod-20240201`) using `az acr repository tag create --image web@sha256:... --tag web:prod-20240201` without rebuilding. Rollback is selecting the previous known-good tag/digest and redeploying it (or `kubectl rollout undo`). Never use `latest` in automation.",
+          "rubric": [
+            {
+              "criterion": "Identifies the core problem with mutable tags and prescribes build-once, deploy-same-artifact",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies using unique tag and/or immutable digest captured from the build",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how deploy stages consume that identifier (manifest or `kubectl set image`)",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes promotion by retagging the existing digest without rebuild",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions a concrete rollback method using prior tag/digest",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Container Registry (ACR)",
+            "CI/CD",
+            "YAML",
+            "Kubernetes",
+            "Docker"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Controlled deployment to AKS with approvals and canary",
+          "brief": "Create a multi-stage Azure DevOps YAML pipeline that deploys a containerized sample app to AKS with controlled production release. Use Azure DevOps Environments with approvals and checks. Implement a canary rollout to prod (20% then 100%) with a validation pause and a rollback path. Serialize prod deployments.",
+          "deliverable": "A repo or archive containing: 1) `azure-pipelines.yml` with Build, Deploy-Dev, and Deploy-Prod stages using deployment jobs; 2) Kubernetes manifests or Helm chart used for deploys; 3) Screenshot(s) of the Azure DevOps Environment `prod` Approvals and checks showing at least one approver and Exclusive lock enabled; 4) A pipeline run log excerpt showing a pending approval for prod and the canary step(s) (route/verify), and (optionally) a rollback invocation; 5) A short README describing how the image tag from Build is passed to Deploy.",
+          "acceptance_criteria": [
+            "Pipeline uses deployment jobs targeting environments (mapping form) for both dev and prod: `environment: name: <env>, resourceName: <k8s-resource>, resourceType: Kubernetes`.",
+            "`prod` environment has at least one approver and Exclusive lock (visible in screenshots).",
+            "Prod uses a canary strategy with two increments (e.g., `[20,80]`) and includes a validation step between increments (manual validation step or automated smoke test).",
+            "A rollback step/command is present (e.g., `kubectl rollout undo` or canary reject) and referenced in YAML.",
+            "The same image identifier built in the Build stage is consumed in Deploy (tag or digest), evidenced in YAML/README.",
+            "Submission includes a run log excerpt showing an approval prompt and canary routing/validation steps."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct use of deployment jobs with environment mapping (name + resourceName) for dev and prod",
+              "marks": 5
+            },
+            {
+              "criterion": "Environment approvals and Exclusive lock correctly configured and evidenced",
+              "marks": 4
+            },
+            {
+              "criterion": "Canary rollout implemented with validation pause between increments",
+              "marks": 4
+            },
+            {
+              "criterion": "Rollback path implemented and documented",
+              "marks": 3
+            },
+            {
+              "criterion": "Image immutability preserved across stages (same tag/digest wired end-to-end)",
+              "marks": 2
+            },
+            {
+              "criterion": "Evidence (logs/screens) clearly demonstrates approvals and canary behavior",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Pipelines",
+            "CI/CD",
+            "YAML",
+            "Kubernetes",
+            "Azure Container Registry (ACR)",
+            "Docker",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Container build-and-deploy via ACR to AKS",
+          "brief": "Build a container image from a sample app, push it to Azure Container Registry, and deploy it to AKS. Ensure the cluster can pull from ACR without imagePullSecrets (managed identity attachment) or, if not available, document and use an imagePullSecret correctly.",
+          "deliverable": "A repo or archive containing: 1) `Dockerfile` (prefer multi-stage or minimal runtime image); 2) `azure-pipelines.yml` (or split build/deploy YAMLs) that builds and pushes to ACR using a proper service connection; 3) Kubernetes manifests (or Helm chart) referencing the ACR image and tag variable; 4) Evidence of push (e.g., `az acr repository show-tags` output or portal screenshot) and evidence of deployment (`kubectl get deploy/pod -o wide` or `kubectl rollout status` output); 5) If using managed identity, the `az aks update --attach-acr <acrName>` command used; otherwise, the secret YAML and Deployment `imagePullSecrets` reference.",
+          "acceptance_criteria": [
+            "Dockerfile builds successfully and produces a runnable container image; repository path is lowercase.",
+            "Pipeline logs/definition show authenticated push to ACR using the correct login server (`*.azurecr.io`) and a unique tag (e.g., `$(Build.BuildId)`).",
+            "Evidence shows the tag exists in ACR (screenshot or CLI output) and matches the tag deployed to AKS.",
+            "Manifests/Helm chart reference the ACR image and the exact pushed tag; AKS can pull it via `--attach-acr` or a correctly referenced imagePullSecret.",
+            "Deployment succeeds (rollout complete) as shown by `kubectl` output in the submission."
+          ],
+          "rubric": [
+            {
+              "criterion": "Sound Dockerfile (lean runtime/multi-stage) and valid lowercase repo naming",
+              "marks": 4
+            },
+            {
+              "criterion": "Pipeline correctly authenticates and pushes to ACR with proper login server and unique tag",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear evidence of the pushed tag in ACR",
+              "marks": 3
+            },
+            {
+              "criterion": "AKS pull configuration correct (`--attach-acr` or valid imagePullSecret) and manifests reference the same tag",
+              "marks": 4
+            },
+            {
+              "criterion": "Successful deployment evidenced by rollout/status outputs",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Docker",
+            "Azure Container Registry (ACR)",
+            "Azure Pipelines",
+            "CI/CD",
+            "Kubernetes",
+            "Microsoft Azure",
+            "YAML"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-007-S04",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Infrastructure as Code",
+        "Terraform",
+        "Azure Monitor",
+        "Azure Key Vault",
+        "Azure Policy"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run Terraform with the following files and environment:\n\n```terraform\n// variables.tf\nvariable \"location\" {\n  type    = string\n  default = \"centralus\"\n}\n```\n\n```terraform\n// main.tf\nprovider \"azurerm\" { features {} }\n\nresource \"azurerm_resource_group\" \"rg\" {\n  name     = \"rg-demo\"\n  location = var.location\n}\n```\n\n```terraform\n// terraform.tfvars\nlocation = \"westeurope\"\n```\n\n```text\nEnvironment:\nTF_VAR_location=eastus\n```\n\nNo -var or -var-file flags are used on the CLI. When you `terraform apply`, which location is used for the resource group, and why?",
+          "options": [
+            "Apply fails due to multiple conflicting sources for the same variable",
+            "centralus, because var defaults are used unless overridden with -var",
+            "eastus, because TF_VAR_ has higher precedence than tfvars",
+            "westeurope, because terraform.tfvars overrides environment variables and defaults"
+          ],
+          "correct_option": "D",
+          "explanation": "Terraform loads variable values in a defined precedence. CLI -var/-var-file > *.tfvars files > environment TF_VAR_* > defaults. With no CLI flags, terraform.tfvars overrides the environment variable and the default, so the location is westeurope.",
+          "distractor_rationale": "B is tempting if you recall TF_VAR exists but forget it ranks below tfvars. C is a common mistake assuming defaults stick unless a CLI flag is used; tfvars also override defaults. D sounds plausible if you expect ambiguity, but Terraform has deterministic precedence and does not error here.",
+          "skills_covered": [
+            "Terraform",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You use an Azure Storage backend for Terraform state:\n\n```terraform\nterraform {\n  backend \"azurerm\" {\n    resource_group_name  = \"rg-tfstate\"\n    storage_account_name = \"tfstate123\"\n    container_name       = \"tfstate\"\n    key                  = \"prod.terraform.tfstate\"\n  }\n}\n```\n\nTwo engineers start `terraform apply` against the same workspace within seconds of each other. What happens to the second apply?",
+          "options": [
+            "It succeeds using a cached state, risking drift",
+            "It errors acquiring the state lock because the azurerm backend uses blob leases for locking",
+            "Both applies succeed due to optimistic concurrency on Azure Storage",
+            "It waits until the first apply completes and then resumes automatically"
+          ],
+          "correct_option": "B",
+          "explanation": "The azurerm backend takes a lease on the blob for state locking. The second apply fails to acquire the lock and errors out, preventing concurrent writes.",
+          "distractor_rationale": "A confuses Terraform's lock error with a queue; Terraform does not auto-queue applies. C reflects a misunderstanding; Terraform requires a lock to write remote state. D sounds like a storage concept, but the backend uses exclusive leases rather than optimistic concurrency for state writes.",
+          "skills_covered": [
+            "Terraform",
+            "Microsoft Azure",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You deploy an App Service with a Key Vault reference in Bicep:\n\n```text\nresource kv 'Microsoft.KeyVault/vaults@2022-07-01' existing = {\n  name: 'kv-demo'\n}\n\nresource web 'Microsoft.Web/sites@2022-03-01' = {\n  name: 'app-demo'\n  location: resourceGroup().location\n  properties: {\n    siteConfig: {\n      appSettings: [\n        {\n          name: 'ConnString'\n          value: '@Microsoft.KeyVault(SecretUri=${kv.properties.vaultUri}secrets/DbConn/abcdef...)'\n        }\n      ]\n    }\n  }\n}\n```\n\nNo `identity` is configured on the web app. After a successful deployment, the first HTTP request to the app fails with a Key Vault reference resolution error. What change fixes this without hardcoding secrets into templates?",
+          "options": [
+            "Disable soft-delete on the Key Vault so references resolve immediately",
+            "Pass the secret as a secure Bicep parameter and reference the parameter in app settings",
+            "Enable a system-assigned managed identity on the web app and grant it access (e.g., Key Vault Secrets User) to the vault",
+            "Add an app setting with the secret value directly and mark it as slot setting"
+          ],
+          "correct_option": "C",
+          "explanation": "Key Vault references require a managed identity on the resource to fetch secrets at runtime. Enabling a system-assigned identity and granting it appropriate access resolves references without embedding secrets in templates or state.",
+          "distractor_rationale": "A avoids Key Vault entirely and puts secrets in configuration, defeating the purpose. C risks secrets ending up in deployment logs and state; it still wouldn’t fix runtime resolution which needs identity. D is unrelated; soft-delete affects deletion/recovery, not reference authorization.",
+          "skills_covered": [
+            "Azure Key Vault",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A dashboard shows inflated CPU averages. The query is:\n\n```text\nHeartbeat\n| where TimeGenerated > ago(5m)\n| join Perf on Computer\n| where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n| summarize AvgCpu = avg(CounterValue) by Computer\n```\n\nWhich change most directly removes duplication bias while keeping a 5-minute window?",
+          "options": [
+            "```text\nHeartbeat\n| where TimeGenerated > ago(5m)\n| distinct Computer\n| join Perf on Computer\n| where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n| summarize AvgCpu = avg(CounterValue) by Computer\n```",
+            "```text\nHeartbeat\n| where TimeGenerated > ago(5m)\n| summarize hb=arg_max(TimeGenerated, *) by Computer\n| join kind=inner (\n    Perf\n    | where TimeGenerated > ago(5m)\n    | where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n    | summarize perf=arg_max(TimeGenerated, *) by Computer\n    | project Computer, CounterValue\n) on Computer\n| summarize AvgCpu = avg(CounterValue) by Computer\n```",
+            "```text\nHeartbeat\n| where TimeGenerated > ago(5m)\n| join kind=innerunique Perf on Computer\n| where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n| summarize AvgCpu = avg(CounterValue) by Computer\n```",
+            "```text\nHeartbeat\n| where TimeGenerated > ago(5m)\n| join kind=leftouter Perf on Computer\n| where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n| summarize AvgCpu = avg(CounterValue) by Computer\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Pre-aggregating both sides to one row per Computer within the time window (using arg_max) prevents many-to-many row multiplication in the join and yields unbiased averages.",
+          "distractor_rationale": "A looks attractive but innerunique arbitrarily picks one right-side row per left row; it still multiplies by multiple left rows. B removes duplicates on Heartbeat but still multiplies across Perf rows. D changes join semantics but not the cardinality explosion.",
+          "skills_covered": [
+            "Azure Monitor"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You try to enable diagnostic settings on an App Service via Terraform:\n\n```terraform\nresource \"azurerm_monitor_diagnostic_setting\" \"ds\" {\n  for_each                   = toset([\"app\", \"db\"]) // two instances\n  name                       = \"send-to-law\"\n  target_resource_id         = azurerm_app_service.app.id\n  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id\n\n  log {\n    category = \"AppServiceHTTPLogs\"\n    enabled  = true\n  }\n}\n```\n\nWhat happens when applying?",
+          "options": [
+            "Apply fails with a 409 Conflict because a target resource cannot have two diagnostic settings with the same name",
+            "Terraform creates two diagnostic settings with the same name; Azure keeps the latest and silently overwrites the first",
+            "Both settings are created because diagnostic settings are scoped per category, not per resource",
+            "Terraform de-duplicates by resource and only one instance is created"
+          ],
+          "correct_option": "A",
+          "explanation": "`azurerm_monitor_diagnostic_setting` maps to a named diagnostic setting on the target resource. Creating two settings with the same name for the same target causes a conflict at the Azure API and the apply fails.",
+          "distractor_rationale": "A sounds plausible if Azure allowed overwrites, but it returns a conflict instead. C misremembers scoping: the resource is a single named setting that can include multiple categories. D is not how Terraform behaves; it will attempt both and error.",
+          "skills_covered": [
+            "Terraform",
+            "Azure Monitor"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You assign the built-in Allowed Locations policy via Terraform:\n\n```terraform\nresource \"azurerm_policy_assignment\" \"allowed_locs\" {\n  name                 = \"enforce-locations\"\n  policy_definition_id = data.azurerm_policy_definition.allowed_locations.id\n  scope                = data.azurerm_subscription.primary.id\n  parameters = jsonencode({\n    listOfAllowedRegions = {\n      value = [\"westeurope\", \"northeurope\"]\n    }\n  })\n}\n```\n\nThe policy definition expects a parameter named `listOfAllowedLocations`. What is the outcome of `terraform apply`?",
+          "options": [
+            "Assignment is created but compliance evaluation fails later with a parsing error",
+            "Assignment succeeds and Azure falls back to the policy's default parameter value",
+            "Apply fails with an Azure error like PolicyParameterNotFound because the parameter name is invalid",
+            "Terraform plan fails locally before contacting Azure because the parameter is not recognized"
+          ],
+          "correct_option": "C",
+          "explanation": "Terraform sends the provided JSON to Azure; Azure validates parameters against the definition and rejects unknown names. The result is a 4xx error indicating the parameter is not found.",
+          "distractor_rationale": "A is wrong; Azure does not silently ignore invalid parameters. C suggests deferred failure, but validation happens on assignment. D is incorrect because Terraform does not introspect policy parameters; validation is server-side.",
+          "skills_covered": [
+            "Azure Policy",
+            "Terraform"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A Key Vault has soft-delete and purge protection enabled. You delete a secret `ApiKey` and immediately run Terraform which tries to create a secret with the same name and a new value. What happens?",
+          "options": [
+            "Apply fails with a conflict because a soft-deleted secret with that name exists; you must recover the secret or use a different name",
+            "Terraform succeeds but Key Vault serves the deleted version until retention expires",
+            "The secret is recreated as a new version under the same name",
+            "The secret is purged automatically due to the new create, then recreated"
+          ],
+          "correct_option": "A",
+          "explanation": "With soft-delete, the deleted secret remains recoverable. With purge protection, it cannot be purged early. Creating a secret with the same name fails until you recover the soft-deleted secret or choose a different name.",
+          "distractor_rationale": "A describes recovery semantics, not a create; a plain create conflicts. C is impossible with purge protection enabled. D misunderstands Key Vault behavior; Azure blocks the create rather than serving the deleted version.",
+          "skills_covered": [
+            "Azure Key Vault"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You add an explicit dependency so Terraform creates Key Vault access before deploying an App Service with a Key Vault reference:\n\n```terraform\nresource \"azurerm_key_vault_access_policy\" \"app\" {\n  key_vault_id = azurerm_key_vault.kv.id\n  tenant_id    = data.azurerm_client_config.current.tenant_id\n  object_id    = azurerm_windows_web_app.app.identity[0].principal_id\n  secret_permissions = [\"Get\", \"List\"]\n}\n\nresource \"azurerm_windows_web_app\" \"app\" {\n  name                = \"wv-demo\"\n  location            = azurerm_resource_group.rg.location\n  resource_group_name = azurerm_resource_group.rg.name\n  identity {\n    type = \"SystemAssigned\"\n  }\n  app_settings = {\n    \"ConnString\" = \"@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.kv.vault_uri}secrets/DbConn/...)\"\n  }\n  depends_on = [azurerm_key_vault_access_policy.app]\n}\n```\n\nDespite `depends_on`, the first cold start after deployment intermittently fails with 403 from Key Vault. Why?",
+          "options": [
+            "Ordering is correct, but AAD/role propagation for the managed identity is eventually consistent; the app may start before permissions fully propagate",
+            "Diagnostic settings are missing; without them Key Vault rejects requests",
+            "`depends_on` on the web app should point to the Key Vault resource, not the access policy",
+            "The failure is due to Key Vault firewall; depends_on cannot fix egress"
+          ],
+          "correct_option": "A",
+          "explanation": "Terraform can order resources, but cannot eliminate eventual consistency. After assigning permissions, it can take time before the managed identity's access is honored. A short warm-up/retry strategy is needed.",
+          "distractor_rationale": "B is misguided; the access policy is the relevant dependency. C could be true in other setups, but the symptom here is intermittent immediately after assignment, typical of propagation delay. D confuses observability with authorization.",
+          "skills_covered": [
+            "Azure Key Vault",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your template sets a Log Analytics workspace retention to 7 days:\n\n```terraform\nresource \"azurerm_log_analytics_workspace\" \"law\" {\n  name                = \"law-demo\"\n  location            = azurerm_resource_group.rg.location\n  resource_group_name = azurerm_resource_group.rg.name\n  sku                 = \"PerGB2018\"\n  retention_in_days   = 7\n}\n```\n\nA Deny policy is assigned that requires at least 30 days retention. What is the result of `terraform apply`?",
+          "options": [
+            "The workspace is created with 7 days and shows non-compliant",
+            "Terraform plan fails locally because the provider validates against policy",
+            "The workspace is created and auto-remediated to 30 days by Azure Policy",
+            "Apply fails with RequestDisallowedByPolicy and the resource is not created"
+          ],
+          "correct_option": "D",
+          "explanation": "A Deny policy blocks the create/update at the control plane. The API returns a RequestDisallowedByPolicy error and the apply fails.",
+          "distractor_rationale": "A describes an Audit policy, not Deny. C is how Modify/DeployIfNotExists with a remediation task can behave, but not Deny. D is wrong; Terraform does not evaluate Azure Policy before apply.",
+          "skills_covered": [
+            "Azure Policy",
+            "Azure Monitor",
+            "Terraform"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A previous run enabled Key Vault purge protection:\n\n```terraform\nresource \"azurerm_key_vault\" \"kv\" {\n  name                       = \"kv-demo\"\n  location                   = azurerm_resource_group.rg.location\n  resource_group_name        = azurerm_resource_group.rg.name\n  tenant_id                  = data.azurerm_client_config.current.tenant_id\n  sku_name                   = \"standard\"\n  soft_delete_retention_days = 90\n  purge_protection_enabled   = true\n}\n```\n\nYou change `purge_protection_enabled` to `false` and run apply. What happens and why?",
+          "options": [
+            "Terraform updates the vault in place and disables purge protection",
+            "Apply fails because purge protection cannot be disabled once enabled",
+            "Azure accepts the change but ignores it until after the retention period",
+            "The vault is destroyed and recreated automatically to satisfy the new setting"
+          ],
+          "correct_option": "B",
+          "explanation": "Azure Key Vault purge protection is a one-way setting. Once enabled, it cannot be disabled. The API rejects attempts to turn it off, so apply fails with a 409/BadRequest.",
+          "distractor_rationale": "A contradicts the platform guarantee. C is not permitted by Azure; the setting is immutable even across recreate attempts without a purge. D confuses soft-delete retention with purge protection mutability.",
+          "skills_covered": [
+            "Azure Key Vault",
+            "Terraform"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You need to deploy a small Azure web workload repeatedly across dev/test/prod using IaC. Compliance requires that no plaintext secrets appear in templates, state files, or deployment logs. The app requires a database connection string at runtime. The platform team also wants diagnostic logs from the web app and database routed to a central Log Analytics workspace and observable within 5 minutes of deployment.",
+          "task": "Propose an end-to-end design for provisioning and configuring this workload using Bicep or Terraform. Specify how variables and secrets are handled, how the app obtains the secret at runtime, how to avoid secrets in state/logs, and how diagnostics are enforced without manual steps. Justify key choices and call out ordering/consistency concerns that affect the first request after deployment.",
+          "expected_answer": "A strong answer proposes Terraform or Bicep for resource creation, with secrets stored in Azure Key Vault and never passed as values to IaC-managed properties that end up in state. For example: create Resource Group, Log Analytics Workspace, App Service Plan/Web App, database (or mock), and Key Vault. Enable system-assigned identity on the web app. Configure the web app setting to use a Key Vault reference string like '@Microsoft.KeyVault(SecretUri=...)' rather than injecting the secret value. Grant the web app identity the 'Key Vault Secrets User' role (RBAC) or an access policy. Explain that Terraform/Bicep should not read secret values; any secret variables must be marked sensitive and avoided in resource arguments that persist to state. Use remote state with Azure Storage and locks for repeatability. Configure azurerm_monitor_diagnostic_setting for both web app and database to send logs/metrics to the central workspace, ideally via a reusable module. Enforce diagnostics via Azure Policy (DeployIfNotExists/Modify) at management group or subscription scope and still configure them explicitly to ensure observability within 5 minutes. Discuss ordering: enable identity, then grant vault permissions, expect AAD propagation delay; suggest a warm-up/retry step post-deploy. Justify that this approach yields a repeatable stack with no secrets in code/state and fast, centralized logging.",
+          "rubric": [
+            {
+              "criterion": "Secrets handling: uses Key Vault; avoids passing secrets through IaC state/logs; uses Key Vault references (not raw values)",
+              "marks": 3
+            },
+            {
+              "criterion": "Identity and access: enables managed identity on app and correctly grants Key Vault access with RBAC/access policy",
+              "marks": 2
+            },
+            {
+              "criterion": "Diagnostics plan: configures diagnostic settings to Log Analytics and/or uses Policy to enforce; explains how logs become available quickly",
+              "marks": 2
+            },
+            {
+              "criterion": "Operational considerations: ordering and eventual consistency (MSI/AAD propagation), remote state/locking, justification of trade-offs",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Infrastructure as Code",
+            "Terraform",
+            "Azure Key Vault",
+            "Azure Monitor",
+            "Azure Policy",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your organization has three subscriptions under a management group. Many existing resources lack diagnostic settings and are deployed in arbitrary regions. Leadership wants to converge on two allowed regions and ensure all supported resources emit logs to a central Log Analytics workspace, without breaking running workloads.",
+          "task": "Design a phased Azure Policy rollout and remediation plan driven by IaC. Specify scopes, effects, identities, remediation tasks, and how you will verify success and handle exceptions. Explain how you will minimize disruption while moving to compliance.",
+          "expected_answer": "A good plan assigns policy at the management group so all subscriptions inherit. Start in AuditOnly for Allowed Locations and diagnostic settings (DeployIfNotExists/Modify) to surface impact. Create or reference a central Log Analytics workspace at a stable scope (per sub or central with access) and parametrize the workspace ID in policy assignments. Use Terraform to manage the initiative/assignments and their parameters. Grant a user-assigned managed identity remediation rights (e.g., 'Log Analytics Contributor' and resource-specific roles) and attach it to the policy assignments to run remediation tasks that add diagnostic settings to existing resources. For Allowed Locations, keep Audit for an initial window, monitor non-compliance via policy compliance state and Azure Monitor workbook, then switch to Deny only after exceptions (policy exemptions) are recorded. Verify success via `az policy state summarize`, spot-check via `az monitor diagnostic-settings list`, and KQL that shows data arrival. Document and implement exemptions for services or regions that cannot move yet. This approach avoids downtime, retrofits diagnostics, and gates new drift.",
+          "rubric": [
+            {
+              "criterion": "Policy design: correct use of scopes, effects (Audit -> Deny, DeployIfNotExists/Modify), parameterization for workspace/locations",
+              "marks": 3
+            },
+            {
+              "criterion": "Remediation identity and permissions: defines identity and rights needed to run remediation tasks safely",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification and exception handling: compliance checks, KQL/CLI evidence, and exemptions for edge cases",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Policy",
+            "Azure Monitor",
+            "Terraform",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "An alert rule intended to page on sustained high CPU is noisy and expensive. Current KQL driving the alert multiplies rows due to a many-to-many join, similar to:\n\n```text\nHeartbeat\n| where TimeGenerated > ago(15m)\n| join Perf on Computer\n| where ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\"\n| summarize AvgCpu = avg(CounterValue) by Computer\n```\n\nMetrics show inflated averages and query costs are high.",
+          "task": "Rewrite the query to remove duplication bias and reduce cost, and specify alert rule thresholds and frequency that detect sustained high CPU without paging on spikes. Justify your design.",
+          "expected_answer": "Proposed KQL pre-aggregates both sides and avoids many-to-many joins, e.g.: `Perf | where TimeGenerated > ago(15m) and ObjectName == \"Processor\" and CounterName == \"% Processor Time\" and InstanceName == \"_Total\" | summarize Avg15m=avg(CounterValue) by Computer` or use `make-series` with binning to smooth. Alternatively, join a `distinct Computer` or `arg_max` heartbeat to filter active machines, but ensure a single row per Computer before averaging. For cost, reduce projected columns and window to the necessary scope. Alert rule: a scheduled query alert running every 5 minutes with Lookback 15 minutes, triggering when `Avg15m > 80` for at least 3 consecutive evaluations (or using `aggregation granularity` with dynamic thresholds if appropriate). Include autoclose or de-duplication. This reduces noise from spikes and eliminates row multiplication.",
+          "rubric": [
+            {
+              "criterion": "Correct KQL eliminating join-induced duplication and reducing projected columns",
+              "marks": 3
+            },
+            {
+              "criterion": "Appropriate alert configuration (lookback, frequency, threshold, suppression or consecutive evaluations)",
+              "marks": 3
+            },
+            {
+              "criterion": "Justification addressing accuracy and cost trade-offs",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure Monitor"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A shared Terraform module deploys an App Service and wires Key Vault secrets. Teams consume it for multiple environments and regions. You have incidents where a new environment’s first requests fail due to Key Vault 403s, and a few runs flapped because diagnostic settings creation conflicted when the module was instantiated twice against the same app resource.",
+          "task": "Propose concrete changes to the module interface and implementation to make it safer and more reusable across environments. Address variable/secret inputs, Key Vault access ordering, eventual consistency, diagnostic settings idempotency, and naming to avoid collisions. Explain how you would validate the module in CI to catch regressions.",
+          "expected_answer": "Recommended changes: accept inputs for Key Vault name and secret names (not values) to avoid secrets entering state; expose a boolean to enable managed identity and wire RBAC/access policy for the identity, ensuring the module creates the identity first, then grants access, and then configures Key Vault references. Add a configurable post-deploy warm-up step (documented or via provisioning script) or a retry policy (e.g., health probe with backoff) to mitigate AAD propagation delay. For diagnostics, ensure resource `azurerm_monitor_diagnostic_setting` name is parameterized and unique per target (e.g., include workspace short name and environment), and guard with a single instance per target resource rather than looping the same name. Use `depends_on` to enforce that the app exists before creating diagnostics and workspace exists before linking. Implement deterministic naming using a prefix/suffix and a random_identifier only when necessary. In CI, run `terraform validate` and `terraform plan` against a test subscription using workspaces for envs; assert no secrets in plan output; add integration tests that deploy once, then re-apply to confirm idempotency (no changes), and attempt a parallel apply to verify state locking is respected.",
+          "rubric": [
+            {
+              "criterion": "Secrets and interface: accepts secret identifiers not values; ensures no secrets in state",
+              "marks": 2
+            },
+            {
+              "criterion": "Identity and Key Vault wiring: correct ordering and mitigation for eventual consistency",
+              "marks": 2
+            },
+            {
+              "criterion": "Diagnostic settings robustness: unique naming/idempotency; avoids duplicate creation conflicts",
+              "marks": 2
+            },
+            {
+              "criterion": "Naming and environment scoping: collision avoidance across regions/envs",
+              "marks": 1
+            },
+            {
+              "criterion": "Validation strategy in CI: plan/apply/idempotency checks without exposing secrets",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Terraform",
+            "Azure Key Vault",
+            "Azure Monitor",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a repeatable Azure stack with variables and secrets wired safely",
+          "brief": "Create IaC (Terraform or Bicep) that provisions a minimal but realistic stack: Resource Group, Log Analytics Workspace, App Service Plan + Web App, and a Key Vault containing a secret `DbConn`. The Web App must read the secret via a Key Vault reference at runtime (no secret values in templates or state). Route App Service logs to the workspace. Use variables for region and names, and a remote backend (if Terraform) to demonstrate repeatability and locking. Include a short README with commands to deploy and verify.",
+          "deliverable": "A repository (zip or link) containing IaC source, a README with deployment/verification steps, a sample tfvars/parameters file (no secrets), and captured evidence files: `terraform plan` (or equivalent) output, `terraform state list` (if Terraform), and outputs of `az monitor diagnostic-settings list --resource <app-id>` and `az webapp config appsettings list` showing the Key Vault reference placeholder (not the secret value).",
+          "acceptance_criteria": [
+            "Web App has system-assigned managed identity enabled",
+            "Key Vault contains secret `DbConn`; Web App app setting references the secret via '@Microsoft.KeyVault(...)' (no plaintext secret in code/state)",
+            "Diagnostic settings exist on the Web App sending logs to the specified Log Analytics workspace",
+            "Variables parameterize at least location and a name prefix; a sample vars/parameters file is provided",
+            "If Terraform: remote azurerm backend is configured and `terraform state list` shows the deployed resources",
+            "README includes exact commands used and verification steps"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct resource topology (RG, LAW, App Service Plan/Web App, Key Vault with secret)",
+              "marks": 4
+            },
+            {
+              "criterion": "Secrets wired via Key Vault reference; no plaintext secrets in code, parameters, or state evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Diagnostic settings correctly configured to the workspace and verifiable via CLI output",
+              "marks": 4
+            },
+            {
+              "criterion": "Parameterization and repeatability (variables/parameters; remote backend and locking if Terraform)",
+              "marks": 4
+            },
+            {
+              "criterion": "Documentation quality and included evidence artifacts",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Infrastructure as Code",
+            "Terraform",
+            "Azure Key Vault",
+            "Azure Monitor",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Operationalize and secure the platform with policy and observability",
+          "brief": "Extend the stack from Task 1 to include Azure Policy assignments and confirm observable security posture. Assign an Allowed Locations policy and a policy that deploys diagnostic settings to LAW for supported resources at your chosen scope (resource group is acceptable). Configure one scheduled query alert on high CPU for the Web App’s underlying App Service (or use a sample KQL against AppServiceHTTPLogs if metrics are not available). Produce evidence of compliance state and that logs/alerts work.",
+          "deliverable": "IaC code for the policy assignments and alert rule, plus evidence: JSON output of `az policy state summarize --scope <scope>`, JSON from `az monitor diagnostic-settings list` for target resources, exported alert rule JSON, and a text or screenshot showing one alert fired (can be test fire). A short OPERATIONS.md explaining the design and how to test.",
+          "acceptance_criteria": [
+            "Policy assignment for Allowed Locations exists at the declared scope with parameters set",
+            "Policy assignment for diagnostic settings exists and targets the Log Analytics workspace used by the app",
+            "Compliance summary shows assignments present and either compliant or actionable non-compliance",
+            "An alert rule exists tied to a KQL or metric with evaluation frequency and threshold documented; evidence of a fired test alert is included",
+            "All artefacts are managed by IaC (no manual-only configuration)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct policy assignments (Allowed Locations and diagnostics) with appropriate parameters and scope",
+              "marks": 6
+            },
+            {
+              "criterion": "Evidence of compliance state and diagnostic settings presence via CLI outputs",
+              "marks": 5
+            },
+            {
+              "criterion": "Alert rule correctness (query/metric, frequency, threshold) and fired test evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "IaC-driven approach and clear OPERATIONS.md explaining testing and rollback",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Azure Policy",
+            "Azure Monitor",
+            "Terraform",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -378,6 +378,23 @@ export const CourseRecommendationsPage = () => {
 
                     {/* Corpus syllabus — absent for the pre-corpus courses */}
                     <CourseSyllabus syllabus={course.syllabus} />
+
+                    {/* The way into the assessment. Only courses that carry a
+                        question corpus (a syllabus) can be sat, so the button is
+                        gated on that — a pre-corpus course would open a page with
+                        no sections and no Start test, which reads as broken. */}
+                    {course.course_id && course.syllabus?.length ? (
+                      <div className="border-t border-line pt-4">
+                        <Button
+                          as={Link}
+                          to={`/projects/${projectId}/courses/${course.course_id}`}
+                          size="sm"
+                          iconRight={ChevronRight}
+                        >
+                          Start assessment
+                        </Button>
+                      </div>
+                    ) : null}
                   </Card>
                 );
               })}

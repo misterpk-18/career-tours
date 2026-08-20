@@ -2,6 +2,8 @@
 
 An AI-driven career matching platform. It manages student profiles, processes resumes, matches student skills to occupations, and produces career and course recommendations using natural language processing, vector embeddings, and LLM-powered summarization.
 
+It also runs the assessments: a generated corpus of **2,560 questions** across all 40 courses (160 sections × 10 MCQ + 4 scenario + 2 practical), sat as timed, pausable, once-graded **sittings** with an anonymous XP leaderboard on top. See [docs/api-contract.md](docs/api-contract.md#7-assessment-api--sittings).
+
 The repository is a monorepo with two applications:
 
 | App | Path | Stack |
@@ -17,10 +19,11 @@ The repository is a monorepo with two applications:
 |---|---|
 | [docs/frontend.md](docs/frontend.md) | Frontend guide: stack, routing, API layer, styling conventions, how to add a page |
 | [docs/career-matching-engine.md](docs/career-matching-engine.md) | Product logic: the 10-step matching pipeline, scoring formulas, LLM vs. deterministic split |
-| [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 17 tables, ER diagram, relationship walkthrough, recommendation data flow |
-| [docs/data-pipelines.md](docs/data-pipelines.md) | How the catalog tables get filled: the course-corpus and ESCO career imports, and how to re-run them |
+| [docs/database_relationship_documentation.md](docs/database_relationship_documentation.md) | All 20 tables, ER diagram, relationship walkthrough, recommendation data flow, the assessment tables |
+| [docs/data-pipelines.md](docs/data-pipelines.md) | How the catalog tables get filled: the course-corpus and ESCO career imports, the generated section-question corpus, and how to re-run them |
 | [docs/architecture.md](docs/architecture.md) | **Current runtime**: CloudFront → API Gateway → Lambda (container image) → Neon + S3 + OpenAI. Live AWS inventory, request path, env vars, build & deploy |
 | [docs/api-contract.md](docs/api-contract.md) | **API contract**: every endpoint, its request/response shapes and error cases |
+| [docs/environment.md](docs/environment.md) | **Configuration**: every environment variable, where its value is stored, what each credential is permitted to do, and the AWS/database migration checklists |
 | [docs/career-tours-auth.postman_collection.json](docs/career-tours-auth.postman_collection.json) | Postman collection for the auth and resume endpoints |
 
 ---
@@ -37,7 +40,8 @@ The repository is a monorepo with two applications:
 **Frontend**
 - **Framework**: React 18 with plain JSX (no TypeScript), built by Vite 5
 - **Routing / HTTP**: `react-router-dom` v6, `axios`
-- **Styling**: Tailwind CSS 3 with a small set of shared glass/gradient utility classes; dark theme only
+- **Styling**: Tailwind CSS 3 driven entirely by CSS custom properties. **One theme — Solarized Dark**; no light mode and no toggle. The accent ramp is adapted for text contrast, and the reasoning is in [docs/frontend.md](docs/frontend.md#the-colour-contract)
+- **Question rendering**: `react-markdown` + `remark-gfm` + `lowlight` with 18 registered grammars — restricted markdown for the 2,560-question assessment corpus
 - **Icons**: `lucide-react`
 
 ---
@@ -90,13 +94,18 @@ career-tours/
 
 | Route | Access | Page |
 |---|---|---|
-| `/login`, `/register` | public | Authentication |
-| `/` | protected | Dashboard — project list |
+| `/login`, `/register` | public | Authentication — password or passwordless email-OTP login |
+| `/verify-email`, `/forgot-password`, `/reset-password` | public | Email verification and password-reset landings |
+| `/` | protected | Dashboard — project list (create, open, **delete**) |
 | `/projects/:projectId` | protected | Project workspace — resume upload, skill extraction, generate recommendations |
 | `/projects/:projectId/careers` | protected | Top 5 career matches with AI insights and skill gaps |
 | `/projects/:projectId/courses` | protected | Gap-filling course recommendations, grouped by career |
+| `/projects/:projectId/courses/:courseId` | protected | A course's sections + Start test (project-scoped assessment) |
+| `/projects/:projectId/sittings/:sittingId` | protected | A timed sitting (project track) |
+| `/courses/:courseId` | protected | Catalogue course page + its **project-independent** assessment |
+| `/courses/:courseId/sittings/:sittingId` | protected | A timed sitting (course track) |
 
-See [docs/frontend.md](docs/frontend.md) for the full guide.
+Auth supports password login, **passwordless email-OTP login**, email verification at signup, and password reset by emailed link. Projects enforce **one active name per student** and support **soft delete** (hidden from the UI, retained in the DB). See [docs/frontend.md](docs/frontend.md) and [docs/api-contract.md](docs/api-contract.md) for the full guides.
 
 ---
 

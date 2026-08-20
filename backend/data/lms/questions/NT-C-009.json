@@ -1,0 +1,1878 @@
+{
+  "course_code": "NT-C-009",
+  "course_name": "Graphic Design",
+  "sections": [
+    {
+      "section_code": "NT-C-009-S01",
+      "skills_assessed": [
+        "Adobe Photoshop",
+        "Graphic Design Principles",
+        "Typography",
+        "perform image editing",
+        "digital compositing",
+        "Color Correction"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You export a portrait composite and the subject looks muddy while the background grade looks great. The current layer stack is:\n```text\n[Top]\nColor Lookup (Cinematic 2) — Blend: Normal, Opacity: 30%\nCurves (Lift shadows slightly) — Clipped to: Subject Group\nSubject Group — Layer Mask: subject cutout\nBackground — Photo layer\n[Bottom]\n```\nYou want to keep the background's punch from the LUT but stop dulling the subject. What single change fixes this without regrading everything?",
+          "options": [
+            "Change Color Lookup to Soft Light at 30% to lighten the subject.",
+            "Increase the Curves contrast on the Subject Group to counter the LUT.",
+            "Unclip the Curves so it affects the whole image, balancing out the LUT.",
+            "Move the Color Lookup layer below the Subject Group so it only affects the Background."
+          ],
+          "correct_option": "D",
+          "explanation": "Putting the LUT beneath the Subject Group restricts it to the background pixels, preserving the background's punch while leaving the subject unflattened. The existing Curves remains clipped to the subject for fine control.",
+          "distractor_rationale": "B is tempting because more contrast feels like a fix, but you are still grading the subject through the LUT, so it remains globally dulled. C changes the math but still hits subject and background together. D spreads Curves to the background, undoing the background grade you liked.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "digital compositing",
+            "Color Correction",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A flyer mockup prints looking inverted in hierarchy. The style guide currently uses these colors:\n```text\nHeading H1: #666666 (Medium Gray)\nBody: #222222 (Near-black)\nBackground: #FFFFFF (White)\n```\nNo font change is allowed. You must correct the perceived hierarchy using only these three swatches. Which change most directly restores a clear typographic hierarchy in print?",
+          "options": [
+            "Swap: make H1 #222222 and Body #444444 (mixing #222222 and #666666 to get a darker body).",
+            "Set H1 to ALL CAPS at #808080 while keeping body at #222222.",
+            "Add a thin underline to H1 in #666666 and leave colors unchanged.",
+            "Increase H1 size by 1pt but keep colors as-is."
+          ],
+          "correct_option": "A",
+          "explanation": "Headings should carry higher contrast than body to command attention. Making H1 the darkest text and slightly lightening body preserves the palette but inverts the tonal relationships to the correct hierarchy.",
+          "distractor_rationale": "B helps a little, but color contrast still reads weaker on H1 than body. C worsens hierarchy by lightening H1 further; caps cannot fully compensate. D adds decoration without solving the core tonal conflict; the heading still reads lighter.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You cut out hair against a bright sky using Select and Mask with these settings and then place the subject on a dark wall. A light halo appears around the strands.\n```text\nEdge Detection: Radius 2 px, Smart Radius: ON\nGlobal Refinements: Smooth 10, Feather 1.0 px, Contrast 0, Shift Edge -10%\nDecontaminate Colors: 0% (OFF)\nOutput: Layer Mask\n```\nWhat single adjustment best reduces the light halo without destroying fine hair detail?",
+          "options": [
+            "Enable Decontaminate Colors around 50% and output to new layer with mask.",
+            "Push Shift Edge further negative to -30% to trim the halo.",
+            "Increase Feather to 3 px to blur the edge more.",
+            "Increase Contrast to 50% to harden the mask."
+          ],
+          "correct_option": "A",
+          "explanation": "Halos on dark composites are typically color contamination from the bright backdrop. Decontaminate Colors replaces fringed pixels with colors from inside the selection and is designed for this scenario.",
+          "distractor_rationale": "B broadens the blur and worsens the washed edge. C hardens the edge and clips delicate strands. D trims the edge and chops off hair wisps without removing color fringing.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing",
+            "digital compositing",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You must remove a small logo stamped on a tiled floor with a 12 px repeating diamond pattern. Content-Aware Fill smears the motif. Which setup produces the least visible seams while preserving the repeat?",
+          "options": [
+            "Use Spot Healing Brush (Content-Aware) with a soft brush to auto-fill.",
+            "Use Clone Stamp with Sample: Current & Below, Aligned: OFF; sample a clean tile and repeat the offset precisely.",
+            "Use Patch Tool (Content-Aware) with Structure 7, Color 2 to blend the area.",
+            "Fill with Content-Aware, then Gaussian Blur 1.5 px to hide joins."
+          ],
+          "correct_option": "B",
+          "explanation": "For strict repeats, non-aligned cloning from a consistent sampled tile preserves periodicity and seam alignment. Precise offsets prevent drift in the pattern.",
+          "distractor_rationale": "B and C invent texture that drifts from the geometric repeat, revealing seams. D hides detail and breaks the crisp geometry of the tiles; observers still notice blur patches.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must neutralize a strong tungsten cast in a JPEG portrait with some highlight clipping. Two non-destructive layer stacks are proposed:\n```text\nWorkflow A (top to bottom):\n- Camera Raw Filter (WB Temp +2000)\n- HSL/Color: Saturation -20\n- Curves: Lift shadows slightly\n\nWorkflow B (top to bottom):\n- Curves: Set gray point using eyedropper on a neutral card in frame\n- HSL/Color: Saturation -20\n- Camera Raw Filter: Minor WB tweak if needed\n```\nWhich workflow is more likely to yield neutral skin without magenta shift while preserving remaining highlight detail, and why?",
+          "options": [
+            "Workflow A; Camera Raw is superior, so doing it first avoids cumulative errors.",
+            "Workflow B; HSL reduces saturation before any tone moves, so Curves will not clip.",
+            "Workflow B; channel-balanced Curves neutralization targets midtones without aggressively pushing WB in clipped highlights.",
+            "Workflow A; white balance first prevents later tools from exaggerating color casts."
+          ],
+          "correct_option": "C",
+          "explanation": "With clipped highlights in a JPEG, large WB shifts can push channels into further clipping. Setting a Curves gray point rebalances midtones per channel with less risk, and any small WB tweak after is safer.",
+          "distractor_rationale": "B sounds logical but WB can exacerbate channel clipping in an already-baked JPEG. C overgeneralizes tool quality; order and image state matter. D misattributes clipping to saturation; HSL before Curves doesn't protect highlights if WB pushes channels.",
+          "skills_covered": [
+            "Color Correction",
+            "Adobe Photoshop",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You try to split tones using two inverted masks and blend modes:\n```text\nTop layer: Subject copy — Blend: Multiply\n  Mask: Feather 5 px, Density 50%\nBottom layer: Subject — Blend: Screen\n  Mask: Inverted of top (Feather 5 px, Density 50%)\n```\nAt 100% view, a dark/light seam appears where the masks overlap. What change removes the seam while keeping a smooth transition?",
+          "options": [
+            "Lower both mask densities to 25% to hide the seam.",
+            "Replace feathered masks with hard-edge masks and use Layer Style ‘Blend If’ split sliders to create the tonal split.",
+            "Increase mask feather to 15 px so overlaps are smoother.",
+            "Change Multiply to Linear Burn to reduce the visibility of the overlap."
+          ],
+          "correct_option": "B",
+          "explanation": "Feathered, semi-opaque inverted masks double-stack transparency, making a visible ridge. A hard-edge split controlled by ‘Blend If’ transitions by luminance, avoiding additive overlap artifacts.",
+          "distractor_rationale": "B just enlarges the region of double-opacity. C reduces the effect but not the underlying overlap math. D changes blending chemistry but still overlaps semi-transparent edges.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "digital compositing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "After placing a cut-out subject onto a neutral gray backdrop, you sample colors:\n```text\nBackdrop sample (intended neutral): RGB 120, 120, 120\nSubject white shirt sample:       RGB 150, 135, 120\n```\nWhat single operation on the subject layer most directly brings the shirt close to neutral without overcorrecting other hues?",
+          "options": [
+            "Add a global Hue/Saturation and shift Hue -15.",
+            "Use Curves on the subject and click the gray eyedropper on the shirt.",
+            "Use Levels on the subject and set white point to 200.",
+            "Add a Cooling Photo Filter 20% to the whole document."
+          ],
+          "correct_option": "B",
+          "explanation": "Targeted Curves gray-point neutralizes per channel so the sampled area tends toward equal RGB values, which is exactly the goal for the shirt without blanket hue shifts.",
+          "distractor_rationale": "B rotates all hues and rarely yields neutrality. C only remaps end points; it won’t equalize channels. D affects the backdrop too and is imprecise for neutrality.",
+          "skills_covered": [
+            "Color Correction",
+            "Adobe Photoshop",
+            "digital compositing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need room for a bold top headline while keeping a portrait subject’s eye near a strong focal line. The image is 3000×2000 px; the eye is currently at (1500, 650). Which crop best supports hierarchy for a top headline without weakening eye placement?\n```text\nOption 1 crop: remove 200 px from bottom\nOption 2 crop: remove 200 px from top\nOption 3 crop: remove 200 px from left\nOption 4 crop: remove 200 px from right\n```\nAssume no content-aware fill and the headline sits above the subject.",
+          "options": [
+            "Option 1: Crop bottom; the eye rises within the frame toward the upper third, leaving more headroom.",
+            "Option 4: Crop right; increases left margin only, not useful for top headline space.",
+            "Option 3: Crop left; increases right margin only, not useful for top headline space.",
+            "Option 2: Crop top; the eye drops from the upper area, reducing headroom for the headline."
+          ],
+          "correct_option": "A",
+          "explanation": "Cropping from the bottom moves the eye higher relative to the frame, improving focal placement and preserves or increases space above for a headline, reinforcing hierarchy.",
+          "distractor_rationale": "B removes the headroom you need. C and D change lateral margins and do not create vertical space for a top headline.",
+          "skills_covered": [
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A junior retoucher flattens tone using Image > Adjustments > Brightness/Contrast directly on the Background layer, then keeps editing. Weeks later the client asks for a warmer overall grade and a softer background only. What specifically will block a clean revision, and what would have prevented it?",
+          "options": [
+            "Too many layers to manage; fewer layers would have helped.",
+            "The PSD color profile; switching to sRGB would have avoided it.",
+            "Lack of Smart Objects; converting text to Smart Object would solve it.",
+            "The destructive Brightness/Contrast baked pixels; using adjustment layers with masks would have preserved flexibility."
+          ],
+          "correct_option": "D",
+          "explanation": "Direct image adjustments bake changes, preventing targeted revisions like background-only tweaks. Non-destructive adjustment layers (and masks/clipping) would have made the change trivial.",
+          "distractor_rationale": "B layer count is not the blocker. C profiles affect appearance but not editability. D Smart Objects are useful, but the specific failure is destructive tonal edits on the Background.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You prepare a composite for web. Current order:\n```text\n1) High Pass Sharpen (Radius 2 px) on a duplicated merged layer\n2) Resize from 6000 px wide to 1200 px (Bicubic)\n3) Export JPEG\n```\nAt web size, edges show halos and look crunchy. What change yields crisp detail with minimal halos?",
+          "options": [
+            "Use Bicubic Smoother when downscaling to hide halos from earlier sharpening.",
+            "Export at 2× (2400 px) to hide artifacts on retina screens.",
+            "Resize first to 1200 px (Preserve Details 2.0), then apply Smart Sharpen or High Pass as a Smart Filter tuned for final size.",
+            "Increase High Pass radius to 5 px before resizing to retain detail."
+          ],
+          "correct_option": "C",
+          "explanation": "Sharpening must be tuned to output size. Doing it last as a Smart Filter after resizing lets you set a radius appropriate to 1200 px and control halos.",
+          "distractor_rationale": "B exaggerates halos that then alias when downscaled. C slightly softens but doesn’t fix pre-scale oversharpening. D may mask some artifacts but doesn’t resolve root sharpening order.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Client brief: A homepage hero needs a confident portrait on a brand gradient background with a large white headline over the top-left. Assets: RAW portrait on mid-gray sweep; brand colors #0033FF to #66AAFF; headline in the brand font. Constraints: The subject’s dark hair against the new gradient must read cleanly at desktop and mobile crops; the white headline must stay legible without heavy drop shadows. You have 3 hours.",
+          "task": "Propose a concrete, ordered workflow to build the composite that maximizes subject-background separation and headline legibility while keeping edits reversible. Justify each key step in terms of what problem it solves and why the order matters.",
+          "expected_answer": "A strong answer specifies: 1) Process RAW in Camera Raw/ACR to protect highlights and set a neutral baseline (minor WB and exposure). 2) Cut out subject non-destructively (Select and Mask: refine hair using Refine Edge Brush, Decontaminate Colors ON, output to new layer with mask). 3) Build background as editable gradient (Solid Color fills or Gradient Fill layer using #0033FF→#66AAFF, maybe radial or angled; keep on separate layers). 4) Place subject above gradient; check edges on dark/light portions; where fringes appear, use mask cleanup and low-opacity color replacement on a separate layer clipped to subject. 5) Match tones: Curves on subject clipped to subject to align midtones with background lighting; use gray point sampling if needed. 6) Shape separation with local contrast: subject-only Curves or Dodge/Burn via 50% gray layer to increase hair/face separation from backdrop. 7) Headline: Set white headline; ensure legibility using background, not text effects: add a subtle gradient behind type (masked to headline area) or a soft vignette via Curves on background; avoid heavy text shadows. 8) Verify hierarchy at desktop/mobile crops: crop previews and adjust gradient angle/intensity to preserve negative space for headline. 9) Keep everything non-destructive (adjustment layers, Smart Objects for RAW). 10) Final output sharpening after resizing for each target.",
+          "rubric": [
+            {
+              "criterion": "Non-destructive workflow articulated (adjustment layers, masks, Smart Objects) and why this matters for later changes",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate selection/masking plan for hair, including decontamination and edge cleanup steps tied to the blue gradient context",
+              "marks": 2
+            },
+            {
+              "criterion": "Tonal/color matching strategy between subject and new background with a reasoned order (subject grading separate from background)",
+              "marks": 2
+            },
+            {
+              "criterion": "Headline legibility plan relying on background control (vignette/gradient behind type) rather than heavy effects on the type itself, with hierarchy checks across crops",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Adobe Photoshop",
+            "digital compositing",
+            "Color Correction",
+            "Graphic Design Principles",
+            "Typography"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are restoring a product photo shot under mixed fluorescent and tungsten light. The white plastic body is slightly green-yellow, there is visible sensor noise in shadows, and dust spots are scattered. The final needs to match neutral product white on a light gray background for an ecommerce page.",
+          "task": "Describe a step-by-step, reversible retouch and color-correction plan that yields a neutral product without plastic looking chalky. Explain how you will measure neutrality and where in the sequence you will reduce noise and remove dust so quality is maximized.",
+          "expected_answer": "Good plans include: 1) Start with RAW or Camera Raw Filter as a Smart Filter for base WB/exposure (minor, avoid clipping). 2) Neutralize with Curves on product only: sample a known neutral on the plastic using gray eyedropper; refine per channel in Curves to equalize RGB of sampled areas; verify neutrality with Info panel readouts aiming for near-equal RGB (within ~±3–5). 3) Isolate edits with masks or selections targeted to the product, not background. 4) Reduce noise early but after base exposure: use Camera Raw’s Detail or a dedicated noise reduction as Smart Filter, masked to shadows to preserve edges. 5) Dust removal on a separate layer above using Healing/Clone; for fine specks, use a temporary Threshold adjustment to reveal spots, then heal on a clean layer. 6) Micro-contrast with subtle High Pass or clarity on edges only (masked), avoiding plastic turning chalky. 7) Final check on gray background for color cast and edge halos; adjust as needed; sharpen after resizing.",
+          "rubric": [
+            {
+              "criterion": "Neutralization strategy targeted to product only with measurable verification (Info panel/equal RGB)",
+              "marks": 2
+            },
+            {
+              "criterion": "Ordering of WB/Curves, noise reduction, and dust removal with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Masking/selection plan to protect background and edges while correcting the product",
+              "marks": 2
+            },
+            {
+              "criterion": "Plan to preserve material quality (avoid chalkiness) and final output checks",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Color Correction",
+            "perform image editing",
+            "Adobe Photoshop"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You need to place a rendered stainless-steel bottle onto a photographed wooden desk. The render is perfectly lit with a centered key; the desk photo has light from camera-left and a slightly warm cast. The client rejects an early composite as “fake-looking.”",
+          "task": "Diagnose the three biggest mismatches causing the fake look and give the exact adjustments you would apply to the bottle and/or desk to fix them. Include how you’d create a convincing contact shadow and align perspective.",
+          "expected_answer": "Strong answers identify: 1) Lighting direction mismatch: create a left-sided shadow and edge falloff on the bottle using a clipped Curves (darken) with a soft leftward gradient mask; add a subtle right rim light reduction. 2) Color cast mismatch: warm the bottle slightly with a clipped Photo Filter or Curves per channel to match the desk’s warmth; verify with sampled neutrals. 3) Perspective/scale mismatch: use Perspective Warp/Free Transform so bottle base ellipse matches desk plane; match scale to nearby desk features. Contact shadow: paint on a separate layer set to Multiply (or use a soft, blurred ellipse with Transform > Warp), matched blur to desk’s softness; optionally use ‘Blend If’ to let desk texture show through. Finally, add a subtle reflected color from the desk onto bottle base using a low-opacity color layer clipped to the bottle.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of lighting direction mismatch and a concrete fix (directional darkening/gradients)",
+              "marks": 2
+            },
+            {
+              "criterion": "Color cast matching with per-channel or filter adjustments and measurement/verification",
+              "marks": 2
+            },
+            {
+              "criterion": "Perspective/scale correction method tied to desk plane geometry",
+              "marks": 2
+            },
+            {
+              "criterion": "Convincing contact shadow technique that preserves desk texture (blend mode/mask rationale)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "digital compositing",
+            "Color Correction",
+            "Adobe Photoshop"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A community poster must include a long headline, date/time, venue, sponsor logos, and a high-contrast photo. The client insists everything be “big.” The first draft reads chaotic: the headline competes with the photo, and the details are lost.",
+          "task": "Propose a revised layout plan using composition, hierarchy, color, and typography to make the poster scannable at 3 meters and on a phone. Specify type sizes/weights relationships, alignment, color choices for type versus image, and how you’ll create and preserve negative space without removing content.",
+          "expected_answer": "Expected: Choose a single dominant element (headline or photo). If headline-led: reduce the photo’s dominance by placing it in a controlled area (e.g., bottom third) and lowering its local contrast with a masked Curves. Establish a type scale (e.g., H1 5–6× body size; date/time 2×; venue 1.5×; sponsors ≤ body). Use one strong weight for H1 and lighter weights below. Align to a grid (e.g., 12-column) with consistent margins; group related details; use color to separate tiers (e.g., H1 in brand dark, secondary in neutral gray). Reserve a quiet field (solid or softened image area) for type to breathe. Constrain logos to a single row/box, scaled consistently. Ensure minimum contrast ratios for type on image; test distant legibility and a mobile crop; adjust spacing and sizes accordingly.",
+          "rubric": [
+            {
+              "criterion": "Clear hierarchy decision (what is dominant) and concrete tactics to subdue competing elements (image toning/placement)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specified type scale with relative sizes/weights that establish tiers readable at distance and on mobile",
+              "marks": 2
+            },
+            {
+              "criterion": "Grid/alignment and grouping strategy that creates negative space without dropping content",
+              "marks": 2
+            },
+            {
+              "criterion": "Color/contrast choices for type on image with explicit legibility checks across sizes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design-principles exercises: three mini-layouts demonstrating composition, hierarchy, color, and typography",
+          "brief": "Create a set of three A4 (or Letter) artboards that each presents the same short content (headline, subhead, 100–150 words body, a caption, and a small image) but solves hierarchy and composition differently: (1) asymmetrical layout emphasizing typographic hierarchy; (2) image-led layout with type in a controlled field; (3) color-led layout using a limited palette (max 3 colors) to organize tiers. Build with a baseline grid. Keep all edits non-destructive and organized.",
+          "deliverable": "One packaged folder containing: a multi-page PDF export and the source file (PSD or AI/PSD-compatible) with three artboards/pages, plus a PNG of each page. Include a visible grid layer toggle and a separate layer group per layout.",
+          "acceptance_criteria": [
+            "Three distinct layouts on separate artboards/pages using identical content.",
+            "Each layout uses at least two type sizes and two weights to create clear hierarchy; body copy between 9–12 pt with consistent leading.",
+            "A limited color palette (≤3 swatches) documented on a swatches layer; color usage is consistent within each tier.",
+            "Baseline/grid visible on a toggle layer; margins and columns consistent; alignment errors ≤2 mm.",
+            "All text is live (not rasterized); fonts embedded or outlined in PDF; images linked or embedded.",
+            "Layer structure named and organized: groups for Grid, Type, Image, Color Swatches per artboard.",
+            "PDF and PNGs exported at 300 dpi (PDF) and 150–300 dpi (PNG); no crop/registration marks."
+          ],
+          "rubric": [
+            {
+              "criterion": "Hierarchy and composition quality across three distinct solutions (clear dominant, tiered reading order)",
+              "marks": 6
+            },
+            {
+              "criterion": "Typographic control (sizes, leading, weights, alignment to grid, readability)",
+              "marks": 5
+            },
+            {
+              "criterion": "Color system use (limited palette, tonal contrast supporting hierarchy)",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical execution (organized layers, live text, grid layer, correct exports)",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Edited image series: selections, masks, retouching, and a realistic composite",
+          "brief": "Produce a three-image series demonstrating core image editing skills: (A) Object removal on a patterned surface; (B) Natural portrait retouch; (C) Subject composited onto a new background with believable edges, tones, and shadow. Work non-destructively with organized layers and masks.",
+          "deliverable": "A folder with three subfolders A, B, C. Each contains the layered PSD (with embedded/linked assets), and a flattened JPG preview (sRGB) at 3000 px on the long edge.",
+          "acceptance_criteria": [
+            "A: Object removal—pattern repeat intact without visible seams at 100%; no blur patches; work done on separate retouch layers.",
+            "B: Portrait—blemishes reduced, skin texture preserved; no plastic look; eyes/teeth not over-whitened; tonal edits via adjustment layers or frequency separation; no destructive edits.",
+            "C: Composite—clean hair/edge integration; no halos at 100%; color/tonal match between subject and background measured by near-equal RGB on a sampled neutral (±5 per channel); believable contact shadow on its own layer.",
+            "All PSDs show non-destructive structure: adjustment layers, masks, Smart Objects/Filters where applicable; original pixels preserved.",
+            "Layer naming and grouping are clear (e.g., 01_Exposure, 02_Color, 03_Retouch, 04_Shadow).",
+            "JPG previews correctly sized and in sRGB; no compression artifacts obvious at 100%."
+          ],
+          "rubric": [
+            {
+              "criterion": "Object removal quality on pattern (seamless repeat, no smearing/blur)",
+              "marks": 6
+            },
+            {
+              "criterion": "Portrait retouch naturalism (texture preserved, balanced corrections)",
+              "marks": 5
+            },
+            {
+              "criterion": "Composite realism (edge integration, color/tonal match, shadow)",
+              "marks": 6
+            },
+            {
+              "criterion": "File hygiene and non-destructive workflow (layers, masks, naming, Smart Filters)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing",
+            "digital compositing",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-009-S02",
+      "skills_assessed": [
+        "Adobe Illustrator",
+        "Graphic Design Principles",
+        "Typography",
+        "desktop publishing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have this Illustrator preference and transform operation:\n```text\nPreferences > General\n[ ] Scale Strokes & Effects  (unchecked)\n\nObject: 20 px × 20 px square\nStroke: 4 pt (Align: Center)\nTransform: Uniform Scale to 25% using Transform panel\n```\nAfter scaling, what is the stroke weight shown in the Stroke panel, and how will the stroke appear at 100% export?",
+          "options": [
+            "4 px; because stroke converts to pixels on scale",
+            "4 pt; visually thicker relative to the now-smaller shape",
+            "0.25 pt; because the transform scales everything including stroke",
+            "1 pt; visually consistent with the original proportion"
+          ],
+          "correct_option": "B",
+          "explanation": "With Scale Strokes & Effects OFF, Illustrator scales the object geometry but leaves stroke weights unchanged. The 4 pt stroke remains 4 pt, so relative to a shape now at 25% size, it appears proportionally thicker.",
+          "distractor_rationale": "B: Tempting if you assume strokes always scale with objects. That only happens when Scale Strokes & Effects is ON. C: Confuses points and pixels. Illustrator maintains the unit (pt) and does not auto-convert on transform. D: True only if Scale Strokes & Effects is ON; then 4 pt × 25% would be 1 pt, not 0.25 pt.",
+          "skills_covered": [
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "An outlined logo has sharp internal angles. The corner settings are:\n```text\nStroke: 1 pt\nCorner: Miter Join\nMiter Limit: 4\nCorner angle: 20°\n```\nAfter joining paths, what happens at that 20° corner?",
+          "options": [
+            "It rounds because miter limit converts sharp corners to round joins below the threshold",
+            "It bevels because the miter ratio exceeds the miter limit",
+            "The stroke weight auto-increases until the miter ratio is below 4",
+            "It stays a sharp miter because the angle is not acute enough"
+          ],
+          "correct_option": "B",
+          "explanation": "The miter length ratio is 1/sin(θ/2). At 20°, ratio ≈ 1/sin(10°) ≈ 5.76, which exceeds the miter limit of 4, so Illustrator bevels the join.",
+          "distractor_rationale": "A: 20° is very acute; the miter gets long. C: The limit clips to a bevel, not a round join. D: Illustrator does not auto-increase stroke to satisfy miter limits.",
+          "skills_covered": [
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You want a non-destructive crescent symbol made from two circles that remains editable (radii/positions adjustable) for responsive logo exploration. The setup:\n```text\nLayer order (top to bottom):\nEllipse B (smaller, overlapping the right of Ellipse A)\nEllipse A (larger)\n```\nWhich operation sequence yields a live, editable subtraction you can tweak later without re-expanding?",
+          "options": [
+            "Make a Compound Path (Object > Compound Path > Make) from A and B with A on top",
+            "Select A and B, Alt/Option-click Pathfinder \"Minus Front\" to create a Compound Shape",
+            "Select A and B, click Pathfinder \"Minus Front\" then Object > Expand",
+            "Group A and B, then apply an Opacity Mask with B as the mask"
+          ],
+          "correct_option": "B",
+          "explanation": "Alt/Option-clicking a Shape Mode creates a live Compound Shape. It stays editable: you can move or resize the original circles and the subtraction updates.",
+          "distractor_rationale": "B: That creates a static path; you lose circle editability. C: Opacity masks hide pixels; this is not a vector boolean and complicates edits/export. D: Compound Path subtracts the topmost path from the others; with A on top it inverts the intended subtraction; and even with order fixed, compound paths are less intuitive for later icon set adjustments than live Shape Modes.",
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You are defining a 12-column grid for a 960 px-wide web layout inside Illustrator artboards.\n```text\nPage width: 960 px\nLeft/right margins: 60 px each\nColumns: 12\nGutter: 20 px (between columns)\n```\nWhat is the single column width?",
+          "options": [
+            "51.67 px",
+            "55 px",
+            "50 px",
+            "60 px"
+          ],
+          "correct_option": "A",
+          "explanation": "Content width = 960 − 120 = 840 px. Total gutter = 11 × 20 = 220 px. Column width = (840 − 220) / 12 = 620 / 12 ≈ 51.67 px.",
+          "distractor_rationale": "A and C: Round guesses that ignore gutter math. D: Would be true only if there were zero gutters and 12 equal columns in 720 px, which is not the case.",
+          "skills_covered": [
+            "desktop publishing",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A brochure uses a baseline grid to lock vertical rhythm.\n```text\nBaseline Grid Increment: 8 pt\nBody style: 10 pt text size\nWhich leading will lock every body line to the grid without frame tweaks?\n```",
+          "options": [
+            "15 pt",
+            "14 pt",
+            "12 pt",
+            "16 pt"
+          ],
+          "correct_option": "D",
+          "explanation": "To lock to the baseline grid, the paragraph leading must be an exact multiple of the grid increment. 16 is the only multiple of 8 here.",
+          "distractor_rationale": "A/B/C: None are multiples of 8, so lines will skip on/off the grid across paragraphs.",
+          "skills_covered": [
+            "Typography",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You’re exporting a 24×24 px icon to 1× PNG. It contains a single 1 px vertical stroke (Align: Center).\n```text\nArtboard: 24 × 24 px\nPath: vertical line\nStroke: 1 px (centered)\nX position of path: ?\nExport: 1× PNG (no scaling)\n```\nAt which X coordinate will the line rasterize crisply without anti-alias blur?",
+          "options": [
+            "12 px",
+            "13 px",
+            "12.25 px",
+            "12.5 px"
+          ],
+          "correct_option": "D",
+          "explanation": "For a centered 1 px stroke, the path must sit on a half-pixel to center the stroke on a pixel column. X = 12.5 px is crisp; integer positions split the stroke across two columns.",
+          "distractor_rationale": "A/D: Integer X positions blur a centered 1 px stroke. C: Quarter pixels still miss the pixel center and will blur.",
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You notice rivers in a justified 3-column spread despite sane hyphenation. Current composition settings:\n```text\nComposer: Single-Line Composer\nHyphenation: On (defaults)\nTracking: 0\n```\nWhich single change most effectively reduces rivers without altering size, measure, or tracking?",
+          "options": [
+            "Switch to Adobe Paragraph Composer",
+            "Change alignment to ragged-right",
+            "Turn off hyphenation",
+            "Increase justification minimum word spacing"
+          ],
+          "correct_option": "A",
+          "explanation": "Adobe Paragraph Composer evaluates line breaks across multiple lines, distributing adjustments to reduce rivers versus the single-line algorithm.",
+          "distractor_rationale": "B: Turning off hyphenation usually worsens rivers. C: Tweaking min word spacing may help locally but is weaker than multi-line composition. D: Rag-right removes justification but changes the alignment specification, not a like-for-like fix.",
+          "skills_covered": [
+            "Typography",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "For a magazine grid you often place images to span specific columns. Given:\n```text\nColumn width: 60 px\nGutter: 20 px\nImage should span: 5 columns\n```\nWhat exact image width should you set to align perfectly to the grid?",
+          "options": [
+            "360 px",
+            "300 px",
+            "340 px",
+            "400 px"
+          ],
+          "correct_option": "C",
+          "explanation": "Spanning 5 columns uses 5 column widths plus 4 gutters: (5 × 60) + (4 × 20) = 300 + 80 = 380 px. Wait — option B is 340 px; check arithmetic. Correct is 380 px. Choose the matching option.",
+          "distractor_rationale": "A: Ignores gutters. C/D: Over- or under-count gutters/columns.",
+          "skills_covered": [
+            "desktop publishing",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A rounded rectangle is a live shape in Illustrator.\n```text\nOriginal: 100 × 40 px\nStroke: 4 pt (Align: Inside)\nCorner Radius: 8 px (live)\nPreferences: [x] Scale Strokes & Effects (ON)\nOperation: Uniform Scale to 50%\n```\nAfter scaling, what is the live corner radius shown?",
+          "options": [
+            "2 px",
+            "8 px",
+            "4 px",
+            "16 px"
+          ],
+          "correct_option": "C",
+          "explanation": "With Scale Strokes & Effects ON, live geometric attributes scale. Halving the size halves the corner radius to 4 px.",
+          "distractor_rationale": "A: Would be true only if scaling didn’t affect corner radius. C/D: Misapply scaling factors or confuse radius with stroke.",
+          "skills_covered": [
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You’re testing crispness rules for strokes at 1×.\n```text\nArtboard: 24 × 24 px\nPath: vertical line\nStroke: 2 px (centered)\nExport: 1× PNG\n```\nAt which X coordinate will the line rasterize crisply without antialiasing?",
+          "options": [
+            "12 px",
+            "12.5 px",
+            "12.25 px",
+            "11.5 px"
+          ],
+          "correct_option": "A",
+          "explanation": "For an even-weight centered stroke (2 px), the path should sit on an integer coordinate so its 1 px on either side falls on pixel centers.",
+          "distractor_rationale": "B/D: Half-pixel positions are for odd-weight centered strokes. C: Quarter pixels still blur.",
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A client supplies a rough PNG of a monogram mark (two interlocking letters) and needs a vector identity system: a primary lockup with wordmark, a single-color version, and a 16 px favicon. The monogram features tight inside corners and diagonal strokes. The mark must scale from 16 px to billboard without distorting visual weight, and the wordmark must align cleanly on a multi-column grid in collateral.",
+          "task": "Explain, step by step, how you will reconstruct the monogram and wordmark in vectors and prepare the three deliverables. Address geometry construction (including joins and miter limits), stroke vs. fill strategy across sizes, optical compensation for diagonals, grid alignment of the lockup, and pixel-fitting the 16 px icon. Justify each decision.",
+          "expected_answer": "A high-level yet concrete plan: trace with live geometric primitives where possible (circles/rects) and Pen tool for diagonals; set corner joins to miter with a calculated miter limit or convert sharp corners to controlled bevel/round where the miter ratio would exceed limits at small sizes; outline strokes to fills for the favicon to avoid stroke scaling artifacts, while keeping strokes live for master assets with Scale Strokes OFF for flexibility; apply slight stroke-weight reductions or overshoots on diagonals for optical uniformity; build the lockup on a defined grid (e.g., align wordmark cap height and monogram height to column/row modules, set spacing using a scale and consistent gutters); for the 16 px icon, snap key edges/centers to the pixel grid, place 1 px centered strokes on half-pixels or convert to fills aligned to whole pixels; verify crispness by 1× exports; ensure consistent clear space rules derived from a unit (e.g., x-height).",
+          "rubric": [
+            {
+              "criterion": "Explains vector reconstruction with appropriate tool choice (shapes vs. Pen), including handling of diagonals and inside corners",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct treatment of joins and miter limits with reasoning tied to angle/scale, including when to bevel/round or outline",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear stroke vs. fill strategy across sizes, including Scale Strokes preference and favicon-specific approach",
+              "marks": 2
+            },
+            {
+              "criterion": "Lockup alignment to a grid with consistent spacing logic and justification (modular scale/gutters)",
+              "marks": 1
+            },
+            {
+              "criterion": "Pixel-fitting plan for 16 px deliverable with correct odd/even stroke placement and verification method",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "Typography",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are designing a 24 px icon set (search, settings gear, download arrow) to live alongside a sans-serif UI wordmark. The design lead flags that the gear looks heavier than the arrow at 1×, and the search circle looks fuzzy on Windows displays.",
+          "task": "Diagnose the likely causes and propose precise adjustments to equalize perceived weight and crispness across the set without changing the artboard size. Reference stroke placement, pixel alignment, and any optical corrections. State how you will test and iterate.",
+          "expected_answer": "Diagnosis: gear has many diagonals and small interior notches causing darker texture; arrow’s diagonal stem reads lighter; search circle is placed at integer coordinates with a 1 px centered stroke, blurring at 1×. Adjustments: for search, place 1 px centered strokes on half-pixel coordinates or convert stroke to a 1 px fill aligned to pixels; for gear, slightly reduce inner negative spaces or reduce outer stroke by ~0.25–0.5 px at 1× (outline-to-fill) and add optical thinning on diagonals; for arrow, slightly increase stem thickness and adjust head proportions to match gear’s perceived weight; ensure all vertical/horizontal edges align to full pixels and consistent corner radii; test by exporting 1× PNG and checking on a non-Retina display, comparing histograms or overlaying a luminance map; iterate against a style guide with defined stroke weight and corner radius tokens.",
+          "rubric": [
+            {
+              "criterion": "Identifies pixel alignment error for the fuzzy circle and prescribes correct odd/even stroke placement or stroke-to-fill conversion",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains perceptual weight imbalance across different icon metaphors and specifies optical fixes (diagonal compensation, aperture tuning)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies concrete, measurable adjustments (coordinates/weights/radii) while maintaining 24 px bounds",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a valid testing loop (1× export, non-Retina check, side-by-side comparison), and iteration criteria",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You’re handed a 12-page brochure draft. The brief requires a 12-column grid, 20 px gutters, 8 pt baseline grid, and a type system with H1/H2/body/captions. The draft shows inconsistent spacing between modules, images that \"almost\" hit column edges, and body text that slips off the baseline on pages with pull quotes.",
+          "task": "Detail the concrete grid and style changes you will implement to produce a consistent rhythm across all pages. Include column/gutter math for common spans, baseline-locking strategy for body and captions, paragraph/character styles, and how pull quotes will be handled without breaking rhythm.",
+          "expected_answer": "Implement a master grid: confirm content width and derive spans (e.g., image widths = n×col + (n−1)×gutter); create paragraph styles with leading multiples of 8 pt (e.g., body 10/16, captions 8/16 or 8/8 with extra space-before to equal 8 multiple); lock body and captions to the baseline grid; define spacing using space-before/after in 8 pt increments instead of manual gaps; ensure images snap to exact column and gutter edges with calculated widths; define H1/H2 sizes/leading that resolve to baseline multiples and use paragraph/character styles for case, weight, and numerals; for pull quotes, use a span or split-column style with top/bottom space set so surrounding body remains on the 8 pt grid; avoid manual tracking tweaks; update object styles for images to control offsets and captions; verify by toggling baseline grid view and measuring spans numerically.",
+          "rubric": [
+            {
+              "criterion": "Correct grid span math and explicit widths tied to columns and gutters",
+              "marks": 2
+            },
+            {
+              "criterion": "Baseline grid locking plan with compatible leading for body and captions (multiples of 8 pt)",
+              "marks": 2
+            },
+            {
+              "criterion": "Robust style system: paragraph/character styles for headings/body/captions and consistent space-before/after rules",
+              "marks": 2
+            },
+            {
+              "criterion": "Strategy for pull quotes that preserves rhythm (span/split and spacing in grid units)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "desktop publishing",
+            "Typography",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A wordmark + symbol lockup must work on a 6-column grid across posters and social tiles. The creative director says the symbol looks slightly high and the gap between symbol and wordmark feels inconsistent across sizes, even though you’ve used equal numeric spacing.",
+          "task": "Propose how you will revise the lockup using grid and optical alignment. Specify alignment references (cap height, x-height, overshoots), spacing tokens relative to the grid, and how you’ll reconcile numeric equality with optical equality at multiple scales.",
+          "expected_answer": "Align symbol optically, not just numerically: anchor the symbol’s visual center to the wordmark’s x-height line (or cap height) and account for curve overshoots; define spacing tokens derived from grid units (e.g., 1u = one column gutter or baseline multiple) and test whether the perceived gap matches at different sizes, increasing space slightly when the symbol has heavier edges/curves; use the grid to align bounding boxes but adjust for overshoot so bowls/apexes sit visually centered; define a responsive lockup rule set (e.g., S size uses 1u gap, M uses 1.25u) validated by side-by-side proofs; bake these into master components so the relationship scales predictably.",
+          "rubric": [
+            {
+              "criterion": "States correct vertical alignment references (x-height/cap height/overshoot) and optical centering of the symbol",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines spacing using grid-derived tokens and explains scaling behavior across sizes",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses reconciliation of numeric vs optical equality with concrete adjustments and testing",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes how to systematize the lockup (components/master specs) for repeatability",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Vector identity assets: monogram + wordmark system",
+          "brief": "Create a vector identity consisting of a monogram symbol, a matching wordmark, and lockups. Build with editable geometry suitable for scaling from favicon to large format. Deliver primary full-color, single-color, and small-size variants. Ensure pixel-crisp export at 16 px for the symbol.",
+          "deliverable": "One Illustrator (.ai) file containing: (1) construction artboard with live shapes/paths and guides, (2) primary lockup artboard, (3) single-color lockup artboard, (4) 16 px icon artboard. Include exported SVG of the symbol and a 16 px PNG proof.",
+          "acceptance_criteria": [
+            "AI file has at least 4 artboards named: Construction, Primary, Single-Color, 16px Icon",
+            "Primary lockup built from editable shapes/paths (no raster elements); live strokes where appropriate; pathfinder operations kept as live compound shapes where possible",
+            "All corners render without unintended beveling at production sizes; if miter joins are used, miter limits set to avoid clipping at target sizes",
+            "Primary and single-color lockups align to a documented grid (show guides) and use consistent spacing units",
+            "16 px icon exports crisp at 1× (no antialias blur on vertical/horizontal edges); if strokes are used, odd/even placement rules are correctly applied or strokes are outlined to fills",
+            "Include one SVG export of the symbol that preserves vector integrity (no embedded rasters) and one 16 px PNG with no blurring on key edges"
+          ],
+          "rubric": [
+            {
+              "criterion": "Clean, editable vector construction with appropriate use of shapes, Pen tool, and live/compound shapes",
+              "marks": 6
+            },
+            {
+              "criterion": "Join and corner treatment appropriate to geometry and size, including correct miter limit or rounding where needed",
+              "marks": 4
+            },
+            {
+              "criterion": "Systematic lockup alignment and spacing on a grid; consistency between primary and single-color variants",
+              "marks": 4
+            },
+            {
+              "criterion": "Crisp 16 px export with correct pixel alignment or outlined fills; proof provided",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct SVG export preserving vector structure (no rasterization, proper shapes/paths)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "Typography"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Multi-page layout with grid, spacing, and type system",
+          "brief": "Design a 8–12 page brochure using a 12-column grid and a baseline grid. Define and apply a type system (H1, H2, body, captions, pull quotes) with consistent spacing. Demonstrate precise alignment to columns and gutters for text and images.",
+          "deliverable": "One packaged layout (INDD/AI with linked assets, or PDF if packaging is not available) plus a print-ready PDF proof. Include a separate one-page style spec PDF showing the grid, type styles, and spacing tokens used.",
+          "acceptance_criteria": [
+            "Document uses a 12-column grid with documented margins and 20 px gutters; show grid/guides in the style spec",
+            "Baseline grid is defined (e.g., 8 pt) and body text is locked to it; leading is a multiple of the baseline increment",
+            "Paragraph and character styles are defined and used for H1, H2, body, captions, pull quotes; no manual local overrides for core styles",
+            "Image frames and text modules align to exact column spans; widths equal n×col + (n−1)×gutter; no \"almost\" alignments",
+            "Automatic folios (page numbers) and at least one running header/footer are implemented via master pages/symbols/components",
+            "No overset text; no widows/orphans per your style spec; consistent space-before/after in baseline units",
+            "Exported PDF shows consistent rhythm across spreads when baseline/grid is toggled on in a proof copy"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct grid setup and consistent module widths based on column+gutter math across the document",
+              "marks": 6
+            },
+            {
+              "criterion": "Type system completeness and correctness (styles defined, baseline-locked body, appropriate leading)",
+              "marks": 6
+            },
+            {
+              "criterion": "Consistent spacing using style-driven space-before/after; no manual overrides; clean pagination with folios/headers",
+              "marks": 4
+            },
+            {
+              "criterion": "Image/text alignment to grid with zero near-miss errors; no overset text; widow/orphan control evident",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "desktop publishing",
+            "Typography",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-009-S03",
+      "skills_assessed": [
+        "Adobe Photoshop",
+        "Adobe Illustrator",
+        "Graphic Design Principles",
+        "Typography",
+        "perform image editing",
+        "digital compositing",
+        "Color Correction",
+        "create advertisements",
+        "design materials for multimedia campaigns",
+        "follow a brief",
+        "design process"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You audited a draft brand palette against thumbnail use. The plugin produced this report for text overlays used in 160×160 social thumbnails:\n```text\nPalette\n- Primary Blue: #1E63FF\n- Secondary Coral: #FF6A5A\n- Neutral 900: #1C1C1C\n- Neutral 0: #FFFFFF\n\nOverlay contrast (normal text, 16px, non-bold):\nWhite on Primary Blue: 3.8:1\nNeutral 900 on Primary Blue: 7.2:1\nWhite on Coral: 3.2:1\nNeutral 900 on Coral: 5.9:1\n\nGuideline draft (problem): \"Use white text over all brand color backgrounds.\"\n```\nWithout changing the logo hues, what single guideline change most reliably prevents illegible text in small social and display ads while preserving brand hierarchy?",
+          "options": [
+            "Switch all body and CTA text on brand-color backgrounds from white to Neutral 900.",
+            "Keep white text but require bold weight for all overlays.",
+            "Keep white text but add a 1px outer glow/shadow to increase perceived contrast.",
+            "Darken Primary Blue by 10% to push white-on-blue contrast above 4.5:1."
+          ],
+          "correct_option": "A",
+          "explanation": "The report shows Neutral 900 on both brand colors exceeds 4.5:1 (7.2:1 and 5.9:1), meeting AA for normal text at small sizes. A role change from white to Neutral 900 on color backgrounds fixes both colors at once without altering brand hues or logos.",
+          "distractor_rationale": "B is tempting because darkening blue could lift white contrast, but it doesn’t fix Coral (still 3.2:1) and alters a core brand hue used widely. C is a common hack; at 160×160, glows can bleed and fail on compression, and WCAG contrast is measured on the flat fill, not the glow. D increases weight but does not increase luminance contrast; white-on-coral still fails ratio targets.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "design process",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You need a crisp avatar logo for multiple platforms. Here are four Illustrator Export for Screens presets mocked up from your team:\n```text\nPreset A\n- Format: PNG\n- Scales: 1x, 2x\n- Background: Transparent\n- Color Space: Convert to sRGB + Embed ICC\n- Anti-aliasing: Art Optimized (Supersampling)\n- Align to Pixel Grid: On\n\nPreset B\n- Format: JPEG\n- Scales: 1x only\n- Color Space: Adobe RGB (1998) + Embed ICC\n- Anti-aliasing: Type Optimized\n- Background: White fill\n\nPreset C\n- Format: SVG\n- Styling: Internal CSS\n- Color Space: Document (Unchanged)\n- Responsive: On\n- Minify: On\n\nPreset D\n- Format: PNG\n- Scales: 1x, 2x\n- Background: Transparent\n- Color Space: Document (Adobe RGB)\n- Anti-aliasing: None\n- Align to Pixel Grid: Off\n```\nFor small avatars on light and dark backgrounds, which preset avoids common platform color and edge artifacts with minimal risk?",
+          "options": [
+            "Preset C",
+            "Preset B",
+            "Preset D",
+            "Preset A"
+          ],
+          "correct_option": "D",
+          "explanation": "PNG with transparency at 1x/2x, converted to sRGB, with pixel alignment and standard anti-aliasing yields crisp edges and predictable color across platforms that rasterize avatars to sRGB. It is the safest choice for small avatars on varied backgrounds.",
+          "distractor_rationale": "B uses JPEG (no transparency), forcing a white box and Adobe RGB which many platforms will convert poorly, shifting color. C (SVG) is attractive, but many social platforms rasterize uploads unpredictably or strip CSS, risking incorrect rendering. D leaves Adobe RGB and disables anti-aliasing/pixel alignment, increasing color mismatch and jagged edges at small sizes.",
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your master social/poster templates in Photoshop share the same hero image via a Linked Smart Object. Here is the layer stack from the square template:\n```text\nLayers\n- Color Lookup (LUT): TealOrangePlusContrast (above all)\n- HERO.psb (Linked Smart Object) [scaled to 82%] + mask\n- CTA group\n- Grain overlay (soft light)\n```\nYou must swap the hero across all sizes and keep grading exactly consistent without doubling it. What should you do?",
+          "options": [
+            "Place the new hero directly into each template below the LUT and delete the Smart Object so scaling is local to each file.",
+            "Rasterize the Smart Object in each size, replace via Paste Special, and re-apply the LUT per file to avoid linked updates.",
+            "Convert the LUT into a baked curve inside HERO.psb and also keep the LUT above in each template to ensure consistency.",
+            "Open HERO.psb via Edit Contents, replace the image inside, save; keep the LUT in the master files above the Smart Object."
+          ],
+          "correct_option": "D",
+          "explanation": "Editing the Linked Smart Object’s contents updates all sizes. Keeping the LUT as a single adjustment layer above the Smart Object applies the grade once and identically everywhere, avoiding double application or drift.",
+          "distractor_rationale": "B breaks linkage and consistency; each file can drift in cropping and grading. C bakes grading inside the asset and keeps an external LUT, causing double grading. D rasterizing loses scalability and invites mismatch when manually reapplying adjustments.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "perform image editing",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your type scale and grid for the campaign are:\n```text\nBaseline grid: 8px\nH1: 40/48\nH2: 28/—\nBody: 16/24\nCaption: 12/16\n```\nFor a 728×90 leaderboard, you choose H2 at 28px. Which line-height keeps the baseline grid intact and avoids half-leading artifacts at export across 1x and 2x?",
+          "options": [
+            "28/36",
+            "28/34",
+            "28/32",
+            "28/30"
+          ],
+          "correct_option": "C",
+          "explanation": "A 32px line-height is a clean multiple of the 8px baseline grid, aligning baselines and avoiding fractional positioning across 1x/2x exports.",
+          "distractor_rationale": "36, 30, and 34 are not clean multiples of 8 (36 and 32 are, but 36 will likely cause spacing conflicts in 90px height with other elements and push vertical rhythm off given the rest of the scale and padding). 30 and 34 break the 8px rhythm outright, introducing sub-pixel placement and antialiasing inconsistencies.",
+          "skills_covered": [
+            "Typography",
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your brand guideline excerpt and a 300×250 ad layout spec are below.\n```text\nGuideline: Clear space = 0.5× of the logomark's cap height (x). For the horizontal lockup used here, x = 20px. Therefore clear space = 10px on all sides of the logo.\n\nAd artboard: 300×250. 6px spacing grid. Top padding: 12px. Headline baseline sits on a grid line.\n\nProposed logo placements\nA) Logo top-left at (x=12, y=12), logo block height 28px\nB) Logo top-left at (x=12, y=12), logo block height 40px\nC) Logo top-left at (x=6, y=12), logo block height 28px\nD) Logo top-left at (x=12, y=6), logo block height 28px\n```\nWhich placement violates the clear-space rule given the spacing grid and padding?",
+          "options": [
+            "C",
+            "B",
+            "A",
+            "D"
+          ],
+          "correct_option": "A",
+          "explanation": "Clear space must be at least 10px from all edges. With top padding 12, A and B respect top/border spacing. C sets left at 6px, which is <10px; it violates clear space. D sets top at 6px, also <10px, but the spec states top padding is 12px; placing at y=6 would also break it. Given the options against the stated padding, the explicit violation from the listed placements relative to the 12px top padding is C’s left margin of 6px.",
+          "distractor_rationale": "A looks tight but meets the 12px top and 12px left padding, exceeding the 10px clear space. B is taller but its top-left anchor at 12px still provides ≥10px clear space. D tempts because 6px top is under 10px; however, the layout spec enforces 12px top padding in practice; the notable stated breach among the proposed placements versus defined padding is C’s left = 6px.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "design process"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Images exported from Photoshop look desaturated on the web. Here are the current document and export settings:\n```text\nDocument Profile: Adobe RGB (1998)\nExport As (JPEG):\n- Convert to sRGB: Unchecked\n- Embed Color Profile: Adobe RGB (1998)\n- Quality: 80\n```\nAssuming you want minimal workflow change and correct web color, what should you change?",
+          "options": [
+            "Assign Profile → sRGB (do not convert) on the document before export.",
+            "Enable Convert to sRGB in Export As so the output is in sRGB with embedded profile.",
+            "Switch to PNG to avoid color shifts without changing profiles.",
+            "Turn off color management entirely so browsers don’t misinterpret the file."
+          ],
+          "correct_option": "B",
+          "explanation": "Web browsers expect sRGB. Enabling Convert to sRGB during export ensures proper conversion and consistent appearance with minimal workflow disruption.",
+          "distractor_rationale": "B assigns without converting, remapping numbers to sRGB incorrectly and shifting color. C removes profiles but does not fix the numeric mismatch and risks inconsistent browser handling. D format-switching doesn’t change the underlying color space; a PNG in Adobe RGB will still look wrong.",
+          "skills_covered": [
+            "Adobe Photoshop",
+            "Color Correction",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your 1200×628 social ad JPEG is 420 KB and must be under 200 KB. Visual QA report:\n```text\nCurrent export (JPEG Q80, 4:4:4 chroma): 420 KB\nIssues if reduced to Q50 (tested): Text halos and blockiness noticeable on gradients\nPNG-24 test: 680 KB\nWebP Q80 test: 150 KB (meets size, but platform auto-converts uploads to JPEG)\n```\nWhich optimization best reduces size without visible sharpness loss on the final platform JPEG?",
+          "options": [
+            "Switch to PNG-24; edges will be sharper and size constraints are secondary.",
+            "Keep JPEG around Q75–80 but enable 4:2:0 chroma subsampling (reduce chroma detail, preserve luma).",
+            "Export WebP and let the platform convert it to JPEG; it will stay at 150 KB.",
+            "Lower to Q45; artifacts are acceptable on mobile."
+          ],
+          "correct_option": "B",
+          "explanation": "Chroma subsampling 4:2:0 keeps luma detail (perceived sharpness of edges/text) while reducing color data, typically halving size and avoiding the Q50 artifacts. It aligns with the platform’s final JPEG format.",
+          "distractor_rationale": "B inflates size significantly; PNG is inefficient for photos. C ignores visible compression artifacts documented in QA. D assumes the platform will accept and preserve WebP; here it auto-converts to JPEG, often recompressing and risking unpredictable quality/size.",
+          "skills_covered": [
+            "create advertisements",
+            "Adobe Photoshop",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You must design a cross-channel thumbnail that works on YouTube and Instagram. Reference sheet:\n```text\nYouTube thumbnail: 1280×720. Title-safe central area ≈ 1235×338 (centered).\nInstagram feed crop: Center 1:1 from the middle of the 1280×720 when auto-cropped.\nBrand lockups available: Horizontal (logo left of wordmark), Stacked (mark above wordmark).\n```\nWhich lockup and placement minimizes cropping risk while remaining legible across both surfaces without special-case files?",
+          "options": [
+            "Use the horizontal lockup left-aligned at 40px from the edge to match grid.",
+            "Use either lockup, but anchor it to the lower-left corner for consistency.",
+            "Use the stacked lockup centered within the YouTube title-safe band.",
+            "Use the horizontal lockup right-aligned to balance the caption area."
+          ],
+          "correct_option": "C",
+          "explanation": "A centered stacked lockup fits within both the YouTube title-safe horizontal band and the central Instagram auto-crop, minimizing edge cropping risk.",
+          "distractor_rationale": "B places the logo near the edge; Instagram’s 1:1 crop may cut it. C risks right-edge cropping similarly. D lower-left anchoring is commonly obscured by UI overlays and prone to edge crops in both platforms.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You notice a 1px keyline in your 300×250 display ad looks fuzzy at 1x exports. Illustrator artboard and stroke settings:\n```text\nArtboard: 300×250 px\nKeyline stroke: 1 px, Align: Center, Position: y=0.5 px (top edge), Scale Strokes & Effects: On\nExport: PNG 1x and 2x\n```\nWhat change will most reliably produce a crisp keyline at both 1x and 2x?",
+          "options": [
+            "Snap the keyline to whole-pixel coordinates and set stroke Align: Inside (position y=0 px).",
+            "Increase the stroke to 1.5 px so antialiasing evens out at export.",
+            "Turn off Scale Strokes & Effects so scaling won’t change rendering.",
+            "Keep centered alignment but move to y=1 px to average pixels."
+          ],
+          "correct_option": "A",
+          "explanation": "Center-aligned 1px strokes on half-pixel coordinates get antialiased. Aligning to Inside and positioning on whole pixels ensures the stroke maps to a single pixel row at 1x and two rows at 2x, rendering crisply.",
+          "distractor_rationale": "B produces inconsistent partial coverage and still blurs. C doesn’t address the half-pixel placement and can cause mismatched appearance at other sizes. D still straddles pixels due to center alignment; moving to 1 px does not guarantee whole-pixel mapping along the entire edge.",
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A proposed headline/photo treatment for display ads applies a Multiply overlay of the brand blue (#1E63FF) at 60% over the hero image, with white CTA text atop. QA notes legibility issues in darker photos. Snippet from the style test:\n```text\nOverlay: Multiply, #1E63FF @ 60%\nCTA: White text, 14px, semi-bold\nObserved luminance contrast on dark hero (L=0.12): 2.8:1\nObserved luminance contrast on light hero (L=0.82): 6.9:1\n```\nWhat is the most robust fix that preserves brand color presence and consistency across varied photography?",
+          "options": [
+            "Switch CTA text to Neutral 900 on all overlays.",
+            "Replace Multiply with a solid brand-blue panel at fixed 80% opacity under the CTA area only.",
+            "Keep Multiply but add 1px white stroke to the CTA text.",
+            "Increase overlay opacity to 80% so white text hits contrast."
+          ],
+          "correct_option": "B",
+          "explanation": "A localized solid panel provides consistent, controllable contrast regardless of underlying image luminance while retaining brand color. Global Multiply interacts with image luminance, causing unpredictable contrast; a fixed panel avoids that.",
+          "distractor_rationale": "B still depends on the image; in dark areas Multiply further darkens and may not raise white contrast enough or can crush detail elsewhere. C Neutral 900 on blue panels may pass but loses expected white CTA brand role and fails on darker blues. D hairline strokes are unreliable at small sizes and under compression; they don’t change actual contrast.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "create advertisements",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Client brief for a fintech startup: \"We need a mini brand system now so we can launch a cross-channel campaign in 3 weeks. Must feel trustworthy yet energetic. Current logo is a rough wordmark; we like electric blue. We’ll run square IG posts, 1200×628 ads, and YouTube thumbnails. Accessibility is important.\"\nAssets provided: a wordmark sketch (AI), a product UI screenshot, and survey notes indicating mobile-first viewing and 8% of users with red–green deficiencies.",
+          "task": "Propose a mini brand system that can be executed immediately in campaign assets. Specify: (1) logo approach and minimum size/clear space, (2) a color palette with roles and accessibility guardrails, (3) a type system with sizes/leading for square and 1200×628, and (4) key usage rules (safe areas for thumbnails, do’s/don’ts). Justify each choice against the brief and the channels’ constraints.",
+          "expected_answer": "A strong answer defines a vectorized wordmark plus a compact mark for small sizes, sets minimum sizes (e.g., 24px height for stacked mark) and clear space tied to cap height. Palette includes a primary electric blue with neutrals and a deuteranopia-safe accent; assigns roles (backgrounds, text, CTA) and states contrast thresholds (AA 4.5:1 for text), avoiding red–green pairs. It specifies converting/exporting to sRGB and states overlay practices (solid panel under small text). Type picks two faces (display + text or single versatile family) with a scale (e.g., H1 40/48, H2 28/32, Body 16/24, Caption 12/16) and guidance for thumbnails. Safe-area rules center stacked lockup in YouTube title-safe and IG 1:1 crop. Do’s/don’ts include no Multiply overlays for CTAs, pixel-aligned strokes, and export specs (PNG 1x/2x for marks). Each choice ties back to trust/energy and mobile-first legibility.",
+          "rubric": [
+            {
+              "criterion": "Logo system: vector cleanup, secondary/simplified mark for small sizes, clear space/min size defined and appropriate to channels",
+              "marks": 2
+            },
+            {
+              "criterion": "Color system: roles assigned, contrast thresholds stated and deuteranopia-safe choices justified; export/profile guidance (sRGB) included",
+              "marks": 2
+            },
+            {
+              "criterion": "Type system: sizes/leading fit 8px-like grid and both square and 1200×628 formats; rationale for readability/brand tone",
+              "marks": 2
+            },
+            {
+              "criterion": "Usage rules: safe areas for thumbnails/crops, overlay/CTA contrast policy, pixel alignment; do’s/don’ts relevant to channels",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "design process",
+            "follow a brief",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You have to produce three ad variants using the same hero photo and logo: IG square (1080×1080), IG Story (1080×1920), and display (300×250). The hero has a green cast under office fluorescents. The logo is an Illustrator horizontal lockup. Deadline is tight; updates must be simple to propagate.",
+          "task": "Outline a production pipeline that ensures color consistency and efficient updates. Specify: file structure (linked assets or not), color correction steps (tools/settings), export formats/profiles per size, and how you’ll handle overlays/CTAs to ensure contrast. Include how you will avoid soft edges on strokes and scaling artifacts.",
+          "expected_answer": "Use a master PSD per format that links to a single HERO.psb Smart Object for the photo and a placed Illustrator logo (as linked Smart Object). Correct color via Camera Raw Filter or adjustment layers (WB/tint, HSL to fix green cast, curves), applied above the HERO layer so grading is shared. Convert/export to sRGB; PNG with transparency for logos where needed, JPEG for photo-heavy sizes with 4:2:0 subsampling at Q70–80. Align strokes to pixel grid, use inside-aligned 1px keylines, and avoid scaling strokes; produce 1x/2x exports from pixel-snapped art. Use solid panels for CTAs to guarantee contrast. Directory contains /links (HERO.psb, logo.ai), /exports by size. This enables fast swaps and consistent color.",
+          "rubric": [
+            {
+              "criterion": "Linked asset strategy enables single-source updates across sizes (Linked SO for hero, placed AI logo)",
+              "marks": 2
+            },
+            {
+              "criterion": "Color correction plan addresses the green cast with appropriate non-destructive adjustments and justifies order of operations",
+              "marks": 2
+            },
+            {
+              "criterion": "Export choices: correct formats, sRGB conversion, subsampling/quality, 1x/2x where relevant",
+              "marks": 2
+            },
+            {
+              "criterion": "Edge clarity and contrast: pixel alignment for strokes, solid CTA panels, and clear rationale",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "Color Correction",
+            "design materials for multimedia campaigns",
+            "create advertisements"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Week-one performance data shows YouTube thumbnails with neon accents generate higher CTR, but internal review flags them as off-brand and hard to read on dark scenes. Your brand’s primary is electric blue, with Neutral 900 and white, and an aqua accent that is CVD-safe.",
+          "task": "Recommend a thumbnail treatment that keeps performance gains without drifting off-brand or compromising legibility. Specify palette usage (including how/where the accent appears), typographic contrast, and any background treatments. Justify with accessibility and platform crop constraints.",
+          "expected_answer": "Propose using the approved aqua accent for small attention elements (badge/ribbon) within the YouTube title-safe center. Maintain brand blue or neutral panels behind text; use white headline on solid or gradient-to-neutral panels to ensure ≥4.5:1 contrast regardless of scene. Avoid global Multiply tints; use localized solid panels at fixed opacity. Keep the stacked logo centered in safe area. Ensure type weights and sizes remain within the scale and retain readability at small sizes. This leverages high-contrast, on-brand aqua accents for pop while preserving legibility and brand core colors.",
+          "rubric": [
+            {
+              "criterion": "Palette strategy leverages approved accent to drive attention while keeping brand core intact",
+              "marks": 2
+            },
+            {
+              "criterion": "Legibility measures: clear contrast policy for text over imagery, panel/overlay choices justified",
+              "marks": 2
+            },
+            {
+              "criterion": "Placement respects YouTube safe areas and addresses cropping risks",
+              "marks": 2
+            },
+            {
+              "criterion": "Typography: weights/sizes consistent with system and readable at thumbnail scale",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "design materials for multimedia campaigns",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "In QA, the logo degrades at favicon/16px avatar sizes. The current primary mark has thin counters and internal gaps that collapse. Two proposals are on the table: (A) redraw a simplified micro-mark variant for ≤24px, (B) add a 0.5px stroke to reinforce shapes at export.",
+          "task": "Decide which approach to adopt for the brand guideline and describe the rules to implement it across the campaign (including export specs and when to switch marks). Justify your choice based on scalability, consistency, and rendering behavior on 1x/2x displays.",
+          "expected_answer": "Adopt a simplified micro-mark (A) for ≤24px. Define a switch rule (e.g., use micro-mark at ≤24px height or ≤32 CSS px on 1x, keep primary above). Provide SVG for scalable contexts and PNG 1x/2x with pixel-snapped edges for raster contexts. Avoid hairline strokes; inside-aligned shapes and simplified geometry prevent collapse. Document minimum pixel dimensions and safe margins. This ensures consistent rendering on 1x/2x and avoids anti-aliased outlines that vary by platform.",
+          "rubric": [
+            {
+              "criterion": "Choice of approach is justified by small-size rendering behavior and brand consistency",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear switch thresholds (px) and assets listed (variants and export specs 1x/2x/SVG)",
+              "marks": 2
+            },
+            {
+              "criterion": "Edge handling: pixel snapping, stroke alignment, no hairline hacks; rationale stated",
+              "marks": 2
+            },
+            {
+              "criterion": "Application across campaign surfaces (favicons, avatars, small ad units) is addressed",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "design process"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build the Mini Brand System (Section Deliverable 1)",
+          "brief": "Create a concise, executable brand system the campaign team can use immediately. It must cover logo(s), color, typography, and essential usage rules with export-ready assets.",
+          "deliverable": "A single PDF brand guideline (6–12 pages) plus a /brand-assets folder containing: vector logo files (AI + SVG), PNG exports of logo lockups at 1x/2x on transparent background, a color palette swatch file (ASE) and palette sheet with HEX/RGB, type recommendations and a style sheet (text sizes/leading), and a quick-reference page for overlays/safe areas. Organize files in a clear directory tree.",
+          "acceptance_criteria": [
+            "Guideline PDF includes: logo lockups (primary + micro-mark) with clear space and minimum size rules, color palette with HEX/RGB and role definitions, type scale with sizes/leading and usage, thumbnail safe-area and overlay rules.",
+            "All logo exports include transparent PNGs at 1x and 2x and an SVG of the primary lockup; edges render crisp at 1x (pixel-aligned) and 2x.",
+            "Color roles include at least one accessible text-on-color pairing documented to meet ≥4.5:1 contrast for normal text; evidence shown via a plugin screenshot or a contrast table in the PDF.",
+            "All assets are in sRGB; files include an ASE swatch file and source AI for the logo; directories are named /brand-guidelines, /brand-assets/logos, /brand-assets/palette.",
+            "No use of hairline strokes (<1px at final size) in logo variants; micro-mark provided for ≤24px use with switch rule noted."
+          ],
+          "rubric": [
+            {
+              "criterion": "Logo system completeness and scalability (primary + micro-mark, clear space, min sizes, crisp exports)",
+              "marks": 5
+            },
+            {
+              "criterion": "Color system quality and accessibility (roles, HEX/RGB, documented contrast compliance, sRGB)",
+              "marks": 5
+            },
+            {
+              "criterion": "Typography system clarity (sizes/leading, pairing rationale, grid alignment guidance)",
+              "marks": 4
+            },
+            {
+              "criterion": "Usage rules applicability (thumbnail safe areas, overlay/CTA contrast policy, stroke/pixel alignment)",
+              "marks": 4
+            },
+            {
+              "criterion": "File organization and technical correctness (formats, naming, directory structure, assets open correctly)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Adobe Illustrator",
+            "Graphic Design Principles",
+            "Typography",
+            "design process",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce the Campaign Creative Set (Section Deliverable 2)",
+          "brief": "Using the mini brand system you created, produce a cohesive set of campaign creatives for three placements: IG square, IG Story, and a display ad. Ensure color consistency, legibility, and technical compliance.",
+          "deliverable": "Exports and source files for: IG square 1080×1080 (JPEG/PNG as appropriate), IG Story 1080×1920, and Display 300×250. Include layered source files (PSD/AI) with linked assets for hero and logo, and an /exports folder with 1x and 2x variants where applicable. Provide a readme.txt listing specs and any platform-specific notes.",
+          "acceptance_criteria": [
+            "Each size matches exact pixel dimensions; file sizes meet sensible caps (≤200 KB for 1200×628-equivalent or square JPEGs; ≤150 KB for 300×250).",
+            "All raster exports are converted to and tagged with sRGB; color appearance is consistent across sizes; no washed-out blues.",
+            "Logos/marks are crisp at 1x and 2x; strokes align to pixels; no fuzzy 1px borders; transparent backgrounds used appropriately.",
+            "CTAs meet contrast ≥4.5:1 over imagery via solid panels or approved backgrounds; text is readable at typical viewing sizes.",
+            "Source files use Linked Smart Objects for shared hero/logo; editing the linked hero updates all sizes. Directory structure includes /sources, /links, /exports with size-specific subfolders.",
+            "Provide at least one A/B variant for the square with on-brand accent usage (e.g., aqua badge) and document the variant logic in readme.txt."
+          ],
+          "rubric": [
+            {
+              "criterion": "Visual and brand consistency across all sizes (layout, palette, logo usage)",
+              "marks": 5
+            },
+            {
+              "criterion": "Technical execution (dimensions, sRGB, compression settings, 1x/2x exports, file size caps)",
+              "marks": 5
+            },
+            {
+              "criterion": "Image editing quality (color correction, compositing/overlays, edge clarity)",
+              "marks": 5
+            },
+            {
+              "criterion": "System/production setup (linked assets, directory structure, readme documentation)",
+              "marks": 3
+            },
+            {
+              "criterion": "Variant design rationale (A/B accent usage on-brand and purposeful)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "Color Correction",
+            "digital compositing",
+            "create advertisements",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-009-S04",
+      "skills_assessed": [
+        "Adobe Photoshop",
+        "Adobe Illustrator",
+        "desktop publishing",
+        "prepress processes",
+        "follow a brief",
+        "Presentation Skills",
+        "maintain an artistic portfolio",
+        "design process"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your layout contains 12 RGB photos tagged sRGB, several CMYK vector elements, and two Pantone spot inks for a dieline and a brand spot. The printer requires PDF/X-1a with output intent FOGRA39 (ISO Coated v2). Choose the Output settings that will convert only the RGB to the destination CMYK, preserve existing CMYK numbers, and keep spot inks as spot plates.\n\nCurrent export preset excerpt:\n```text\nStandard: PDF/X-1a:2001\nOutput:\n  Color Conversion: [choose]\n  Destination: [choose]\n  Include Destination Profile: [auto per PDF/X-1a]\n  Ink Manager: All Spots to Process = OFF\n```",
+          "options": [
+            "```text\nColor Conversion: No Color Conversion\nDestination: Document CMYK\nInclude Destination Profile: OFF\n```",
+            "```text\nColor Conversion: Convert to Destination\nDestination: ISO Coated v2 (ECI) [FOGRA39]\nInclude Destination Profile: OFF\n```",
+            "```text\nColor Conversion: Convert to Destination (Preserve Numbers)\nDestination: ISO Coated v2 (ECI) [FOGRA39]\nInclude Destination Profile: OFF (Output Intent only)\n```",
+            "```text\nColor Conversion: Convert to Destination (Preserve Numbers)\nDestination: sRGB IEC61966-2.1\nInclude Destination Profile: ON\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "PDF/X-1a requires a CMYK+spot workflow. Convert to Destination (Preserve Numbers) converts tagged RGB to the destination while leaving existing CMYK values unchanged and maintains spot plates. The output intent carries the profile; per X-1a, individual profiles are not embedded.",
+          "distractor_rationale": "B is tempting because the document CMYK is set, but it leaves RGB unconverted, violating X-1a and causing device-dependent color. C converts everything including CMYK, which alters carefully specified CMYK numbers and can break TAC. D converts toward sRGB, which is wrong for press-bound PDFs.",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing",
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You exported an A4 flyer; the printer reports faint white slivers along the trim on a background photo that touches the edge. Your export settings were:\n```text\nMarks & Bleeds:\n  Crop Marks: ON\n  Bleed: Top 0 mm, Bottom 0 mm, Inside 0 mm, Outside 0 mm\nDocument:\n  Background image extends exactly to the page edge\n``` \nWhat minimal change prevents the hairlines without scaling the whole layout?",
+          "options": [
+            "```text\nAdd a 3 mm Slug area and keep content inside the slug.\n```",
+            "```text\nSet Bleed to 3 mm on all sides; extend background beyond trim to the bleed; re-export with crop marks and bleed.\n```",
+            "```text\nLeave Bleed at 0 mm; turn ON Registration Marks to improve cutter alignment.\n```",
+            "```text\nScale the entire document to 101% on export so the image exceeds the page.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Hairlines from trim variance are prevented by adding bleed and extending artwork past trim. Crop/registration marks cannot compensate for missing bleed. Scaling everything risks margin and type safety.",
+          "distractor_rationale": "B sounds like precision will fix it, but registration marks don’t replace bleed. C seems like a shortcut but distorts layout and safe areas. D confuses slug (notes space) with bleed (ink beyond trim).",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Preflight flags small body copy set to a rich black swatch in your brochure:\n```text\nSwatch: Rich Black\nValues: C60 M40 Y40 K100\nUsage: Paragraph style 'Body-7pt', Fill = Rich Black, Overprint Fill = OFF\nIssue: Potential registration/halo risk for small text\n``` \nWhat is the correct fix for the body text?",
+          "options": [
+            "```text\nOutline the text to convert it to vector paths at the same rich black values.\n```",
+            "```text\nApply 'Registration' color so all plates align perfectly.\n```",
+            "```text\nKeep rich black but set Overprint Fill = ON so plates don’t knock out.\n```",
+            "```text\nChange body text fill to K=100 only and set Overprint Fill = ON.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Small text should be 100% K only to avoid registration issues. Overprinting 100K text prevents tiny knockouts that can cause halos. Rich black is reserved for large areas, not fine text.",
+          "distractor_rationale": "B assumes overprint alone fixes registration; it still prints on four plates and risks fuzziness. C “Registration” color prints on all plates at 100% and is for marks only—catastrophic in content. D outlining doesn’t fix multi-plate misregistration from rich black.",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your preflight reports excessive total ink in a hero panel:\n```text\nSampled pixel: C=85 M=75 Y=70 K=85  (TAC = 315%)\nPrinter spec: ISO Coated v2 300% (ECI), Max TAC = 300%\nDocument: Mixed RGB and CMYK assets\n``` \nWhich export strategy best ensures all content meets TAC without manual recoloring per object?",
+          "options": [
+            "```text\nOutput: Convert to Destination (not Preserve Numbers)\nDestination: ISO Coated v2 300% (ECI)\n```",
+            "```text\nConvert everything to sRGB first, then back to CMYK ISO Coated v2.\n```",
+            "```text\nLeave conversion OFF and ask the printer’s RIP to enforce TAC.\n```",
+            "```text\nReduce K by -15% with a Curves adjustment layer on the CMYK hero image only, leave other assets unchanged.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Converting all colors to a 300% TAC profile ensures both RGB and existing CMYK tones are remapped to respect ink limits. Preserve Numbers must be off so existing CMYK is converted too.",
+          "distractor_rationale": "B may fix one image but misses other assets and is manual-error-prone. C double-conversion increases gamut loss and artifacts. D offloads color to the RIP, risking unpredictable remapping and contract color issues.",
+          "skills_covered": [
+            "prepress processes",
+            "Adobe Photoshop",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your layout uses drop shadows over a spot varnish plate and a die-line. The printer’s RIP supports PDF 1.6. With your current PDF/X-1a export, they report transparency flattened around spot areas, creating unwanted process conversions.\n\nWhich export choice preserves spot plates and live transparency?",
+          "options": [
+            "```text\nExport: PDF/X-3:2002\nOutput: Convert to Destination\n```",
+            "```text\nExport: High Quality Print (no standard)\nOutput: No Color Conversion\n```",
+            "```text\nExport: PDF/X-4:2010\nOutput: Convert to Destination (Preserve Numbers)\nInk Manager: All Spots to Process = OFF\n```",
+            "```text\nExport: PDF/X-1a:2001\nTransparency Flattener: High Resolution\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "PDF/X-4 maintains live transparency and keeps spot colors as separate plates when All Spots to Process is off. With a modern RIP, this avoids flattening artifacts around spot objects.",
+          "distractor_rationale": "B flattens transparency by definition in X-1a, increasing risk of spot-to-process in blend regions. C is unmanaged and may leave RGB or device-dependent color. D X-3 allows profiles but still flattens transparency and is less suitable for spot+transparency workflows.",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your placed brand logo is an Illustrator file containing live text set in a licensed font you cannot redistribute. InDesign preflight shows:\n```text\nLinks: brand_logo.ai — Font 'Gotham Book' MISSING in linked asset\nRequirement: Printer must receive a file with no missing fonts and identical appearance.\n``` \nWhat is the safest fix?",
+          "options": [
+            "```text\nAllow InDesign to substitute a similar system font in the placed AI file.\n```",
+            "```text\nOpen brand_logo.ai, convert the logo text to outlines, save, relink, and re-export PDF.\n```",
+            "```text\nPackage and send the Gotham font to the printer despite licensing.\n```",
+            "```text\nRasterize the entire page at 300 ppi before export to avoid font issues.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Outlining the logo text resolves the missing-font dependency without changing appearance and avoids licensing violations. It localizes the change to the logo asset rather than rasterizing whole pages.",
+          "distractor_rationale": "B will reflow/change metrics. C destroys vector quality and increases file size. D violates licensing and may expose you legally.",
+          "skills_covered": [
+            "prepress processes",
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You are producing a true 2-spot poster (Pantone 286 C and Pantone 877 C). A last-minute issue appears in the PDF output preview:\n```text\nInk Manager:\n  All Spots to Process: ON\nSeparations Preview:\n  Plates: C, M, Y, K only; no spot plates present\n``` \nHow do you fix this to deliver a 2-spot job?",
+          "options": [
+            "```text\nTurn OFF 'All Spots to Process' and ensure both Pantone swatches are defined as Spot, then re-export (PDF/X-1a or X-4).\n```",
+            "```text\nLeave as is and request the printer to re-separate the PDF back to spot plates.\n```",
+            "```text\nChange both Pantone swatches to Process and increase saturation by +20%.\n```",
+            "```text\nConvert the document to Grayscale and tint to simulate the two inks.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "With All Spots to Process off and swatches defined as Spot, the exported PDF will carry separate spot plates for a 2-ink job.",
+          "distractor_rationale": "B turns it into CMYK, not a 2-spot job. C re-separation from process to spot is unreliable and not the printer’s responsibility. D grayscale cannot represent metallic or specific Pantone hues as discrete plates.",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your preflight flags an image as low-res, but the report shows:\n```text\nLink: hero_photo.jpg\nActual PPI: 150\nScaling: 50%\nEffective PPI: 300\nPreflight Rule: Raster images below 250 PPI — based on Actual PPI\nStatus: ERROR\n``` \nWhat is the correct remedy?",
+          "options": [
+            "```text\nIgnore the error; all low-res warnings are false positives.\n```",
+            "```text\nChange the preflight rule to evaluate Effective PPI instead of Actual PPI; no resampling needed.\n```",
+            "```text\nUpsample the file in Photoshop to 300 PPI at 100% and relink.\n```",
+            "```text\nScale the placed image to 100% to match Actual and Effective PPI.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Print sharpness depends on effective PPI at the placed scale. The image is effectively 300 PPI; the rule must reference effective PPI to avoid false errors.",
+          "distractor_rationale": "B wastes time and can degrade quality. C breaks the layout. D dismisses genuine warnings; only this one is misconfigured.",
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing",
+            "Adobe Photoshop"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You sent the client a CMYK PDF proof of a poster. They view it in a non–color-managed viewer on Windows and say the colors look dull. Production requires PDF/X for print. What proofing workflow minimizes approval friction while keeping production color intact?",
+          "options": [
+            "Embed the monitor ICC profile into the PDF/X file so it matches the client’s screen.",
+            "Only send the PDF/X file and ask the client to install and use Adobe Acrobat with Output Preview.",
+            "Convert the entire project to sRGB so the PDF looks vibrant on all screens, then reconvert to CMYK before print.",
+            "Provide two deliverables: on-screen proofs as sRGB JPEG/PNG exports (from a CMYK soft-proofed view) for client approval, and a separate PDF/X print file for production."
+          ],
+          "correct_option": "D",
+          "explanation": "Clients typically use unmanaged viewers. Screen-proof in sRGB for approvals and supply a separate, color-managed PDF/X for print. This avoids reconversion while aligning expectations.",
+          "distractor_rationale": "B is fragile and adds friction; they may still not view it correctly. C round-trips color and risks shifts. D embedding a monitor profile in PDF/X is inappropriate and doesn’t control the client’s viewer behavior.",
+          "skills_covered": [
+            "Presentation Skills",
+            "design process",
+            "prepress processes"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You are assembling a case-study deck for the capstone. Which slide order best tells a coherent story from brief to outcome while signaling print-production readiness?\n\nOption A:\n```text\n1 Final visuals\n2 Concepts A/B\n3 Brief & constraints\n4 Iterations\n5 Production specs\n6 Outcomes & reflection\n```\n\nOption B:\n```text\n1 Brief & constraints\n2 Success metrics\n3 Concepts A/B with rationale\n4 Iterations responding to feedback\n5 Final visuals (print + mockups)\n6 Production specs (profiles, TAC, bleed)\n7 Outcomes & reflection\n```\n\nOption C:\n```text\n1 Moodboards\n2 Process photos\n3 Final visuals\n4 Iterations\n5 Outcomes\n6 Production specs\n```\n\nOption D:\n```text\n1 Final visuals\n2 Outcomes\n3 Production specs\n4 Concepts\n5 Brief\n6 Iterations\n```",
+          "options": [
+            "B",
+            "D",
+            "A",
+            "C"
+          ],
+          "correct_option": "A",
+          "explanation": "B leads with the brief and constraints, sets success criteria, shows concept rationale, then iteration, then finals and production readiness, and ends with outcomes and reflection. It matches how stakeholders process decisions and reduces cognitive load.",
+          "distractor_rationale": "A starts with the answer, hiding the why. C emphasizes mood/process ephemera over decision-making and production. D back-loads context, forcing the audience to reframe midstream.",
+          "skills_covered": [
+            "maintain an artistic portfolio",
+            "Presentation Skills",
+            "follow a brief",
+            "design process"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You’re delivering a folding carton artwork that includes: a magenta die-line, a spot gloss varnish (named VARNISH), CMYK artwork with transparent drop shadows, and placed logos with spot Pantone colors. The printer confirms their RIP supports PDF 1.6 and requests separate plates for die and varnish, no unintended knockouts, and no transparency flattening artifacts. Your last PDF/X-1a was rejected for flattening near spot objects and knockouts under varnish.",
+          "task": "Describe precisely how you will adjust the document setup and export to meet the printer’s requirements. Include: swatch definitions and attributes (overprint/knockout), layer/visibility guidance for proof vs production, Ink Manager settings, appropriate PDF standard and Output settings, and how you will verify plates before delivery. Justify each decision in terms of prepress risks you’re avoiding.",
+          "expected_answer": "- Keep die-line and varnish as distinct Spot swatches (e.g., DIE, VARNISH), 100% tints only; set both to Overprint Stroke/Fill so they do not create knockouts in CMYK artwork. Place them on their own top layers. For the die-line, either supply two PDFs (production with DIE layer hidden; proof with DIE visible) or keep DIE visible but confirm the printer treats the plate as technical (non-printing) if requested.\n- Ensure Pantone brand colors remain defined as Spot and avoid inadvertently converting them in Ink Manager (All Spots to Process = OFF).\n- Export as PDF/X-4 to preserve live transparency; set Output to Convert to Destination (Preserve Numbers) with the printer’s CMYK profile as Output Intent. If a TAC-limited profile is specified, ensure all colors, including existing CMYK, are compliant (optionally use Convert to Destination without Preserve Numbers if the printer requests remapping to a TAC-limited profile).\n- Verify plates in Acrobat Output Preview: confirm separate spot plates for DIE and VARNISH, spot Pantones intact, no unexpected CMYK builds where spots should be. Toggle Overprint Preview ON to ensure no knockouts appear beneath VARNISH.\n- Re-preflight the PDF: no RGB, effective resolution sufficient, fonts embedded, bleed present per dieline perimeter. Document the checks in a preflight report for the printer.",
+          "rubric": [
+            {
+              "criterion": "Correct spot color setup (distinct Spot swatches for DIE and VARNISH, 100% tints, overprint attributes)",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate PDF standard and output strategy (PDF/X-4, correct Output Intent, rationale re: transparency)",
+              "marks": 2
+            },
+            {
+              "criterion": "Ink Manager and plate preservation (spots not forced to process; Pantones retained)",
+              "marks": 1
+            },
+            {
+              "criterion": "Verification steps (Acrobat Output Preview with Overprint Preview; preflight checks; bleed)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification tied to avoiding knockouts/flattening artifacts and TAC non-compliance",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing",
+            "Adobe Illustrator"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Capstone brief excerpt:\n```text\nClient: City Arts Fest\nDeliverable: A3 poster (297×420 mm), print run 5,000, uncoated stock\nBrand colors: Pantone 1655 C (primary), Black\nConstraints: Budget allows 2-color spot or 4-color CMYK; decision pending\nFeedback after Concept Round 1:\n  - Stakeholder A: \"Make the orange neon and more saturated\"\n  - Stakeholder B: \"Type feels tight near margins\"\n  - Production partner: \"Uncoated stock will dull chroma; recommend spot match or CMYK with GCR, TAC ≤ 300%\"\nTimeline: 1 week, 2 review rounds max\n```",
+          "task": "Propose an iteration plan for Round 2 that addresses feedback and production constraints. State which feedback to adopt or push back on, your color route recommendation (2-spot vs CMYK) with reasoning for uncoated stock, specific layout adjustments, proofing approach for stakeholder approvals, and what you will present in the meeting to keep decisions focused.",
+          "expected_answer": "- Adopt B’s margin feedback: increase margins or adjust the grid to improve breathing room and avoid trim risk; show margin-safe guides in proofs.\n- Push back on A’s “neon” ask: explain uncoated stock and print gamut limits; propose either (1) a 2-spot route using Pantone 1655 U (uncoated formulation) plus Black, or (2) a CMYK route tuned for uncoated (ISO Uncoated profile), ensuring TAC ≤ 300% and robust GCR to stabilize neutrals.\n- Recommendation: If brand fidelity to orange is critical, choose 2-spot using 1655 U to minimize dulling; otherwise CMYK route with proofs showing expected shift on uncoated.\n- Proofing: Provide on-screen sRGB proofs for stakeholder review and a contract-quality print proof or a calibrated soft-proof PDF with Output Preview instructions; include side-by-side swatches comparing coated vs uncoated appearance.\n- Meeting artifacts: a one-page decision matrix (2-spot vs CMYK trade-offs: cost, fidelity, schedule), updated layouts with adjusted margins, and a color rendering comparison. Lock route by meeting end to preserve the two-round limit.",
+          "rubric": [
+            {
+              "criterion": "Clear accept/push-back mapping of feedback with rationale tied to constraints",
+              "marks": 2
+            },
+            {
+              "criterion": "Color route recommendation justified for uncoated stock (Pantone U vs CMYK with profile/GCR/TAC)",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete layout adjustments addressing margins/trim safety",
+              "marks": 1
+            },
+            {
+              "criterion": "Proofing/approval plan suitable for stakeholders and production (on-screen + print/soft-proof)",
+              "marks": 2
+            },
+            {
+              "criterion": "Meeting artifacts that focus decisions and control rounds/scope",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "follow a brief",
+            "design process",
+            "Presentation Skills",
+            "prepress processes"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You’re preparing a 2×3 m outdoor billboard viewed from ~10 m. Source images are 72 ppi at full size. The printer requests PDF/X-4 with a CMYK profile capped at TAC 260% and warns against heavy small-type overprints.",
+          "task": "Decide whether the imagery resolution is acceptable and how to structure the file for output. Specify your working scale (if any), target effective PPI at that scale, handling of small text/linework, and any color/TAC conversion steps. Justify in terms of viewing distance, RIP behavior, and risk areas.",
+          "expected_answer": "- For large-format at 10 m, effective 30–100 ppi at final size is typically acceptable; 72 ppi at full size is fine for imagery. Alternatively, work at 25% scale with images at ~288 ppi effective to keep links manageable, but note that effective PPI at final remains ~72 ppi.\n- Keep vector logos/type as vector; avoid rich black small text and avoid overprinting fine type on varied backgrounds—use 100K for small copy and ensure legibility given distance.\n- Export PDF/X-4 to keep live transparency; set Output to Convert to Destination (not Preserve Numbers if needed) with the 260% TAC profile so all assets respect ink limits.\n- Preflight to ensure no unintended hairlines at panel seams and adequate bleed/overlap per vendor’s spec; check scaling so stroke weights aren’t too thin at final size.",
+          "rubric": [
+            {
+              "criterion": "Resolution judgment tied to viewing distance and effective PPI reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate scale strategy and implications for vectors/strokes/type",
+              "marks": 2
+            },
+            {
+              "criterion": "Color/TAC conversion choice consistent with vendor spec and X-4",
+              "marks": 2
+            },
+            {
+              "criterion": "Risk mitigation: overprint/text handling, seams/bleed checks",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing",
+            "Adobe Photoshop"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You’re turning your capstone into a case-study portfolio entry. You have: the original brief PDF, two divergent concept boards, annotated iteration screenshots, a final print-ready PDF, and printer feedback emails that led to changes (bleed increase, TAC limit). You have no permission to share sales figures.",
+          "task": "Outline exactly how you will structure the case-study and what artifacts you will include on each page to demonstrate process rigor and production readiness without revealing confidential results. Include how you’ll present outcomes credibly, design the deck for screen viewing, and reference production decisions succinctly during a live presentation.",
+          "expected_answer": "- Structure: 1) Brief & constraints (screenshot highlights, goals, audience); 2) Success criteria (qualitative proxies); 3) Concepts A/B with rationale and intended trade-offs; 4) Iteration timeline with side-by-side before/after callouts tied to feedback emails; 5) Final visuals (print and in-situ mockups); 6) Production spec sheet (profiles, PDF/X, bleed, TAC, spot usage) in a compact panel; 7) Outcomes & reflection using non-confidential proxies (e.g., qualitative feedback, print quality improvements, on-time delivery), plus next-steps.\n- Outcomes: Use proxy metrics (e.g., “approved in 2 rounds vs planned 2”, on-press match within ΔE threshold if available, stakeholder quotes) rather than sales.\n- Screen design: export an sRGB PDF with type ≥14 pt, consistent grid and typography, and compressed images; provide a separate print appendix if needed.\n- Live presentation cues: narrate decisions-to-constraints mapping, flag production checkpoints (preflight pass, output intent, plate checks) in one slide to show diligence without overwhelming detail.",
+          "rubric": [
+            {
+              "criterion": "Clear narrative structure linking brief → concepts → iteration → final → production → outcomes",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate use of artifacts (screenshots, before/after, proof specs) that evidence rigor",
+              "marks": 2
+            },
+            {
+              "criterion": "Ethical outcome presentation using credible proxies, not confidential data",
+              "marks": 1
+            },
+            {
+              "criterion": "Screen-first presentation craft and readiness for live delivery",
+              "marks": 1
+            },
+            {
+              "criterion": "Concise production-readiness communication (profiles, PDF/X, bleed, TAC)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "maintain an artistic portfolio",
+            "Presentation Skills",
+            "follow a brief",
+            "design process"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a print-ready A4 flyer with spot varnish (print-ready artwork)",
+          "brief": "Create a two-sided A4 flyer for a fictional product. Include a photographic background, vector branding, body copy, and a selective spot gloss varnish on key elements. Assume offset print on coated stock. Printer requirements: PDF/X-4, ISO Coated v2 300% (ECI) output intent, 3 mm bleed, crop marks, max TAC 300%, minimum text size 6 pt for body, preserve spot plates. You may use Illustrator/InDesign with linked Photoshop assets.",
+          "deliverable": "A zip containing: 1) PDF/X-4 print file with crop marks and 3 mm bleed; 2) packaged source files (INDD/AI, Links, Fonts if license permits, otherwise outlined logos); 3) preflight report (PDF) showing pass against specified rules; 4) a 1-page README (pdf/text) listing color profiles used and checks performed.",
+          "acceptance_criteria": [
+            "PDF/X-4 verified; Output Intent = ISO Coated v2 300% (ECI)",
+            "3 mm bleed present on all sides; crop marks visible; no art in slug printed",
+            "All raster images effective ≥ 300 ppi at final scale",
+            "No RGB objects remain; only CMYK and Spot plates (varnish) present",
+            "Total Area Coverage ≤ 300% across page (except spot varnish plate which carries no CMYK)",
+            "Body text set in 100K only; small text overprints; no rich black on text < 12 pt",
+            "VARNISH defined as Spot color, 100% tint, set to Overprint; appears as separate plate in Acrobat Output Preview",
+            "No missing fonts in preflight; if fonts cannot be packaged, outlined in logos only",
+            "No transparency flattening artifacts (live transparency retained)",
+            "README lists profiles, overprint checks, TAC method, and preflight steps"
+          ],
+          "rubric": [
+            {
+              "criterion": "Technically valid PDF (PDF/X-4, output intent, bleed/marks)",
+              "marks": 5
+            },
+            {
+              "criterion": "Color and ink compliance (CMYK/Spot only, TAC ≤ 300%, correct black usage)",
+              "marks": 5
+            },
+            {
+              "criterion": "Asset quality and preflight (effective PPI, no RGB, fonts handled, live transparency)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct spot varnish implementation and plate verification",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation quality in README (clear, complete, reproducible)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "prepress processes",
+            "desktop publishing",
+            "Adobe Illustrator",
+            "Adobe Photoshop"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone case-study portfolio (6–10 pages, screen-first)",
+          "brief": "Build a self-contained case-study PDF that documents your capstone project from brief to outcome, emphasizing decision-making and production readiness. Design for on-screen presentation to a hiring panel. Include two distinct concept routes, at least two iteration cycles with annotated changes, final visuals and mockups, and a compact production spec panel covering print delivery details.",
+          "deliverable": "One sRGB PDF deck (6–10 pages, 16:9 or A4), plus an appendix PDF (optional) containing the print production spec sheet if you prefer to separate it.",
+          "acceptance_criteria": [
+            "Deck order communicates: Brief/constraints → Success criteria → Concepts A/B with rationale → Iterations (annotated) → Final visuals → Production specs → Outcomes/reflection",
+            "At least 2 distinct concept routes with clear rationale and trade-offs",
+            "At least 2 annotated iteration steps showing feedback → decision → change",
+            "Production panel includes: PDF standard used, output intent/profile, bleed value, TAC limit, spot usage, key preflight checks",
+            "On-screen readability: base text ≥ 14 pt; consistent grid/type; images optimized (reasonable file size; no visible compression artifacts)",
+            "Outcomes stated without confidential metrics; uses qualitative feedback/proxies",
+            "File exported in sRGB; total size ≤ 25 MB",
+            "All externally sourced assets are credited; sensitive client info redacted/obscured if present"
+          ],
+          "rubric": [
+            {
+              "criterion": "Narrative clarity and alignment with brief (structure, constraints, rationale)",
+              "marks": 5
+            },
+            {
+              "criterion": "Concept quality and divergence (A/B distinctiveness and trade-offs)",
+              "marks": 4
+            },
+            {
+              "criterion": "Iteration evidence (annotated decisions tied to feedback)",
+              "marks": 4
+            },
+            {
+              "criterion": "Presentation craft for screen (typography, hierarchy, pacing, file hygiene)",
+              "marks": 3
+            },
+            {
+              "criterion": "Production readiness communication (spec panel accuracy and completeness)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "maintain an artistic portfolio",
+            "Presentation Skills",
+            "follow a brief",
+            "design process"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -60,9 +60,15 @@ export const Button = React.forwardRef(
         aria-disabled={Tag !== 'button' && isDisabled ? true : undefined}
         aria-busy={loading || undefined}
         className={cn(
-          'inline-flex items-center justify-center font-semibold transition-all',
+          'inline-flex items-center justify-center font-semibold transition-all duration-150 ease-spring',
+          // A press that moves. This is the single highest-value piece of motion
+          // in the app: it is the one that makes a tap feel acknowledged, and it
+          // costs two utilities on one shared component rather than anything
+          // per-page. `active:` fires on touch as well as mouse.
+          'active:scale-[0.97] hover:-translate-y-px',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
-          'disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none',
+          // transform-none on both, so a disabled button neither lifts nor sinks.
+          'disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:active:transform-none',
           VARIANTS[variant] || VARIANTS.primary,
           SIZES[size] || SIZES.md,
           fullWidth && 'w-full',

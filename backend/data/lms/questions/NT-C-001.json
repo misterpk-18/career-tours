@@ -1,0 +1,1825 @@
+{
+  "course_code": "NT-C-001",
+  "course_name": "Python Full Stack",
+  "sections": [
+    {
+      "section_code": "NT-C-001-S01",
+      "skills_assessed": [
+        "Python",
+        "Git",
+        "Unit Testing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the code:\n```python\ndef append_item(x, items=[]):\n    items.append(x)\n    return items\n\na = append_item(1)\nb = append_item(2)\nc = append_item(3, [])\nprint(a, b, c)\n```\nWhat is printed?",
+          "options": [
+            "```text\n[1] [1, 2] [3]\n```",
+            "```text\n[1, 2] [1, 2] [3]\n```",
+            "```text\n[1, 2] [2] [3]\n```",
+            "```text\n[1] [2] [3]\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "The default list is created once at function definition time and reused. After a=append_item(1), the default list is [1]; b=append_item(2) mutates the same list to [1,2], so both a and b reference [1,2]. The explicit [] passed to the third call is a new list, producing [3].",
+          "distractor_rationale": "- B: Tempting if you think each call gets a fresh default list.\n- C: Suggests each call returns a snapshot instead of references to the same list.\n- D: Assumes stateless behavior of default arguments, which is incorrect for mutables.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this print?\n```python\nfuncs = [lambda: i for i in range(3)]\nprint([f() for f in funcs])\n```\nChoose the exact output.",
+          "options": [
+            "```text\n[0, 1, 2]\n```",
+            "```text\n[2, 2, 2]\n```",
+            "```text\n[None, None, None]\n```",
+            "```text\n[0, 2, 4]\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "The lambdas close over the variable i, not its value at each iteration. After the loop, i is 2, so each lambda returns 2.",
+          "distractor_rationale": "- B: Confuses late binding with capturing values per-iteration.\n- C: Lambdas return i, which is defined; not None.\n- D: Misinterprets i as being computed at definition time and doubled.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given:\n```python\ndef f():\n    try:\n        return 1\n    finally:\n        return 2\n\nprint(f())\n```\nWhat is printed and why?",
+          "options": [
+            "```text\n1\n```",
+            "```text\n2\n```",
+            "```text\nNone\n```",
+            "```text\nAn exception is raised\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A return in finally overrides any prior return from try. The function returns 2.",
+          "distractor_rationale": "- B: Assumes try's return is final; finally can override it.\n- C: There is an explicit return 2; not None.\n- D: No exception is raised here.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "File I/O and cursor position:\n```python\nfrom pathlib import Path\np = Path('numbers.txt')\np.write_text('1\\n2\\n', encoding='utf-8')\n\nwith open(p, 'r+', encoding='utf-8') as f:\n    print(f.read())          # line A\n    f.write('3\\n')          # line B\n    f.seek(0)                # line C\n    print(f.read())          # line D\n```\nWhat is printed by line A and line D (in order)?",
+          "options": [
+            "```text\n1\n2\n\n1\n2\n3\n\n```",
+            "```text\n1\n2\n\n3\n\n```",
+            "```text\n1\n2\n\n3\n\n1\n2\n\n```",
+            "```text\n\n\n1\n2\n3\n\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "After the first f.read(), the cursor is at EOF, so the write appends. After seek(0), reading returns the whole file including the newly appended 3. So it prints first '1\\n2\\n', then '1\\n2\\n3\\n'.",
+          "distractor_rationale": "- B: Suggests that reading after seek returns only the last write.\n- C: Swaps the order, ignoring cursor movement.\n- D: Assumes the first read returns empty due to r+ mode, which is false; the cursor starts at 0.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Exception hierarchy and handler order:\n```python\ntry:\n    raise FileNotFoundError('x')\nexcept OSError:\n    print('OSError')\nexcept FileNotFoundError:\n    print('FileNotFoundError')\n```\nWhat is printed?",
+          "options": [
+            "```text\nOSError\n```",
+            "```text\nNothing\n```",
+            "```text\nA traceback is printed\n```",
+            "```text\nFileNotFoundError\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "FileNotFoundError is a subclass of OSError. The first matching except block (OSError) catches it, so 'OSError' is printed.",
+          "distractor_rationale": "- B: Correct type but wrong because it’s shadowed by the earlier broader handler.\n- C: The exception is handled; something prints.\n- D: No unhandled exception remains to produce a traceback.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Multiple inheritance and MRO:\n```python\nclass A:\n    def m(self):\n        print('A')\n\nclass B(A):\n    def m(self):\n        print('B')\n        super().m()\n\nclass C(A):\n    def m(self):\n        print('C')\n        super().m()\n\nclass D(B, C):\n    def m(self):\n        print('D')\n        super().m()\n\nD().m()\n```\nWhat is printed?",
+          "options": [
+            "```text\nD\nB\nA\nC\n```",
+            "```text\nD\nC\nB\nA\n```",
+            "```text\nB\nC\nA\nD\n```",
+            "```text\nD\nB\nC\nA\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The MRO for D(B, C) is D, B, C, A. Each method calls super().m(), so the chain follows the MRO: D, B, C, A.",
+          "distractor_rationale": "- B: Reverses B and C, misunderstanding MRO rules.\n- C: Skips C, which still participates due to cooperative super.\n- D: Starts at B, ignoring the call on D().",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You want to test `stamp` without hitting real time. Files:\n```text\nproject/\n  app.py\n  utils.py\n```\n```python\n# utils.py\nimport datetime\n\ndef now():\n    return datetime.datetime.now()\n```\n```python\n# app.py\nfrom utils import now\n\ndef stamp(msg):\n    return f\"{now().isoformat()} {msg}\"\n```\nWhich patch target makes this test work?\n```python\nfrom unittest.mock import patch\nimport datetime\nfrom app import stamp\n\n@patch('...')\ndef test_stamp(mock_now):\n    mock_now.return_value = datetime.datetime(2020, 1, 1)\n    assert stamp('x').endswith(' x')\n```",
+          "options": [
+            "```text\napp.datetime.datetime.now\n```",
+            "```text\ndatetime.datetime.now\n```",
+            "```text\napp.now\n```",
+            "```text\nutils.now\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`stamp` looks up `now` in the `app` module namespace because it imported the name. Patch where the function is looked up (app.now), not where it was defined.",
+          "distractor_rationale": "- B: Patching utils.now leaves the already-imported binding in app unchanged.\n- C: Overly broad and changes a C extension; also `stamp` doesn’t call datetime directly.\n- D: There is no such attribute chain in app; datetime is not re-exported.",
+          "skills_covered": [
+            "Unit Testing",
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Custom context manager suppression:\n```python\nclass CM:\n    def __enter__(self):\n        print('enter')\n        return self\n    def __exit__(self, exc_type, exc, tb):\n        print(exc_type.__name__ if exc_type else None)\n        return exc_type is ValueError\n\ntry:\n    with CM():\n        raise ValueError('boom')\n    print('done')\nexcept Exception:\n    print('caught')\n```\nWhat is printed?",
+          "options": [
+            "```text\nenter\nNone\ndone\n```",
+            "```text\nenter\nNone\ncaught\n```",
+            "```text\nenter\nValueError\ncaught\n```",
+            "```text\nenter\nValueError\ndone\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "__exit__ returns True only when the exception is a ValueError, so it suppresses it and prints its type name. Control continues after the with, so 'done' prints. No exception propagates to the except.",
+          "distractor_rationale": "- B: Assumes the exception was not suppressed.\n- C/D: __exit__ sees a ValueError, not None.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Recovering a detached-HEAD commit:\n```bash\ngit checkout HEAD~2   # now detached\nprintf \"hi\\n\" >> notes.txt\ngit commit -am \"temp work\"\n# Oops, switched back\ngit checkout main\n```\nWhich command reliably lets you find the orphan commit to recover it?",
+          "options": [
+            "```bash\ngit fsck --lost-found\n```",
+            "```bash\ngit show HEAD@{1}\n```",
+            "```bash\ngit reflog\n```",
+            "```bash\ngit log --all --grep=\"temp work\"\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`git reflog` records all movements of HEAD, including detached states, so you can find the commit SHA and recover it (e.g., by creating a branch).",
+          "distractor_rationale": "- B: `--all` doesn’t include reflog-only commits; grep may miss unreachable commits.\n- C: Can sometimes find dangling commits, but not guaranteed and less direct than reflog.\n- D: HEAD@{1} may not refer to the detached commit depending on your exact sequence.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Completing an interrupted rebase:\n```bash\ngit rebase origin/main\n# Conflict occurs; you fix files\ngit add .\n# Which command correctly continues the rebase?\n```",
+          "options": [
+            "```bash\ngit rebase --continue\n```",
+            "```bash\ngit rebase --skip\n```",
+            "```bash\ngit merge --continue\n```",
+            "```bash\ngit commit\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "After resolving conflicts and staging, use `git rebase --continue` to proceed to the next commit in the rebase sequence.",
+          "distractor_rationale": "- B: Creates a commit but leaves rebase state inconsistent; Git warns to use rebase --continue.\n- C: There is no `merge --continue` relevant to a rebase.\n- D: Skips the current commit entirely, losing its changes.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You inherited this function used by a CLI to load a CSV of users:\n```python\ndef load_users(path):\n    f = open(path)\n    rows = f.read().splitlines()\n    return [r.split(',') for r in rows]\n```\nBug reports mention: files sometimes stay locked on Windows, UnicodeDecodeError on some inputs, and the CLI crashes with an unhelpful stack trace when the file is missing or a row has fewer columns than expected.",
+          "task": "Identify at least three concrete problems in the implementation, propose a corrected implementation that addresses them, and justify each change. Your answer should mention resource management, encoding, error handling design (including which exception type you will raise), and how you would unit test the error paths without requiring real broken files.",
+          "expected_answer": "Problems: (1) File handle is never closed; causes locks on Windows and leaked descriptors. (2) No explicit encoding; default varies by system and can trigger UnicodeDecodeError. (3) Naive split(',') fails on quoted commas and inconsistent column counts; at minimum, use csv module. (4) No error translation; raw exceptions bubble up with poor UX.\n\nProposed implementation:\n```python\nimport csv\nfrom typing import List\n\nclass DataFormatError(Exception):\n    pass\n\ndef load_users(path: str) -> list[list[str]]:\n    try:\n        with open(path, 'r', encoding='utf-8', newline='') as f:\n            reader = csv.reader(f)\n            rows: List[list[str]] = []\n            for i, row in enumerate(reader, start=1):\n                if not row or any(cell is None for cell in row):\n                    raise DataFormatError(f\"Empty or invalid row at line {i}\")\n                rows.append(row)\n            return rows\n    except FileNotFoundError as e:\n        raise FileNotFoundError(f\"Input file not found: {path}\") from e\n    except UnicodeDecodeError as e:\n        raise DataFormatError(f\"Invalid encoding in {path}: {e}\") from e\n    except csv.Error as e:\n        raise DataFormatError(f\"CSV parse error in {path}: {e}\") from e\n```\nJustification: with-statement closes the file reliably, solving locks/leaks. Explicit UTF-8 encoding makes behavior consistent; newline='' is recommended for csv. Using csv.reader handles quoted commas and edge cases. Converting low-level parse/Unicode errors into a domain-specific DataFormatError yields clearer CLI messages; FileNotFoundError is preserved with a better message.\n\nTesting: Use unittest with temporary files via tempfile.TemporaryDirectory. For encoding errors, write bytes with a wrong encoding to a file and assert DataFormatError. For FileNotFoundError, call with a non-existent path and assert raises. For csv error, write a malformed CSV row (e.g., unmatched quote) and assert DataFormatError. No network or real locks needed; all local and deterministic.",
+          "rubric": [
+            {
+              "criterion": "Identifies at least three concrete issues (resource leak, encoding default, naive CSV parsing, poor error surfacing)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a corrected implementation using with, explicit encoding, csv module, and appropriate exception mapping",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides clear justification linking each fix to a reported symptom",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a viable unit-testing approach for error paths using temp files or fixtures without external dependencies",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You need tests for a function that timestamps and rotates a log without touching the real clock or filesystem:\n```python\n# rotator.py\nimport datetime, shutil, os\n\ndef rotate_log(path: str) -> str:\n    ts = datetime.datetime.now().strftime('%Y%m%d')\n    dst = f\"{path}.{ts}\"\n    shutil.copy(path, dst)\n    os.remove(path)\n    return dst\n```\nThe team uses unittest and wants fast, deterministic tests.",
+          "task": "Design the unit tests. Specify exactly which symbols you will patch and where, the assertions you will make, and how you will handle error cases (e.g., source file missing, copy failure). Explain why your chosen patch points are correct with respect to Python name resolution.",
+          "expected_answer": "Patch where looked up: in rotator module. Use @patch('rotator.datetime.datetime') to control now(), @patch('rotator.shutil.copy') and @patch('rotator.os.remove') to avoid real I/O. In tests, set fake_now = object with .now() returning fixed datetime via configuring the mock datetime class: mock_dt.now.return_value = fixed_dt and mock_dt.strftime side not needed because strftime is on datetime instances; better: set mock_dt.now.return_value.strftime.return_value = '20240130'. Alternatively, patch datetime.datetime.now and build dst manually.\n\nTest success path: Arrange path='app.log', mock_dt.now()->fixed date, assert rotate_log returns 'app.log.20240130'; assert shutil.copy called once with ('app.log','app.log.20240130'); assert os.remove called with 'app.log' and call order: copy before remove (use assert_has_calls with any_order=False or check mock_copy.call_time < mock_remove.call_time).\n\nTest missing source: make shutil.copy raise FileNotFoundError; assert it propagates or is translated (based on design). Also assert os.remove was not called when copy fails.\n\nTest remove failure: make os.remove raise PermissionError; assert exception propagates and copy was still attempted once.\n\nWhy patch points: rotate_log references datetime, shutil.copy, and os.remove by names bound in the rotator module namespace. Patching rotator.datetime (or more precisely rotator.datetime.datetime) and rotator.shutil.copy/rotator.os.remove ensures the function under test sees the fakes; patching the standard library modules directly would not affect the already-imported bindings in rotator.",
+          "rubric": [
+            {
+              "criterion": "Identifies correct patch targets in rotator’s namespace (datetime/shutil/os remove) with justification of name resolution",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies concrete assertions for success path (returned dst, copy args, remove args, call order)",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers failure scenarios with appropriate assertions about propagation and side effects",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains configuration of the datetime mock to control strftime output or now() appropriately",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A config object unexpectedly shares options across instances:\n```python\nclass Config:\n    options = {}\n    def set(self, k, v):\n        self.options[k] = v\n\nc1 = Config(); c2 = Config()\nc1.set('mode', 'dev')\nprint(c2.options.get('mode'))  # prints 'dev'\n```\nThe team expected each instance to have its own options.",
+          "task": "Explain precisely why the behavior occurs and propose a corrected design that preserves per-instance options while still allowing for sensible class-level defaults. Show a minimal code revision and justify your choices.",
+          "expected_answer": "`options` is a class attribute shared by all instances; attribute lookup finds Config.options when instance has no `options`. Mutating the dict mutates the shared object. Fix by moving to an instance attribute, initialized per-instance in __init__. Keep class-level defaults immutable and copy them into instances.\n\nExample:\n```python\nclass Config:\n    DEFAULTS = {'timeout': 30}  # immutable mapping or treat as read-only\n    def __init__(self, *, defaults=None):\n        base = Config.DEFAULTS if defaults is None else defaults\n        self.options = dict(base)  # per-instance copy\n    def set(self, k, v):\n        self.options[k] = v\n```\nNow each instance has its own dict; class-level DEFAULTS is not mutated. This preserves per-instance state and avoids shared-mutable pitfalls.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies class attribute lookup and shared-mutable state as the cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes per-instance initialization in __init__ and avoids mutable class attributes for state",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes a minimal, correct code revision",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how defaults are handled safely (copying, immutability)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A commit added secrets to main two commits ago:\n```text\n* a1b2c3d Add analytics dashboard\n* 9f8e7d6 Add .env with API_KEY=abcd1234 (accidental)\n* 1234567 Initial commit\n```\nSince then, a teammate pushed another commit to main on origin. Security requires the secret to be purged from the entire history, not just the working tree. Your team uses GitHub.",
+          "task": "Recommend a concrete, safe workflow to remove the secret from history and prevent recurrence. Include exact commands, how you will coordinate with the teammate’s new commit, and the risks involved. Your answer should cover both history rewrite and follow-up steps in the repo.",
+          "expected_answer": "Because the secret must be purged from history, a history rewrite is required. Coordinate first: announce a force-push window and ensure teammates pause work or are ready to rebase.\n\nSteps:\n1) Rotate/invalidate the leaked credential outside Git first.\n2) Add the secret file to .gitignore and commit.\n3) Use filter-repo (preferred over filter-branch) to remove the file and its blobs across history:\n```bash\npipx run git-filter-repo --path .env --invert-paths\n```\nAlternatively, if only a line in a file leaked, use --replace-text.\n4) Force-push rewritten main and protect remote:\n```bash\ngit push --force-with-lease origin main\n```\n5) Instruct teammates to rebase their local work onto the new main:\n```bash\ngit fetch origin\ngit checkout main\ngit reset --hard origin/main\n# For feature branches:\ngit checkout feature\ngit rebase --rebase-merges --rebase-stateless-fixup origin/main\n```\n6) Open a PR that adds pre-commit or secret scanning (e.g., GitHub secret scanning, git-secrets) and a .gitignore rule.\n\nRisks: Force-pushing rewrites commit IDs; anyone with old history must resync; open PRs need rebasing. Using --force-with-lease reduces risk of overwriting others’ work. The accidental commit by the teammate will also be rewritten, so coordinate carefully and verify GitHub Actions or CI tokens are rotated.",
+          "rubric": [
+            {
+              "criterion": "Chooses a history rewrite approach appropriate to purging secrets (filter-repo/filter-branch) with correct commands",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses coordination and force-push implications, including teammates rebasing",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes preventative measures (ignore rules, secret scanning, credential rotation)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains risks and mitigations (force-with-lease, CI impacts)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "CLI column selector for CSV (csvcut)",
+          "brief": "Build a command-line program `csvcut.py` that reads a CSV from a file path or stdin, selects a subset of columns by name or index, and writes the result to stdout. It must handle large files in a streaming manner, configurable delimiter, and robust error reporting (missing columns, bad input, encoding issues). Provide `--help` usage and exit with non-zero codes on errors.",
+          "deliverable": "A Git repository folder containing: `csvcut.py`, a README with usage examples, and sample input/output files. The assessor will run the tool from the command line.",
+          "acceptance_criteria": [
+            "Running `python csvcut.py --help` shows usage including options: `-i/--input`, `-o/--output` (optional), `-c/--columns`, `-d/--delimiter` (default comma), `--encoding` (default utf-8).",
+            "Selecting by names: `python csvcut.py -i data.csv -c name,age` emits only those columns, preserving order and header.",
+            "Selecting by indices (0-based or 1-based, document which): `python csvcut.py -i data.csv -c 0,2` works even when no header is present (add `--no-header` switch).",
+            "Reads from stdin when `-i` is omitted; writes to stdout when `-o` is omitted.",
+            "Handles malformed input: prints a clear error to stderr and exits with code 2 when a requested column is missing or the CSV is malformed; does not produce partial output on error.",
+            "Supports large files without loading everything into memory (stream rows).",
+            "Opens files with the specified encoding; demonstrates correct handling of UTF-8 input with non-ASCII characters.",
+            "Returns exit code 0 on success; non-zero on failure."
+          ],
+          "rubric": [
+            {
+              "criterion": "Argument parsing with required/optional flags, helpful `--help`, and clear error messages",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct column selection by name and by index; header handling and delimiter support",
+              "marks": 6
+            },
+            {
+              "criterion": "Streaming I/O without reading the entire file; correct stdin/stdout behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust error handling (missing columns, malformed CSV, encoding) with correct exit codes",
+              "marks": 4
+            },
+            {
+              "criterion": "Code quality (structure, functions, docstrings) and basic Git usage (at least 3 meaningful commits)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Git"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Tested Python package: textutils",
+          "brief": "Create a minimal installable Python package `textutils` with: (1) a function `slugify(s: str) -> str` that lowercases, replaces whitespace with `-`, and removes non-alphanumerics except `-` and `_`; (2) a function `word_count(s: str) -> dict[str,int]` splitting on whitespace; (3) a class `TextFile` with methods `read(path, encoding='utf-8')` and `write(path, text, encoding='utf-8')` that raise a custom `TextIOError` on failures. Provide comprehensive unit tests with unittest, including error paths using mocks or temp files. Package must be installable in editable mode and expose the API via `textutils/__init__.py`.",
+          "deliverable": "A Git repository with a Python package layout:\n```text\ntextutils/\n  __init__.py\n  core.py\ntests/\n  test_core.py\npyproject.toml (or setup.cfg + setup.py)\nREADME.md\n```\nThe assessor will install with `pip install -e .` and run `python -m unittest -v`.",
+          "acceptance_criteria": [
+            "Package installs in editable mode via `pip install -e .` without errors.",
+            "`python -c \"import textutils; print(textutils.slugify('Hello World!'))\"` prints `hello-world`.",
+            "Unit tests cover normal and error cases: slugify and word_count behaviors, TextFile read/write happy paths, and error paths (e.g., reading a missing file raises TextIOError).",
+            "Tests isolate filesystem where appropriate (use tempfile for real files or unittest.mock to simulate errors).",
+            "Custom exception `TextIOError` is defined and raised from read/write while preserving original exceptions via exception chaining (`from e`).",
+            "Code uses context managers for file I/O and specifies encoding.",
+            "Git history shows at least: initial package scaffold, feature commit(s), and tests added; with meaningful messages."
+          ],
+          "rubric": [
+            {
+              "criterion": "Installable package structure and API exposure via __init__.py",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct implementation of slugify, word_count, and TextFile with proper exceptions and context managers",
+              "marks": 6
+            },
+            {
+              "criterion": "Comprehensive unittest suite (happy paths and failure paths) that runs green",
+              "marks": 6
+            },
+            {
+              "criterion": "Good repository hygiene: README with usage, meaningful commit history, and basic packaging metadata",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Unit Testing",
+            "Git"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-001-S02",
+      "skills_assessed": [
+        "SQL",
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have these tables and rows:\n\n```sql\nCREATE TABLE customers (\n  id INT PRIMARY KEY,\n  name TEXT\n);\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT REFERENCES customers(id)\n);\n\n-- Sample\nafter INSERTs:\ncustomers: (1,'Ana'), (2,'Bo'), (3,'Cy')\norders: (10,1), (11,1), (12,2)\n```\n\nYou need a result listing all customers and their total order count, including 0 for customers with no orders.\nWhich query produces the correct counts without post-processing?\n",
+          "options": [
+            "```sql\nSELECT c.id, c.name, COUNT(o.id) AS total\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nGROUP BY c.id, c.name\nORDER BY c.id;\n```",
+            "```sql\nSELECT c.id, c.name, COUNT(DISTINCT o.customer_id) AS total\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nGROUP BY c.id, c.name\nORDER BY c.id;\n```",
+            "```sql\nSELECT c.id, c.name, COUNT(*) AS total\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nGROUP BY c.id, c.name\nORDER BY c.id;\n```",
+            "```sql\nSELECT c.id, c.name, COUNT(o.id) AS total\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nGROUP BY c.id, c.name\nORDER BY c.id;\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "LEFT JOIN preserves customers with no matching orders as NULLs on the orders side. COUNT(o.id) counts only non-NULL values, yielding 0 for customers without orders. INNER JOIN drops customers with no orders. COUNT(*) on a LEFT JOIN counts the preserved row even when the right side is NULL, giving 1 for customers with zero orders. COUNT(DISTINCT o.customer_id) can only be 0 or 1 and never reflects multiple orders.",
+          "distractor_rationale": "A: INNER JOIN removes customers with no orders, so they never appear.\nC: COUNT(*) counts the left-join-preserved row even when o.* is NULL, giving 1 for customers with 0 orders.\nD: DISTINCT o.customer_id collapses multiple orders per customer to 1, undercounting customers with more than one order.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given these tables with cascading deletes:\n\n```sql\nCREATE TABLE customers (\n  id INT PRIMARY KEY\n);\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT REFERENCES customers(id) ON DELETE CASCADE\n);\nCREATE TABLE order_items (\n  id INT PRIMARY KEY,\n  order_id INT REFERENCES orders(id) ON DELETE CASCADE\n);\n\n-- Data\n-- customers: (10), (20)\n-- orders: (101,10), (102,10), (201,20)\n-- order_items: 3 rows for order 101, 2 rows for order 102, 4 rows for order 201\n```\n\nAfter running:\n\n```sql\nDELETE FROM customers WHERE id = 10;\n```\n\nHow many rows are removed across all three tables by this statement?",
+          "options": [
+            "3",
+            "1",
+            "7",
+            "8"
+          ],
+          "correct_option": "D",
+          "explanation": "Deleting customer 10 removes 1 customer row, cascades to 2 of their orders, and then cascades to the 5 items belonging to those orders. Total 1 + 2 + 5 = 8.",
+          "distractor_rationale": "B: Assumes cascades stop at orders and do not reach order_items.\nC: Assumes the customer isn't deleted (e.g., RESTRICT), which contradicts the ON DELETE CASCADE.\nD: Ignores cascades entirely.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You frequently run this query on a table with millions of rows:\n\n```sql\nSELECT id\nFROM orders\nWHERE status = 'PAID'\n  AND created_at >= CURRENT_DATE - INTERVAL '30 days'\nORDER BY created_at DESC\nLIMIT 20;\n```\n\nWhich index most effectively supports the WHERE and ORDER BY together for this query pattern?",
+          "options": [
+            "```sql\nCREATE INDEX idx_orders_status ON orders(status);\n```",
+            "```sql\nCREATE INDEX idx_orders_created_at ON orders(created_at DESC);\n```",
+            "```sql\nCREATE INDEX idx_orders_status ON orders(status);\nCREATE INDEX idx_orders_created_at ON orders(created_at);\n```",
+            "```sql\nCREATE INDEX idx_orders_status_created_at ON orders(status, created_at DESC);\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "An index on (status, created_at) allows filtering by equality on status, range on created_at, and then produces rows already ordered by created_at for the LIMIT. Separate single-column indexes generally cannot satisfy both the filter and the order efficiently without a sort/bitmap, and an index on created_at alone can't filter on status first.",
+          "distractor_rationale": "A: Filters status but leaves a large set to sort by created_at.\nB: Helps the ORDER BY but forces scanning many rows because it cannot pre-filter by status.\nD: Two single-column indexes are not merged to satisfy both the filter and the order; a sort or bitmap is still needed.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You have a card grid:\n\n```html\n<div class=\"grid\">\n  <article class=\"card\">...</article>\n  <!-- many cards -->\n</div>\n```\n\n```css\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 16px;\n  padding: 16px;\n}\n```\n\nAt a viewport width of 520px, how many columns render? Assume the grid spans the viewport width.",
+          "options": [
+            "It depends on content height, not width",
+            "3",
+            "1",
+            "2"
+          ],
+          "correct_option": "C",
+          "explanation": "Available content width is 520 - 32px padding = 488px. With a 16px gap between tracks, two 250px min tracks would require 250 + 16 + 250 = 516px, which does not fit. The grid therefore collapses to one column of min 250px expanding to 488px.",
+          "distractor_rationale": "B: Assumes 250 + 250 = 500 fits, ignoring the gap and padding.\nC: Exceeds available width even without gaps.\nD: Grid track formation for columns depends on available inline size, not content height.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given the following CSS and HTML, what is the computed text color of the \"Buy\" link?\n\n```css\n.button { color: blue; }\n#primary .button { color: green; }\n.button.primary { color: red; }\na.button { color: purple !important; }\n```\n\n```html\n<div id=\"primary\">\n  <a class=\"button primary\" href=\"#\">Buy</a>\n</div>\n```",
+          "options": [
+            "green",
+            "purple",
+            "red",
+            "blue"
+          ],
+          "correct_option": "B",
+          "explanation": "The !important declaration on the selector a.button overrides more specific but non-important rules. Therefore the color is purple.",
+          "distractor_rationale": "A/B/C: Each has higher or different specificity than .button, but none uses !important. In the cascade, !important wins over greater specificity of non-important rules.",
+          "skills_covered": [
+            "CSS",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A list is re-rendered by replacing its innerHTML on every update:\n\n```html\n<ul id=\"todos\"></ul>\n```\n\n```javascript\nfunction render(items) {\n  document.getElementById('todos').innerHTML = items\n    .map(t => `<li data-id=\"${t.id}\">${t.text}</li>`)\n    .join('');\n}\n```\n\nClick handlers on individual <li> elements keep breaking after updates. Which approach reliably handles clicks for both current and future <li> elements without re-attaching listeners after every render?",
+          "options": [
+            "```javascript\n// Event delegation on parent\nconst ul = document.getElementById('todos');\nul.addEventListener('click', e => {\n  const li = e.target.closest('li');\n  if (!li || !ul.contains(li)) return;\n  console.log('clicked', li.dataset.id);\n});\n```",
+            "```javascript\n// Attach to current items once\nfor (const li of document.querySelectorAll('#todos li')) {\n  li.addEventListener('click', e => {\n    console.log('clicked', li.dataset.id);\n  });\n}\n```",
+            "```javascript\n// Re-attach after each render\nfunction render(items) {\n  const ul = document.getElementById('todos');\n  ul.innerHTML = items.map(...).join('');\n  ul.querySelectorAll('li').forEach(li => {\n    li.onclick = () => console.log('clicked', li.dataset.id);\n  });\n}\n```",
+            "```javascript\n// Inline handlers in markup\nfunction render(items) {\n  document.getElementById('todos').innerHTML = items\n    .map(t => `<li onclick=\\\"onClick(${t.id})\\\">${t.text}</li>`)\n    .join('');\n}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Event delegation attaches a single listener to the stable parent and inspects event targets. Since the parent element persists across renders, the handler continues to work for newly created <li> nodes without re-binding.",
+          "distractor_rationale": "A: Attaches listeners only to the current set; they are lost when the list is rebuilt.\nC: Works but requires re-binding after every render, which is brittle and inefficient for frequent updates.\nD: Inlines JS into HTML, couples concerns, and still requires regeneration on every render; it also complicates escaping and testability.",
+          "skills_covered": [
+            "JavaScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your HTML loads JavaScript in the head:\n\n```html\n<head>\n  <script src=\"app.js\"></script>\n</head>\n<body>\n  <button id=\"go\">Go</button>\n</body>\n```\n\napp.js contains:\n\n```javascript\ndocument.getElementById('go').addEventListener('click', () => {\n  console.log('go');\n});\n```\n\nOn slow networks you see `Cannot read properties of null` for `getElementById('go')`. Without moving the script tag, which change fixes the error and allows the handler to be ready as soon as the DOM is parsed (without waiting for images)?",
+          "options": [
+            "```javascript\nsetTimeout(() => {\n  document.getElementById('go').addEventListener('click', () => console.log('go'));\n}, 0);\n```",
+            "```javascript\nwindow.onload = () => {\n  document.getElementById('go').addEventListener('click', () => console.log('go'));\n};\n```",
+            "```javascript\ndocument.addEventListener('DOMContentLoaded', () => {\n  document.getElementById('go').addEventListener('click', () => console.log('go'));\n});\n```",
+            "```html\n<head>\n  <script async src=\"app.js\"></script>\n</head>\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Listening for DOMContentLoaded defers handler registration until the DOM tree is built, making the element available as early as possible without waiting for images and other subresources. window.onload waits for all resources. setTimeout(0) does not guarantee the DOM is ready. async can execute before DOM is parsed or out of order.",
+          "distractor_rationale": "B: Works but delays until all resources load, later than necessary.\nC: Timing is not tied to DOM readiness; it may still run before the element exists.\nD: async can fire before the DOM node exists and does not ensure execution after parsing.",
+          "skills_covered": [
+            "JavaScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Select the query that returns the latest order per customer, even if multiple customers placed orders at the same timestamp. Break ties within a customer by highest id.\n\n```sql\n-- orders(id, customer_id, created_at)\n```\n",
+          "options": [
+            "```sql\nSELECT o.*\nFROM orders o\nJOIN (\n  SELECT customer_id, MAX(created_at) AS mx\n  FROM orders\n  GROUP BY customer_id\n) m ON m.customer_id = o.customer_id AND m.mx = o.created_at;\n```",
+            "```sql\nWITH ranked AS (\n  SELECT o.*, ROW_NUMBER() OVER (\n    PARTITION BY customer_id\n    ORDER BY created_at DESC, id DESC\n  ) AS rn\n  FROM orders o\n)\nSELECT * FROM ranked WHERE rn = 1;\n```",
+            "```sql\nSELECT DISTINCT customer_id, FIRST_VALUE(id) OVER (\n  PARTITION BY customer_id ORDER BY created_at DESC\n) AS id\nFROM orders;\n```",
+            "```sql\nSELECT * FROM orders o\nWHERE o.created_at = (SELECT MAX(created_at) FROM orders)\nORDER BY customer_id;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "ROW_NUMBER partitioned by customer orders each customer's rows by created_at DESC, id DESC and selects the top row. The MAX(created_at) join fails when a customer has multiple orders at the same timestamp (returns multiple rows). A global MAX(created_at) ignores customer grouping. FIRST_VALUE without filtering returns a row per input; DISTINCT then mismatches id with customer_id across rows.",
+          "distractor_rationale": "A: Returns duplicates for customers with multiple orders at the same timestamp.\nC: Produces only the globally latest orders, not one per customer.\nD: FIRST_VALUE needs an outer filter (e.g., QUALIFY/FILTER) to keep one row per customer; DISTINCT on customer_id with a window value from arbitrary rows is incorrect.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You need the first 50 customer ids (by ascending id) who both:\n- have at least one PAID order, and\n- have at least one OPEN support ticket.\n\nThe tables are indexed on orders(customer_id, status) and tickets(customer_id, status). Which query avoids row explosion and unstable pagination while efficiently using the indexes?",
+          "options": [
+            "```sql\nSELECT c.id\nFROM (\n  SELECT customer_id FROM orders WHERE status='PAID'\n  UNION ALL\n  SELECT customer_id FROM tickets WHERE status='OPEN'\n) u\nJOIN customers c ON c.id = u.customer_id\nGROUP BY c.id\nHAVING COUNT(*) >= 2\nORDER BY c.id\nLIMIT 50;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.id AND o.status = 'PAID'\n) AND EXISTS (\n  SELECT 1 FROM tickets t\n  WHERE t.customer_id = c.id AND t.status = 'OPEN'\n)\nORDER BY c.id\nLIMIT 50;\n```",
+            "```sql\nSELECT DISTINCT c.id\nFROM customers c\nJOIN orders o ON o.customer_id = c.id AND o.status = 'PAID'\nJOIN tickets t ON t.customer_id = c.id AND t.status = 'OPEN'\nORDER BY c.id\nLIMIT 50;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nLEFT JOIN tickets t ON t.customer_id = c.id\nWHERE o.status = 'PAID' AND t.status = 'OPEN'\nORDER BY c.id\nLIMIT 50;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Two semi-joins via EXISTS allow the planner to probe each index and short-circuit per customer without materializing a potentially huge join result. Ordering and LIMIT apply to the small customer set. DISTINCT over a multi-join can require sorting/deduplicating a much larger intermediate, harming stability and performance.",
+          "distractor_rationale": "B: Functionally returns the right set but may build a large joined result and then deduplicate before ordering and limiting, making pagination unstable and costly.\nC: Equivalent to INNER JOIN by the WHERE clause; suffers the same explosion.\nD: UNION ALL plus HAVING simulates an intersection but still materializes duplicates and forces grouping before limiting.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A form contains a control that opens a help modal via JavaScript. Clicking it submits the form and reloads the page. Which change fixes this while keeping good semantics and keyboard accessibility?\n\n```html\n<form>\n  <!-- fields -->\n  <button id=\"help\">Help</button>\n</form>\n```\n",
+          "options": [
+            "```html\n<button id=\"help\" type=\"button\">Help</button>\n```",
+            "```html\n<button id=\"help\" onclick=\"return false;\">Help</button>\n```",
+            "```html\n<a id=\"help\" href=\"#\">Help</a>\n```",
+            "```html\n<div id=\"help\" role=\"button\" tabindex=\"0\">Help</div>\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Buttons inside forms default to type=\"submit\". Setting type=\"button\" prevents submission while preserving native button semantics, focus, and keyboard behavior. The JS can then open the modal without interfering with form submission.",
+          "distractor_rationale": "B: A link needs preventDefault and additional key handling to fully mimic a button; semantics are wrong for an action that does not navigate.\nC: A div with role=button lacks native semantics and keyboard behavior unless more JS is added.\nD: Inline return false is brittle and mixes behavior with markup; it still leaves the element as a submit button in some contexts and harms maintainability.",
+          "skills_covered": [
+            "HTML",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You maintain a storefront with these tables:\n\n```sql\nproducts(id PK, name, price_cents)\ncategories(id PK, name)\nproduct_categories(product_id FK->products, category_id FK->categories, PK(product_id, category_id))\norders(id PK, created_at, customer_id FK->customers)\norder_items(id PK, order_id FK->orders, product_id FK->products, qty, price_cents)\n```\n\nMarketing wants a \"Trending Now\" section on the home page that shows the top 8 products by units sold in the last 14 days, but only within a selected category (from the UI filter). Page loads must stay under 150 ms for this widget. Current queries are slow and occasionally show duplicated products. You can add indexes but cannot denormalize price into orders further than it already is.",
+          "task": "Design an efficient SQL solution that returns the top 8 product ids and names for a given category id and a 14-day window, with stable sorting. Provide the query and the specific indexes you would add. Justify why your approach avoids duplicates and remains fast as data scales.",
+          "expected_answer": "A performant approach is to aggregate order_items filtered by time window and category, then rank and limit. Use EXISTS on the category join to avoid row explosion and ensure each product is counted once.\n\nProposed indexes:\n- orders(created_at) to restrict the time window cheaply (if not already covered by another index)\n- order_items(order_id) to join quickly from filtered orders\n- product_categories(category_id, product_id) to probe products in a category efficiently\n- products(id) is PK and already indexed\n\nQuery:\n\n```sql\nWITH recent_orders AS (\n  SELECT id\n  FROM orders\n  WHERE created_at >= NOW() - INTERVAL '14 days'\n),\ncategory_products AS (\n  SELECT pc.product_id\n  FROM product_categories pc\n  WHERE pc.category_id = $1\n)\nSELECT p.id, p.name, SUM(oi.qty) AS units\nFROM order_items oi\nJOIN recent_orders ro ON ro.id = oi.order_id\nJOIN products p ON p.id = oi.product_id\nWHERE EXISTS (\n  SELECT 1 FROM category_products cp WHERE cp.product_id = oi.product_id\n)\nGROUP BY p.id, p.name\nORDER BY units DESC, p.id ASC\nLIMIT 8;\n```\n\nRationale: Filtering orders first shrinks the join set. Using EXISTS against a compact list of product_ids in the chosen category prevents multiplicative joins if products belong to multiple categories over time. GROUP BY on product_id ensures one row per product; tie-breaker by p.id yields stable ordering. Indexes align with join/filter predicates to keep the working set and aggregation small.",
+          "rubric": [
+            {
+              "criterion": "Correct use of aggregation to compute units per product for the time window and category (GROUP BY of product_id)",
+              "marks": 2
+            },
+            {
+              "criterion": "Indexes proposed match predicates and join directions (e.g., product_categories(category_id, product_id); orders(created_at)) with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Join strategy that prevents duplication (e.g., EXISTS or distinct product set) and a tie-breaker for stable ordering",
+              "marks": 2
+            },
+            {
+              "criterion": "Performance justification referencing cardinalities and how LIMIT is satisfied without large sorts",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "An order summary API currently pulls totals with this query, which sometimes reports inflated order totals when an order has multiple shipments:\n\n```sql\nSELECT o.id,\n       SUM(oi.qty * oi.price_cents) AS items_total_cents,\n       SUM(s.shipping_cents)        AS shipping_total_cents\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nLEFT JOIN shipments s ON s.order_id = o.id\nWHERE o.id = $1\nGROUP BY o.id;\n```\n\nEach order can have many items and many shipments. `shipping_cents` is the shipping charge for each shipment, not per item. The UI displays a single order total as (items_total + shipping_total). Users report totals that are too high when there are multiple shipments and multiple items.",
+          "task": "Rewrite the SQL to return the correct totals for a single order without double counting shipping. Explain why the original query is wrong and how your rewrite fixes it. You may use subqueries or CTEs.",
+          "expected_answer": "The original join multiplies rows: each item row joins to each shipment row, causing shipping cents to be summed once per item. Fix by aggregating items and shipments separately, then joining the aggregates:\n\n```sql\nWITH item_sum AS (\n  SELECT oi.order_id, SUM(oi.qty * oi.price_cents) AS items_total_cents\n  FROM order_items oi\n  WHERE oi.order_id = $1\n  GROUP BY oi.order_id\n),\nship_sum AS (\n  SELECT s.order_id, COALESCE(SUM(s.shipping_cents), 0) AS shipping_total_cents\n  FROM shipments s\n  WHERE s.order_id = $1\n  GROUP BY s.order_id\n)\nSELECT o.id,\n       i.items_total_cents,\n       s.shipping_total_cents,\n       i.items_total_cents + s.shipping_total_cents AS order_total_cents\nFROM orders o\nLEFT JOIN item_sum i ON i.order_id = o.id\nLEFT JOIN ship_sum s ON s.order_id = o.id\nWHERE o.id = $1;\n```\n\nExplanation: Aggregating in isolated subqueries removes the Cartesian product between items and shipments. Joining the two 1-row aggregates back to orders yields correct totals regardless of item or shipment counts.",
+          "rubric": [
+            {
+              "criterion": "Identifies the duplication cause (many-to-many join creating row multiplication)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a corrected query aggregating items and shipments separately",
+              "marks": 3
+            },
+            {
+              "criterion": "Handles orders with zero shipments correctly (LEFT JOIN/COALESCE)",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear explanation of why the rewrite prevents double counting",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A responsive product grid looks fine on desktop but overflows horizontally on tablets. Current CSS:\n\n```css\n.grid { display: flex; flex-wrap: wrap; gap: 24px; }\n.card { width: 320px; margin: 0; }\n.container { max-width: 768px; padding: 16px; }\n```\n\nAt 768px viewport, three cards try to fit: 320 + 24 + 320 + 24 + 320 = 1008px plus padding, causing scroll. The design intent is:\n- <= 599px: 1 column\n- 600–899px: 2 columns\n- >= 900px: 3 columns\nCards should fill available space evenly without overflow.",
+          "task": "Propose concrete CSS changes (media queries and layout) to meet the intent and prevent overflow. Explain why your solution eliminates the scroll at 768px and adapts cleanly between breakpoints.",
+          "expected_answer": "Switch to CSS Grid with minmax tracks and explicit breakpoints, removing fixed card widths.\n\n```css\n.grid {\n  display: grid;\n  grid-template-columns: 1fr; /* mobile-first */\n  gap: 16px;\n}\n\n@media (min-width: 600px) {\n  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }\n}\n\n@media (min-width: 900px) {\n  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }\n}\n\n.card { width: auto; }\n.container { box-sizing: border-box; max-width: 100%; padding: 16px; }\n```\n\nExplanation: Removing fixed widths lets cards flex to available track size. Grid gaps are included in track calculation, so at 768px the two tracks and one gap fit within the container without overflow. Using minmax(0,1fr) prevents content overflow from expanding tracks. Mobile-first media queries step from 1 to 2 to 3 columns at the specified breakpoints.",
+          "rubric": [
+            {
+              "criterion": "Replaces fixed card width with fluid tracks (e.g., Grid with minmax or Flex with calc)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct media queries implementing 1/2/3 columns at stated breakpoints",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses overflow via box-sizing or equivalent and explains gap/track sizing interaction",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear explanation connecting the fix to the overflow observed at 768px",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Responsive Design",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A filter panel controls a large list. Current JS re-renders the list on every keystroke by assigning `innerHTML`, which:\n- drops focus from the active filter input,\n- resets scroll position to the top,\n- causes jank on low-end devices.\n\nHTML (simplified):\n\n```html\n<input id=\"search\" aria-label=\"Search products\" />\n<ul id=\"results\"></ul>\n```\n\nThe requirement is to keep the input focused and avoid expensive DOM work while typing quickly.",
+          "task": "Describe how you would refactor the DOM update logic to be responsive and accessible. Include code for: (1) debouncing the input, (2) rendering via a minimal diff or document fragment, and (3) using event delegation for item clicks. Justify how each part addresses the problems.",
+          "expected_answer": "Debounce to limit frequency, render with minimal DOM mutations, and delegate events.\n\n```javascript\nconst ul = document.getElementById('results');\nconst input = document.getElementById('search');\n\nconst debounce = (fn, ms) => {\n  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };\n};\n\ninput.addEventListener('input', debounce(e => {\n  const q = e.target.value.toLowerCase();\n  const next = data.filter(d => d.name.toLowerCase().includes(q));\n  // Minimal update\n  const frag = document.createDocumentFragment();\n  for (const item of next) {\n    const li = document.createElement('li');\n    li.dataset.id = item.id;\n    li.textContent = item.name;\n    frag.appendChild(li);\n  }\n  // Replace children in one operation\n  ul.replaceChildren(frag);\n}, 150));\n\n// Stable event listener\nul.addEventListener('click', e => {\n  const li = e.target.closest('li');\n  if (!li) return; // ignore background clicks\n  console.log('open', li.dataset.id);\n});\n```\n\nJustification: Debouncing prevents a re-render on every keystroke burst. Building in a fragment and replacing children once avoids repeated layout and preserves the focused input node (not replaced). Event delegation avoids reattaching listeners as the list changes. Scroll position of the page is unaffected because only list children are replaced, not the container or ancestors.",
+          "rubric": [
+            {
+              "criterion": "Correct debouncing implementation tied to input events",
+              "marks": 2
+            },
+            {
+              "criterion": "Minimal DOM rendering approach (fragment or keyed replace) avoiding wholesale container replacement",
+              "marks": 2
+            },
+            {
+              "criterion": "Event delegation that works for dynamic list items",
+              "marks": 1
+            },
+            {
+              "criterion": "Explanation linking each technique to focus retention, scroll stability, and performance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript",
+            "HTML",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Relational database exercise: Storefront orders and products",
+          "brief": "Design and implement a small relational schema for a storefront with customers, products, categories, orders, and order_items. Populate it with realistic sample data and demonstrate CRUD and complex joins that answer non-trivial questions (e.g., customers with no orders, top categories by revenue, latest order per customer).",
+          "deliverable": "Relational database exercise",
+          "acceptance_criteria": [
+            "Schema DDL defines at least 6 tables including customers, products, categories, product_categories (junction), orders, order_items; each with primary keys",
+            "All foreign keys defined with appropriate ON DELETE behavior; at least two non-PK indexes supporting common queries (e.g., product_categories(category_id, product_id); orders(created_at))",
+            "At least 30 INSERTs across tables with valid referential integrity; quantities and prices are plausible and positive (CHECK constraints or equivalent)",
+            "CRUD scripts: one transaction inserting an order and its items; one UPDATE adjusting a price or quantity; one DELETE demonstrating ON DELETE effect safely",
+            "Five queries demonstrating joins and grouping: (1) customers and their order counts including zero; (2) top 5 categories by revenue in last 30 days; (3) latest order per customer using a window function; (4) orders with total (items + tax/shipping if modeled) without double counting; (5) customers with no orders",
+            "A brief README.txt explaining how to run the SQL (targeting SQLite or Postgres) and describing each query’s intent"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, normalized schema with PK/FK relationships and junction table for many-to-many",
+              "marks": 6
+            },
+            {
+              "criterion": "Appropriate constraints and indexes supporting expected queries",
+              "marks": 4
+            },
+            {
+              "criterion": "CRUD scripts demonstrate transactions and integrity (inserts, updates, deletes)",
+              "marks": 4
+            },
+            {
+              "criterion": "Queries cover specified join/aggregate/window use-cases and are correct",
+              "marks": 4
+            },
+            {
+              "criterion": "Sample data is sufficient and coherent; README documents execution and intent",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Responsive front-end: Product listing with client-side filtering",
+          "brief": "Build a responsive product listing page that renders product cards from a JSON array, supports a text search filter, and adapts layout across breakpoints without horizontal overflow. Implement event delegation for interactions and ensure keyboard-accessible controls.",
+          "deliverable": "Responsive front-end",
+          "acceptance_criteria": [
+            "Semantic HTML structure using header, main, and a nav or aside for filters; all images include meaningful alt text",
+            "Mobile-first CSS with at least two breakpoints (e.g., 600px and 900px); grid or flex-based layout shows 1 column on small, 2 on medium, 3 on large viewports; no horizontal scrollbar at any width from 320px to 1280px",
+            "Cards maintain aspect ratio (e.g., using object-fit) and equal vertical spacing; box-sizing set to avoid padding-induced overflow",
+            "Interactive text filter that updates the card list without a page reload; uses debouncing (>=150ms) and does not replace the filter input node (focus remains)",
+            "Event delegation used for card click interactions; no per-card inline onclick attributes",
+            "JS loads after DOM is ready (defer attribute or DOMContentLoaded listener) and does not throw errors if executed before images load; no use of external frameworks",
+            "Basic accessibility: visible focus states, labels for inputs, buttons use type=\"button\" when not submitting, and all interactive elements are reachable by keyboard"
+          ],
+          "rubric": [
+            {
+              "criterion": "Semantic, accessible HTML structure and controls",
+              "marks": 3
+            },
+            {
+              "criterion": "Responsive layout meets specified column counts and avoids overflow across widths",
+              "marks": 6
+            },
+            {
+              "criterion": "Robust CSS (aspect ratios, spacing, box-sizing) with clean visual behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "Filtering implemented with debounced input and stable DOM updates (no input focus loss)",
+              "marks": 4
+            },
+            {
+              "criterion": "Event delegation for interactions and JS readiness (defer/DOMContentLoaded)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS",
+            "Responsive Design",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-001-S03",
+      "skills_assessed": [
+        "Python",
+        "SQL",
+        "Django",
+        "Django REST Framework",
+        "ORM",
+        "Authentication",
+        "REST API",
+        "HTML"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have the following URLconf and two simple views:\n\n```python\n# urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('articles/<slug:slug>/', views.detail, name='article-detail'),\n    path('articles/new/', views.create, name='article-create'),\n]\n```\n\n```python\n# views.py\nfrom django.http import HttpResponse\n\ndef detail(request, slug):\n    return HttpResponse(f\"detail:{slug}\")\n\ndef create(request):\n    return HttpResponse(\"create\")\n```\n\nA user requests:\n\n```text\nGET /articles/new/\n```\n\nWhat response body is returned?",
+          "options": [
+            "```text\nNot Found (404)\n```",
+            "```text\ncreate\n```",
+            "```text\ndetail:new\n```",
+            "```text\nMethod Not Allowed (405)\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "URL patterns are matched in order. The slug converter accepts \"new\", so the first pattern matches and routes to views.detail with slug=\"new\". The body becomes \"detail:new\".",
+          "distractor_rationale": "B: Tempting because there is an explicit \"articles/new/\" route, but it comes after the slug route and is never reached for this path. C: Django only returns 404 if no route matches; here the first route matches. D: 405 would require the path to match but the method to be disallowed by the view; both views accept GET and return a response.",
+          "skills_covered": [
+            "Django"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A `Book` has a ManyToMany field `tags` included in a `ModelForm`.\n\n```python\n# views.py\n@login_required\ndef create_book(request):\n    if request.method == 'POST':\n        form = BookForm(request.POST)\n        if form.is_valid():\n            book = form.save(commit=False)\n            book.added_by = request.user\n            book.save()\n            # missing call here\n            return redirect('book_detail', pk=book.pk)\n    else:\n        form = BookForm()\n    return render(request, 'books/form.html', {'form': form})\n```\n\nAssume posted data includes valid `tags`. After redirect, what is the state of the `tags` relation for the saved `Book`?",
+          "options": [
+            "```text\nNo tags are saved; the M2M relation is empty.\n```",
+            "```text\nAll submitted tags are saved correctly due to implicit handling by ModelForm.\n```",
+            "```text\nA database IntegrityError occurs because M2M relations require commit=True.\n```",
+            "```text\nSome tags appear randomly due to race conditions in M2M through table writes.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "When saving a ModelForm with commit=False, ManyToMany data is not saved. You must call `form.save_m2m()` after saving the instance to persist M2M relations.",
+          "distractor_rationale": "B: ModelForm does not implicitly handle M2M when commit=False. C: There is no IntegrityError from omitting `save_m2m()`; the relation just stays empty. D: The behavior is deterministic; missing `save_m2m()` yields no writes, not race conditions.",
+          "skills_covered": [
+            "Django",
+            "ORM"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A template renders a list of orders and accesses the related customer name:\n\n```python\n# views.py\norders = Order.objects.all()\nreturn render(request, 'orders/list.html', {'orders': orders})\n```\n\n```html\n<!-- orders/list.html -->\n<ul>\n  {% for o in orders %}\n    <li>{{ o.id }} - {{ o.customer.name }}</li>\n  {% endfor %}\n</ul>\n```\n\n`Order.customer` is a `ForeignKey` to `Customer`. You want exactly one database query for this page render. Which change achieves that?",
+          "options": [
+            "```python\norders = Order.objects.defer('customer')\n```",
+            "```python\norders = Order.objects.select_related('customer')\n```",
+            "```python\norders = Order.objects.prefetch_related('customer')\n```",
+            "```python\norders = Order.objects.only('id', 'customer__name')\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`select_related('customer')` joins the related table in a single query for ForeignKey relations, allowing the template to access `customer.name` without extra queries.",
+          "distractor_rationale": "B: `prefetch_related` uses two queries (one for orders, one for customers) and is ideal for M2M or reverse FK, not for FK when you want a single query. C: `only` restricts columns but still triggers a fetch of `customer` when accessed unless combined with `select_related`. D: `defer('customer')` defers loading and will cause an additional query when accessing `customer` in the template.",
+          "skills_covered": [
+            "ORM",
+            "Django",
+            "SQL"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider this view that attempts to create related records within a transaction:\n\n```python\nfrom django.db import transaction, IntegrityError\nfrom django.http import HttpResponse\n\n@transaction.atomic\ndef place_order(request):\n    order = Order.objects.create(number='A1')\n    try:\n        Payment.objects.create(order=order, ref='A1', amount=100)\n        Shipment.objects.create(order=order, tracking='dup', carrier='X')\n        # unique constraint: tracking must be unique\n        Shipment.objects.create(order=order, tracking='dup', carrier='Y')\n    except IntegrityError:\n        pass\n    return HttpResponse('ok')\n```\n\nAfter calling this view once, what is the database state?",
+          "options": [
+            "```text\nOrder is saved; Payment and Shipments are rolled back because they are after the failing statement.\n```",
+            "```text\nNothing is persisted: the IntegrityError marks the atomic block for rollback, so Order and Payment are rolled back.\n```",
+            "```text\nA 500 error occurs because catching IntegrityError inside atomic is forbidden.\n```",
+            "```text\nOrder and Payment are saved; only the duplicate Shipment is discarded.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Inside an `atomic` block, an IntegrityError causes the transaction to be marked for rollback to the savepoint. Even if you catch the exception, exiting the block rolls back all writes within it. The view still returns 200, but none of the objects persist.",
+          "distractor_rationale": "B: This would be true without atomic/savepoints, but within `atomic` the entire block rolls back. C: Transaction rollback is to the block's start, not just statements after the failure. D: Catching the exception is allowed; it doesn't force a 500, but it also doesn't prevent the rollback.",
+          "skills_covered": [
+            "ORM",
+            "Django",
+            "SQL",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "DRF settings and a viewset:\n\n```python\n# settings.py\nREST_FRAMEWORK = {\n    'DEFAULT_AUTHENTICATION_CLASSES': [\n        'rest_framework.authentication.SessionAuthentication',\n        'rest_framework.authentication.BasicAuthentication',\n    ],\n    'DEFAULT_PERMISSION_CLASSES': [\n        'rest_framework.permissions.IsAuthenticated',\n    ],\n}\n```\n\n```python\n# views.py\nclass ItemViewSet(viewsets.ModelViewSet):\n    queryset = Item.objects.all()\n    serializer_class = ItemSerializer\n```\n\nA logged-in user (session cookie present) makes a POST via fetch without a CSRF token:\n\n```javascript\nfetch('/api/items/', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ name: 'X' })\n});\n```\n\nWhat status code does DRF return?",
+          "options": [
+            "```text\n400 Bad Request because JSON body lacks CSRF token field\n```",
+            "```text\n401 Unauthorized with WWW-Authenticate: Basic\n```",
+            "```text\n201 Created because the user is authenticated via session\n```",
+            "```text\n403 Forbidden (CSRF Failed)\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "With SessionAuthentication, DRF enforces Django's CSRF checks on unsafe methods when a session is used. The request lacks the CSRF token, so it returns 403. DRF does not fall back to BasicAuthentication once session credentials are present.",
+          "distractor_rationale": "B: Fallback to Basic doesn't occur when the request is already associated with a session. C: Authentication succeeds, but CSRF still blocks the request. D: CSRF is enforced via header/cookie, not a JSON field; lack of such a field is irrelevant.",
+          "skills_covered": [
+            "Django REST Framework",
+            "Authentication",
+            "REST API"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A DRF serializer allows negative prices because no explicit validation is present. The model defines `clean` to forbid negatives:\n\n```python\n# models.py\nclass Product(models.Model):\n    name = models.CharField(max_length=64)\n    price = models.DecimalField(max_digits=8, decimal_places=2)\n    def clean(self):\n        if self.price < 0:\n            raise ValidationError('negative price')\n```\n\n```python\n# serializers.py\nclass ProductSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Product\n        fields = ['id', 'name', 'price']\n```\n\n```python\n# views.py\nclass ProductViewSet(viewsets.ModelViewSet):\n    queryset = Product.objects.all()\n    serializer_class = ProductSerializer\n```\n\nA POST is made with `{ \"name\": \"A\", \"price\": -1 }`. What happens?",
+          "options": [
+            "```text\nDRF automatically calls model.clean(), so the request is rejected with 400.\n```",
+            "```text\nThe request fails with 500 because model.clean() raises inside save().\n```",
+            "```text\nThe product is saved with price -1 unless the model or DB enforces a constraint elsewhere.\n```",
+            "```text\nDjango admin-side validation is reused automatically by DRF and blocks the save.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "DRF's ModelSerializer does not call `model.full_clean()` by default. Unless you hook validation into the serializer or the model enforces the constraint in `save()` or the DB has a CHECK constraint, the negative value will be saved.",
+          "distractor_rationale": "B: DRF does not automatically invoke `clean()`/`full_clean()` unless you override behavior. C: Admin form validation is separate from DRF. D: A 500 would require an exception to propagate; as written, `clean()` is never called.",
+          "skills_covered": [
+            "Django REST Framework",
+            "Django",
+            "ORM",
+            "REST API"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You attempt to exempt a class-based view from CSRF like this:\n\n```python\nfrom django.views import View\nfrom django.http import JsonResponse\nfrom django.views.decorators.csrf import csrf_exempt\n\nclass SubmitView(View):\n    @csrf_exempt\n    def post(self, request):\n        return JsonResponse({'ok': True})\n```\n\nURLconf:\n\n```python\npath('submit/', SubmitView.as_view())\n```\n\nA POST to `/submit/` without a CSRF token results in what?",
+          "options": [
+            "```text\nRedirect to login, because CSRF failures trigger authentication by default.\n```",
+            "```text\n405 Method Not Allowed, because CSRF blocks dispatch before method resolution.\n```",
+            "```text\n200 OK, because decorating post() is enough to bypass CSRF middleware.\n```",
+            "```text\n403 Forbidden, because the exemption didn't apply to the view function generated by as_view().\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "For CBVs, CSRF is checked on the function returned by `as_view()` (dispatch). Decorating only `post()` doesn't mark the view function as exempt. You must exempt `dispatch` via `@method_decorator(csrf_exempt, name='dispatch')` or decorate the class with it.",
+          "distractor_rationale": "B: Common misconception; the middleware checks before calling the method. C: CSRF failures yield 403, not 405. D: CSRF does not trigger login redirects by itself.",
+          "skills_covered": [
+            "Django"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given this viewset and router:\n\n```python\n# views.py\nclass OrderViewSet(viewsets.ModelViewSet):\n    queryset = Order.objects.all()\n    serializer_class = OrderSerializer\n\n    @action(detail=True, methods=['post'])\n    def cancel(self, request, pk=None):\n        ...\n```\n\n```python\n# urls.py\nrouter = DefaultRouter()\nrouter.register('orders', OrderViewSet)\nurlpatterns = [\n    path('api/', include(router.urls)),\n]\n```\n\nWhich request is routed to the `cancel` action?",
+          "options": [
+            "```text\nPOST /api/orders/42/cancel/\n```",
+            "```text\nPOST /api/order/42/cancel/\n```",
+            "```text\nGET /api/orders/42/cancel/\n```",
+            "```text\nPOST /api/orders/cancel/42/\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`@action(detail=True)` creates a detail route at `/api/orders/<pk>/cancel/` responding to POST. The router pluralizes as registered: `orders`.",
+          "distractor_rationale": "B: The order of segments is wrong; actions come after the detail identifier. C: Method is wrong; only POST is declared. D: The basename path is `orders`, not `order`.",
+          "skills_covered": [
+            "Django REST Framework",
+            "REST API",
+            "Django"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your admin shows N+1 queries when listing `Order` with a `customer` FK:\n\n```python\n# admin.py\n@admin.register(Order)\nclass OrderAdmin(admin.ModelAdmin):\n    list_display = ('id', 'customer_name')\n    def customer_name(self, obj):\n        return obj.customer.name\n```\n\nWhich change eliminates the N+1 on the changelist page?",
+          "options": [
+            "```python\nclass OrderAdmin(admin.ModelAdmin):\n    search_fields = ('customer__name',)\n```",
+            "```python\nclass OrderAdmin(admin.ModelAdmin):\n    list_display = ('id', 'customer_name')\n    list_select_related = ('customer',)\n```",
+            "```python\nclass OrderAdmin(admin.ModelAdmin):\n    raw_id_fields = ('customer',)\n```",
+            "```python\nclass OrderAdmin(admin.ModelAdmin):\n    list_display = ('id', 'customer__name')  # follow relation directly\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`list_select_related` tells the admin changelist queryset to join the `customer` FK, allowing `obj.customer.name` without extra queries.",
+          "distractor_rationale": "B: `list_display` does not accept double-underscore lookups; it requires a field name or callable. C: `raw_id_fields` affects the form widget, not the changelist queryset. D: `search_fields` controls search lookups, not queryset optimization for the list display.",
+          "skills_covered": [
+            "Django",
+            "ORM",
+            "SQL"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A file upload form and view are defined as:\n\n```html\n<form method=\"post\" action=\"/upload/\">\n  {% csrf_token %}\n  <input type=\"file\" name=\"photo\">\n  <button>Upload</button>\n</form>\n```\n\n```python\ndef upload(request):\n    if request.method == 'POST':\n        form = PhotoForm(request.POST, request.FILES)\n        if form.is_valid():\n            form.save()\n            return HttpResponse('ok')\n    return HttpResponse('bad')\n```\n\n`PhotoForm` has a required `ImageField` bound to `photo`. A user selects a file and submits. What does the server return?",
+          "options": [
+            "```text\nbad\n```",
+            "```text\nok\n```",
+            "```text\n403 Forbidden because CSRF token is invalid for file uploads\n```",
+            "```text\n400 Bad Request because browsers block file upload without multipart\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The form lacks `enctype=\"multipart/form-data\"`, so the browser does not send the file content. `request.FILES` is empty, validation fails for the required field, and the view returns `bad`.",
+          "distractor_rationale": "B: Would be true only if the form used the correct encoding type. C: Browsers still submit, but without file data; the server sees a normal POST. D: CSRF is unrelated here; the token is present and valid.",
+          "skills_covered": [
+            "HTML",
+            "Django"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A blog app has two views:\n\n```python\n# views.py\nfrom django.shortcuts import render, redirect\nfrom .models import Post\n\ndef post_detail(request, slug):\n    post = Post.objects.get(slug=slug)\n    return render(request, 'blog/detail.html', {'post': post})\n\n@login_required\ndef post_new(request):\n    ...  # standard create form logic\n```\n\nThe URLconf is:\n\n```python\n# urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('posts/<slug:slug>/', views.post_detail, name='post-detail'),\n    path('posts/new/', views.post_new, name='post-new'),\n]\n```\n\nUsers report that visiting `/posts/new/` sometimes shows a post detail page for a post with slug `\"new\"` (your seed data contains that slug).",
+          "task": "Propose a robust fix that ensures `/posts/new/` always routes to the creation form while preserving clean slugs for all other posts. Explain the trade-offs of at least two approaches and justify your chosen implementation in this case.",
+          "expected_answer": "Two viable fixes:\n\n1) Reorder and reserve keyword:\n\n```python\nurlpatterns = [\n    path('posts/new/', views.post_new, name='post-new'),\n    path('posts/<slug:slug>/', views.post_detail, name='post-detail'),\n]\n```\n\nPros: Simple and explicit. Cons: Relies on route ordering; future routes could reintroduce conflicts if not careful. Also silently reserves the slug \"new\" without documenting it.\n\n2) Exclude the reserved word from the slug route using a regex path:\n\n```python\nfrom django.urls import re_path\n\nurlpatterns = [\n    path('posts/new/', views.post_new, name='post-new'),\n    re_path(r'^posts/(?P<slug>(?!new$)[\\w-]+)/$', views.post_detail, name='post-detail'),\n]\n```\n\nPros: Makes the reservation explicit and order-agnostic for this case; `/posts/new/` cannot be captured by the slug route. Cons: Slightly harder to read; if you later add other reserved words, you must update the regex.\n\nEither change should be accompanied by tests:\n\n```python\n# tests.py\nself.assertEqual(self.client.get('/posts/new/').resolver_match.view_name, 'post-new')\nself.assertEqual(self.client.get('/posts/some-slug/').resolver_match.view_name, 'post-detail')\n```\n\nGiven a production slug \"new\" already exists, also consider a data migration to rename that slug or add a redirect to avoid breaking inbound links. Final choice: implement the regex exclusion plus reordering to be explicit and resilient, and add a check that prevents creating posts with reserved slugs in the form's `clean_slug`.",
+          "rubric": [
+            {
+              "criterion": "Identifies the root cause: path ordering allows the slug route to capture 'new'",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes at least two correct fixes (reorder, regex exclusion or converter constraint)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies a preferred fix with trade-offs (readability, future safety, reserved word policy)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses migration/compatibility concerns (renaming existing slug, redirects, tests)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Django",
+            "HTML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your team ships a DRF endpoint to list projects with owners and tags:\n\n```python\n# models.py\nclass Project(models.Model):\n    name = models.CharField(max_length=100)\n    owner = models.ForeignKey(User, on_delete=models.CASCADE)\n    tags = models.ManyToManyField('Tag', blank=True)\n\nclass Tag(models.Model):\n    name = models.CharField(max_length=50, unique=True)\n```\n\n```python\n# serializers.py\nclass ProjectSerializer(serializers.ModelSerializer):\n    owner = serializers.StringRelatedField()\n    tags = serializers.SlugRelatedField(slug_field='name', many=True, read_only=True)\n    class Meta:\n        model = Project\n        fields = ['id','name','owner','tags']\n```\n\n```python\n# views.py\nclass ProjectViewSet(viewsets.ReadOnlyModelViewSet):\n    queryset = Project.objects.all()\n    serializer_class = ProjectSerializer\n```\n\nThe list endpoint `/api/projects/` is slow, and Django Debug Toolbar shows 1 query for projects plus N additional queries for owners and another N for tags.",
+          "task": "Propose precise queryset and serialization changes to eliminate the N+1 problem for both `owner` and `tags` on the list view. Explain why each change fixes the queries and how many queries remain.",
+          "expected_answer": "Use `select_related` for the FK owner and `prefetch_related` for the M2M tags, and ensure serializer fields don't trigger extra lookups per object.\n\nImplementation:\n\n```python\n# views.py\nclass ProjectViewSet(viewsets.ReadOnlyModelViewSet):\n    serializer_class = ProjectSerializer\n    def get_queryset(self):\n        return (Project.objects\n                .select_related('owner')        # FK via JOIN in main query\n                .prefetch_related('tags'))      # M2M via second query + in-memory join\n```\n\nSerializer fields `StringRelatedField` (owner) and `SlugRelatedField` (tags, read_only) read from the already-fetched related objects and do not issue queries when relations are preloaded. No need to change the serializer.\n\nExpected queries on list view:\n- 1 query for projects joined to owner (because of `select_related`)\n- 1 query for all tags across the page (because of `prefetch_related`)\nTotal: 2 queries, regardless of the number of projects rendered on the page.\n\nIf the tag relation used a custom `through` with extra fields, ensure the prefetch targets the correct related name or uses `Prefetch` with a queryset to include required fields without extra queries.",
+          "rubric": [
+            {
+              "criterion": "Recommends select_related for FK and explains JOIN behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Recommends prefetch_related for M2M and explains separate query + in-memory join",
+              "marks": 2
+            },
+            {
+              "criterion": "Accounts for serializer behavior (no per-object lookups when preloaded)",
+              "marks": 2
+            },
+            {
+              "criterion": "States the resulting query count and conditions that could adjust it (through model, Prefetch)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ORM",
+            "Django REST Framework",
+            "SQL"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are building an Orders API. Requirements:\n- Authenticated users can list and retrieve only their own orders.\n- Staff can access all orders.\n- Writes (update/delete) must be blocked for non-owners; staff may write.\n\nCurrent code:\n\n```python\n# views.py\nclass OrderViewSet(viewsets.ModelViewSet):\n    queryset = Order.objects.all()\n    serializer_class = OrderSerializer\n    permission_classes = [permissions.IsAuthenticated]\n```\n\nSecurity testing finds that a user can `GET /api/orders/123/` for an order they don't own if they guess the ID, because `get_object()` pulls from `queryset` before any filtering.",
+          "task": "Propose code changes to enforce both the listing and object-level access rules without leaking object existence. Explain why your approach covers all endpoints and methods of the viewset.",
+          "expected_answer": "Enforce ownership in both the base queryset and object-level permissions.\n\n```python\n# permissions.py\nclass IsOwnerOrStaff(permissions.BasePermission):\n    def has_object_permission(self, request, view, obj):\n        if request.user.is_staff:\n            return True\n        return getattr(obj, 'user', None) == request.user\n```\n\n```python\n# views.py\nclass OrderViewSet(viewsets.ModelViewSet):\n    serializer_class = OrderSerializer\n    permission_classes = [permissions.IsAuthenticated, IsOwnerOrStaff]\n\n    def get_queryset(self):\n        qs = Order.objects.all()\n        if self.request.user.is_staff:\n            return qs\n        return qs.filter(user=self.request.user)\n```\n\nWhy this works:\n- `get_queryset` ensures list endpoints and any operations using `get_queryset()` (including `get_object()`) cannot see others' orders, removing ID enumeration leaks (404 for non-matching objects).\n- `IsOwnerOrStaff` enforces object-level checks on retrieve/update/delete even if another method mistakenly broadens the queryset later.\n- Staff bypass both filters via the conditionals.\n- DRF's `get_object()` uses `get_queryset()`, so non-owners get 404 rather than 403, which avoids existence leakage; the object-level permission still protects update/delete if a developer later widens the queryset.",
+          "rubric": [
+            {
+              "criterion": "Filters visibility in get_queryset with staff bypass and user restriction",
+              "marks": 2
+            },
+            {
+              "criterion": "Adds an object-level permission and ties it to ownership/staff",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains interplay: get_object uses get_queryset; 404 vs 403 rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers all methods (list/retrieve/update/destroy) and avoids leakage",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Django REST Framework",
+            "REST API",
+            "ORM"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A server-rendered CRUD page for `Task` uses this view logic:\n\n```python\n# views.py\n@login_required\ndef task_create(request):\n    if request.method == 'POST':\n        form = TaskForm(request.POST)\n        if form.is_valid():\n            task = form.save(commit=False)\n            task.owner = request.user\n            task.save()\n            return render(request, 'tasks/detail.html', {'task': task, 'msg': 'Created'})\n    else:\n        form = TaskForm()\n    return render(request, 'tasks/form.html', {'form': form})\n```\n\nUsers report double submissions when refreshing the browser after creation, and success messages do not persist across navigation. Error states on invalid POSTs are fine.",
+          "task": "Redesign the flow to prevent duplicate submissions and preserve a success message across the redirect, while keeping validation errors visible when invalid. Show the revised code and justify the pattern.",
+          "expected_answer": "Use Post/Redirect/Get (PRG) and Django's messages framework. On valid POST, redirect to the detail URL; on invalid POST, render the form with errors (no redirect).\n\n```python\nfrom django.contrib import messages\nfrom django.shortcuts import redirect, render\n\n@login_required\ndef task_create(request):\n    if request.method == 'POST':\n        form = TaskForm(request.POST)\n        if form.is_valid():\n            task = form.save(commit=False)\n            task.owner = request.user\n            task.save()\n            messages.success(request, 'Task created')\n            return redirect('task-detail', pk=task.pk)\n        # invalid: fall through to render bound form with errors\n    else:\n        form = TaskForm()\n    return render(request, 'tasks/form.html', {'form': form})\n```\n\nIn the detail template, display messages:\n\n```html\n{% if messages %}\n  <ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>\n{% endif %}\n```\n\nJustification: PRG breaks the back/refresh resubmission chain because the browser loads the GET target after a 302. Messages survive the redirect via session storage. Rendering the form with errors for invalid POST keeps field-level error display without losing user input.",
+          "rubric": [
+            {
+              "criterion": "Applies PRG correctly with redirect on success and render on invalid",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses messages framework to persist feedback across redirect",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct code changes (redirect to detail, bound form on invalid)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why PRG prevents duplicates and preserves UX",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Django",
+            "HTML",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Server-rendered CRUD app: Courses and Lessons",
+          "brief": "Build a Django app that provides full server-rendered CRUD for `Course` and its related `Lesson`s. Use Django templates and forms; no JavaScript frameworks. Enforce login for create/update/delete. Include pagination on list views and basic search by course title.",
+          "deliverable": "A repository or zip containing a Django project with: source code, migrations, a small sqlite database or fixtures, templates, and a README with setup/run instructions and URLs. Provide a superuser for admin access.",
+          "acceptance_criteria": [
+            "Model design: `Course(title, description, owner)` and `Lesson(course FK, title, content, order)` with sensible constraints (e.g., unique `order` per course).",
+            "URLs and views: List, detail, create, update, delete for Course; inline creation of Lessons via a separate create form that associates to a Course.",
+            "Templates render with CSRF tokens on all POST forms. Forms show field and non-field errors when invalid.",
+            "List pages use pagination (page size 10) and preserve a `?q=` title search term when present.",
+            "Ownership: Only authenticated users can create/update/delete. The `owner` of a Course is set to the current user on create; only the owner or staff can edit/delete. Anonymous users see list/detail only.",
+            "N+1 avoidance: The course list loads owner efficiently (select_related) and the course detail loads lessons efficiently (prefetch_related).",
+            "Styling can be minimal, but templates must be readable and include links to navigate between list/detail/create/edit.",
+            "Admin configured for Course and Lesson for quick inspection (list_display including owner/course and optimized with list_select_related)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Data model and migrations created correctly (Course/Lesson relationships, constraints)",
+              "marks": 4
+            },
+            {
+              "criterion": "Complete CRUD views and URL routing with login protection where required",
+              "marks": 5
+            },
+            {
+              "criterion": "Templates: CSRF in forms, proper error display, usability (navigation)",
+              "marks": 3
+            },
+            {
+              "criterion": "Pagination and search work and interact correctly (retain query on pagination)",
+              "marks": 3
+            },
+            {
+              "criterion": "Ownership enforcement and authorization logic (owner-only edits; staff bypass)",
+              "marks": 3
+            },
+            {
+              "criterion": "Query optimization with select_related/prefetch_related where applicable",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Django",
+            "HTML",
+            "ORM",
+            "Authentication",
+            "SQL",
+            "Python"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Secured REST API and data model for Courses and Lessons",
+          "brief": "Expose a REST API for the same `Course` and `Lesson` models using Django REST Framework. Enforce authentication and ownership rules: authenticated users may list and retrieve all courses, but may create/update/delete only courses they own; staff may modify any. Lessons are writable only for owners of the parent course or staff. Provide minimal documentation and example requests.",
+          "deliverable": "A Django project with DRF integrated, including serializers, viewsets, routers, and permission classes. Include a README with curl/httpie examples demonstrating authentication, allowed/denied operations, and endpoints. Admin enabled for inspection.",
+          "acceptance_criteria": [
+            "Endpoints registered via a DRF router under `/api/`: `/courses/` and `/lessons/` with standard list/retrieve/create/update/partial_update/destroy.",
+            "Authentication configured (Session or Token). If Session is used, CSRF is enforced on unsafe methods; README includes examples showing CSRF header usage or uses TokenAuth in examples.",
+            "Permissions: `IsAuthenticated` plus a custom permission or viewset logic so only owners or staff can modify. Non-owners receive 403 on write attempts and 404 if an object is not in their filtered queryset (avoid leaking existence).",
+            "Serializers include field-level and object-level validation (e.g., course title non-blank, lesson order non-negative and unique per course).",
+            "Query optimizations: `select_related('owner','course')` and `prefetch_related('lesson_set')` where appropriate on list endpoints to avoid N+1.",
+            "Error responses are JSON with appropriate status codes (400 on validation errors, 403/404/401 on permission/auth failures).",
+            "README includes runnable examples with expected responses, e.g., 401 when unauthenticated, 403 without CSRF for session auth, successful create for owner, denied update for non-owner."
+          ],
+          "rubric": [
+            {
+              "criterion": "Router, serializers, and viewsets correctly implemented for both resources",
+              "marks": 4
+            },
+            {
+              "criterion": "Authentication configured and demonstrated with working examples",
+              "marks": 4
+            },
+            {
+              "criterion": "Ownership/staff permissions enforced for all write operations (courses and lessons)",
+              "marks": 5
+            },
+            {
+              "criterion": "Validation implemented (field/object level) with correct HTTP status handling",
+              "marks": 3
+            },
+            {
+              "criterion": "Query optimization on list endpoints (select_related/prefetch_related)",
+              "marks": 2
+            },
+            {
+              "criterion": "Documentation/examples clearly demonstrate allowed/denied flows and CSRF/token usage",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Django REST Framework",
+            "Authentication",
+            "REST API",
+            "ORM",
+            "Django",
+            "SQL",
+            "Python"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-001-S04",
+      "skills_assessed": [
+        "JavaScript",
+        "React",
+        "REST API",
+        "Authentication",
+        "Application Deployment",
+        "Unit Testing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this component rendered once on mount:\n```jsx\nimport { useEffect, useState } from 'react';\n\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const id = setInterval(() => setCount(count + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n\n  return <div>{count}</div>;\n}\n```\nAfter exactly 3 seconds without user interaction, what text is shown on screen, and why?",
+          "options": [
+            "1, because the interval closure captured the initial `count` and keeps setting it to the same next value",
+            "3, because the interval runs three times and increments `count` each tick",
+            "2, because React batches the second and third ticks into a single state update",
+            "0, because the empty dependency array prevents the effect from running at all"
+          ],
+          "correct_option": "A",
+          "explanation": "The effect's callback closes over `count = 0`, so every tick runs `setCount(0 + 1)`. After the first tick the state is 1 and subsequent ticks call `setCount(1)` again, which is a no-op. The UI remains at 1.",
+          "distractor_rationale": "A: Looks plausible if you forget closures and assume `count` updates inside the callback. C: Confuses effect execution with dependency updates; the effect runs once and sets an interval. D: Batching doesn't collapse seconds; the problem is the stale closure, not batching.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You have React Router v6 with links between user pages. Component:\n```jsx\nimport { useEffect, useState } from 'react';\nimport { useParams } from 'react-router-dom';\n\nfunction User() {\n  const { id } = useParams();\n  const [user, setUser] = useState(null);\n\n  useEffect(() => {\n    fetch(`/api/users/${id}`).then(r => r.json()).then(setUser);\n  }, []);\n\n  return <div>{user ? user.name : 'loading'}</div>;\n}\n```\nFrom `/users/1` you click a `<Link to=\"/users/2\"/>`. The backend responds correctly. What will the UI do and why?",
+          "options": [
+            "Flash 'loading' but still show the old user, because `useEffect` ignores URL changes",
+            "Keep showing the first user's name until a full page reload, because the effect never re-runs without `id` in its dependency array",
+            "Show 'loading' then the new user's name, because `useParams` changes force the effect to re-run even with an empty dependency array",
+            "Throw a warning about updating state on an unmounted component, because React remounts on param change"
+          ],
+          "correct_option": "B",
+          "explanation": "The same component instance stays mounted across param changes. With an empty dependency array, the fetch runs only once for the first `id`, so the UI stays on the first user until reload.",
+          "distractor_rationale": "A/D: Tempting if you think URL changes trigger effects automatically; they don't without dependencies. C: The component doesn't unmount/remount on param change, so no update-after-unmount warning.",
+          "skills_covered": [
+            "React",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A search component fires a request on each query change:\n```jsx\nconst [q, setQ] = useState('');\nconst [results, setResults] = useState([]);\n\nuseEffect(() => {\n  if (!q) return;\n  fetch(`/api/search?q=${encodeURIComponent(q)}`)\n    .then(r => r.json())\n    .then(setResults);\n}, [q]);\n```\nTyping quickly sends `q=\"a\"` then `q=\"ab\"`. Due to network jitter, `\"a\"` resolves last and overwrites results. Which change ensures only the latest query updates state?",
+          "options": [
+            "```jsx\nuseEffect(() => {\n  if (!q) return;\n  const ac = new AbortController();\n  fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: ac.signal })\n    .then(r => r.json())\n    .then(setResults)\n    .catch(e => { if (e.name !== 'AbortError') throw e; });\n  return () => ac.abort();\n}, [q]);\n```",
+            "```jsx\nuseEffect(() => {\n  // already has [q], nothing else needed\n  if (!q) return;\n  fetch(`/api/search?q=${q}`).then(r => r.json()).then(setResults);\n}, [q]);\n```",
+            "```jsx\nuseEffect(() => {\n  if (!q) return;\n  React.startTransition(() => {\n    fetch(`/api/search?q=${q}`).then(r => r.json()).then(setResults);\n  });\n}, [q]);\n```",
+            "```jsx\nuseEffect(() => {\n  if (!q) return;\n  const t = setTimeout(() => {\n    fetch(`/api/search?q=${q}`).then(r => r.json()).then(setResults);\n  }, 300);\n  return () => clearTimeout(t);\n}, [q]);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Aborting the in-flight previous request guarantees stale responses cannot commit. Debouncing alone doesn't prevent an older response from racing in after a newer one, and `startTransition` only affects rendering priority, not network races.",
+          "distractor_rationale": "B: Transition prioritizes UI updates, not network cancellation. C: The current code has the race. D: Debounce reduces requests but stale responses can still arrive last and overwrite.",
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A component loads data on mount. The current test is flaky:\n```jsx\n// Component\nfunction Hello() {\n  const [name, setName] = useState('');\n  useEffect(() => {\n    fetch('/api/me').then(r => r.json()).then(d => setName(d.name));\n  }, []);\n  return <h1>Hello {name}</h1>;\n}\n\n// Test\nit('greets user', () => {\n  render(<Hello/>);\n  expect(screen.getByText(/Hello/)).toHaveTextContent('Hello Sam');\n});\n```\nWhich change makes this test reliable under Jest + React Testing Library with no real network access?",
+          "options": [
+            "```jsx\nit('greets user', () => {\n  render(<Hello/>);\n  act(() => jest.runAllTimers());\n  expect(screen.getByText(/Hello Sam/)).toBeInTheDocument();\n});\n```",
+            "```jsx\nit('greets user', async () => {\n  render(<Hello/>);\n  await waitFor(() => expect(screen.getByText(/Hello Sam/)).toBeInTheDocument());\n});\n```",
+            "```jsx\nglobal.fetch = jest.fn().mockResolvedValue({\n  json: () => Promise.resolve({ name: 'Sam' })\n});\n\nit('greets user', async () => {\n  render(<Hello/>);\n  expect(await screen.findByText(/Hello Sam/)).toBeInTheDocument();\n});\n```",
+            "```jsx\nit('greets user', () => {\n  render(<Hello/>);\n  expect(screen.queryByText(/Hello Sam/)).toBeInTheDocument();\n});\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Mocking `fetch` and awaiting `findByText` synchronizes the test with the async update without hitting the network. The assertion only runs after the DOM contains the expected text.",
+          "distractor_rationale": "B: Timers don't advance Promises or network; no mock provided. C: `queryByText` is sync and will likely run before data arrives. D: `waitFor` can work but without mocking `fetch` it still depends on real network and remains flaky.",
+          "skills_covered": [
+            "Unit Testing",
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "In development you rely on CRA's proxy:\n```json\n{\n  \"name\": \"app\",\n  \"proxy\": \"http://localhost:8000\"\n}\n```\nTwo calls are made from the browser during `npm start`:\n```javascript\nfetch('http://localhost:8000/api/items');\nfetch('/api/items');\n```\nAssuming the backend has no CORS headers, which request(s) will succeed without CORS errors?",
+          "options": [
+            "Only `fetch('http://localhost:8000/api/items')` is proxied and succeeds",
+            "Both are proxied and succeed because host matches",
+            "Neither is proxied; CRA proxy only affects WebSocket connections",
+            "Only `fetch('/api/items')` is proxied and succeeds"
+          ],
+          "correct_option": "D",
+          "explanation": "CRA's simple proxy only rewrites relative-path requests; absolute URLs bypass the dev proxy and require CORS headers. The relative `/api/items` is proxied to `http://localhost:8000/api/items`.",
+          "distractor_rationale": "A/C: Common misunderstanding that host matching or absolute URLs are proxied; CRA proxy is path-based. D: Proxy handles HTTP too, not just WebSockets.",
+          "skills_covered": [
+            "React",
+            "REST API",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You switch from token-in-localStorage to cookie-based auth with httpOnly cookies and CSRF protection. After the change, this call returns 403 CSRF failure:\n```javascript\nawait fetch('/api/profile', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ bio: 'hi' })\n});\n```\nCookies are set by the server on prior login. What change unblocks this request?",
+          "options": [
+            "Send an `Authorization: Bearer <token>` header alongside cookies to satisfy CSRF",
+            "Include credentials and send the CSRF token header extracted from the cookie\n```javascript\nconst csrf = getCookie('csrftoken');\nawait fetch('/api/profile', {\n  method: 'POST',\n  credentials: 'include',\n  headers: {\n    'Content-Type': 'application/json',\n    'X-CSRFToken': csrf\n  },\n  body: JSON.stringify({ bio: 'hi' })\n});\n```",
+            "Use `mode: 'no-cors'` so the browser sends cookies silently",
+            "Store the cookie value in `localStorage` and keep the same fetch options"
+          ],
+          "correct_option": "B",
+          "explanation": "With cookie-based auth, the browser only attaches cookies when `credentials` is set appropriately. Servers with CSRF protection typically also require a CSRF header. Including both satisfies the check.",
+          "distractor_rationale": "B: Moving secrets to localStorage defeats httpOnly and CSRF model. C: `no-cors` cripples the request and doesn't fix CSRF. D: CSRF checks are independent of Authorization headers; cookies still need CSRF mitigation.",
+          "skills_covered": [
+            "Authentication",
+            "REST API",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A snapshot test fails due to a timestamp in the component:\n```jsx\nfunction Stamp() {\n  return <time>{new Date().toISOString()}</time>;\n}\n```\nWhat is the most direct way to make the snapshot deterministic?",
+          "options": [
+            "Use `toMatchInlineSnapshot()` instead of regular snapshots",
+            "```javascript\n// In test setup\ndescribe('Stamp', () => {\n  beforeAll(() => {\n    jest.useFakeTimers();\n    jest.setSystemTime(new Date('2020-01-01T00:00:00.000Z'));\n  });\n  afterAll(() => jest.useRealTimers());\n});\n```",
+            "Modify the component to never render timestamps in production",
+            "Spy on `Date.now` only, without changing timers"
+          ],
+          "correct_option": "B",
+          "explanation": "Freezing time with modern fake timers (and `setSystemTime`) makes `new Date()` deterministic for the test, stabilizing the snapshot.",
+          "distractor_rationale": "B: Inline snapshots still capture the changing value. C: Changing production behavior to satisfy tests is not appropriate. D: `Date.now` mocking doesn't affect `new Date().toISOString()` unless `Date` uses `now` in that environment; freezing system time is safer.",
+          "skills_covered": [
+            "Unit Testing",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given an error boundary:\n```jsx\nfunction ErrorBoundary({ children }) { /* standard class boundary or hook impl */ }\n\nfunction Clicker() {\n  return <button onClick={() => { throw new Error('boom'); }}>Click</button>;\n}\n\nrender(\n  <ErrorBoundary>\n    <Clicker />\n  </ErrorBoundary>\n);\n```\nYou click the button. What happens?",
+          "options": [
+            "React unmounts the entire tree automatically to avoid inconsistent UI",
+            "The boundary shows its fallback UI because it catches errors from event handlers",
+            "Nothing changes in the UI; the error is uncaught by the boundary and logged to the console",
+            "The boundary only catches errors on the second click due to batching"
+          ],
+          "correct_option": "C",
+          "explanation": "Error boundaries catch errors during rendering, lifecycle, and constructors of child components, not in event handlers. An error thrown in an event handler is not caught by the boundary; it surfaces to the console unless you handle it.",
+          "distractor_rationale": "A/D: Misconceptions about boundary coverage and batching. C: React doesn't auto-unmount the whole tree for event handler errors.",
+          "skills_covered": [
+            "React"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You edit documents at `/edit/:id`. Local form state should reset when navigating between ids. Current routes:\n```jsx\n<Routes>\n  <Route path=\"/edit/:id\" element={<Editor />} />\n</Routes>\n```\n`Editor` holds form state in `useState`. Navigating from `/edit/1` to `/edit/2` preserves the old state. Which change ensures a remount so state resets?",
+          "options": [
+            "```jsx\nfunction EditorWrapper() {\n  const { id } = useParams();\n  return <Editor key={id} />;\n}\n\n<Routes>\n  <Route path=\"/edit/:id\" element={<EditorWrapper />} />\n</Routes>\n```",
+            "```jsx\n<Route key=\":id\" path=\"/edit/:id\" element={<Editor />} />\n```",
+            "```jsx\nnavigate(0) after link click to force a full page reload\n```",
+            "```jsx\nuseEffect(() => { /* in Editor */ setFormState(initialState); }, []);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Keying the rendered element by `id` forces React to remount the `Editor` when the param changes, resetting state. Adding a key to the `Route` does not key the element instance.",
+          "distractor_rationale": "B: The key is on the `Route` definition, not the element instance; it won't cause remounts. C: Empty deps won't run on id change. D: Reload works but is a bad UX and defeats SPA routing.",
+          "skills_covered": [
+            "React"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your app logs the API base:\n```javascript\nconsole.log('API:', process.env.REACT_APP_API_URL);\n```\nYou built with `REACT_APP_API_URL=https://staging.api` and later changed the platform env var to `https://prod.api` without rebuilding. In production, what prints and why?",
+          "options": [
+            "`https://staging.api` due to a service worker cache, but it would change on hard refresh",
+            "`https://prod.api`, because the browser reads env vars at runtime from the host",
+            "`undefined`, because `process` is not defined in the browser",
+            "`https://staging.api`, because CRA inlines env vars at build time into the bundle"
+          ],
+          "correct_option": "D",
+          "explanation": "CRA replaces `process.env.REACT_APP_*` at build time. Changing the host env without a rebuild doesn't affect the already-built bundle.",
+          "distractor_rationale": "A: Browsers don't expose host env vars. C: CRA shims `process.env` at build. D: Service workers can cache, but the fundamental reason is compile-time inlining, not caching.",
+          "skills_covered": [
+            "Application Deployment",
+            "JavaScript",
+            "React"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A React search page must feel snappy under poor networks. Current code fires a fetch on each keystroke and sometimes shows stale results. It also occasionally leaves a \"loading\" spinner visible if the component unmounts mid-request. The API is a GET endpoint `/api/search?q=...` that supports ETags and returns JSON arrays.",
+          "task": "Propose a front-end design that ensures last-typed query wins, avoids memory leaks on unmount, keeps keystrokes responsive, and leverages caching when the same query repeats within a session. Include the core code structure (pseudo/real code acceptable) and justify trade-offs.",
+          "expected_answer": "A strong answer specifies: (1) debounce input to reduce requests, plus a last-request-wins guarantee using AbortController and effect cleanup; (2) an in-memory cache keyed by query to return instantly for repeats; (3) using `If-None-Match` with stored ETag and handling 304 to avoid payloads; (4) proper loading/error states and cleanup on unmount; (5) testability considerations.\nExample structure:\n```jsx\nconst cache = new Map(); // { q: { etag, data } }\n\nuseEffect(() => {\n  if (!q.trim()) { setResults([]); return; }\n  const ac = new AbortController();\n  const t = setTimeout(async () => {\n    // serve from cache immediately\n    const cached = cache.get(q);\n    if (cached) setResults(cached.data);\n    const headers = cached?.etag ? { 'If-None-Match': cached.etag } : {};\n    try {\n      const r = await fetch(`/api/search?q=${encodeURIComponent(q)}` , { signal: ac.signal, headers });\n      if (r.status === 304 && cached) return; // we already showed cached\n      const data = await r.json();\n      const etag = r.headers.get('ETag');\n      cache.set(q, { etag, data });\n      setResults(data);\n    } catch (e) {\n      if (e.name !== 'AbortError') setError('Network error');\n    } finally {\n      setLoading(false);\n    }\n  }, 250);\n  return () => { clearTimeout(t); ac.abort(); };\n}, [q]);\n```\nExplain trade-offs: small memory cost for cache, debounce may delay first character responsiveness, ETag requires backend support. Tests: mock fetch and assert abort is called on rapid typing; assert cache hit path has no network.\n",
+          "rubric": [
+            {
+              "criterion": "Guarantees latest-request-wins (AbortController or equivalent) and explains why it prevents stale commits",
+              "marks": 2
+            },
+            {
+              "criterion": "Debounce rationale and implementation tied to perceived responsiveness",
+              "marks": 2
+            },
+            {
+              "criterion": "Session cache and conditional request (ETag/304) with correct header/behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Cleanup on unmount and error/loading handling; mentions testability (mocking fetch/aborts)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your SPA currently stores JWTs in `localStorage` and adds them as `Authorization` headers. Security requests a switch to httpOnly cookies with rotating refresh tokens and CSRF protection. Backend provides: `/auth/refresh` (rotates refresh cookies), access token in a non-httpOnly cookie is NOT allowed; CSRF token available in a `csrftoken` cookie; CORS allowed for your origin with credentials.",
+          "task": "Design the front-end auth flow: how requests include credentials, how to attach CSRF tokens, how to handle 401s by refreshing once, and how to avoid infinite loops or replaying unsafe requests. Specify where this logic lives and any routing guards you would add.",
+          "expected_answer": "Proposed flow: Use a fetch wrapper that always sets `credentials:'include'`. For unsafe methods, read `csrftoken` from a readable cookie and attach `X-CSRFToken`. On 401 from API (not from `/auth/refresh`), attempt one refresh by calling `/auth/refresh` with credentials. If refresh succeeds, retry the original request once. If it fails, redirect to `/login` and clear any UI user state. Use a reentrancy guard (e.g., a flag or queue) to avoid concurrent refresh storms. Never store tokens in JS. For protected routes, add a route guard that pings `/auth/me` on app load (with credentials) to hydrate user or redirect. Pseudocode:\n```javascript\nasync function api(input, init={}) {\n  const headers = new Headers(init.headers);\n  if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(init.method || 'GET')) {\n    const csrf = getCookie('csrftoken');\n    headers.set('X-CSRFToken', csrf);\n  }\n  const doFetch = () => fetch(input, { ...init, headers, credentials: 'include' });\n  let r = await doFetch();\n  if (r.status !== 401 || input.toString().includes('/auth/refresh')) return r;\n  if (api._refreshing) { await api._refreshing; return doFetch(); }\n  api._refreshing = fetch('/auth/refresh', { credentials: 'include' })\n    .then(x => { api._refreshing = null; if (!x.ok) throw new Error('refresh failed'); });\n  try { await api._refreshing; } catch { return r; }\n  return doFetch();\n}\n```\nRouting: a ProtectedRoute checks hydrated auth state or triggers a silent `/auth/me` check; on failure, `navigate('/login', { replace: true })`. Avoid infinite loops by not attempting refresh for refresh endpoint itself, and by retrying at most once.",
+          "rubric": [
+            {
+              "criterion": "Correct use of `credentials:'include'` and CSRF header attachment for unsafe methods",
+              "marks": 2
+            },
+            {
+              "criterion": "401 handling with a single refresh attempt and safe retry strategy; prevents refresh storms",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids storing tokens in JS; explains cookie/SameSite/secure implications",
+              "marks": 1
+            },
+            {
+              "criterion": "Protected routing strategy and failed-auth redirect without loops",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "REST API",
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A form component posts JSON to `/api/items` and renders server-side validation errors next to fields. Tests are flaky in CI: sometimes they pass locally but fail in CI due to timing. Component uses `fetch` in `onSubmit`, disables the submit button while pending, and re-enables it on completion.",
+          "task": "Describe a reliable test plan with React Testing Library and Jest that verifies: (1) POST body is correct, (2) server errors render next to fields, (3) button is disabled while pending, even on slow CI, and (4) no real network is used. Include key code snippets or APIs you would use and why.",
+          "expected_answer": "Plan: Mock `fetch` with `jest.fn()` returning a controllable Promise. Use `userEvent` to type and submit. Assert the disabled state using `toBeDisabled()` while the Promise is pending. Resolve/reject the Promise to simulate success/error and `await` UI using `findByText` or `waitFor`.\nSnippets:\n```javascript\nglobal.fetch = jest.fn();\n\nit('posts correct body and shows errors', async () => {\n  let resolve;\n  const pending = new Promise(r => { resolve = r; });\n  fetch.mockResolvedValueOnce({ ok: false, json: () => Promise.resolve({ errors: { name: 'Required' } }) });\n  render(<Form/>);\n  await user.type(screen.getByLabelText(/name/i), '');\n  await user.click(screen.getByRole('button', { name: /save/i }));\n  expect(fetch).toHaveBeenCalledWith('/api/items', expect.objectContaining({\n    method: 'POST',\n    headers: expect.objectContaining({ 'Content-Type': 'application/json' }),\n    body: JSON.stringify({ name: '' })\n  }));\n  // simulate slow network\n  fetch.mockResolvedValueOnce({ ok: false, json: async () => ({ errors: { name: 'Required' } }) });\n  expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();\n  expect(await screen.findByText('Required')).toBeInTheDocument();\n  expect(screen.getByRole('button', { name: /save/i })).not.toBeDisabled();\n});\n```\nUse `findBy*` queries to await DOM updates. Never perform real network calls. Optionally assert there are no unresolved requests using `expect(fetch).toHaveBeenCalledTimes(n)` and ensure cleanup between tests.",
+          "rubric": [
+            {
+              "criterion": "Mocks network deterministically; no real network used; uses controllable promises",
+              "marks": 2
+            },
+            {
+              "criterion": "Asserts correct POST shape (method, headers, body)",
+              "marks": 2
+            },
+            {
+              "criterion": "Verifies pending disabled state and re-enable flow reliably using async RTL APIs",
+              "marks": 2
+            },
+            {
+              "criterion": "Checks server error rendering next to fields with appropriate selectors",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "React",
+            "REST API",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You deployed a React SPA to a static host. Issues observed: (a) hard-refreshing `/items/42` returns 404 from the host, (b) production still points to staging API after you changed an env var in the host UI, and (c) `.map` source files are publicly served in production.",
+          "task": "Specify deployment and build changes to fix all three with minimal disruption. Include concrete config/env steps and explain why they work.",
+          "expected_answer": "(a) Configure SPA fallback: on Netlify add `_redirects` with `/* /index.html 200`; on S3/CloudFront set 403/404 error responses to `/index.html`. This serves the SPA for deep links.\n(b) Env var changes require a rebuild for CRA-inlined vars. If runtime mutability is needed, serve a `/config.json` and load it at app start (`window.__APP_CONFIG__`) so changing it doesn't need a rebuild.\n(c) Disable source maps in production by setting `GENERATE_SOURCEMAP=false` at build time or configuring the server not to serve `*.map` (e.g., Nginx `location ~ \\.map$ { return 404; }`). Document these steps in README and CI pipeline.\n",
+          "rubric": [
+            {
+              "criterion": "Correct SPA fallback configuration for deep links on at least one static host (e.g., Netlify or S3/CloudFront)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains build-time env inlining and provides a runtime-config alternative or mandates rebuilds",
+              "marks": 2
+            },
+            {
+              "criterion": "Disables serving source maps with a concrete setting or server rule and rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides actionable steps (files/vars) and justification for each fix",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build an API-connected React interface with routing and robust fetching",
+          "brief": "Create a small React app that lists and views items from a REST API. It must implement client-side routing, loading/error states, and prevent stale results on rapid input changes. Include unit tests for the data-fetch and routing behaviors.",
+          "deliverable": "Git repository URL with source code, a README with setup instructions, and a test report (e.g., `npm test` output).",
+          "acceptance_criteria": [
+            "Routes: `/items` shows a paginated or searchable list; `/items/:id` shows a detail view driven by the `:id` param.",
+            "Data fetching uses `AbortController` to cancel in-flight requests when query changes or component unmounts (assessed by reading code).",
+            "Loading and error UI is visible and distinct for list and detail views.",
+            "Relative API calls (e.g., `/api/items`) are used so a dev proxy can work; the base URL is not hardcoded to `localhost` in source.",
+            "Unit tests (React Testing Library + Jest): at least 3 passing tests covering (1) list fetch success path using a mocked `fetch`, (2) detail route renders item after navigation, (3) stale request is canceled or ignored on rapid query changes.",
+            "No use of `dangerouslySetInnerHTML` for API data, or demonstrate server-sanitized HTML with a sanitizer in code.",
+            "`npm start` runs the app locally and `npm test` executes tests without hitting real network."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct routing and parameter-driven data load for list and detail routes",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust fetching (abort on change/unmount) with clear loading/error states",
+              "marks": 6
+            },
+            {
+              "criterion": "Unit tests: mocking, async assertions, routing coverage; tests pass",
+              "marks": 6
+            },
+            {
+              "criterion": "Configuration hygiene (relative API path, README with setup) and basic security (no unsafe HTML)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy the capstone SPA with runtime config and production hardening",
+          "brief": "Package and deploy the app to a public URL over HTTPS. Make the API base configurable without code changes and ensure SPA deep links work in production. Include basic CI to run tests on push.",
+          "deliverable": "Live production URL, repository URL, and README documenting build/deploy steps and how to change the API base at runtime.",
+          "acceptance_criteria": [
+            "App is publicly accessible over HTTPS at the provided URL. Navigating directly to a deep route (e.g., `/items/42`) loads the SPA, not a 404 page.",
+            "API base is read from a runtime configuration file served by the app (for example `/config.json` or `window.__APP_CONFIG__` script). The file is present and readable in production, and the bundle does not hardcode `localhost` or environment-specific URLs.",
+            "Changing the runtime config file’s API base and redeploying static assets (without rebuilding the JS bundle) switches the API target. Document the procedure in README.",
+            "Source maps are not served publicly (e.g., `GET <prod>/static/js/*.map` returns 404). Document how this is enforced (e.g., `GENERATE_SOURCEMAP=false` or server rule).",
+            "A basic CI workflow runs `npm ci && npm test && npm run build` on push or PR, visible in the repo (config file present, e.g., GitHub Actions YAML)."
+          ],
+          "rubric": [
+            {
+              "criterion": "HTTPS deployment works and SPA fallback for deep links is correctly configured",
+              "marks": 5
+            },
+            {
+              "criterion": "Runtime configuration for API base is implemented and documented; no hardcoded environment URLs in code",
+              "marks": 6
+            },
+            {
+              "criterion": "Production hardening: source maps disabled or blocked; justification provided",
+              "marks": 4
+            },
+            {
+              "criterion": "CI pipeline present and runs tests/build; evidence in repo",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "React",
+            "REST API",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

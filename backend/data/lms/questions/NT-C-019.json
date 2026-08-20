@@ -1,0 +1,1826 @@
+{
+  "course_code": "NT-C-019",
+  "course_name": "Web Development / Web Designing",
+  "sections": [
+    {
+      "section_code": "NT-C-019-S01",
+      "skills_assessed": [
+        "HTML",
+        "CSS",
+        "Typography"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit a header with a primary nav. Inspect the DOM and styles:\n\n```html\n<header>\n  <nav class=\"primary\">\n    <a class=\"btn\" href=\"/buy\">Buy now</a>\n  </nav>\n</header>\n```\n\n```css\nnav a { color: #555; }\nheader nav a.btn { color: red; }\nheader a { color: green !important; }\n```\n\nOn first paint, what color does the \"Buy now\" link render as, and why?",
+          "options": [
+            "#FF0000 (red)",
+            "#555 (inherited from nav rule)",
+            "Browser default blue because :link overrides author rules",
+            "green"
+          ],
+          "correct_option": "D",
+          "explanation": "The `header a { color: green !important; }` declaration has `!important`, so it overrides the more specific selector without `!important`. No other `!important` competes, so the computed color is green.",
+          "distractor_rationale": "B: Looks plausible because `header nav a.btn` is more specific, but `!important` on a less specific selector still wins over non-important.\nC: Tempting if you recall the cascade but ignore `!important`.\nD: Pseudo-classes don't automatically trump authored declarations; browser defaults are the lowest priority and are overridden here.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider adjacent margins between siblings:\n\n```html\n<article class=\"post\">\n  <h1>Title</h1>\n  <p class=\"lead\">Intro paragraph</p>\n</article>\n```\n\n```css\n.post { background:#fafafa; }\nh1 { margin-bottom: 24px; }\n.lead { margin-top: 16px; }\n```\n\nWhat is the vertical gap rendered between the bottom of the `h1` box and the top of the `.lead` paragraph?",
+          "options": [
+            "24px",
+            "16px",
+            "0px, because margins collapse to nothing inside the same formatting context",
+            "40px"
+          ],
+          "correct_option": "A",
+          "explanation": "Between adjacent block-level siblings, vertical margins collapse to the maximum of the two. max(24px, 16px) = 24px.",
+          "distractor_rationale": "B: Summing margins is a common mistake; siblings' vertical margins collapse, they do not add.\nC: Picking the smaller value is another collapse misconception; the max is used.\nD: Margins don't collapse to zero between siblings unless both are zero.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You are debugging unexpected horizontal scrollbars.\n\n```html\n<div class=\"container\">\n  <div class=\"box\">…</div>\n</div>\n```\n\n```css\n.container { width: 300px; background:#eee; }\n.box {\n  width: 100%;\n  padding: 20px;\n  border: 5px solid #999;\n  box-sizing: content-box;\n}\n```\n\nHow wide does `.box` render and what is the effect?",
+          "options": [
+            "300px; it fits because percentage widths exclude padding and border",
+            "350px; it overflows the container by 50px",
+            "300px; the border paints outside the container but does not cause overflow",
+            "260px; the content width shrinks to accommodate padding and border"
+          ],
+          "correct_option": "B",
+          "explanation": "With `box-sizing: content-box`, `width:100%` sets the content box to 300px. Padding (40px) and border (10px) are added outside, yielding 350px total, so it overflows by 50px.",
+          "distractor_rationale": "A: Percentage widths do exclude padding/border in the calculation, but those still add to the rendered size and cause overflow.\nC: Content does not auto-shrink; the box grows beyond the container in this case.\nD: Borders are part of the box model and contribute to overflow; they don't magically paint outside without affecting layout.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Compute the font size of the inner `span`.\n\n```html\n<html>\n  <body>\n    <article class=\"card\">\n      <h2>Plan</h2>\n      <p class=\"price\"><span>$9</span>/mo</p>\n    </article>\n  </body>\n</html>\n```\n\n```css\nhtml { font-size: 62.5%; } /* 16px * 0.625 = 10px root */\n.card { font-size: 1.2rem; }     /* 12px */\n.card h2 { font-size: 1.5em; }   /* 18px */\n.price { font-size: 0.9em; }     /* 10.8px */\n.price span { font-size: 1rem; }\n```\n\nWhat is the computed font-size of `.price span`?",
+          "options": [
+            "10px",
+            "12px",
+            "10.8px",
+            "18px"
+          ],
+          "correct_option": "A",
+          "explanation": "`1rem` is always relative to the root element. Root is 10px, so `.price span` is 10px regardless of the parent's 10.8px.",
+          "distractor_rationale": "A: Confuses `rem` with inheriting the component's `rem`-scaled size.\nB: That's the parent's size using `em`, not the child's `rem`.\nD: That's the `h2` size; unrelated to the `.price span`.",
+          "skills_covered": [
+            "CSS",
+            "Typography"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You need separators in a breadcrumb nav without touching the main menu.\n\n```html\n<nav class=\"primary\">\n  <ul>\n    <li><a href=\"/\">Home</a></li>\n    <li><a href=\"/shop\">Shop</a></li>\n  </ul>\n</nav>\n\n<nav aria-label=\"breadcrumb\">\n  <ol>\n    <li><a href=\"/\">Home</a></li>\n    <li><a href=\"/shop\">Shop</a></li>\n    <li>Tees</li>\n  </ol>\n</nav>\n```\n\nWhich selector adds a slash before each breadcrumb item except the first, without affecting the primary nav?",
+          "options": [
+            "```css\nnav[aria-label=\"breadcrumb\"] li+li::before { content: \"/\"; }\n```",
+            "```css\nnav[aria-label=\"breadcrumb\"] ol > li::after { content: \"/\"; }\n```",
+            "```css\nnav li:not(:last-child)::after { content: \"/\"; }\n```",
+            "```css\n[aria-label=breadcrumb] > a::after { content: \"/\"; }\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`li+li::before` targets every list item that has a previous sibling, so no separator appears before the first item. Scoping to `nav[aria-label=\"breadcrumb\"]` avoids touching the primary nav.",
+          "distractor_rationale": "B: Adds separators in all navs, including the primary menu.\nC: The breadcrumb links are inside `li` elements within an `ol`, not direct children of the `nav`.\nD: Appends a separator after every item including the last, which is not desired.",
+          "skills_covered": [
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given the following rules, what color will a hovered, already-visited link inside `.nav` render?\n\n```css\na { color: blue; }\na:visited { color: purple; }\n.nav a:hover { color: red; }\na:active { color: orange; }\n```\n",
+          "options": [
+            "purple",
+            "blue",
+            "red",
+            "It depends on source order; visited always wins over hover"
+          ],
+          "correct_option": "C",
+          "explanation": "`.nav a:hover` has higher specificity (class + pseudo-class + element) than `a:visited` (element + pseudo-class). On a visited link inside `.nav`, hover wins, so it turns red.",
+          "distractor_rationale": "B: `:visited` can be overridden by a more specific matching rule.\nC: The base `a` rule is overridden by both `:visited` and `:hover`.\nD: Source order only tiebreaks equal specificity. `:visited` does not inherently outrank `:hover`.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A gray `main` wraps a hero section, but the hero's top margin seems to sit above the gray background.\n\n```html\n<main class=\"content\">\n  <section class=\"hero\">…</section>\n</main>\n```\n\n```css\n.content { background:#f0f0f0; }\n.hero { margin-top: 40px; }\n```\n\nWithout changing markup or the `.hero` rule, which single change to `.content` ensures the 40px gap appears inside the gray background (not above it) with minimal side effects?",
+          "options": [
+            "```css\n.content { padding-top: 1px; }\n```",
+            "```css\n.content { display: flow-root; }\n```",
+            "```css\n.content { overflow: hidden; }\n```",
+            "```css\n.hero { position: relative; }\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`display: flow-root` establishes a new block formatting context, preventing the child's top margin from collapsing with the parent, without clipping or scroll-related side effects.",
+          "distractor_rationale": "A: Also creates a BFC and would work, but it can clip overflowing children and affect scrollbars.\nB: Prevents collapse but introduces a visual 1px you must compensate for.\nD: Changing `.hero` was disallowed; `position: relative` does not prevent margin collapse here.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Style only external links (absolute HTTP(S) URLs not on `site.com`, including protocol-relative), leaving internal and hash/mail links untouched. Which selector set works?\n",
+          "options": [
+            "```css\na[href*=\"://\"]:not([href*=\"site.com\"]) { /* style */ }\n```",
+            "```css\na[href^=\"http\"]:not([href*=\"//site.com\"]),\na[href^=\"//\"]:not([href*=\"//site.com\"]) { /* style */ }\n```",
+            "```css\na:not([href^=\"/\"]) { /* style */ }\n```",
+            "```css\na[href^=\"http\"]:not([href^=\"https://site.com\"]) { /* style */ }\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "It matches `http` and protocol-relative `//` URLs while excluding any that contain the site's host. It avoids styling `mailto:`/`tel:` and relative URLs.",
+          "distractor_rationale": "B: Fails for `http://site.com` and any absolute URLs that start with `http` but point to the same host.\nC: Misses protocol-relative links (`//…`).\nD: Styles `mailto:`, `tel:`, `#hash`, etc., which are not external HTTP(S) links.",
+          "skills_covered": [
+            "CSS",
+            "HTML"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You see this invalid markup in a hero intro:\n\n```html\n<p class=\"intro\">Welcome <div class=\"badge\">New</div> to our site.</p>\n```\n\nHow do browsers repair and render it in the DOM?",
+          "options": [
+            "`<div>` is allowed inside `<p>` and becomes inline, so the background wraps everything.",
+            "Browsers wrap the `<div>` in a `<span>` to keep it inline inside the paragraph.",
+            "The invalid `<div>` is dropped from the DOM entirely to preserve flow.",
+            "They auto-close the `<p>` before the `<div>`, then open a new anonymous paragraph after the `<div>`. The `.intro` background will not wrap the badge."
+          ],
+          "correct_option": "D",
+          "explanation": "Block-level elements are not permitted inside `<p>`. The parser implicitly closes the `<p>` before the `<div>`, then continues text afterward, so the background of `.intro` doesn't include the badge.",
+          "distractor_rationale": "B: `<div>` does not become inline; it's block-level and forces paragraph closure.\nC: Browsers do error correction, not silent node removal here.\nD: They don't auto-wrap block elements in inline elements; they restructure by closing the paragraph.",
+          "skills_covered": [
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You style a heading link with `currentColor`.\n\n```html\n<article class=\"card\">\n  <h2><a href=\"#\">Item</a></h2>\n</article>\n```\n\n```css\n.card { color: #333; }\n.card h2 a {\n  color: royalblue;\n  border-bottom: 2px solid currentColor;\n}\n```\n\nWhat color is the underline (border-bottom) of the link?",
+          "options": [
+            "transparent, because borders don't inherit",
+            "#333",
+            "royalblue",
+            "The browser default text color"
+          ],
+          "correct_option": "C",
+          "explanation": "`currentColor` resolves to the computed `color` of the element it’s used on, which is `royalblue` for the `a` element here.",
+          "distractor_rationale": "B: `currentColor` doesn't look up to the parent when the element has its own `color`.\nC: The link’s `color` is set explicitly; defaults don’t apply.\nD: Borders use `currentColor` as a valid value; they are not transparent unless specified.",
+          "skills_covered": [
+            "CSS",
+            "Typography"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A landing page arrived with this structure and styles:\n\n```html\n<div id=\"top\">\n  <div id=\"nav\"><a href=\"/\">Home</a> | <a href=\"/about\">About</a></div>\n  <div id=\"content\">\n    <div class=\"block\">\n      <div class=\"ttl\">Welcome</div>\n      <div class=\"sub\">Our mission</div>\n      <div class=\"txt\">…</div>\n    </div>\n  </div>\n  <div id=\"btm\">© 2026</div>\n</div>\n```\n\n```css\n#top #nav a { color:#222; font-weight:bold; }\n#content .block .ttl { font-size:28px; margin:24px 0 12px; }\n#content .block .sub { font-size:20px; margin:0 0 16px; }\n#content .block .txt { line-height:1.6; }\n```\n\nStakeholders complain that maintaining styles is difficult and headings don’t read well in screen outlines. You may not change the visual design yet, only the HTML semantics and selector strategy.",
+          "task": "Propose a semantic rewrite of the HTML using landmark and heading elements, and rewrite the selectors to target those semantics with lower, more robust specificity. Justify your choices regarding heading levels and how your CSS avoids future specificity battles while preserving the current look.",
+          "expected_answer": "A strong answer replaces generic wrappers with landmarks and true headings, e.g.:\n\n```html\n<header>\n  <nav aria-label=\"primary\">\n    <ul>\n      <li><a href=\"/\">Home</a></li>\n      <li><a href=\"/about\">About</a></li>\n    </ul>\n  </nav>\n</header>\n<main>\n  <article class=\"block\">\n    <h1>Welcome</h1>\n    <h2>Our mission</h2>\n    <p>…</p>\n  </article>\n</main>\n<footer>© 2026</footer>\n```\n\nSelectors are simplified and class-scoped instead of deep ID chains, e.g.:\n\n```css\nnav[aria-label=\"primary\"] a { color:#222; font-weight:700; }\n.block h1 { font-size:28px; margin:24px 0 12px; }\n.block h2 { font-size:20px; margin:0 0 16px; }\n.block p  { line-height:1.6; }\n```\n\nJustification: Headings use `<h1>` and `<h2>` to reflect page structure, improving outlines and document navigation. Landmark elements (`header`, `nav`, `main`, `footer`) clarify page regions and reduce the need for IDs. Selector specificity is lowered (no descendant ID chains), easing overrides and maintenance. Visual parity is maintained by mapping previous font sizes/margins to semantic selectors. Optional rationale on nav list semantics for keyboard focus order and future styling flexibility.",
+          "rubric": [
+            {
+              "criterion": "Rewrites markup with appropriate landmarks (`header`, `nav`, `main`, `footer`) and list-based nav",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses a coherent heading hierarchy (h1 for page/section title, h2 for subtitle) and removes faux headings",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides CSS selectors scoped to semantics/classes with reduced specificity versus original ID chains",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies choices (outlines/readability/maintainability) and explains how visual parity is preserved",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS",
+            "Typography"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A product card component shows irregular vertical spacing depending on which child elements are present. Current markup and styles:\n\n```html\n<article class=\"card\">\n  <h3 class=\"title\">Tee</h3>\n  <p class=\"price\">$20</p>\n  <p class=\"desc\">Soft cotton tee.</p>\n</article>\n```\n\n```css\n.card .title { margin-bottom: 12px; }\n.card .price { margin-top: 8px; margin-bottom: 8px; }\n.card .desc { margin-top: 12px; }\n```\n\nWhen `.desc` is omitted, the gap below `.price` differs from cards that include `.desc`. You cannot add wrapper elements.",
+          "task": "Recommend a selector-based spacing strategy that yields a consistent vertical rhythm between whatever children appear, and rewrite the minimal CSS to implement it. Explain why it fixes the inconsistency and how it interacts with margin collapse.",
+          "expected_answer": "Use the \"stack\" pattern to space adjacent children uniformly, independent of which elements are present:\n\n```css\n.card > * + * { margin-top: 12px; }\n/* Remove individual element margins */\n.card .title, .card .price, .card .desc { margin: 0; }\n```\n\nExplanation: By zeroing specific margins and applying `margin-top` only to elements that have a preceding sibling, every gap is the same (12px) whether `.desc` exists or not. Because the margins are between siblings inside the same formatting context, no container edges are involved and collapse with the card’s edges is avoided. The first child has no top margin by definition of the combinator rule.",
+          "rubric": [
+            {
+              "criterion": "Proposes the adjacent-sibling stack pattern (e.g., `.card > * + * { margin-top: N }`) or an equivalent that yields uniform gaps",
+              "marks": 3
+            },
+            {
+              "criterion": "Removes or neutralizes element-specific margins that would conflict with the stack rule",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the approach avoids margin collapse at container edges and ensures consistent spacing when children vary",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Design wants a type scale that shrinks inside compact components but remains consistent relative to the page base. Today you see mixed `px`/`em` sizes and unpredictable scaling.",
+          "task": "Define a root and component strategy using `rem` for global scale and `em` for component-relative scaling. Specify concrete CSS for `html`, `body`, a `.card` component, and its `h2` and `.meta` text that yields: page base 16px, card base 14px, card `h2` 21px, and card `.meta` 12px. Explain the choice of units and compute each size.",
+          "expected_answer": "Set the root and page base with `rem`, then scale the component with `em` so it shrinks proportionally:\n\n```css\nhtml { font-size: 100%; }      /* 16px root */\nbody { font-size: 1rem; }      /* 16px text */\n.card { font-size: 0.875rem; } /* 14px base inside card */\n.card h2 { font-size: 1.5em; } /* 14px * 1.5 = 21px */\n.card .meta { font-size: 0.8571429em; } /* 14px * 0.857… ≈ 12px */\n```\n\nReasoning: Use `rem` to tie to global scale, so changing `html` cleanly resizes the site. Use `em` inside components to scale their children with the component base. Computations: root 16px; `.card` base 0.875rem = 14px; `h2` 1.5em of 14px = 21px; `.meta` ≈ 12px.",
+          "rubric": [
+            {
+              "criterion": "Correctly sets root and page base with `rem` to 16px and component base to 14px",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses `em` within the component to achieve 21px heading and ~12px meta with correct calculations",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains rationale for `rem` vs `em` and how changes propagate predictably",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Typography"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your page has two navigations that currently share styles:\n\n```html\n<header>\n  <nav class=\"primary\">\n    <ul>\n      <li><a href=\"/\">Home</a></li>\n      <li><a href=\"/shop\">Shop</a></li>\n    </ul>\n  </nav>\n</header>\n<main>\n  <nav aria-label=\"breadcrumb\">\n    <ol>\n      <li><a href=\"/\">Home</a></li>\n      <li><a href=\"/shop\">Shop</a></li>\n      <li>Tees</li>\n    </ol>\n  </nav>\n</main>\n```\n\nCurrent CSS uses `nav a { … }`, which makes breadcrumb links look like the main menu.",
+          "task": "Propose a selector strategy that isolates styles for the primary navigation and breadcrumb using existing semantics/attributes only. Include hover/visited states ordered to avoid unexpected overrides. Briefly justify how your approach scales if a footer nav is added later.",
+          "expected_answer": "Scope the primary nav to its class or position and the breadcrumb to its ARIA label. Example:\n\n```css\n/* Primary nav */\nnav.primary a:link, nav.primary a:visited { color:#222; font-weight:600; }\nnav.primary a:hover, nav.primary a:active { color:#c00; }\n\n/* Breadcrumb */\nnav[aria-label=\"breadcrumb\"] li+li::before { content:\"/\"; margin:0 .5ch; color:#888; }\nnav[aria-label=\"breadcrumb\"] a:link, nav[aria-label=\"breadcrumb\"] a:visited { color:#06c; }\nnav[aria-label=\"breadcrumb\"] a:hover, nav[aria-label=\"breadcrumb\"] a:active { color:#039; }\n```\n\nJustification: Using `nav.primary` and `nav[aria-label=\"breadcrumb\"]` cleanly separates concerns with low specificity, avoids leaking styles to other navs, and respects LoVe/HAte ordering to prevent hover from being trumped by visited. Adding a footer nav later can use `footer nav` or a `secondary` class without touching existing rules.",
+          "rubric": [
+            {
+              "criterion": "Provides correctly scoped selectors for primary nav and breadcrumb using existing semantics/attributes",
+              "marks": 3
+            },
+            {
+              "criterion": "Orders link pseudo-classes to avoid override issues (:link/:visited before :hover/:active)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how the approach prevents style leakage and scales to new navs",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Author a semantic two-page microsite",
+          "brief": "Create two HTML pages (index.html and article.html) that demonstrate correct, maintainable document structure using semantic HTML only. No frameworks or JavaScript. Minimal placeholder content is fine. Focus on landmarks, headings, and structural semantics that communicate meaning without relying on classes for structure.",
+          "deliverable": "Semantic pages",
+          "acceptance_criteria": [
+            "Two files exist: index.html and article.html",
+            "Each page contains exactly one <main> landmark, plus appropriate <header>, <nav>, and <footer>",
+            "Primary navigation is a list-based menu inside <nav>; breadcrumb is an <nav aria-label=\"breadcrumb\"> with an <ol>",
+            "article.html contains an <article> with at least one nested <section>, a <figure> with <img> and <figcaption>, and a <time datetime> element",
+            "Headings form a logical hierarchy without skipping levels within a section (e.g., h1 then h2/h3 as appropriate)",
+            "No invalid block-in-inline nesting (e.g., no <div> inside <p>); HTML validates without structural errors",
+            "Links used for navigation/actions; no <button> used for plain navigation links",
+            "No duplicate IDs; all IDs (if any) are unique within a page"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct use of landmarks (header/nav/main/footer) with exactly one main per page",
+              "marks": 6
+            },
+            {
+              "criterion": "Logical, consistent heading hierarchy reflecting page and section structure",
+              "marks": 5
+            },
+            {
+              "criterion": "Proper use of structural/media semantics (article/section, figure/figcaption, time, list-based nav/breadcrumb)",
+              "marks": 4
+            },
+            {
+              "criterion": "Valid, well-formed HTML without mis-nesting or structural validation errors",
+              "marks": 3
+            },
+            {
+              "criterion": "Appropriate link/button semantics for navigation vs. actions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Style the microsite with selectors, box model, and type/color system",
+          "brief": "Add a single external CSS file (styles.css) to the two pages from Task 1 to demonstrate selector quality, box model control, a typographic scale, and a small color palette. Do not change the HTML structure from Task 1.",
+          "deliverable": "Styled pages",
+          "acceptance_criteria": [
+            "All styling is in styles.css; no inline styles",
+            "Set html { font-size: 62.5%; } and body { font-size: 1.6rem; } to establish a 10px rem baseline and 16px body text",
+            "Define a typographic scale using rem for page-level headings and em inside components so a .card (or article) can scale its children; document at least h1 and h2 sizes and ensure they compute to 24px and 20px respectively at the page level",
+            "Apply box-sizing: border-box globally and demonstrate a card or content box with padding and border that fits a fixed-width container without overflow",
+            "Implement consistent vertical rhythm within a component using a combinator pattern (e.g., .card > * + * { margin-top: 16px; }) instead of per-element margins",
+            "Style the primary nav and breadcrumb separately using selectors that do not affect each other; breadcrumb separators added via CSS (no extra markup)",
+            "Define at least three CSS custom properties for colors (e.g., --color-text, --color-accent, --color-muted) and use them for text, links, and separators",
+            "Ensure link state rules use correct order (:link/:visited/:hover/:active) and hover styles are visible on both navs"
+          ],
+          "rubric": [
+            {
+              "criterion": "Typographic system with rem/em correctly producing specified computed sizes and scalable components",
+              "marks": 6
+            },
+            {
+              "criterion": "Selector quality and scoping (primary vs breadcrumb), with correct pseudo-class ordering",
+              "marks": 5
+            },
+            {
+              "criterion": "Box model control: global border-box and containers without overflow; consistent intra-component spacing using combinators",
+              "marks": 5
+            },
+            {
+              "criterion": "Color system implemented with CSS variables and applied consistently to text/links/separators",
+              "marks": 2
+            },
+            {
+              "criterion": "Code organization: single external stylesheet, no inline styles; HTML from Task 1 unchanged",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Typography",
+            "HTML"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-019-S02",
+      "skills_assessed": [
+        "CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Given the following layout, what widths do the three items end up with?\n\n```html\n<div class=\"wrap\">\n  <div class=\"item a\">A</div>\n  <div class=\"item b\">B</div>\n  <div class=\"item c wide\">C</div>\n</div>\n```\n\n```css\n.wrap { display: flex; width: 600px; }\n.item { flex: 1 1 200px; }\n.wide { flex: 2 1 300px; }\n```\nAssume no borders/gaps and the content can shrink. Answer approximately in pixels for A, B, C.",
+          "options": [
+            "B: 171, 171, 257",
+            "D: 120, 120, 360",
+            "C: 150, 150, 300",
+            "A: 200, 200, 200"
+          ],
+          "correct_option": "A",
+          "explanation": "Total flex-basis is 200 + 200 + 300 = 700px, container is 600px so there is -100px free space. With flex-shrink: 1 for all, shrink is proportional to flex-basis. Shrink amounts: A 28.57px, B 28.57px, C 42.86px. Final widths: A≈171, B≈171, C≈257.",
+          "distractor_rationale": "A: Treats flex as distributing space equally regardless of bases (ignores shrink math). C: Shrinks each item equally by 50px (not proportional to basis). D: Assumes grow factor 2 applies during shrink or that C can't shrink (misapplies grow vs shrink).",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this grid and five items placed in DOM order A–E. Where does E land?\n\n```html\n<div class=\"container\">\n  <div class=\"item a\">A</div>\n  <div class=\"item b\">B</div>\n  <div class=\"item c\">C</div>\n  <div class=\"item d\">D</div>\n  <div class=\"item e\">E</div>\n</div>\n```\n\n```css\n.container {\n  display: grid;\n  grid-template-columns: repeat(3, 100px);\n  grid-auto-rows: 50px;\n  grid-auto-flow: row dense;\n  gap: 0;\n}\n.a { grid-column: 1 / span 2; }\n.b { grid-column: 2 / span 2; }\n.c { grid-column: span 2; }\n/* D and E have no explicit placement */\n```\nAssume default auto-placement rules otherwise.",
+          "options": [
+            "B: Row 2, Col 1",
+            "D: Row 3, Col 3",
+            "C: Row 2, Col 2",
+            "A: Row 1, Col 3"
+          ],
+          "correct_option": "A",
+          "explanation": "A occupies row1 col1–2, leaving row1 col3 empty. B cannot fit row1 col2–3 so moves to row2 col2–3. C needs 2 columns; the first place it fits is row3 col1–2. D back-fills the earliest 1x1 hole at row1 col3 (dense). The next hole is row2 col1, so E lands at row2 col1.",
+          "distractor_rationale": "A: Tempting because of the visible hole, but D fills that first. C: Looks plausible if you ignore dense backfilling priority. D: Misreads auto-placement; there is an earlier hole in row2 col1 that dense will fill before creating a new row.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "At 640px viewport width, what font-size applies to .card?\n\n```css\n.card { font-size: 14px; }\n@media (min-width: 600px) { .card { font-size: 18px; } }\n@media (min-width: 500px) { .card { font-size: 16px; } }\n```\nBoth media queries match.",
+          "options": [
+            "A: 14px",
+            "B: 16px",
+            "C: 18px",
+            "D: 20px"
+          ],
+          "correct_option": "B",
+          "explanation": "With mobile-first min-width queries, when multiple rules match, normal cascade and source order decide. The later 500px block comes after the 600px block and has equal specificity, so it wins: 16px.",
+          "distractor_rationale": "A: Ignores that media queries override base rule. C: Assumes larger min-width always wins, ignoring later source order. D: No rule sets 20px.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What logs when clicking a newly appended list item?\n\n```html\n<ul id=\"list\">\n  <li class=\"item\">One</li>\n</ul>\n<button id=\"add\">Add</button>\n```\n\n```javascript\nconst items = document.querySelectorAll('#list .item');\nitems.forEach(li => li.addEventListener('click', () => console.log('item')));\n\ndocument.getElementById('add').addEventListener('click', () => {\n  const li = document.createElement('li');\n  li.className = 'item';\n  li.textContent = 'New';\n  document.getElementById('list').appendChild(li);\n});\n```\nThen click the newly added \"New\" item.",
+          "options": [
+            "C: Throws because NodeList is stale",
+            "D: Logs \"item\" twice due to event bubbling",
+            "A: Logs \"item\" once",
+            "B: Logs nothing"
+          ],
+          "correct_option": "D",
+          "explanation": "`querySelectorAll` returns a static NodeList and listeners were attached only to existing items. The appended item has no listener, so nothing logs.",
+          "distractor_rationale": "A: Assumes NodeList is live or delegation in place. C: NodeList being static is not an error; it just doesn't include new nodes. D: Bubbling cannot invoke a listener that was never attached to any ancestor here.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given:\n\n```html\n<form id=\"f\">\n  <input id=\"email\" type=\"email\" required>\n  <button type=\"submit\">Go</button>\n</form>\n```\n\n```javascript\nconst f = document.getElementById('f');\nconst email = document.getElementById('email');\nemail.addEventListener('input', () => {\n  if (email.value.endsWith('@example.com')) {\n    email.setCustomValidity('Company emails not allowed');\n  } else {\n    email.setCustomValidity('');\n  }\n});\n\nf.addEventListener('submit', e => {\n  if (!f.checkValidity()) {\n    e.preventDefault();\n    f.reportValidity();\n  } else {\n    alert('submitted');\n  }\n});\n```\nUser first enters `a@example.com` and clicks Go. Then changes the field to `a@gmail.com` and clicks Go again (same page, no reload). What happens?",
+          "options": [
+            "B: Both submits succeed because type=\"email\" accepts both",
+            "A: First submit shows \"Company emails not allowed\" without submitting; second submit succeeds and alerts",
+            "D: Both show the browser's default \"Please include an '@'\" message",
+            "C: First blocks; second still blocked because custom validity persists until form reset"
+          ],
+          "correct_option": "B",
+          "explanation": "The custom error makes the first `checkValidity()` fail, preventing submission and showing the custom message. On `input`, the custom validity is cleared for non-@example.com addresses, so the second `checkValidity()` passes and the form submits (alert).",
+          "distractor_rationale": "B: Ignores the custom validity error path. C: `setCustomValidity('')` clears the custom error immediately on input; no reset needed. D: The value has an `@`; the default pattern error would not appear here, and a custom message overrides it anyway.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A teammate uses JS to control grid columns with a CSS variable:\n\n```css\n.grid { display: grid; grid-template-columns: repeat(var(--cols, 1), 1fr); }\n```\n\n```javascript\nfunction setCols() {\n  const cols = Math.max(1, Math.floor(window.innerWidth / 300));\n  document.documentElement.style.setProperty('--cols', cols);\n}\nwindow.addEventListener('resize', setCols);\n```\nOn first page load at 1200px width, before any resizing, how many columns render?",
+          "options": [
+            "A: 1 column until the first resize triggers JS; then 4",
+            "B: 4 columns immediately because CSS waits for JS",
+            "D: Throws an error because CSS variables must be declared in CSS first",
+            "C: Grid fails to render due to unresolved var"
+          ],
+          "correct_option": "A",
+          "explanation": "`--cols` is unset initially, so `var(--cols, 1)` falls back to 1. JS only runs on resize, so it stays 1 column until the user resizes (or until code explicitly runs once on load).",
+          "distractor_rationale": "B: CSS does not pause layout waiting for JS; no initial call is made. C: `var(--cols, 1)` has a valid fallback, so grid renders. D: CSS variables need not be predeclared; unset variables are valid with fallbacks.",
+          "skills_covered": [
+            "CSS",
+            "JavaScript",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "What logs on click?\n\n```html\n<button id=\"btn\">Do</button>\n```\n\n```javascript\nconst btn = document.getElementById('btn');\nbtn.addEventListener('click', () => console.log('first'));\nbtn.addEventListener('click', (e) => { e.stopPropagation(); console.log('second'); });\ndocument.body.addEventListener('click', () => console.log('body'));\n```\nYou click the button.",
+          "options": [
+            "C: second only",
+            "B: second, then first",
+            "A: first, then second",
+            "D: first, second, then body"
+          ],
+          "correct_option": "C",
+          "explanation": "Listeners on the same element run in registration order. `stopPropagation()` prevents the event from reaching ancestors, but it does not cancel other listeners on the same target. So 'first' then 'second'; body doesn't log.",
+          "distractor_rationale": "B: Reverses listener order without basis. C: Confuses `stopPropagation()` with `stopImmediatePropagation()` (which would stop subsequent listeners). D: Ignores the effect of `stopPropagation()` on bubbling to body.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "For this grid:\n\n```css\n.grid { width: 400px; display: grid; grid-template-columns: 1fr minmax(300px, 2fr) 1fr; column-gap: 0; }\n```\nAssuming content can shrink and no gaps, what are the column widths at 400px container width?",
+          "options": [
+            "B: 100px, 200px, 100px",
+            "C: 0px, 400px, 0px",
+            "A: 50px, 300px, 50px",
+            "D: 33%, 33%, 33%"
+          ],
+          "correct_option": "C",
+          "explanation": "The middle column cannot shrink below 300px. The remaining 100px is distributed to the two 1fr tracks, which can shrink to share the leftover: 50px each.",
+          "distractor_rationale": "B: Treats fr tracks as equal thirds regardless of min constraints. C: Ignores the min in `minmax`. D: Assumes fr tracks are percentages independent of constraints; they are flexible and take leftover space.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Event delegation bug:\n\n```html\n<ul id=\"todos\">\n  <li><button class=\"remove\"><svg><path></path></svg> Remove</button></li>\n</ul>\n```\n\n```javascript\nconst list = document.getElementById('todos');\nlist.addEventListener('click', (e) => {\n  if (e.target.matches('button.remove')) {\n    list.removeChild(e.target.closest('li'));\n  }\n});\n```\nClicking directly on the inner `<path>` inside the SVG icon does what?",
+          "options": [
+            "B: Removes the item anyway because of bubbling",
+            "C: Throws because `closest` is called on undefined",
+            "D: Removes the wrong `<li>` (the first one)",
+            "A: Nothing happens"
+          ],
+          "correct_option": "D",
+          "explanation": "`e.target` is the deepest element, here the `<path>`, which does not match `button.remove`, so the if-branch doesn't run. A robust fix is to use `e.target.closest('button.remove')` in the check.",
+          "distractor_rationale": "B: Bubbling changes `currentTarget`, not `target`; the code still checks `target.matches`. C: `closest` isn't called unless the `if` passes, so no exception. D: There is no code path that removes the wrong element here.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "This code tries to mirror the input into a preview:\n\n```html\n<input id=\"name\" type=\"text\">\n<div id=\"preview\"></div>\n```\n\n```javascript\nconst input = document.getElementById('name');\ninput.addEventListener('change', e => {\n  document.getElementById('preview').textContent = e.target.value;\n});\n```\nHow does the preview update as the user types?",
+          "options": [
+            "C: It updates every time a keydown event fires",
+            "B: It updates when the field loses focus or the user commits the change",
+            "D: It never updates unless the form is submitted",
+            "A: It updates on every keystroke"
+          ],
+          "correct_option": "B",
+          "explanation": "The `change` event on text inputs fires on commit (typically blur or Enter), not on each keystroke. For real-time updates, use the `input` event.",
+          "distractor_rationale": "A: Confuses `change` with `input`. C: There is no keydown listener. D: `change` does not require form submission.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your catalog page uses JS to set a CSS variable that controls grid columns. On first load users see a single column until they resize the window, after which the layout snaps to multiple columns. Current implementation:\n\n```css\n.grid { display: grid; grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr)); gap: 16px; }\n```\n\n```javascript\nfunction setCols() {\n  const cols = Math.max(1, Math.floor(window.innerWidth / 280));\n  document.documentElement.style.setProperty('--cols', cols);\n}\nwindow.addEventListener('resize', setCols);\n```\nYou also target breakpoints elsewhere with mobile-first CSS media queries.",
+          "task": "Decide how to fix the first-load single-column bug and whether JS should be used for column count at all. Propose a concrete solution (code-level) and justify it in terms of correctness and mobile-first behavior. Address initial render, resize handling, and what happens if JS is disabled.",
+          "expected_answer": "Two solid options:\n1) Keep JS-driven columns but initialize correctly and avoid thrash:\n- Call `setCols()` on first paint: `window.addEventListener('DOMContentLoaded', setCols);` or place an inline `setCols()` before adding the resize listener. Optionally use `matchMedia` listeners instead of raw resize to cut calls.\n- Debounce resize: wrap `setCols` in a requestAnimationFrame or a 100ms debounce to avoid excessive style recalcs.\n- Fallback: Keep a CSS default that is usable (1 column via `var(--cols, 1)`).\n\n2) Prefer pure CSS grid for this use case (mobile-first, no JS needed):\n- Replace the custom column logic with auto-fit/minmax:\n```css\n.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }\n```\n- This renders correctly on first load, expands/contracts responsively, and requires no JS. It also works with JS disabled.\n\nRecommendation: Use option 2 for a product grid; it matches mobile-first design and removes brittle JS resize coupling. If other dynamic conditions must affect columns, keep option 1 but ensure an initial `setCols()` and a debounced resize. In all cases, test at widths around 280px, 560px, 840px to verify wrap behavior, and ensure `minmax(0, 1fr)` or `minmax(280px, 1fr)` to prevent content overflow.",
+          "rubric": [
+            {
+              "criterion": "Identifies root cause (no initial `setCols()` and reliance on JS for first render)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a correct initialization strategy and resize handling (DOMContentLoaded/matchMedia/debounce) or justifies removing JS",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, correct pure-CSS solution with auto-fit/minmax (or equally robust alternative)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains mobile-first implications and JS-disabled fallback behavior",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "JavaScript",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are building a signup form with fields: email (required, type=email), password (required, min 8 chars), and an optional list of phone numbers that users can add dynamically by clicking \"+ Add phone\". On submit, the form must block submission if any constraint fails, show a field-specific custom message, and focus the first invalid field. New phone fields added later must be validated without rebinding listeners to each input individually.",
+          "task": "Describe the event strategy and DOM API usage you will implement. Include the events listened to, where listeners are attached, how custom messages are set/cleared, how submission is prevented, and how dynamically added inputs are covered.",
+          "expected_answer": "- Attach a single `submit` listener to the `<form>` that calls `preventDefault()` when `!form.checkValidity()`, then calls `form.reportValidity()` and focuses the first invalid via `form.querySelector(':invalid')?.focus()`.\n- For live feedback, attach an `input` event listener using event delegation on the form: `form.addEventListener('input', (e) => { const t = e.target; if (!(t instanceof HTMLInputElement)) return; ... });`.\n- Inside the input handler, set per-field messages with `setCustomValidity(...)` based on business rules (e.g., block company domain or weak password). Always clear with `setCustomValidity('')` when valid.\n- Use the Constraint Validation API attributes where possible: `required`, `type=\"email\"`, `minlength=\"8\"` on password, and for phone, a `pattern` or custom validity.\n- Because the listener is on the form, dynamically added phone `<input class=\"phone\">` elements are covered automatically; no per-input binding needed.\n- On \"+ Add phone\", create inputs with the same `name` and attributes, append to the form, and optionally trigger validation on blur/change to avoid noisy errors while typing.\n- Do not use `change` for real-time validation; prefer `input` to update messages immediately as the user types.\n- Only submit if `form.checkValidity()` passes; then proceed (e.g., `form.submit()` or normal submit without preventDefault).",
+          "rubric": [
+            {
+              "criterion": "Correct use of Constraint Validation API (checkValidity/reportValidity/setCustomValidity/HTML attributes)",
+              "marks": 2
+            },
+            {
+              "criterion": "Event strategy: submit prevention and focus management for first invalid field",
+              "marks": 2
+            },
+            {
+              "criterion": "Delegation approach that covers dynamically added phone fields",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate choice of events (input vs change) and proper clearing of custom errors",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your responsive navbar collapses to a hamburger at < 768px. When expanded, clicking a submenu toggle inside the menu sometimes immediately closes the whole menu. Current code:\n\n```html\n<button id=\"nav-toggle\">Menu</button>\n<nav id=\"nav\" class=\"collapsed\">\n  <ul>\n    <li>\n      <button class=\"submenu-toggle\">More</button>\n      <ul class=\"submenu collapsed\"> ... </ul>\n    </li>\n  </ul>\n</nav>\n```\n\n```javascript\nconst nav = document.getElementById('nav');\ndocument.getElementById('nav-toggle').addEventListener('click', () => nav.classList.toggle('collapsed'));\n\ndocument.addEventListener('click', (e) => {\n  if (!nav.contains(e.target) && !e.target.closest('#nav-toggle')) {\n    nav.classList.add('collapsed'); // click outside closes\n  }\n});\n\ndocument.querySelectorAll('.submenu-toggle').forEach(btn => {\n  btn.addEventListener('click', () => btn.nextElementSibling.classList.toggle('collapsed'));\n});\n```\nCSS shows/hides by adding/removing `collapsed`.",
+          "task": "Explain why submenu clicks sometimes close the entire nav and propose a robust fix using events and minimal CSS adjustments. Include how to handle click-outside, event order, and breakpoint changes.",
+          "expected_answer": "Cause: The document-level click-outside handler runs after the submenu button's click in the bubbling phase. If the submenu toggle expands, the same click also reaches the document, and since the target is inside nav it's fine—but race conditions occur if `nav` collapses first (due to other code) or if the user clicks near edges. More robustly, the outside handler should ignore clicks that originate inside the nav by checking sooner or preventing it when handling internal toggles.\n\nFix:\n- Stop the outside handler for internal clicks: in the submenu toggle handler, call `e.stopPropagation()` (attach handler as `(e)=>{ e.stopPropagation(); ... }`) so the document listener never runs for that click.\n- Alternatively, make the outside handler run in capture and mark internal clicks with a flag: set a boolean in the toggle handler then clear it in a microtask; check it in the outside handler.\n- Prefer checking `if (nav.contains(e.target) || e.target.closest('#nav-toggle')) return;` at the very top of the outside handler to bail early.\n- Ensure the outside closer is attached before or after consistently; but propagation control is more deterministic.\n- For breakpoint transitions, reset state via `matchMedia('(min-width: 768px)')` listener: when switching to desktop, remove `collapsed` from both nav and any `.submenu` to avoid stuck hidden menus; when returning to mobile, start collapsed.\n- Minimal CSS: use `pointer-events: none` only if needed for overlays; primary fix is event handling order and clear breakpoint state management.",
+          "rubric": [
+            {
+              "criterion": "Identifies bubbling to document as root cause and explains propagation/timing",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a concrete event-level fix (stopPropagation or equivalent) with correct code-level detail",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses outside-click guard condition and order of checks for reliability",
+              "marks": 1
+            },
+            {
+              "criterion": "Considers breakpoint transitions and resetting menu state",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A marketing layout has a sidebar that should appear above main content on mobile and to the left on desktop. A developer used flexbox order to move the sidebar in mobile and cloned the sidebar markup for desktop. Toggling a \"Filters\" button sometimes opens the mobile sidebar but not the desktop one, and state gets out of sync across breakpoints.",
+          "task": "Redesign the layout and interaction so a single sidebar element is repositioned responsively without duplication, and the toggle works across breakpoints. Provide CSS and JS strategies and justify them.",
+          "expected_answer": "- Single source of truth: keep one `#sidebar` element in the DOM.\n- Use CSS Grid areas (or flexbox with wrap) to reposition without DOM duplication:\n```css\n.page { display: grid; grid-template-areas: 'sidebar' 'main'; grid-template-columns: 1fr; }\n#sidebar { grid-area: sidebar; }\n#main { grid-area: main; }\n@media (min-width: 992px) {\n  .page { grid-template-areas: 'sidebar main'; grid-template-columns: 300px 1fr; }\n}\n```\n- Or with flexbox: keep DOM order sidebar then main; switch from column (mobile) to row (desktop) so visual order matches DOM.\n- JS: one toggle tied to the single `#sidebar` (e.g., `sidebar.classList.toggle('open')`). No querying of cloned nodes. Attach the listener once to the button and reference `#sidebar` directly.\n- On breakpoint change, normalize state using `matchMedia('(min-width: 992px)')` listeners: on desktop, ensure sidebar is visible (remove `open/collapsed` as needed); on mobile, start collapsed and rely on the toggle.\n- Remove the duplicate sidebar from the DOM entirely. If duplication is unavoidable, use `display: none` and do not bind events to hidden clones—but preferred is a single element.\n- Justification: grid areas achieve responsive repositioning without changing DOM or `order`, avoiding focus/interaction bugs; one element removes synchronization problems; JS remains simple and robust across breakpoints.",
+          "rubric": [
+            {
+              "criterion": "Removes duplication and proposes a single-element layout strategy (grid areas or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct responsive CSS that repositions without DOM changes",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines a clean JS toggle tied to the single sidebar and handles breakpoint state via matchMedia",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear justification relating to robustness across breakpoints",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "JavaScript",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a responsive mini-site",
+          "brief": "Create a 2–3 page static mini-site (e.g., Home, Catalog, About) that demonstrates mobile-first responsive layout using Flexbox and CSS Grid. Include a responsive navbar, a hero section, and a card-based catalog grid that adapts from 1 column on small screens to multiple columns on larger screens without JS. Avoid horizontal scrolling at common device widths.",
+          "deliverable": "Responsive site",
+          "acceptance_criteria": [
+            "Uses mobile-first CSS. No desktop-first max-width queries that override mobile styles.",
+            "Navbar stacks vertically below 480px, becomes horizontal by 768px. Hamburger icon may be present but need not function in this task.",
+            "Catalog grid uses `grid-template-columns: repeat(auto-fit, minmax(>=240px, 1fr))` or equivalent; shows 1 column on small screens, 2+ on wider screens.",
+            "No horizontal scrollbars at 360px, 768px, and 1280px viewport widths.",
+            "Images scale responsively (no distortion) using `max-width: 100%` or `aspect-ratio`/`object-fit`.",
+            "Layout built with Flexbox and Grid; no table layout or framework grid systems.",
+            "CSS and HTML validate in modern browsers; no inline styles except critical demo overrides."
+          ],
+          "rubric": [
+            {
+              "criterion": "Mobile-first approach correctly implemented (breakpoints, no horizontal overflow)",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct, semantic use of Flexbox and Grid to achieve the layouts",
+              "marks": 6
+            },
+            {
+              "criterion": "Responsive catalog grid behaves as specified across widths",
+              "marks": 4
+            },
+            {
+              "criterion": "Responsive media handling (images/video) without distortion",
+              "marks": 2
+            },
+            {
+              "criterion": "Code quality (no frameworks required; clear structure, no inline CSS except trivial)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Interactive page with events and validation",
+          "brief": "Build a single-page demo that includes: 1) a hamburger menu that opens/closes a nav panel on small screens and resets appropriately on desktop; 2) a signup form with client-side validation using the Constraint Validation API and custom messages; 3) a dynamic list (e.g., todo or tags) where items can be added and removed, implemented with event delegation so handlers work for newly added elements. No frameworks.",
+          "deliverable": "Interactive page",
+          "acceptance_criteria": [
+            "Hamburger toggles a single nav element via class changes; click outside closes it; state resets when crossing a desktop breakpoint (e.g., ≥ 992px).",
+            "Form prevents submission when invalid; shows custom messages; focuses first invalid field; submitting valid data triggers a visible success indicator without page reload.",
+            "Validation uses checkValidity/reportValidity/setCustomValidity and HTML attributes (required, type, minlength, pattern) where appropriate.",
+            "Dynamic list supports add and remove without re-binding per item; implemented with a single delegated listener on a stable ancestor element.",
+            "No inline event handlers (no onclick=\"...\"); all JS in a separate file using addEventListener.",
+            "Works in latest Chrome/Firefox/Edge at 360px, 768px, and 1280px widths."
+          ],
+          "rubric": [
+            {
+              "criterion": "Menu interactions (toggle, outside click close, breakpoint reset) implemented robustly",
+              "marks": 6
+            },
+            {
+              "criterion": "Form validation logic correctness (Constraint Validation API, custom messages, prevent invalid submit, focus)",
+              "marks": 6
+            },
+            {
+              "criterion": "Event delegation works for dynamically added list items (add/remove)",
+              "marks": 4
+            },
+            {
+              "criterion": "Separation of concerns and code quality (no inline handlers, organized JS)",
+              "marks": 2
+            },
+            {
+              "criterion": "Cross-viewport functionality without layout breakage for the interactive pieces",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript",
+            "Responsive Design",
+            "CSS"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-019-S03",
+      "skills_assessed": [
+        "HTML",
+        "JavaScript",
+        "API Integration",
+        "JSON",
+        "Wireframing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run this code against an endpoint that sometimes returns 204 No Content.\n```javascript\nasync function load() {\n  const res = await fetch('/api/items');\n  const data = await res.json();\n  console.log('items:', data.length);\n}\n```\nThe server responds:\n```http\nHTTP/1.1 204 No Content\n```\nWhat happens when `load()` runs against that response?",
+          "options": [
+            "It throws a SyntaxError from `res.json()` due to an empty body.",
+            "It throws a TypeError on `data.length` because `data` is `null`.",
+            "It logs `items: undefined` because `res.json()` resolves to `undefined` on 204.",
+            "It logs `items: 0` because `res.json()` treats no body as an empty array."
+          ],
+          "correct_option": "A",
+          "explanation": "`res.json()` attempts to parse the body. With 204 there is no body, so the JSON parser throws `SyntaxError: Unexpected end of JSON input` before the `length` access.",
+          "distractor_rationale": "A: A common assumption, but the Fetch API does not coerce empty bodies into arrays. C: `res.json()` rejects; it doesn't resolve to `undefined` on empty. D: The code never reaches `data.length`; it fails earlier during JSON parsing.",
+          "skills_covered": [
+            "JavaScript",
+            "API Integration",
+            "JSON"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider:\n```javascript\nasync function save(form) {\n  const res = await fetch('/api/users', {\n    method: 'POST',\n    body: JSON.stringify({ email: form.email.value })\n    // no Content-Type header set\n  });\n  return await res.json();\n}\n```\nThe server expects `Content-Type: application/json` and replies with:\n```http\nHTTP/1.1 415 Unsupported Media Type\nContent-Type: application/json\n\n{\"error\":\"expected application/json\"}\n```\nWhat does `save(form)` do?",
+          "options": [
+            "It rejects with a SyntaxError because non-2xx responses cannot be parsed as JSON.",
+            "It retries automatically with the correct header and then resolves with the created user.",
+            "It rejects with `TypeError: Failed to fetch` because the status is 415.",
+            "It resolves with `{ error: \"expected application/json\" }` even though the request failed."
+          ],
+          "correct_option": "D",
+          "explanation": "Fetch does not throw on HTTP error statuses. `res.json()` parses the body regardless of `res.ok`. Since the server returned a JSON error body, the function resolves with that object.",
+          "distractor_rationale": "A: Non-2xx is not a parse blocker; only invalid/missing JSON causes SyntaxError. C: `TypeError: Failed to fetch` indicates a network failure, not an HTTP error. D: Fetch does not auto-retry or auto-add headers.",
+          "skills_covered": [
+            "JavaScript",
+            "API Integration",
+            "JSON"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You submit a form with a file input using:\n```javascript\nconst res = await fetch('/upload', {\n  method: 'POST',\n  headers: { 'Content-Type': 'multipart/form-data' },\n  body: new FormData(document.querySelector('form'))\n});\n```\nOn a typical server expecting multipart bodies, what is the most likely outcome?",
+          "options": [
+            "`new FormData()` throws if the form contains a file input.",
+            "The server cannot parse the body because the `Content-Type` header is missing the boundary.",
+            "The request is sent as `application/x-www-form-urlencoded` instead of multipart.",
+            "It works; the browser adds the boundary automatically even if you set the header yourself."
+          ],
+          "correct_option": "B",
+          "explanation": "When you manually set `Content-Type: multipart/form-data`, the browser does not append the boundary parameter. The server then lacks the boundary to parse the body. Omit the header and let the browser set it with the correct boundary.",
+          "distractor_rationale": "B: Tempting, but the boundary is not auto-fixed if you set the header. C: The body is multipart; the header is just malformed. D: `FormData` supports file inputs and does not throw.",
+          "skills_covered": [
+            "HTML",
+            "JavaScript",
+            "API Integration"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A typeahead search can show stale results. Current code:\n```javascript\nlet lastQuery = '';\nasync function search(q) {\n  lastQuery = q;\n  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);\n  const results = await res.json();\n  render(results);\n}\n```\nUsers type fast: request for \"car\" resolves first, then slower request for \"cat\" resolves and overwrites UI. Which change prevents stale results without modifying the API?",
+          "options": [
+            "```javascript\nlet lastQuery = '';\nasync function search(q) {\n  lastQuery = q;\n  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);\n  const results = await res.json();\n  if (q !== lastQuery) return; // skip stale response\n  render(results);\n}\n```",
+            "```javascript\nasync function search(q) {\n  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);\n  requestAnimationFrame(() => render(res.json()));\n}\n```",
+            "```javascript\nasync function search(q) {\n  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, { cache: 'no-store' });\n  render(await res.json());\n}\n```",
+            "```javascript\nasync function search(q) {\n  await new Promise(r => setTimeout(r, 0));\n  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);\n  render(await res.json());\n}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Tracking the latest query and discarding outdated responses at render time ensures only the newest result is shown without requiring AbortController.",
+          "distractor_rationale": "B: A zero-timeout doesn't address race order. C: `requestAnimationFrame` changes timing but not request ordering; also misuses `res.json()`. D: Cache control doesn't fix out-of-order arrivals.",
+          "skills_covered": [
+            "JavaScript",
+            "API Integration"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You have three page wireframes that all show the same top area:\n```text\n+----------------------------------------------------+\n| LOGO    |  Home  Products  About  |   [ Search ]  |\n+----------------------------------------------------+\n```\nThe nav highlight changes per page; the search box’s placeholder differs on one page. To maximize reuse and keep assets consistent, where should you define component boundaries?",
+          "options": [
+            "Use a monolithic `Page` component for each screen and do not extract header subcomponents to avoid prop drilling.",
+            "Duplicate `Logo+Nav` in each page so the active nav item can be hard-coded per page; keep `SearchBox` global.",
+            "Create a reusable `Header` component that composes `Logo`, `PrimaryNav` (with a `activeItem` prop), and `SearchBox` (with a `placeholder` prop). Reference shared icons once.",
+            "Keep `SearchBox` defined in each page; put only `Logo+Nav` in a `Header` to avoid passing props."
+          ],
+          "correct_option": "C",
+          "explanation": "A composed `Header` with parameterized subcomponents delivers reuse and consistent assets while allowing per-page differences via props/variants described in the design spec.",
+          "distractor_rationale": "B: Hard-coding duplicates markup/assets and invites drift. C: Splitting `SearchBox` out per page loses reuse of behaviors/assets. D: Monoliths prevent reuse and hinder consistent asset usage.",
+          "skills_covered": [
+            "Wireframing",
+            "HTML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given API data and a mapping in your design spec that shows a product card with a primary image:\n```json\n{\n  \"product\": {\n    \"name\": \"Lamp\",\n    \"images\": []\n  }\n}\n```\nCurrent mapping code:\n```javascript\nconst url = data.product.images[0].url || '/placeholder.png';\n```\nWhat actually happens at runtime for this payload?",
+          "options": [
+            "`res.json()` would have returned `null`, so the code never runs.",
+            "It falls back to `'/placeholder.png'` because `images[0]` is falsy.",
+            "It sets `url` to `undefined` because `images[0]` is missing, then `||` fixes it later.",
+            "It throws `TypeError: Cannot read properties of undefined (reading 'url')`."
+          ],
+          "correct_option": "D",
+          "explanation": "`images[0]` is `undefined`; accessing `.url` throws before `||` can evaluate the fallback. A robust mapping must guard the index or use optional chaining/nullish coalescing.",
+          "distractor_rationale": "B/C: Both assume short-circuiting happens before property access, which is false—the property access happens first and throws. D: The JSON is valid; `res.json()` returns an object.",
+          "skills_covered": [
+            "JavaScript",
+            "JSON",
+            "Wireframing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Form submission handler:\n```html\n<form id=\"signup\" novalidate>\n  <input name=\"email\" type=\"email\" required>\n  <button>Join</button>\n</form>\n<script>\n  document.querySelector('#signup').addEventListener('submit', e => {\n    e.preventDefault();\n    if (!e.target.checkValidity()) {\n      console.log('invalid');\n      return;\n    }\n    console.log('submit');\n  });\n</script>\n```\nThe user clicks Join with the email field empty. What is logged?",
+          "options": [
+            "TypeError because `checkValidity()` is not available when `novalidate` is set.",
+            "invalid",
+            "Nothing; the browser blocks submission and shows a native error bubble even with `novalidate`.",
+            "submit"
+          ],
+          "correct_option": "B",
+          "explanation": "`novalidate` disables the browser’s automatic submission blocking and native UI, but the Constraint Validation API still works. The handler calls `checkValidity()`, which returns false, so it logs `invalid`.",
+          "distractor_rationale": "A: With `novalidate`, the browser does not block automatically. C: The handler gates on validity; empty required email fails. D: `checkValidity()` exists regardless of `novalidate`.",
+          "skills_covered": [
+            "HTML",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What happens here?\n```javascript\nconst res = await fetch('/api/profile');\nconst a = await res.json();\nconst b = await res.json();\nconsole.log(a, b);\n```",
+          "options": [
+            "It caches the parsed JSON internally and returns it again on the second call.",
+            "It logs the same object twice; the body can be read multiple times.",
+            "It throws `TypeError: body used already` on the second `res.json()`.",
+            "It logs `a` correctly and `b` as `undefined` because the second call returns nothing."
+          ],
+          "correct_option": "C",
+          "explanation": "The response body is a stream that can be consumed only once. The second `res.json()` attempts to read an already used body and throws.",
+          "distractor_rationale": "B/D: Common misconceptions; Fetch does not cache the body for repeated parsing. C: It does not return `undefined`; it throws.",
+          "skills_covered": [
+            "JavaScript",
+            "API Integration",
+            "JSON"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your design spec calls for the same magnifier icon at 18px, 24px, and 32px, with fill color changing on hover. Current markup:\n```html\n<img src=\"/icons/search.png\" width=\"18\" height=\"18\" alt=\"Search\">\n```\nWhich change best improves fidelity and reuse while minimizing asset duplication?",
+          "options": [
+            "Keep the PNG and swap images via JavaScript on `mouseenter`/`mouseleave` to change color.",
+            "Inline the icon as SVG and change its `fill` in CSS for hover and theming.",
+            "Use a single large PNG (e.g., 64px) and scale it down with `width`/`height` for all sizes.",
+            "Add an `srcset` with 1x/2x/3x PNGs for each size and color combination to cover DPI and hover."
+          ],
+          "correct_option": "B",
+          "explanation": "SVG scales crisply for multiple sizes and allows color changes via CSS without multiplying assets.",
+          "distractor_rationale": "B: Covers DPI but explodes the number of assets across sizes and colors. C: Downscaling raster images blurs at small sizes. D: JS swaps add complexity and still multiply assets.",
+          "skills_covered": [
+            "HTML",
+            "Wireframing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Code expects a JSON body on 201:\n```javascript\nasync function create() {\n  const res = await fetch('/api/create', { method: 'POST' });\n  if (res.status === 201) {\n    const body = await res.json();\n    console.log('id', body.id);\n  }\n}\n```\nBut the server replies:\n```http\nHTTP/1.1 201 Created\nLocation: /api/items/123\nContent-Length: 0\n```\nWhat occurs?",
+          "options": [
+            "A `SyntaxError` is thrown when parsing JSON because the body is empty.",
+            "Fetch follows `Location` automatically after 201 and logs the created resource.",
+            "It logs `id undefined` because the body has no `id`.",
+            "It works because 2xx guarantees a JSON body."
+          ],
+          "correct_option": "A",
+          "explanation": "A 201 may include no body. Calling `res.json()` on an empty body throws a SyntaxError. The client must either use the `Location` header for a follow-up GET or handle empty bodies.",
+          "distractor_rationale": "B: The code fails earlier while parsing, not at the property access. C: 2xx does not imply a JSON body. D: Fetch does not auto-follow `Location` on 201; only redirects (3xx) are followed.",
+          "skills_covered": [
+            "JavaScript",
+            "API Integration",
+            "JSON"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A three-screen flow in your design spec shows: (1) Product List with a top header, filter bar, and a grid of product cards; (2) Product Detail with the same header, a hero image, and details; (3) Create Product form with the same header, a form, and inline error states. The wireframes annotate that the filter bar and search box appear on (1) and (3), and cards in (1) reappear as a \"Related products\" strip in (2). Assets include a shared magnifier icon, a heart icon for favorites, and a primary button style used across screens.",
+          "task": "Propose a component hierarchy and asset strategy that avoids duplication while covering these states. Name which parts are components vs. variants, where error states live, and how shared assets are referenced. Justify choices with respect to reuse and change isolation.",
+          "expected_answer": "A strong answer defines a composed header and parameterized subcomponents, identifies reusable product card and button components with variants, and places error states as variants on the input group component rather than duplicating page-level markup. For example:\n- Components: `Header` (composes `Logo`, `PrimaryNav(activeItem)`, `SearchBox(placeholder)`), `FilterBar(children)` used on List and Form screens, `ProductCard({name, price, imageUrl, isFavorite})` used in the grid and as a compact variant in Related strip, `Button({variant: 'primary'|'secondary'|'danger'})`.\n- Form elements as `FieldGroup({label, input, error})` where error is a stateful slot; error states are defined on `FieldGroup`, not duplicated per form.\n- Variants: `ProductCard` has size variant `grid|compact` and optional favorite icon slot; `Header` has a `showSearch` boolean.\n- Asset strategy: Use one inline SVG set (sprite or symbols) for `search`, `heart`, and button icons; reference them across components; document icon usage and hover/active fills in the spec.\n- Mapping reuse: The Related strip uses the same `ProductCard` with the `compact` variant; the filter bar is a shared component across List and Form but with different child controls.\n- Change isolation: Updating the heart icon or button style in one place updates all occurrences; nav highlighting is a prop, not page-specific duplication.",
+          "rubric": [
+            {
+              "criterion": "Identifies appropriate component boundaries (Header, ProductCard, Button, FieldGroup) with clear responsibilities",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines variants/props to cover per-screen differences without duplication (e.g., active nav, card size, search visibility)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains where error states live (at FieldGroup/component level) and how they are represented",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies an asset strategy that avoids duplication (shared SVGs/icons referenced by components)",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies how the proposal isolates change and promotes reuse across the three screens",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Wireframing",
+            "HTML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You have a create-user form and an API that returns validation errors in this shape when the server rejects input:\n```http\nHTTP/1.1 422 Unprocessable Entity\nContent-Type: application/json\n\n{\n  \"errors\": {\n    \"email\": [\"has already been taken\"],\n    \"password\": [\"is too short (min 8)\"]\n  }\n}\n```\nYour HTML uses `name` attributes that match the JSON keys:\n```html\n<form id=\"create\">\n  <label>Email <input name=\"email\" type=\"email\" required></label>\n  <span class=\"error\" data-for=\"email\"></span>\n  <label>Password <input name=\"password\" type=\"password\" required></label>\n  <span class=\"error\" data-for=\"password\"></span>\n  <button>Create</button>\n  <div id=\"form-global-error\"></div>\n</form>\n```\n",
+          "task": "Describe, at the design-and-code boundary, how you will map these server errors to inline field errors and a global error area, handling unknown keys gracefully. Include the fetch/parse decision points (e.g., `res.ok` vs parsing body), the data mapping to DOM, and how this behavior is represented in the design spec as an error-state variant.",
+          "expected_answer": "A good answer:\n- Checks `res.ok` before trusting success; on failure, attempts `await res.json()` and falls back to a generic message if parsing fails (e.g., 500 with HTML).\n- Iterates over `Object.entries(errors)` and for each `[name, messages]`, finds `.error[data-for=\"name\"]` and sets `textContent = messages.join(' ')`. Clears previous errors first. Unknown keys: append messages to `#form-global-error` so nothing is lost.\n- Keeps HTML5 validation in place for client-side constraints; uses `novalidate` only if handling all validation via JS. Calls `form.reportValidity()` for client-side failures before fetch.\n- Represents in the design spec a `FieldGroup` error variant with red border, help text area, and an icon; the spec documents that error text is populated from server-provided messages keyed by `name`.\n- On success, clears error containers and either shows a success banner or navigates per spec.",
+          "rubric": [
+            {
+              "criterion": "Correctly sequences HTTP handling (check `res.ok`; parse JSON body for error details; fallback if not JSON)",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate mapping from error keys to fields using `name`/`data-for` attributes; clears and renders messages",
+              "marks": 2
+            },
+            {
+              "criterion": "Graceful handling of unknown/unmapped error keys (global area) without dropping information",
+              "marks": 2
+            },
+            {
+              "criterion": "Links implementation to a documented error-state variant in the design spec (component-level, not page-level)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "JavaScript",
+            "API Integration",
+            "JSON",
+            "Wireframing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A search results page renders tags for each item using:\n```javascript\nconst tags = data.item.tags; // expected array of strings\nconst tagLine = tags.join(', ');\n```\nNew API versions may omit `tags` or return `tags: null` when there are none. Users report the page sometimes breaks.",
+          "task": "Explain exactly what breaks and propose a robust mapping that preserves the intended UI: show a muted 'No tags' when missing/empty, otherwise the comma-joined list. Provide the JavaScript you would use and note any changes you would document in the design spec for the empty state.",
+          "expected_answer": "The failure is `TypeError: Cannot read properties of null/undefined (reading 'join')` when `tags` is missing or null. A robust approach normalizes before rendering:\n```javascript\nconst raw = data?.item?.tags;\nconst safe = Array.isArray(raw) ? raw : [];\nconst tagLine = safe.length ? safe.join(', ') : 'No tags';\n```\nDesign spec: define an empty-state variant for the tag area with muted text 'No tags' and ensure components accept empty arrays/missing fields without layout shift.",
+          "rubric": [
+            {
+              "criterion": "Identifies the specific runtime error and its cause (calling `join` on null/undefined)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct, concise JavaScript normalization and rendering logic",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes the empty-state design representation (muted text, no layout break)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript",
+            "JSON",
+            "Wireframing"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are implementing a profile form that includes text fields and an optional avatar upload. The backend accepts either JSON for text-only updates or multipart form data when a file is included. The current HTML:\n```html\n<form id=\"profile\">\n  <input name=\"displayName\" required>\n  <input name=\"bio\">\n  <input name=\"avatar\" type=\"file\" accept=\"image/*\">\n  <button>Save</button>\n</form>\n```",
+          "task": "Decide how the submit handler should choose between JSON and multipart, what headers to send in each case, and how to handle server responses that may return 204 No Content or a JSON body with the updated user. Include code that avoids the common multipart boundary pitfall and that renders a success or error state.",
+          "expected_answer": "Decision: if a file is selected, use `FormData`; otherwise send JSON.\n- Multipart path (file present):\n```javascript\nconst fd = new FormData(form); // includes text and file fields\nconst res = await fetch('/api/profile', { method: 'PATCH', body: fd }); // no Content-Type header; browser sets boundary\n```\n- JSON path (no file):\n```javascript\nconst payload = { displayName: form.displayName.value, bio: form.bio.value };\nconst res = await fetch('/api/profile', {\n  method: 'PATCH',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify(payload)\n});\n```\n- Response handling: if `res.status === 204`, treat as success without body; else if `res.ok`, parse JSON and render confirmation; on failure, try `await res.json()` for error details and map to UI as per spec; otherwise show a generic error. Update the design spec with success and error-state variants for the form footer.",
+          "rubric": [
+            {
+              "criterion": "Correctly chooses payload format based on presence of a file; avoids setting multipart Content-Type manually",
+              "marks": 2
+            },
+            {
+              "criterion": "Sends correct headers for the JSON path and omits them for multipart",
+              "marks": 2
+            },
+            {
+              "criterion": "Handles 204 vs JSON responses robustly without assuming a body on success",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes user-visible success/error states and how they map to the design spec",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "JavaScript",
+            "API Integration",
+            "JSON"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design specification: List → Detail → Create flow",
+          "brief": "Produce a design spec for a small three-screen flow: (1) Items List with header and filter/search, (2) Item Detail with a related-items strip, (3) Create Item form with inline error states. Capture component hierarchy, variants, and assets, with annotations sufficient for a developer to implement without guessing.",
+          "deliverable": "A single PDF or a folder containing PNG/SVG exports of annotated wireframes plus a `spec.md` (or `spec.pdf`) describing hierarchy, components, variants, and an asset inventory. All files in one zip.",
+          "acceptance_criteria": [
+            "Includes annotated low-fidelity wireframes for all three screens with callouts for components and states (success, empty, and error for the form).",
+            "Provides a component inventory listing each component, its purpose, props/variants, and where it is used across screens.",
+            "Supplies a hierarchy diagram or outline showing component composition for each screen (e.g., Header → Nav, SearchBox; List → FilterBar, CardGrid → ProductCard).",
+            "Includes an asset list with filenames/IDs, intended sizes, and usage locations (e.g., search icon, favorite icon, button icon), avoiding duplicates.",
+            "Documents how server-side validation errors appear inline at the field level and in a global area for unmapped errors.",
+            "Shows reuse explicitly (e.g., Related strip uses ProductCard compact variant) and avoids duplicated components across screens.",
+            "All text is legible, callouts are unambiguous, and the spec is self-consistent (names in wireframes match names in the inventory)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and clarity of three annotated wireframes, including states",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality of component inventory (clear names, responsibilities, variants, reuse notes)",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate and coherent hierarchy mapping per screen",
+              "marks": 4
+            },
+            {
+              "criterion": "Asset inventory avoids duplication and specifies usage and sizes",
+              "marks": 3
+            },
+            {
+              "criterion": "Error-state documentation (field-level and global) aligns with components",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Wireframing",
+            "HTML"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Data-driven page with form and robust error states",
+          "brief": "Build a single-page app that lists users and lets you filter by name and create a new user. Use Fetch to load initial data from a local JSON file. Implement a search field that debounces input and avoids stale renders. Implement a create-user form that performs client-side checks and handles server-style 422 errors. Provide loading, empty, and error states.",
+          "deliverable": "A zip containing `index.html`, `styles.css`, `app.js`, `data/users.json` (seed data), and `README.md` with setup and testing instructions. The app must run by opening `index.html` in a browser without a build step.",
+          "acceptance_criteria": [
+            "Initial list renders from `data/users.json` via `fetch` and displays at least name and email for each user.",
+            "Search input filters the list as you type with a visible loading indicator; previous in-flight requests are ignored or aborted to prevent stale results.",
+            "Form uses native constraints (`required`, `type='email'`) and JS validation; invalid client input is blocked before network interaction.",
+            "Submitting valid data posts to a mock endpoint implemented as a local handler (e.g., `fetch('/api/users', ...)` stub in `app.js`) that can return either success (201 with JSON) or error (422 with JSON errors).",
+            "On 422, field-level errors are mapped to inline messages based on `name` attributes; unknown error keys appear in a global error area.",
+            "Handles 204 and empty-body success responses without crashing; shows a success state or adds the user to the list.",
+            "Includes explicit empty state when no users match the filter, and a network error state when the fetch for initial data fails.",
+            "No external libraries; code is modular and commented where non-obvious."
+          ],
+          "rubric": [
+            {
+              "criterion": "Data loading and rendering from local JSON with visible loading and error states",
+              "marks": 5
+            },
+            {
+              "criterion": "Search behavior correctness (debounce and stale-response prevention via guard or abort)",
+              "marks": 4
+            },
+            {
+              "criterion": "Form validation: proper use of HTML constraints and JS checks before submit",
+              "marks": 3
+            },
+            {
+              "criterion": "Server-style error handling: maps 422 JSON errors to fields and handles unknown keys globally",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust response handling (201 with JSON vs 204/empty) without exceptions; success UI updates",
+              "marks": 2
+            },
+            {
+              "criterion": "Code quality: no libraries, readable structure, and explanatory comments",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "JavaScript",
+            "API Integration",
+            "JSON",
+            "Wireframing"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-019-S04",
+      "skills_assessed": [
+        "Web Accessibility",
+        "Git",
+        "SEO",
+        "Performance Optimization",
+        "web analytics",
+        "Application Deployment",
+        "Manual Testing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You audit a custom control meant to act like a button. Keyboard users report it only activates with Enter, not Space, and its pressed state isn't announced reliably.\n\n```html\n<div role=\"button\" tabindex=\"0\" aria-pressed=\"false\" id=\"save\">Save</div>\n<script>\n  function clickSave(){ /* saves... */ }\n  const el = document.getElementById('save');\n  el.addEventListener('keydown', e => {\n    if (e.key === 'Enter') clickSave();\n  });\n  el.addEventListener('click', clickSave);\n</script>\n```\nWhich change results in correct keyboard activation semantics and accessible name/role with the least code risk?",
+          "options": [
+            "Keep the div, set aria-pressed=\"true\" by default, and add a keyup handler for both Enter and Space.",
+            "Replace the keydown handler with handlers for both Enter and Space that call clickSave().",
+            "Replace the div with a native button and keep only the click handler.\n\n```html\n<button id=\"save\" aria-pressed=\"false\">Save</button>\n<script>\n  document.getElementById('save').addEventListener('click', clickSave);\n</script>\n```",
+            "Keep the div but set tabindex=\"-1\" so screen readers announce it via aria-pressed without receiving focus."
+          ],
+          "correct_option": "C",
+          "explanation": "A native button provides correct semantics, keyboard support for both Enter and Space (with Space firing on keyup), focus behavior, and accessibility APIs without custom event juggling. Keeping only the click handler leverages the browser's built-in activation mapping.",
+          "distractor_rationale": "A: Adding Space on keydown partially works but mishandles Space (activation should be on keyup) and still leaves name/role/value fragile. C: Even with keyup handlers, you'd be re-implementing native semantics and could miss focus, disabled states, and ARIA updates. D: Removing it from the tab order breaks keyboard access entirely.",
+          "skills_covered": [
+            "Web Accessibility",
+            "Manual Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Field data shows poor LCP on your landing page. The hero image is marked lazy and not otherwise prioritized.\n\n```html\n<!-- no preloads in <head> -->\n<img \n  src=\"/img/hero-1600.jpg\" \n  alt=\"Students collaborating at laptops\" \n  width=\"1600\" height=\"900\" \n  loading=\"lazy\"\n/>\n```\nWhich change most directly improves LCP without introducing CLS?",
+          "options": [
+            "Move the hero image to a CSS background-image on the hero container.",
+            "Keep lazy and only add explicit width/height.",
+            "Preload only, leaving loading=\"lazy\" on the hero.\n\n```html\n<link rel=\"preload\" as=\"image\" href=\"/img/hero-1600.jpg\">\n```",
+            "Keep width/height and remove lazy plus add fetchpriority.\n\n```html\n<img src=\"/img/hero-1600.jpg\" alt=\"Students collaborating at laptops\" width=\"1600\" height=\"900\" fetchpriority=\"high\">\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The hero (often the LCP element) should not be lazy-loaded. Giving it fetchpriority=high and fixed dimensions preserves layout while prioritizing download, improving LCP.",
+          "distractor_rationale": "B: Preload fights with lazy and still delays rendering priority. C: Background images are not discoverable to the preload scanner the same way and lose semantics/alt, and can hurt LCP. D: Dimensions prevent CLS but do not fix the delayed fetch from lazy-loading.",
+          "skills_covered": [
+            "Performance Optimization",
+            "SEO"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You configure GitHub Pages (first-time publish) to serve from the /docs folder on main. Before building, you add this to .gitignore:\n\n```text\ndist/\ndocs/\n```\nYour build outputs static files into /docs, then you run:\n\n```bash\ngit add .\ngit commit -m \"feat: first publish\"\ngit push origin main\n```\nPages builds successfully. What happens when visiting your site URL?",
+          "options": [
+            "The site serves an older version from a previous commit even though this is the first publish.",
+            "A 404 (or \"Site not found\") because /docs files were ignored and never committed, so Pages has no index.html to serve.",
+            "The Pages build fails with a Jekyll error due to .gitignore excluding /docs.",
+            "The site serves the latest content because GitHub Pages ignores .gitignore during publish."
+          ],
+          "correct_option": "B",
+          "explanation": "Git ignores untracked files under docs/ due to .gitignore, so your commit contained no site files. GitHub Pages builds from the repository tree, not your working directory; with no index.html in /docs, the site 404s.",
+          "distractor_rationale": "B: There is no previous Pages publish to fall back to on a first-time deploy. C: Pages does not ignore .gitignore; it sees only committed files. D: .gitignore doesn’t cause a Jekyll error by itself; the build can \"succeed\" but publish nothing useful.",
+          "skills_covered": [
+            "Git",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your Nginx config adds a long-lived cache header universally:\n\n```nginx\nlocation / {\n  add_header Cache-Control \"public, max-age=31536000, immutable\";\n}\n```\nAfter redeploys, users still see old titles, and Google shows stale snippets. What’s the correct fix to keep assets fast but HTML fresh?",
+          "options": [
+            "Send different Cache-Control by content-type: no-cache (or max-age=0, must-revalidate) for text/html, and 1-year immutable only for hashed assets (JS/CSS/images).",
+            "Keep the 1-year cache for all, but add strong ETags so browsers revalidate HTML.",
+            "Rely on a Service Worker to bypass HTTP caching for HTML.",
+            "Reduce the global max-age to 600 seconds for everything."
+          ],
+          "correct_option": "A",
+          "explanation": "HTML should be revalidated on each navigation so new content and metadata are visible, while static, fingerprinted assets benefit from long-lived immutable caching.",
+          "distractor_rationale": "B: A blanket short cache degrades asset performance needlessly. C: Strong caching with ETags still allows stale cache if not revalidated; long-lived max-age defeats timely HTML refresh. D: Service workers add complexity and are unnecessary for this basic policy split.",
+          "skills_covered": [
+            "Application Deployment",
+            "Performance Optimization",
+            "SEO"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must record the first page_view only after consent is granted while not delaying initial script availability. Current code puts GA4 at the end of body without async and shows inconsistent first hits.\n\nWhich change both preserves performance and ensures the first pageview is sent only on consent?",
+          "options": [
+            "Load GA4 in the head with async, set default consent denied, then update consent and manually send page_view on accept.\n\n```html\n<!-- head -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXX\"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('consent', 'default', { 'analytics_storage': 'denied' });\n  gtag('js', new Date());\n  gtag('config', 'G-XXXX', { 'send_page_view': false });\n</script>\n<!-- on consent -->\n<script>\n  gtag('consent', 'update', { 'analytics_storage': 'granted' });\n  gtag('event', 'page_view');\n</script>\n```",
+            "Wrap the GA4 <script> tags in an if (window.userConsented) check so they never load until after click.",
+            "Use defer instead of async on the GA4 external script.",
+            "Keep GA4 in the body and only call gtag('consent','update',...) after accept, leaving send_page_view at default."
+          ],
+          "correct_option": "A",
+          "explanation": "Async-loading in the head makes the library available early without blocking. Default-denied consent plus explicit page_view on grant ensures no hits are sent before consent, and the first pageview is reliably captured when allowed.",
+          "distractor_rationale": "B: Without disabling send_page_view, a hit may fire before the update depending on timing. C: Delaying script load until interaction risks missing the initial pageview and is brittle. D: defer applies to same-origin parser-executed scripts and still runs before DOMContentLoaded; it doesn’t address consent timing and may delay availability.",
+          "skills_covered": [
+            "web analytics",
+            "Performance Optimization"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Lighthouse flags \"Ensure text remains visible during webfont load\" and suggests preloading your primary font.\n\n```css\n@font-face {\n  font-family: 'Acme';\n  src: url('/fonts/Acme-Regular.woff2') format('woff2');\n}\nbody { font-family: 'Acme', system-ui, sans-serif; }\n```\nWhat change best reduces FOIT and improves LCP?",
+          "options": [
+            "Inline the entire font as base64 in CSS to avoid a request.",
+            "Convert the font to TTF and move the @font-face block to the top of the CSS file.",
+            "Remove the system-ui fallback so browsers wait for Acme to render for visual consistency.",
+            "Add font-display: swap and preload the woff2 with crossorigin.\n\n```html\n<link rel=\"preload\" as=\"font\" type=\"font/woff2\" crossorigin href=\"/fonts/Acme-Regular.woff2\">\n```\n```css\n@font-face {\n  font-family: 'Acme';\n  src: url('/fonts/Acme-Regular.woff2') format('woff2');\n  font-display: swap;\n}\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Preloading brings the font down earlier, and font-display: swap renders text with a fallback immediately, eliminating FOIT and helping LCP. crossorigin is required for preloaded fonts.",
+          "distractor_rationale": "B: TTF increases size and doesn’t address rendering behavior. C: Removing fallbacks makes FOIT worse. D: Inlining large fonts bloats CSS, hurts caching, and can still block rendering.",
+          "skills_covered": [
+            "Performance Optimization",
+            "SEO"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your layout uses CSS order to reverse columns:\n\n```html\n<div class=\"container\">\n  <nav>…links…</nav>\n  <main>…content…</main>\n</div>\n```\n```css\n.container { display: flex; }\nnav { order: 2; }\nmain { order: 1; }\n```\nKeyboard and screen reader users report confusing focus/reading order. What actually happens, and what’s the appropriate fix?",
+          "options": [
+            "Assistive tech follows visual order when CSS order is used, so no change is needed.",
+            "Assistive tech and tab order follow DOM order, not visual order. Swap the elements in the DOM so <main> precedes <nav>, and use CSS to achieve any needed visual arrangement.",
+            "Add tabindex attributes to force focus through main before nav.",
+            "Use aria-flowto to direct screen readers to read main before nav without changing DOM order."
+          ],
+          "correct_option": "B",
+          "explanation": "DOM order controls reading and focus order; CSS 'order' only changes visual placement. Correct the DOM order for logical navigation and reading; keep any visual design with CSS.",
+          "distractor_rationale": "B: A common misconception; most AT follows DOM, not visual order. C: aria-flowto is not a general fix for reading order and has limited support; it’s not a substitute for logical DOM. D: tabindex hacks create brittle navigation and don’t fix reading order for screen readers.",
+          "skills_covered": [
+            "Web Accessibility",
+            "Manual Testing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your non-www to www redirect is defined as:\n\n```nginx\nserver {\n  server_name example.com;\n  return 302 https://www.example.com$request_uri;\n}\n```\nMonths later, Search Console still shows both hosts indexed. What change most directly helps consolidate signals?",
+          "options": [
+            "Add rel=canonical on both hosts pointing to themselves respectively.",
+            "Change 302 to 301 (permanent) for the canonical redirect.",
+            "Use a meta refresh 0 on example.com pages to send users to www.",
+            "Disallow example.com in robots.txt to stop crawling it."
+          ],
+          "correct_option": "B",
+          "explanation": "A permanent (301) redirect signals canonicalization to crawlers and is the standard for host consolidation.",
+          "distractor_rationale": "B: Self-referential canonicals on both hosts do not consolidate. C: Meta refresh is a poor signal and user-hostile. D: Disallow prevents crawling, but the URLs can remain indexed; it does not consolidate link equity like a 301.",
+          "skills_covered": [
+            "SEO",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your production deploy triggers on any push to main. A single bad commit broke your CSS. You must roll back fast while keeping history intact and without force-pushing. Which approach is correct?",
+          "options": [
+            "```bash\ngit revert <bad-commit-sha>\ngit push origin main\n```",
+            "```bash\ngit reset --hard HEAD~1\ngit push --force origin main\n```",
+            "```bash\ngit checkout HEAD~1\ngit push origin HEAD:main\n```",
+            "```bash\ngit rebase -i HEAD~2  # drop the bad commit\ngit push origin main\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Revert creates a new commit that undoes the bad change, preserves history, and works with protected branches and CI that deploys on push.",
+          "distractor_rationale": "A: Force-push is dangerous and usually blocked on protected mains. C: History rewriting on a shared main is risky and often disallowed; CI may redeploy unexpectedly. D: Pushing a detached HEAD like this is effectively a history rewrite and not permitted on protected branches.",
+          "skills_covered": [
+            "Git",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Lighthouse shows high Total Blocking Time due to a third-party analytics library executing a long task shortly after DOMContentLoaded. You don’t want to drop analytics, and LCP is already good. Which implementation best reduces TBT impact while preserving data quality?",
+          "options": [
+            "Move the analytics script to the top of <head> without async so it executes earlier.",
+            "Preload the analytics script with <link rel=\"preload\"> to increase its priority.",
+            "Load analytics after first user interaction by lazily injecting the <script async> via a tiny inline listener.\n\n```html\n<script>\n  function loadAnalytics(){\n    var s=document.createElement('script');\n    s.src='https://www.googletagmanager.com/gtag/js?id=G-XXXX';\n    s.async=true; document.head.appendChild(s);\n  }\n  window.addEventListener('pointerdown', loadAnalytics, { once:true });\n</script>\n```",
+            "Inline the analytics library to remove network latency and execute immediately."
+          ],
+          "correct_option": "C",
+          "explanation": "Deferring analytics load until the first interaction avoids blocking the main thread during initial load, reducing TBT. Using async preserves non-blocking fetch. This preserves most data quality for engaged sessions while protecting UX.",
+          "distractor_rationale": "B: Synchronous execution worsens TBT. C: Inlining ensures a large, blocking script executes immediately — the opposite of the goal. D: Preloading raises priority and can increase contention and TBT near LCP.",
+          "skills_covered": [
+            "web analytics",
+            "Performance Optimization"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You ran audits on your in-progress portfolio. Excerpts:\n\n```text\naxe-core (key fails)\n- Focus trapped inside modal (critical)\n- Element with role=\"button\" not keyboard-accessible (serious)\n- Insufficient color contrast: .btn--secondary (#7AA vs #FFF) ratio 2.8:1 (serious)\n\nLighthouse (Mobile)\n- LCP: 4.1s (image element) — hero.jpg lazy-loaded; no preload\n- Serve static assets with an efficient cache policy (26 resources > 1 day suggested)\n- Avoid large layout shifts (CLS: 0.18) — hero image lacks width/height\n\nSEO checks\n- Two <h1> elements found on /about\n- <title> and <meta name=\"description\"> present\n```\nConstraints: You have one sprint day to ship fixes with the highest impact on real users and basic SEO. You cannot redesign brand colors this sprint.\n",
+          "task": "Prioritize and justify a concrete fix plan for this one-day sprint that addresses the most harmful issues first. Name the exact code/config changes you would make and how you will verify each fix before deploy.",
+          "expected_answer": "A strong answer prioritizes user-blocking a11y defects and LCP/CLS over cosmetic/structure nits:\n- Fix keyboard traps and non-activatable controls first: replace role=\"button\" divs with <button>, ensure modals trap focus correctly on open and restore on close; add Esc-to-close. Verify with keyboard-only walkthrough and axe re-run.\n- Improve LCP and prevent CLS: remove loading=\"lazy\" from the hero; add width/height; add fetchpriority=\"high\" or a <link rel=\"preload\" as=\"image\" …> for hero. Re-run Lighthouse to confirm LCP < 2.5s and CLS ~0.\n- Cache policy split: set Cache-Control: no-cache for HTML; 1y immutable for hashed assets. Verify via curl -I and a hard refresh showing updated HTML and cached assets.\n- Defer color contrast change (blocked by brand) but add interim accessible variant: increase font-weight/background or add a border for contrast until design can adjust; document a ticket to adjust brand token later.\n- Tidy headings opportunistically if trivial: ensure a single H1 per page by demoting secondary H1 to H2. Verify with HTML outline and an automated SEO check.\nEvidence: before/after axe and Lighthouse excerpts; code diffs for modal and hero; headers screenshot from devtools Network.",
+          "rubric": [
+            {
+              "criterion": "Explains a prioritization that puts keyboard trap fix and activation semantics ahead of cosmetic/structural issues",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies concrete, correct code changes for hero LCP/CLS (remove lazy, add dimensions, prioritize fetch) and modal/controls",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes correct cache-policy split for HTML vs assets with a verifiable method (curl/devtools)",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers verification steps with appropriate tools (axe, Lighthouse, manual keyboard) and acknowledges deferral of brand contrast with mitigating step",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Web Accessibility",
+            "Performance Optimization",
+            "SEO",
+            "Manual Testing",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your deployment uses GitHub Actions to build and publish a static site. A footer version component expects a tag or commit from git describe, but the build log shows a short hash only. Analytics is also loading in preview deploys, polluting data.\n\n```yaml\n# .github/workflows/deploy.yml (excerpt)\n- uses: actions/checkout@v4\n  with:\n    fetch-depth: 1\n- name: Build\n  run: |\n    echo \"VERSION=$(git describe --tags --always)\" > .env\n    npm ci && npm run build\n- name: Deploy\n  uses: actions/upload-pages-artifact@v3\n```\nPreview deploys are created on pull requests by a separate job. GA4 is initialized unconditionally in the app’s HTML template.",
+          "task": "Propose precise changes to ensure: (1) git describe can resolve annotated tags in CI for main-line deploys, (2) version data is embedded in the built site, and (3) analytics loads only on production (not previews) while still recording the first pageview correctly on consent.",
+          "expected_answer": "- Set fetch-depth to 0 (full history) so git describe can find tags; optionally fetch --tags explicitly.\n- Export VERSION into the build and surface it at runtime (e.g., write a version.json into the output or bake the string into the footer during build). Ensure the deploy artifact contains it.\n- Gate analytics on an environment flag and consent: set NODE_ENV=production or SITE_ENV=production in the main deploy job; in HTML/gtag config set send_page_view: false; default consent denied; on production with consent granted, send the first page_view. In preview jobs, omit the env flag so analytics is not initialized.\n- Verify: log VERSION in build output, check the rendered footer, and confirm GA4 not present in preview HTML but present in production after consent via Network panel.",
+          "rubric": [
+            {
+              "criterion": "Correctly removes shallow clone limitation (fetch-depth: 0 and/or fetch tags) and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows a robust way to embed and surface version data in the built artifact",
+              "marks": 2
+            },
+            {
+              "criterion": "Designs an environment-gated analytics initialization with consent-safe first pageview logic",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides clear verification steps for both version and analytics behavior",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "Application Deployment",
+            "web analytics"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "After moving to a CDN in front of your static host, you see stale titles in SERPs and social shares post-release. A curl shows:\n\n```bash\n$ curl -I https://www.example.com/\nHTTP/2 200\ncache-control: public, max-age=2592000, immutable\ncontent-type: text/html; charset=utf-8\n\n$ curl -I https://www.example.com/app.8f1a3.css\nHTTP/2 200\ncache-control: public, max-age=600\n```\nThe HTML is cached a month; assets are cached for 10 minutes. Canonical tags are correct in HTML. The CDN honors origin cache headers.",
+          "task": "Design the corrected caching strategy (origin headers and any CDN rules) and a validation plan so future releases show fresh HTML immediately while keeping repeat views fast. Explain why your choices fix both user and crawler freshness.",
+          "expected_answer": "- Flip the policy: HTML gets no-cache (or max-age=0, must-revalidate) to force conditional requests on navigation; assets get 1-year immutable with filename hashing to allow aggressive caching.\n- Configure at origin (web server) by content-type or URL patterns, or at CDN level via rules: text/html -> no-cache; /*.(css|js|woff2|png|jpg) with hash in name -> 1y immutable.\n- Ensure build produces hashed filenames and updates references in HTML.\n- Validation: after deploy, curl -I homepage and an asset to confirm headers; hard and soft reloads in browser show fresh HTML and cached assets; use Search Console URL Inspection to request refresh and verify live HTML; confirm CDN does not override HTML policy.\n- Outcome: crawlers revalidate and fetch fresh HTML content/metadata; users avoid stale pages; static assets remain fast from cache.",
+          "rubric": [
+            {
+              "criterion": "Proposes correct split cache policy (HTML revalidated; hashed assets long-lived) with implementation detail (origin/CDN)",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses build-time hashing and reference updates",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete validation plan using curl/devtools and Search Console",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Performance Optimization",
+            "SEO"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You’re adding basic analytics to a portfolio with three key goals: contact clicks, project view depth, and resume downloads. Privacy is a requirement: no hits before consent. Current site is multi-page (no SPA) and uses GA4 via gtag.js.",
+          "task": "Define an event plan (names and parameters), the consent-safe initialization, and how you will QA the setup end-to-end on a staging URL before production. Include how you’ll avoid double-counting and how you’ll verify that previews do not send data.",
+          "expected_answer": "- Event plan: contact_click (parameters: link_url, link_text), project_view (parameters: project_slug, position), resume_download (parameters: file_name). Use recommended GA4 conventions (snake_case), and set send_page_view:false with your own page_view after consent.\n- Initialization: load gtag async in head; default consent denied; on consent update, grant analytics_storage and fire a single page_view per page load; attach event listeners to anchors/buttons to emit events once (use { once: true } or idempotent guards) to avoid double-counting.\n- Env gating: expose SITE_ENV, initialize analytics only when SITE_ENV=production; staging/previews do not include GA4 script or use a separate test property.\n- QA: use GA4 DebugView/Realtime to observe events from staging test property, verify parameters; network panel to confirm no requests before consent and a single hit after; test that staging sends to test property only and production property remains quiet until go-live.",
+          "rubric": [
+            {
+              "criterion": "Clear, sensible GA4 event design with meaningful parameters and naming",
+              "marks": 2
+            },
+            {
+              "criterion": "Consent-safe initialization that prevents pre-consent hits and avoids double-counting pageviews/events",
+              "marks": 2
+            },
+            {
+              "criterion": "Environment separation strategy ensuring previews/staging do not pollute production data",
+              "marks": 2
+            },
+            {
+              "criterion": "End-to-end QA plan using Realtime/DebugView and Network inspection",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "web analytics",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce an Accessibility–Performance–SEO audit report for your portfolio",
+          "brief": "Audit your current portfolio site (local or hosted) focusing on accessibility, performance, SEO basics, and testing. Run both automated and manual checks, record evidence, and propose fixes with priority and owner-ready detail.",
+          "deliverable": "One report file (PDF or Markdown) plus raw tool exports in a folder/zip. The report must include screenshots and exact issue locations (URLs/selectors/lines) and proposed fixes. Include the raw Lighthouse JSON and an axe report export.",
+          "acceptance_criteria": [
+            "Report covers at least 3 distinct pages or states (e.g., home, a project page, contact modal).",
+            "Accessibility: includes results from an automated tool (axe or Lighthouse A11y) and a manual keyboard test (documented steps and findings).",
+            "Performance: includes Lighthouse Mobile run with metrics (LCP/CLS/TBT) and a concrete fix plan for the LCP element if >2.5s.",
+            "SEO basics: verifies presence/quality of <title> and <meta description>, a single <h1> per page, and correct canonical where applicable.",
+            "Headers: includes evidence of Cache-Control for HTML and at least one asset via curl -I or devtools screenshots, with an assessment.",
+            "Each issue lists: URL, element/snippet, why it matters (impact), recommended fix, and priority (P0/P1/P2).",
+            "Includes before/after evidence for at least 3 fixes applied or prototyped (code diff or screenshots).",
+            "All raw exports attached: Lighthouse JSON, axe export (or equivalent), and any crawl/output files."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accessibility section quality: correct identification of issues and manual keyboard findings with precise locations",
+              "marks": 5
+            },
+            {
+              "criterion": "Performance analysis depth: correct metric interpretation and targeted, technically sound fixes for LCP/CLS/TBT",
+              "marks": 5
+            },
+            {
+              "criterion": "SEO basics coverage: titles, descriptions, headings, canonicals with accurate assessments and fixes",
+              "marks": 4
+            },
+            {
+              "criterion": "HTTP caching/header analysis accuracy with concrete, correct recommendations",
+              "marks": 3
+            },
+            {
+              "criterion": "Quality of evidence: screenshots, raw exports, code snippets; clarity and prioritization",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Web Accessibility",
+            "Performance Optimization",
+            "SEO",
+            "Manual Testing",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy a live portfolio with CI, basic analytics, and deployment documentation",
+          "brief": "Host your portfolio from a public Git repo using a CI-based deployment (e.g., GitHub Pages, Netlify, or Vercel). Implement basic analytics gated by consent, apply sensible cache headers, and document how to operate and roll back the site.",
+          "deliverable": "A live URL and the public Git repository URL. The repo must contain a README.md with deployment details and a /public/version.txt (or equivalent) embedded in the deployed site with build time and commit SHA.",
+          "acceptance_criteria": [
+            "Live site is reachable over HTTPS and returns HTTP 200 at the root URL.",
+            "Repo shows an automated deploy workflow (Actions/CI config file present) that triggers on push to main.",
+            "A version endpoint or file is publicly accessible (e.g., /version.txt) and matches the latest commit SHA in the repo.",
+            "HTML includes <title> and <meta name=\"description\"> on the homepage; robots.txt and sitemap.xml are accessible at standard paths.",
+            "Cache policy: HTML responses send Cache-Control no-cache (or max-age=0, must-revalidate); static assets are fingerprinted (hash in filename) and send long-lived immutable caching. Assessor can verify via browser devtools or curl -I.",
+            "Basic analytics present but consent-gated: no analytics network requests before consent; after granting consent, a page_view request appears. In preview/staging URLs, analytics must be disabled or point to a test property.",
+            "Keyboard accessibility: header nav and any buttons are usable entirely with keyboard (Tab/Shift+Tab/Enter/Space), and visible focus is present. Assessor will spot-check.",
+            "README.md documents: hosting target, how CI/CD works, how to roll back a bad deploy, and how to change analytics property IDs and consent behavior."
+          ],
+          "rubric": [
+            {
+              "criterion": "Working CI-based deployment with verifiable version stamping and repo linkage",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct caching strategy (HTML vs assets) implemented and verifiable on the live site",
+              "marks": 4
+            },
+            {
+              "criterion": "Analytics implementation: consent-gated, environment-aware, and visibly functioning post-consent",
+              "marks": 4
+            },
+            {
+              "criterion": "Essential SEO elements and discoverability files (robots.txt, sitemap.xml) present and correct",
+              "marks": 3
+            },
+            {
+              "criterion": "Keyboard accessibility visibly supported on critical navigation/actions",
+              "marks": 2
+            },
+            {
+              "criterion": "Operational documentation quality (deploy, rollback, analytics config)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Git",
+            "web analytics",
+            "SEO",
+            "Web Accessibility",
+            "Performance Optimization",
+            "Manual Testing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -10,7 +10,11 @@ import {
   Layers,
   Target,
 } from 'lucide-react';
-import { catalogueAPI } from '../services/api';
+import {
+  catalogueAPI,
+  courseSittingsAPI,
+  courseAchievementsAPI,
+} from '../services/api';
 import PageShell, { NarrowShell } from '../components/ui/PageShell';
 import PageSpinner from '../components/ui/PageSpinner';
 import HeroBanner from '../components/ui/HeroBanner';
@@ -20,6 +24,7 @@ import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import SectionHeading from '../components/ui/SectionHeading';
 import ProgressBar from '../components/ui/ProgressBar';
+import SectionAssessment from '../components/SectionAssessment';
 import { apiErrorMessage } from '../lib/apiError';
 
 /**
@@ -33,10 +38,32 @@ import { apiErrorMessage } from '../lib/apiError';
  */
 export const CourseJourneyPage = () => {
   const { courseId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Set when the student lands here via "Continue to next section".
+  const focusSection = location.state?.focusSection || null;
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // The course-track assessment state — independent of any project.
+  const [progress, setProgress] = useState({});
+  const [xp, setXp] = useState(null);
+  const [starting, setStarting] = useState('');
+  const [sittingError, setSittingError] = useState('');
+
+  const loadAssessment = useCallback(async (courseCode) => {
+    if (!courseCode) return;
+    try {
+      const rows = await courseSittingsAPI.progress(courseId, courseCode);
+      setProgress(Object.fromEntries(rows.map((row) => [row.section_code, row])));
+    } catch {
+      /* progress is decoration on top of the syllabus; a failure must not blank the page */
+    }
+    courseAchievementsAPI.mine().then(setXp).catch(() => {});
+  }, [courseId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,7 +73,11 @@ export const CourseJourneyPage = () => {
       setError('');
       try {
         const data = await catalogueAPI.getCourse(courseId);
-        if (!cancelled) setCourse(data);
+        if (cancelled) return;
+        setCourse(data);
+        // Assessment state depends on the course code, so it can only run once
+        // the course is known. A failure here leaves the syllabus intact.
+        loadAssessment(data.course_code);
       } catch (err) {
         console.error('Failed to load the course:', err);
         // Cancelled requests must not paint an error: the component is gone.
@@ -61,7 +92,25 @@ export const CourseJourneyPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [courseId]);
+  }, [courseId, loadAssessment]);
+
+  const open = useCallback(
+    async (sectionCode, { mode = 'graded', restart = false } = {}) => {
+      setStarting(sectionCode);
+      setSittingError('');
+      try {
+        const { sitting } = await courseSittingsAPI.start(courseId, sectionCode, { mode, restart });
+        navigate(`/courses/${courseId}/sittings/${sitting.sitting_id}`);
+      } catch (err) {
+        console.error('Failed to start the sitting:', err);
+        setSittingError(apiErrorMessage(err, 'Unable to start this test.'));
+        if (course?.course_code) loadAssessment(course.course_code).catch(() => {});
+      } finally {
+        setStarting('');
+      }
+    },
+    [course, courseId, loadAssessment, navigate]
+  );
 
   if (loading) {
     return <PageSpinner message="Loading the learning journey…" className="py-24" />;
@@ -131,6 +180,21 @@ export const CourseJourneyPage = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Journey */}
         <div className="space-y-6 lg:col-span-2">
+          {/* The assessment: sit any section's test, independent of any project.
+              Only shown when the course carries a question corpus (a syllabus). */}
+          {course.syllabus?.length ? (
+            <SectionAssessment
+              title="Assessment"
+              sections={course.syllabus}
+              progress={progress}
+              xp={xp}
+              starting={starting}
+              error={sittingError}
+              onStart={open}
+              focusSection={focusSection}
+            />
+          ) : null}
+
           <SectionHeading as="h2" icon={Layers} iconClassName="text-brand-fg">
             The learning journey
           </SectionHeading>

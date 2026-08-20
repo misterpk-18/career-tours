@@ -4,42 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#090d16" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#002b36" />
     <meta
       name="description"
       content="Career Tours matches your resume skills to career paths and recommends courses that close the gaps."
     />
     <title>Career Tours — career guidance and resume analysis</title>
 
-    <!--
-      Resolve and commit the theme BEFORE the stylesheet applies, otherwise the
-      page paints in the wrong theme and then corrects itself.
-
-      This duplicates the resolution logic in src/context/ThemeContext.jsx by
-      necessity: it must run before any module loads, so it cannot import from
-      src/lib/storage.js. Keep the key name and accepted values in sync with both.
-    -->
-    <script>
-      (function () {
-        try {
-          var stored = localStorage.getItem('career_tours_theme');
-          var theme =
-            stored === 'light' || stored === 'dark'
-              ? stored
-              : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light';
-          var root = document.documentElement;
-          root.setAttribute('data-theme', theme);
-          root.style.colorScheme = theme;
-        } catch (e) {
-          // localStorage unavailable (private mode). Fall back to dark, matching
-          // the app's original appearance.
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
-    </script>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

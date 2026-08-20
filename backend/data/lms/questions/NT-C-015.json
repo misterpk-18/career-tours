@@ -1,0 +1,1817 @@
+{
+  "course_code": "NT-C-015",
+  "course_name": "Core Java",
+  "sections": [
+    {
+      "section_code": "NT-C-015-S01",
+      "skills_assessed": [
+        "Java",
+        "JDK",
+        "Data Structures"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have this layout and source:\n\n```text\nproject/\n  src/\n    p/\n      Hello.java\n  out/\n```\n\n```java\n// src/p/Hello.java\npackage p;\npublic class Hello {\n    public static void main(String[] args) {\n        System.out.println(\"ok\");\n    }\n}\n```\n\nFrom project root you run:\n\n```bash\njavac -d out src/p/Hello.java\n```\n\nWhich single command, run from project root immediately after compilation, prints `ok`?",
+          "options": [
+            "```bash\njava -cp out Hello\n```",
+            "```bash\njava -cp out p/Hello\n```",
+            "```bash\njava Hello\n```",
+            "```bash\njava -cp out p.Hello\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The class is in package `p` and compiled under `out`, so the runtime must find `p/Hello.class` under a classpath root and the main class must be specified fully-qualified. `java -cp out p.Hello` satisfies both.",
+          "distractor_rationale": "A: Omits classpath and package; the launcher searches the current dir for `Hello.class` (no package) and fails.\nB: Classpath is correct but the main class name must be fully-qualified; `Hello` is not in the default package.\nD: Uses a file path, but `java` expects a fully-qualified class name, not a filesystem path.",
+          "skills_covered": [
+            "JDK",
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this print?\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println(10 + 20 + \"30\" + 40 + 50);\n  }\n}\n```",
+          "options": [
+            "30304050",
+            "1020304050",
+            "\"30304050\" (with quotes)",
+            "303090"
+          ],
+          "correct_option": "A",
+          "explanation": "Left to right: `10+20` is `30` (numeric). `30+\"30\"` is string concatenation `\"3030\"`. Then `+40` -> `\"303040\"`, `+50` -> `\"30304050\"`. The println does not include quotes.",
+          "distractor_rationale": "B: Treats all as concatenation from the start; but numeric addition happens until a String is seen.\nC: Assumes `40+50` is added numerically at the end; but once concatenation starts, the rest are appended as strings.\nD: println does not add quotes around its output.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider numeric promotion and compound assignment:\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    byte b = 100;\n    b += 200;\n    System.out.println(b);\n  }\n}\n```",
+          "options": [
+            "-56",
+            "44",
+            "300",
+            "Compilation error at `b += 200`"
+          ],
+          "correct_option": "B",
+          "explanation": "`b += 200` is equivalent to `b = (byte)(b + 200)`. `b + 200` computes as `int` = 300, then narrows to `byte` giving 300 - 256 = 44.",
+          "distractor_rationale": "B: Ignores narrowing back to byte.\nC: A common overflow result people remember from `200` cast to byte being `-56`, but here it's `100+200` first, so 300 -> 44.\nD: Simple `+=` compiles due to implicit cast; `b = b + 200` would not.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What happens when running this program?\n\n```java\nimport java.util.Arrays;\n\npublic class Main {\n  public static void main(String[] args) {\n    int[] a = {0,1,2};\n    int i = 1;\n    a[i++] = a[++i];\n    System.out.println(Arrays.toString(a));\n    System.out.println(i);\n  }\n}\n```",
+          "options": [
+            "It prints `[0, 2, 2]` then `3`.",
+            "It throws `ArrayIndexOutOfBoundsException` before any printing.",
+            "It prints `[0, 1, 2]` then `2`.",
+            "Compilation error due to using both `i++` and `++i` on one line."
+          ],
+          "correct_option": "B",
+          "explanation": "Evaluation order is array ref, left index, then right-hand side. Left index uses `i++` (uses 1 then i becomes 2). Right side `a[++i]` increments `i` to 3 and tries to read `a[3]`, causing `ArrayIndexOutOfBoundsException` before any println executes.",
+          "distractor_rationale": "B: Assumes no change and that execution reaches prints; ignores the exception.\nC: Assumes successful assignment and that both sides update i; fails because the RHS access throws first.\nD: It compiles; Java forbids multiple modifications in one expression only when it leads to ambiguity in sequence points in some languages, not here.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given:\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    int x = 2;\n    switch (x) {\n      case 1: System.out.print(\"A\");\n      case 2: System.out.print(\"B\");\n      default: System.out.print(\"C\");\n      case 3: System.out.print(\"D\"); break;\n    }\n  }\n}\n```",
+          "options": [
+            "B",
+            "BC",
+            "BCD",
+            "BD"
+          ],
+          "correct_option": "C",
+          "explanation": "Case 2 matches, there is no break, so it falls through to `default` then to `case 3` until the break. Thus `B`, `C`, `D`.",
+          "distractor_rationale": "B: Assumes `default` is skipped when a case matches; in Java it’s just a label in the fall-through chain unless guarded by breaks.\nC: Assumes implicit break after each case.\nD: Assumes fall-through stops before the next explicit case label, which is false in Java.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "What does this print?\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n    for (int i = 0; i < 5; i++) {\n      if ((i++ % 2) == 0) continue;\n      sum += i;\n    }\n    System.out.println(sum);\n  }\n}\n```",
+          "options": [
+            "0",
+            "4",
+            "9",
+            "6"
+          ],
+          "correct_option": "A",
+          "explanation": "Loop iterations: start i=0 → condition uses `i++` (0%2==0) then i becomes 1, continue; loop increment makes i=2. i=2 → `i++%2==0` true, i becomes 3, continue; loop increment i=4. i=4 → true again, i becomes 5, continue; loop increment i=6, exit. `sum` never changes.",
+          "distractor_rationale": "B/C/D: These assume either the `continue` doesn’t skip the addition, or they mis-track the effect of the post-increment inside the `if` test in combination with the loop increment.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "What is the effect of this code on the array?\n\n```java\nimport java.util.Arrays;\n\npublic class Main {\n  public static void main(String[] args) {\n    int[] arr = {1,2,3};\n    for (int x : arr) {\n      x *= 2;\n    }\n    System.out.println(Arrays.toString(arr));\n  }\n}\n```",
+          "options": [
+            "```text\n[2, 4, 6]\n```",
+            "```text\n[1, 4, 9]\n```",
+            "```text\n[1, 2, 3]\n```",
+            "Throws `ConcurrentModificationException`"
+          ],
+          "correct_option": "C",
+          "explanation": "The enhanced for loop assigns each element value to a local copy `x`. Modifying `x` doesn’t write back to the array. The array remains unchanged.",
+          "distractor_rationale": "B: Believes the loop writes through; it doesn’t for primitives.\nC: Mixes up doubling with squaring; also still wouldn’t write back.\nD: There is no iterator here; arrays don’t throw `ConcurrentModificationException` on this pattern.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Arrays and parameter passing:\n\n```java\npublic class Main {\n  static void f(int[] a, int[] b) {\n    a[0] = 9;\n    b = new int[]{7,7};\n    b[0] = 8;\n  }\n  public static void main(String[] args) {\n    int[] x = {1,1};\n    int[] y = {2,2};\n    f(x, y);\n    System.out.println(x[0] + \",\" + y[0]);\n  }\n}\n```",
+          "options": [
+            "1,8",
+            "9,2",
+            "9,8",
+            "1,2"
+          ],
+          "correct_option": "B",
+          "explanation": "`a[0]=9` mutates the caller’s array. Reassigning `b` points the local parameter to a new array; the caller’s `y` still points to the original `{2,2}`.",
+          "distractor_rationale": "B: Assumes reassignment of `b` affects the caller’s reference; Java is pass-by-value of the reference.\nC/D: Assume the mutation to `a[0]` didn’t happen or that `b[0]` wrote into `y`.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Short-circuit effects:\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    int a = 1, b = 1;\n    if (a++ > 1 && ++b > 1 || ++a > 2) { }\n    System.out.println(a + \",\" + b);\n  }\n}\n```",
+          "options": [
+            "3,2",
+            "2,2",
+            "2,1",
+            "3,1"
+          ],
+          "correct_option": "D",
+          "explanation": "`a++>1` uses 1 then a=2 → false, so `&&` short-circuits: `++b` not evaluated (b stays 1). `false || ++a>2` evaluates right side: `++a` makes a=3; `3>2` true. Final `a=3, b=1`.",
+          "distractor_rationale": "B/C/D: Each assumes the skipped `++b` ran or that the final `++a` didn’t, misunderstanding `&&` and `||` short-circuit and left-to-right evaluation.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Jagged arrays and defaults:\n\n```java\npublic class Main {\n  public static void main(String[] args) {\n    int[][] m = new int[2][];\n    m[0] = new int[]{1,2};\n    System.out.print(m[1][0]);\n  }\n}\n```",
+          "options": [
+            "Throws `NullPointerException` at the access",
+            "Compilation error: second dimension must be specified",
+            "Throws `ArrayIndexOutOfBoundsException`",
+            "Prints `0`"
+          ],
+          "correct_option": "A",
+          "explanation": "`m` is a 2-length array of `int[]` with both elements initialized to null. Assigning `m[0]` leaves `m[1]` null. Dereferencing `m[1][0]` throws `NullPointerException`.",
+          "distractor_rationale": "B: Assumes a default inner array exists; it does not.\nC: Index 0 would be valid if `m[1]` were an array; the failure is dereferencing null, not bounds.\nD: Java allows ragged arrays with an unspecified second dimension.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A teammate committed this file:\n\n```java\n// src/com/acme/app/Main.java\npackage com.acme.app;\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Run me\");\n  }\n}\n```\n\nYour repo has no build tool. From the project root, you compiled using:\n\n```bash\njavac -d out src/com/acme/app/Main.java\n```\n\nAnother teammate now tries to run it with `java Main` and then `java -cp out Main` and both fail with `Error: Could not find or load main class`. They ask you to fix the run step without changing any source code or moving files.",
+          "task": "State the exact compile and run commands you would use from the project root so that the program prints `Run me`, and justify why the previous attempts failed. Your answer must explain how the package name, directory structure, and classpath interact at runtime.",
+          "expected_answer": "- Keep the compile step as given or re-run explicitly: `javac -d out src/com/acme/app/Main.java`. This creates `out/com/acme/app/Main.class` with the declared package name `com.acme.app`.\n- Run with a classpath root that contains the `com` folder and specify the fully-qualified class name: `java -cp out com.acme.app.Main`.\n- The failing commands omitted the package name. `java Main` and `java -cp out Main` both ask the launcher to find a class in the default package named `Main`. Our class is in `com.acme.app`, so the launcher looks for `out/Main.class` (or `./Main.class`) and fails. The classpath must point to the directory above `com` (here `out`), and the name passed to `java` must be the fully-qualified name that matches the package declaration.",
+          "rubric": [
+            {
+              "criterion": "Gives a correct compile command that produces classes under a package-matching output root (e.g., `javac -d out src/com/acme/app/Main.java`).",
+              "marks": 2
+            },
+            {
+              "criterion": "Gives a correct run command that includes the classpath root and fully-qualified class name (e.g., `java -cp out com.acme.app.Main`).",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains precisely why `java Main` and `java -cp out Main` fail (mismatch between default package and declared package).",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains the relationship between package declaration, directory structure, and classpath root at runtime.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JDK",
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherit a tiny REPL-like average calculator:\n\n```java\nimport java.util.*;\npublic class Avg {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int sum = 0;\n    int count = 0;\n    while (sc.hasNextInt()) {\n      int x = sc.nextInt();\n      if (x < 0) break; // negatives stop input\n      sum += x;\n      count++;\n    }\n    double avg = sum / count; // prints wrong for many inputs\n    System.out.println(\"avg=\" + avg);\n  }\n}\n```\nWith input `2 3 3 -1`, it prints `avg=2.0`. With input `-1`, it crashes with `ArithmeticException`.",
+          "task": "Propose the smallest, targeted changes to make the program print a mathematically correct average for non-empty input and handle empty input gracefully, without changing the loop structure or termination rule. Explain why your changes work with reference to Java's type and operator semantics.",
+          "expected_answer": "- Promote one operand to `double` during division to avoid integer division, e.g., `double avg = count == 0 ? Double.NaN : (sum / (double) count);` or `((double) sum) / count`. This changes the numeric type at the division point only.\n- Guard against `count == 0` before dividing; for example, print `avg=NaN` or a clear message like `avg=undefined` when no non-negative numbers were read.\n- Rationale: `sum` and `count` are `int`. In `sum / count`, integer division truncates before assignment to `double`, so `8/3` becomes `2`, then widens to `2.0`. An explicit cast to `double` on either operand triggers floating-point division. A zero-count guard prevents `ArithmeticException`.",
+          "rubric": [
+            {
+              "criterion": "Changes ensure floating-point division via targeted casting or promotion (no wholesale refactor).",
+              "marks": 3
+            },
+            {
+              "criterion": "Handles the `count == 0` case without throwing (clear behavior defined).",
+              "marks": 2
+            },
+            {
+              "criterion": "Explanation correctly identifies integer division and widening conversion as the root cause.",
+              "marks": 2
+            },
+            {
+              "criterion": "Keeps the original loop and termination semantics intact (negatives stop input).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A utility is meant to rotate an array `k` steps to the right, in-place:\n\n```java\nimport java.util.Arrays;\npublic class Rot {\n  static void rotateRight(int[] a, int k) {\n    k = k % a.length;\n    for (int i = 0; i < k; i++) {\n      for (int j = a.length - 1; j > 0; j--) {\n        a[j] = a[j - 1];\n      }\n      // missing something?\n    }\n  }\n  public static void main(String[] args) {\n    int[] a = {1,2,3,4};\n    rotateRight(a, 1);\n    System.out.println(Arrays.toString(a)); // expected [4,1,2,3]\n  }\n}\n```\nBut it prints `[1,1,2,3]`. For `k=2`, it prints `[1,1,1,2]`.",
+          "task": "Identify precisely what is wrong, show the state change that causes the bad output, and provide a corrected implementation that keeps the same O(k·n) approach and also handles negative and large `k` values properly. Justify your fix succinctly.",
+          "expected_answer": "- Problem: On each right-shift, the code overwrites `a[a.length-1]` with `a[a.length-2]` and never preserves the original last element to place into `a[0]`. So information is lost and duplicates appear.\n- Fix: Save the last element before the inner loop, shift right, then write the saved value into `a[0]`. Normalize `k` to `((k % n) + n) % n` to handle negatives.\n- Corrected code:\n\n```java\nstatic void rotateRight(int[] a, int k) {\n  int n = a.length;\n  if (n == 0) return;\n  k = ((k % n) + n) % n; // handle negatives and large k\n  for (int r = 0; r < k; r++) {\n    int last = a[n - 1];\n    for (int j = n - 1; j > 0; j--) {\n      a[j] = a[j - 1];\n    }\n    a[0] = last;\n  }\n}\n```\n- With `[1,2,3,4]` and `k=1`, the inner loop produces `[1,1,2,3]` and then `a[0]=4` restores the lost element → `[4,1,2,3]`.",
+          "rubric": [
+            {
+              "criterion": "Diagnoses the lost-element issue (failure to preserve and restore the last element).",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct in-place fix that saves last, shifts, then assigns `a[0]`.",
+              "marks": 3
+            },
+            {
+              "criterion": "Correctly normalizes `k` to handle negative and large values.",
+              "marks": 1
+            },
+            {
+              "criterion": "Demonstrates correctness on the provided example or an equivalent concrete trace.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A sentinel-sum utility should sum all entered integers until `-1` appears, then print the sum of all non-sentinel numbers:\n\n```java\nimport java.util.*;\npublic class Sum {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int sum = 0;\n    int x;\n    do {\n      x = sc.nextInt();\n      sum += x; // bug: includes sentinel\n    } while (x != -1);\n    System.out.println(sum);\n  }\n}\n```\nFor input `5 7 -1`, it prints `11`? No — it prints `11` only if you fix it; currently it prints `11`? Actually it prints `11` + `-1` = `11`? Wait, it prints `11`? It actually prints `11`? Think carefully: as written, it prints `11`? No, it prints `11` plus the sentinel which is -1: `5+7+(-1)=11`. So it prints `11`? This confusion is common on the team.",
+          "task": "Rewrite the control flow minimally so the sentinel is not added to the sum, without duplicating reads or changing the sentinel value. Explain why your version avoids the off-by-one/read placement issue inherent in `do/while` here.",
+          "expected_answer": "Read first, test, then add — or test before add. Two minimal patterns work:\n\nPattern A (while loop):\n\n```java\nint sum = 0;\nint x = 0;\nwhile ((x = sc.nextInt()) != -1) {\n  sum += x;\n}\nSystem.out.println(sum);\n```\n\nPattern B (reorder in do/while):\n\n```java\nint sum = 0;\nint x;\ndo {\n  x = sc.nextInt();\n  if (x != -1) sum += x; // guard the addition\n} while (x != -1);\nSystem.out.println(sum);\n```\n\nRationale: The original `do/while` guarantees one addition occurs before any check, so the sentinel is always included once. Guarding the addition or using a pre-checked `while` prevents adding the sentinel to the sum.",
+          "rubric": [
+            {
+              "criterion": "Provides a correct minimal control-flow fix (guarded addition or pre-checked `while`).",
+              "marks": 3
+            },
+            {
+              "criterion": "Avoids duplicating input reads and preserves the `-1` sentinel semantics.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains clearly why `do/while` as written includes the sentinel once before the check.",
+              "marks": 1
+            },
+            {
+              "criterion": "Shows the corrected code structure precisely (no pseudocode mistakes).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "ArrayStats: a basic CLI for numeric array statistics",
+          "brief": "Build a small command-line program that computes statistics over integer inputs provided as command-line arguments. Implement the following subcommands, each as its own static method, and dispatch from `main`:\n- `sum <ints...>` → print the total sum\n- `avg <ints...>` → print the arithmetic mean as a decimal with exactly 2 fractional digits (round half up)\n- `max <ints...>` → print the maximum\n- `median <ints...>` → print the median (for even count, the mean of the two middle numbers with exactly 2 fractional digits)\nConstraints: no external libraries; use arrays, loops, conditions, and your own helper methods. Do not use `Streams` or `Collections` — treat the inputs as a plain `int[]`. Package your class (e.g., `package app;`).",
+          "deliverable": "Source in `src/app/ArrayStats.java` (and any helper classes in `src/app/`), plus a short README with the exact `javac` and `java` commands to compile to `out/` and run each sample. No binaries.",
+          "acceptance_criteria": [
+            "Compiles from project root with `javac -d out src/app/*.java` and runs from project root with `java -cp out app.ArrayStats ...`.",
+            "`java -cp out app.ArrayStats sum 5 10 -2` prints exactly `13`.",
+            "`java -cp out app.ArrayStats avg 2 3 3` prints exactly `2.67`.",
+            "`java -cp out app.ArrayStats max 9 -1 4 9 3` prints exactly `9`.",
+            "`java -cp out app.ArrayStats median 7 1 3` prints exactly `3.00`.",
+            "`java -cp out app.ArrayStats median 4 1 3 9 11` prints exactly `6.00`.",
+            "Invalid invocation (unknown subcommand or no numbers) prints a single line starting with `ERROR:` and exits without throwing.",
+            "Implementation uses at least four static helper methods: `parseInts(String[] args, int from)`, `sum(int[] a)`, `max(int[] a)`, `median(int[] a)` and a method for `avg`. Manual sort for median is implemented using loops (e.g., selection or insertion sort). No use of `Arrays.sort`.",
+            "All numeric formatting requirements (exact 2 decimals for avg/median where applicable) are met."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct results for sum, max, avg (with rounding), and median on provided examples.",
+              "marks": 8
+            },
+            {
+              "criterion": "Argument parsing and error handling: rejects bad input (non-integers, missing args, unknown subcommand) with `ERROR:` message; does not crash.",
+              "marks": 4
+            },
+            {
+              "criterion": "Manual array processing: median implemented via explicit in-place or copied-array sort using loops; no library sorting.",
+              "marks": 4
+            },
+            {
+              "criterion": "Program structure: clear method decomposition and packaged class; README shows correct `javac`/`java` commands.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "JDK",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "ControlKatas: three logic exercises in one CLI",
+          "brief": "Implement a single packaged program exposing three subcommands that each exercise conditions, loops, arrays, and methods. Subcommands:\n- `fizzbuzz <start> <end>`: For each integer from start to end inclusive, print `FizzBuzz` if divisible by 15, `Fizz` if divisible by 3, `Buzz` if divisible by 5, else the number. One line per item.\n- `primecount <start> <end>`: Print the count of primes in the inclusive range. Implement `isPrime(int n)` without libraries; handle `n < 2` as non-prime.\n- `collatz <n>`: Print the number of steps needed to reach 1 using the Collatz rule (n → n/2 if even, 3n+1 if odd). Use a loop; no recursion.\nAll outputs are plain text with no extra spaces. Use only core language features from these two modules.",
+          "deliverable": "Source in `src/cli/ControlKatas.java` (and optional helpers in `src/cli/`), plus a README with compile/run commands. Package the class under `cli`.",
+          "acceptance_criteria": [
+            "Compiles with `javac -d out src/cli/*.java` and runs with `java -cp out cli.ControlKatas ...`.",
+            "`java -cp out cli.ControlKatas fizzbuzz 14 16` prints exactly three lines: `14`, `FizzBuzz`, `16`.",
+            "`java -cp out cli.ControlKatas primecount 1 10` prints exactly `4`.",
+            "`java -cp out cli.ControlKatas collatz 6` prints exactly `8`.",
+            "Input validation: wrong arity, non-integer args, or `start > end` for range commands prints a single line starting with `ERROR:` and does not throw.",
+            "Implementation provides separate static methods: `fizzbuzz(int start,int end)`, `isPrime(int n)`, `primeCount(int start,int end)`, and `collatzSteps(int n)`; `main` only parses/dispatches.",
+            "No external libraries or streams/collections are used; only arrays and primitives."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness of fizzbuzz output (ordering, inclusivity, exact strings).",
+              "marks": 5
+            },
+            {
+              "criterion": "Correctness and efficiency of `isPrime`/`primeCount` for the sample (division checks up to sqrt or equivalent).",
+              "marks": 5
+            },
+            {
+              "criterion": "Correctness of `collatzSteps` for provided input and handling of `n <= 0` via validation error.",
+              "marks": 4
+            },
+            {
+              "criterion": "CLI parsing, validation, and error messaging across all commands; program does not crash on bad input.",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear method decomposition and packaged structure; README shows correct compile/run usage.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "JDK"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-015-S02",
+      "skills_assessed": [
+        "Java",
+        "Object-Oriented Programming",
+        "Data Structures"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the code:\n```java\nimport java.util.*;\n\nclass Point {\n  final int x, y;\n  Point(int x, int y) { this.x = x; this.y = y; }\n  @Override public boolean equals(Object o) {\n    if (!(o instanceof Point p)) return false;\n    return x == p.x && y == p.y;\n  }\n  // hashCode not overridden\n}\n\npublic class Main {\n  public static void main(String[] args) {\n    Set<Point> s = new HashSet<>();\n    s.add(new Point(1, 2));\n    s.add(new Point(1, 2));\n    System.out.println(s.size());\n  }\n}\n```\nWhat is printed and why?",
+          "options": [
+            "1",
+            "2",
+            "Compilation error",
+            "0"
+          ],
+          "correct_option": "B",
+          "explanation": "HashSet uses hashCode to partition buckets before equals. With equals overridden but not hashCode, the two equal-looking Points likely have different hash codes (Object's identity-based), landing in different buckets; equals is never consulted across buckets, so both are kept. Size prints 2.",
+          "distractor_rationale": "A: A common belief is that equals alone controls set uniqueness. In hash-based collections, equal objects must also have equal hashCode.\nC: Nothing removes elements; non-sensical here.\nD: All code compiles; missing hashCode is legal but incorrect for hashed collections.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What happens when compiling and running this?\n```java\ninterface A { default String f() { return \"A\"; } }\ninterface B { default String f() { return \"B\"; } }\nclass C implements A, B {\n  // no override\n  String g() { return A.super.f() + B.super.f(); }\n}\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println(new C().f());\n  }\n}\n```",
+          "options": [
+            "Prints B",
+            "Compilation error: C inherits conflicting defaults for f() and must override",
+            "Prints A",
+            "Prints AB"
+          ],
+          "correct_option": "B",
+          "explanation": "When two interfaces provide the same default method, the implementing class must explicitly override it to resolve the conflict. Calling A.super.f() or B.super.f() is only legal from within such an overriding method; without it, compilation fails.",
+          "distractor_rationale": "B/C/D: Learners may think the first-declared or last-declared interface wins, or that both concatenate, but Java requires an explicit override to disambiguate.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given:\n```java\nimport java.util.*;\n\nstatic void addNums(List<? super Integer> dest) {\n  dest.add(1);\n  dest.add(2);\n}\n\npublic static void main(String[] args) {\n  List<Number> a = new ArrayList<>();\n  List<Integer> b = new ArrayList<>();\n  // Which of these calls compiles?\n}\n```\nChoose the correct statement.",
+          "options": [
+            "Only addNums(a) compiles; addNums(b) does not",
+            "Neither compiles",
+            "Only addNums(b) compiles; addNums(a) does not",
+            "Both addNums(a) and addNums(b) compile"
+          ],
+          "correct_option": "D",
+          "explanation": "A List<? super Integer> can be a List<Integer>, List<Number>, or List<Object>. Both List<Integer> and List<Number> satisfy the lower-bounded wildcard and allow adding Integer values.",
+          "distractor_rationale": "A/B: Confusing lower bounds with upper bounds; '? super Integer' includes Integer itself and supertypes.\nD: Suggests that wildcards block all adds; lower-bounded wildcards are designed exactly to allow safe adds of the lower bound type.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider mutating a HashMap key after insertion:\n```java\nimport java.util.*;\n\nclass K {\n  int id;\n  K(int id) { this.id = id; }\n  @Override public int hashCode() { return id; }\n  @Override public boolean equals(Object o) {\n    return (o instanceof K k) && k.id == id;\n  }\n}\n\npublic class Main {\n  public static void main(String[] args) {\n    Map<K,String> m = new HashMap<>();\n    K k = new K(1);\n    m.put(k, \"v1\");\n    k.id = 2; // mutate field used in hashCode/equals\n    System.out.println(m.get(new K(1)) + \" \" + m.get(k));\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "v1 v1",
+            "null v1",
+            "v1 null",
+            "null null"
+          ],
+          "correct_option": "D",
+          "explanation": "The entry sits in the bucket computed with hash 1. After mutation, k.hashCode() is 2 but the map's internal bucket isn't updated. get(new K(1)) searches bucket 1, finds the mutated key that no longer equals 1, so it fails. get(k) searches bucket 2 (by the new hash) where no node exists. Both are null.",
+          "distractor_rationale": "A/B/D: Assume the map tracks changing hashes or that get uses identity. HashMap uses hash first, then equals within a bucket; mutating key fields breaks both retrieval paths.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Which overload is chosen and what is printed?\n```java\nimport java.util.*;\n\nclass Main {\n  static void m(Collection<?> c) { System.out.print(\"C\"); }\n  static void m(List<?> l)       { System.out.print(\"L\"); }\n  public static void main(String[] args) { m(null); }\n}\n```\n",
+          "options": [
+            "Compilation error: ambiguous call",
+            "Throws NullPointerException before printing",
+            "Prints L",
+            "Prints C"
+          ],
+          "correct_option": "C",
+          "explanation": "Method overload resolution picks the most specific applicable method. List is a subtype of Collection, so m(List<?>) is more specific and selected at compile time. Passing null is allowed; the method body doesn't dereference it.",
+          "distractor_rationale": "B: Belief that null matches the first-declared or least-specific overload.\nC: It would be ambiguous only if neither were more specific; here List is strictly more specific.\nD: Null is not dereferenced; it's only a parameter value.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "What happens here?\n```java\nimport java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    List<String> list = new ArrayList<>(List.of(\"a\",\"b\",\"c\"));\n    for (String s : list) {\n      if (s.equals(\"b\")) list.remove(s);\n    }\n    System.out.println(list);\n  }\n}\n```\n",
+          "options": [
+            "Throws ConcurrentModificationException before printing",
+            "Prints [a, b, c]",
+            "Prints [a, c]",
+            "Prints [a, c] but not reliably across JVMs"
+          ],
+          "correct_option": "A",
+          "explanation": "The enhanced for-loop uses an Iterator under the hood. Removing via the list directly during iteration violates the iterator's fail-fast contract and throws ConcurrentModificationException. The correct removal is via Iterator.remove() inside an explicit iterator loop or using removeIf.",
+          "distractor_rationale": "A/B: Many have seen it \"seem to work\" in other contexts, but ArrayList's iterator is fail-fast.\nD: Assumes remove is ignored; it is not, and the fail-fast triggers.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This generic copy fails to compile:\n```java\nimport java.util.*;\n\nstatic <T> void copy(List<T> dst, List<T> src) {\n  dst.addAll(src);\n}\n\npublic static void main(String[] args) {\n  List<Number> nums = new ArrayList<>();\n  List<Integer> ints = List.of(1,2,3);\n  copy(nums, ints); // error\n}\n```\nWhich change makes the call compile safely, without casts?",
+          "options": [
+            "```text\nstatic <T> void copy(List<? super T> dst, List<? extends T> src) {\n  dst.addAll(src);\n}\n```",
+            "```text\nstatic <T extends Number> void copy(List<T> dst, List<T> src) {\n  dst.addAll(src);\n}\n```",
+            "```text\nstatic void copy(List<Object> dst, List<Integer> src) {\n  dst.addAll(src);\n}\n```",
+            "```text\n@SuppressWarnings(\"rawtypes\")\nstatic void copy(List dst, List src) { dst.addAll(src); }\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Use PECS: Producer extends, Consumer super. The source produces T values (? extends T), and the destination consumes them (? super T). With T = Integer, dst can be List<Number> and src can be List<Integer>.",
+          "distractor_rationale": "B: Constrains T to Number but still requires both lists use the same T, which nums and ints do not.\nC: Overly concrete and loses generality; it would not accept List<Number> as dst unless Object is used, and it doesn't generalize.\nD: Raw types compile but forfeit type safety, hiding real errors until runtime.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Access-order LinkedHashMap iteration after an access and a put:\n```java\nimport java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    LinkedHashMap<String,Integer> m = new LinkedHashMap<>(16, 0.75f, true);\n    m.put(\"A\",1); m.put(\"B\",2); m.put(\"C\",3);\n    m.get(\"A\");\n    m.put(\"D\",4);\n    System.out.println(m.keySet());\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "[B, C, A, D]",
+            "[A, B, C, D]",
+            "[D, A, B, C]",
+            "[A, D, B, C]"
+          ],
+          "correct_option": "A",
+          "explanation": "With accessOrder=true, iteration order is least-recently-accessed to most-recently-accessed. After accessing A it becomes most recent: B, C, A. Putting D appends it as most recent: B, C, A, D.",
+          "distractor_rationale": "A: That's insertion order, not access order.\nC/D: Misunderstand how access and put affect recency; only the accessed/inserted keys move to the end.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "TreeSet with a comparator that groups values:\n```java\nimport java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    Comparator<Integer> cmp = Comparator.comparingInt(x -> x % 3);\n    Set<Integer> s = new TreeSet<>(cmp);\n    s.addAll(List.of(2,5,8,1));\n    System.out.println(s);\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "[1, 2, 5, 8]",
+            "[1, 2]",
+            "[1, 2, 5]",
+            "[2, 5, 8, 1]"
+          ],
+          "correct_option": "B",
+          "explanation": "TreeSet considers two elements equal if the comparator returns 0. 2, 5, and 8 are all congruent mod 3, so only the first inserted among them (2) remains. Sorted by cmp gives [1 (mod1), 2 (mod2)].",
+          "distractor_rationale": "A: Assumes natural ordering instead of comparator behavior.\nB: Assumes insertion order; TreeSet is sorted, not insertion-ordered.\nD: Thinks some but not all congruent elements are kept; exactly one remains per comparator-equivalence class.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Array conversion from a generic list:\n```java\nimport java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    List<Integer> l = List.of(1,2,3);\n    Object[]  a1 = l.toArray();\n    Integer[] a2 = (Integer[]) l.toArray();\n    Integer[] a3 = l.toArray(new Integer[0]);\n  }\n}\n```\nWhich of the assignments succeed at runtime without throwing?",
+          "options": [
+            "Only a1",
+            "Only a3",
+            "a1 and a3; a2 throws ClassCastException",
+            "All three"
+          ],
+          "correct_option": "C",
+          "explanation": "toArray() returns Object[], which assigns to Object[] but cannot be cast to Integer[] at runtime (throws ClassCastException). The typed overload toArray(T[]) allocates an Integer[] and succeeds.",
+          "distractor_rationale": "A/B: Each picks one valid form but ignores the other.\nD: Assumes the raw toArray returns a reifiable Integer[]; it does not.",
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are handed a bug report: a user creates several logically identical Person objects and adds them to a HashSet, but duplicates appear and later lookups by an equivalent Person return null. Current code:\n```java\nimport java.util.*;\n\nfinal class Person {\n  private String nationalId; // may change after verification step\n  private String name;\n\n  Person(String nationalId, String name) {\n    this.nationalId = nationalId; this.name = name;\n  }\n  public void setNationalId(String nationalId) { this.nationalId = nationalId; }\n  @Override public boolean equals(Object o) {\n    return (o instanceof Person p) &&\n           Objects.equals(nationalId, p.nationalId);\n  }\n  // hashCode is NOT overridden\n}\n\nSet<Person> people = new HashSet<>();\nPerson a = new Person(null, \"Sam\");\npeople.add(a);\n// later, after verification:\na.setNationalId(\"ID-123\");\npeople.add(new Person(\"ID-123\", \"Samuel\"));\nboolean found = people.contains(new Person(\"ID-123\", \"Anyone\"));\n```\nThe team asks you to explain the behavior and fix it without breaking future maintenance.",
+          "task": "Explain precisely why duplicates can appear and why contains returns false in this case. Propose and show the minimal code changes to Person to make HashSet behavior correct, and discuss whether mutability of fields used in equality is acceptable here. If mutability is unavoidable, recommend an alternative design or collection choice and justify it.",
+          "expected_answer": "- Root cause: equals overridden but hashCode not; HashSet buckets are partitioned by hashCode, so equal objects with unequal hashCodes may live in different buckets. Additionally, mutating a field used in hashCode/equals after adding to a HashSet breaks retrieval because the key's bucket is chosen using an outdated hash, and equals no longer matches within that bucket.\n- Fix: override hashCode consistent with equals, e.g. use Objects.hash(nationalId). Make either nationalId immutable or exclude mutable fields from equality. Prefer making nationalId final and set at construction only; if it must change, do not use it as a hash/equality key while mutable, or remove and re-add after change.\n- If mutability is required: use a Map keyed by an immutable identifier (e.g., temporary surrogate key) and store Person as a value; or use identity-based collections if logical equality cannot be stable. Alternatively, avoid using Person itself as a key in hashed collections when its equality basis can change.\n- Show corrected code:\n```java\nfinal class Person {\n  private final String nationalId; // make immutable if possible\n  private String name;\n  Person(String nationalId, String name) { this.nationalId = nationalId; this.name = name; }\n  @Override public boolean equals(Object o) {\n    return (o instanceof Person p) && Objects.equals(nationalId, p.nationalId);\n  }\n  @Override public int hashCode() { return Objects.hash(nationalId); }\n}\n```\n- If id cannot be final: document that any change requires remove-then-reinsert, or better, use Map<String,Person> by id and keep Person equality by identity only (equals == reference) to avoid contract violations.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies equals/hashCode contract breach as primary cause of duplicates",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains bucket selection and why mutation after insertion breaks contains/get",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents consistent equals and hashCode code or immutability change",
+              "marks": 2
+            },
+            {
+              "criterion": "Recommends viable alternative (immutable key, Map keying, or remove/re-add) with justification if mutability remains",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You need a task scheduler that processes tasks by priority but preserves submission order among tasks with the same priority. A first attempt uses:\n```java\nclass Task { final int priority; final String id; Task(int p, String id){ this.priority=p; this.id=id; } }\nQueue<Task> q = new PriorityQueue<>(Comparator.comparingInt(t -> t.priority));\n```\nIn testing, tasks with the same priority are not processed in submission order.",
+          "task": "Propose a design that meets both requirements. Choose appropriate collections and show Java code for ordering. You must justify the choice, address generics/type-safety, and explain any trade-offs. Show how you would enqueue and dequeue tasks with your design.",
+          "expected_answer": "- PriorityQueue does not guarantee stability among equal-priority elements; tie order is unspecified.\n- Design: Wrap Task with a monotonically increasing sequence number captured at enqueue time, and use a comparator that sorts by (priority asc, sequence asc). Keep Queue<TaskWrapper> as a PriorityQueue for O(log n) ops.\n- Code:\n```java\nfinal class Task { final int priority; final String id; Task(int p, String id){ this.priority=p; this.id=id; } }\nfinal class TaskWrapper {\n  final long seq; final Task task;\n  TaskWrapper(long seq, Task task){ this.seq=seq; this.task=task; }\n}\nfinal class StableScheduler {\n  private final PriorityQueue<TaskWrapper> pq = new PriorityQueue<>(\n    Comparator.<TaskWrapper>comparingInt(tw -> tw.task.priority)\n              .thenComparingLong(tw -> tw.seq)\n  );\n  private long nextSeq = 0L;\n  public void enqueue(Task t){ pq.add(new TaskWrapper(nextSeq++, t)); }\n  public Task dequeue(){ return pq.remove().task; }\n  public boolean isEmpty(){ return pq.isEmpty(); }\n}\n```\n- Generics: The queue type is PriorityQueue<TaskWrapper>; no raw types. API is type safe.\n- Alternatives considered: TreeSet cannot handle true duplicates (equal comparator keys) without additional tie-breaker in the key; LinkedHashMap keyed by priority to a Queue preserves insertion order within each priority but complicates dequeue selection (need to pick the smallest non-empty key efficiently). The wrapper approach keeps operations O(log n) and simple.\n- Enqueue/dequeue usage:\n```java\nStableScheduler s = new StableScheduler();\ns.enqueue(new Task(5, \"A\"));\ns.enqueue(new Task(5, \"B\"));\ns.enqueue(new Task(1, \"C\"));\nSystem.out.println(s.dequeue().id); // C\nSystem.out.println(s.dequeue().id); // A\nSystem.out.println(s.dequeue().id); // B\n```",
+          "rubric": [
+            {
+              "criterion": "Identifies instability of PriorityQueue for ties and articulates requirement clearly",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes correct data structure and comparator meeting both priority and stability requirements",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides type-safe Java API and code for enqueue/dequeue without raw types",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses at least one alternative and its trade-offs (e.g., TreeSet or bucketed LinkedHashMap)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Data Structures",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A library API needs a utility method that copies elements from one list to another. The naive design was:\n```java\nstatic <T> void copy(List<T> dst, List<T> src) { dst.addAll(src); }\n```\nbut calling it with List<Number> and List<Integer> fails to compile.",
+          "task": "Explain why the naive signature fails. Redesign the method signature using generics and wildcards so it supports copying from List<Integer> to List<Number> (and similar hierarchies) safely. Provide a code example showing successful calls for Number<-Integer and Object<-Number. Briefly justify the variance choice.",
+          "expected_answer": "- Failure reason: Java generics are invariant; List<Integer> is not a subtype of List<Number>, so a single T cannot represent both Integer and Number at the same time.\n- Correct signature uses PECS (Producer Extends, Consumer Super):\n```java\nstatic <T> void copy(List<? super T> dst, List<? extends T> src) {\n  for (T t : src) dst.add(t);\n}\n```\n- Example usage:\n```java\nList<Number> nums = new ArrayList<>();\nList<Integer> ints = List.of(1,2,3);\ncopy(nums, ints);           // OK: T=Integer\nList<Object> objs = new ArrayList<>();\ncopy(objs, nums);           // OK: T=Number\n```\n- Justification: Source produces T values safely if it's ? extends T; destination consumes T values safely if it's ? super T. This maintains type safety without casts.",
+          "rubric": [
+            {
+              "criterion": "Correctly explains invariance and why the naive <T> signature fails",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides the correct PECS-based method signature",
+              "marks": 3
+            },
+            {
+              "criterion": "Demonstrates two concrete successful call sites (Number<-Integer and Object<-Number)",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies the variance choice succinctly",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are integrating multiple logging traits into a class hierarchy:\n```java\ninterface LogA { default String tag() { return \"A\"; } }\ninterface LogB { default String tag() { return \"B\"; } }\nabstract class Base { public String tag() { return \"Base\"; } }\nclass Impl extends Base implements LogA, LogB { }\n```\nA teammate is unsure what Impl.tag() should return and how to intentionally select a specific behavior. They also want to keep a registry of handlers by their implemented interface to preserve registration order and allow multiple handlers per interface.",
+          "task": "State what method resolution will return for new Impl().tag() and why. Show how to override tag() in Impl to explicitly choose LogA's behavior (and optionally delegate to Base). Then, design a registry to map an interface Class to its handlers using collections and generics, preserving insertion order and allowing duplicates. Provide the core field and two methods: register and getHandlers(Class<?> iface).",
+          "expected_answer": "- Resolution: Class methods beat interface defaults. Since Base provides a concrete tag(), Impl inherits Base.tag(), so new Impl().tag() returns \"Base\".\n- Explicit selection:\n```java\nclass Impl extends Base implements LogA, LogB {\n  @Override public String tag() {\n    // choose LogA explicitly, or combine with Base if desired\n    // return LogA.super.tag();\n    return LogA.super.tag() + \":\" + super.tag(); // example composition\n  }\n}\n```\n- Registry design: Use a LinkedHashMap<Class<?>, List<Object>> to preserve key insertion order and a List to keep handler insertion order and allow duplicates. With generics, expose type-safe methods using wildcards.\n```java\nclass HandlerRegistry {\n  private final Map<Class<?>, List<Object>> byIface = new LinkedHashMap<>();\n  public <T> void register(Class<T> iface, T handler) {\n    byIface.computeIfAbsent(iface, k -> new ArrayList<>()).add(handler);\n  }\n  @SuppressWarnings(\"unchecked\")\n  public <T> List<T> getHandlers(Class<T> iface) {\n    return (List<T>) byIface.getOrDefault(iface, List.of());\n  }\n}\n```\n- Justification: LinkedHashMap preserves insertion order of interface keys; ArrayList preserves registration order and allows duplicates. Wildcards and generic methods provide type safety at API boundaries while storing as Object internally.",
+          "rubric": [
+            {
+              "criterion": "Correctly states Java’s resolution rule (class beats interface default) and expected return value",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct override using Interface.super and/or super to control behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Designs a registry that preserves order and allows duplicates, with appropriate collections",
+              "marks": 1
+            },
+            {
+              "criterion": "Uses generics/wildcards to keep the public API type-safe",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "OOP mini-application: Catalog with polymorphic pricing and behaviors",
+          "brief": "Build a small console application that models a product catalog with polymorphic behavior. There is a base type Item and at least three concrete subtypes (e.g., Book, Movie, Subscription). Some types implement multiple interfaces (e.g., Discountable, Downloadable). Pricing rules vary per subtype (e.g., Subscription price depends on months; Book has base price minus discount). Demonstrate polymorphism by processing a heterogeneous List<Item> and invoking behavior through base types/interfaces only. Include identity semantics: Items with the same SKU should be considered equal for catalog uniqueness. Show that a Set<Item> enforces uniqueness correctly and that lookups work reliably.",
+          "deliverable": "A Java project with source code and a runnable Main class that prints: 1) a polymorphic pricing summary for multiple Item instances held in a List<Item>, 2) the size of a Set<Item> before/after adding duplicates by SKU, 3) a demonstration of invoking interface-specific behavior via the interface type. Include a README with build/run instructions and the expected console output sample.",
+          "acceptance_criteria": [
+            "Includes an abstract class or base class Item with at least one abstract method (e.g., price()) and shared state/behavior",
+            "Includes at least three concrete subclasses with distinct overridden behavior",
+            "Defines at least two interfaces with at least one default method; at least one class implements two interfaces; any default conflicts are resolved via an explicit override",
+            "Polymorphism demonstrated: iterate a List<Item> and call price() and a shared method without instanceof/casts",
+            "Equality contract: equals and hashCode implemented based on an immutable identifier (e.g., SKU), demonstrated with a HashSet<Item> showing de-duplication",
+            "No raw types; collections are strongly typed with generics; no unchecked warnings",
+            "Main program runs and prints the required summary, set sizes, and interface-behavior outputs matching README sample",
+            "Code compiles with a standard JDK (no external libraries required)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Class hierarchy design (base abstraction, correct overriding, coherent fields/methods)",
+              "marks": 6
+            },
+            {
+              "criterion": "Use of interfaces, default methods, and conflict resolution where applicable",
+              "marks": 4
+            },
+            {
+              "criterion": "Demonstrated polymorphism via base/interface types (no instanceof/casts for core behavior)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct, consistent equals and hashCode on immutable identifier; HashSet demo works",
+              "marks": 4
+            },
+            {
+              "criterion": "Type-safe use of generics with collections (no raw types/unchecked warnings) and runnable main/README",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Java",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Collection-based program: Generic LRU cache with eviction demo",
+          "brief": "Implement a generic, fixed-capacity LRU cache using LinkedHashMap in access-order mode. The cache supports get(K), put(K,V), size(), and capacity(), and evicts the least-recently-used entry on insert when full. Demonstrate that accesses update recency and that eviction is correct. Provide a small benchmark/demo in main that shows the key order and evictions.",
+          "deliverable": "A Java class LruCache<K,V> and a runnable Main that constructs a cache of capacity 3, performs a sequence of put/get operations, prints the cache contents (keys in order) after each step, and prints which key was evicted when eviction occurs. Include a README with the exact sequence used and the expected console output.",
+          "acceptance_criteria": [
+            "LruCache<K,V> internally uses LinkedHashMap<K,V> with accessOrder=true and overrides removeEldestEntry for eviction",
+            "All public APIs are generic and type-safe; no raw types or unchecked casts",
+            "Capacity is enforced: when inserting the (capacity+1)th distinct key, exactly one eldest entry is evicted",
+            "Accessing an entry via get marks it as most-recently-used; the printed order reflects recency after each operation",
+            "Main demonstrates at least: initial fills, an access that changes order, an insertion that evicts the correct key, and a subsequent access + insertion showing updated eviction behavior",
+            "README includes build/run instructions and the expected output; Main’s actual output matches it",
+            "Code compiles and runs on a standard JDK without external libraries"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct use of LinkedHashMap with access-order and removeEldestEntry to implement LRU semantics",
+              "marks": 8
+            },
+            {
+              "criterion": "Type-safe, generic public API for LruCache with clear behavior and no raw types",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate eviction and recency updates demonstrated by a deterministic, documented sequence",
+              "marks": 6
+            },
+            {
+              "criterion": "Runnable demo and README with matching expected output",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Structures",
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-015-S03",
+      "skills_assessed": [
+        "Java",
+        "use functional programming",
+        "Logging",
+        "File I/O",
+        "Exception handling",
+        "JDK"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following program:\n```java\nimport java.io.*;\n\nclass BadClose implements AutoCloseable {\n    @Override public void close() throws IOException {\n        throw new IOException(\"close\");\n    }\n}\n\npublic class TWR {\n    public static void main(String[] args) {\n        try (BadClose c = new BadClose()) {\n            throw new IllegalStateException(\"work\");\n        } catch (Exception e) {\n            System.out.println(e.getClass().getSimpleName() + \":\" + e.getMessage() +\n                               \" suppressed=\" + e.getSuppressed().length);\n        }\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "IllegalStateException:work suppressed=0",
+            "IOException:close suppressed=1",
+            "IllegalStateException:work suppressed=1",
+            "IOException:close suppressed=0"
+          ],
+          "correct_option": "C",
+          "explanation": "In try-with-resources, if both the try block and close() throw, the primary exception is the one from the try block; the close() exception is added as a suppressed exception. Therefore the caught exception is IllegalStateException(\"work\") with one suppressed exception from close().",
+          "distractor_rationale": "B: Tempting if you think the last thrown wins, but try-with-resources preserves the primary exception from the try block. C: Ignores suppressed exceptions; close() did throw, so it is recorded. D: Wrong for both which exception is primary and for ignoring suppression.",
+          "skills_covered": [
+            "Exception handling",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You need to count lines across many files. The current code leaks resources:\n```java\nlong total = 0;\nfor (Path p : files) {\n    // compiles; assume IOException already handled elsewhere\n    total += java.nio.file.Files.lines(p).count();\n}\nSystem.out.println(total);\n```\nWhich change correctly prevents leaking OS file descriptors for the streams opened by `Files.lines`?",
+          "options": [
+            "```java\n// Open once and reuse the stream for all files\ntry (java.util.stream.Stream<String> s = java.nio.file.Files.lines(files.get(0))) {\n    for (Path p : files) total += s.count();\n}\n```",
+            "```java\nfor (Path p : files) {\n    try (java.util.stream.Stream<String> s = java.nio.file.Files.lines(p)) {\n        total += s.count();\n    }\n}\n```",
+            "```java\n// Force materialization so the stream will auto-close\nfor (Path p : files) {\n    total += java.nio.file.Files.lines(p).collect(java.util.stream.Collectors.toList()).size();\n}\n```",
+            "```java\n// Use parallel to flush faster\ntotal = files.parallelStream().mapToLong(p -> java.nio.file.Files.lines(p).count()).sum();\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`Files.lines` returns a Stream that holds an open file/channel until the stream is closed. Wrapping each stream in try-with-resources ensures it is closed after the terminal operation.",
+          "distractor_rationale": "B: Streams cannot be reused; also this still leaves the other files' streams unclosed. C: Materializing does not close the stream; it still needs explicit close/try-with-resources. D: Parallelism does not close resources automatically; it can make leaks worse by opening more files concurrently.",
+          "skills_covered": [
+            "File I/O",
+            "use functional programming",
+            "Exception handling"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given Java Util Logging configuration in code:\n```java\nimport java.util.logging.*;\n\nLogger logger = Logger.getLogger(\"app\");\nlogger.setUseParentHandlers(false);\nConsoleHandler h = new ConsoleHandler();\nh.setLevel(Level.INFO);\nlogger.addHandler(h);\nlogger.setLevel(Level.WARNING);\n\nlogger.info(\"I\");\nlogger.warning(\"W\");\n\nh.setLevel(Level.SEVERE);\nlogger.warning(\"W2\");\n```\nWhat appears on the console (formatting aside)?",
+          "options": [
+            "Only W",
+            "I then W",
+            "W then W2",
+            "Nothing"
+          ],
+          "correct_option": "A",
+          "explanation": "The logger is set to WARNING, so INFO is filtered out before reaching handlers. The handler initially accepts INFO and above, so W is printed. After raising the handler to SEVERE, a WARNING no longer passes, so W2 is dropped. Result: only W.",
+          "distractor_rationale": "B: Misunderstands that the logger’s own level (WARNING) filters out INFO before the handler. C: Ignores the handler level change to SEVERE before W2. D: At least one message (W) meets both logger and handler thresholds initially.",
+          "skills_covered": [
+            "Logging",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Evaluate the path operations:\n```java\nimport java.nio.file.*;\nPath p = Paths.get(\"/var/log\");\nPath q = p.resolve(\"../data\").normalize();\nSystem.out.println(q);\n```\nWhat is printed on a Unix-like system?",
+          "options": [
+            "/var/data",
+            "/var/log/data",
+            "data",
+            "/var/log/../data"
+          ],
+          "correct_option": "A",
+          "explanation": "`resolve` produces `/var/log/../data`; `normalize` removes `..` relative to the base, yielding `/var/data`.",
+          "distractor_rationale": "A: Result before normalization. C: Ignores the `..`. D: Misinterprets as relative resolution from CWD rather than absolute normalization.",
+          "skills_covered": [
+            "File I/O",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What happens when this runs?\n```java\nimport java.util.*;\n\nList<String> xs = Arrays.asList(\"A\", \"2\", \"3\");\nlong c = 0;\ntry {\n    Optional<Integer> first = xs.stream()\n        .map(Integer::parseInt)\n        .filter(n -> n > 1)\n        .findFirst();\n    c = first.isPresent() ? 1 : 0;\n    System.out.println(c);\n} catch (Exception e) {\n    System.out.println(e.getClass().getSimpleName());\n}\n```\nWhat is printed?",
+          "options": [
+            "0",
+            "IllegalArgumentException",
+            "1",
+            "NumberFormatException"
+          ],
+          "correct_option": "D",
+          "explanation": "The first element \"A\" triggers `NumberFormatException` in `map(Integer::parseInt)` before any filtering or short-circuiting applies. The exception is thrown and caught; the program prints `NumberFormatException`.",
+          "distractor_rationale": "A/B: Assume `findFirst` short-circuits before mapping, but mapping happens first and fails on the first element. D: Wrong exception type for parsing failure.",
+          "skills_covered": [
+            "use functional programming",
+            "Java"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Consider DST spring-forward in Los Angeles. What does this print?\n```java\nimport java.time.*;\n\nLocalDateTime ldt = LocalDateTime.of(2021, 3, 14, 2, 30);\nZonedDateTime z = ldt.atZone(ZoneId.of(\"America/Los_Angeles\"));\nSystem.out.println(z);\n```\nNote: 2021-03-14 in Los Angeles jumps from 01:59:59 to 03:00:00.",
+          "options": [
+            "2021-03-14T02:30-08:00[America/Los_Angeles]",
+            "2021-03-14T01:30-08:00[America/Los_Angeles]",
+            "2021-03-14T03:30-07:00[America/Los_Angeles]",
+            "Throws DateTimeException"
+          ],
+          "correct_option": "C",
+          "explanation": "`LocalDateTime.atZone` resolves a gap by moving forward to the next valid offset/time. 02:30 is nonexistent on that day, so it becomes 03:30 with offset -07:00.",
+          "distractor_rationale": "A/D: Times that would imply 02:30 or 01:30 exist in PST that day; 02:30 does not. C: `atZone` does not throw for gaps; it resolves them by shifting forward.",
+          "skills_covered": [
+            "JDK",
+            "Java"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This code fails to compile because `Files.readAllLines` throws `IOException` inside the lambda:\n```java\nimport java.nio.file.*;\nimport java.util.stream.*;\n\nlong total = Files.list(dir)\n    .map(p -> java.nio.file.Files.readAllLines(p).size())\n    .mapToLong(Integer::longValue)\n    .sum();\n```\nWhich revision both compiles and avoids leaking resources?",
+          "options": [
+            "```java\nlong total = Files.list(dir)\n    .map(p -> {\n        try (java.util.stream.Stream<String> s = java.nio.file.Files.lines(p)) {\n            return (int) s.count();\n        } catch (java.io.IOException e) {\n            throw new java.io.UncheckedIOException(e);\n        }\n    })\n    .mapToLong(Integer::longValue)\n    .sum();\n```",
+            "```java\nlong total = Files.list(dir)\n    .map(java.nio.file.Files::size) // get byte sizes\n    .mapToLong(Long::longValue)\n    .sum();\n```",
+            "```java\nlong total = Files.list(dir)\n    .flatMap(p -> java.nio.file.Files.lines(p)) // rely on GC to close\n    .count();\n```",
+            "```java\nlong total = Files.list(dir)\n    .map(p -> java.nio.file.Files.readAllLines(p)) // OK: compiler infers throws\n    .mapToLong(java.util.List::size)\n    .sum();\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Wrap the checked exception in `UncheckedIOException` and use try-with-resources around `Files.lines(p)` to ensure the stream is closed per file.",
+          "distractor_rationale": "B: Lambdas cannot throw checked exceptions unless declared; this does not compile. C: Omits closing; relying on GC risks descriptor leaks. D: Changes the meaning (sums byte sizes, not line counts), ducking the exception rather than solving it.",
+          "skills_covered": [
+            "File I/O",
+            "use functional programming",
+            "Exception handling"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What does this print?\n```java\nimport java.nio.file.*;\nimport java.nio.charset.*;\nimport java.util.*;\n\nPath p = Files.createTempFile(\"t\", \".txt\");\nFiles.write(p, Arrays.asList(\"café\"), StandardCharsets.UTF_8);\nList<String> lines = Files.readAllLines(p, StandardCharsets.ISO_8859_1);\nSystem.out.println(lines.get(0));\n```\nAssume all operations succeed.",
+          "options": [
+            "café",
+            "cafÃ©",
+            "Throws MalformedInputException",
+            "caf?"
+          ],
+          "correct_option": "B",
+          "explanation": "Reading UTF-8 bytes as ISO-8859-1 decodes the two bytes for 'é' (0xC3 0xA9) as 'Ã' and '©', producing \"cafÃ©\".",
+          "distractor_rationale": "A: Only if both write and read used UTF-8. B: ISO-8859-1 maps all 0x00–0xFF to a character; no replacement character is used. D: Decoding as ISO-8859-1 never throws for arbitrary byte sequences.",
+          "skills_covered": [
+            "File I/O",
+            "JDK"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Consider:\n```java\nimport java.util.*; import java.util.stream.*;\nList<Integer> xs = IntStream.rangeClosed(1, 1_000_000).boxed().collect(Collectors.toList());\nint v = xs.parallelStream().filter(n -> n % 17 == 0).findAny().orElse(-1);\nSystem.out.println(v);\n```\nWhich statement is true over multiple runs?",
+          "options": [
+            "It always prints the smallest multiple of 17 in the range.",
+            "It prints some multiple of 17, but which one may vary between runs.",
+            "It always prints 17.",
+            "It sometimes prints -1."
+          ],
+          "correct_option": "B",
+          "explanation": "On a parallel stream, `findAny` is allowed to return any encountered element. It will be a multiple of 17, but is not deterministic across runs.",
+          "distractor_rationale": "A/B: Confuse `findAny` with ordered `findFirst` or assume inherent ordering. D: There are multiples of 17 in the range, so `-1` will not occur.",
+          "skills_covered": [
+            "use functional programming",
+            "Java"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "What is printed here if the walk encounters a directory without permission?\n```java\nimport java.nio.file.*; import java.util.stream.*;\ntry (Stream<Path> s = Files.walk(Paths.get(\"/root\"))) {\n    long count = s.filter(Files::isRegularFile).count();\n    System.out.println(count);\n} catch (Exception e) {\n    System.out.println(e.getClass().getSimpleName());\n}\n```\nAssume the process lacks privileges for some subtree.",
+          "options": [
+            "AccessDeniedException",
+            "IOException",
+            "NoSuchFileException",
+            "UncheckedIOException"
+          ],
+          "correct_option": "D",
+          "explanation": "I/O errors during traversal in `Files.walk` are propagated as `UncheckedIOException` from the stream pipeline. The catch prints the runtime wrapper’s simple name.",
+          "distractor_rationale": "A/C/D: Specific checked exceptions can be the cause, but the stream wraps them in `UncheckedIOException`. Printing the class name of the caught exception shows the wrapper, not the cause.",
+          "skills_covered": [
+            "File I/O",
+            "Exception handling",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are ingesting hundreds of CSV files under `in/` to produce a daily summary. An early prototype uses:\n```java\nlong total = Files.walk(Paths.get(\"in\"))\n    .filter(Files::isRegularFile)\n    .parallel() // speed!\n    .map(p -> Files.lines(p)) // unchecked resource\n    .flatMap(s -> s)\n    .map(line -> parse(line)) // may throw NumberFormatException\n    .mapToLong(evt -> evt.amount())\n    .sum();\n```\nProblems seen in production: occasional `Too many open files`, the job aborts on a single malformed line, and logs are missing which file/line failed. The team wants to keep good throughput but fix correctness and observability.",
+          "task": "Propose a concrete redesign of the pipeline. Specify where and how resources are opened/closed, how you isolate and log per-line failures with filename and line number, and how you choose concurrency. Justify your decisions with respect to correctness (no leaks, no abort-on-first-bad-line) and performance.",
+          "expected_answer": "A robust design opens one file at a time in a bounded manner and closes it deterministically. Iterate files with `Files.walk` in try-with-resources; for each file, use another try-with-resources around `Files.lines(p)` so the stream closes even on exceptions. Example sketch:\n```java\ntry (Stream<Path> files = Files.walk(root)) {\n  files.filter(Files::isRegularFile)\n       .forEach(p -> {\n         try (Stream<String> lines = Files.lines(p)) {\n           final java.util.concurrent.atomic.AtomicLong lineNo = new java.util.concurrent.atomic.AtomicLong(0);\n           lines.forEach(line -> {\n             long n = lineNo.incrementAndGet();\n             try {\n               Event e = parse(line); // may throw\n               // accumulate via thread-safe collector or write to concurrent map\n             } catch (RuntimeException ex) {\n               logger.log(Level.WARNING, () -> p + \":\" + n + \" parse failed: \" + ex.getMessage());\n               // optionally count and continue\n             }\n           });\n         } catch (IOException ioe) {\n           logger.log(Level.WARNING, p + \" read failed\", ioe);\n         }\n       });\n}\n```\nConcurrency: parallelize across files, not across lines, to keep log order per file and limit open descriptors. Use `files.parallel().forEach(...)` only with a custom `ForkJoinPool` of limited size or use a `Semaphore` to cap concurrently open files to avoid FD exhaustion. Avoid `flatMap` on unclosed streams. Summary is reduced using concurrent collectors (e.g., `Collectors.toConcurrentMap`) or by per-file local maps merged at the end. This eliminates leaks (every `Stream` in try-with-resources), keeps processing despite bad lines (exceptions handled inside the per-line loop), and logs filename:line for observability.",
+          "rubric": [
+            {
+              "criterion": "Opens and closes both the walk stream and each file’s line stream deterministically (e.g., nested try-with-resources)",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows per-line exception isolation (malformed lines do not abort the job)",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes logging with file path and line number at appropriate level, without expensive work when disabled (e.g., Supplier)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies concurrency choice (bounded parallelism across files; avoids unbounded open streams) and explains impact on FD usage/performance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "File I/O",
+            "Exception handling",
+            "Logging",
+            "use functional programming",
+            "Java"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A recurring task must run every day at 02:30 in Europe/Berlin. On DST transitions, 02:30 can be nonexistent (spring forward) or ambiguous (fall back). A previous implementation used `LocalDateTime.of(date, LocalTime.of(2,30))` and `toInstant(ZoneOffset.UTC)`, which misfired around DST.",
+          "task": "Design and justify a scheduling computation that, given the previous run `ZonedDateTime lastRun` in Europe/Berlin, computes the next `ZonedDateTime nextRun` at local 02:30 on the next calendar day, handling gaps/overlaps explicitly. State exactly what should happen on both DST transition days and show code that achieves it.",
+          "expected_answer": "Use `ZonedDateTime` in the target zone and zone rules for resolving gaps/overlaps. Policy: on spring-forward (02:30 nonexistent), run at 03:30 (next valid time); on fall-back (02:30 ambiguous), pick the earlier offset occurrence (first 02:30, e.g., CEST). Code:\n```java\nZoneId zone = ZoneId.of(\"Europe/Berlin\");\nZonedDateTime nextLocal = lastRun.plusDays(1).withHour(2).withMinute(30).withSecond(0).withNano(0);\n// Resolve gap/overlap deterministically\njava.time.zone.ZoneRules rules = zone.getRules();\nLocalDateTime ldt = nextLocal.toLocalDateTime();\njava.util.List<ZoneOffset> offs = rules.getValidOffsets(ldt);\nZonedDateTime nextRun;\nif (offs.isEmpty()) { // gap -> shift forward to next valid time\n    ZoneOffsetTransition tr = rules.nextTransition(nextLocal.toInstant());\n    nextRun = tr.getDateTimeAfter().withHour(3).withMinute(30); // or rules.getTransition(ldt).getDateTimeAfter()\n} else {\n    // overlap -> choose earlier offset occurrence (first 02:30)\n    nextRun = ZonedDateTime.of(ldt, offs.get(0), zone);\n}\n```\nAlternatively, `ldt.atZone(zone)` already advances into the gap (spring) to 03:30 and in overlap picks the earlier offset; document this policy and assert with tests. Avoid UTC arithmetic for a local-time SLA; always compute in the target zone, then convert to Instant if needed.",
+          "rubric": [
+            {
+              "criterion": "States clear, deterministic policy for gap (spring-forward) and overlap (fall-back) handling",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses `ZonedDateTime`/zone rules correctly (no UTC-local mixups) to compute next run",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete code that implements the policy",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the previous `LocalDateTime` + UTC approach fails at DST boundaries",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JDK",
+            "Java"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your library has hot-path debug logging like:\n```java\nif (logger.isLoggable(Level.FINE)) {\n    logger.fine(String.format(\"Scored %f for %s\", expensiveScore(obj), obj.getId()));\n}\n```\nUsers complain about overhead even when FINE is disabled. They also want exceptions logged with stack traces and to control output via their app’s handlers, not yours.",
+          "task": "Refactor the logging usage and configuration approach to eliminate string/compute overhead when disabled, correctly log exceptions, and avoid hijacking application handlers. Provide code for the logging calls and describe handler/level configuration in this library context.",
+          "expected_answer": "Use lazy message suppliers to defer formatting and computation, and never install global handlers in a library. For exceptions, pass the `Throwable` parameter. Example:\n```java\n// In library code\nlogger.log(Level.FINE, () -> String.format(\"Scored %.3f for %s\", expensiveScore(obj), obj.getId()));\n// Or avoid String.format allocation entirely:\nlogger.log(Level.FINE, () -> \"Scored \" + expensiveScore(obj) + \" for \" + obj.getId());\n\ntry { /* ... */ }\ncatch (IOException e) {\n    logger.log(Level.WARNING, \"I/O while loading profile \" + id, e);\n}\n```\nLibrary configuration: obtain loggers with stable names (e.g., `Logger.getLogger(\"com.example.lib\")`), set no handlers and keep `useParentHandlers=true` so the application controls handlers/formatters and levels. Optionally document recommended logger names and levels. This avoids eager formatting and lets apps route output; exception stack traces are emitted by passing the Throwable, not by embedding `e.toString()` in the message.",
+          "rubric": [
+            {
+              "criterion": "Eliminates hot-path overhead using `Logger.log(Level, Supplier<String>)` or equivalent lazy technique",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows correct exception logging with a Throwable argument",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains and applies proper library logger configuration (no custom handlers; respect parent handlers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses formatting cost (avoiding String.format or making it lazy) and level control",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are building a file-ingest utility that moves processed files from `incoming/` to `archive/`. Sometimes moves fail with `AtomicMoveNotSupportedException` (different filesystems) or `AccessDeniedException` (antivirus/backup holds a lock). There are occasional partial files in `incoming/` still being written by another process.",
+          "task": "Propose an error-tolerant move strategy using NIO that is atomic when possible, preserves attributes, copes with cross-filesystem moves, retries transient lock errors with backoff, and skips files that are still being written. Provide key code snippets and justify failure modes and logging.",
+          "expected_answer": "Strategy:\n- Prefer atomic move with replace when supported; on failure, fallback to copy-then-atomic-rename in target dir.\n- Preserve attributes when copying.\n- Retry on transient `AccessDeniedException` with bounded backoff; give up after N attempts and continue with other files.\n- Skip files recently modified (age threshold) to avoid ingesting active files.\n- Log each outcome at appropriate level.\nCode sketch:\n```java\nPath src = ...; Path dst = archive.resolve(src.getFileName());\nif (Files.getLastModifiedTime(src).toMillis() > System.currentTimeMillis() - ageMs) {\n    logger.fine(() -> \"Skipping active file \" + src);\n    return;\n}\ntry {\n    Files.move(src, dst, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);\n} catch (AtomicMoveNotSupportedException e) {\n    Path tmp = dst.resolveSibling(dst.getFileName() + \".part\");\n    Files.copy(src, tmp, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);\n    Files.move(tmp, dst, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);\n    Files.delete(src);\n} catch (AccessDeniedException e) {\n    int attempts = 0;\n    while (attempts++ < maxRetries) {\n        try { Thread.sleep(backoff(attempts)); Files.move(src, dst, StandardCopyOption.REPLACE_EXISTING); return; }\n        catch (AccessDeniedException ignored) { /* retry */ }\n    }\n    logger.log(Level.WARNING, \"Lock persisted for \" + src + \", giving up\", e);\n}\n```\nJustification: `ATOMIC_MOVE` prevents readers of `archive/` from ever seeing a partial file; copy+atomic-rename emulates this across filesystems. COPY_ATTRIBUTES preserves timestamps/permissions. The age check reduces collisions with writers. Retries handle transient scanner locks without stalling the whole batch; failures are logged and the loop proceeds.",
+          "rubric": [
+            {
+              "criterion": "Uses `Files.move` with appropriate options and shows a correct fallback for cross-filesystem moves",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains and implements a retry with backoff for transient `AccessDeniedException`",
+              "marks": 2
+            },
+            {
+              "criterion": "Accounts for active/partial files (e.g., age or temp extension) and skips them safely",
+              "marks": 2
+            },
+            {
+              "criterion": "Preserves attributes on fallback copy and ensures no partials are visible in `archive/`",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "File I/O",
+            "Exception handling",
+            "Logging",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Reliable File Utility",
+          "brief": "Build a CLI utility that moves files from a source directory to a target directory reliably. It must be resilient to partial files, cross-filesystem moves, and transient locks, and produce actionable logs.",
+          "deliverable": "A zip/tar containing: source code, a runnable fat JAR (or clear run instructions), a README, a sample `sample-in/` and `sample-archive/` directory tree used for demonstration, and the produced `sample-run.log` from a run against the sample tree.",
+          "acceptance_criteria": [
+            "CLI arguments: `--source <dir> --target <dir> [--include <glob>] [--age-sec <n>] [--retries <n>] [--dry-run]`. Shown in README with an example invocation.",
+            "Moves are atomic when supported; on cross-filesystem, performs copy to a temp in target and atomic rename, preserving attributes. `REPLACE_EXISTING` honored.",
+            "Skips files newer than `--age-sec`. Dry-run lists intended actions without mutating the filesystem.",
+            "Continues after failures. At end, prints a summary line: `moved=<n> skipped=<n> failed=<n>` to stdout and log.",
+            "Logging via java.util.logging with a rotating file handler writing to `sample-run.log`. Each moved file is logged at INFO; retries and skips at FINE/INFO; permanent failures at WARNING with exception stack traces.",
+            "No resource leaks: uses try-with-resources where applicable and closes directory/stream resources. Code shows deterministic closure of `Files.walk` or `Files.list` streams.",
+            "Submission includes `sample-run.log` produced by running on the provided `sample-in/` tree, demonstrating a move, a skip (age), and a handled failure."
+          ],
+          "rubric": [
+            {
+              "criterion": "Implements robust move with atomic when possible; correct cross-FS fallback that preserves attributes",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct handling of active files (`--age-sec`) and dry-run behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Error handling: retries with backoff for transient locks; continues processing; accurate end-of-run summary",
+              "marks": 5
+            },
+            {
+              "criterion": "Logging: JUL configuration, rotating file handler, appropriate levels, includes stack traces for failures",
+              "marks": 3
+            },
+            {
+              "criterion": "Resource management: uses try-with-resources/closure for walkers/streams; code clarity in README and instructions",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "File I/O",
+            "Exception handling",
+            "Logging",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Stream-based Data Processing with Date/Time",
+          "brief": "Implement a data-processing tool that reads a newline-delimited CSV file of transactions and writes two reports using streams and the java.time API.",
+          "deliverable": "A zip/tar containing: source code, a runnable fat JAR (or run instructions), README with usage, an input `sample-transactions.csv`, and the generated outputs `daily-summary.csv` and `top-users-weekly.csv`, plus a `processing.log`.",
+          "acceptance_criteria": [
+            "Input CSV columns: `timestamp,userId,amount` where `timestamp` is ISO-8601 with zone (e.g., `2024-03-31T01:15:00+01:00[Europe/Berlin]`). Lines may be malformed.",
+            "Output 1 `daily-summary.csv`: totals per local calendar day in system default zone, columns `date,totalAmount`. DST transitions must be handled via ZonedDateTime in the system zone.",
+            "Output 2 `top-users-weekly.csv`: for each ISO week (system zone), list the top 3 users by total amount, columns `year-week,userId,totalAmount` sorted by `year-week` then amount desc.",
+            "Processing must be streaming: avoid loading the whole file in memory. Use `Files.lines` with try-with-resources and stream collectors.",
+            "Malformed lines are skipped without aborting. Each skipped line is logged at WARNING with the line content and reason. The count of skipped lines is reported at the end (stdout/log).",
+            "No resource leaks. Deterministic closure of file streams. Uses `java.time` for all calendar computations (no legacy `Date`).",
+            "Submission includes the exact output files generated from the provided `sample-transactions.csv` and a `processing.log` showing at least one skipped line."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct stream-based I/O with deterministic closure and no bulk in-memory loading",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate date/time handling in system zone for daily totals and ISO-week aggregation",
+              "marks": 5
+            },
+            {
+              "criterion": "Top-N per group implemented correctly and efficiently (e.g., comparator/collector)",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust error handling: per-line isolation, logging of malformed lines with reason, final skipped count",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity of deliverables: README, run instructions, and presence of required output files/logs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "use functional programming",
+            "File I/O",
+            "Exception handling",
+            "Logging",
+            "JDK",
+            "Java"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-015-S04",
+      "skills_assessed": [
+        "Java",
+        "SQL",
+        "JDBC",
+        "JUnit",
+        "Unit Testing",
+        "Git",
+        "Apache Maven",
+        "provide documentation",
+        "JDK"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You implement a money transfer inside one JDBC transaction. The audit insert fails, but you forgot to roll back. What is the final state after this method returns?\n\n```java\nvoid transfer(DataSource ds, long fromId, long toId, BigDecimal amount) throws SQLException {\n    try (Connection c = ds.getConnection()) {\n        c.setAutoCommit(false);\n        try {\n            try (PreparedStatement ps = c.prepareStatement(\n                    \"UPDATE account SET balance = balance - ? WHERE id = ?\")) {\n                ps.setBigDecimal(1, amount);\n                ps.setLong(2, fromId);\n                ps.executeUpdate();\n            }\n            try (PreparedStatement ps = c.prepareStatement(\n                    \"UPDATE account SET balance = balance + ? WHERE id = ?\")) {\n                ps.setBigDecimal(1, amount);\n                ps.setLong(2, toId);\n                ps.executeUpdate();\n            }\n            // This fails due to FK violation (bug in audit reference)\n            try (PreparedStatement ps = c.prepareStatement(\n                    \"INSERT INTO transfer_audit(tx_id, from_id, to_id, amount) VALUES(?,?,?,?)\")) {\n                ps.setLong(1, 9999L); // bad fk\n                ps.setLong(2, fromId);\n                ps.setLong(3, toId);\n                ps.setBigDecimal(4, amount);\n                ps.executeUpdate();\n            }\n            c.commit();\n        } catch (SQLException e) {\n            // forgot: no rollback here\n            // log and continue\n        }\n        c.commit(); // second commit\n    }\n}\n```",
+          "options": [
+            "All changes are rolled back because an exception occurred in the try block.",
+            "Only the debit is committed; the credit and audit are lost.",
+            "Both account updates are committed; the audit row is missing.",
+            "Nothing is committed because calling commit after an exception is illegal in JDBC."
+          ],
+          "correct_option": "C",
+          "explanation": "Auto-commit is disabled, and no rollback occurs. The two account updates executed successfully before the audit insert failed. The catch block swallows the exception and the code calls commit after the catch, which commits whatever work is pending. The audit row is missing; balances reflect the transfer.",
+          "distractor_rationale": "B) Many assume exceptions auto-rollback; JDBC does not do that. You must call rollback explicitly. C) Commit is legal after catching an exception as long as the connection is open; it's how you can choose to commit partial work (even if it's a bug). D) Both debit and credit executed before the failure; there's no reason only the first update would persist.",
+          "skills_covered": [
+            "Java",
+            "JDBC",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "This insert uses a PreparedStatement with parameters bound in the wrong order vs the SQL column order. What happens on a typical database with strict types?\n\n```java\nString sql = \"INSERT INTO tx(amount, account_id) VALUES(?, ?)\";\ntry (PreparedStatement ps = c.prepareStatement(sql)) {\n    ps.setLong(1, 42L);          // intended account_id\n    ps.setBigDecimal(2, new BigDecimal(\"12.34\"));\n    ps.executeUpdate();\n}\n```\nTable schema:\n```sql\nCREATE TABLE tx (\n  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,\n  amount DECIMAL(12,2) NOT NULL,\n  account_id BIGINT NOT NULL\n);\n```",
+          "options": [
+            "JDBC swaps parameters to match column names, so amount=12.34 and account_id=42 are inserted.",
+            "A row is inserted with amount=42.00 and account_id=12 (or fails if DECIMAL→BIGINT cast is not allowed).",
+            "A SQLException is thrown before executeUpdate because setLong on parameter 1 violates the column type for amount.",
+            "Compilation fails because JDBC can detect the wrong types at compile time."
+          ],
+          "correct_option": "B",
+          "explanation": "JDBC binds by index, not by column name. Parameter 1 will go into the first placeholder (amount) and parameter 2 into the second (account_id). Many databases will coerce BIGINT to DECIMAL, resulting in amount=42.00 and account_id=12. If coercion is not allowed, the driver throws at execute time, not at bind time.",
+          "distractor_rationale": "B) JDBC does not match by column names for PreparedStatement placeholders; it is strictly positional. C) Type checks are not compile-time; JDBC is runtime-bound. D) setLong does not fail at bind time; type issues surface when executing against the database.",
+          "skills_covered": [
+            "JDBC",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "What persists after using a savepoint and rolling back to it?\n\n```java\nc.setAutoCommit(false);\ntry (Statement st = c.createStatement()) {\n  st.executeUpdate(\"INSERT INTO items(name) VALUES('A')\");\n  Savepoint sp = c.setSavepoint();\n  st.executeUpdate(\"INSERT INTO items(name) VALUES('B')\");\n  c.rollback(sp);\n  st.executeUpdate(\"INSERT INTO items(name) VALUES('C')\");\n  c.commit();\n}\n```\nAssume no errors and default settings.",
+          "options": [
+            "Rows 'A' and 'C' are committed; 'B' is discarded.",
+            "Only 'C' is committed; 'A' was before the savepoint and is lost.",
+            "All three rows are committed because commit occurs at the end.",
+            "Only 'A' is committed; rolling back to the savepoint cancels the entire transaction."
+          ],
+          "correct_option": "A",
+          "explanation": "Rolling back to a savepoint undoes work done after the savepoint but preserves work before it. After rollback(sp), 'B' is undone. The later insert of 'C' plus the earlier 'A' remain and commit.",
+          "distractor_rationale": "B) Rolling back to a savepoint does not cancel work before the savepoint. C) Commit commits the current state, which excludes 'B' due to the rollback(sp). D) Work before the savepoint ('A') is preserved, not lost.",
+          "skills_covered": [
+            "JDBC",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider a batch insert where the third insert violates a unique constraint. What does executeBatch return/throw and what is persisted?\n\n```java\ntry (PreparedStatement ps = c.prepareStatement(\n    \"INSERT INTO users(email) VALUES(?)\")) {\n  c.setAutoCommit(false);\n  ps.setString(1, \"a@example.com\"); ps.addBatch();\n  ps.setString(1, \"b@example.com\"); ps.addBatch();\n  ps.setString(1, \"a@example.com\"); ps.addBatch(); // violates unique(email)\n  ps.setString(1, \"d@example.com\"); ps.addBatch();\n  ps.executeBatch();\n  c.commit();\n}\n```\nAssume default driver behavior (stop-on-error).",
+          "options": [
+            "executeBatch returns [-3,-3,-3,-3]; nothing persists until commit, which then also fails.",
+            "executeBatch throws SQLException with no update counts, and the transaction is implicitly rolled back.",
+            "executeBatch completes and returns [1,1,0,1]; all non-conflicting rows persist.",
+            "executeBatch throws BatchUpdateException with counts for the successful statements before the error; the first two rows persist."
+          ],
+          "correct_option": "D",
+          "explanation": "Under stop-on-error, the driver applies prior statements, throws BatchUpdateException, and includes an int[] of update counts for the successful commands before the failing one. With no rollback called, those successful rows remain pending and will commit if commit is reached (here it is).",
+          "distractor_rationale": "B) -3 denotes Statement.SUCCESS_NO_INFO but is not typical here, and the driver does not return all -3 with no error. C) The batch does not continue after the failure in stop-on-error mode. D) JDBC does not implicitly roll back on error; and BatchUpdateException provides update counts.",
+          "skills_covered": [
+            "JDBC",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What happens when you attempt to create a savepoint while auto-commit is true?\n\n```java\ntry (Connection c = ds.getConnection()) {\n  // auto-commit default is true\n  Savepoint sp = c.setSavepoint();\n}\n```",
+          "options": [
+            "The savepoint is ignored; a warning is logged but no exception is thrown.",
+            "The savepoint is created and survives across statements until connection close.",
+            "A new transaction is implicitly started for the savepoint and immediately committed.",
+            "setSavepoint throws SQLException because savepoints require an active transaction."
+          ],
+          "correct_option": "D",
+          "explanation": "Savepoints are only valid within an active transaction. With auto-commit true, each statement is its own transaction; calling setSavepoint violates the contract and results in SQLException on compliant drivers.",
+          "distractor_rationale": "B) Savepoints cannot exist outside a transaction. C) JDBC specifies an exception for unsupported conditions; silently ignoring would be driver-specific and non-portable. D) JDBC does not implicitly start and commit a transaction for a savepoint call.",
+          "skills_covered": [
+            "JDBC"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A JUnit 5 test class fails to run its database initializer. What change makes it run?\n\n```java\nclass UserRepoTest {\n  @BeforeAll\n  void initDb() throws Exception {\n    // create schema and seed data using JDBC\n  }\n\n  @Test\n  void findsUser() { /* ... */ }\n}\n```\nError:\n```text\norg.junit.platform.commons.JUnitException: Cannot invoke @BeforeAll method 'initDb' in class UserRepoTest: the test instance must be per-class or the method must be static.\n```",
+          "options": [
+            "Replace @BeforeAll with @BeforeEach to always run it.",
+            "Make initDb static or annotate the class with @TestInstance(TestInstance.Lifecycle.PER_CLASS).",
+            "Rename the method to setUpClass so the platform detects it.",
+            "Add @ExtendWith(MockitoExtension.class) to enable lifecycle methods."
+          ],
+          "correct_option": "B",
+          "explanation": "In JUnit 5, @BeforeAll must be static unless the test instance lifecycle is PER_CLASS. Either make the method static or annotate the class accordingly.",
+          "distractor_rationale": "B) setUpClass is a JUnit 4 naming convention and not used by Jupiter. C) @BeforeEach runs per test but does not fix the @BeforeAll semantics issue. D) Mockito extension is unrelated to JUnit's lifecycle requirements.",
+          "skills_covered": [
+            "JUnit",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Which test classes run when you execute mvn test with Maven Surefire defaults and JUnit 5?\n\nProject has these classes:\n```text\nsrc/test/java/\n  AccountSpec.java\n  AccountTests.java\n  ITAccount.java\n  AccountIT.java\n```\nPOM has surefire with defaults (no includes/excludes configured), and failsafe is not configured.",
+          "options": [
+            "AccountTests runs; AccountIT, AccountSpec, and ITAccount are skipped.",
+            "AccountTests and AccountIT run; AccountSpec and ITAccount are skipped.",
+            "All four run because JUnit 5 detects them dynamically.",
+            "Only classes annotated with @Test run, regardless of name."
+          ],
+          "correct_option": "A",
+          "explanation": "Surefire's default includes are **/Test*.java, **/*Test.java, **/*Tests.java, **/*TestCase.java. AccountTests matches; AccountIT and ITAccount are typical IT names but don't match default unit-test patterns; AccountSpec doesn't match either. Without Failsafe or custom includes, only AccountTests runs.",
+          "distractor_rationale": "A) *AccountIT* does not match Surefire defaults; it's commonly run by Failsafe. C) JUnit 5 discovery still respects Surefire's file includes. D) File naming affects discovery before annotations are considered.",
+          "skills_covered": [
+            "Apache Maven",
+            "JUnit"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "After rebasing your feature branch, you push with --force-with-lease. What happens to the remote?\n\n```bash\n# on branch feature\ngit fetch origin\ngit rebase origin/main\n# resolves fine\ngit push --force-with-lease origin feature\n```\nAt the same time, a teammate may have updated origin/feature.",
+          "options": [
+            "The remote is unconditionally rewritten to your history, potentially deleting teammates' commits.",
+            "The push converts your rebase into a merge on the remote to preserve both histories.",
+            "Push succeeds only if your local upstream of origin/feature is still its current tip; otherwise it is rejected to protect teammates' work.",
+            "The push always fails after any rebase because non-fast-forward updates are blocked by default."
+          ],
+          "correct_option": "C",
+          "explanation": "--force-with-lease updates the remote only if the remote ref has not advanced since you last fetched. If it advanced, the push is rejected to avoid clobbering others' work.",
+          "distractor_rationale": "B) That's --force (without lease), which blindly overwrites. C) Non-fast-forward pushes are allowed with explicit force. D) Git does not auto-merge a rebase on push.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two concurrent transfers deadlock occasionally. Which change most directly reduces deadlock risk?\n\n```java\n// T1\nUPDATE account SET balance = balance - 10 WHERE id = 1; // locks row 1\nUPDATE account SET balance = balance + 10 WHERE id = 2; // then row 2\n\n// T2 (runs concurrently)\nUPDATE account SET balance = balance - 5 WHERE id = 2;  // locks row 2\nUPDATE account SET balance = balance + 5 WHERE id = 1;  // then row 1\n```\nAssume default isolation and row-level locks.",
+          "options": [
+            "Always update accounts in ascending id order within a transaction.",
+            "Set the isolation level to SERIALIZABLE on both transactions.",
+            "Create an index on balance to make updates faster.",
+            "Use autocommit=true so each statement commits immediately."
+          ],
+          "correct_option": "A",
+          "explanation": "Deadlocks arise from cyclic lock acquisition. Enforcing a consistent lock ordering (e.g., always lower id first) breaks the cycle and is the standard mitigation.",
+          "distractor_rationale": "B) Higher isolation can worsen lock contention and does not address the cyclic ordering problem. C) Indexing the updated column does not avoid row-lock cycles. D) Autocommit breaks transactional atomicity and can introduce other anomalies; plus it does not prevent a two-statement transfer from needing both locks.",
+          "skills_covered": [
+            "SQL",
+            "JDBC"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your POM compiles with Java 17 settings, but the build agent uses JDK 11. What happens when running mvn -q -DskipTests package?\n\n```xml\n<plugin>\n  <groupId>org.apache.maven.plugins</groupId>\n  <artifactId>maven-compiler-plugin</artifactId>\n  <version>3.11.0</version>\n  <configuration>\n    <release>17</release>\n  </configuration>\n</plugin>\n```\nAgent:\n```text\n$ java -version\nopenjdk version \"11.0.21\" 2023-10-17\n```\n",
+          "options": [
+            "Build succeeds because Maven downloads a JDK matching the release automatically.",
+            "Compilation fails: Source release 17 requires target release 17, which is unsupported by JDK 11.",
+            "Only tests fail; compilation of main sources is unaffected.",
+            "Build succeeds but the resulting bytecode runs only on Java 17."
+          ],
+          "correct_option": "B",
+          "explanation": "With <release>17</release>, the compiler requires a JDK 17 toolchain. Using JDK 11 to compile for release 17 fails with an error because the toolchain cannot target a higher release than itself.",
+          "distractor_rationale": "B) Maven does not auto-provision a JDK unless you configure toolchains/CI. C) It cannot produce Java 17 bytecode with a Java 11 compiler. D) The failure occurs at compilation of main sources, not only tests.",
+          "skills_covered": [
+            "Apache Maven",
+            "JDK"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A funds-transfer service currently performs two balance updates and then writes an audit row, all in one JDBC method. Occasionally the audit insert fails due to a foreign key mismatch, leaving the balances moved but no audit row. The code resembles:\n\n```java\nc.setAutoCommit(false);\ntry {\n  debit(fromId, amt, c);\n  credit(toId, amt, c);\n  insertAudit(txId, fromId, toId, amt, c); // can throw SQLException\n  c.commit();\n} catch (SQLException e) {\n  // log only\n}\n```\nThe business rule is \"transfer is atomic with audit\" — either both balances change and an audit row exists, or nothing changes. The service handles 200 TPS and must not serialize all transfers globally.",
+          "task": "Propose a concrete JDBC refactor that enforces atomicity without introducing global contention. Specify where to place savepoints or rollbacks/commits, how to handle audit failures, and what you will log and return to the caller when the audit fails. Justify your choices with regard to isolation, lock scope, and error visibility.",
+          "expected_answer": "Use a single transaction per transfer and roll back the entire transaction on any failure, including audit. Remove the outer commit in the catch block and add an explicit rollback. Optional: keep a single savepoint before starting any writes if additional operations follow, but here a full transaction rollback suffices. Pseudocode:\n\n```java\nc.setAutoCommit(false);\ntry {\n  debit(...);\n  credit(...);\n  insertAudit(...);\n  c.commit();\n} catch (SQLException e) {\n  try { c.rollback(); } catch (SQLException suppressed) { /* log */ }\n  // log error with txId and account ids for traceability\n  // propagate a domain exception so caller sees the transfer failed atomically\n  throw new TransferFailedException(e);\n}\n```\nMaintain row-level lock scope by updating accounts in a consistent order (e.g., lower id first) to reduce deadlock risk at 200 TPS, not by serializing the whole table. Isolation READ_COMMITTED is sufficient for this write path if business rules tolerate concurrent reads; do not elevate to SERIALIZABLE. Ensure the audit insert uses the same connection so it participates in the transaction. Log sufficient context (txId, fromId, toId, amount, SQLState) but no sensitive data. Return an error to the caller so they can retry safely, since no partial state is committed.",
+          "rubric": [
+            {
+              "criterion": "Identifies need for single transaction for both balances and audit; proposes rollback on any failure",
+              "marks": 3
+            },
+            {
+              "criterion": "Removes/avoids committing after catching exceptions; shows correct placement of commit/rollback (and optional savepoint)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses concurrency without global serialization (e.g., consistent lock ordering, acceptable isolation)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains caller-facing behavior and logging with useful context and safe retry semantics",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JDBC",
+            "SQL",
+            "Java"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your database tests are flaky in CI. Sometimes test A passes locally but fails in CI because rows from a previous test remain. The repository class accepts a Connection created from DriverManager in production code, and tests connect to the same RDBMS as production. Current test:\n\n```java\nclass OrderRepoTest {\n  static Connection c;\n  @BeforeAll static void open() throws Exception { c = DriverManager.getConnection(url); }\n  @AfterAll static void close() throws Exception { c.close(); }\n\n  @Test void createOrders() throws Exception {\n    // creates schema if absent, then inserts 2 rows\n  }\n\n  @Test void findOrders() throws Exception {\n    // expects 0 rows initially, then inserts and queries\n  }\n}\n```\nCI parallelizes tests by class; your suite may also run in random order.",
+          "task": "Design a test strategy and concrete changes to the code/test setup that make these tests deterministic and fast. Specify the data source choice, lifecycle annotations, and how you will reset state. Include any Maven configuration required.",
+          "expected_answer": "Use an isolated database per test class (ideally per test) with an in-memory engine such as H2 or a temporary file DB. Refactor repository to accept a DataSource so tests can inject an H2 DataSource while production uses the real one. Manage lifecycle with @BeforeEach/@AfterEach to ensure clean state. Option A: wrap each test in a transaction and roll back in @AfterEach. Option B: recreate schema/data in @BeforeEach and drop in @AfterEach.\n\nConcrete steps:\n- Change repo constructors to take javax.sql.DataSource.\n- Test code:\n```java\n@TestInstance(PER_CLASS)\nclass OrderRepoTest {\n  DataSource ds;\n  @BeforeAll void init() { ds = new org.h2.jdbcx.JdbcDataSource(); /* url=mem:db;DB_CLOSE_DELAY=-1 */ }\n  @BeforeEach void reset() throws SQLException { try (Connection c = ds.getConnection(); Statement s=c.createStatement()){ s.execute(\"DROP ALL OBJECTS\"); s.execute(schemaSql); seedIfNeeded(); } }\n  @Test void createOrders() { /* ... use ds */ }\n}\n```\n- Configure Surefire to limit parallelism or disable parallel for DB tests; or mark DB tests in a group and run them sequentially if necessary.\n- Maven: ensure H2 is a test-scoped dependency and surefire version supports JUnit 5.\n- Avoid static shared Connection; acquire/close per test to prevent cross-test leakage.",
+          "rubric": [
+            {
+              "criterion": "Proposes isolated data source (e.g., H2) and/or per-test database isolation; avoids using production DB",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses proper JUnit 5 lifecycle to reset state deterministically (transaction rollback or schema recreate)",
+              "marks": 2
+            },
+            {
+              "criterion": "Refactors code to inject DataSource instead of static DriverManager Connection",
+              "marks": 2
+            },
+            {
+              "criterion": "Maven/test runner considerations (dependencies, surefire, parallelism) clearly stated",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JUnit",
+            "Unit Testing",
+            "JDBC",
+            "Apache Maven"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your JUnit 5 tests do not run in CI. The POM declares JUnit Jupiter, but Surefire is old. CI logs show 0 tests run. Excerpt:\n\n```xml\n<dependencies>\n  <dependency>\n    <groupId>org.junit.jupiter</groupId>\n    <artifactId>junit-jupiter</artifactId>\n    <version>5.10.1</version>\n    <scope>test</scope>\n  </dependency>\n</dependencies>\n<build>\n  <plugins>\n    <plugin>\n      <groupId>org.apache.maven.plugins</groupId>\n      <artifactId>maven-surefire-plugin</artifactId>\n      <version>2.12.4</version>\n    </plugin>\n  </plugins>\n</build>\n```\nTests are in classes named UserRepositoryTests and OrderServiceTest.",
+          "task": "Diagnose why 0 tests run and specify exact POM and project changes to make JUnit 5 tests run under mvn test and in CI. Do not switch to JUnit 4.",
+          "expected_answer": "Surefire 2.12.4 predates JUnit Platform and cannot run Jupiter tests. Upgrade Surefire to a Jupiter-capable version (2.22.0+; preferably 3.1.x). Ensure the junit-jupiter-engine is on the test classpath (the junit-jupiter BOM/pom artifact pulls it transitively in recent versions). Example fix:\n\n```xml\n<properties>\n  <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>\n</properties>\n<dependencies>\n  <dependency>\n    <groupId>org.junit.jupiter</groupId>\n    <artifactId>junit-jupiter</artifactId>\n    <version>5.10.1</version>\n    <scope>test</scope>\n  </dependency>\n</dependencies>\n<build>\n  <plugins>\n    <plugin>\n      <groupId>org.apache.maven.plugins</groupId>\n      <artifactId>maven-surefire-plugin</artifactId>\n      <version>${maven.surefire.plugin.version}</version>\n      <configuration>\n        <useModulePath>false</useModulePath>\n      </configuration>\n    </plugin>\n  </plugins>\n</build>\n```\nKeep default test class names (they match Surefire includes). Verify with mvn -q -DskipITs test. If CI uses JDK 17+, ensure toolchain aligns with compiler settings.",
+          "rubric": [
+            {
+              "criterion": "Correct root cause (old Surefire cannot discover Jupiter tests)",
+              "marks": 2
+            },
+            {
+              "criterion": "Supplies correct plugin/dependency changes (Surefire ≥2.22.0 and Jupiter engine present)",
+              "marks": 3
+            },
+            {
+              "criterion": "Considers test naming/discovery and verifies mvn test in CI context/toolchain",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Apache Maven",
+            "JUnit",
+            "JDK"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You opened a PR from feature to main. While waiting, you rebased feature on latest main locally. After resolving conflicts, your push is rejected:\n\n```bash\ngit status\n# on branch feature\n# your branch and 'origin/feature' have diverged\n\ngit push --force-with-lease origin feature\n# ! [rejected]        feature -> feature (stale info)\n```\nA teammate has also pushed to origin/feature since your last fetch.",
+          "task": "Describe the exact, safe Git command sequence to update your remote branch so your rebased commits are pushed without deleting your teammate's work. Explain why each step is necessary and what happens to the PR.",
+          "expected_answer": "Fetch latest refs, integrate teammate's new commits, then push with lease. Two viable approaches:\n\n1) Rebase your local feature again on top of the new origin/feature tip:\n```bash\ngit fetch origin\ngit rebase origin/feature   # replay your rebased commits on top of teammate's\n# resolve if needed\ngit push --force-with-lease origin feature\n```\nThis preserves a linear history on feature that includes both sets of commits. The PR updates accordingly.\n\n2) Alternatively, merge origin/feature into your local feature if rebasing again is undesirable:\n```bash\ngit fetch origin\ngit merge --no-ff origin/feature\ngit push --force-with-lease origin feature\n```\nExplain that --force-with-lease prevents overwriting the branch if it advances again before push, and that the PR remains open and updates to show the new commit graph.",
+          "rubric": [
+            {
+              "criterion": "Uses fetch to update local knowledge before attempting push",
+              "marks": 2
+            },
+            {
+              "criterion": "Integrates teammate's commits correctly (rebase onto origin/feature or merge origin/feature)",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses --force-with-lease (not plain --force) and explains safety",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains PR impact (stays open; updates to new commits)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a JDBC-backed account ledger with transactional transfers",
+          "brief": "Create a small Java console application that manages accounts and supports transactional transfers using JDBC. Implement CRUD for accounts and a transfer operation that debits one account and credits another atomically, with an audit table. Use PreparedStatement for all SQL, disable auto-commit during transfers, and handle rollback on any failure. Prefer an embedded database (e.g., H2 or SQLite) for ease of assessment, but the code must work against any JDBC DataSource.",
+          "deliverable": "A Maven project repository or zip with source, POM, schema SQL, seed data, and run instructions. The app should have a main class demonstrating: create account(s), list accounts, perform a transfer, list accounts and audit entries after the transfer. Include sample output in README.",
+          "acceptance_criteria": [
+            "Project builds with mvn -q -DskipTests package without errors.",
+            "Schema includes tables: account(id,balance,...) and transfer_audit(...), with appropriate PK/FK constraints.",
+            "Transfer uses a single Connection with auto-commit=false, commits on success, and rolls back on any exception; no partial balance changes should be observable after a forced audit failure.",
+            "All SQL uses PreparedStatement; no string concatenation for parameters.",
+            "README contains setup steps, how to run, and an example transcript of creating accounts and a transfer."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct JDBC transaction handling in transfer (disable auto-commit, commit/rollback paths)",
+              "marks": 6
+            },
+            {
+              "criterion": "CRUD operations implemented using PreparedStatement and parameter binding (no SQL injection risks)",
+              "marks": 5
+            },
+            {
+              "criterion": "Schema correctness (keys, types, FK from audit to accounts) and portability (works with embedded DB)",
+              "marks": 4
+            },
+            {
+              "criterion": "Runnable demo and documentation quality (README with steps and example output)",
+              "marks": 3
+            },
+            {
+              "criterion": "Build correctness with Maven (compiles, packages)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JDBC",
+            "SQL",
+            "Java",
+            "Apache Maven",
+            "provide documentation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Add JUnit tests, Maven config, Git history, and documentation",
+          "brief": "Extend the ledger project to be a tested Java project. Introduce JUnit 5 unit/integration tests for the repository/service layer. Use an H2 in-memory database for tests via a test-scoped DataSource so tests are isolated and fast. Configure Maven Surefire to run JUnit 5 tests. Provide documentation (README and Javadoc) and a clean Git history.",
+          "deliverable": "Same repository augmented with tests under src/test/java, a configured POM, generated Javadoc, and a Git history. Include a README section describing the test strategy and how to run tests locally and in CI.",
+          "acceptance_criteria": [
+            "At least 6 tests across 2+ test classes; mvn -q test passes locally without external DB dependencies.",
+            "Tests use an in-memory H2 (or similar) DataSource and reset state per test (transaction rollback or schema recreate).",
+            "Maven POM configures maven-surefire-plugin version that supports JUnit 5; junit-jupiter dependency present; project compiles with an explicitly declared Java release consistent with the local JDK.",
+            "Public service/repository classes have Javadoc; mvn javadoc:javadoc succeeds.",
+            "Repository has at least 3 meaningful commits with clear messages (e.g., \"Add transactional transfer and rollback on failure\")."
+          ],
+          "rubric": [
+            {
+              "criterion": "Effective, isolated tests (use of in-memory DB, deterministic setup/teardown) and passing build",
+              "marks": 7
+            },
+            {
+              "criterion": "Coverage of core behaviors (successful transfer, rollback on failure, CRUD paths) across multiple test classes",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct Maven configuration for JUnit 5 and Java release/toolchain; build reproducibility",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation quality: README test strategy + generated Javadoc on public API",
+              "marks": 3
+            },
+            {
+              "criterion": "Git history shows incremental, meaningful commits",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JUnit",
+            "Unit Testing",
+            "Apache Maven",
+            "JDK",
+            "provide documentation",
+            "JDBC",
+            "Java",
+            "Git"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

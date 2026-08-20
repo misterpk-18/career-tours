@@ -1,0 +1,238 @@
+{
+  "course_code": "NT-C-032",
+  "course_name": "Cyber Security",
+  "sources": [
+    {
+      "name": "EDUSUM - CompTIA Security+ (SY0-701) Certification Sample Questions",
+      "url": "https://www.edusum.com/comptia/comptia-security-sy0-701-certification-sample-questions",
+      "note": "Free publicly posted sample set. Concept reused, scenario and options rewritten; not reproduced verbatim."
+    },
+    {
+      "name": "IndiaBIX - Networking Questions and Answers: Security",
+      "url": "https://www.indiabix.com/networking/security/",
+      "note": "Free practice bank. Wildcard-mask access-list concept reused; stem and options rewritten as a firewall rule task."
+    },
+    {
+      "name": "NIST SP 800-77 Rev. 1 - Guide to IPsec VPNs",
+      "url": "https://csrc.nist.gov/pubs/sp/800/77/r1/final",
+      "note": "US Government publication, public domain. Reference text, not an MCQ source; item authored from its material."
+    },
+    {
+      "name": "GeeksforGeeks - Permissions in Linux",
+      "url": "https://www.geeksforgeeks.org/linux-unix/permissions-in-linux/",
+      "note": "Public tutorial. setuid/setgid/sticky-bit semantics reused; item authored, no text copied."
+    },
+    {
+      "name": "NIST SP 800-63B - Digital Identity Guidelines: Authentication and Lifecycle Management",
+      "url": "https://pages.nist.gov/800-63-3/sp800-63b.html",
+      "note": "US Government publication, public domain. Verifier-impersonation-resistance requirement used to author the item."
+    },
+    {
+      "name": "OWASP Cheat Sheet Series - Password Storage Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "note": "CC BY-SA 4.0. Salt/pepper/work-factor distinctions used to author the item; wording is original."
+    },
+    {
+      "name": "FIRST - CVSS v3.1 Specification Document",
+      "url": "https://www.first.org/cvss/v3.1/specification-document",
+      "note": "Freely published specification. Base vs Temporal vs Environmental metric semantics used to author the item."
+    },
+    {
+      "name": "Cymulate - SIEM Correlation Rules: Fine-Tune Detection Logic at Scale",
+      "url": "https://cymulate.com/cybersecurity-glossary/siem-correlation-rules/",
+      "note": "Public vendor glossary article. Correlation-vs-severity tuning concept reused; item authored."
+    },
+    {
+      "name": "NIST SP 800-61 Rev. 2 - Computer Security Incident Handling Guide",
+      "url": "https://csrc.nist.gov/pubs/sp/800/61/r2/final",
+      "note": "US Government publication, public domain. Containment/eradication/recovery ordering used to author the item."
+    },
+    {
+      "name": "AWS Well-Architected Framework - Security Pillar: Shared responsibility",
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/shared-responsibility.html",
+      "note": "Public AWS documentation. Responsibility split used to author the item; no text copied."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "A retailer decided not to fix a weak card-handling process and instead bought a cyber-insurance policy sized to the assessed annual loss. Six months later that same process causes a breach, the insurer pays out, and the board asks why the risk register still shows the entry at its original residual rating. Which explanation is correct?",
+      "options": [
+        "Transferring a risk moves the financial consequence to a third party but changes neither the likelihood nor the control gap, so the residual rating is unchanged and the register is right",
+        "The policy acts as a corrective control, so the entry should have been downgraded to 'reduced' once the payout cleared",
+        "Because the loss landed inside the assessed annual loss expectancy, the treatment performed as designed and no rating change was ever due",
+        "Buying insurance restores the risk to its inherent rating, so the register should have been reset to the pre-control score"
+      ],
+      "correct_option": "A",
+      "explanation": "Risk transfer reassigns impact, specifically the financial share of it, to another party. It does not touch the threat, the vulnerability, or the probability of occurrence, so the residual risk that remains after treatment is identical to what it was before the policy was purchased. The register is accurate; what is wrong is the assumption that a paid claim is evidence of a treated risk.",
+      "distractor_rationale": "B tempts anyone who has memorised the control-type list without noticing that insurance is a financing instrument rather than a control acting on the system. C confuses an accurate loss estimate with an effective treatment: predicting the loss correctly does not mean the risk was reduced. D inverts the definitions of inherent and residual risk, a swap that half-learned candidates make often because both terms attach to the same register row.",
+      "skills_covered": ["define security policies", "ethics"],
+      "difficulty": "hard",
+      "source_name": "EDUSUM - CompTIA Security+ (SY0-701) Certification Sample Questions",
+      "source_url": "https://www.edusum.com/comptia/comptia-security-sy0-701-certification-sample-questions",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "You must add exactly one inbound rule on the perimeter firewall that drops every packet whose source address falls between 192.168.160.0 and 192.168.191.255, and drops nothing outside that span. The platform's rule syntax takes an address followed by a wildcard mask. Which rule does the job?",
+      "options": [
+        "deny ip 192.168.160.0 0.0.31.255 any",
+        "deny ip 192.168.160.0 0.0.191.255 any",
+        "deny ip 192.168.160.0 255.255.224.0 any",
+        "deny ip 192.168.128.0 0.0.31.255 any"
+      ],
+      "correct_option": "A",
+      "explanation": "The span 192.168.160.0 to 192.168.191.255 is 32 contiguous /24 blocks, i.e. a /19. A /19 leaves 13 host bits, so the wildcard mask must have 13 bits set: 0.0.31.255. Address 192.168.160.0 is a valid /19 boundary (160 is a multiple of 32), so 192.168.160.0 0.0.31.255 matches exactly the required range.",
+      "distractor_rationale": "B is the classic error of writing the last octet-pair of the range into the mask instead of computing the block size; 0.0.191.255 is not even a contiguous mask. C swaps in a subnet mask where the syntax expects a wildcard, and 255.255.224.0 is the arithmetic complement a candidate reaches for after learning /19 without learning the inversion. D gets the /19 mask right but slides the base address down to the previous boundary, covering 192.168.128.0 to 192.168.159.255 - the block immediately below the one asked for.",
+      "skills_covered": ["Firewall", "TCP/IP"],
+      "difficulty": "hard",
+      "source_name": "IndiaBIX - Networking Questions and Answers: Security",
+      "source_url": "https://www.indiabix.com/networking/security/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "A site-to-site IPsec tunnel joins a branch (10.10.0.0/16) to HQ (10.20.0.0/16). IKE Phase 1 and Phase 2 both report established. Hosts in 10.10.1.0/24 reach HQ normally, but hosts in 10.10.2.0/24 get no replies, and a capture on the branch WAN link shows their packets leaving in cleartext rather than as ESP. Which explanation fits?",
+      "options": [
+        "The Phase 2 security association was negotiated with a traffic selector narrower than 10.10.0.0/16, so traffic outside that selector never matches the SA and is forwarded unprotected via the default route",
+        "Phase 1 was negotiated in aggressive mode, which supports only one protected subnet per peer",
+        "Perfect forward secrecy is disabled, so only the first subnet to use the tunnel retains a usable key",
+        "The tunnel is running in transport mode, and transport mode protects only a single host pair, so the second subnet is dropped"
+      ],
+      "correct_option": "A",
+      "explanation": "Traffic is placed into an IPsec tunnel by matching it against the Phase 2 traffic selectors (proxy IDs) of an established SA. Anything that does not match is not an IPsec error at all - it is simply routed normally, which is why the packets appear in cleartext rather than being dropped. A selector negotiated as 10.10.1.0/24 rather than 10.10.0.0/16 produces exactly this asymmetry with both phases showing up.",
+      "distractor_rationale": "B invents a limitation: aggressive mode changes how Phase 1 identities are exchanged and how many messages it takes, not how many subnets can be protected. C misunderstands PFS, which governs whether new Phase 2 keys are derived independently of the Phase 1 key, and applies to rekeying rather than to which subnets are carried. D is the most tempting because transport mode really is restricted relative to tunnel mode, but transport mode secures traffic between the two endpoints themselves and would not leave a subnet's packets in cleartext while the tunnel reports established - and it would also break the working subnet.",
+      "skills_covered": ["VPN", "TCP/IP"],
+      "difficulty": "hard",
+      "source_name": "NIST SP 800-77 Rev. 1 - Guide to IPsec VPNs",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/77/r1/final",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "A Linux host review finds /usr/local/bin/logclean owned by root with mode 4755, and the script invokes tar by bare name rather than by absolute path. The containing directory is root-owned mode 755. Operators genuinely need to run the tool with elevated rights. Which single change removes the escalation exposure while keeping the tool usable?",
+      "options": [
+        "Clear the setuid bit and let operators invoke it through a sudoers rule that enforces secure_path",
+        "Change the file to 4750 and add the operators to root's group, keeping setuid so it still runs privileged",
+        "Set the sticky bit on /usr/local/bin so that only root can replace binaries stored there",
+        "Change the file to 0755 and set the setgid bit instead, so it runs with the group's rights rather than root's"
+      ],
+      "correct_option": "A",
+      "explanation": "The exposure is the combination of setuid-root with an unqualified command lookup: the elevated process resolves tar through an inherited PATH. Removing the setuid bit takes the privilege out of the file's permission bits, and sudo then supplies the privilege under a policy that resets PATH to secure_path, so the lookup no longer depends on the caller's environment.",
+      "distractor_rationale": "B narrows who can run it but keeps setuid-root and the unqualified lookup, so the mechanism is untouched - and adding users to root's group is itself a privilege grant. C misreads the sticky bit, which restricts deletion and renaming inside a world-writable directory; on a root-owned 755 directory it changes nothing, since non-root users already cannot write there. D understands that setgid is weaker than setuid but not that the file's group still determines what is inherited, and it silently removes the elevation operators actually need.",
+      "skills_covered": ["Linux Security", "User Management"],
+      "difficulty": "hard",
+      "source_name": "GeeksforGeeks - Permissions in Linux",
+      "source_url": "https://www.geeksforgeeks.org/linux-unix/permissions-in-linux/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "Staff sign in with a password plus a 6-digit TOTP code. A lookalike sign-in portal relays both the password and the code to the real service within seconds and captures the session cookie that comes back. Shortening the TOTP step to 15 seconds makes no difference. Which replacement closes this off, and on what mechanism does it depend?",
+      "options": [
+        "A FIDO2/WebAuthn authenticator, because its signed assertion is bound to the origin that requested it, so a challenge relayed from the lookalike domain yields an assertion the real service will reject",
+        "SMS delivery of the one-time code, because the code arrives out of band on a channel the operator of the portal does not control",
+        "Push approval notifications, because the user is shown the request and can decline anything they did not initiate",
+        "Raising the TOTP shared secret from 80 to 160 bits, because a relayed code then becomes computationally infeasible to reuse"
+      ],
+      "correct_option": "A",
+      "explanation": "This is a verifier-impersonation (adversary-in-the-middle) attack, and the defence is channel binding rather than secrecy or freshness. WebAuthn signs over the relying-party ID and the TLS-derived client data, so an assertion produced for the attacker's origin does not validate at the real one. Any authenticator whose output the user can read and retype - TOTP included - can be relayed by definition, which is why shortening the window does nothing.",
+      "distractor_rationale": "B is a widely held belief that out-of-band delivery equals phishing resistance; SMS codes are still manually entered and therefore relayable, and SMS carries its own SIM-swap exposure. C describes a real usability improvement and a partial mitigation, but a relay attack arrives while the user is actively signing in, so the prompt looks legitimate and gets approved. D treats a relay as a cryptographic problem: the attacker never has to guess or derive the code, so secret length is irrelevant.",
+      "skills_covered": ["Authentication", "User Management"],
+      "difficulty": "hard",
+      "source_name": "NIST SP 800-63B - Digital Identity Guidelines: Authentication and Lifecycle Management",
+      "source_url": "https://pages.nist.gov/800-63-3/sp800-63b.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A password store is dumped. Each record holds an Argon2id digest with a unique per-user salt, and the application also HMACs the password with a key kept in an HSM before hashing. A colleague argues the per-user salts alone would have given the same protection. Which assessment is right?",
+      "options": [
+        "The salt only forces the attacker to work each hash separately; the HSM-held pepper is what prevents any offline cracking at all for as long as the key stays out of the dump",
+        "The salt already prevents offline cracking, because an attacker who does not know the salt cannot compute a candidate hash",
+        "The pepper adds nothing, because Argon2id's memory cost already makes per-hash attack infeasible regardless of extra key material",
+        "Salts and peppers both defeat precomputed tables; the only real difference is that a pepper has to be rotated whenever a password changes"
+      ],
+      "correct_option": "A",
+      "explanation": "Salts are stored alongside the hash, so a database dump reveals them. Their job is to destroy the economics of precomputation and cross-user reuse by making every hash a separate target - not to stop cracking a single chosen account. The pepper is a secret that is deliberately not in the database; while it stays in the HSM the attacker cannot construct the input to the hash at all, so no candidate can be tested offline.",
+      "distractor_rationale": "B is the single most common misconception about salts: candidates remember that salts are per-user and random and conclude they must be secret, when they are stored in the clear next to the digest. C over-trusts the work factor - Argon2id makes each guess expensive, but expensive is not impossible against a weak or already-breached password. D flattens the two into the same mechanism and adds a rotation rule that does not exist; rotating a pepper invalidates every stored hash at once, which is precisely why it is not tied to password changes.",
+      "skills_covered": ["Authentication", "define security policies"],
+      "difficulty": "hard",
+      "source_name": "OWASP Cheat Sheet Series - Password Storage Cheat Sheet",
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "This sprint's remediation capacity covers one finding. The scan reports CVE-A at CVSS v3.1 base 9.8 on an isolated lab host with no inbound path from anywhere, and CVE-B at base 7.5 on the internet-facing payment gateway, with a working exploit already circulating. You intend to schedule CVE-B first. What must the vulnerability report state to make that defensible?",
+      "options": [
+        "That a base score captures intrinsic technical severity only, and that rescoring with Temporal metrics for exploit maturity and Environmental metrics for asset criticality and modified attack vector reverses the ordering",
+        "That the 9.8 is a false positive, since a host with no inbound path cannot carry a network-vector vulnerability",
+        "That severity should be judged on the base score's Exploitability sub-score rather than the overall base score, because that sub-score is the part that reflects real-world risk",
+        "That base scores already fold in asset value, so a 9.8 outranks a 7.5 and the deviation has to be filed as a documented policy exception"
+      ],
+      "correct_option": "A",
+      "explanation": "CVSS explicitly separates the intrinsic, environment-independent characteristics of a flaw (Base) from how exploitable it currently is in the wild (Temporal) and from what it is worth in your estate (Environmental). Isolation is expressed by modifying the environmental attack vector, and a circulating exploit is expressed through exploit code maturity. Recording that rescoring is what turns a prioritisation decision into an auditable one.",
+      "distractor_rationale": "B conflates reachability with existence - the vulnerability is genuinely present, it is simply not reachable, and calling a real finding a false positive corrupts the register. C is a half-remembered decomposition: the Exploitability sub-score measures how a flaw is reached in the abstract, not whether anyone is exploiting it today, which is what Temporal metrics cover. D is the belief that keeps teams patching lab boxes ahead of production - base scores deliberately exclude asset value, which is exactly why Environmental metrics exist.",
+      "skills_covered": ["Vulnerability Assessment", "Report Writing"],
+      "difficulty": "hard",
+      "source_name": "FIRST - CVSS v3.1 Specification Document",
+      "source_url": "https://www.first.org/cvss/v3.1/specification-document",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "A SIEM rule fires on every authentication failure and delivers roughly 4,000 alerts a day, of which analysts confirm three as genuine. A junior analyst proposes raising the rule's assigned severity so that fewer items surface on the triage queue. Why does that not work, and what does change the signal-to-noise ratio?",
+      "options": [
+        "Severity is only a label attached to the same firing condition, so the rule still matches every event; narrowing the condition itself - for example failures followed by a success from an unfamiliar network within a short window - is what reduces the volume",
+        "Nothing is wrong with it: raising severity is the standard tuning step, because low-severity events are discarded at ingest and never reach the queue",
+        "The rule should be retired and authentication logs dropped from ingest, since three true positives a day do not justify the storage and licence cost",
+        "The threshold should be set to five failures within one minute, which is sufficient on its own because an isolated failure is never worth alerting on"
+      ],
+      "correct_option": "A",
+      "explanation": "Severity is metadata written onto an alert after the detection logic has already matched. It can reorder a queue but cannot stop the rule matching, so the underlying alert count is unchanged. Real noise reduction comes from making the detection condition more specific - correlating an event with a second, corroborating event inside a time window so that benign isolated activity no longer satisfies the rule.",
+      "distractor_rationale": "B assumes severity is an ingest-time filter, which mixes up the detection pipeline with log-source filtering and would in any case throw away the raw data needed for later investigation. C is the cost-driven overcorrection: those three confirmed events are exactly the ones you cannot afford to lose, and authentication logs are foundational evidence for incident response. D is the closest to right and therefore the strongest distractor - thresholding is a genuine technique, but a count threshold alone still fires on ordinary password fumbles and lockout storms, and single failures do matter in contexts such as a dormant service account.",
+      "skills_covered": ["SIEM Basics", "Logging", "perform escalation procedure"],
+      "difficulty": "hard",
+      "source_name": "Cymulate - SIEM Correlation Rules: Fine-Tune Detection Logic at Scale",
+      "source_url": "https://cymulate.com/cybersecurity-glossary/siem-correlation-rules/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "Ransomware has encrypted a file server. The host has been isolated from the network. Management wants an immediate restore from last night's backup so the business can reopen, arguing that the backup predates the encryption. Which course of action and reasoning does the incident playbook support?",
+      "options": [
+        "Capture volatile state and a disk image, establish the initial access point and how long the intruder was resident, eradicate the foothold, then restore to a point verified to predate that access - because a backup taken after the intrusion but before the encryption will carry the foothold back in",
+        "Restore from last night's backup at once: because it predates the encryption event it necessarily predates the compromise, and evidence can be recovered from the restored system afterwards",
+        "Rebuild the server from the hardened baseline and restore the data onto it, then skip eradication, since a freshly built host cannot be carrying the original foothold",
+        "Return the host to the network so the SIEM keeps collecting from it, because isolating it destroys the volatile evidence the investigation depends on"
+      ],
+      "correct_option": "A",
+      "explanation": "Encryption is the last visible step of an intrusion, not the first. Dwell time between initial access and detonation is routinely days or weeks, so the restore point has to be chosen against the compromise date rather than the encryption date, and that date is only known once the investigation establishes it. Eradication precedes recovery for the same reason: restoring onto an environment that still holds the access path invites immediate reinfection.",
+      "distractor_rationale": "B is the exact assumption the question is built on, and the most common real-world failure - equating the encryption timestamp with the compromise timestamp. C is half right: rebuilding from a baseline does clear the host, but the data being restored can carry the persistence, and eradication also has to cover the credentials and any other systems the intruder reached. D correctly notes that volatile data is lost when a host is powered off, but conflates isolation with shutdown - isolating the network interface preserves memory while stopping lateral movement, which is why it is the standard containment step.",
+      "skills_covered": ["Backup and Recovery", "perform escalation procedure"],
+      "difficulty": "hard",
+      "source_name": "NIST SP 800-61 Rev. 2 - Computer Security Incident Handling Guide",
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/61/r2/final",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "An audit of your AWS estate raises two findings: an EC2 instance three months behind on operating-system security updates, and an S3 bucket holding customer records left on default settings with no bucket policy and no encryption decision recorded. The team replies that AWS secures and patches the platform. Under the shared responsibility model, which findings does the customer own?",
+      "options": [
+        "Both - the guest operating system and its patching sit with the customer on EC2, and on S3 the customer still owns data classification, access permissions and the encryption choice even though AWS runs the operating system and platform",
+        "Only the EC2 patching; S3 is a managed service, so bucket access control and encryption fall to AWS",
+        "Only the S3 bucket; AWS applies operating-system security patches to EC2 guests as part of routine instance maintenance",
+        "Neither - both sit below the application layer, and everything below the application layer is 'security of the cloud', which AWS operates"
+      ],
+      "correct_option": "A",
+      "explanation": "The dividing line is not how abstracted the service is; it is who controls the configuration. On EC2 the customer controls the guest OS, so patching, installed software and security-group rules are the customer's. On S3 AWS operates the OS and storage platform, but the customer still decides what data goes in, who may read it, and whether it is encrypted - so both findings are 'security in the cloud'.",
+      "distractor_rationale": "B applies the reasonable-sounding rule that a more managed service means less customer responsibility, and lands on the misconfiguration class that causes most real S3 data exposures. C inverts the EC2 side specifically: AWS patches the hypervisor and host, never the guest, and 'instance maintenance' events are hardware retirement notices rather than OS updates. D generalises the layer metaphor into a rule the model does not contain, and would leave the two most common cloud findings unowned.",
+      "skills_covered": ["cloud technologies", "define security policies"],
+      "difficulty": "medium",
+      "source_name": "AWS Well-Architected Framework - Security Pillar: Shared responsibility",
+      "source_url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/shared-responsibility.html",
+      "provenance": "adapted"
+    }
+  ]
+}

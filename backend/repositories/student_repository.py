@@ -144,6 +144,37 @@ class StudentRepository:
         return Student(**cast(Any, row._mapping)) if row else None
 
     @staticmethod
+    def mark_email_verified(student_id):
+        """Flip email_verified true. Idempotent — verifying twice is harmless."""
+        db.session.execute(
+            text("""
+                UPDATE students
+                SET email_verified = true, updated_at = CURRENT_TIMESTAMP
+                WHERE student_id = :student_id
+            """),
+            {"student_id": student_id},
+        )
+        db.session.commit()
+
+    @staticmethod
+    def set_password(student_id, new_password):
+        """Set a new password hash. Used by the reset-password flow."""
+        from werkzeug.security import generate_password_hash
+
+        db.session.execute(
+            text("""
+                UPDATE students
+                SET password_hash = :password_hash, updated_at = CURRENT_TIMESTAMP
+                WHERE student_id = :student_id
+            """),
+            {
+                "student_id": student_id,
+                "password_hash": generate_password_hash(new_password),
+            },
+        )
+        db.session.commit()
+
+    @staticmethod
     def get_by_phone(phone):
         result = db.session.execute(
             text("""

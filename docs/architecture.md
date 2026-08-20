@@ -164,6 +164,11 @@ and hold a Neon connection open while frozen.
 Everything is supplied as Lambda environment variables. There is no `.env` file in the image,
 so a missing variable is a runtime failure, not a fallback.
 
+The table below is the summary. **[environment.md](environment.md) is the source of truth** for
+configuration: every variable with its consumer and default, what each credential is actually
+permitted to do, the drift between the local `.env` and the Lambda env map, and the checklists for
+migrating the AWS account or the database.
+
 | Variable | Notes |
 |---|---|
 | `DB_USER`, `DB_PASSWORD` | default to `""` |
@@ -183,6 +188,53 @@ through to its default credential chain and picks up the **execution role** — 
 static keys later is an env-var change with no code change, once the role has
 `s3:PutObject`/`s3:GetObject` on `arn:aws:s3:::career-tours-bkt/*`.
 
+### Database pressure returns 503, not 500
+
+Two `errorhandler`s in `app.py` turn a transient database failure into a `503` with
+`Retry-After` and `"retryable": true`:
+
+| Exception | Cause | Retry-After |
+|---|---|---|
+| `sqlalchemy.exc.TimeoutError` | connection pool exhausted | 2s |
+| `sqlalchemy.exc.OperationalError` | Neon compute waking, or a dropped connection | 3s |
+
+Measured: 64 concurrent sittings against `pool_size: 1, max_overflow: 2` produced
+40 responses of `QueuePool limit of size 1 overflow 2 reached, timeout 10.00`, every
+one served as a `500`. **That status is a lie with a cost** — a 500 means "this
+request is broken, do not retry", so a client that believed it would discard a
+student's answer that nothing was actually wrong with.
+
+**The pool is not the bug and should stay small.** This runs as a container-image
+Lambda, where concurrency comes from more invocations rather than more threads, and
+one connection per sandbox is what keeps Neon's connection limit reachable. After
+the change, the same 64-concurrent run produced zero 500s and all 250 answer-saves
+succeeded.
+
+The remaining ceiling is therefore Neon connections × Lambda concurrency, not this
+code: each sandbox holds one connection, so concurrent invocations map roughly 1:1
+onto Neon connections. Worth knowing the plan's limit before a full cohort sits
+tests at once.
+
+### Round trips are the latency, not the queries
+
+One round trip to this Neon instance measures **~74ms** (cross-region), so per-request
+trip *count* dominates. The answer-save path was cut from 6 to 4:
+
+- The clock used to be its own `SELECT EXTRACT(EPOCH ...)`. It is now computed by
+  the database in the same query that reads the sitting row — 74ms of pure latency
+  removed from every request that touches a sitting, for a subtraction the previous
+  query could do for free.
+- The path fetched all ten stems and explanations just to rebuild the option
+  shuffle. It now uses a key-only projection, cached in-process for 5 minutes
+  (`section_code` → ids, options, correct option). Both projections were verified to
+  produce an identical shuffle, so the cache cannot change what a student sees.
+  TTL rather than permanent because `load_section_questions.py` can reload the
+  corpus without a restart; in Lambda it is usually a per-container memo.
+
+Sequential p50 for one answer save: 538ms → **466ms**. `pool_pre_ping` adds one
+more trip per checkout, which is deliberate — a connection can be dead after a
+Lambda freeze.
+
 ### Known risk: secrets are plaintext
 
 Every secret above — including `OPENAI_API_KEY`, `HF_TOKEN`, `LANGSMITH_API_KEY`,
@@ -193,9 +245,42 @@ or SSM Parameter Store requires an execution-role policy change.
 
 ---
 
+## Email (SES)
+
+Transactional email — signup verification links, passwordless-login OTP codes, and
+password-reset links — is sent through **Amazon SES** from
+`Nipuna Careers <no-reply@nipunacareers.com>` (`backend/services/email/mailer.py`, `sesv2`
+client in `AWS_REGION`). On Lambda the call is authorised by the execution role's inline
+`career-tours-ses-send` policy; locally boto3 falls through to the static keys in `.env`.
+
+Two facts that bit during rollout, kept here so they don't again:
+
+1. **The IAM resource must be `*`, not the sending identity.** Scoped to
+   `identity/nipunacareers.com`, `SendEmail` failed with `AccessDenied` naming the **recipient**
+   identity — SES evaluates the action against recipients too. `Resource: "*"` is the standard,
+   safe send policy; SES still enforces that the From is a verified identity, so `*` does not let
+   the function send as anyone else.
+2. **The account is still in the SES sandbox.** It delivers only to **verified recipient
+   identities**; any other recipient is rejected at send with `MessageRejected: Email address is
+   not verified`. The auth routes treat a send failure as non-fatal and log it (the
+   enumeration-safe endpoints must not reveal it), so the API still returns its normal response —
+   the mail simply never arrives. To test, verify a single inbox
+   (`aws sesv2 create-email-identity --email-identity <addr>`); to ship to all students, request
+   **production access** (SES console → Account dashboard). No code changes when it's granted.
+
+The domain `nipunacareers.com` is verified with DKIM (`SUCCESS`) and a custom MAIL FROM
+(`mail.nipunacareers.com`). Every emailed secret is stored only as a SHA-256 hash, is single-use,
+and expires — see [database_relationship_documentation.md](database_relationship_documentation.md)
+(`auth_email_challenges`).
+
+---
+
 ## IAM: what the deploy user can do
 
-Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`.
+Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`, which holds
+**`AdministratorAccess`** (verified 2026-08-20, alongside two redundant policies). So the answer to
+"can the deployer do X" is currently "yes". What it *should* be allowed to do, and the same question
+for the execution role and the S3 key, is in [environment.md](environment.md#what-each-credential-is-allowed-to-do).
 
 An earlier revision of this document listed `apigateway:GET`, `iam:*`, `s3:ListAllMyBuckets`,
 `s3:ListBucket`, `s3:GetBucketLocation` and `cloudfront:ListDistributions` as **denied** to this

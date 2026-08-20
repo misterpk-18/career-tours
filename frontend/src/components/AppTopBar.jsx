@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Menu } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
 import GlobalSearch from './GlobalSearch';
 import { resolveRoute } from '../lib/nav';
 
@@ -80,7 +79,6 @@ export const AppTopBar = ({ onOpenSidebar }) => {
             through the pages themselves. */}
         <GlobalSearch className="hidden w-full max-w-xs sm:block lg:max-w-sm" />
 
-        <ThemeToggle />
       </div>
     </header>
   );

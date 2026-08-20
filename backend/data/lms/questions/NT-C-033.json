@@ -1,0 +1,1851 @@
+{
+  "course_code": "NT-C-033",
+  "course_name": "Ethical Hacking",
+  "sections": [
+    {
+      "section_code": "NT-C-033-S01",
+      "skills_assessed": [
+        "Reconnaissance",
+        "ICT security legislation",
+        "Risk management",
+        "Technical Writing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are assigned under this SOW and receive a side email the morning of kickoff.\n\n```text\nSOW excerpt (signed):\n- In-scope: corp.example.com, vpn.example.com\n- Out-of-scope: prod.example.com; any third-party-hosted assets\n- Methods: Passive reconnaissance only (no active scanning, no auth bypass)\n- Window: 20:00–23:00 UTC, Mon–Thu\n- Contacts: security@example.com (Authorising Officer)\n\nEmail (09:12 UTC) from Marketing Lead:\n\"Could you also look at careers.example.com this week? Our team owns it. Thanks!\"\n```\nWhat is the compliant next step?",
+          "options": [
+            "Decline to touch careers.example.com and request a formal written scope amendment, signed by the Authorising Officer; pause until received.",
+            "Proceed if the Marketing Lead CCs their manager to confirm ownership of careers.example.com.",
+            "Proceed to include careers.example.com because it is a subdomain of example.com and likely the same owner.",
+            "Proceed on careers.example.com but restrict to passive methods only, since passive is always safe without extra approval."
+          ],
+          "correct_option": "A",
+          "explanation": "Only written, lawful authorisation from the named authorising party (or a formally amended SOW) can expand scope. A subdomain’s apparent ownership or limiting to passive methods does not change the legal requirement. Pause and obtain a signed amendment before proceeding.",
+          "distractor_rationale": "A: Common but wrong: DNS hierarchy does not equal legal authorisation. B: “Passive is always safe” is a myth; legality hinges on consent, not method. D: Internal CCs are not equivalent to formal authorisation; authority must match the SOW’s signatory or delegated authority in writing.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management",
+            "Reconnaissance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Review the following OSINT artefacts:\n\n```text\nWHOIS: corp.example.com\nRegistrar: GANDI SAS\nRegistrant Organization: Example Corp\nName Server: ns-123.awsdns-45.com\nName Server: ns-678.awsdns-12.org\n```\n```text\nDNS TXT for corp.example.com:\n\"v=spf1 include:_spf.google.com ~all\"\n```\nWhich conclusion is most reliable for asset mapping without additional probing?",
+          "options": [
+            "Outbound email from corp.example.com is blocked because SPF ends with ~all.",
+            "All subdomains of example.com are managed in AWS Route 53 and therefore all are in-scope.",
+            "Example Corp likely uses Google Workspace to send email for corp.example.com.",
+            "The corp.example.com website is hosted on Google Cloud because SPF includes Google."
+          ],
+          "correct_option": "C",
+          "explanation": "An SPF record including _spf.google.com strongly indicates Google Workspace (or Google-managed mail sending) for that domain’s email. It says nothing about web hosting. NS records suggest the zone is on Route 53, but that doesn’t imply scope or cover every subdomain’s hosting. \"~all\" is a softfail policy, not a block.",
+          "distractor_rationale": "B: Confuses email-sending infrastructure with web hosting. C: Management of DNS in Route 53 doesn’t grant authorisation or guarantee uniform hosting/scope. D: Misreads SPF softfail (~all) as “blocked.”",
+          "skills_covered": [
+            "Reconnaissance"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You query certificate transparency logs and observe:\n\n```text\ncrt.sh extract for example.com (selected SANs)\n- CN: vpn.example.com; SANs: vpn.example.com, auth.example.com\n- CN: *.dev.example.com; SANs: api.dev.example.com, ui.dev.example.com\n- CN: cdn.example.com; SANs: cdn.example.com\n- CN: staging.example.internal; SANs: staging.example.internal\n```\nYour SOW says: in-scope = corp.example.com, vpn.example.com; passive methods only; internal-only domains excluded. Which host is safest to add to your working asset map now, without further authorisation?",
+          "options": [
+            "cdn.example.com",
+            "api.dev.example.com",
+            "staging.example.internal",
+            "auth.example.com"
+          ],
+          "correct_option": "D",
+          "explanation": "auth.example.com appears as a SAN alongside vpn.example.com, suggesting a related externally reachable host under example.com. It is not tagged as internal-only or dev-only. Adding it tentatively to the working map (not attacking) is a safe passive recon step. Dev and internal-only hosts are excluded by SOW; cdn.example.com may be third-party fronted and requires scope/hosting checks before inclusion.",
+          "distractor_rationale": "A: Dev subdomain is excluded by SOW. C: Explicitly internal-only per naming and SOW. D: CDN endpoints often CNAME to third parties; without confirming hosting/scope, inclusion risks violating out-of-scope third-party clause.",
+          "skills_covered": [
+            "Reconnaissance",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You retrieved robots.txt during planning before the passive-only rule was clarified. It contains:\n\n```text\nGET /robots.txt HTTP/1.1\n200 OK\nUser-agent: *\nDisallow: /admin/\nDisallow: /beta/\nAllow: /blog/\n```\nThe SOW now states passive reconnaissance only. What is the most compliant next step to learn about /admin without touching the live target?",
+          "options": [
+            "Use the Internet Archive (Wayback Machine) to review historical snapshots of /admin if available, and do not send any requests to the live site.",
+            "Request an SOW amendment allowing low-rate crawling of /admin during the test window; pause until approved.",
+            "Crawl /admin once, outside peak hours, because it’s a low-impact request.",
+            "Run a headless browser to screenshot /admin at 1 request per minute; that’s still \"passive\"."
+          ],
+          "correct_option": "A",
+          "explanation": "Consulting third-party archives is passive and does not interact with the live target. Any request to the target is active. Seeking an amendment is fine procedurally, but until it is signed, you must not proceed; the immediate compliant action to learn is third-party archives.",
+          "distractor_rationale": "A: Process is reasonable but does not answer the immediate \"learn without touching\" need; also requires waiting. B and D: Both still send requests to the live host; that’s active, not passive.",
+          "skills_covered": [
+            "Reconnaissance",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "During OSINT you find a cached spreadsheet preview exposing employee PII via a public search engine cache, without visiting the live site.\n\n```text\nCache metadata:\nURL: https://www.example.com/files/hr_roster.xlsx\nCached by: SearchEngine CDN (text-only view)\nFields visible in preview: name, work email, mobile, national ID\n```\nYour SOW requires strict lab safety and minimisation of sensitive data. What is the correct evidence handling approach now?",
+          "options": [
+            "Capture the cached preview HTML and also try the direct URL once to confirm it still exists.",
+            "Record the cache URL, timestamp, and a minimal redacted screenshot that shows the exposure without PII; avoid downloading the live file; encrypt evidence at rest.",
+            "Download the full XLSX from the live site to preserve evidence integrity.",
+            "Copy the visible PII into your notes so it’s searchable, then delete after the report is sent."
+          ],
+          "correct_option": "B",
+          "explanation": "Minimise data, avoid accessing the live file (active), record provenance, and store any necessary evidence encrypted. Redaction preserves utility while reducing risk and legal exposure.",
+          "distractor_rationale": "A: Fetching the live file is active and increases exposure. B: “One try” is still active. D: Replicating PII into notes expands exposure and creates additional uncontrolled copies.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management",
+            "Reconnaissance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your lab VPN currently pushes a full-tunnel default route. You intend to perform passive recon that also requires general internet access for third‑party datasets.\n\n```bash\n$ ip route\ndefault via 10.8.0.1 dev tun0  # pushed by VPN\n10.8.0.0/24 dev tun0 proto kernel\n192.0.2.0/24 dev eth0 proto kernel  # your ISP\n```\nGiven the ROE’s safety requirement to avoid collateral impact, what change best reduces blast radius while preserving access to in-scope hosts?",
+          "options": [
+            "Add a second default route via ISP with higher metric, so most traffic still uses VPN.",
+            "Replace the default route with split-tunnel routes only to in-scope target IP ranges or PAC-based domain proxying; send other traffic via ISP.",
+            "Disable the VPN during OSINT because passive methods never need a VPN.",
+            "Keep the full-tunnel but throttle bandwidth to reduce impact on non-targets."
+          ],
+          "correct_option": "B",
+          "explanation": "Split tunnelling to only the in-scope ranges (or using a PAC/proxy for target domains) confines any accidental requests to authorised space and avoids dragging unrelated traffic through the lab VPN, aligning with safety and least-privilege routing.",
+          "distractor_rationale": "A: Throttling doesn’t control where traffic goes. C: Dual defaults are ambiguous and fragile; still risks collateral flow through VPN. D: Some passive access to controlled resources may require the lab path; blanket disabling is unsafe/non-compliant with lab policy.",
+          "skills_covered": [
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You discover a public GitHub repo apparently owned by the target’s engineer.\n\n```text\nhttps://github.com/jane-doe/example-infra-tools\nREADME.md excerpt:\nexport API_TOKEN=\"eyJhbGciOi...\"\n# helper scripts for internal metrics API at https://metrics.example.com\n```\nUnder passive-only rules and the SOW’s prohibition on authentication attempts, what is the correct action?",
+          "options": [
+            "Use the token once to confirm it’s valid, then report it.",
+            "Ignore it because it’s personal and not on a corporate account.",
+            "Report the exposed token and referenced host with supporting links/screens, but do not attempt any authentication or API calls.",
+            "Attempt only GET /health on metrics.example.com without the token; that’s not authentication."
+          ],
+          "correct_option": "C",
+          "explanation": "Public exposure is a valid recon finding. Using the token or touching the API would be active and likely unauthorised authentication. Reporting with evidence, without use, complies with passive-only and ROE.",
+          "distractor_rationale": "A: “One time” is still unauthorised use. C: Even unauthenticated probes are active; the SOW forbids touching the host. D: Ownership of the GitHub account doesn’t nullify risk; the asset is corporate-relevant.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Reconnaissance",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your ROE states a strict time window.\n\n```text\nROE (signed): 20:00–23:00 UTC, Mon–Thu\nEmail (PM): \"We’re fine with tonight 8–11pm PST; go ahead.\"\n```\nIt is currently 19:30 UTC on Thursday. What is the safest compliant action?",
+          "options": [
+            "Proceed at either window as long as you log the start time and keep impact low.",
+            "Proceed at 20:00 PST because the PM clarified intent.",
+            "Proceed at 20:00 UTC, per ROE; disregard the email.",
+            "Proceed only after obtaining a written ROE update correcting/clarifying the timezone; otherwise follow the signed UTC window."
+          ],
+          "correct_option": "D",
+          "explanation": "Authorised windows are part of lawful consent. Conflicting timezones require written correction. In the absence of updated ROE, default to the signed terms or pause until clarified to avoid violating consent or business hours.",
+          "distractor_rationale": "A: Following the signed ROE is safer than the email, but the conflict should be resolved in writing to avoid disputes. B: Email from a PM lacks authority to override a signed ROE. D: Logging does not legalise an out-of-window action.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "DNS data for two candidate hosts:\n\n```bash\n$ dig A app.example.com +short\n198.51.100.23\n\n$ dig CNAME cdn1.example.com +short\nexample-cdn.vendor.net.\n\n$ dig A example-cdn.vendor.net +short\n203.0.113.45\n```\nThe SOW excludes \"third-party-hosted assets\". Which host remains in-scope by default, assuming no other info?",
+          "options": [
+            "app.example.com",
+            "cdn1.example.com",
+            "example-cdn.vendor.net",
+            "Both hosts are out-of-scope by default."
+          ],
+          "correct_option": "A",
+          "explanation": "app.example.com resolves directly to an IP without an intervening CNAME to a third-party domain, so it’s presumptively first-party pending further verification. cdn1.example.com is fronted by a third-party CDN per CNAME and is excluded by SOW unless specifically authorised.",
+          "distractor_rationale": "B: CNAME to a third party indicates out-of-scope under the exclusion. C: A third-party vendor host is clearly out-of-scope. D: Overly conservative; first‑party direct A records are normally in-scope when within the authorised namespace.",
+          "skills_covered": [
+            "Reconnaissance",
+            "ICT security legislation"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "From public job posts and LinkedIn you note:\n\n```text\nSignals observed:\n- \"Experience administering Okta and Azure AD\"\n- \"Confluence/Jira Cloud administration\"\n- Email examples in press kit: alice.smith@example.com, j.lee@example.com\n```\nUnder passive-only rules, which next step best informs your asset map without overreach?",
+          "options": [
+            "Attempt to visit example.okta.com and enumerate login policies.",
+            "List Okta, Azure AD, and Atlassian Cloud as probable SaaS dependencies and attempt no logins; corroborate via certificate transparency and public status pages.",
+            "Send password reset requests to confirm identity provider routing.",
+            "Assume the email format is firstname.lastname and begin generating likely usernames to test later."
+          ],
+          "correct_option": "B",
+          "explanation": "Documenting likely SaaS dependencies as hypotheses and corroborating via passive datasets refines the map without interacting with the services. Any login or password reset interactions are active and unauthorised.",
+          "distractor_rationale": "A: Visiting the login page is an active interaction and may be out-of-scope. C: Password reset triggers emails and is clearly active. D: Generating accounts to test later presumes future active steps; stick to passive corroboration now.",
+          "skills_covered": [
+            "Reconnaissance",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Two documents disagree:\n\n```text\nMaster Service Agreement (signed): \"Provider may conduct activities strictly limited to passive reconnaissance against corp.example.com and vpn.example.com, Mon–Thu, 20:00–23:00 UTC.\"\nChange Request (unsigned draft, emailed by DevOps Manager): \"Include staging.example.com. Window flexible this week.\" \nSlack message (DevOps Manager): \"Consider this approved; legal is slow.\"\n```\nYour team also has a backlog item to map cloud assets this week. The DevOps Manager is pressuring for speed because a launch is imminent.",
+          "task": "Decide whether you proceed with staging.example.com this week and outline, step-by-step, exactly what you will do next. Justify each step with reference to lawful authorisation, rules of engagement, and safety. Include what you will document, who you will notify, and what you will not do.",
+          "expected_answer": "Do not proceed on staging.example.com until a signed amendment is received from an authorised signatory. Immediately acknowledge the request, explain the need for written consent per the MSA, and provide a redlined scope amendment template for fast turnaround. In the meantime, continue permissible work on corp.example.com and vpn.example.com within the signed window. Document the conflict (timestamps, artefacts), your decision, and communications in the engagement log. Notify the Authorising Officer and PM about the pressure and proposed amendment. State explicitly that no live requests will be sent to staging until consent is signed. If consent arrives, confirm the window/timezone, methods (still passive-only), and data handling constraints before touching staging; re-brief the team and update the rules of engagement pack. Capture all decisions with versioning to ensure auditability.",
+          "rubric": [
+            {
+              "criterion": "States a clear go/no-go decision on staging.example.com aligned with signed authority",
+              "marks": 2
+            },
+            {
+              "criterion": "References lawful authorisation and ROE, explaining why informal messages are insufficient",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines concrete next steps (who to contact, what to send, what work continues in-scope)",
+              "marks": 2
+            },
+            {
+              "criterion": "Details documentation/audit trail (timestamps, artefacts, updates to scope/ROE) and safety constraints",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You compiled these passive artefacts during asset mapping:\n\n```text\nA. WHOIS (example.com): Registrant: Example Corp; NS: aws dns set\nB. crt.sh shows SANs for: auth.example.com, sso.example.com, cdn.example.com\nC. dig CNAME cdn.example.com -> example-cdn.vendor.net\nD. Subsidiary press release: \"Example Corp acquires AcmePayments; sites: acmepay.io, pay.acmepay.io\"\nE. SOW: in-scope \"example.com and subdomains,\" excludes \"third-party-hosted assets\"; no mention of subsidiaries.\n```\nStakeholders want a \"complete map\" quickly.",
+          "task": "Select which hosts you will list as in-scope candidates now, which you will list as out-of-scope or pending, and what follow-up you will request. Justify each classification with reference to the artefacts and SOW.",
+          "expected_answer": "In-scope candidates: auth.example.com, sso.example.com (appear in CT under example.com, likely first-party). Pending verification: cdn.example.com (currently CNAMEs to a third-party vendor; likely out-of-scope per exclusion, but confirm hosting/contractual control). Out-of-scope by default: example-cdn.vendor.net (third party), acmepay.io and pay.acmepay.io (subsidiary not named in SOW). Follow-up: request a signed SOW amendment if the client wants CDN endpoints or subsidiary domains included; ask for a list of first-party IP ranges/hosts behind cdn.example.com if they assert operational control; confirm whether any subsidiary domains are legally under the same authorising entity.",
+          "rubric": [
+            {
+              "criterion": "Correctly classifies first-party CT-derived hosts as in-scope candidates with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly flags CDN-fronted host as pending/out-of-scope with reasoning tied to CNAME/third-party exclusion",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly excludes subsidiary domains per SOW scope and proposes needed amendment",
+              "marks": 2
+            },
+            {
+              "criterion": "Requests appropriate follow-ups (proof of control, amendment, hosting details)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Reconnaissance",
+            "ICT security legislation"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The ROE requires passive only. The team brainstorms options for expanding the subdomain list:\n\n```text\n1) Query Common Crawl and CT logs for example.com\n2) Trigger password reset on sso.example.com to see if an email is sent\n3) Use web.archive.org for /admin and /old on www.example.com\n4) Run dig AXFR example.com against each NS\n5) Pull DNS data from passive DNS providers and threat intel feeds\n6) Visit login.example.com to capture the favicon and identify the IdP via hash\n```\nTime is limited; you must choose a safe plan now.",
+          "task": "Select which items you will perform and in what order. For each selected item, justify why it is compliant and useful. For each rejected item, explain the risk or ROE violation.",
+          "expected_answer": "Perform 1 (Common Crawl and CT) first for breadth with zero target interaction; perform 5 (passive DNS/threat feeds) next to corroborate and enrich; perform 3 (Wayback) for historical paths without touching live. Reject 2 (password reset) as an active interaction with potential notification/legal issues; reject 4 (AXFR) because even attempting zone transfer is an active request and commonly disallowed; reject 6 (visiting login) as an active touch that violates passive-only rules. Document sources, timestamps, and de-duplication logic.",
+          "rubric": [
+            {
+              "criterion": "Selects only passive, non-interactive methods and orders them sensibly for breadth then corroboration",
+              "marks": 3
+            },
+            {
+              "criterion": "Correctly identifies and rejects active/ROE-violating methods with clear risk justifications",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains evidence handling (citations, timestamps, de-duplication) to keep the map auditable",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Reconnaissance",
+            "Risk management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "While passively browsing public paste sites, you find a snippet claiming to be an S3 bucket URL hosting logs for vpn.example.com. The paste includes a directory URL and several .gz filenames that imply user session logs. You have not clicked the bucket URL. The ROE includes a data minimisation clause and a duty to report critical exposures quickly.",
+          "task": "Decide exactly what you will collect as evidence, what you will avoid, and who you will notify. Propose the wording of the initial advisory note to the client that balances urgency, legality, and minimisation. Include how you will store and label the evidence in the lab.",
+          "expected_answer": "Collect only passive artefacts: paste URL, timestamp, hash of the paste content, redacted screenshot that shows the bucket URL without sensitive log filenames. Do not browse the bucket or fetch objects; that would be active. Notify the Authorising Officer and security contact immediately with a brief advisory: describe the suspected exposure, provenance (public paste), why you did not access it, and recommended immediate client actions (validate ownership, restrict bucket, rotate keys/sessions). Store evidence in the lab’s encrypted repository, label as sensitive, and limit access. Log all steps and communications. Offer to incorporate formal testing of the bucket if they amend the SOW.",
+          "rubric": [
+            {
+              "criterion": "Specifies minimal, passive evidence collection with clear redaction and no active access",
+              "marks": 3
+            },
+            {
+              "criterion": "Identifies correct stakeholders and proposes a concise, appropriate advisory note",
+              "marks": 2
+            },
+            {
+              "criterion": "Details secure evidence storage/labeling and access control in the lab",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions change control/SOW amendment path if client wants deeper testing",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Scope and Rules of Engagement Pack (Signed scope exercise)",
+          "brief": "Create a complete scope and ROE pack for a fictitious client engagement that reflects Module 1’s expectations. Use a realistic target profile (e.g., Example Corp) and constrain testing to passive reconnaissance of specified subdomains. Include: in-scope/out-of-scope assets, authorised methods, time windows and timezone, data handling/minimisation rules, communication/notification paths, stop conditions, escalation, and change control. Obtain signatures (you may countersign as the provider), and include versioning. You may use your own template or adapt an industry one, but it must be unambiguously test-ready.",
+          "deliverable": "Signed scope exercise",
+          "acceptance_criteria": [
+            "Document contains: in-scope assets explicitly enumerated (FQDNs/IP ranges) and out-of-scope constraints.",
+            "Authorised methods are explicit and include a passive-only clause; prohibited techniques listed.",
+            "Time window defined with timezone, blackout periods, and environment (prod/non-prod) notes.",
+            "Data handling policy includes minimisation, storage encryption, retention period, and sanitisation plan.",
+            "Communications plan lists named contacts, notification SLAs, and incident escalation path.",
+            "Safety/stop conditions defined (e.g., detection of PII/credentials, production instability).",
+            "Change control: version, amendment procedure, and who may authorise changes.",
+            "Signatures and dates from both parties (learner and a stand-in for the client), with roles/titles.",
+            "Document is internally consistent (scope matches ROE; times/timezones align) and free of contradictions."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clear, precise asset scope (in and out) with unambiguous identifiers",
+              "marks": 4
+            },
+            {
+              "criterion": "Authorised methods and prohibited techniques match passive-only constraints",
+              "marks": 4
+            },
+            {
+              "criterion": "Time windows/timezone and operational constraints are explicit and realistic",
+              "marks": 3
+            },
+            {
+              "criterion": "Data handling/minimisation, retention, and security controls are comprehensive",
+              "marks": 3
+            },
+            {
+              "criterion": "Communications, escalation, and stop conditions are actionable",
+              "marks": 3
+            },
+            {
+              "criterion": "Change control, versioning, and signatures/dates are complete and valid",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "ICT security legislation",
+            "Risk management",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Passive Reconnaissance Report (Asset map and evidence)",
+          "brief": "Produce a recon report that demonstrates passive information gathering and asset mapping for a target. You may choose: (a) a domain you control; or (b) the course’s lab seed pack if provided; or (c) a fictitious company with clearly marked synthetic evidence. Your methods must be passive. Include methodology, findings (hosts/subdomains, technologies, third-party dependencies), scope alignment notes, evidence citations with timestamps, and an appendix containing raw artefacts (screenshots, CT entries, passive DNS snapshots). Clearly label any assumptions and separate them from verified facts. Do not probe live targets beyond passive sources.",
+          "deliverable": "Recon report",
+          "acceptance_criteria": [
+            "Executive summary (one page max) with scope, methods, and high-level findings.",
+            "Methodology section lists only passive sources and is reproducible (queries, tools, datasets).",
+            "Findings include an asset map (hosts, groupings, suspected ownership/hosting) with scope alignment (first-party vs third-party).",
+            "Each finding cites at least one source with timestamp; URLs or dataset references provided.",
+            "Appendix contains raw artefacts (sanitised/redacted where necessary) and shows no evidence of active probing.",
+            "Assumptions and hypotheses are clearly marked and distinguished from verified facts.",
+            "Risks/notes include data handling/minimisation considerations and any recommended scope clarifications.",
+            "Report structure and language are clear, concise, and technically correct."
+          ],
+          "rubric": [
+            {
+              "criterion": "Reproducible passive-only methodology with proper citations/timestamps",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate asset map distinguishing first-party vs third-party and scope alignment",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and appropriateness of evidence (raw artefacts, redaction, no active probing)",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and professionalism of report (structure, language, executive summary)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explicit marking of assumptions vs verified facts and notes on legal/safety constraints",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Reconnaissance",
+            "Technical Writing",
+            "Risk management"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-033-S02",
+      "skills_assessed": [
+        "Penetration Testing",
+        "Vulnerability Assessment",
+        "Reconnaissance",
+        "Web application security threats",
+        "OWASP Top 10",
+        "Technical Writing",
+        "TCP/IP",
+        "Authentication",
+        "proxy servers",
+        "DNS"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You scan a host and see a default page unless you supply the right virtual host. TLS cert SANs reveal an internal hostname.\n\nScan and cert:\n```text\nnmap -sV -p80,443 10.0.5.23\n\nPORT    STATE SERVICE VERSION\n80/tcp  open  http    nginx 1.20.1\n443/tcp open  ssl/http nginx 1.20.1\n|\n| ssl-cert: Subject: CN=nginx-default\n| Subject Alternative Name: DNS:nginx-default, DNS:intranet.local\n| Not valid before: 2024-05-01\n|_Not valid after:  2025-05-01\n```\nA plain request:\n```bash\ncurl -i http://10.0.5.23/\n```\nreturns the nginx welcome page. Which request best validates whether a hidden app is bound to the `intranet.local` vhost on port 80?\n",
+          "options": [
+            "```bash\ncurl -i https://intranet.local/\n```",
+            "```bash\ncurl -i -H \"Host: intranet.local\" http://10.0.5.23/\n```",
+            "```bash\ncurl -i https://10.0.5.23/ --header \"Host: intranet.local\"\n```",
+            "```bash\ncurl -i http://10.0.5.23/\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "For HTTP on port 80, vhost routing is decided by the Host header. Supplying Host: intranet.local to the IP directly tests that binding without requiring DNS. Option B does exactly that.",
+          "distractor_rationale": "A: Tempting because it \"works\" for default vhost, but it cannot select a non-default server block, so you won't see the hidden app.\nC: Many assume Host overrides SNI on TLS; it does not. HTTPS vhost selection happens during the TLS handshake via SNI, not via Host after handshake; this will likely yield the default cert/site or a cert warning.\nD: Works only if your resolver can resolve intranet.local. In many test networks it won't. Even if it resolves, it validates DNS rather than vhost binding to this IP. The safer validation against the target IP is B.",
+          "skills_covered": [
+            "Penetration Testing",
+            "Reconnaissance",
+            "TCP/IP",
+            "Web application security threats"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You enumerated HTTP methods on an app hosted at 10.0.7.12:8080.\n\nOutput:\n```text\nnmap -p8080 --script http-methods 10.0.7.12\n\nPORT     STATE SERVICE\n8080/tcp open  http-proxy\n| http-methods: \n|_  Supported Methods: GET HEAD POST OPTIONS PUT\n```\nA GET on `/` returns 200 and the body contains:\n```html\n<!-- uploads served from /uploads/ -->\n```\nWhich single request most reliably validates arbitrary file upload to a web-served path (without needing a second request)?\n",
+          "options": [
+            "```bash\ncurl -i -X PUT 'http://10.0.7.12:8080/uploads/' --data 'owned'\n```",
+            "```bash\ncurl -i -X POST 'http://10.0.7.12:8080/uploads/poc.txt' --data 'owned'\n```",
+            "```bash\ncurl -i -X PUT 'http://10.0.7.12:8080/uploads/poc.txt' \\\n  -H 'Content-Type: text/plain' \\\n  --data 'owned' --write-out '\\nVERIFY:%{http_code}'\n```",
+            "```bash\ncurl -i -X PUT 'http://10.0.7.12:8080/poc.txt'\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Issuing a PUT to a likely web-served path with a body and content type will typically return 200/201 on success, which you can check immediately in the same response. Option A does exactly that and surfaces the status code inline.",
+          "distractor_rationale": "B: POST is not generally accepted for WebDAV-style arbitrary file placement. It may be routed to app logic instead of writing a file.\nC: PUT to a directory commonly fails (409/405) unless specific WebDAV collection handling is enabled.\nD: Writing to the web root often fails due to permissions or routing. The comment in the page hints that /uploads is the served directory; ignoring that is a common mistake.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Penetration Testing",
+            "Web application security threats",
+            "OWASP Top 10"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A login response sets this cookie over HTTPS:\n```http\nHTTP/1.1 302 Found\nSet-Cookie: SESSIONID=abc123; Path=/; HttpOnly; SameSite=Lax; Secure\nLocation: /dashboard\n```\nWhich cross-site action will still include `SESSIONID` by default in modern browsers, potentially enabling CSRF if a sensitive endpoint is GET-triggered?\n",
+          "options": [
+            "Loading an <img src=\"https://target.tld/transfer?...\"> tag on attacker.com",
+            "A top-level navigation via <a href=\"https://target.tld/transfer?...\"> clicked by the user",
+            "A background cross-site fetch() with credentials: 'include' from attacker.com",
+            "An auto-submitting cross-site POST form from attacker.com to https://target.tld/transfer"
+          ],
+          "correct_option": "B",
+          "explanation": "SameSite=Lax allows cookies on top-level cross-site navigations (typically GET), but blocks them on subresource requests and programmatic POSTs. A user clicking a link causing a GET will send the cookie.",
+          "distractor_rationale": "A: With Lax, cookies are not sent on cross-site POSTs.\nB: Subresource requests like images do not receive Lax cookies cross-site.\nD: fetch with credentials from a different site is subject to SameSite too; the cookie will be withheld in a cross-site context with Lax.",
+          "skills_covered": [
+            "Authentication",
+            "OWASP Top 10",
+            "Web application security threats"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You suspect 10.0.5.40 is an open resolver. Which command best validates that it performs recursion for names it is not authoritative for?\n",
+          "options": [
+            "```bash\ndig @10.0.5.40 www.wikipedia.org A +trace\n```",
+            "```bash\ndig @10.0.5.40 example.com AXFR\n```",
+            "```bash\ndig @10.0.5.40 www.wikipedia.org A +norecurse\n```",
+            "```bash\ndig @10.0.5.40 www.wikipedia.org A\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "By default dig sets RD=1 (recursion desired). Querying a name the server is not authoritative for and receiving an answer (with RA set in the response) validates recursion. +norecurse disables that test; +trace makes the client walk the tree itself; AXFR is zone transfer, irrelevant to recursion.",
+          "distractor_rationale": "B: Disables recursion; even an open resolver will not recurse here, so it cannot validate recursion.\nC: +trace performs iterative resolution client-side; it doesn't prove the server is recursing.\nD: AXFR tests zone transfer permissions, not recursion. Also most servers will refuse it.",
+          "skills_covered": [
+            "Reconnaissance",
+            "DNS",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You need to validate the HTTPS vhost bound to `app.internal` on 10.0.5.23:443. Direct IP access returns the default site and cert.\n\nWhich request correctly targets the SNI vhost and bypasses DNS by pinning name-to-IP?\n",
+          "options": [
+            "```bash\ncurl -k https://app.internal/\n```",
+            "```bash\ncurl --connect-to app.internal:443:10.0.5.23:443 https://10.0.5.23/\n```",
+            "```bash\ncurl -i --resolve app.internal:443:10.0.5.23 https://app.internal/\n```",
+            "```bash\ncurl -i https://10.0.5.23/ -H 'Host: app.internal'\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "SNI happens during the TLS handshake and requires the requested hostname to be known before the connection. curl --resolve seeds both DNS and SNI to target app.internal at the given IP, returning the correct cert and vhost content.",
+          "distractor_rationale": "A: Host header is sent after TLS, so SNI still selects the default cert/site.\nC: -k ignores cert errors but doesn't control where the name resolves or which SNI name is sent.\nD: --connect-to rewires the TCP connection but does not change the HTTP Host header or the SNI name unless the URL still contains the hostname. Here the URL is an IP, so SNI will be wrong.",
+          "skills_covered": [
+            "Penetration Testing",
+            "Reconnaissance",
+            "TCP/IP",
+            "proxy servers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "`TRACE` appears enabled on https://site.tld/.\n\nValidation goal: confirm if sensitive headers are echoed, indicating potential cross-site tracing exposure via intermediaries.\n\nWhich single request best demonstrates echo of a sensitive header in the response body?\n",
+          "options": [
+            "```bash\ncurl -i -X OPTIONS https://site.tld/\n```",
+            "```bash\ncurl -i -X TRACE https://site.tld/\n```",
+            "```bash\ncurl -i -X TRACE -H 'X-Test: 1' https://site.tld/\n```",
+            "```bash\ncurl -i -X TRACE -H 'Cookie: SESSIONID=abc' https://site.tld/\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Sending a TRACE with a Cookie header and seeing it reflected demonstrates that intermediaries or the server echo back sensitive headers, which is the risk. Option C validates by attempting to reflect an actual sensitive header.",
+          "distractor_rationale": "A: Proves TRACE exists but not whether sensitive headers are echoed.\nB: Shows reflection of a benign header; it's weaker evidence of impact than echoing Cookie.\nD: OPTIONS enumerates methods; it neither uses nor reflects headers.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "OWASP Top 10",
+            "Web application security threats"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A reflected parameter `q` is inserted unsafely into HTML. The app blocks the literal substring `\"<script\"` server-side but performs no other output encoding.\n\nReflection point (brackets show insertion):\n```html\n<div class=\"result\">You searched for: [VALUE]</div>\n```\nWhich payload is most likely to execute despite the naive filter?\n",
+          "options": [
+            "```text\n<svg/onload=alert(1)>\n```",
+            "```text\n<script>alert(1)</script>\n```",
+            "```text\n%3Cscript%3Ealert(1)%3C%2Fscript%3E\n```",
+            "```text\n<ScRiPt>alert(1)</ScRiPt>\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Filtering only the substring \"<script\" misses tag-onload vectors like <svg/onload=...>. Without output encoding, this will execute in a reflected context.",
+          "distractor_rationale": "A: Blocked by the literal substring filter.\nC: Many naive filters are case-insensitive; even if case-sensitive, browsers normalize tags, but the blocklist often lowercases input before checking. It's unreliable and commonly still blocked.\nD: If the app simply decodes and then checks for \"<script\", this will be caught. If it doesn't decode, it will reflect as text, not execute, because it's percent-encoded.",
+          "skills_covered": [
+            "OWASP Top 10",
+            "Web application security threats",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You suspect session fixation. The app sets a session cookie before login and does not issue a new one after authentication.\n\nObserved sequence:\n```http\nGET /login HTTP/1.1\n<-- Set-Cookie: SESSIONID=prelogin; Path=/; HttpOnly; Secure\n...\nPOST /login HTTP/1.1\nCookie: SESSIONID=prelogin\n<-- 302 /dashboard (no new Set-Cookie)\n```\nWhich validation step best proves fixation risk end-to-end?\n",
+          "options": [
+            "Plant SESSIONID=prelogin in the victim’s browser, then have them log in and verify you can use the same SESSIONID to access their session",
+            "Share a pre-set link and see if the victim lands on /dashboard",
+            "Log in twice yourself and compare cookie names",
+            "Ask the victim to log in while you watch the network tab for cookies"
+          ],
+          "correct_option": "A",
+          "explanation": "Fixation is proven by controlling the victim’s pre-auth session ID, having them authenticate without rotation, and then reusing that same ID to access their authenticated context.",
+          "distractor_rationale": "A: Observational only and does not demonstrate attacker control of the ID.\nB: Proves no rotation but does not show attacker-to-victim reuse.\nC: Being redirected to /dashboard says nothing about which session ID is in use or attacker control.",
+          "skills_covered": [
+            "Authentication",
+            "OWASP Top 10",
+            "Penetration Testing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A file download endpoint blocks simple traversal:\n\nBlocked attempt:\n```http\nGET /download?path=../etc/passwd HTTP/1.1\nHost: target\n--> 403 Forbidden (\"illegal path\")\n```\nWhich request is most likely to bypass a naive blacklist that only checks for the substring \"../\" before URL decoding?\n",
+          "options": [
+            "```http\nGET /download?path=..%2Fetc%2Fpasswd HTTP/1.1\nHost: target\n```",
+            "```http\nGET /download?path=%252e%252e%252fetc%252fpasswd HTTP/1.1\nHost: target\n```",
+            "```http\nGET /download?path=/etc/passwd HTTP/1.1\nHost: target\n```",
+            "```http\nGET /download?path=..\\etc\\passwd HTTP/1.1\nHost: target\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Double-encoding the traversal (`%252e%252e%252f` decodes to `%2e%2e/`, which then decodes to `../`) often bypasses checks that search for `../` before decoding. Servers that decode twice will reach the traversal path.",
+          "distractor_rationale": "A: Single-encoded `../` is commonly decoded before the naive check and then blocked.\nC: Backslash separators are normalized by some servers, but many UNIX-targeted checks or path resolvers won’t accept them; bypass is less reliable.\nD: Direct absolute path may be normalized or rejected; if the app resolves relative to a whitelist root, this won’t bypass the blacklist logic focused on `../`.",
+          "skills_covered": [
+            "OWASP Top 10",
+            "Web application security threats",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Admin panel denies GET but your proxy shows method override support.\n\nEvidence:\n```http\nGET /admin HTTP/1.1\n--> 403 Forbidden\n\nPOST /admin HTTP/1.1\nX-HTTP-Method-Override: GET\n--> 200 OK (admin HTML)\n```\nWhich request best validates method-tampering access control bypass?\n",
+          "options": [
+            "```http\nPOST /admin HTTP/1.1\nHost: target\nX-HTTP-Method-Override: GET\nContent-Length: 0\n```",
+            "```http\nHEAD /admin HTTP/1.1\nHost: target\n```",
+            "```http\nPOST /admin HTTP/1.1\nHost: target\nContent-Length: 0\n```",
+            "```http\nGET /admin HTTP/1.1\nHost: target\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The server honors X-HTTP-Method-Override and evaluates authorization based on the effective method. Sending POST with the override to GET reproduces the 200 and proves the bypass.",
+          "distractor_rationale": "A: Demonstrates the baseline 403, not the bypass.\nB: POST without override is evaluated as POST and likely still blocked or routed differently.\nD: HEAD is often treated like GET for routing, but many apps still enforce the same controls; the evidence points to an override-based bypass instead.",
+          "skills_covered": [
+            "OWASP Top 10",
+            "Web application security threats",
+            "Penetration Testing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are assessing a host 10.2.1.50 that presents a default page on HTTP/HTTPS. `nmap -sV -p80,443` shows nginx with a cert SAN containing `staff.portal.local`. When browsing https://10.2.1.50 you receive the default site and a cert for `nginx-default`. DNS for `staff.portal.local` does not resolve externally. The client suspects a hidden staff portal and wants validation without changing DNS or adding hosts entries on testers' machines. You must avoid false positives from misrouted Host headers on HTTPS.",
+          "task": "Describe, with command-level specificity, how you will validate and evidence whether a distinct vhost `staff.portal.local` exists and serves different content on both 80 and 443 at 10.2.1.50. Include how you will handle SNI for TLS, what success/failure signals you will look for (headers, titles, cert CN/SANs, content diffs), and how you will avoid caching or CDN confounders when comparing responses. Provide the exact commands you would run and the artifacts you would capture.",
+          "expected_answer": "A rigorous plan that uses Host for HTTP and SNI pinning for HTTPS. For HTTP: curl with `-H 'Host: staff.portal.local'` to the IP and capture `-i` output and title/body hash to show different content than default vhost. For HTTPS: use `curl --resolve staff.portal.local:443:10.2.1.50 https://staff.portal.local/ -i` to ensure SNI and Host match. Validate cert CN/SAN in response, HTTP title, and response length/hash differ from default. Optionally use `openssl s_client -connect 10.2.1.50:443 -servername staff.portal.local -showcerts` to confirm the cert chain/subject. Include cache-bypass headers (e.g., `Cache-Control: no-cache`, unique query string) and compare `ETag`/`Vary` headers. Capture screenshots or saved HTML, `curl -v` traces showing SNI name, and SHA256 of bodies. State failure cases: if same content and cert appear even with SNI, likely no distinct vhost; if cert matches SAN but content same, could be same site with alias. Note avoiding system DNS changes by using --resolve rather than /etc/hosts; and avoiding proxy interference by specifying `--noproxy '*'` if needed.",
+          "rubric": [
+            {
+              "criterion": "Uses correct technique for HTTP vhost validation (Host header to IP) with concrete commands",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses correct technique for HTTPS vhost validation (SNI via --resolve or equivalent) with concrete commands",
+              "marks": 3
+            },
+            {
+              "criterion": "States concrete evidence to capture (cert CN/SAN, titles, headers, body hashes) and success/failure signals",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses cache/CDN confounders and proxy/DNS pitfalls (e.g., no-cache, unique query, --noproxy)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Penetration Testing",
+            "Reconnaissance",
+            "TCP/IP",
+            "proxy servers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "During testing of https://bank.local (resolves internally), the login sets `SESSIONID` with `SameSite=Lax; Secure; HttpOnly`. Transfers can be initiated via GET `/transfer?to=...&amount=...` or POST `/transfer`. The app implements no CSRF tokens and does not check Origin/Referer on GET. Security claims that SameSite=Lax prevents CSRF. You need to decide if there's still a practical CSRF risk and how to demonstrate it safely without moving money.",
+          "task": "Decide whether a CSRF attack remains feasible in this configuration. If yes, describe exactly how you would demonstrate impact safely. Your answer must explain the browser behaviors that matter, the request you would craft (HTML or HTTP), and the observable evidence you would capture to prove the cookie was sent and state changed or would have changed. Include any necessary mitigations (e.g., using a test account, small reversible actions) to keep the demo safe.",
+          "expected_answer": "Yes, CSRF remains feasible for the GET endpoint because SameSite=Lax permits cookies on top-level cross-site navigations. Construct a PoC page on attacker.test with a link or meta-refresh to `https://bank.local/transfer?to=TEST&amount=0` or a no-op endpoint like `/set-preference?id=1` to avoid monetary impact. Alternatively, if there is a dry-run parameter, use it. Evidence: use a test victim account under your control; record DevTools network showing the GET with `Cookie: SESSIONID=...` included coming from a cross-site navigation; capture server logs or the application’s activity log reflecting the action; show absence of CSRF token and missing Origin/Referer checks on GET. Note that a POST form would not include the cookie under Lax, so the demo must be a top-level GET navigation. Include a statement on isolating the demo to a non-destructive action and rolling back after.",
+          "rubric": [
+            {
+              "criterion": "Correctly assesses feasibility in presence of SameSite=Lax and distinguishes GET vs POST behaviors",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, safe PoC method (HTML/redirect) and target request details",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies and plans to capture definitive evidence (cookies sent, server/app logs, visible state change)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses safety: test account, reversible/no-op action, rollback plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "OWASP Top 10",
+            "Web application security threats"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The API has two roles: user and admin. You intercept these two requests with the same user token:\n\nRequest A:\n```http\nGET /api/v1/users/1234 HTTP/1.1\nAuthorization: Bearer <user>\n--> 200 {\"id\":1234, \"role\":\"user\"}\n```\nRequest B:\n```http\nGET /api/v1/admin/users/1234 HTTP/1.1\nAuthorization: Bearer <user>\n--> 403 {\"error\":\"forbidden\"}\n```\nHowever, you observe that:\n```http\nPATCH /api/v1/admin/users/1234 HTTP/1.1\nAuthorization: Bearer <user>\nContent-Type: application/json\n{\"role\":\"admin\"}\n--> 200 {\"id\":1234, \"role\":\"admin\"}\n```\nThe team argues the 403 on GET proves access control is fine. You must judge if this is Broken Access Control and design a validation approach that avoids false positives.",
+          "task": "Decide whether a Broken Access Control vulnerability likely exists. Justify your judgment referencing method-specific checks and endpoint grouping. Propose a step-by-step validation plan, including additional requests you would send, the variations (methods, headers, IDs), and the evidence you will capture to conclusively show impact or rule it out. Include how you will ensure you’re not hitting a cached response or a shadow route.",
+          "expected_answer": "This strongly indicates Broken Access Control via method-specific enforcement: GET is denied but PATCH is allowed on an admin-only route. The plan: 1) Verify reproducibility on multiple IDs, including one not owned by the user. 2) Confirm that a normal user token can change privileged fields (e.g., role) and that the change persists by following up with GET as an admin or via side effects (e.g., logging in with elevated privileges after the change). 3) Test other methods (POST/DELETE) on the admin namespace. 4) Inspect for header-dependent behavior (X-HTTP-Method-Override, Content-Type quirks). 5) Capture full requests/responses with timestamps, and compare response headers (Cache-Control, ETag) to rule out caching; add a cache-buster query if needed. 6) Ensure you are hitting the same upstream route (no shadow route) by correlating server `X-Request-Id` or tracing headers if available. Evidence includes before/after state, audit logs, and successful privileged action as the user. If follow-up GET as user remains 403 but the role is changed, that still proves impact.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies method-specific Broken Access Control and articulates why GET 403 does not disprove it",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete validation steps across methods/IDs and persistence checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Details evidence to capture to prove impact and addresses caching/shadow-route concerns",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "OWASP Top 10",
+            "Vulnerability Assessment",
+            "Penetration Testing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A search endpoint `/search?q=` sometimes returns DB error traces when you fuzz input. WAF blocks requests containing `<script` and `' or 1=1 --` but allows others. Your initial probes:\n```http\nGET /search?q=%27%22%5C HTTP/1.1\n--> 500 error with stack trace mentioning TypeError: cannot convert 'str' to int\n```\nand\n```http\nPOST /search HTTP/1.1\nContent-Type: application/json\n{\"q\": {\"$gt\": \"\"}}\n--> 200 with empty result\n```\nYou must judge likely server-side input handling weaknesses and propose a validation approach that distinguishes weak blocklists from true output encoding and parameterized queries, while staying within safe testing bounds.",
+          "task": "Explain what is likely happening in input handling, and propose a systematic test plan to validate input, output encoding, and injection resilience across contexts (query, JSON, path), including at least three concrete payload classes you would use that avoid destructive effects. Describe the success/failure signals you’ll look for and how you will document them as evidence.",
+          "expected_answer": "Likely weak input validation relying on blocklists at the edge (WAF) and inconsistent server-side type handling. The 500 TypeError suggests unhandled type coercion, not safe parameterization. The allowed JSON with `{\"$gt\": \"\"}` hints at backend passing objects to a query layer that might mis-handle operators (NoSQL injection probe). Plan: 1) Input validation: send benign but structured payloads across contexts: a) XSS-safe HTML tags like `<svg onload=1>` (should be encoded in HTML), b) SQL meta-characters without keywords: `')--`, `\"\\0` to test server errors without triggering WAF, c) NoSQL operators `{\"$ne\": null}`, `{\"$where\": \"return true\"}` and observe whether the API rejects or treats them as data. 2) Confirm output encoding by checking whether reflected values are HTML-encoded (`<` to `&lt;`). 3) Confirm parameterization by observing absence of syntax errors and that queries with meta-characters return sane results rather than stack traces. 4) Use timing-safe probes (e.g., `SLEEP(1)`-style variants appropriate to backend, or regex catastrophes in a capped environment) only if safe and bounded. 5) Evidence: full request/response pairs, status codes, error messages, and consistent encoding behavior. A secure app should normalize/validate types, reject objects where a string is expected, HTML-encode reflections, and never leak stack traces.",
+          "rubric": [
+            {
+              "criterion": "Correctly infers likely weaknesses (blocklist reliance, type handling) from artifacts provided",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes concrete, safe payload classes spanning XSS, SQL/NoSQL probes, and explains why they are safe",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines clear success/failure signals for encoding and parameterization and how to observe them",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes evidence capture sufficient for validation notes (requests, responses, errors)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "OWASP Top 10",
+            "Vulnerability Assessment",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce an asset/service inventory for a small target scope",
+          "brief": "You are given a scope of up to five IPs or hostnames by your assessor. Enumerate and validate exposed network services and key web service traits. Your inventory must be evidence-backed and reproducible without needing access to your live machine.",
+          "deliverable": "A single CSV named asset_service_inventory.csv plus a companion commands.txt. The CSV must contain, per asset and port: asset (IP or hostname), port/proto, service name, version (or best guess), TLS (yes/no), HTTP title (if any), vhost(s) discovered (from cert SANs or headers), authentication observed (e.g., Basic realm, form), validation command used (exact one-liner), and evidence reference (filename of saved response/output). Include the raw evidence files you reference (e.g., curl outputs, screenshots) in an evidence/ folder.",
+          "acceptance_criteria": [
+            "CSV contains all required columns with one row per discovered open port/service",
+            "Version and service fields are supported by attached evidence (nmap scripts, banners, or application headers)",
+            "Where HTTPS is present, cert CN/SANs are extracted and listed; where multiple vhosts are suspected, a validation request is included (e.g., curl --resolve)",
+            "All HTTP/HTTPS rows include page title or HTTP status and whether auth prompts were observed",
+            "commands.txt includes the exact commands used (nmap flags, curl one-liners, openssl s_client) with targets redacted or parameterized as needed",
+            "An evidence/ directory contains the raw outputs cited by name in the CSV; filenames match exactly",
+            "Assessor can reproduce a sample row’s validation by running the provided command and observing consistent output"
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and correctness of CSV fields across all discovered services",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality and sufficiency of validation evidence (nmap outputs, headers, certs) mapped to each row",
+              "marks": 6
+            },
+            {
+              "criterion": "Accuracy of vhost/TLS handling and HTTP traits (titles, auth) with appropriate validation commands",
+              "marks": 4
+            },
+            {
+              "criterion": "Reproducibility: clear commands.txt and coherent evidence folder references",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Reconnaissance",
+            "Penetration Testing",
+            "Vulnerability Assessment",
+            "TCP/IP",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Web assessment notes: input, session, and access-control checks",
+          "brief": "Assess a target web application (provided by your assessor) for OWASP-oriented input handling, session management, and access-control controls. Focus on validation, not volume: pick 3–5 representative endpoints that exercise these areas and document your tests and outcomes rigorously.",
+          "deliverable": "A markdown report named web_assessment_notes.md plus an evidence/ folder. The report must include: scope and target version/date; test environment (proxy/tools); per-endpoint notes covering: test cases attempted (exact payloads or requests), expected vs observed behavior, risk reasoning tied to OWASP categories, and remediation hints. Include at least: one input/reflection context test, one session behavior test (cookies flags, SameSite, rotation on login/logout), and one access-control test (role/method/object level). For each, attach and reference concrete evidence (HTTP transcripts, screenshots) stored under evidence/.",
+          "acceptance_criteria": [
+            "Report contains scope, date, and environment/tooling summary (including proxy settings if used)",
+            "At least three endpoints are assessed with concrete requests/payloads shown verbatim",
+            "Session notes explicitly cover cookie flags (Secure, HttpOnly, SameSite) and rotation on auth events, with evidence",
+            "Access-control notes include a clear test for method, role, or object-level authorization and outcome with evidence",
+            "Input-handling notes include at least two payload classes (e.g., harmless XSS vector and SQL/NoSQL meta-chars) and discuss encoding/errors observed",
+            "Each finding references a file in evidence/ and the file exists and matches the description",
+            "Writing is clear, structured, and maps each observation to an OWASP category with brief remediation guidance"
+          ],
+          "rubric": [
+            {
+              "criterion": "Coverage: includes input, session, and access-control checks with sufficient endpoint variety",
+              "marks": 6
+            },
+            {
+              "criterion": "Specificity and rigor of test cases and observations (exact requests, expected vs observed)",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality of evidence linkage (screenshots/transcripts) and correctness of interpretations",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and technical writing quality; OWASP mapping and actionable remediation hints",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "OWASP Top 10",
+            "Web application security threats",
+            "Penetration Testing",
+            "Vulnerability Assessment",
+            "Technical Writing",
+            "proxy servers",
+            "Authentication"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-033-S03",
+      "skills_assessed": [
+        "Penetration Testing",
+        "Vulnerability Assessment",
+        "Risk management",
+        "TCP/IP",
+        "Authentication",
+        "Network Troubleshooting",
+        "Subnetting",
+        "DNS"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You scan a file server from the jump VLAN and compare with on-host evidence collected by the sysadmin.\n\nScan output:\n```bash\n$ nmap -p445 --script smb-vuln-ms17-010 10.10.20.5\nPORT    STATE SERVICE\n445/tcp open  microsoft-ds\n|\n| smb-vuln-ms17-010:\n|   VULNERABLE:\n|   Remote Code Execution vulnerability in Microsoft SMBv1 (MS17-010)\n|     State: VULNERABLE\n|     IDs:  CVE:CVE-2017-0143\n|\n```\nOn-host evidence minutes later:\n```powershell\nPS C:\\> Get-HotFix -Id KB4012212\nSource      Description      HotFixID   InstalledBy   InstalledOn\n--------    --------------   --------   -----------   -----------\nFSRV01      Update           KB4012212  DOMAIN\\\\admin  6/15/2026\n\nPS C:\\> Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\RebootPending'\nTrue\n```\nGiven these artefacts, what is the most defensible conclusion about the host's exposure over the network right now?",
+          "options": [
+            "The host remains network-vulnerable until it is rebooted, because the patched SMB driver is not yet active.",
+            "NSE cannot detect this issue remotely and only guesses based on OS version strings.",
+            "A firewall or IPS in-path is altering the SMB negotiation, making the scanner think the host is vulnerable.",
+            "The nmap script is producing a false positive because the required KB is installed."
+          ],
+          "correct_option": "A",
+          "explanation": "The patch is installed but a reboot is pending, so the running SMB kernel driver has not been replaced. The remote check still sees the vulnerable behavior until the service stack is restarted, typically by rebooting.",
+          "distractor_rationale": "A: Tempting because the KB is listed, but the reboot-pending flag shows the patch is not active yet. C: NSE script detects vulnerability by probing SMB behavior; it is not a blind guess. D: Middleboxes rarely mimic the exact vulnerable SMB negotiation in a way that fools this check; the local reboot-pending evidence directly explains the discrepancy.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "The jump VLAN is the only segment allowed to reach servers on TCP/22. Admin automation already uses SSH keys. Current `sshd_config` on several Linux servers is:\n```ini\n# /etc/ssh/sshd_config\nPermitRootLogin prohibit-password\nPasswordAuthentication yes\nPubkeyAuthentication yes\nChallengeResponseAuthentication no\nUsePAM yes\nMaxAuthTries 6\n```\nYou must harden against credential spraying with minimum disruption to existing key-based automation. Which single change best reduces the risk?",
+          "options": [
+            "Set `MaxAuthTries 1` to severely limit guesses per connection.",
+            "Add `AllowUsers admin` to restrict which accounts can log in.",
+            "Set `PermitRootLogin no` to fully prevent root login.",
+            "Set `PasswordAuthentication no` to disable password logon entirely."
+          ],
+          "correct_option": "D",
+          "explanation": "Disabling password authentication eliminates password-based spraying risk while leaving key-based automation to function unchanged. It directly targets the attack surface without affecting existing key workflows.",
+          "distractor_rationale": "A: Reduces attempt volume but still permits password spraying and brute-force. C: Good hygiene, but does not address non-root password spraying. D: Narrows account scope but still allows password authentication against those accounts.",
+          "skills_covered": [
+            "Authentication",
+            "Risk management",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A firewall between VLAN10 (users) 10.10.10.0/24 and VLAN20 (servers) 10.10.20.0/24 has these rules:\n```bash\n# iptables -S FORWARD\n-A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT\n-A FORWARD -s 10.10.20.0/24 -d 10.10.10.0/24 -p tcp --dport 445 -j ACCEPT\n-A FORWARD -s 10.10.10.0/24 -d 10.10.20.0/24 -p tcp --dport 3389 -j ACCEPT\n-A FORWARD -s 10.10.10.0/24 -d 10.10.20.0/24 -j DROP\n-A FORWARD -j DROP\n```\nThe intended policy was: users can RDP to servers; SMB should be blocked both ways. What outcome will occur during testing from servers to clients?",
+          "options": [
+            "Server-initiated SMB connections will be blocked by the default drop after the RDP allow.",
+            "Server-initiated SMB connections to clients will be allowed, contrary to policy.",
+            "Only established SMB responses will pass; new server-initiated SMB cannot be created.",
+            "Clients will be able to initiate SMB to servers due to the ESTABLISHED,RELATED rule."
+          ],
+          "correct_option": "B",
+          "explanation": "The second rule explicitly permits new connections from 10.10.20.0/24 to 10.10.10.0/24 with destination port 445, enabling server-initiated SMB to clients. This contradicts the stated intent.",
+          "distractor_rationale": "B: The allow for SMB from servers appears before the default drop, so packets will not reach the drop. C: ESTABLISHED does not affect new flows; the explicit allow for servers creates them. D: The ESTABLISHED rule only covers return traffic; there is no client-to-server SMB allow for new flows.",
+          "skills_covered": [
+            "TCP/IP",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A corporate SSID uses WPA2-Enterprise with PEAP-MSCHAPv2. Several laptops are configured like this:\n```text\nWi-Fi Properties > Security\nSecurity type: WPA2-Enterprise\nChoose a network authentication method: Microsoft: Protected EAP (PEAP)\nSettings: [ ] Validate server certificate  (unchecked)\n```\nRADIUS uses a publicly trusted server certificate. What risk persists in this setup?",
+          "options": [
+            "802.1X authentication will silently downgrade to open authentication.",
+            "Clients can be tricked by an evil-twin AP to disclose MSCHAPv2 challenge/response for offline cracking.",
+            "Roaming will fail because PEAP requires a private CA to operate correctly.",
+            "No significant risk; a public CA removes the need for validation."
+          ],
+          "correct_option": "B",
+          "explanation": "Without validating the server certificate, clients cannot distinguish the real RADIUS endpoint from a rogue AP/proxy, enabling credential capture of MSCHAPv2 exchanges for offline attack.",
+          "distractor_rationale": "A: Public CA does not help if clients do not verify the presented identity. C: PEAP works with public or private CAs; validation is the key requirement. D: 802.1X will not downgrade to open; it will continue to attempt EAP but is vulnerable to impersonation without validation.",
+          "skills_covered": [
+            "Authentication",
+            "Risk management"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "From a guest VLAN host, you test the corporate DNS server 10.20.0.10 and see:\n```bash\n$ nmap -p53 --script=dns-recursion 10.20.0.10\nPORT   STATE SERVICE\n53/tcp open  domain\n| dns-recursion:\n|   Recursion enabled (10.30.5.44:53 -> 8.8.8.8:53)\n|_  Queries for internal.example.local are answered\n```\nYou must reduce information leakage while keeping guest internet access. What single network control is the most immediate and effective fix?",
+          "options": [
+            "Block guest VLAN egress for UDP/53 entirely.",
+            "NAT guest DNS to the corporate DNS so it can be monitored centrally.",
+            "Disable recursion on the corporate DNS for all subnets.",
+            "Block TCP/UDP 53 from guest VLAN to 10.20.0.10; permit DNS only to approved external resolvers."
+          ],
+          "correct_option": "D",
+          "explanation": "Stopping guest-to-corporate DNS flows at the boundary prevents access to internal resolvers and zone data while preserving guest internet access via allowed public resolvers.",
+          "distractor_rationale": "A: Breaks guest internet access entirely unless an alternate is provided. C: Disabling recursion for all breaks corporate resolution for internal clients. D: NATing guest DNS to corporate maintains the leakage risk.",
+          "skills_covered": [
+            "DNS",
+            "TCP/IP",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You export a Windows security baseline from a domain-joined host handling RDP:\n```ini\n[System Access]\nMinimumPasswordLength = 8\nPasswordComplexity = 1\nLockoutBadCount = 0\nResetLockoutCount = 30\nLockoutDuration = 0\n```\nSegmentation allows only the jump VLAN to reach TCP/3389. Which change most directly reduces credential-spray risk without creating prolonged admin lockouts?",
+          "options": [
+            "Set `PasswordComplexity = 2` to require symbols and numbers.",
+            "Increase `MinimumPasswordLength` to 12.",
+            "Set `LockoutBadCount = 5` and `LockoutDuration = 15`.",
+            "Disable RDP on the host entirely."
+          ],
+          "correct_option": "C",
+          "explanation": "Enabling a modest lockout threshold with a short duration throttles spraying from the allowed segment but does not create long lockouts for admins who mistype once.",
+          "distractor_rationale": "B and D: Stronger passwords help but do not directly rate-limit spraying attempts. C: Eliminates service access and is not feasible in this environment that depends on RDP.",
+          "skills_covered": [
+            "Authentication",
+            "Risk management"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "AP configuration for the corporate SSID shows:\n```text\nSSID: CORP\nVLAN: 20\nClient Isolation: Disabled\nBroadcast/Multicast Filtering: Off\n802.11 Mode: 5 GHz only\n```\nInter-VLAN ACLs are in place. During testing with two laptops on CORP, what traffic is most likely to succeed and increase lateral-movement risk?",
+          "options": [
+            "Direct SMB or LLMNR traffic between the two laptops on the same SSID/VLAN.",
+            "RDP from one laptop to servers in VLAN20 because client isolation is off.",
+            "ICMP echo to servers in VLAN30 (Guest).",
+            "ARP requests from a laptop in VLAN20 to a guest device in VLAN30."
+          ],
+          "correct_option": "A",
+          "explanation": "With client isolation disabled, layer-2 peer-to-peer traffic between clients on the same SSID/VLAN is allowed, enabling protocols like SMB and LLMNR between peers regardless of inter-VLAN ACLs.",
+          "distractor_rationale": "B and D: Inter-VLAN traffic is still governed by upstream ACLs; client isolation affects only intra-BSS L2 peer traffic. C: RDP to servers is unrelated to client isolation; it depends on upstream ACLs.",
+          "skills_covered": [
+            "TCP/IP",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A summarised ACL was deployed to allow only RDP from VLAN10 to servers in VLAN20:\n```text\nip access-list extended VLAN10_TO_SERVERS\n permit tcp 10.10.0.0 0.0.255.255 10.20.0.0 0.0.255.255 eq 3389\n deny   ip any 10.20.0.0 0.0.255.255\n permit ip any any\n```\nOriginally, only 10.10.10.0/24 existed in VLAN10, but new /24s were added later. Which test flow will now be unexpectedly permitted by this ACL?",
+          "options": [
+            "10.11.10.23 -> 10.20.3.3:3389 from a different class A.",
+            "172.16.10.23 -> 10.20.3.3:3389 from a private range.",
+            "10.10.50.23 -> 10.20.3.3:3389 from a new user subnet.",
+            "10.10.10.23 -> 10.20.3.3:445 from the original subnet."
+          ],
+          "correct_option": "C",
+          "explanation": "The wildcard 0.0.255.255 matches any 10.10.x.x source, not just 10.10.10.0/24, so newly added 10.10.50.0/24 can RDP to VLAN20.",
+          "distractor_rationale": "B: Port 445 is not permitted. C and D: Sources are outside 10.10.0.0/16 and do not match the permit statement.",
+          "skills_covered": [
+            "Subnetting",
+            "TCP/IP",
+            "Risk management"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You observe clients in VLAN20 receiving IPs from the VLAN10 scope. Packet capture from a server NIC (VLAN20) shows:\n```text\n12:31:02.101 DHCPDISCOVER from 00:11:22:33:44:55\n12:31:02.105 DHCPOFFER    from 10.10.10.1 to 10.10.20.25 (yiaddr 10.10.10.77)\n```\nSwitch SVI config snippets:\n```text\ninterface Vlan20\n ip address 10.10.20.1 255.255.255.0\n ip helper-address 10.10.10.1\n!\ninterface Vlan10\n ip address 10.10.10.1 255.255.255.0\n ip helper-address 10.10.10.1\n```\nWhat explains the leakage and should be corrected?",
+          "options": [
+            "The VLAN20 SVI relays to the VLAN10 DHCP server, which is offering the wrong scope to VLAN20 clients.",
+            "The offer is normal; clients will ignore it due to GIADDR mismatch.",
+            "DHCP snooping is disabled, allowing rogue servers in VLAN10 to answer in VLAN20.",
+            "The helper address must be the SVI IP (10.10.20.1) for VLAN20."
+          ],
+          "correct_option": "A",
+          "explanation": "The `ip helper-address` on VLAN20 forwards broadcasts to 10.10.10.1, which is serving the VLAN10 scope. Either remove the helper or configure the DHCP server with the correct scope for VLAN20.",
+          "distractor_rationale": "B: Could be a factor, but the capture shows the legitimate 10.10.10.1 server offering. C: The helper should point to a DHCP server, not the SVI IP itself. D: Many DHCP servers will craft offers based on GIADDR, but here it's clearly sending the wrong scope, which clients may accept.",
+          "skills_covered": [
+            "Network Troubleshooting",
+            "TCP/IP",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A legacy Windows member server shows this registry setting:\n```text\nWindows Registry Editor Version 5.00\n\n[HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa]\n\"LMCompatibilityLevel\"=dword:00000000\n```\nInter-VLAN ACLs permit SMB only from the jump VLAN. During traffic review, what increased credential exposure should you expect across segments?",
+          "options": [
+            "Only local logons are affected; network authentication remains Kerberos-only.",
+            "Clients and servers will negotiate NTLMv1, increasing susceptibility to relay and offline attacks on allowed SMB paths.",
+            "Kerberos will fail and all authentication will downgrade to anonymous.",
+            "SMB signing will be forced, removing credential exposure risk."
+          ],
+          "correct_option": "B",
+          "explanation": "An `LMCompatibilityLevel` of 0 allows LM/NTLMv1. Over allowed SMB paths, this increases the risk of credential relay and weaker hash capture during authentication exchanges.",
+          "distractor_rationale": "B: Kerberos may still work when available; the risk is allowing weaker NTLMv1 where SMB is permitted. C: SMB signing is a separate setting; this registry value does not enforce it. D: The value applies to network authentication too, not just local logons.",
+          "skills_covered": [
+            "Authentication",
+            "Risk management",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are assessing a site with three VLANs: VLAN10 Users (10.10.10.0/24), VLAN20 Servers (10.10.20.0/24), VLAN30 Guest (10.10.30.0/24). The firewall currently has the following relevant excerpts:\n```text\n# ACL excerpt (top to bottom)\n1 permit tcp 10.10.0.0/16 any eq 3389\n2 deny   tcp any any eq 445\n3 permit udp 10.10.30.0/24 any eq 53\n4 deny   ip 10.10.30.0/24 10.10.0.0/16\n5 permit ip any any\n```\nAdditionally, a short capture on a user workstation shows:\n```text\n14:22:11 10.10.20.15 -> 10.10.10.42 TCP 445 S\n14:22:11 10.10.10.42 -> 10.10.20.15 TCP 445 SA\n14:22:12 10.10.20.15 -> 10.10.10.42 TCP 445 A\n```\nThe intent is: Users may RDP to servers; SMB must be blocked both directions between VLAN10 and VLAN20; Guests should reach only the internet. ",
+          "task": "Identify the specific rule or rule interaction that is breaking the intent, explain the exact traffic path that currently succeeds but should not, and propose a minimal, testable change (or change set) to enforce the policy without introducing regressions. Justify your proposal using the artefacts.",
+          "expected_answer": "Rule 1 over-permits by summarizing 10.10.0.0/16 and allowing RDP from any 10.10.x.y, but that is not directly causing the SMB bypass. The SMB bypass is due to the lack of an explicit deny between VLAN10 and VLAN20 for TCP/445 before the broad permit at Rule 5, combined with the fact there is no directional deny for server-initiated SMB. The packet capture shows a server (10.10.20.15) initiating to a user (10.10.10.42) on port 445 and being permitted because only a generic port 445 deny (Rule 2) exists but is ineffective if a later permit catches it, and the final permit (Rule 5) allows traffic not matched earlier. Minimal fix: insert a specific bidirectional deny above Rule 5, e.g., `deny tcp 10.10.10.0/24 10.10.20.0/24 eq 445` and `deny tcp 10.10.20.0/24 10.10.10.0/24 eq 445` placed above any permits, or a single `deny tcp any any eq 445` moved above all permits if 445 is not needed anywhere. Also tighten Rule 1 to `permit tcp 10.10.10.0/24 10.10.20.0/24 eq 3389` to avoid unintended sources. Validate by re-running a server-initiated SMB attempt (should fail) and user RDP (should still succeed).",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the precise rule interaction causing SMB to be permitted (not just \"ACL is wrong\")",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains the traffic path with reference to the capture and ACL order-of-operations",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a minimal, specific change (or change set) that enforces bidirectional SMB block without breaking RDP",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes a concrete test/validation plan tied to the artefacts",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "TCP/IP",
+            "Network Troubleshooting",
+            "Risk management"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You have mixed OS hosts exposed to the jump VLAN. For a Linux web server and a Windows file server, you collect:\n```bash\n# From jump VLAN\n$ nmap -sV -p 22,80,445 10.10.20.7,10.10.20.5\nHost: 10.10.20.7  Ports: 22/open (OpenSSH_7.4), 80/open (Apache 2.4.29)\nHost: 10.10.20.5  Ports: 445/open (microsoft-ds)\n```\n```bash\n# Linux host 10.10.20.7\n$ uname -r\n4.15.0-84-generic\n$ apt list --upgradable | egrep 'openssl|openssh|linux-image'\nopenssh-server/… 1:7.6p1-4ubuntu0.7 [upgradable]\nlinux-image-4.15.0-206-generic [upgradable]\n```\n```powershell\n# Windows host 10.10.20.5\nPS> Get-HotFix -Id KB5015807\nSource  HotFixID   InstalledOn\n------  --------   -----------\nFSRV01  KB5015807  6/01/2026\n\nPS> Test-Path 'HKLM:\\...\\RebootPending'\nTrue\n```\n",
+          "task": "Prioritize the first three remediation actions across both hosts that most reduce network-exposed risk, and justify your ordering using the evidence. Your answer should tie host patch/config state to the exposed services and any required reboots/windows of change.",
+          "expected_answer": "1) Reboot 10.10.20.5 (Windows) to finalize pending updates affecting SMB. Evidence: open TCP/445 and `RebootPending` true indicate patched binaries are not active; this is a high-impact, low-effort action that immediately closes known SMB exposure windows detected remotely. 2) Update OpenSSH on 10.10.20.7 to the patched package level and restart sshd. Evidence: SSH is exposed on 22; the package is flagged upgradable; key-based auth may be fine, but known OpenSSH vulnerabilities are mitigated by updating. 3) Schedule a kernel update and reboot on 10.10.20.7. Evidence: linux-image upgradable; kernel affects multiple CVEs, but requires coordination; Apache is exposed but not flagged upgradable here. Justification: Address services directly exposed (445,22) before deeper platform updates, and prefer actions with immediate effect (reboot to apply already-installed updates) over those requiring maintenance windows; ensure change windows are planned for the kernel reboot and SSH update service restart.",
+          "rubric": [
+            {
+              "criterion": "Clear, defensible prioritization across both hosts (1st, 2nd, 3rd)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explicit linkage of each action to exposed network services from the scan",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses on-host evidence (pending reboot, upgradable packages) to justify timing and effect",
+              "marks": 2
+            },
+            {
+              "criterion": "Considers change impact (restarts/reboots) in the justification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "TCP/IP",
+            "Risk management"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Enterprise Wi‑Fi uses WPA2‑Enterprise (PEAP‑MSCHAPv2) with RADIUS. A sample of client profiles shows server certificate validation disabled. RADIUS logs:\n```text\nAuth: Login OK: [jdoe] (from client AP01 port 12 cli 18:22:33:44:55:66)\nReply-Message = \"Using MSCHAPv2\"\nTunnel-Type = VLAN\nTunnel-Medium-Type = IEEE-802\nTunnel-Private-Group-ID = \"20\"\n```\nWireless controller:\n```text\nSSID: CORP -> VLAN 20 (Client Isolation: Disabled)\nSSID: GUEST -> VLAN 30 (Client Isolation: Enabled)\n```\n",
+          "task": "Assess the credential-risk and lateral-movement implications of the current configuration and propose two specific, prioritized mitigations that reduce risk without breaking legitimate access. Justify each in terms of attack surface and segmentation.",
+          "expected_answer": "Risk: With server certificate validation disabled, clients can be tricked into authenticating to a rogue AP/RADIUS impersonator, exposing MSCHAPv2 challenge/response for offline cracking. Additionally, client isolation is disabled on CORP, allowing peer-to-peer discovery protocols (LLMNR/SMB) that aid lateral movement if any credentials are compromised. Prioritized mitigations: (1) Enforce server certificate validation on client profiles with pinning to the issuing CA and RADIUS CN/SAN; this prevents credential capture at association time without changing user experience when properly deployed. (2) Enable client isolation on CORP (or apply equivalent L2 peer blocking) to prevent intra-SSID L2 peer traffic, reducing lateral movement opportunities. Justification: The first change removes an exposed credential capture path; the second constrains movement if credentials are compromised. Both preserve intended access to network resources via upstream ACLs.",
+          "rubric": [
+            {
+              "criterion": "Correctly explains why disabling server certificate validation is risky in PEAP-MSCHAPv2",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies the lateral movement risk introduced by lack of client isolation",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes two concrete, prioritized mitigations that are feasible and preserve access",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies mitigations in terms of reduced attack surface and segmentation controls",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Risk management",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "From the guest network, DNS queries to the corporate DNS 10.20.0.10 succeed for internal names. Current edge firewall policy allows guest egress to \"any any\" except RFC1918 destinations. Core routing permits guest-to-core DNS due to an overlooked static route. A minimal network diagram shows Guest -> Edge FW -> Internet, and a side path Guest -> Core (10.20.0.0/16) for port 53 only due to the static route.\n\nTests:\n```bash\n$ dig +short host1.internal.example.local @10.20.0.10\n10.20.0.25\n$ dig +short www.example.com @10.20.0.10\n93.184.216.34\n```\n",
+          "task": "Recommend a concrete DNS architecture and firewall/routing change set that stops internal-zone leakage from Guest while preserving guest internet browsing and captive portal operation. Include how you will validate success and detect regressions.",
+          "expected_answer": "Architecture and controls: Remove the static route that enables Guest to reach 10.20.0.0/16 for port 53, and on the edge firewall explicitly block TCP/UDP 53 from Guest to any corporate IPs. Allow Guest DNS only to a defined set of public recursive resolvers (e.g., ISP or 1.1.1.1/8.8.8.8), and ensure the captive portal intercepts only HTTP/HTTPS, not DNS. Optionally, enable egress DNS pinning (policy-based NAT or ACL) to those resolvers. Corporate DNS should restrict recursion to corporate subnets only. Validation: From Guest, queries to 10.20.0.10 must time out/refuse; queries to allowed public resolvers must succeed for internet domains; queries for internal.example.local to public resolvers must return NXDOMAIN. Confirm captive portal still presents on HTTP/HTTPS and does not block DNS. Monitor edge firewall logs for denied guest-to-corp DNS attempts to verify the block and alert on regressions.",
+          "rubric": [
+            {
+              "criterion": "Specific, feasible change set covering both routing and firewall rules",
+              "marks": 3
+            },
+            {
+              "criterion": "Preserves guest internet and captive portal in the design",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes corporate DNS recursion restriction for defense-in-depth",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear validation steps and regression detection plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "TCP/IP",
+            "Risk management"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Host findings: configuration, patch and credential-risk assessment",
+          "brief": "Assess one Windows host and one Linux host that are reachable from your jump segment. Focus on configuration and patch state that affects network-exposed services and credential risk. Collect on-host evidence using native tools only (e.g., Windows PowerShell `Get-HotFix`, `systeminfo`, Local Security Policy export; Linux `uname -r`, package manager queries, `sshd_config`, `authselect`/PAM settings). Correlate with a minimal external scan from the jump segment (e.g., `nmap` of only the ports in scope) to show exposure. Prioritize findings by likelihood and impact, and recommend specific remediations with expected service impact (restarts/reboots).",
+          "deliverable": "A \"Host findings\" report (PDF or Markdown) including: (1) system details; (2) patch status with evidence; (3) key security configuration items (e.g., SSH auth methods, Windows lockout policy, SMB signing if applicable); (4) correlation to externally exposed services; (5) prioritized remediation list with rationale; and (6) an appendix of raw command outputs/screenshots.",
+          "acceptance_criteria": [
+            "Report names two distinct hosts (one Windows, one Linux) with OS/version evidence.",
+            "Each host includes at least three concrete findings spanning patches and security configuration, each backed by on-host evidence (command output or screenshots).",
+            "At least one finding per host is explicitly tied to an externally exposed service observed from the jump segment.",
+            "Prioritization is present with rationale (risk and impact), and each remediation states whether a service restart or reboot is required.",
+            "Appendix contains raw artefacts sufficient to verify each finding without re-running tests."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of host coverage and evidence (two hosts; clear OS/service context)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and correctness of patch/config findings with verifiable artefacts",
+              "marks": 6
+            },
+            {
+              "criterion": "Strength of correlation between findings and externally exposed services",
+              "marks": 4
+            },
+            {
+              "criterion": "Prioritization and remediation clarity, including change impact (restart/reboot)",
+              "marks": 4
+            },
+            {
+              "criterion": "Report clarity and structure (readability; artefact appendix cross-referenced)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Authentication",
+            "Risk management",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Network findings: segmentation, wireless concepts and traffic review",
+          "brief": "Evaluate segmentation controls, wireless client risk, and traffic behavior across three VLANs in your lab (or a constrained simulation). Map intended flows, then test actual behavior using safe methods: ping/TCP connection tests for allowed/blocked paths; a short packet capture for DNS and common lateral-movement protocols (LLMNR/SMB) within an SSID; and wireless controller/AP settings review for client isolation and 802.1X server certificate validation policies. Include at least one DNS resolution test from a guest-equivalent segment to show whether internal resolvers are reachable.",
+          "deliverable": "A \"Network findings\" report (PDF or Markdown) including: (1) a concise segment map with intended ACLs; (2) test matrix of allowed/blocked flows with screenshots or logs; (3) wireless security observations (client isolation and EAP server certificate validation posture); (4) DNS egress behavior from guest segment; (5) prioritized, actionable remediation items; and (6) an appendix with configuration excerpts and packet captures (pcap or screenshots).",
+          "acceptance_criteria": [
+            "Report includes a segment map and a table or matrix of at least six tested flows with outcomes (allowed/blocked).",
+            "Evidence of wireless posture includes either controller/AP screenshots or CLI excerpts for client isolation and 802.1X cert validation policy.",
+            "Packet capture or logs demonstrate DNS behavior from a guest-equivalent segment and at least one intra-SSID peer-traffic observation.",
+            "Findings highlight at least one segmentation gap and one wireless-related risk, each with a specific remediation.",
+            "All claims are supported by artefacts in the appendix (configs, captures, or command outputs)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accuracy and coverage of segmentation testing (map + test matrix + evidence)",
+              "marks": 6
+            },
+            {
+              "criterion": "Depth of wireless assessment (client isolation and EAP validation) with proof",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality of traffic review (captures/logs for DNS and intra-SSID behavior)",
+              "marks": 4
+            },
+            {
+              "criterion": "Actionable, prioritized remediations addressing identified gaps",
+              "marks": 4
+            },
+            {
+              "criterion": "Report organization and evidence traceability",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Network Troubleshooting",
+            "TCP/IP",
+            "DNS",
+            "Risk management",
+            "Authentication",
+            "Penetration Testing"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-033-S04",
+      "skills_assessed": [
+        "Penetration Testing",
+        "Vulnerability Assessment",
+        "Risk management",
+        "Technical Writing",
+        "ICT security legislation"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your team's severity policy for this engagement is:\n\n```text\n1) Start from CVSS v3.1 base rating (Critical ≥9.0; High 7.0–8.9; Medium 4.0–6.9; Low <4.0)\n2) Upgrade one level if the issue is internet-exposed AND does not require authentication\n3) Downgrade one level if compensating control logs show consistent blocking for the last 7 days\n```\n\nYou validated the following findings:\n\n```json\n[\n  {\n    \"id\": \"F-101\",\n    \"cvss_base_score\": 8.8,\n    \"cvss_vector\": \"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L\",\n    \"internet_exposed\": true,\n    \"auth_required\": false,\n    \"compensating_control\": {\"type\": \"WAF\", \"blocked_last_7_days\": false}\n  },\n  {\n    \"id\": \"F-102\",\n    \"cvss_base_score\": 9.1,\n    \"cvss_vector\": \"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H\",\n    \"internet_exposed\": false,\n    \"auth_required\": true,\n    \"compensating_control\": {\"type\": \"WAF\", \"blocked_last_7_days\": true}\n  },\n  {\n    \"id\": \"F-103\",\n    \"cvss_base_score\": 6.5,\n    \"cvss_vector\": \"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L\",\n    \"internet_exposed\": true,\n    \"auth_required\": false,\n    \"compensating_control\": {\"type\": \"none\", \"blocked_last_7_days\": false}\n  }\n]\n```\n\nWhich finding should be reported as Critical after applying the policy?",
+          "options": [
+            "F-103",
+            "F-101",
+            "None of them",
+            "F-102"
+          ],
+          "correct_option": "B",
+          "explanation": "F-101 starts High (8.8) and is upgraded one level due to being internet-exposed and not requiring authentication, becoming Critical. F-102 starts Critical (9.1) but is downgraded one level because logs show consistent blocking for 7 days, so becomes High. F-103 starts Medium (6.5) and is upgraded to High.",
+          "distractor_rationale": "B: F-102 looks Critical by base CVSS, but the given policy explicitly downgrades one level for proven compensating controls over 7 days. C: F-103 is tempting because it is internet-exposed and unauthenticated, but a Medium upgraded by one level becomes High, not Critical. D: Incorrect because F-101 clearly meets the upgrade criteria to reach Critical.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Risk management"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Scope excerpt:\n\n```text\n- No destructive payloads\n- No bulk data exfiltration or retrieval of real PII\n- Controlled proof must be demonstrable from timing/logic without altering state\n```\n\nTarget endpoint and current observation:\n\n```http\nPOST /login HTTP/1.1\nHost: app.example.com\nContent-Type: application/x-www-form-urlencoded\n\nusername=alice&password='||'\n```\n\nServer returns a database syntax error, suggesting injectable context. Which request best demonstrates controlled proof under these constraints?",
+          "options": [
+            "```bash\ncurl -X POST https://app.example.com/login \\\n  -d \"username=alice&password=' UNION SELECT username,password FROM users-- \"\n```",
+            "```bash\ncurl -X POST https://app.example.com/login \\\n  -d \"username=alice&password='; DROP TABLE users;-- \"\n```",
+            "```bash\ncurl -s -w \"\\n%{time_total}\\n\" -X POST https://app.example.com/login \\\n  -d \"username=alice&password=' OR SLEEP(1)-- \"\n```",
+            "```bash\ncurl -X POST https://app.example.com/login \\\n  -d \"username=alice&password='; SELECT 1;-- \"\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "A uses a short, measurable time delay to prove injection without retrieving data or altering state, satisfying controlled proof and scope limits. The total time increase is a non-destructive signal.",
+          "distractor_rationale": "B: UNION-selecting credential columns exfiltrates sensitive data, violating scope. C: A destructive payload explicitly forbidden. D: A no-op SELECT may still error out but does not reliably demonstrate a testable side effect to prove exploitability; it's inconclusive for controlled proof.",
+          "skills_covered": [
+            "Penetration Testing",
+            "ICT security legislation"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You retest a header-hardening finding. Evidence before and after:\n\nBefore:\n```bash\n$ curl -sI https://shop.example.com | sed -n '1,8p'\nHTTP/2 200 \nserver: nginx/1.18.0 (Ubuntu)\nx-powered-by: PHP/7.4\ncontent-type: text/html; charset=UTF-8\n```\n\nAfter:\n```bash\n$ curl -sI https://shop.example.com | sed -n '1,8p'\nHTTP/2 200 \nserver: nginx\ncontent-type: text/html; charset=UTF-8\nx-powered-by: PHP/7.4\n```\n\nWhat retest outcome should you record in the finding?",
+          "options": [
+            "Inconclusive – evidence is insufficient",
+            "Fail – no change achieved",
+            "Pass – the `server` banner is now generic",
+            "Partially remediated – keep open and note residual exposure"
+          ],
+          "correct_option": "D",
+          "explanation": "`server` was hardened, but `x-powered-by` still discloses technology. That is a partial remediation and should remain open with residual risk and next steps documented.",
+          "distractor_rationale": "A: Ignores that `x-powered-by` still leaks stack details. B: Incorrect because there was a material improvement. D: Evidence is sufficient; two concrete snapshots allow a clear judgement.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Risk management"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Extract from a draft finding record destined for the executive report (Annex will contain technical details):\n\n```markdown\nFinding: Session fixation via predictable token\nEvidence (login response):\nSet-Cookie: JSESSIONID=1A1B1C1D1E1F1G1H1I1J; Path=/; HttpOnly\nUser: qa_tester\nSource IP: 10.12.34.56\n```\n\nGiven client policy prohibits disclosure of secrets in executive sections, what must be redacted here before publication to execs while still preserving sufficient context?",
+          "options": [
+            "Redact the full cookie value",
+            "Redact nothing; move the whole block to the executive summary",
+            "Redact the username",
+            "Redact the internal source IP"
+          ],
+          "correct_option": "A",
+          "explanation": "Session identifiers are secrets and must not be disclosed in executive sections. Keep the cookie name and a masked value (e.g., JSESSIONID=****) and move the raw value to the technical annex if needed.",
+          "distractor_rationale": "B: Internal IPs are typically allowed in technical annexes and may not require redaction in an executive-facing extract if kept high level, but the critical redaction here is the secret. C: The non-PII test username is not sensitive in this context. D: Executive summaries should not include raw technical artefacts; also secrets must never be exposed there.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You captured a screenshot as evidence. Metadata:\n\n```text\nFile: idor_evidence.png\nEXIF: CreateDate=2026:05:10 14:03:22-0500 (America/Chicago)\nHost system clock at capture: 2026-05-10 19:03:29Z (UTC)\nTicket notes currently list 2026-05-10 18:03Z\n```\n\nBefore publishing, what is the most appropriate action to preserve evidence integrity and consistency?",
+          "options": [
+            "Strip all EXIF metadata from the image and keep only the PNG",
+            "Edit the EXIF to match the ticket’s 18:03Z time so all artefacts align",
+            "Ignore the discrepancy; readers can infer the timezone from context",
+            "Attach the original file unmodified, record UTC-normalized times and the source timezone in chain-of-custody notes, and correct the ticket to 19:03Z"
+          ],
+          "correct_option": "D",
+          "explanation": "Keep the artefact unchanged, normalize timestamps to UTC with explicit timezone provenance, and reconcile the ticket so the record is self-consistent and auditable.",
+          "distractor_rationale": "B: Altering evidence metadata undermines integrity and can be challenged. C: Stripping metadata discards provenance. D: Leaving inconsistencies forces readers to reconcile and weakens the audit trail.",
+          "skills_covered": [
+            "ICT security legislation",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "During retest of a header-hardening fix behind a load balancer, you pin to two backend nodes:\n\n```bash\n$ curl -sI https://api.example.com --resolve api.example.com:443:203.0.113.21 | grep -i server\nserver: Apache\n$ curl -sI https://api.example.com --resolve api.example.com:443:203.0.113.22 | grep -i server\nserver: Apache/2.4.54 (Ubuntu)\n```\n\nWhat is the correct next step?",
+          "options": [
+            "Close the finding but add a recommendation to fix remaining nodes later",
+            "Coordinate with operations to deploy the fix to all nodes and retest each node (or enable stickiness) before marking the finding as passed",
+            "Increase severity since inconsistent nodes imply weak change control",
+            "Mark the finding as passed because at least one node is fixed and the load balancer reduces exposure"
+          ],
+          "correct_option": "B",
+          "explanation": "Consistency across all serving nodes is required to pass; coordinate rollout and retest deterministically per node using stickiness or direct-IP resolution.",
+          "distractor_rationale": "B: A partial deployment is not sufficient to pass. C: Severity should be driven by risk and exploitability, not process hygiene alone; the immediate need is coordinated rollout and retest. D: Closure is inappropriate while some nodes remain vulnerable.",
+          "skills_covered": [
+            "Penetration Testing",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Choose the most appropriate executive-summary sentence for a payment platform finding (same issue, four phrasings).",
+          "options": [
+            "```text\nAn attacker on the internet can run database commands through our checkout page. This puts payment data at risk. We recommend deploying input validation and prepared statements within two weeks.\n```",
+            "```text\nWe observed returning 500 from the cart controller post parameterization error, indicating an injection vector.\n```",
+            "```text\nThe vuln is critical per CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H and should be actioned.\n```",
+            "```text\nExploitable remote unauthenticated SQLi on /checkout?cart= causes Boolean-based inference via SLEEP(1) with clear-time delta at p95.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "B communicates business impact, actor, affected surface, and a time-bound recommendation without jargon, which fits an executive summary.",
+          "distractor_rationale": "A: Accurate but overly technical for executives. C: CVSS vector is valuable in the technical section, not executive summary. D: Controller jargon and HTTP status detail belong in the technical report, not the executive summary.",
+          "skills_covered": [
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You receive this email from the client CISO:\n\n```text\nSubject: Risk acceptance – F-220 (Clickjacking on reports portal)\nWe accept the residual clickjacking risk on the internal-only reports portal until Q4 due to legacy dependencies. Please mark F-220 as risk accepted. – CISO, 2026-06-01\n```\n\nWhat should you do in your report tracking and closure?",
+          "options": [
+            "Leave the status as \"Open\" but remove it from the executive summary",
+            "Set status to \"Closed\" because the business has accepted the risk",
+            "Set status to \"Risk accepted\" with the CISO’s name and date, keep it out of the closure pass list, and note the review date in the closure section",
+            "Delete the finding from the report to avoid confusion"
+          ],
+          "correct_option": "C",
+          "explanation": "Risk acceptance is not closure. Record the acceptance decision with attribution and date, exclude it from passed items, and note the review timeframe in the closure narrative.",
+          "distractor_rationale": "B: Acceptance does not equal remediation and should not be counted as closed. C: Keeping it open without clearly recording acceptance miscommunicates. D: Deleting erases auditability and history.",
+          "skills_covered": [
+            "Risk management",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Scanner output vs manual validation:\n\n```text\nNessus: Reflective XSS detected on /search?q= – Medium (plugin 12345)\nEvidence: response contains <script>alert(1)</script>\n```\n\nManual test:\n\n```http\nGET /search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E HTTP/1.1\nHost: app.example.com\n```\n\nResponse excerpt:\n\n```html\n<div class=\"result\">&lt;script&gt;alert(1)&lt;/script&gt;</div>\n```\n\nHeaders:\n```http\nContent-Security-Policy: default-src 'self'; script-src 'self'\nX-XSS-Protection: 0\n```\n\nHow should you handle this in the report?",
+          "options": [
+            "Escalate to High due to reflected payload appearance",
+            "Mark as false positive or not exploitable with manual-evidence screenshots and rationale; do not include in risk scoring but keep in appendix",
+            "Delete the finding entirely since it is a false positive",
+            "Keep as Medium because the scanner flagged it; add a note that manual test differed"
+          ],
+          "correct_option": "B",
+          "explanation": "The payload is safely encoded in the DOM and the CSP disallows inline/script from other origins, so the scanner alert is a false positive. Document your manual validation and rationale; retain traceability without inflating risk.",
+          "distractor_rationale": "B: Blindly mirroring the scanner rating ignores manual validation. C: No exploit demonstrated; headers and encoding contradict escalation. D: Removing it erases the audit trail and may cause reappearance without context; it belongs in an appendix as a closed-out false positive.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A fix changes the site’s CSP from:\n\n```http\nContent-Security-Policy: default-src *\n```\n\nto:\n\n```http\nContent-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'\n```\n\nWhat is the correct retest outcome and guidance to record?",
+          "options": [
+            "Partially remediated – downgrade severity and advise replacing 'unsafe-inline' with nonces or hashes before closure",
+            "Pass – restrictive default-src and script-src now enforced",
+            "Fail – no meaningful change in policy",
+            "Inconclusive – CSP is complex and requires longer observation"
+          ],
+          "correct_option": "A",
+          "explanation": "'unsafe-inline' leaves avenues for XSS via inline scripts and event handlers. The risk is reduced but not eliminated; recommend moving to nonce-/hash-based CSP and keep the finding open until done.",
+          "distractor_rationale": "A: Ignores the residual risk introduced by 'unsafe-inline'. C: The change is meaningful; default-src narrowed and script-src restricted to self (though still too permissive). D: Evidence is sufficient to judge residual risk without extended observation.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Risk management"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You validated an RCE in a self-hosted CI runner exposed via a misconfigured agent API. Evidence:\n\n```text\nHost: ci-runner.internal (10.20.30.40) via VPN only\nPoC: curl -H \"X-Task: $(id)\" https://ci.example.com/agent/exec -> output shows uid=999(ci-agent)\nCVSS: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H (9.8)\nNetwork logs: edge firewall denies inbound internet to ci-runner.internal; access requires VPN with MFA\nBusiness context: CI pipeline can push to production registries\nCompensating control logs: VPN auth logs show least 7 days of MFA-only access; 18 distinct users\n```\n",
+          "task": "Decide the severity you will report (justify any deviation from the base CVSS), propose a remediation plan with priority, and specify exact retest evidence you will collect to close this finding.",
+          "expected_answer": "Report as High rather than Critical due to the effective compensating control restricting access to authenticated VPN users, provided the control is demonstrated to be continuously enforced (7+ days of logs, MFA). Justification should note that AV is effectively changed from Network to Adjacent/Restricted in practice even if CVSS base does not account for environmental controls. Remediation: lock down or disable the agent API, enforce mTLS/service account auth on the agent endpoint, restrict runner scope and tokens, and implement least privilege on the CI to prevent pushing to prod registries from untrusted jobs. Include monitoring/alerting for agent endpoint access. Retest evidence: show 403/401 when calling the endpoint without valid client cert or token; show change tickets and configuration diffs for agent; provide VPN/WAF logs demonstrating deny of unauthenticated traffic; re-run prior PoC demonstrating it no longer executes arbitrary commands.",
+          "rubric": [
+            {
+              "criterion": "States and justifies severity with respect to compensating controls (not just restating CVSS)",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete, prioritized remediation steps addressing the misconfigured agent API and CI privileges",
+              "marks": 3
+            },
+            {
+              "criterion": "Specific, checkable retest evidence (negative PoC, config diff, logs)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Risk management",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "During validation you observe verbose error logs exposing fragments of PII. Constraints from the authorization letter:\n\n```text\n- No storage of real PII outside client systems\n- Redact secrets and identifiers in any deliverable except where absolutely necessary in the technical appendix\n- Do not export log bundles; use on-screen captures only with masking\n```\n\nSample console output you saw:\n\n```text\nERROR: Payment failed for user john.doe@example.com, SSN 123-45-6789, card **** **** **** 4242\n```\n",
+          "task": "Explain exactly how you will evidence this finding without violating constraints, what you will redact where, and how you will phrase it in the executive and technical sections.",
+          "expected_answer": "Use a screenshot captured on a client-jumppad with masking applied before saving: blur or black-box the email and SSN, leaving format-only hints (e.g., john.[redacted]@example.com, SSN XXX-XX-6789). Store only the redacted image. In the finding record, include a textual description of the leakage pattern and affected log path and environment. Executive section: describe the risk at a high level (PII leakage in logs increases breach exposure) and the remediation (reduce log verbosity, scrub PII at source, rotate/secure logs). Technical appendix: include the redacted screenshot, timestamp, host, and exact logger configuration references (e.g., logback pattern, middleware scrubber rule) plus steps to reproduce (trigger failure with test account). Do not copy raw PII into the report or notes; reference it descriptively (\"email address and SSN fields\").",
+          "rubric": [
+            {
+              "criterion": "Method preserves evidence while complying with no-PII storage (masking, capture location)",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear division of content between executive and technical sections with appropriate redaction levels",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifics included: timestamp/host context and reproduction without PII leakage in the report",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ICT security legislation",
+            "Technical Writing",
+            "Penetration Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The client mitigated a SQL injection by adding a WAF rule. Your original PoC now returns 403 with this WAF log:\n\n```text\n2026-06-02T12:20:14Z WAF BLOCK id=942100 msg=\"SQL Injection Attack Detected\" path=/products?q=' OR SLEEP(1)-- ip=198.51.100.10\n```\n\nScanner still flags the endpoint Medium. The dev team requests closure.",
+          "task": "Decide the current status you would record, whether to adjust severity, and what additional checks or evidence you require before any downgrade or closure.",
+          "expected_answer": "Record status as Mitigated by compensating control (WAF) but not closed. Consider a one-level severity downgrade if logs show sustained effective blocking without bypasses (7+ days) and if application-layer fixes are in progress. Require evidence: WAF rule ID and policy scope, logs over a representative period, bypass testing (encodings, case changes) that remains blocked, and an application code change plan (parameterization). Closure should wait for in-app remediation; otherwise, keep it as accepted risk if the business chooses, documented accordingly.",
+          "rubric": [
+            {
+              "criterion": "Correctly distinguishes mitigation from remediation and sets status accordingly",
+              "marks": 3
+            },
+            {
+              "criterion": "Reasoned approach to severity adjustment tied to evidence of durable WAF efficacy",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear list of further checks/evidence (bypass attempts, logs, scope, code change plan)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Risk management",
+            "Vulnerability Assessment",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Prior to closure, you compile a roll-up. Current tracker excerpt:\n\n```text\nID     Title                                 Sev    Status             Notes\nF-110  TLS weak ciphers on legacy API        High   Fixed (await retest)  Change ticket CHG-2217\nF-121  Verbose error leaks stack traces      Medium Fixed (passed)        PR #845 merged, evidence attached\nF-133  Clickjacking on intranet portal       Low    Risk accepted         CISO email 2026-06-01\nF-147  Open S3 bucket (logs)                 High   Fixed (passed)        ACL tightened, 403 verified\nF-158  Mixed content on helpdesk             Low    Open                  Awaiting CDN rule\n```\n\nClient asks for a closure letter today.",
+          "task": "State whether you can issue closure, what caveats apply, and draft 3–5 sentences you would place in the closure section to accurately reflect the state, including legal/authorization considerations.",
+          "expected_answer": "You can issue a conditional closure noting residual items: one High pending retest (F-110) prevents an unconditional clean closure. Offer either a partial closure noting outstanding items and planned retest date or delay closure until F-110 is retested. Include that F-133 is risk accepted by the CISO as of 2026-06-01 and excluded from pass counts. Closure text should reference the original authorization, scope, and date range, affirm that fixes for F-121 and F-147 were validated with attached evidence, and explicitly list F-110 (pending retest) and F-158 (open Low) as outstanding with target dates. Note that accepted risks remain the client’s responsibility until addressed or re-reviewed.",
+          "rubric": [
+            {
+              "criterion": "Correct closure decision with rationale (conditional/partial vs delay)",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate handling of risk-accepted and open items in the closure narrative",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, professional closure wording that references authorization and evidence",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Technical Writing",
+            "Risk management"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Create validated finding records with controlled proof and remediation",
+          "brief": "Produce a machine-readable set of finding records for an authorized assessment you performed. Each finding must include controlled proof (non-destructive), severity with rationale, remediation guidance, and retest status. Use the template schema below and populate it with at least 6 distinct findings across at least 3 severity levels. Link each finding’s evidence to concrete artefacts (e.g., curl output, HTTP transcript, sanitized screenshot) stored alongside the submission.",
+          "deliverable": "A single JSON file named findings.json plus an evidence/ directory containing referenced artefacts (images or text).",
+          "acceptance_criteria": [
+            "findings.json validates against the provided schema",
+            "At least 6 findings present; IDs unique and stable",
+            "Each finding has: title, description, asset, cvss_vector, severity, evidence_refs (paths under evidence/), repro_steps, remediation, status (Open/Partially remediated/Fixed (passed)/Mitigated/ Risk accepted), and retest_notes",
+            "cvss_vector strings are valid CVSS v3.x vectors; severity aligns with vector and any documented policy adjustments",
+            "Evidence artefacts exist at the referenced paths and contain redacted/sanitized content where appropriate (no secrets/PII)",
+            "Repro steps demonstrate controlled proof (non-destructive) and are repeatable",
+            "Remediation guidance is specific (e.g., headers, code patterns, config keys)",
+            "Retest notes indicate what was verified and how (commands/logs), or what remains"
+          ],
+          "rubric": [
+            {
+              "criterion": "Schema compliance and completeness across all required fields",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality of controlled proof and clarity of reproducible steps",
+              "marks": 5
+            },
+            {
+              "criterion": "Sound severity rationale including CVSS vector and any policy-based adjustment",
+              "marks": 4
+            },
+            {
+              "criterion": "Actionable, specific remediation guidance",
+              "marks": 4
+            },
+            {
+              "criterion": "Proper evidence handling (redaction, references, no secrets/PII)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Penetration Testing",
+            "Technical Writing",
+            "ICT security legislation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Authorised assessment report with executive and technical sections, retest and closure",
+          "brief": "Compile a client-ready report that ties to your findings.json. Include an executive summary, authorization and scope, methodology, prioritized remediation plan, retest outcomes, and a closure section. All technical evidence must be confined to a technical appendix with proper redactions. Reference findings by their IDs and provide a clear mapping from business risk to remediation timelines.",
+          "deliverable": "One report file named report.pdf or report.md that references the IDs from findings.json and includes an appendix linking to evidence/ artefacts.",
+          "acceptance_criteria": [
+            "Report includes: Executive summary, Authorization & scope, Methodology, Findings overview with prioritization, Remediation plan with timelines, Retest results, Closure & sign-offs, Technical appendix",
+            "Executive summary avoids jargon, states business impact and recommended timelines",
+            "Authorization section cites engagement dates, who authorized, and constraints (e.g., no-destructive testing)",
+            "Findings overview references finding IDs from findings.json and rolls up counts by severity and status",
+            "Remediation plan groups fixes into sprints/windows with owners and target dates",
+            "Retest results clearly indicate Pass/Partial/Mitigated/Risk accepted per finding with evidence references",
+            "Closure section correctly handles open vs risk-accepted vs passed items and includes any conditions",
+            "No raw secrets/PII appear in the main body; technical appendix contains only redacted artefacts with provenance (timestamps, hosts)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Structure completeness and correct mapping to findings.json IDs",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and appropriateness of executive summary and prioritization",
+              "marks": 5
+            },
+            {
+              "criterion": "Accuracy and transparency of retest outcomes and closure handling",
+              "marks": 5
+            },
+            {
+              "criterion": "Legal/authorization compliance and evidence provenance/redaction quality",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Technical Writing",
+            "Risk management",
+            "ICT security legislation",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

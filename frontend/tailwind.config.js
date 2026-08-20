@@ -7,10 +7,9 @@ const ch = (name) => `rgb(var(${name}) / <alpha-value>)`;
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  // The resolved theme lives on <html data-theme="light|dark">. Pointing
-  // Tailwind's `dark:` variant at the same attribute keeps one source of truth
-  // while leaving an escape hatch for genuinely asymmetric cases.
-  darkMode: ['selector', '[data-theme="dark"]'],
+  // No darkMode variant. There is one palette — Solarized Dark — so `dark:`
+  // would be a class that can never match, and its absence means a stray one is
+  // a build-time nothing rather than a style that silently never applies.
   theme: {
     extend: {
       colors: {
@@ -45,6 +44,16 @@ export default {
           fg: ch('--brand-fg'),
           subtle: ch('--brand-subtle'),
           'subtle-fg': ch('--brand-subtle-fg'),
+        },
+        // ACHIEVEMENT ONLY — XP, levels, streaks, badges, celebration. See the
+        // revised colour contract at the top of index.css. Kept narrow so amber
+        // never stops meaning "you earned something".
+        accent: {
+          solid: ch('--accent-solid'),
+          'solid-hover': ch('--accent-solid-hover'),
+          fg: ch('--accent-fg'),
+          subtle: ch('--accent-subtle'),
+          'subtle-fg': ch('--accent-subtle-fg'),
         },
         success: { solid: ch('--success-solid'), fg: ch('--success-fg'), subtle: ch('--success-subtle') },
         warning: { solid: ch('--warning-solid'), fg: ch('--warning-fg'), subtle: ch('--warning-subtle') },
@@ -83,6 +92,10 @@ export default {
         DEFAULT: '0.5rem',
         lg: '0.5rem',
         xl: '0.75rem',
+        // Presentation surfaces only — the result hero, the level card. `md` and
+        // `3xl` stay absent on purpose so they compile to nothing instead of
+        // quietly reintroducing a five-radius nest.
+        '2xl': '1rem',
         full: '9999px',
       },
       boxShadow: {
@@ -95,16 +108,101 @@ export default {
       // `float` was dead code and `pulse-slow` drove a decorative 2px dot on
       // every skill-gap chip. `fade-in` is the app's only animation now, and it
       // is covered by the prefers-reduced-motion block in index.css.
+      // MOTION
+      //
+      // Every entry below is covered by the prefers-reduced-motion block in
+      // index.css, which flattens animation and transition durations to 0.01ms
+      // globally — so adding motion here cannot override a user's stated
+      // preference. That block is why these are `animation` utilities rather
+      // than inline JS tweens.
+      //
+      // One easing curve for everything that enters (a decelerating cubic) and
+      // one springy overshoot for things that CONFIRM (a press landing, a tick
+      // appearing). Two curves, used consistently, read as one system; five
+      // curves read as five people.
+      transitionTimingFunction: {
+        enter: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      },
       animation: {
-        // The three modals already referenced `animate-fade-in`; without this
-        // entry the class was a silent no-op and they appeared instantly.
         'fade-in': 'fade-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both',
+        // Entrances. `rise-in` is the workhorse; the stagger comes from
+        // animation-delay applied per item by the Reveal component.
+        'rise-in': 'rise-in 0.34s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'slide-in-right': 'slide-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'slide-in-left': 'slide-in-left 0.28s cubic-bezier(0.16, 1, 0.3, 1) both',
+        // Confirmations — something the student did just landed.
+        pop: 'pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'pop-tick': 'pop-tick 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        // A wrong answer in PRACTICE only. Never in a graded run, where no
+        // verdict is revealed at all.
+        shake: 'shake 0.36s ease-in-out both',
+        // The last minute of a timed sitting.
+        'pulse-urgent': 'pulse-urgent 1s ease-in-out infinite',
+        // Achievement surfaces.
+        'flame-flicker': 'flame-flicker 2.4s ease-in-out infinite',
+        'sheen': 'sheen 2.2s ease-in-out infinite',
+        'ring-in': 'ring-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both',
       },
       keyframes: {
         'fade-in': {
           from: { opacity: '0', transform: 'translateY(4px) scale(0.985)' },
           to: { opacity: '1', transform: 'none' },
         },
+        'rise-in': {
+          from: { opacity: '0', transform: 'translateY(10px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        'slide-in-right': {
+          from: { opacity: '0', transform: 'translateX(16px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        'slide-in-left': {
+          from: { opacity: '0', transform: 'translateX(-16px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        pop: {
+          '0%': { opacity: '0', transform: 'scale(0.9)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        'pop-tick': {
+          '0%': { opacity: '0', transform: 'scale(0.4) rotate(-12deg)' },
+          '70%': { opacity: '1', transform: 'scale(1.12) rotate(2deg)' },
+          '100%': { opacity: '1', transform: 'scale(1) rotate(0)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%': { transform: 'translateX(-5px)' },
+          '40%': { transform: 'translateX(5px)' },
+          '60%': { transform: 'translateX(-3px)' },
+          '80%': { transform: 'translateX(3px)' },
+        },
+        'pulse-urgent': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.45' },
+        },
+        'flame-flicker': {
+          '0%, 100%': { transform: 'scale(1) rotate(-1deg)', opacity: '1' },
+          '50%': { transform: 'scale(1.08) rotate(1.5deg)', opacity: '0.92' },
+        },
+        sheen: {
+          '0%': { transform: 'translateX(-120%)' },
+          '60%, 100%': { transform: 'translateX(220%)' },
+        },
+        'ring-in': {
+          from: { 'stroke-dashoffset': 'var(--ring-empty)' },
+          to: { 'stroke-dashoffset': 'var(--ring-offset-target)' },
+        },
+      },
+      backgroundImage: {
+        // EARNED surfaces only, per the revised contract. Theme-aware via the
+        // token, because light and dark need genuinely different tints here — an
+        // alpha wash disappears on white and an opaque tint looks pasted-on over
+        // dark. See --gradient-earned in index.css.
+        'earned': 'var(--gradient-earned)',
+        'earned-strong': 'linear-gradient(135deg, rgb(var(--brand-solid)), rgb(var(--accent-solid)))',
+        'xp': 'linear-gradient(90deg, rgb(var(--brand-solid)), rgb(var(--accent-solid)))',
+        'sheen': 'linear-gradient(100deg, transparent, rgb(255 255 255 / 0.28), transparent)',
       },
     },
   },

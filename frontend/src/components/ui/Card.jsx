@@ -26,10 +26,16 @@ const VARIANTS = {
   solid: 'bg-surface border border-line',
 };
 
+// Opt-in, not automatic. Every card lifting on hover would make a page of eight
+// cards twitch as the cursor crosses it; the lift belongs on cards that actually
+// do something when clicked.
+const LIFT = 'transition-transform duration-200 ease-enter hover:-translate-y-0.5';
+
 export const Card = ({
   as: Tag = 'div',
   variant = 'panel',
   padding = 'md',
+  lift = false,
   className,
   children,
   ...rest
@@ -38,6 +44,7 @@ export const Card = ({
     className={cn(
       VARIANTS[variant] || VARIANTS.panel,
       'rounded-xl',
+      lift && LIFT,
       PADDING[padding] ?? PADDING.md,
       className
     )}

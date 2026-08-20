@@ -1,0 +1,1805 @@
+{
+  "course_code": "NT-C-011",
+  "course_name": ".NET Full Stack",
+  "sections": [
+    {
+      "section_code": "NT-C-011-S01",
+      "skills_assessed": [
+        "C#",
+        "Object-Oriented Programming",
+        "Testing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following C# program:\n\n```csharp\nusing System;\nusing System.Collections.Generic;\n\nclass Program\n{\n    static void M(object o) => Console.Write(\"o\");\n    static void M(IEnumerable<int> e) => Console.Write(\"e\");\n    static void M(int[] a) => Console.Write(\"a\");\n\n    static void Main()\n    {\n        int[] x = null;\n        M(x);\n    }\n}\n```\nWhat is the program's output and why?",
+          "options": [
+            "It prints: a",
+            "It prints: e",
+            "It prints: o",
+            "Compile-time error: ambiguous call to M"
+          ],
+          "correct_option": "A",
+          "explanation": "Overload resolution chooses the most specific applicable method. Given `int[] x`, all three overloads are applicable (`int[]` implements `IEnumerable<int>` and is an `object`), but `M(int[])` is more specific than `M(IEnumerable<int>)` and `M(object)`. `null` does not change applicability. Therefore it prints `a`.",
+          "distractor_rationale": "B is tempting because `int[]` implements `IEnumerable<int>`, but a more specific array overload exists. C appeals to the idea that `object` matches anything, but specificity rules still make `int[]` better. D seems plausible if one assumes optional ambiguity across reference conversions, but there is a strict better conversion to `int[]` so the call is not ambiguous.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this program print and why?\n\n```csharp\nusing System;\nusing System.Collections.Generic;\n\nstruct Point { public int X; }\n\nclass Program\n{\n    static void Main()\n    {\n        var list = new List<Point> { new Point { X = 1 } };\n        foreach (var p in list)\n        {\n            // Attempt to mutate\n            var tmp = p;\n            tmp.X = 2;\n        }\n        Console.WriteLine(list[0].X);\n    }\n}\n```\n",
+          "options": [
+            "Runtime exception: InvalidOperationException",
+            "Compiler error: cannot assign to foreach iteration variable",
+            "2",
+            "1"
+          ],
+          "correct_option": "D",
+          "explanation": "`Point` is a struct. `foreach` iterates values by copying elements. Mutating the copy does not change the original element stored in the list. Therefore the stored `X` remains 1.",
+          "distractor_rationale": "B is what would happen if `Point` were a class reference or if the mutation hit the element in place. C confuses this with the rule that the foreach iteration variable itself is readonly in older C# versions; here the code mutates a copy `tmp`, which is allowed. D imagines mutation of a collection during enumeration; no such mutation happens here.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given the following code and a modern .NET runtime:\n\n```csharp\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        var s1 = \"hello\";\n        var s2 = string.Intern(new string(\"hello\".ToCharArray()));\n        var s3 = string.Copy(s1);\n\n        Console.WriteLine(object.ReferenceEquals(s1, s2));\n        Console.WriteLine(object.ReferenceEquals(s1, s3));\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "False\\nFalse",
+            "True\\nFalse",
+            "False\\nTrue",
+            "True\\nTrue"
+          ],
+          "correct_option": "B",
+          "explanation": "`s1` is interned. `s2` is created then interned, returning the canonical interned instance, so `ReferenceEquals(s1, s2)` is `True`. `string.Copy` returns a distinct string instance with the same contents but not interned, so `ReferenceEquals(s1, s3)` is `False`.",
+          "distractor_rationale": "A assumes interning affects all strings equally, but `string.Copy` returns a separate instance. C assumes `Intern` fails to return the canonical reference. D assumes neither is the same reference, ignoring interning semantics for literals and `Intern`.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider deferred execution in LINQ:\n\n```csharp\nusing System;\nusing System.Collections.Generic;\nusing System.Linq;\n\nclass Program\n{\n    static void Main()\n    {\n        var data = new List<int> { 1, 2, 3 };\n        var q = data.Where(x => x > 1);\n        data.Add(4);\n        Console.WriteLine(string.Join(\",\", q));\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "2,3",
+            "3,4",
+            "2,3,4",
+            "1,2,3,4"
+          ],
+          "correct_option": "C",
+          "explanation": "`Where` is deferred. The query is evaluated at enumeration time. After adding 4, enumeration sees the current list contents and applies `x > 1`, yielding 2, 3, 4.",
+          "distractor_rationale": "A is the result you would get if the query had been materialized before the mutation (e.g., with `ToList()`). C mistakenly filters out 2. D ignores the predicate altogether.",
+          "skills_covered": [
+            "C#",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "How many times is the selector invoked?\n\n```csharp\nusing System;\nusing System.Linq;\n\nclass Program\n{\n    static void Main()\n    {\n        int calls = 0;\n        var seq = Enumerable.Range(1, 3).Select(x => { calls++; return x; });\n        var a = seq.Sum();\n        var b = seq.Sum();\n        Console.WriteLine(calls);\n    }\n}\n```\n",
+          "options": [
+            "Undefined: depends on JIT optimizations",
+            "6",
+            "4",
+            "3"
+          ],
+          "correct_option": "B",
+          "explanation": "Each `Sum()` fully enumerates `seq`, and the selector runs once per element per enumeration. There are three elements and two independent enumerations, so `calls` becomes 6.",
+          "distractor_rationale": "A counts only one enumeration. B imagines partial caching or fusion across calls which does not occur. D suggests JIT may change LINQ semantics; it does not for pure C# iterator pipelines here.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Examine cancellation and continuations:\n\n```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static void Main()\n    {\n        var cts = new CancellationTokenSource();\n        var t = Task.Delay(1000, cts.Token)\n            .ContinueWith(_ => 1, TaskContinuationOptions.OnlyOnRanToCompletion);\n        cts.Cancel();\n        Console.WriteLine(t.Status);\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "WaitingForActivation",
+            "RanToCompletion",
+            "Canceled",
+            "Faulted"
+          ],
+          "correct_option": "C",
+          "explanation": "`Task.Delay(…, token)` transitions to Canceled when the token is canceled. The continuation is configured with `OnlyOnRanToCompletion`, so it will not run. Therefore `t` is in the Canceled state.",
+          "distractor_rationale": "A suggests the continuation is pending, but the antecedent's cancellation completes it. C would happen for a faulted antecedent or a throwing continuation, neither applies. D assumes the continuation runs regardless of antecedent result; the option is explicitly OnlyOnRanToCompletion.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Consider disposal and exceptions:\n\n```csharp\nusing System;\n\nclass BadDisposable : IDisposable\n{\n    private readonly string _name;\n    public BadDisposable(string name) => _name = name;\n    public void Dispose() => throw new Exception($\"Dispose {_name}\");\n}\n\nclass Program\n{\n    static void Main()\n    {\n        try\n        {\n            using (var a = new BadDisposable(\"A\"))\n            using (var b = new BadDisposable(\"B\"))\n            {\n                throw new Exception(\"work\");\n            }\n        }\n        catch (Exception ex)\n        {\n            Console.WriteLine(ex.Message);\n        }\n    }\n}\n```\nWhat message is printed?",
+          "options": [
+            "Dispose B",
+            "Dispose A",
+            "Aggregate exception containing both Dispose A and work",
+            "work"
+          ],
+          "correct_option": "A",
+          "explanation": "The inner `using`'s `Dispose` (`b.Dispose`) runs first in the `finally` and throws, replacing the original `work` exception during unwinding. The outer `using`'s `Dispose` would then run; if it also throws, the last thrown could replace the prior one, but here only `b.Dispose` is observed. C# does not automatically aggregate these exceptions.",
+          "distractor_rationale": "A assumes the original exception survives disposal; it is replaced by the first dispose that throws. B would be printed only if the outer dispose threw and replaced an inner exception; here the inner dispose throws first and is caught. D imagines automatic aggregation/suppressed exceptions; C# prior to specialized constructs does not aggregate disposals by default.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What is the observable output and why?\n\n```csharp\nusing System;\n\nclass Base\n{\n    public Base() { Print(); }\n    public virtual void Print() { Console.Write(\"B\"); }\n}\n\nclass Derived : Base\n{\n    private string msg = \"D\";\n    public override void Print() { Console.Write(msg); }\n}\n\nclass Program\n{\n    static void Main() => new Derived();\n}\n```\n",
+          "options": [
+            "D",
+            "B",
+            "NullReferenceException at runtime",
+            "No output"
+          ],
+          "correct_option": "D",
+          "explanation": "Virtual dispatch calls `Derived.Print` from the base constructor. However, instance field initializers in `Derived` run after the base constructor, so `msg` is `null` at the time of the call. `Console.Write(string)` with `null` writes nothing and does not throw.",
+          "distractor_rationale": "A assumes the derived field is initialized before the base constructor executes; it is not. B assumes non-virtual call behavior from constructors; calls are virtual. D assumes writing `null` causes a `NullReferenceException`; `Console.Write(string)` accepts null and writes nothing.",
+          "skills_covered": [
+            "C#",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Analyze the ordering result:\n\n```csharp\nusing System;\nusing System.Linq;\n\nclass Program\n{\n    static void Main()\n    {\n        var data = new[] { (K:\"a\", V:2), (K:\"a\", V:1), (K:\"b\", V:1) };\n        var r = data\n            .OrderBy(x => x.K)\n            .OrderBy(x => x.V); // second OrderBy here\n\n        Console.WriteLine(string.Join(\",\", r.Select(x => $\"{x.K}{x.V}\")));\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "a1,a2,b1",
+            "a1,b1,a2",
+            "a2,a1,b1",
+            "b1,a1,a2"
+          ],
+          "correct_option": "B",
+          "explanation": "The second `OrderBy` discards the previous ordering and orders solely by `V`. For equal `V`, the relative order is that of the original source (not the prior ordering). Original source order is (a2,a1,b1) in terms of pairs; grouping by `V`: for V=1 we have (a1,b1) preserving source order; then V=2 is (a2). Thus output: `a1,b1,a2`.",
+          "distractor_rationale": "A is what you get if you incorrectly assume chaining `OrderBy` then another `OrderBy` means primary then secondary key. That requires `ThenBy`. C assumes a different stability or source order. D assumes the previous `OrderBy` is still contributing to the final ordering; it is not.",
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A developer writes this test expecting it to pass:\n\n```csharp\n// Production code\nusing System.Collections.Generic;\n\nIEnumerable<int> Get()\n{\n    yield return 1;\n    yield return 2;\n    throw new System.InvalidOperationException(\"boom\");\n}\n\n// Test code (pseudo xUnit)\n[Fact]\npublic void Get_Throws()\n{\n    Assert.Throws<System.InvalidOperationException>(() => Get());\n}\n```\nWhat actually happens when the test runs?",
+          "options": [
+            "The test fails because `Get` does not throw until enumeration begins.",
+            "The test intermittently passes depending on JIT and optimization.",
+            "The test passes because `Get` throws when called.",
+            "The test hangs because of deferred execution."
+          ],
+          "correct_option": "A",
+          "explanation": "Iterator methods using `yield` are lazy. No user code runs until the sequence is enumerated. The exception will be thrown during enumeration, not at method call. The assertion as written will fail. The test must eagerly enumerate (e.g., `Assert.Throws(..., () => Get().ToList())`).",
+          "distractor_rationale": "A assumes normal eager execution. C suggests deadlock or blocking; plain enumeration is synchronous. D imagines non-determinism due to optimization; enumeration timing is well-defined.",
+          "skills_covered": [
+            "Testing",
+            "C#"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are adding discounts to a console-based order calculator. Current implementation hard-codes rules:\n\n```csharp\npublic decimal CalculatePrice(Order order)\n{\n    decimal price = order.Lines.Sum(l => l.UnitPrice * l.Qty);\n    if (order.Customer.IsVip) price *= 0.90m;\n    if (price > 1000m) price *= 0.95m;\n    return price;\n}\n```\nNew requirements:\n- Seasonal discount (10%) applies only to non-VIP customers.\n- First-time buyer discount (15%) cannot be combined with any other discount.\n- Business wants to add/remove rules without editing `CalculatePrice` and to control their application order.\nYou must keep it as a console app for now, but make it testable.",
+          "task": "Propose an OOP design that supports these requirements, show a minimal code sketch of the core types and composition using LINQ, and explain how your design enforces rule precedence and non-combinable constraints while remaining testable.",
+          "expected_answer": "A good answer introduces a strategy-like abstraction for discount rules with metadata for priority and combinability, composes them externally, and applies them in order with LINQ. For example:\n\n```csharp\npublic interface IDiscountRule\n{\n    int Priority { get; }\n    bool CanCombine { get; }\n    bool IsApplicable(Order order);\n    decimal Apply(decimal currentPrice, Order order);\n}\n\npublic sealed class VipRule : IDiscountRule\n{\n    public int Priority => 100; // lower runs earlier\n    public bool CanCombine => true;\n    public bool IsApplicable(Order o) => o.Customer.IsVip;\n    public decimal Apply(decimal p, Order o) => p * 0.90m;\n}\n\npublic sealed class HighValueRule : IDiscountRule\n{\n    public int Priority => 200;\n    public bool CanCombine => true;\n    public bool IsApplicable(Order o) => p(o) > 1000m;\n    decimal p(Order o) => o.Lines.Sum(l => l.UnitPrice * l.Qty);\n    public decimal Apply(decimal p, Order o) => p * 0.95m;\n}\n\npublic sealed class SeasonalNonVipRule : IDiscountRule\n{\n    public int Priority => 150;\n    public bool CanCombine => true;\n    public bool IsApplicable(Order o) => !o.Customer.IsVip && o.SeasonalActive;\n    public decimal Apply(decimal p, Order o) => p * 0.90m;\n}\n\npublic sealed class FirstTimeBuyerRule : IDiscountRule\n{\n    public int Priority => 50;\n    public bool CanCombine => false; // cannot combine with any other\n    public bool IsApplicable(Order o) => o.Customer.IsFirstTime;\n    public decimal Apply(decimal p, Order o) => p * 0.85m;\n}\n\npublic class PricingEngine\n{\n    private readonly IReadOnlyList<IDiscountRule> _rules;\n    public PricingEngine(IEnumerable<IDiscountRule> rules) =>\n        _rules = rules.OrderBy(r => r.Priority).ToList();\n\n    public decimal CalculatePrice(Order order)\n    {\n        decimal basePrice = order.Lines.Sum(l => l.UnitPrice * l.Qty);\n        var applicable = _rules.Where(r => r.IsApplicable(order)).ToList();\n        // If any non-combinable rule applies, pick the highest-priority one only\n        var nonComb = applicable.FirstOrDefault(r => !r.CanCombine);\n        if (nonComb != null) return nonComb.Apply(basePrice, order);\n        // Otherwise apply all combinable in priority order\n        return applicable.Aggregate(basePrice, (p, r) => r.Apply(p, order));\n    }\n}\n```\nJustification: Each rule is isolated, easily unit-testable, and can be added/removed via composition (e.g., DI or a factory in Program.cs). Priority enforces order deterministically. The non-combinable case is enforced by branching: if any such rule applies, it short-circuits others. The engine exposes pure logic without I/O, so unit tests can assert pricing outcomes for different orders. Console UI remains a thin shell invoking `PricingEngine`.",
+          "rubric": [
+            {
+              "criterion": "Defines an appropriate abstraction for discount rules with applicability and application (e.g., interface with IsApplicable/Apply)",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how rules are composed externally and ordered deterministically (e.g., Priority + LINQ OrderBy)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly enforces non-combinable rule behavior and explains precedence reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses testability (pure logic, unit-testable rules/engine) and separation from console I/O",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C#",
+            "Testing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A console tool must process thousands of lines from files using asynchronous I/O. A teammate wrote:\n\n```csharp\nvar lines = System.IO.File.ReadAllLines(path);\nParallel.ForEach(lines, async line =>\n{\n    await ProcessAsync(line); // writes to an async sink\n});\nConsole.WriteLine(\"Done\");\n```\n`Done` prints before all lines are processed, and sometimes some work is lost under load.",
+          "task": "Diagnose precisely what is wrong and propose a corrected approach that preserves asynchrony, ensures all work completes, and allows bounding concurrency. Provide a concrete code sketch and explain why it works.",
+          "expected_answer": "Diagnosis: `Parallel.ForEach` expects a synchronous body and does not understand `async` lambdas. The `async` lambda here is an `async void` delegate under the hood, fire-and-forget, so `Parallel.ForEach` completes without awaiting. Work can still be in-flight or dropped if exceptions occur.\n\nFix: Use `Task`-aware composition. Options include `Task.WhenAll` over a projection, `Parallel.ForEachAsync` (in .NET 6+) with proper `ValueTask` handling, and/or a `SemaphoreSlim` to bound concurrency.\n\nExample with `WhenAll` and bound concurrency:\n\n```csharp\nvar throttler = new SemaphoreSlim(8);\nvar tasks = File.ReadLines(path)\n    .Select(async line =>\n    {\n        await throttler.WaitAsync();\n        try { await ProcessAsync(line); }\n        finally { throttler.Release(); }\n    });\nawait Task.WhenAll(tasks);\nConsole.WriteLine(\"Done\");\n```\n\nOr with `Parallel.ForEachAsync`:\n\n```csharp\nawait Parallel.ForEachAsync(File.ReadLines(path), new ParallelOptions { MaxDegreeOfParallelism = 8 },\n    async (line, ct) => await ProcessAsync(line));\nConsole.WriteLine(\"Done\");\n```\nWhy it works: Both versions return a `Task` you can await, ensuring completion before printing `Done`. Concurrency is explicitly bounded. Exceptions propagate via the awaited `Task` instead of being lost.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies that `Parallel.ForEach` does not await `async` delegates and explains `async void`/fire-and-forget behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct, task-based rewrite that awaits completion (e.g., Task.WhenAll or Parallel.ForEachAsync)",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how to bound concurrency (e.g., SemaphoreSlim or MaxDegreeOfParallelism)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains exception and completion semantics improvement over the original",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C#"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A flaky unit test occasionally fails in CI:\n\n```csharp\npublic class TokenGenerator\n{\n    private static readonly Random _rng = new Random();\n    public string NextToken() => _rng.Next(0, 1000000).ToString();\n}\n\n[Fact]\npublic void GeneratesUniqueTokens()\n{\n    var gen = new TokenGenerator();\n    var tokens = Enumerable.Range(0, 10000).Select(_ => gen.NextToken());\n    Assert.Equal(10000, tokens.Distinct().Count());\n}\n```\nFailures are rare but happen.",
+          "task": "Explain the precise source of flakiness and redesign both the production code and the test to be deterministic and meaningful. Include code showing your design for testability and what the test should assert instead.",
+          "expected_answer": "Source: `Random` is not cryptographically strong and can produce collisions; using a shared static `Random` also introduces thread-safety issues and test coupling. The uniqueness assertion over 10k draws from ~1e6 space is probabilistic and will flake.\n\nRedesign for testability: Inject a number/string source so tests can control it, and in production use a stronger generator if uniqueness is required (e.g., `Guid` or `RandomNumberGenerator`). Tests should verify behavior, not probabilistic uniqueness.\n\nExample:\n\n```csharp\npublic interface ITokenSource { string Next(); }\npublic sealed class GuidTokenSource : ITokenSource\n{\n    public string Next() => Guid.NewGuid().ToString(\"N\");\n}\n\npublic sealed class SequenceTokenSource : ITokenSource\n{\n    private int _i;\n    public string Next() => (_i++).ToString();\n}\n\npublic class TokenGenerator\n{\n    private readonly ITokenSource _source;\n    public TokenGenerator(ITokenSource source) => _source = source;\n    public string NextToken() => _source.Next();\n}\n\n// Test\n[Fact]\npublic void GeneratesIncreasingTokens_WithSequenceSource()\n{\n    var gen = new TokenGenerator(new SequenceTokenSource());\n    var tokens = Enumerable.Range(0, 5).Select(_ => gen.NextToken()).ToList();\n    Assert.Equal(new[]{\"0\",\"1\",\"2\",\"3\",\"4\"}, tokens);\n}\n```\nIn production `Program` composes `TokenGenerator` with `GuidTokenSource`. Deterministic tests assert documented behavior (format/order), not statistical properties.",
+          "rubric": [
+            {
+              "criterion": "Identifies probabilistic uniqueness and static Random as the cause of flakiness",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes dependency injection or an interface to make generation controllable in tests",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete revised production code using a deterministic or strong source",
+              "marks": 2
+            },
+            {
+              "criterion": "Rewrites the test to assert deterministic, meaningful behavior",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Testing",
+            "Object-Oriented Programming",
+            "C#"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A console app aggregates people by identity using a `HashSet<Person>` and `Distinct()`:\n\n```csharp\npublic class Person\n{\n    public int Id { get; set; }\n    public string Name { get; set; }\n    public override bool Equals(object obj) => ((Person)obj).Id == Id;\n    public override int GetHashCode() => 42; // placeholder\n}\n\nvar people = new[]{ new Person{Id=1,Name=\"A\"}, new Person{Id=1,Name=\"A\"}, new Person{Id=2,Name=\"B\"} };\nvar distinct = people.Distinct().ToList(); // sometimes behaves poorly in larger sets\n```\n`Distinct()` appears slow and sometimes misses expected de-duplication in a larger dataset when `Id` changes during processing.",
+          "task": "Critique this implementation. Propose a robust equality strategy that works with LINQ and `HashSet`, avoids performance pathologies, and addresses mutability concerns. Provide corrected code and justify trade-offs.",
+          "expected_answer": "Problems: `Equals` lacks null/type checks and will throw on non-`Person`. `GetHashCode` returning a constant causes extreme hash collisions and poor performance. Using a mutable property (`Id`) in equality leads to undefined behavior in `HashSet`/`Distinct` if it changes while in a set.\n\nFix 1 (override properly, keep identity immutable):\n\n```csharp\npublic class Person\n{\n    public int Id { get; }\n    public string Name { get; set; }\n\n    public Person(int id, string name) { Id = id; Name = name; }\n\n    public override bool Equals(object obj)\n        => obj is Person other && other.Id == Id;\n\n    public override int GetHashCode() => Id.GetHashCode();\n}\n```\nNow identity is immutable and hashing stable; `Distinct()` and `HashSet<Person>` behave correctly and fast.\n\nFix 2 (leave class mutable, supply comparer at use site):\n\n```csharp\nsealed class PersonIdComparer : IEqualityComparer<Person>\n{\n    public bool Equals(Person x, Person y) => x?.Id == y?.Id;\n    public int GetHashCode(Person obj) => obj?.Id.GetHashCode() ?? 0;\n}\n\nvar distinct = people.Distinct(new PersonIdComparer()).ToList();\n```\nTrade-offs: Overriding ties equality to the type globally, which is appropriate for true identity. A custom comparer localizes equality and is safer if `Id` can change or multiple notions of equality are needed. In all cases, avoid mutating fields that participate in hashing while the object is in a hashed collection.",
+          "rubric": [
+            {
+              "criterion": "Identifies flaws: constant hash code, unsafe Equals, and mutability problems affecting hashed collections",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct override of Equals/GetHashCode with type/null safety and stable identity",
+              "marks": 2
+            },
+            {
+              "criterion": "Offers an alternative comparer-based approach and shows LINQ/HashSet usage",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains mutability/collection interaction and performance implications",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C#"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Console Task Manager with async operations and unit tests",
+          "brief": "Build a console application that manages tasks (to-dos). It must support commands to add, list, complete, delete, and search tasks. Persist in-memory for this exercise. Simulate asynchronous persistence with cancellable async methods. Provide a separate test project covering the core logic. Keep the console UI thin and test the domain/services instead.",
+          "deliverable": "A .NET solution containing: (1) a console app project runnable with `dotnet run` that accepts commands via standard input; (2) a test project runnable with `dotnet test`; (3) instructions (`README.md`) with sample commands. No external packages required.",
+          "acceptance_criteria": [
+            "Commands implemented: `add <title>`, `list`, `complete <id>`, `delete <id>`, `search <term>`, `exit`.",
+            "Listing shows IDs, titles, and completion status exactly in the format: `[#<id>] <title> (Done|Pending)` one per line, stable order by ID ascending.",
+            "`search <term>` uses case-insensitive substring match implemented with LINQ, returning the same listing format but filtered.",
+            "All mutations (`add`, `complete`, `delete`) call an `async` service method that awaits a `Task.Delay` to simulate I/O and honors a `CancellationToken`.",
+            "`complete <id>` and `delete <id>` print `NotFound` if the ID does not exist and leave state unchanged.",
+            "Graceful input handling: unknown command prints `UnknownCommand` and continues; empty lines are ignored.",
+            "Unit tests (minimum 8) cover: adding, completing, deleting, searching logic; attempting to complete/delete non-existent IDs; that async methods respect cancellation (assert OperationCanceledException); and that the console UI delegates to the service without embedding business logic.",
+            "`dotnet test` passes all tests; `dotnet run` session with the provided sample below reproduces the expected output."
+          ],
+          "rubric": [
+            {
+              "criterion": "Domain model and OOP design (Task entity, repository/service abstraction, separation from console)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct LINQ usage for listing/searching and stable ordering",
+              "marks": 4
+            },
+            {
+              "criterion": "Async service methods implemented with proper cancellation support and awaited in the UI",
+              "marks": 4
+            },
+            {
+              "criterion": "Command parsing and console I/O behavior match acceptance criteria including error cases",
+              "marks": 4
+            },
+            {
+              "criterion": "Comprehensive, passing unit tests focused on core logic (no flakiness)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "C#",
+            "Object-Oriented Programming",
+            "Testing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Async CSV Analyzer (console) with deterministic tests",
+          "brief": "Create a console app that reads a CSV file of sales records and prints summary statistics. Use async file I/O. Model records with types and use LINQ for aggregation. Include tests for parsing and aggregation.",
+          "deliverable": "A .NET solution with: (1) a console app that accepts an input path argument; (2) a test project; (3) a sample `sales.csv` committed to the repo for validation; (4) README with run instructions.",
+          "acceptance_criteria": [
+            "CSV schema: `date,region,product,qty,price` (headers included). Dates are ISO `yyyy-MM-dd`, qty integer, price decimal with `.`. Invalid rows are skipped and counted.",
+            "Async reading implemented with `StreamReader.ReadLineAsync` or `File.ReadLinesAsync` pattern; no full-file synchronous reads.",
+            "Outputs exactly these lines:\n1) `TotalRevenue:<decimal>` (qty*price sum)\n2) `TotalQty:<int>`\n3) `TopProducts:<product1>|<product2>|<product3>` by revenue descending (ties broken by product name ascending)\n4) `Regions:<region1>=<revenue1>;...` sorted by region name ascending\n5) `InvalidRows:<int>`\n",
+            "LINQ used for aggregations (GroupBy, Sum, OrderBy/ThenBy, Take).",
+            "Implements a pure parser method that takes a CSV line and returns either a record or an error; tested deterministically.",
+            "At least 6 unit tests: valid parse, invalid parse (bad qty/price/date), revenue aggregation, top products ordering including tie-breaker, region breakdown sorting, and that invalid rows do not affect totals.",
+            "Running `dotnet run -- sales.csv` on the provided sample below produces the expected output shown below."
+          ],
+          "rubric": [
+            {
+              "criterion": "Type modeling and parsing robustness (pure parse with clear success/failure)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct async file reading (no synchronous full reads) and proper awaiting",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate LINQ aggregations matching ordering/tie-break rules",
+              "marks": 5
+            },
+            {
+              "criterion": "Console output format matches exactly and is reproducible with sample input",
+              "marks": 3
+            },
+            {
+              "criterion": "Deterministic, meaningful unit tests covering parser and aggregations",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "C#",
+            "Object-Oriented Programming",
+            "Testing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-011-S02",
+      "skills_assessed": [
+        "SQL",
+        "Entity Framework Core",
+        "HTML",
+        "JavaScript"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run the following against SQL Server with the shown data.\n\n```sql\n-- Data\nCREATE TABLE Customers(CustomerId INT PRIMARY KEY);\nINSERT INTO Customers VALUES (1),(2),(3);\n\nCREATE TABLE Orders(OrderId INT IDENTITY PRIMARY KEY, CustomerId INT NULL);\nINSERT INTO Orders(CustomerId) VALUES (1), (NULL);\n\n-- Query under test\nSELECT c.CustomerId\nFROM Customers c\nWHERE c.CustomerId NOT IN (SELECT o.CustomerId FROM Orders o);\n```\nWhat is the result of the final SELECT?",
+          "options": [
+            "```text\n-- empty set (zero rows)\n```",
+            "```text\n2\n3\n-- only if SET ANSI_NULLS OFF\n```",
+            "```text\n3\n```",
+            "```text\n2\n3\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The subquery returns the set {1, NULL}. NOT IN with a NULL in the right-hand set yields UNKNOWN for all comparisons, so the predicate never evaluates to TRUE and the result is an empty set.",
+          "distractor_rationale": "A: Many believe NOT IN simply subtracts 1, returning {2,3}, but NULL in the subquery poisons the comparison. B: ANSI_NULLS OFF does not change NOT IN's three-valued logic for NULL containment in this context. D: Picking a single excluded value (3) confuses NOT IN with a specific anti-join on a known value.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this EF Core code:\n\n```csharp\nusing var ctx = new AppDbContext();\nvar p = ctx.Products.AsNoTracking().First(x => x.Id == 5);\np.Price += 10;\nctx.SaveChanges();\n```\nAssume the entity exists and the code runs without exceptions. What happens in the database?",
+          "options": [
+            "EF Core starts tracking at SaveChanges and updates the row.",
+            "An InvalidOperationException is thrown because the entity is detached.",
+            "No changes are saved because EF Core is not tracking the entity.",
+            "The row with Id 5 is updated with the new Price."
+          ],
+          "correct_option": "C",
+          "explanation": "Entities materialized via AsNoTracking are not tracked. Modifying the detached entity and calling SaveChanges does nothing. No exception is thrown, and EF does not auto-track at SaveChanges.",
+          "distractor_rationale": "A: Confuses tracked vs. untracked entities; only tracked changes are persisted. B: EF Core allows SaveChanges with no tracked changes; it doesn't throw for detached instances. D: EF does not implicitly attach detached instances at SaveChanges without an explicit Attach/Update call.",
+          "skills_covered": [
+            "Entity Framework Core"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given table and index:\n\n```sql\nCREATE TABLE Person(\n  PersonId INT PRIMARY KEY,\n  LastName NVARCHAR(50),\n  FirstName NVARCHAR(50),\n  City NVARCHAR(50)\n);\nCREATE INDEX IX_Person_Last_First ON Person(LastName, FirstName);\n```\nYou run:\n\n```sql\nSELECT *\nFROM Person\nWHERE FirstName = 'Ali'\nORDER BY LastName;\n```\nAssume many rows and no covering index for City. Which access pattern is the optimizer most likely to choose?",
+          "options": [
+            "Index scan on IX_Person_Last_First with residual filter on FirstName; no extra sort needed.",
+            "Index seek on FirstName, then sort on LastName.",
+            "Table scan followed by explicit sort on LastName.",
+            "Index seek on LastName then residual filter on FirstName; no sort."
+          ],
+          "correct_option": "A",
+          "explanation": "The composite index is ordered by (LastName, FirstName). Without a predicate on the leading key (LastName), it cannot seek by FirstName. It can scan the index in LastName order, apply a residual filter on FirstName, and avoid an extra sort because the required ORDER BY matches the index's leading key.",
+          "distractor_rationale": "A: You cannot seek on the second column without constraining the first. C: A table scan with sort is possible but usually costlier than scanning the already-ordered index. D: You cannot perform a pinpoint seek on LastName when no value is provided; this degenerates to a scan, which is essentially B but the claimed seek is misleading.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You change your EF Core model property `Phone` from nullable to required and add `[Required]` (or fluent `.IsRequired()`):\n\n```csharp\npublic class Customer\n{\n    public int Id { get; set; }\n    public string Phone { get; set; } = null!; // was string?\n}\n```\nThe generated migration becomes (simplified):\n\n```csharp\nmigrationBuilder.AlterColumn<string>(\n    name: \"Phone\",\n    table: \"Customers\",\n    type: \"nvarchar(20)\",\n    nullable: false,\n    oldClrType: typeof(string),\n    oldType: \"nvarchar(20)\",\n    oldNullable: true);\n```\nYour existing table has some NULL Phone values. What happens when you apply the migration?",
+          "options": [
+            "It succeeds but the model snapshot becomes inconsistent with the database.",
+            "It fails at apply time with a constraint violation due to existing NULLs.",
+            "It succeeds; EF auto-fills empty strings for NULLs.",
+            "SQL Server converts NULLs to '0' for NOT NULL columns."
+          ],
+          "correct_option": "B",
+          "explanation": "Altering a column to NOT NULL with existing NULL data violates the constraint and the migration fails unless you provide a default value or fix the data first.",
+          "distractor_rationale": "A: EF Core does not automatically rewrite NULL data. C: The snapshot reflects your model; the failure happens before persistence changes, not as a silent drift. D: SQL Server does not coerce NULLs to literal strings when enforcing NOT NULL.",
+          "skills_covered": [
+            "Entity Framework Core",
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your card grid overflows horizontally on narrow phones. Current CSS:\n\n```css\n.container { display: flex; }\n.card { flex: 0 0 300px; margin: 16px; }\n```\nWithout adding breakpoint-specific rules, which single change best prevents overflow while keeping cards roughly 300px when space allows?",
+          "options": [
+            "```css\n.container { overflow-x: auto; }\n```",
+            "```css\n.card { flex: 1 1 300px; min-width: 0; }\n```",
+            "```css\n.container { flex-wrap: wrap; }\n```",
+            "```css\n.card { width: 100vw; }\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Allowing cards to grow and shrink with a basis of 300px, and ensuring `min-width: 0` so they can shrink below intrinsic size, lets single cards fit within narrow viewports without overflow while still targeting ~300px when space exists.",
+          "distractor_rationale": "B: Wrapping helps multiple columns, but a single 300px card with margins can still overflow a 320px viewport if it can't shrink. C: 100vw ignores container padding/margins and often still overflows due to margins/scrollbars. D: Adds a scrollbar instead of fixing the layout; still overflows content.",
+          "skills_covered": [
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You sort prices stored as strings in the browser:\n\n```javascript\nconst products = [\n  { name: 'A', price: '9' },\n  { name: 'B', price: '12' },\n  { name: 'C', price: '100' }\n];\nproducts.sort((a, b) => a.price.localeCompare(b.price));\nconsole.log(products.map(p => p.price).join(','));\n```\nWhat should you do to get correct numeric ascending order without preconverting your data model?",
+          "options": [
+            "```javascript\nproducts.sort((a,b) => parseInt(a.price) - parseInt(b.price));\n```",
+            "```javascript\nproducts.sort((a,b) => a.price - b.price);\n```",
+            "```javascript\nproducts.sort((a,b) => a.price.toFixed(2).localeCompare(b.price.toFixed(2)));\n```",
+            "```javascript\nproducts.sort((a,b) => a.price.localeCompare(b.price, undefined, { numeric: true }));\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "`localeCompare` with `{ numeric: true }` compares digit sequences numerically while keeping the values as strings, yielding 9,12,100 order without altering the model or risking parse issues with locales/decimals.",
+          "distractor_rationale": "B: Works for integers but fails for decimals (parseInt truncates). C: Subtracting coerces to numbers but breaks if any price contains localized formats (e.g., commas). D: `toFixed` is a Number method; calling it on strings would first require conversion and still sorts lexically, not numerically, across locales.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This LEFT JOIN unexpectedly drops orders without payments:\n\n```sql\nSELECT o.Id, p.Amount\nFROM Orders o\nLEFT JOIN Payments p ON p.OrderId = o.Id\nWHERE p.Status = 'Captured';\n```\nHow do you preserve orders with no payments while still filtering captured payments when present?",
+          "options": [
+            "```sql\nSELECT o.Id, p.Amount\nFROM Orders o\nLEFT JOIN Payments p ON p.OrderId = o.Id\nWHERE p.Status <> 'Failed';\n```",
+            "```sql\nSELECT o.Id, p.Amount\nFROM Orders o\nLEFT JOIN Payments p\n  ON p.OrderId = o.Id AND p.Status = 'Captured';\n```",
+            "```sql\nSELECT o.Id, p.Amount\nFROM Orders o\nLEFT JOIN (\n  SELECT * FROM Payments WHERE Status = 'Captured'\n) p ON p.OrderId = o.Id\nWHERE p.Status = 'Captured';\n```",
+            "```sql\nSELECT o.Id, p.Amount\nFROM Orders o\nINNER JOIN Payments p ON p.OrderId = o.Id AND p.Status = 'Captured';\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Put the filter predicate on the JOIN condition, not in the WHERE clause. This keeps unmatched orders (NULL payment rows) while only matching captured payments when they exist.",
+          "distractor_rationale": "B: Moving the filter into a subquery but still applying `WHERE p.Status='Captured'` after the join reintroduces the inner-join effect. C: Changes semantics and still eliminates NULL matches. D: Explicitly makes it an INNER JOIN, which is the bug.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What is the effect of `Include` here?\n\n```csharp\nvar data = ctx.Customers\n    .Include(c => c.Orders)\n    .Select(c => new\n    {\n        c.Id,\n        OrderCount = c.Orders.Count()\n    })\n    .ToList();\n```\nAssume EF Core 6+ and a relational provider.",
+          "options": [
+            "The query fails because `Include` cannot be combined with projection.",
+            "`Include` forces eager loading of Orders, and then the projection runs client-side.",
+            "`Include` is ignored because of the projection; EF generates a single SQL with a correlated COUNT, and no `Orders` are loaded.",
+            "EF performs two queries: one for Customers and one for Orders, then merges."
+          ],
+          "correct_option": "C",
+          "explanation": "EF Core ignores `Include` when projecting to a non-entity type. It translates `c.Orders.Count()` into SQL (often a correlated subquery or GROUP BY) and does not load the `Orders` collection.",
+          "distractor_rationale": "B: In EF Core 3+, client-eval of arbitrary query parts was removed; this projection is translated to SQL instead. C: Split queries occur with `AsSplitQuery` or complex `Include`s on entity shapes, not for a scalar projection like Count. D: Projection with `Include` is allowed; `Include` just becomes a no-op here.",
+          "skills_covered": [
+            "Entity Framework Core"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your front end prevents duplicate email signups by keeping a `Set` of existing emails loaded at page init. Two users submit the same new email concurrently. One will slip through unless the persistence layer stops it. Which approach guarantees consistency?",
+          "options": [
+            "Perform a `SELECT` before `INSERT` in application code to check for existence.",
+            "Keep the front-end `Set` and debounce submissions for 5 seconds.",
+            "Annotate the EF Core entity with `[Index(nameof(Email), IsUnique = true)]` without adding a migration.",
+            "Create a unique index/constraint on `Email` in the database and surface any violation back to the UI."
+          ],
+          "correct_option": "D",
+          "explanation": "Only a database-enforced unique constraint/index guarantees consistency under concurrency. The UI can be optimistic and then handle a constraint violation gracefully.",
+          "distractor_rationale": "A: Timing does not solve race conditions. B: The attribute influences migrations; without applying a migration, the DB has no constraint. D: A pre-check is subject to TOCTOU races between the check and the insert.",
+          "skills_covered": [
+            "SQL",
+            "Entity Framework Core",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You dynamically add list items with \"Remove\" buttons. Existing code binds clicks only once and new buttons do nothing.\n\n```html\n<ul id=\"list\"></ul>\n```\n\n```javascript\nfunction addItem(text){\n  const li = document.createElement('li');\n  li.innerHTML = `${text} <button class=\"remove\">Remove</button>`;\n  document.getElementById('list').appendChild(li);\n}\n\ndocument.querySelectorAll('.remove')\n  .forEach(btn => btn.addEventListener('click', () => console.log('removed')));\n```\nWhat change makes future buttons work without rebinding after each add?",
+          "options": [
+            "```javascript\ndocument.getElementById('list').addEventListener('click', (e) => {\n  if (e.target.matches('.remove')) {\n    console.log('removed');\n  }\n});\n```",
+            "```javascript\nfunction addItem(text){\n  // after append\n  document.querySelectorAll('.remove').forEach(/* rebind each time */);\n}\n```",
+            "```javascript\n// inline HTML handler\ndocument.body.insertAdjacentHTML('beforeend', '<button class=\"remove\" onclick=\"console.log(\\'removed\\')\">x</button>');\n```",
+            "```javascript\ndocument.getElementById('list').addEventListener('click', handler, true);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Event delegation binds a single handler to the stable parent and checks the event target, so dynamically added buttons are handled without rebinding.",
+          "distractor_rationale": "B: Works but causes repeated DOM queries and rebinding overhead; brittle. C: Capture phase does not solve that the handler is bound to the wrong elements; you still need delegation. D: Inline handlers mix content and behavior and still don't handle future elements unless you inject handlers for each.",
+          "skills_covered": [
+            "JavaScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are modeling a booking system for guided tours. Entities: `Tour` (Id, Title, Price, Active), `Customer` (Id, Email), `Booking` (Id, TourId, CustomerId, BookedAt, Status), and a many-to-many `TourTag` (TourId, Tag) for faceted search. Current pain points:\n\n- Occasional duplicate `TourTag` rows for the same (TourId, Tag) appear after concurrent admin edits.\n- `Price` arithmetic shows rounding drift in monthly revenue reports.\n- A frequent query filters active tours by tag and sorts by bookings in the last 30 days.\n\nYou will implement persistence with EF Core and SQLite/SQL Server now; the UI comes later.",
+          "task": "Decide and justify: (a) the EF Core configuration needed to prevent duplicate `TourTag`s; (b) how to store and configure `Price` to avoid drift; (c) which indexes to add to support the frequent query efficiently; (d) how to shape the EF Core query to avoid N+1s while computing recent booking counts for listing cards.",
+          "expected_answer": "a) Configure a composite key or unique index on (TourId, Tag). In EF Core fluent API: for owned simple table, use `modelBuilder.Entity<TourTag>().HasKey(tt => new { tt.TourId, tt.Tag });` or `HasIndex(tt => new { tt.TourId, tt.Tag }).IsUnique();`. Apply a migration so the database enforces it. Relying on pre-insert checks races; only a unique constraint guarantees correctness under concurrency.\n\nb) Store `Price` as a decimal with fixed precision/scale appropriate to currency, e.g., SQL Server `decimal(10,2)` and EF Core `HasColumnType(\"decimal(10,2)\")`. Avoid `float/double`. In SQLite, map to `TEXT` affinity via EF type mapping or still configure decimal to avoid binary float. Ensure calculations aggregate in SQL as decimals.\n\nc) Indexes: on Tours, `CREATE INDEX IX_Tours_Active ON Tours(Active)` may help, but more valuable is a composite covering index for the tag filter and Active: `CREATE INDEX IX_TourTag_Tag_TourId ON TourTag(Tag, TourId)` plus an index on `Booking(TourId, BookedAt)` to support date range filters and grouping. If sorting by recent bookings, also consider including `Status` in the booking index if you filter by it.\n\nd) Write one set-based query. Example:\n\n```csharp\nvar since = DateTime.UtcNow.AddDays(-30);\nvar q = ctx.Tours\n    .Where(t => t.Active && t.TourTags.Any(tt => tt.Tag == tag))\n    .Select(t => new {\n        t.Id,\n        t.Title,\n        t.Price,\n        RecentCount = ctx.Bookings.Count(b => b.TourId == t.Id && b.BookedAt >= since && b.Status == \"Confirmed\")\n    })\n    .OrderByDescending(x => x.RecentCount);\nvar list = await q.ToListAsync();\n```\nOr use a GroupJoin:\n\n```csharp\nvar list = await ctx.Tours\n    .Where(t => t.Active && t.TourTags.Any(tt => tt.Tag == tag))\n    .GroupJoin(\n        ctx.Bookings.Where(b => b.BookedAt >= since && b.Status == \"Confirmed\"),\n        t => t.Id,\n        b => b.TourId,\n        (t, bs) => new { t.Id, t.Title, t.Price, RecentCount = bs.Count() })\n    .OrderByDescending(x => x.RecentCount)\n    .ToListAsync();\n```\nThis compiles to a single SQL statement (with EXISTS/COUNT) and avoids N+1s and unnecessary `Include`s.",
+          "rubric": [
+            {
+              "criterion": "Correctly proposes a DB-enforced uniqueness for (TourId, Tag) via composite key or unique index and explains concurrency reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Chooses fixed-point decimal for Price with appropriate precision/scale and rejects float/double, with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies helpful indexes for Tag filtering and recent bookings (TourTag Tag, TourId; Booking TourId, BookedAt [and possibly Status])",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a set-based EF Core query that translates to single SQL with COUNT/EXISTS and avoids N+1s/Include misuse, with justification",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Entity Framework Core",
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You have a bookings table used by ops on desktop, but the public site must be mobile-friendly. Current markup:\n\n```html\n<table class=\"bookings\">\n  <thead>\n    <tr>\n      <th>Tour</th><th>Date</th><th>Name</th><th>Party</th><th>Status</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td data-label=\"Tour\">City Walk</td>\n      <td data-label=\"Date\">2026-09-12</td>\n      <td data-label=\"Name\">Lee</td>\n      <td data-label=\"Party\">4</td>\n      <td data-label=\"Status\">Confirmed</td>\n    </tr>\n    <!-- many rows -->\n  </tbody>\n</table>\n```\nOn 360px phones, the table overflows and text wraps awkwardly; horizontal scroll is not acceptable. You cannot remove columns for ops desktop, but you may alter HTML/CSS and add minimal ARIA. JS sorting/filtering comes later.",
+          "task": "Propose a responsive approach that keeps the same data but adapts for narrow screens without breaking desktop. Specify concrete CSS (selectors and rules) and any minimal markup changes. Justify why it addresses overflow, reading order, and accessibility.",
+          "expected_answer": "Use a CSS-only stacked-card pattern at small widths, preserving semantic table structure for desktop and screen readers. Approach:\n\n- Keep table markup for desktop. At narrow viewports, switch `display` of `table`, `thead`, `tbody`, `tr`, `td` to block so each row becomes a card. Use `data-label` attributes to show headers for each cell, improving readability.\n- Hide the visual `<thead>` on small screens but keep it for accessibility via `aria-hidden`.\n- Ensure cells wrap and break long words using `word-break` and allow responsive spacing.\n\nExample CSS:\n\n```css\n@media (max-width: 600px) {\n  .bookings { border: 0; }\n  .bookings thead { position: absolute; left: -9999px; height: 1px; width: 1px; overflow: hidden; }\n  .bookings tr { display: block; border: 1px solid #ddd; margin-bottom: 12px; }\n  .bookings td { display: grid; grid-template-columns: 8ch 1fr; gap: 8px; padding: 8px 12px; }\n  .bookings td::before { content: attr(data-label); font-weight: 600; color: #555; }\n  .bookings td { word-break: break-word; }\n}\n```\nOptional small markup change: ensure each `td` has `data-label` matching its header text (already present). For accessibility, keep native table semantics; the `<thead>` remains in the DOM for screen readers even if visually hidden. This avoids horizontal scrolling, presents a clear label-value stack on mobile, and maintains the correct reading order. Desktop view remains an actual table with no changes outside the media query.",
+          "rubric": [
+            {
+              "criterion": "Presents a concrete CSS strategy that converts rows to stacked cards on small screens (display/block, grid or flex, and visually hides the thead)",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses `data-label` or equivalent to render header labels per cell and preserves semantics/accessibility",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses overflow/wrapping and spacing explicitly (e.g., word-break, padding)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains why the approach preserves desktop behavior while fixing mobile usability",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You need to display a paged customer list with each customer's latest booking date on the listing page. The naive code is causing either many queries or heavy payloads:\n\n```csharp\n// Option 1 (N+1 risk if lazy loading):\nvar customers = await ctx.Customers\n    .OrderBy(c => c.Id)\n    .Skip(page*size).Take(size)\n    .ToListAsync();\nforeach (var c in customers)\n{\n    var latest = await ctx.Bookings\n        .Where(b => b.CustomerId == c.Id)\n        .OrderByDescending(b => b.BookedAt)\n        .Select(b => b.BookedAt)\n        .FirstOrDefaultAsync();\n    // render latest\n}\n\n// Option 2 (eager load all orders, then compute in-memory):\nvar customers2 = await ctx.Customers\n    .Include(c => c.Bookings)\n    .OrderBy(c => c.Id)\n    .Skip(page*size).Take(size)\n    .ToListAsync();\n```\nYou control the EF Core query but cannot change the UI loop signature right now.",
+          "task": "Rewrite the data access to produce a single SQL round-trip with only the columns needed, avoiding N+1 and avoiding loading full orders. Explain your choice and any indexing that supports it.",
+          "expected_answer": "Project the needed aggregate server-side and return a lightweight shape the UI can consume. For example:\n\n```csharp\nvar pageData = await ctx.Customers\n    .OrderBy(c => c.Id)\n    .Skip(page*size).Take(size)\n    .Select(c => new {\n        c.Id,\n        c.Name,\n        Latest = ctx.Bookings\n            .Where(b => b.CustomerId == c.Id)\n            .Max(b => (DateTime?)b.BookedAt)\n    })\n    .ToListAsync();\n```\nThis compiles to a single SQL with a correlated aggregate (or OUTER APPLY) per row and transfers only Id/Name/Latest, not entire `Bookings`. If OUTER APPLY is not available, EF Core on SQL Server emits a subquery per row in one statement. Add an index on `Bookings(CustomerId, BookedAt DESC)` to support the max lookup efficiently. Alternatively, a GroupJoin with grouping key and Max in the projection achieves the same set-based plan. This avoids N+1 queries and avoids the payload explosion from `Include`.",
+          "rubric": [
+            {
+              "criterion": "Produces a single set-based EF Core query projecting Latest via Max/GroupJoin/Apply, not per-row async queries",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why it avoids both N+1 and heavy eager-loading",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies an index supporting the aggregate by CustomerId and BookedAt",
+              "marks": 1
+            },
+            {
+              "criterion": "Keeps the projection minimal (no full orders loaded)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Entity Framework Core",
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your SQLite/SQL Server database stores `BookedAt` as local time text values like `\"2026-08-01 14:30\"`. The UI shows wrong ordering across time zones and client-side sorting is inconsistent. You are about to rebuild both storage and display for dates, with a plain HTML/JS front end.",
+          "task": "Decide how to store, index, and query timestamps and how to render them on the client to users in their local time while preserving correct ordering server- and client-side. Be specific about data types, formats, and JS code to display.",
+          "expected_answer": "Persist timestamps in UTC using a proper datetime type. In SQL Server: `datetime2` with `UTC` semantics in the app; in SQLite use `TEXT` in ISO 8601 UTC (e.g., `2026-08-01T14:30:00Z`) or `REAL/INTEGER` epoch, but configure EF Core to map `DateTime`/`DateTimeOffset` and always store UTC. Add an index on `BookedAt` for range queries: `CREATE INDEX IX_Bookings_BookedAt ON Bookings(BookedAt);`.\n\nQuery ordering then works lexicographically for ISO 8601 and natively for datetime columns. In EF Core, ensure `DateTimeKind.Utc` or use `DateTimeOffset` to avoid accidental local conversions.\n\nOn the client, transmit ISO 8601 UTC strings. Render with JS converting to local time:\n\n```javascript\nfunction formatLocal(isoUtc){\n  const d = new Date(isoUtc); // parse UTC\n  return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });\n}\n```\nThis keeps the persisted/orderable canonical UTC while presenting user-local times. Never store local wall times; avoid textual non-ISO formats that break sorting.",
+          "rubric": [
+            {
+              "criterion": "Chooses UTC storage with appropriate DB type/format and explains why (ordering, consistency)",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies indexing on the timestamp for range/order queries",
+              "marks": 1
+            },
+            {
+              "criterion": "Shows concrete JS to convert ISO UTC to local display via toLocaleString",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses EF Core mapping concerns (DateTime vs DateTimeOffset, Kind) to avoid silent local conversions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Entity Framework Core",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Persistent data model for CareerTours (EF Core + Migrations)",
+          "brief": "Design and implement a minimal but production-ready data model for a tours booking domain using EF Core Code First. Target SQLite or SQL Server. Include entities, relationships, constraints, seed data, and migrations. Provide a small console app that applies migrations, seeds, and prints results of a few representative queries.",
+          "deliverable": "A repository folder containing: EF Core project with entities, DbContext, fluent configuration, initial migration(s), seed data, and a console `Program` that creates/applies migrations and prints query results; generated database file (if SQLite) or creation script; and a README with instructions and sample output.",
+          "acceptance_criteria": [
+            "Entities: Tour(Id, Title, Price decimal 10,2, Active bool), Customer(Id, Email unique), Booking(Id, TourId FK, CustomerId FK, BookedAt UTC, Status), Payment(Id, BookingId FK, Amount decimal 10,2, PaidAt UTC, Status), TourTag(TourId, Tag) with uniqueness on (TourId, Tag).",
+            "Relationships: one-to-many Tour->Booking, Customer->Booking; one-to-one/zero-or-one Booking->Payment; many-to-many via TourTag; cascade or restrict rules chosen and configured explicitly.",
+            "Constraints: unique index on Customer.Email; unique composite index on (TourId, Tag); appropriate NOT NULLs; decimal precision specified; indexing on Booking(TourId, BookedAt) and TourTag(Tag, TourId).",
+            "Migrations compile and run: `dotnet run` (or documented commands) creates database, applies migrations, and seeds at least 5 tours, 10 customers, 20 bookings, and related payments/tags.",
+            "Program prints to console: (1) top 3 tours by bookings in the last 30 days; (2) bookings per customer; (3) total revenue by tour. Results must match seeded data and be labeled.",
+            "README includes: exact commands to build/run; database choice; how to inspect created tables; and a short note on cascade choices and decimal/UTC decisions."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct entity modeling and relationships implemented in EF Core with appropriate fluent configuration",
+              "marks": 6
+            },
+            {
+              "criterion": "Database constraints and indexes present (unique Email; unique TourTag; Booking and TourTag indexes) and justified in README",
+              "marks": 4
+            },
+            {
+              "criterion": "Migrations run cleanly and database is created/seeded as specified",
+              "marks": 4
+            },
+            {
+              "criterion": "Console queries implemented correctly and outputs align with seed data (top tours, per-customer counts, revenue)",
+              "marks": 4
+            },
+            {
+              "criterion": "Documentation quality: clear run steps, technology choices, and rationale (UTC, decimals, cascade)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Entity Framework Core",
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Responsive front end for Tours catalogue (HTML/CSS/JS)",
+          "brief": "Build a mobile-first, responsive catalogue page that renders a list of tours from a static JSON file (you may export from Task 1 or craft a representative sample). Include filtering and sorting in vanilla JS, and ensure good accessibility and performance without frameworks.",
+          "deliverable": "A self-contained `frontend/` folder with `index.html`, `styles.css`, `app.js`, a `tours.json` sample, and a README with usage notes and supported features. No build step required; opening `index.html` in a static server should work.",
+          "acceptance_criteria": [
+            "Layout: grid or flex-based card layout that displays at least image placeholder, Title, Price, and Tag chips. Cards reflow from 1 column (<=400px) to 2–4 columns on wider screens without overflow; uses `minmax`/`auto-fit` or flexible flex-basis.",
+            "Responsiveness: includes viewport meta; images are responsive (max-width:100%; height:auto) and do not distort; no horizontal scrollbar on 320px width.",
+            "Filtering/sorting: client-side text filter by Title or Tag; dropdown sort by Price ascending/descending that numerically sorts string prices correctly; updates occur without page reload.",
+            "Accessibility: semantic HTML (lists or section/article), focus-visible styles, buttons with ARIA labels where needed, sufficient color contrast, and keyboard-operable controls.",
+            "Data loading: fetches `tours.json` and renders; includes a graceful fallback message if loading fails; no external frameworks.",
+            "Performance: minimal CSS/JS; avoids layout thrash (e.g., batch DOM updates via fragments) and uses `loading=\"lazy\"` on images."
+          ],
+          "rubric": [
+            {
+              "criterion": "Responsive layout implementation (grid/flex, reflow at breakpoints, no overflow)",
+              "marks": 6
+            },
+            {
+              "criterion": "Functional filtering and correct numeric sorting behavior in JS",
+              "marks": 5
+            },
+            {
+              "criterion": "Accessible, semantic markup and keyboard/focus handling",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust data loading with graceful error handling and lazy images",
+              "marks": 3
+            },
+            {
+              "criterion": "Code quality and documentation (README with how to run/test)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-011-S03",
+      "skills_assessed": [
+        "ASP.NET Core",
+        "MVC",
+        "Dependency Injection",
+        "REST API",
+        "Authentication",
+        "Authorization"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following routing setup and controller.\n\n```csharp\n// Program.cs (.NET 6 minimal hosting)\nvar builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddControllersWithViews();\nvar app = builder.Build();\n\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Home}/{action=Index}/{id?}\");\n\napp.MapControllerRoute(\n    name: \"shop\",\n    pattern: \"products/{action=Index}/{id?}\");\n\napp.MapControllers();\napp.Run();\n```\n\n```csharp\n// ProductsController.cs\n[Route(\"products\")] // attribute route applied at controller level\npublic class ProductsController : Controller\n{\n    [HttpGet(\"{id:int}\")]\n    public IActionResult Details(int id) => Content($\"D:{id}\");\n\n    // No route attribute here\n    public IActionResult Index() => Content(\"I\");\n}\n```\n\nWhat is the response for a GET request to `/products`?",
+          "options": [
+            "200 OK with body \"D:0\" due to defaulting `id`",
+            "404 Not Found because `Index` lacks an HTTP verb attribute",
+            "200 OK with body \"I\"",
+            "302 Redirect to `/products/Index`"
+          ],
+          "correct_option": "C",
+          "explanation": "`Index` has no attribute route, so it participates in conventional routing. The `\"shop\"` route pattern `products/{action=Index}/{id?}` maps `/products` to `ProductsController.Index`, returning \"I\". The `Details` action is attribute-routed only and does not affect `/products` without an `id` segment.",
+          "distractor_rationale": "B: In MVC, conventional routing does not require HTTP verb attributes; `Index` is callable for GET by default. C: `Details` requires an `int` segment; `/products` lacks it, so it does not match. D: There is no default redirect to `/products/Index`; the route directly maps to the action.",
+          "skills_covered": [
+            "ASP.NET Core",
+            "MVC"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You have an API controller with automatic validation and a nested DTO:\n\n```csharp\n[ApiController]\n[Route(\"api/[controller]\")]\npublic class UsersController : ControllerBase\n{\n    [HttpPost]\n    public IActionResult Create(UserDto dto)\n    {\n        if (!ModelState.IsValid) return BadRequest(ModelState);\n        return Ok(\"created\");\n    }\n}\n\npublic class UserDto\n{\n    [Required]\n    public string Email { get; set; }\n    public AddressDto Address { get; set; }\n}\n\npublic class AddressDto\n{\n    [Required]\n    public string City { get; set; }\n}\n```\n\nRequest:\n\n```http\nPOST /api/users HTTP/1.1\nContent-Type: application/json\n\n{\n  \"email\": \"a@b.com\",\n  \"address\": {}\n}\n```\n\nWhat happens?",
+          "options": [
+            "200 OK with body \"created\" because top-level fields are valid",
+            "422 Unprocessable Entity because nested validation errors use 422 by default",
+            "400 Bad Request returned by the explicit `BadRequest(ModelState)` inside the action after it runs",
+            "400 Bad Request with ProblemDetails (Address.City missing); the action body does not execute"
+          ],
+          "correct_option": "D",
+          "explanation": "With `[ApiController]`, invalid `ModelState` short-circuits the pipeline and returns a 400 ProblemDetails response before the action runs. The missing `Address.City` triggers that behavior.",
+          "distractor_rationale": "B: `[ApiController]` doesn't allow proceeding with invalid nested properties. C: The action does not execute when automatic 400 handling is enabled. D: ASP.NET Core uses 400 by default for validation problems, not 422.",
+          "skills_covered": [
+            "REST API",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider these registrations and types:\n\n```csharp\nbuilder.Services.AddDbContext<AppDb>(o => o.UseSqlServer(cs)); // Scoped\n\npublic class ReportGenerator\n{\n    private readonly AppDb _db;\n    public ReportGenerator(AppDb db) => _db = db;\n}\n\nbuilder.Services.AddSingleton<ReportGenerator>();\n```\n\n`ReportGenerator` is injected into a controller and used on the first request. What happens at runtime?",
+          "options": [
+            "An InvalidOperationException is thrown when resolving `ReportGenerator` because a scoped service (`AppDb`) cannot be consumed from a singleton",
+            "It works but `AppDb` ends up null inside `ReportGenerator`",
+            "It works because the container promotes `AppDb` to singleton when required",
+            "It works, but the same `AppDb` instance is reused across requests, risking data races"
+          ],
+          "correct_option": "A",
+          "explanation": "A singleton cannot depend on a scoped service in Microsoft.Extensions.DependencyInjection. Resolving it throws an InvalidOperationException: cannot consume scoped service from singleton.",
+          "distractor_rationale": "B: There is no implicit reuse across scopes; resolution fails instead. C: The container does not promote lifetimes. D: DI will not inject null for a required service; it throws.",
+          "skills_covered": [
+            "Dependency Injection",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "The app is configured to reload settings on change and uses options in an MVC controller:\n\n```csharp\n// Program.cs\nbuilder.Configuration.AddJsonFile(\"appsettings.json\", optional: false, reloadOnChange: true);\n\nbuilder.Services.Configure<FeatureXOptions>(builder.Configuration.GetSection(\"FeatureX\"));\n\n// Controller\npublic class HomeController : Controller\n{\n    private readonly IOptionsSnapshot<FeatureXOptions> _opts;\n    public HomeController(IOptionsSnapshot<FeatureXOptions> opts) => _opts = opts;\n\n    public IActionResult Index() => Content($\"Enabled={_opts.Value.Enabled}\");\n}\n```\n\n`appsettings.json` initially has `\"FeatureX\": { \"Enabled\": true }`. You flip it to `false` while the app runs. What output do subsequent requests to `/Home/Index` show, without restarting the app?",
+          "options": [
+            "Enabled=False on the very next request because `IOptionsSnapshot` reads the latest value per scope",
+            "Enabled=True until app restart because only `IOptions<T>` captures at startup",
+            "Enabled=False only if using `IOptionsMonitor` in a singleton background service",
+            "Enabled=False only after configuration is re-bound manually in the controller"
+          ],
+          "correct_option": "A",
+          "explanation": "`IOptionsSnapshot` reads the latest bound values once per request scope when `reloadOnChange` is enabled. It reflects the changed config on the next request.",
+          "distractor_rationale": "B: `IOptions<T>` would require restart to see changes, but this code uses `IOptionsSnapshot`. C: `IOptionsMonitor` would also see changes, but the question is about the controller shown. D: No manual rebind is needed; the options pipeline handles it.",
+          "skills_covered": [
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Middleware order is as follows:\n\n```csharp\napp.UseAuthorization();\napp.UseAuthentication();\napp.MapControllers();\n```\n\nAn endpoint `[Authorize]` expects a valid JWT in `Authorization: Bearer ...`. A client sends a valid token. What is the outcome?",
+          "options": [
+            "200 OK because the token is valid regardless of middleware order",
+            "401 Unauthorized because authorization runs before authentication and sees an anonymous user",
+            "500 Internal Server Error due to an exception in the pipeline",
+            "403 Forbidden because the user is authenticated but lacks a policy"
+          ],
+          "correct_option": "B",
+          "explanation": "`UseAuthentication` must run before `UseAuthorization`. With the reversed order, authorization evaluates with no authenticated user and triggers a challenge (401).",
+          "distractor_rationale": "B: The user is never authenticated, so it's a challenge (401), not a forbid (403). C: Middleware order matters; the token isn't processed in time. D: ASP.NET Core handles this cleanly; it doesn't throw.",
+          "skills_covered": [
+            "ASP.NET Core",
+            "Authentication",
+            "Authorization"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given this controller:\n\n```csharp\n[ApiController]\n[Route(\"api/books\")]\npublic class BooksController : ControllerBase\n{\n    [HttpGet(\"{id}\", Name = \"GetBook\")]\n    public ActionResult<Book> Get(int id) => ...;\n\n    [HttpPost]\n    public IActionResult Post(Book book)\n    {\n        // ... save, set book.Id\n        return CreatedAtAction(\"GetById\", new { id = book.Id }, book);\n    }\n}\n```\n\nWhat happens when posting a valid `Book`?",
+          "options": [
+            "201 Created with a Location header pointing to `/api/books/{id}`",
+            "500 Internal Server Error because `CreatedAtAction` cannot find action \"GetById\"",
+            "404 Not Found because the GET route name is not used",
+            "200 OK because `CreatedAtAction` falls back to 200 when action is missing"
+          ],
+          "correct_option": "B",
+          "explanation": "`CreatedAtAction` needs to resolve the target action by name. Since \"GetById\" does not exist (the action is named `Get`), resolving the link throws an InvalidOperationException, resulting in a 500 unless handled.",
+          "distractor_rationale": "B: This would be correct if the action name matched or `CreatedAtRoute(\"GetBook\", ...)` were used. C: The POST does not return 404; link generation fails before sending a response. D: There is no fallback to 200.",
+          "skills_covered": [
+            "REST API",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Two JWT schemes are configured:\n\n```csharp\nservices.AddAuthentication()\n    .AddJwtBearer(\"A\", o => { o.Audience = \"aud-a\"; /* ... */ })\n    .AddJwtBearer(\"B\", o => { o.Audience = \"aud-b\"; /* ... */ });\n\nservices.AddAuthorization();\n\n[Authorize(AuthenticationSchemes = \"B\")]\n[HttpGet(\"/secure-b\")]\npublic IActionResult SecureB() => Ok(\"ok\");\n```\n\nA request includes a valid token for audience `aud-a` only. What is the result?",
+          "options": [
+            "200 OK because any valid JWT is acceptable",
+            "302 Redirect to login because no cookie is present",
+            "403 Forbidden because the user is authenticated by scheme A but not allowed by B",
+            "401 Unauthorized because scheme B fails to authenticate the token"
+          ],
+          "correct_option": "D",
+          "explanation": "The action specifies scheme B. Authentication for B fails with a token for A, so the result is a challenge (401).",
+          "distractor_rationale": "B: The user is not authenticated for the requested scheme; it's a challenge, not a forbid. C: The action requires a specific scheme, not any. D: No cookie challenge is configured here.",
+          "skills_covered": [
+            "Authentication",
+            "Authorization",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Consider role-based attributes:\n\n```csharp\n[Authorize(Roles = \"Admin\")]\npublic class AdminController : ControllerBase\n{\n    [Authorize(Roles = \"Manager\")]\n    [HttpGet(\"reports\")]\n    public IActionResult Reports() => Ok();\n}\n```\n\nA user has role `Admin` but not `Manager`. What happens when calling `GET /reports`?",
+          "options": [
+            "401 Unauthorized because the user lacks any roles",
+            "200 OK because the action attribute overrides the controller attribute",
+            "403 Forbidden because both role requirements must be satisfied",
+            "302 Redirect to a login page due to missing role"
+          ],
+          "correct_option": "C",
+          "explanation": "Multiple `[Authorize]` attributes combine, requiring all to pass. The user is authenticated with role `Admin` but lacks `Manager`, so authorization fails with 403.",
+          "distractor_rationale": "B: Attributes do not override; they are additive. C: The user is authenticated; the issue is insufficient roles, not lack of identity. D: Cookie redirects are not implied for APIs; and the failure is 403, not a redirect.",
+          "skills_covered": [
+            "Authorization"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "CORS is placed after endpoint mapping:\n\n```csharp\napp.UseRouting();\napp.UseAuthentication();\napp.UseAuthorization();\napp.MapControllers();\napp.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());\n```\n\nA browser SPA at `https://app.example.com` calls `GET https://api.example.com/weather` with `fetch`. The API action returns 200. What does the SPA observe?",
+          "options": [
+            "A successful response because CORS runs regardless of middleware order",
+            "The browser blocks the response due to missing CORS headers, even though the API returned 200",
+            "A runtime exception because CORS must run before authentication",
+            "A 403 Forbidden preflight response"
+          ],
+          "correct_option": "B",
+          "explanation": "CORS middleware must run before endpoints to add the appropriate headers. Placing it after `MapControllers()` omits CORS headers; the browser blocks access to the response.",
+          "distractor_rationale": "B: Preflight isn't necessarily denied; headers are just missing. C: Middleware order matters for CORS. D: The app doesn't throw; it just fails to include headers.",
+          "skills_covered": [
+            "ASP.NET Core",
+            "REST API"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "With `[ApiController]`, consider:\n\n```csharp\n[ApiController]\n[Route(\"api/orders\")]\npublic class OrdersController : ControllerBase\n{\n    [HttpPost]\n    public IActionResult Create(OrderDto order, AuditDto audit)\n    {\n        return Ok();\n    }\n}\n```\n\n`OrderDto` and `AuditDto` are complex types. A client posts valid JSON for both in the request body. What happens?",
+          "options": [
+            "A 500-style error occurs because multiple parameters are inferred as `[FromBody]` and only one body can be read",
+            "Model binding binds `order` from body and `audit` from query string automatically",
+            "400 Bad Request automatic validation response",
+            "Only the first complex parameter is bound from the body; the second is silently ignored"
+          ],
+          "correct_option": "A",
+          "explanation": "With `[ApiController]`, complex types are inferred as `[FromBody]` by default. Having two body-bound parameters is not supported and results in an InvalidOperationException at runtime on invocation.",
+          "distractor_rationale": "B: The inference is body for both, not body+query. C: The framework does not silently ignore the second; it throws. D: This is not a validation error; it's an action descriptor error.",
+          "skills_covered": [
+            "REST API",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A product catalog app mixes attribute and conventional routes.\n\n```csharp\n// Program.cs\napp.MapControllerRoute(\n    name: \"legacy-id\",\n    pattern: \"shop/{id:int}\",\n    defaults: new { controller = \"Products\", action = \"ById\" });\n\napp.MapControllers();\n```\n\n```csharp\n// ProductsController.cs\n[Route(\"shop\")]\npublic class ProductsController : Controller\n{\n    [HttpGet(\"latest\")] public IActionResult Latest() => ...;\n\n    [HttpGet(\"{slug}\")] public IActionResult BySlug(string slug) => ...;\n\n    public IActionResult ById(int id) => ...; // conventional only\n}\n```\n\nUsers report that `GET /shop/123` sometimes hits `BySlug` instead of `ById`, while `GET /shop/latest` works. You cannot break existing links: `/shop/{id:int}` must resolve to `ById`, and `/shop/{alpha-slug}` to `BySlug`.",
+          "task": "Explain precisely why `GET /shop/123` is ambiguous here, and propose a concrete routing change that guarantees: (1) `/shop/123` maps to `ById`, (2) `/shop/latest` maps to `Latest`, (3) `/shop/{slug}` maps to `BySlug` only for non-numeric slugs. Show the exact attribute or route pattern changes needed and justify the precedence effects.",
+          "expected_answer": "Ambiguity arises because `BySlug` is attribute-routed with an unconstrained catch-all segment `{slug}` under the `shop` prefix, which happily matches `123`. The conventional `legacy-id` route also matches `shop/{id:int}`. Endpoint routing orders endpoints by registration and specificity, but an unconstrained attribute route can be chosen over the conventional route depending on endpoint order. To remove ambiguity, impose mutually exclusive constraints and keep routing within the same attribute-routed controller to control precedence.\n\nOne correct fix:\n\n```csharp\n[Route(\"shop\")]\npublic class ProductsController : Controller\n{\n    [HttpGet(\"latest\")] public IActionResult Latest() => ...;\n\n    [HttpGet(\"{id:int}\")] public IActionResult ById(int id) => ...; // move to attribute routing\n\n    [HttpGet(\"{slug:alpha}\")] public IActionResult BySlug(string slug) => ...; // constrain to letters\n}\n```\n\nThen remove the conventional `legacy-id` route. Now `/shop/123` matches `{id:int}` (more specific than `{slug:alpha}`), `/shop/latest` hits the literal segment route, and other alphabetic slugs hit `{slug:alpha}`. Alternatively, if the conventional route must remain, still constrain `BySlug` as `{slug:alpha}` so numeric paths never match it, or set route order explicitly:\n\n```csharp\n[Route(\"shop\", Order = 0)]\n[HttpGet(\"{id:int}\", Order = 0)]\n[HttpGet(\"{slug:alpha}\", Order = 1)]\n```\n\nThis ensures numeric ids bind only to `ById`, literals beat parameters, and the slug pattern excludes numbers, eliminating ambiguity.",
+          "rubric": [
+            {
+              "criterion": "Correct diagnosis: unconstrained `{slug}` attribute route matches numbers and competes with `shop/{id:int}` conventional route",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed attribute route for `ById` with `{id:int}` under `shop` or equivalent precedence control (e.g., keeping conventional but ensuring exclusivity)",
+              "marks": 2
+            },
+            {
+              "criterion": "Constraint on `BySlug` (e.g., `:alpha` or custom regex) to prevent numeric matches",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification referencing endpoint ordering/precedence and why the fix guarantees the three required mappings",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "MVC",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your app serves both a browser admin UI (cookie auth) and a public API (JWT Bearer). Current setup:\n\n```csharp\nservices.AddAuthentication(\"Cookies\")\n    .AddCookie(\"Cookies\", o => { /* ... */ })\n    .AddJwtBearer(\"Bearer\", o => { /* ... */ });\n\nservices.AddAuthorization();\n\n// Controllers\n[Authorize]\n[Route(\"api/[controller]\")]\npublic class OrdersController : ControllerBase { /* API */ }\n\n[Authorize]\n[Route(\"/admin\")] \npublic class AdminController : Controller { /* MVC */ }\n```\n\nAPI calls with `Authorization: Bearer ...` are being challenged as if they were cookie-based. Some actions were fixed by adding `[Authorize(AuthenticationSchemes=\"Bearer\")]`, but others are still broken and the team keeps forgetting the attribute.",
+          "task": "Propose a robust authentication/authorization configuration that makes `[Authorize]` on API controllers accept JWT by default, and `[Authorize]` on the admin area use cookies, without repeating `AuthenticationSchemes` everywhere. Explain how the scheme selection works at runtime and how to avoid regressions.",
+          "expected_answer": "Use policy scheme forwarding or area-specific defaults. Two common, robust approaches:\n\n1) Policy scheme that forwards based on the presence of the `Authorization` header:\n\n```csharp\nservices.AddAuthentication(options =>\n{\n    options.DefaultScheme = \"Smart\";\n    options.DefaultChallengeScheme = \"Smart\";\n})\n.AddPolicyScheme(\"Smart\", \"Smart\", o =>\n{\n    o.ForwardDefaultSelector = ctx =>\n        ctx.Request.Headers.ContainsKey(\"Authorization\") ? \"Bearer\" : \"Cookies\";\n})\n.AddCookie(\"Cookies\", o => { /* ... */ })\n.AddJwtBearer(\"Bearer\", o => { /* ... */ });\n```\n\nNow `[Authorize]` on API endpoints with a Bearer header authenticate via JWT; browser requests without that header use Cookies. Admin MVC actions continue to work.\n\n2) Alternatively, split endpoints and set defaults per endpoint group:\n\n- Keep `DefaultScheme = \"Cookies\"` globally for MVC.\n- For APIs, set:\n\n```csharp\nservices.AddAuthorization(options =>\n{\n    options.FallbackPolicy = new AuthorizationPolicyBuilder()\n        .AddAuthenticationSchemes(\"Bearer\")\n        .RequireAuthenticatedUser()\n        .Build();\n});\n```\n\n…and mark API controllers with `[ApiController]` and place them under `/api` route. Then map API endpoints with a convention applying `RequireAuthorization()` and `RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = \"Bearer\" })` if using minimal routing groups. In MVC, use a custom `AuthorizeFilter` added via `AddControllersWithViews` to set Cookies.\n\nIn both approaches, `[Authorize]` requires no per-action scheme parameter. At runtime, the policy scheme chooses JWT when the `Authorization` header is present, otherwise cookies. This avoids regressions by centralizing the rule and covering new endpoints automatically.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies root cause: default scheme is Cookies so `[Authorize]` challenges with cookies for API calls",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a concrete configuration using a policy scheme with `ForwardDefaultSelector` (or equivalent grouping)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains runtime selection logic (header-based forwarding, or per-endpoint default) clearly",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses maintainability (no per-action attributes) and avoids regressions for future endpoints",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Authorization",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "The `POST /api/accounts` endpoint currently returns `200 OK` with a message body for all outcomes. Requirements have changed:\n- On success, return `201 Created` with a Location header to `GET /api/accounts/{id}`.\n- If the email already exists, return `409 Conflict` with a standard problem response.\n- If validation fails (missing required fields), return `400` with details.\n\nThe controller is annotated with `[ApiController]` and uses EF Core behind a service layer.",
+          "task": "Describe the changes to the action logic and response construction to meet the requirements. Show the exact return statements (or helper methods) you would use for each outcome and any attribute or route name necessary for `CreatedAt...` to work. Explain how `[ApiController]` changes your validation flow.",
+          "expected_answer": "Make the GET-by-id routable by name and use `CreatedAtRoute` or `CreatedAtAction` in POST. Example:\n\n```csharp\n[ApiController]\n[Route(\"api/[controller]\")]\npublic class AccountsController : ControllerBase\n{\n    [HttpGet(\"{id}\", Name = \"GetAccount\")]\n    public ActionResult<AccountDto> Get(int id) => ...;\n\n    [HttpPost]\n    public async Task<IActionResult> Post(AccountCreateDto dto)\n    {\n        // `[ApiController]` automatically returns 400 if ModelState is invalid\n        if (await _svc.EmailExistsAsync(dto.Email))\n        {\n            return Problem(\n                statusCode: StatusCodes.Status409Conflict,\n                title: \"Email already exists\",\n                detail: $\"An account with {dto.Email} already exists.\");\n        }\n\n        var acc = await _svc.CreateAsync(dto);\n        return CreatedAtRoute(\"GetAccount\", new { id = acc.Id }, acc);\n    }\n}\n```\n\n- Success: `CreatedAtRoute(\"GetAccount\", new { id }, acc)` produces `201` and the Location header.\n- Duplicate: use `Problem(..., statusCode: 409)` for a consistent body.\n- Validation: `[ApiController]` short-circuits to `400` with ProblemDetails before action executes; no manual `ModelState` checks needed.\n\nEnsure the GET route has a `Name` or pass the correct action name to `CreatedAtAction(nameof(Get), ...)`.",
+          "rubric": [
+            {
+              "criterion": "Correct use of `CreatedAtRoute` or `CreatedAtAction` with named GET route or correct action name",
+              "marks": 2
+            },
+            {
+              "criterion": "Proper 409 Conflict handling with a ProblemDetails-style response",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains and leverages `[ApiController]` automatic 400 behavior (no redundant ModelState checks)",
+              "marks": 2
+            },
+            {
+              "criterion": "Complete mapping of all three outcomes with accurate status codes and headers",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A singleton caching service captures a scoped dependency and occasionally throws `ObjectDisposedException` under load.\n\n```csharp\npublic interface ICurrentUser { string UserId { get; } }\npublic class HttpContextCurrentUser : ICurrentUser\n{\n    private readonly IHttpContextAccessor _ctx;\n    public HttpContextCurrentUser(IHttpContextAccessor ctx) => _ctx = ctx;\n    public string UserId => _ctx.HttpContext?.User?.FindFirst(\"sub\")?.Value;\n}\n\npublic class CatalogCache\n{\n    private readonly ICurrentUser _user; // captured at singleton construction\n    public CatalogCache(ICurrentUser user) { _user = user; }\n    public string KeyPrefix() => _user.UserId; // sometimes throws\n}\n\nservices.AddHttpContextAccessor();\nservices.AddScoped<ICurrentUser, HttpContextCurrentUser>();\nservices.AddSingleton<CatalogCache>();\n```\n\nThe cache is injected into controllers and background services.",
+          "task": "Identify the precise DI lifetime issue and propose a safe redesign that still lets the cache compute a user-specific key prefix when needed. Provide code-level changes and explain why they eliminate the disposal/race problems.",
+          "expected_answer": "The singleton `CatalogCache` depends on scoped `ICurrentUser`, which is invalid. The singleton is created once and holds a reference to a scoped object whose lifetime is per-request. Under concurrency, it can see a disposed `HttpContext` or the wrong user.\n\nFix by removing the captured scoped dependency and deferring resolution per operation via a factory or `IHttpContextAccessor` read at call time. Options:\n\n1) Inject `IServiceProvider` and create a scope per call:\n\n```csharp\npublic class CatalogCache\n{\n    private readonly IServiceProvider _sp;\n    public CatalogCache(IServiceProvider sp) => _sp = sp;\n    public string KeyPrefix()\n    {\n        using var scope = _sp.CreateScope();\n        var user = scope.ServiceProvider.GetRequiredService<ICurrentUser>();\n        return user.UserId;\n    }\n}\n```\n\n2) Better for ASP.NET requests: inject `IHttpContextAccessor` (singleton-safe) and compute on demand without holding onto a scoped service:\n\n```csharp\npublic class CatalogCache\n{\n    private readonly IHttpContextAccessor _http;\n    public CatalogCache(IHttpContextAccessor http) => _http = http;\n    public string KeyPrefix() => _http.HttpContext?.User?.FindFirst(\"sub\")?.Value;\n}\n```\n\nRegister:\n\n```csharp\nservices.AddHttpContextAccessor();\nservices.AddSingleton<CatalogCache>();\n// remove scoped ICurrentUser from singleton's constructor\n```\n\nOr change `CatalogCache` to scoped if it truly must hold user-specific state. These designs avoid capturing a disposed scoped service and align lifetimes correctly.",
+          "rubric": [
+            {
+              "criterion": "Accurate identification of the lifetime violation (singleton depending on scoped)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, safe redesign (factory/scope per call or IHttpContextAccessor) with code",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why the change eliminates disposal/race issues",
+              "marks": 1
+            },
+            {
+              "criterion": "Considers alternative of making the cache scoped if it needs per-user state",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Dependency Injection",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Server-side MVC application with DI, routing, and configuration",
+          "brief": "Build an ASP.NET Core MVC application for a simple catalog (Categories and Products) that demonstrates MVC, routing, configuration binding, and dependency injection. Implement CRUD for Products with server-side validation, a custom constrained route, and use options bound from `appsettings.json`.",
+          "deliverable": "Server-side application",
+          "acceptance_criteria": [
+            "The app runs on `https://localhost:{port}` and exposes a Products list at `GET /store` rendering an HTML table.",
+            "Creating a product with missing required fields returns the same form view with validation messages rendered next to the fields (no redirect).",
+            "A custom route `GET /store/{category:alpha}/{id:int}` maps to `ProductsController.Details(int id, string category)` and returns 404 when constraints are not met.",
+            "`appsettings.json` contains a `CatalogOptions` section with a `FeaturedCategory` string; the home page displays its current value via options binding without restarting after editing the file (use reloadOnChange + `IOptionsSnapshot`).",
+            "Repositories/services are injected via DI (no `new` in controllers). Verify that `IProductRepository` is registered as scoped and consumed by `ProductsController`.",
+            "Conventional route `/{controller=Home}/{action=Index}/{id?}` coexists with the custom route without ambiguity (the `Details` action should be attribute-routed with constraints).",
+            "Source includes a readme with run steps and the route list (e.g., output of `dotnet run` with endpoints or documented manually)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Implements MVC CRUD for Products with server-side validation messages on invalid POST",
+              "marks": 6
+            },
+            {
+              "criterion": "Defines and proves the custom constrained route works and returns 404 on constraint mismatch",
+              "marks": 5
+            },
+            {
+              "criterion": "Configuration bound to options with reload-on-change reflected at runtime via `IOptionsSnapshot`",
+              "marks": 4
+            },
+            {
+              "criterion": "Repository/service abstraction registered with correct DI lifetime and consumed by controllers",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear run instructions and documented routes; no routing ambiguity with conventional routing",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "MVC",
+            "Dependency Injection",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Secured REST API with validation, authentication, and authorization",
+          "brief": "Implement a RESTful Orders API with JWT authentication and role/claim-based authorization. Include proper status codes, model validation, and useful hypermedia headers on creation.",
+          "deliverable": "Secured API",
+          "acceptance_criteria": [
+            "Expose endpoints under `/api/orders`: `GET /api/orders`, `GET /api/orders/{id}`, `POST /api/orders`, `PUT /api/orders/{id}`, `DELETE /api/orders/{id}`. Use `[ApiController]` so invalid models return 400 automatically with ProblemDetails.",
+            "`POST` returns `201 Created` with a Location header using `CreatedAtRoute` or `CreatedAtAction`. Duplicate-order business rule (e.g., same customer+externalId) results in `409 Conflict` with ProblemDetails.",
+            "JWT Bearer authentication is configured. Provide a minimal token-issuing endpoint or a script with a sample valid JWT and the signing key for testing. Unauthenticated requests to protected endpoints return 401.",
+            "Authorization: `GET` requires scope/claim `orders.read`; `POST/PUT/DELETE` require `orders.write`. A user with only `orders.read` receives 403 on write attempts but can read.",
+            "CORS: allow `https://app.example.com` using `WithOrigins(...).AllowAnyHeader().AllowAnyMethod().AllowCredentials(false)`. CORS middleware is placed before `MapControllers`. Preflight succeeds.",
+            "`GET /api/orders/{id}` returns 404 for missing ids. `PUT` with mismatched route and body ids returns 400. `DELETE` of a non-existent id is 204 (idempotent) or 404 (document which one you chose).",
+            "Include a Postman (or HTTP) collection with requests that demonstrate: unauthorized 401, forbidden 403, successful 201 with Location, 409 conflict, and CORS success from the allowed origin."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct REST behaviors and status codes (201 with Location, 404, 400 on id mismatch, 204/404 documented for delete)",
+              "marks": 6
+            },
+            {
+              "criterion": "Model validation via `[ApiController]` producing ProblemDetails without manual ModelState checks",
+              "marks": 3
+            },
+            {
+              "criterion": "JWT authentication configured and demonstrable; unauthenticated => 401, authenticated without rights => 403",
+              "marks": 5
+            },
+            {
+              "criterion": "Authorization policies/requirements for `orders.read` and `orders.write` enforced correctly",
+              "marks": 3
+            },
+            {
+              "criterion": "CORS correctly configured and ordered; cross-origin requests succeed from the allowed origin",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "Authentication",
+            "Authorization",
+            "ASP.NET Core"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-011-S04",
+      "skills_assessed": [
+        "React",
+        "JavaScript",
+        "HTML",
+        "REST API",
+        "Git",
+        "Testing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You ship a React search box that queries on each change.\n\n```tsx\nimport { useEffect, useState } from 'react';\n\nexport function Search({ api }: { api: string }) {\n  const [q, setQ] = useState('');\n  const [items, setItems] = useState<string[]>([]);\n\n  useEffect(() => {\n    if (!q) return;\n    fetch(`${api}/search?q=${encodeURIComponent(q)}`)\n      .then(r => r.json())\n      .then(setItems);\n  }, [q, api]);\n\n  return (\n    <>\n      <input placeholder=\"Search\" value={q} onChange={e => setQ(e.target.value)} />\n      <ul>{items.map(x => <li key={x}>{x}</li>)}</ul>\n    </>\n  );\n}\n```\n\nUsers type quickly: \"g\" then immediately \"go\". Due to a CDN layer, the older \"g\" request can complete after the newer \"go\" request. What will the UI sometimes show and why?",
+          "options": [
+            "It can end up showing results for \"g\" because responses can arrive out of order and the later-arriving older response overwrites state.",
+            "It can briefly show results for \"g\" but will always stabilize to \"go\" because the later effect call overwrites the earlier one deterministically.",
+            "It will always show results for \"go\" because React applies state updates from effects in dependency order.",
+            "The list will clear to empty because the effect re-runs and the first line `if (!q) return;` prevents setting state."
+          ],
+          "correct_option": "A",
+          "explanation": "There is no cancellation or ordering check. If the earlier request (for \"g\") resolves after the later request (for \"go\"), its `then(setItems)` runs last and overwrites the newer results. This produces stale UI occasionally.",
+          "distractor_rationale": "A: Tempting if you think dependency arrays enforce network response order — they don't. B: Often true when newer response wins, but it's not guaranteed; race conditions can flip it. D: `q` isn't empty after typing; the guard doesn't clear results and wouldn't run in this flow.",
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider a debounced search built with lodash's debounce:\n\n```tsx\nimport debounce from 'lodash.debounce';\n\nconst [query, setQuery] = useState('');\n\nconst debouncedSearch = useCallback(\n  debounce(() => {\n    // fires the request using the captured `query`\n    fetch(`/api/search?q=${encodeURIComponent(query)}`);\n  }, 300),\n  [] // deps intentionally empty\n);\n\n<input\n  placeholder=\"Search\"\n  onChange={e => {\n    setQuery(e.target.value);\n    debouncedSearch();\n  }}\n/>\n```\n\nUsers type \"cat\". What is the first query value actually sent and why?",
+          "options": [
+            "```text\n\"cat\" — the function runs after 300ms with the latest state because React rebinds closures automatically.\n```",
+            "```text\nOften an empty string or a previous value — the debounced callback closes over the initial `query` and isn't recreated, causing a stale read. Pass the value or include `query` in deps.\n```",
+            "```text\nIt throws at runtime because `debounce` can't see React state across renders.\n```",
+            "```text\n\"c\", then \"ca\", then \"cat\" — because debounce executes on every keystroke with the input at that moment.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`debouncedSearch` captures `query` at creation ('' here) and never updates because its deps are empty. When it runs, it uses that stale value. Either pass the current value into the debounced function or include `query` in the hook dependencies (or use a debounced state).",
+          "distractor_rationale": "A: Suggests React magically refreshes closures; it doesn't. B: Describes throttle, not debounce, and still ignores stale closure. D: No exception is thrown; it just uses the wrong value.",
+          "skills_covered": [
+            "React",
+            "JavaScript",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A test intermittently fails. Component fetches on input and renders a list item. Test code:\n\n```tsx\n// Search.tsx uses fetch and renders <li>Golang</li> when API returns it.\n\ntest('loads items', () => {\n  render(<Search api=\"/api\" />);\n  // mock before triggering effect\n  global.fetch = jest.fn().mockResolvedValue({\n    json: () => Promise.resolve(['Golang'])\n  } as any);\n\n  fireEvent.change(screen.getByPlaceholderText(/search/i), {\n    target: { value: 'go' }\n  });\n\n  expect(screen.getByText('Golang')).toBeInTheDocument();\n});\n```\n\nWhich change makes the test reliably pass without adding arbitrary timeouts?",
+          "options": [
+            "```tsx\nconst li = await screen.findByText('Golang');\nexpect(li).toBeInTheDocument();\n```",
+            "```tsx\njest.useFakeTimers();\njest.runAllTimers();\nexpect(screen.getByText('Golang')).toBeInTheDocument();\n```",
+            "```tsx\nexpect(screen.getByText('Golang')).toBeInTheDocument(); // keep synchronous getBy*\n```",
+            "```tsx\nawait waitFor(() =>\n  expect(screen.getByText('Golang')).toBeInTheDocument()\n);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`findBy*` queries are promise-based and wait for the element to appear after the async fetch resolves. Using `await screen.findByText('Golang')` makes the expectation align with the component's async behavior.",
+          "distractor_rationale": "A: Synchronous getBy* races the network mock and fails intermittently. B: Could work, but mixing `waitFor` with synchronous getBy* is brittle and can still race if not awaited properly; `findBy*` is clearer. D: Timers don't advance promise resolution of fetch and add complexity without addressing the real async boundary.",
+          "skills_covered": [
+            "Testing",
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A POST from your React app includes an Authorization header:\n\n```javascript\nfetch('https://api.example.com/orders', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer abc123'\n  },\n  body: JSON.stringify({ sku: 'X', qty: 1 })\n});\n```\n\nThe API's CORS config allows `Content-Type` but not `Authorization`. What happens in the browser?",
+          "options": [
+            "The browser strips the `Authorization` header but still sends the POST; fetch resolves with 200 if the server accepts it.",
+            "The browser sends a preflight OPTIONS request, sees `Authorization` not allowed, blocks the POST, and fetch rejects before any body is sent.",
+            "The request is downgraded to a simple request without headers; the server receives it but ignores the body.",
+            "The POST is sent, the server replies 403, then fetch rejects with a Response error."
+          ],
+          "correct_option": "B",
+          "explanation": "Because of the non-simple `Authorization` header, the browser performs a preflight. When the preflight fails, the actual POST is never sent. Fetch rejects with a CORS TypeError before the server sees the body.",
+          "distractor_rationale": "A: Suggests the POST went through; it doesn't on preflight failure. C and D: Browsers don't silently downgrade or strip headers to force a request through CORS; they block it.",
+          "skills_covered": [
+            "REST API",
+            "JavaScript",
+            "React"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You rebased a feature branch and then try to push:\n\n```text\ngit checkout feature\n# update main locally and rebase\ngit fetch origin\ngit rebase origin/main\n# push\ngit push origin feature\nTo https://example.com/repo.git\n ! [rejected]        feature -> feature (non-fast-forward)\nerror: failed to push some refs to 'https://example.com/repo.git'\n```\n\nWhat should you run to update the remote safely without clobbering others' work?",
+          "options": [
+            "```bash\ngit merge origin/main && git push origin feature\n```",
+            "```bash\ngit pull --rebase origin feature && git push origin feature\n```",
+            "```bash\ngit push --force-with-lease origin feature\n```",
+            "```bash\ngit push -f origin feature\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "After a rebase, history diverges and requires a force push. `--force-with-lease` protects against overwriting remote commits you don't have by checking the remote ref state first.",
+          "distractor_rationale": "B: Works but unsafe; it can overwrite others' pushes. C: Merging main locally doesn't solve the remote divergence created by rebase. D: Pulling your own branch with rebase doesn't change the need to force-push the rewritten history.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your Vite React app reads an API base URL like this:\n\n```tsx\nconst apiBase = import.meta.env.API_URL; // set in .env.production as API_URL=https://api.example.com\n```\n\nThe production build starts but all requests go to `undefined`. What is the root cause and fix?",
+          "options": [
+            "Env vars only work in development with `npm run dev`; for production, hardcode the URL in code.",
+            "Vite strips all env vars in production; you must read from `window.ENV` injected at runtime.",
+            "The correct prefix is `VITE_`; use `import.meta.env.VITE_API_URL` and define `VITE_API_URL=...`.",
+            "`process.env` must be used instead of `import.meta.env` in production builds."
+          ],
+          "correct_option": "C",
+          "explanation": "Vite only exposes vars prefixed with `VITE_` to client code. `API_URL` is not injected, so it becomes `undefined`. Rename and use `VITE_API_URL`.",
+          "distractor_rationale": "A: Vite does inject env vars, but only with the `VITE_` prefix. C: `process.env` is for Node/webpack; with Vite you should use `import.meta.env`. D: Hardcoding defeats environment-based deployment and isn't required.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Inspect this markup in your form:\n\n```html\n<label for=\"email\">Email</label>\n<input id=\"user-email\" type=\"email\" />\n```\n\nWhat is the observable behavior when a user clicks the label?",
+          "options": [
+            "The input receives focus because labels forward clicks by any `for` attribute.",
+            "The form submits because clicking a label triggers a submit event if the input is empty.",
+            "Screen readers announce the input as required due to the `for` mismatch.",
+            "Nothing happens because the `for` value doesn't match any input `id` and the association is broken."
+          ],
+          "correct_option": "D",
+          "explanation": "The label's `for` must match the input's `id` to associate and forward clicks. With a mismatch, clicking the label doesn't focus the input.",
+          "distractor_rationale": "A: Only true when `for` matches. C: Labels don't submit forms by default. D: Accessibility is harmed, not improved; no special 'required' announcement arises from a mismatch.",
+          "skills_covered": [
+            "HTML"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A counter component increments twice on click:\n\n```tsx\nconst [count, setCount] = useState(0);\nconst onClick = () => {\n  setCount(count + 1);\n  setCount(count + 1);\n};\n```\n\nAfter one click in React 18, what value is rendered and why?",
+          "options": [
+            "1, because updates in the same event are batched and both read the same stale `count` value; use functional updaters to get +2.",
+            "It alternates between 1 and 2 depending on StrictMode re-renders.",
+            "2, because two updates run sequentially and each sees the prior update.",
+            "0, because React defers state updates until after paint and coalesces them away."
+          ],
+          "correct_option": "A",
+          "explanation": "In the same event, React batches updates; both calls compute from the same closed-over `count`. Only the last wins, producing +1. To increment twice, use `setCount(c => c + 1)` twice.",
+          "distractor_rationale": "A: Ignores batching and stale reads. C: React doesn't discard them; it merges them, last write wins here. D: StrictMode may double-invoke in dev, but the stale update logic still yields +1 per click.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two Jest tests mock `fetch`. Setup and teardown:\n\n```typescript\nbeforeEach(() => {\n  jest.spyOn(global, 'fetch').mockResolvedValue({\n    json: async () => ({ ok: true })\n  } as any);\n});\n\nafterAll(() => jest.restoreAllMocks());\n```\n\nOne test asserts `expect(fetch).toHaveBeenCalledTimes(1)`. Another test also calls `fetch`. Intermittently, the call count leaks across tests. What is the fix?",
+          "options": [
+            "Wrap each test in `act(...)` so that fetches complete before assertions.",
+            "Use `mockReset` on `fetch` in `afterAll` to reset implementations only once.",
+            "Move `restoreAllMocks` to `afterEach` so the spy is completely removed after every test.",
+            "Add `jest.clearAllMocks()` in `beforeEach` to reset call history between tests."
+          ],
+          "correct_option": "D",
+          "explanation": "`spyOn` persists across tests unless cleared. Adding `jest.clearAllMocks()` (or `fetch.mockClear()`) in `beforeEach` resets call counts between tests while keeping the spy in place.",
+          "distractor_rationale": "B: Restoring after each test removes the spy and may break re-spying logic; you still need to reset counts per test. C: `mockReset` once at the end won't help intermediate tests. D: `act` coordinates React updates, not Jest mock call histories.",
+          "skills_covered": [
+            "Testing",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your fetch error handling:\n\n```typescript\nconst r = await fetch('/api/items/999');\nconst data = await r.json();\nif (!r.ok) throw new Error(data.message);\nsetItem(data);\n```\n\nThe API returns 404 with an empty body (or HTML error page). What happens?",
+          "options": [
+            "`r.ok` is false so an Error is thrown with `data.message` as undefined, but setState still runs.",
+            "`r.json()` throws before `r.ok` is checked, causing an unhandled rejection unless wrapped; handle non-JSON errors separately.",
+            "Fetch resolves with `ok=false` and `json()` returns `{}`; no error occurs.",
+            "Nothing renders and React silently ignores the failed promise."
+          ],
+          "correct_option": "B",
+          "explanation": "Calling `r.json()` on a non-JSON or empty body rejects. You never reach the `ok` check. You must check `r.ok` first or branch on `Content-Type`, e.g., read `text()` when not JSON.",
+          "distractor_rationale": "B: You won't reach the `ok` check if `json()` throws. C: `json()` doesn't magically return `{}` on bad bodies. D: React doesn't swallow promise rejections; they'll surface unless caught.",
+          "skills_covered": [
+            "REST API",
+            "JavaScript",
+            "React"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "After deploying your React SPA to `/app/` behind Nginx, deep links like `https://example.com/app/orders/123` return a 404 on refresh. Static files are served from `/var/www/app`. API calls are proxied to `https://api.example.com` under `/api`. Current server block:\n\n```nginx\nlocation /app/ {\n  root   /var/www;\n  try_files $uri $uri/ =404;\n}\n\nlocation /api/ {\n  proxy_pass https://api.example.com/;\n}\n```\n\nYour React app also uses `import.meta.env.VITE_API_BASE` and builds assets with relative paths.",
+          "task": "Diagnose why deep links 404 after refresh and propose precise changes to make SPA routing and asset loading work when hosted under `/app/`, while keeping `/api` proxied. Include any necessary React build config changes. Justify each change.",
+          "expected_answer": "The 404 happens because the server tries to resolve `/app/orders/123` as a real file and returns 404; the SPA router needs index.html for unknown paths. Also, assets might break if the base path is wrong. Fixes:\n- Nginx: serve index.html as a fallback under `/app/` and still serve real files. For example:\n\n```nginx\nlocation /app/ {\n  root /var/www;                 # /var/www/app/index.html exists\n  try_files $uri $uri/ /app/index.html;\n}\n```\n\nThis returns `/var/www/app/index.html` for any unknown sub-route so the SPA can render `orders/123`.\n- Ensure the client builds with the correct base/public path so asset URLs resolve under `/app/` (Vite example in `vite.config.ts`):\n\n```typescript\nexport default defineConfig({\n  base: '/app/',\n});\n```\n\n- Keep API proxy distinct so `/api/*` does not hit the SPA fallback:\n\n```nginx\nlocation /api/ {\n  proxy_pass https://api.example.com/;\n  # include CORS headers if needed\n}\n```\n\n- Set `VITE_API_BASE` at deploy time to `https://example.com/api` so the client calls the correct absolute base from the `/app/` subpath.\n\nJustification: `try_files` with `/app/index.html` preserves static files while routing unknown paths to the SPA. Setting `base` prevents broken asset links (e.g., `/assets/...` vs `/app/assets/...`). Keeping `/api` in a separate location block avoids the SPA fallback catching API calls.",
+          "rubric": [
+            {
+              "criterion": "Identifies SPA vs server routing mismatch as root cause of 404 on deep links",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct Nginx try_files fallback to /app/index.html without breaking real static files",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses client asset base path configuration for subpath hosting",
+              "marks": 2
+            },
+            {
+              "criterion": "Keeps /api proxy separate and sets correct API base URL via environment",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You built a controlled checkout form with async server-side validation. Current submit logic:\n\n```tsx\nasync function onSubmit(e: React.FormEvent) {\n  e.preventDefault();\n  setSubmitting(true);\n  setErrors({});\n  const res = await fetch(`${api}/checkout`, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(form)\n  });\n  const data = await res.json();\n  if (!res.ok) throw new Error(data.message || 'Unknown');\n  setToast('Order placed');\n}\n```\n\nThe API returns 422 with JSON `{ errors: { email: 'Invalid', card: 'Declined' } }`. The UI only shows \"Unknown\" and sometimes flashes stale errors when users edit fields while a previous request is in flight.",
+          "task": "Propose code-level changes to report per-field errors and prevent race conditions when users edit while a previous submit is pending. Include data shape for errors, error parsing, and request cancellation or ordering. Explain why each change prevents the observed issues.",
+          "expected_answer": "Changes:\n- Model per-field errors in state and render them next to inputs:\n\n```typescript\ntype FieldErrors = Partial<Record<'email' | 'card' | 'name', string>>;\nconst [errors, setErrors] = useState<FieldErrors>({});\n```\n\n- Parse errors without assuming JSON is present only after checking `ok`. Branch on `res.ok` first; if false, read JSON safely and set field errors:\n\n```typescript\nconst res = await fetch(...);\nif (res.ok) {\n  const data = await res.json();\n  // success flow\n  setToast('Order placed');\n  return;\n}\nlet payload: any = undefined;\ntry { payload = await res.json(); } catch {}\nif (payload?.errors) setErrors(payload.errors as FieldErrors);\nelse setToast('Checkout failed');\n```\n\n- Prevent races with either AbortController or a submit token:\n\n```typescript\nconst abortRef = useRef<AbortController | null>(null);\nasync function onSubmit(e: FormEvent) {\n  e.preventDefault();\n  abortRef.current?.abort();\n  const ctrl = new AbortController();\n  abortRef.current = ctrl;\n  setSubmitting(true);\n  setErrors({});\n  const res = await fetch(url, { signal: ctrl.signal, ... });\n  // handle as above\n}\n```\n\nAlternatively, use a monotonically increasing `requestId` and ignore out-of-order responses.\n\n- Disable the submit button when `submitting` to avoid parallel submits and use defensive rendering so errors clear on field change:\n\n```typescript\nonChange={e => { setForm(f => ({...f, email: e.target.value })); setErrors(err => ({...err, email: ''})); }}\n```\n\nWhy this works: Parsing conditionally on `ok` prevents `json()` exceptions and maps server 422 to field-level messages. Aborting previous requests or ignoring stale responses removes stale error flashes from earlier submissions completing later.",
+          "rubric": [
+            {
+              "criterion": "Designs per-field error state and rendering approach",
+              "marks": 2
+            },
+            {
+              "criterion": "Handles non-OK responses without throwing on `json()`; maps 422 payload to field errors",
+              "marks": 2
+            },
+            {
+              "criterion": "Introduces cancellation or ordering to avoid races under rapid submits/edits",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains disabling submit/clearing field-specific errors on change to prevent stale UI",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "CI runs React component tests with Jest + Testing Library. A component uses a loading spinner controlled by a `setTimeout` inside `useEffect` to delay showing an empty state by 500ms. Locally tests pass; in CI they are flaky. Snippets:\n\n```tsx\nuseEffect(() => {\n  const id = setTimeout(() => setShowEmpty(true), 500);\n  return () => clearTimeout(id);\n}, [items.length]);\n```\n\nTest:\n\n```tsx\ntest('shows empty state after delay', async () => {\n  render(<List items={[]} />);\n  await waitFor(() => expect(screen.getByText(/no items/i)).toBeInTheDocument());\n});\n```\n",
+          "task": "Stabilize this test in CI without increasing wall-clock time. Propose concrete Jest timer configuration and assertions, or a component change suitable for testability. Explain why the fix removes flakiness.",
+          "expected_answer": "Use modern fake timers to control the timeout deterministically and flush it immediately in the test:\n\n```typescript\nbeforeEach(() => {\n  jest.useFakeTimers({ legacyFakeTimers: false });\n});\n\nafterEach(() => {\n  jest.useRealTimers();\n});\n\ntest('shows empty state after delay', () => {\n  render(<List items={[]} />);\n  // no need to wait for real 500ms\n  act(() => { jest.advanceTimersByTime(500); });\n  expect(screen.getByText(/no items/i)).toBeInTheDocument();\n});\n```\n\nAlternatively, inject the delay as a prop (default 500) and set it to 0 in tests:\n\n```tsx\nfunction List({ items, emptyDelay = 500 }: { items: string[]; emptyDelay?: number }) {\n  useEffect(() => {\n    const id = setTimeout(() => setShowEmpty(true), emptyDelay);\n    return () => clearTimeout(id);\n  }, [items.length, emptyDelay]);\n  // ...\n}\n```\n\nThen in test `render(<List items={[]} emptyDelay={0} />)`; no timers needed.\n\nWhy it works: Fake timers or an injectable delay remove dependence on real time and CI scheduling variance, making assertions deterministic and instant.",
+          "rubric": [
+            {
+              "criterion": "Specifies correct Jest timer configuration and cleanup or proposes an injectable delay design",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows the exact test code changes to deterministically trigger the timeout",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the approach removes CI timing variance and prevents flakes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Testing",
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must deploy a production hotfix while a long-running feature branch is in progress. Git history:\n\n```text\n* f3  feature: partial work\n* f2  feature: scaffolding\n* m5  main: release v1.0.0 (tag v1.0.0)\n* m4  main: bugfix docs\n* m3  main: minor cleanup\n```\n\nThe bug exists in v1.0.0. CI deploys any tag pushed to `main` as a release. You want to:\n1) Patch v1.0.0 and deploy v1.0.1.\n2) Keep main linear.\n3) Avoid contaminating the feature branch.\n4) Later, rebase the feature onto the fixed main.",
+          "task": "Propose the exact Git command sequence to create the hotfix from the release tag, test it, merge it into main, tag and push the release, and then rebase the feature branch on the updated main. Briefly justify each step.",
+          "expected_answer": "One safe flow:\n\n```bash\n# 1) Branch from the released tag\ngit checkout -b hotfix/v1.0.1 v1.0.0\n# implement fix, commit\ngit commit -m \"fix: correct X in production\"\n\n# 2) Test locally/CI on the hotfix branch\n# (optional) open PR targeting main\n\n# 3) Fast-forward main via PR or direct merge (linear history)\ngit checkout main\ngit merge --ff-only hotfix/v1.0.1\n\n# 4) Tag the release on main and push\ngit tag -a v1.0.1 -m \"Release v1.0.1\"\ngit push origin main --tags\n\n# 5) Rebase the feature onto the fixed main\ngit checkout feature\ngit fetch origin\ngit rebase origin/main\n\n# 6) If feature was previously pushed, update it safely\ngit push --force-with-lease origin feature\n```\n\nJustification: Branching from the tag isolates the hotfix to the released code. A fast-forward merge keeps main linear. Tagging on main triggers CI release. Rebasing the feature incorporates the fix without polluting main with partial feature commits.",
+          "rubric": [
+            {
+              "criterion": "Uses the release tag as the hotfix base and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Merges hotfix to main with linear history (fast-forward) and tags the release correctly",
+              "marks": 2
+            },
+            {
+              "criterion": "Pushes tags and main in the right order to trigger CI release",
+              "marks": 1
+            },
+            {
+              "criterion": "Rebases the feature onto updated main and safely updates remote",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build an integrated interface for a Product catalog with robust form and API handling",
+          "brief": "Implement a React front end that integrates with an existing REST API to list and create Products. Include a controlled form with validation, loading/error states, cancellation of in-flight requests on rapid input changes, and unit tests. Use an environment variable for the API base URL.",
+          "deliverable": "A public Git repository link containing the React app, test suite, and a README with setup instructions; plus one screenshot of the running UI showing the list, the create form, and an example validation error.",
+          "acceptance_criteria": [
+            "List view loads from GET `${VITE_API_BASE}/products` and renders rows with stable keys.",
+            "Create form has controlled inputs for name (required, 3-50 chars) and price (required, > 0). Client-side validation prevents submit and shows inline messages.",
+            "Submitting shows a loading indicator; on 201 Created, the new product appears in the list without a full reload; on 4xx with `{ errors: { field: msg } }`, per-field errors render inline.",
+            "Rapidly editing the name field during a search or server-side validation causes prior requests to be aborted (use AbortController) or ignored via a request id; no stale errors flash after changes.",
+            "Tests (Jest + Testing Library) cover: a) prevents submit on invalid input; b) displays server-side field errors from a 422 JSON; c) aborts or ignores stale responses; d) uses `findBy*`/`waitFor` for async; all tests pass in CI.",
+            "API base URL is read from `import.meta.env.VITE_API_BASE`; README documents how to set it (.env)."
+          ],
+          "rubric": [
+            {
+              "criterion": "List integration works and renders data from REST API with stable keys",
+              "marks": 4
+            },
+            {
+              "criterion": "Controlled form with client-side validation enforces rules and shows inline messages",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust async handling: loading states, success refresh without reload, and field-level server error mapping",
+              "marks": 5
+            },
+            {
+              "criterion": "Race handling: aborts or ignores stale responses; no stale UI flashes",
+              "marks": 3
+            },
+            {
+              "criterion": "Automated tests cover async flows and pass reliably in CI",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses environment variable for API base and provides clear README",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API",
+            "JavaScript",
+            "Testing",
+            "HTML",
+            "Git"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy the capstone with CI, environment configuration, and SPA routing",
+          "brief": "Deploy your full-stack capstone to production-like hosting. The frontend must be built for production and accessible under a stable URL. Ensure SPA deep-link refreshes work, API calls succeed via the configured base URL, and CI builds/tests on every push to main.",
+          "deliverable": "A live URL to the deployed app, the Git repository link, and a short RELEASE.md including: deployed URL, commit hash, tag (e.g., v1.x.y), build number/CI run link, and the values used for environment variables (names and example values, not secrets).",
+          "acceptance_criteria": [
+            "Frontend is a production build; initial load < 3 seconds on first byte over a typical connection and assets are cache-busted (hashed filenames).",
+            "SPA routing works on deep-link refresh; server is configured to return index.html for client routes without interfering with `/api/*`.",
+            "Frontend reads API base URL from an environment variable (e.g., `VITE_API_BASE`), not hardcoded. API calls succeed (CORS configured if cross-origin).",
+            "A CI pipeline runs tests on push to main and only deploys when tests pass. The release is tagged; the tag and CI run are linked in RELEASE.md.",
+            "Git history for the release is linear on main. The repository contains infrastructure/deploy docs (README/RELEASE.md) with clear repro steps."
+          ],
+          "rubric": [
+            {
+              "criterion": "Production deployment reachable at live URL with hashed assets and reasonable performance",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct SPA server configuration for deep-link fallback without breaking /api proxy",
+              "marks": 4
+            },
+            {
+              "criterion": "Environment-driven API base configuration; no hardcoded endpoints",
+              "marks": 4
+            },
+            {
+              "criterion": "Operational CI: tests run on main and gate deployment; release is tagged and documented",
+              "marks": 5
+            },
+            {
+              "criterion": "Repository hygiene: linear main, clear RELEASE.md/README deploy instructions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "REST API",
+            "Git",
+            "Testing",
+            "JavaScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

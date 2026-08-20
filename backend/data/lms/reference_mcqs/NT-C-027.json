@@ -1,0 +1,218 @@
+{
+  "course_code": "NT-C-027",
+  "course_name": "Azure Cloud",
+  "sources": [
+    {
+      "name": "Microsoft Learn - Study guide for Exam AZ-104: Microsoft Azure Administrator",
+      "url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104",
+      "note": "Official skills-measured outline. Used to choose and ground items; no exam content is reproduced. Microsoft documentation is (c) Microsoft and published under the Microsoft Learn terms of use."
+    },
+    {
+      "name": "Microsoft Learn - Study guide for Exam AZ-900: Microsoft Azure Fundamentals",
+      "url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900",
+      "note": "Official skills-measured outline, used to calibrate the foundation-level items. No exam content reproduced."
+    },
+    {
+      "name": "Microsoft Learn - Azure product documentation",
+      "url": "https://learn.microsoft.com/en-us/azure/",
+      "note": "Individual doc pages cited per item. Mechanisms taken from the docs; every stem, option and explanation is our own wording."
+    },
+    {
+      "name": "GeeksforGeeks - Azure Interview Questions and Answers",
+      "url": "https://www.geeksforgeeks.org/devops/azure-interview-questions-and-answer/",
+      "note": "Third-party question bank surveyed for candidates. Items there are mostly definitional; only concepts were reused, never wording. Site content is copyrighted - nothing copied."
+    },
+    {
+      "name": "Aditya Garg - Azure 104 Renewal Questions with Explanation (Medium)",
+      "url": "https://adityagarg94.medium.com/azure-104-renewal-questions-with-explanation-d29f8e40727c",
+      "note": "Third-party blog surveyed for scenario-shaped candidates (NSG priority, blob rehydration vs lifecycle policy). Concepts adapted; scenarios and all options rewritten from the Microsoft docs."
+    },
+    {
+      "name": "Sanfoundry / IncludeHelp / PlacementPreparation Azure MCQ sets",
+      "url": "https://www.includehelp.com/mcq/microsoft-azure-mcqs.aspx",
+      "note": "Surveyed as candidate pools. Nearly every item is a banned glossary form (\"NSG stands for ___\", \"Which service stores unstructured data?\"), so none survived filtering. Recorded for provenance completeness only."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "An engineer holds the Owner role on subscription Sub1, and the Access control (IAM) blade confirms the assignment is active and inherited down to every resource. She tries to delete the storage account stprod01 in resource group RG-Prod and the operation is rejected. RG-Prod carries a ReadOnly management lock applied at the resource group. Which explanation matches the behaviour, and which minimum change lets the delete succeed?",
+      "options": [
+        "Management locks are applied across all users and roles regardless of RBAC, and a lock on a parent scope is inherited by every resource inside it, so the ReadOnly lock on RG-Prod blocks both updates and deletes on stprod01; because Owner carries Microsoft.Authorization/locks/*, she can remove the lock and then retry the delete.",
+        "The Owner role does not include Microsoft.Storage/storageAccounts/delete, so she must additionally be granted Storage Account Contributor scoped to RG-Prod before the delete will be authorised.",
+        "A ReadOnly lock only protects the resource group object itself and never its contents, so the real blocker must be a separate CanNotDelete lock placed directly on stprod01, which is what has to be removed.",
+        "Locks apply only at the exact scope where they are created and are never inherited, so the rejection comes from a deny assignment created by a managed application, and only the publisher of that application can lift it."
+      ],
+      "correct_option": "A",
+      "explanation": "Management locks sit outside RBAC: they restrict the control-plane operation for every principal, including Owner, and 'when you apply a lock at a parent scope, all resources within that scope inherit the same lock'. ReadOnly is the stricter of the two levels - it blocks delete and update, roughly reducing everyone to Reader. Owner and User Access Administrator both hold Microsoft.Authorization/locks/*, so removing the lock is within the engineer's rights and is the minimum change.",
+      "distractor_rationale": "B tempts anyone who believes an authorisation failure must always be a missing permission and reaches for a more specific built-in role; Owner already contains every action on the resource. C encodes the common belief that locks do not flow downward and therefore hunts for a second lock on the resource itself. D combines the same no-inheritance belief with the genuinely real (but irrelevant here) case of managed-application deny assignments, which is exactly the kind of half-remembered exception a partly trained candidate reaches for.",
+      "skills_covered": ["Microsoft Azure", "implement cloud security and compliance"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Lock your resources to protect your infrastructure",
+      "source_url": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "A service-desk lead is granted Owner on subscription Sub1, inherited to every resource group beneath it. She then opens Microsoft Entra ID and attempts to reset a user's password and add a member to a security group; both actions are refused. No Conditional Access policy targets her sign-in, and no Privileged Identity Management activation is pending. Why is she refused?",
+      "options": [
+        "Azure RBAC roles such as Owner authorise operations against Azure Resource Manager resources only; directory objects such as users and groups are governed by a separate role system, Microsoft Entra roles, which must be assigned at the tenant.",
+        "Owner at subscription scope does carry directory permissions, but they stay dormant until the 'Access management for Azure resources' toggle is switched on for her account in Entra ID properties.",
+        "Resetting another user's password can only ever be done by a Global Administrator, so no assignment short of that role in either system would have worked.",
+        "Microsoft Entra ID inherits Azure RBAC assignments downward from the tenant root management group, so the fix is to move her Owner assignment from Sub1 up to the root management group."
+      ],
+      "correct_option": "A",
+      "explanation": "Azure RBAC and Microsoft Entra RBAC are two distinct systems. Azure roles control access to resources reached through Azure Resource Manager - virtual machines, storage accounts, resource groups. Entra roles control access to directory objects reached through Microsoft Graph - users, groups, applications. Owner over a subscription therefore confers nothing in the directory; she needs an Entra role such as User Administrator or Helpdesk Administrator.",
+      "distractor_rationale": "B inverts a real feature: the 'Access management for Azure resources' toggle elevates a Global Administrator to User Access Administrator over Azure resources - it runs directory-to-Azure, not Azure-to-directory - and mixing up the direction is a classic half-learned error. C reflects the widespread belief that password reset is a Global Administrator monopoly, when several lower Entra roles include it. D asserts the reverse inheritance most learners assume once they see the management-group hierarchy drawn above subscriptions; the root management group is an Azure RBAC scope and does not reach into the directory.",
+      "skills_covered": ["Microsoft Entra ID", "RBAC"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Overview of Microsoft Entra role-based access control (RBAC)",
+      "source_url": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/custom-overview",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "A user has Reader assigned at management group MG-Corp and Contributor assigned at resource group RG-App, which sits under MG-Corp. A deployment stack has additionally created a deny assignment at RG-App covering Microsoft.Compute/virtualMachines/delete. The user attempts two operations: deleting VM1 in RG-App, and deleting VM2 in RG-Other, a sibling resource group also under MG-Corp. Which outcome occurs?",
+      "options": [
+        "Both deletes fail - VM1 because a deny assignment is evaluated ahead of role assignments and blocks the action despite Contributor, and VM2 because Azure RBAC grants are additive: Reader at MG-Corp is the only assignment reaching RG-Other and it confers no delete permission.",
+        "Both deletes succeed, because the assignment at the narrowest matching scope wins and Contributor at RG-App is therefore the effective permission everywhere under MG-Corp.",
+        "VM1 is deleted and VM2 is not, because deny assignments produced by deployment stacks are advisory: they emit a warning in the activity log but do not stop a principal who already holds Contributor.",
+        "VM1 is not deleted and VM2 is, because a Reader assignment at a management group is raised to the highest role the principal holds anywhere in that hierarchy."
+      ],
+      "correct_option": "A",
+      "explanation": "Effective access in Azure RBAC is the union of every role assignment that applies at or above the target scope - there is no most-specific-wins override and no way for one assignment to subtract from another. Reader at MG-Corp plus Contributor at RG-App means the user is a Contributor only inside RG-App and a Reader everywhere else under MG-Corp, so VM2 cannot be deleted. Inside RG-App the deny assignment is evaluated before role assignments and takes precedence, so VM1 cannot be deleted either. Deny assignments, not role assignments, are the only mechanism that subtracts.",
+      "distractor_rationale": "B applies the most-specific-wins intuition people bring from NTFS permissions and firewall rules, and then compounds it by propagating a resource-group assignment sideways to a sibling. C treats deny assignments as a soft control, which is what a candidate who has only read that they are 'created by Azure, not by administrators' tends to assume. D is the additive model misread as a levelling-up model - the belief that holding Contributor somewhere raises your floor everywhere in the same tree, which is exactly the failure of least privilege the concept is meant to prevent.",
+      "skills_covered": ["RBAC", "Least Privilege"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Study guide for Exam AZ-104 (Manage access to Azure resources: assign roles at different scopes, interpret access assignments)",
+      "source_url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "A web app runs on App Service plan ASP1 (Standard S1, 3 instances) and has a 'staging' deployment slot used for pre-release load tests. During a load test fired at the staging slot, production response times degrade sharply. The team then scales the staging slot out to 10 instances hoping to isolate the test, and the following month's App Service bill roughly triples. Which single fact explains both the degradation and the bill?",
+      "options": [
+        "Every slot of an app runs on the same App Service plan and draws on the same instances, so the load test competed with production for ASP1's compute, and scaling 'the staging slot' scaled ASP1 itself to 10 instances that all slots are billed for.",
+        "Each deployment slot receives its own isolated instances, so the degradation came from contention on the plan's shared file storage, and the bill rose because Standard tier meters each slot as a separate app.",
+        "Scaling out a slot affects only that slot, but any scale-out operation on a Standard plan automatically promotes the plan to Premium to supply the extra instances, which is where the cost came from.",
+        "Slots share plan resources only until their first swap; because staging had never been swapped into production it was still pinned to production's instances, and a single swap would have separated them without needing a second plan."
+      ],
+      "correct_option": "A",
+      "explanation": "A deployment slot is a live app that runs inside the same App Service plan as its production counterpart, so slots share the plan's CPU, memory and instance count. Traffic sent at a slot therefore consumes the same compute serving production, and scale settings belong to the plan rather than to any one slot: setting the staging slot to 10 instances resizes ASP1 to 10 instances, and the plan is billed on its instance count. Load testing belongs on a separate plan.",
+      "distractor_rationale": "B is what the portal's per-slot scale blade leads people to believe - that slots are isolated compute - and then invents a plausible-sounding storage explanation for the contention. C invents an automatic tier promotion; candidates who know scale-up and scale-out are different axes often assume the platform bridges them for you. D is a garbled version of the true swap mechanic (a swap exchanges the slots' routing, and slots share the plan before and after), which is exactly the sort of half-remembered detail that survives a single read of the docs.",
+      "skills_covered": ["Azure App Service"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Set up staging environments in Azure App Service",
+      "source_url": "https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "A storage account has a lifecycle management policy whose tierToArchive action uses daysAfterModificationGreaterThan: 30. An auditor needs report-2025.pdf, which was written once, never modified, and archived four months ago. An administrator calls Set Blob Tier to move it to Hot. Roughly fourteen hours later the blob is readable; the next day it is back in Archive and unreadable, and finance flags an early-deletion charge on the account. What happened, and what should have been done instead?",
+      "options": [
+        "Set Blob Tier does not update the blob's last-modified time, so the policy's 30-day condition still matched and archived it again the next time the policy ran; copying the archived blob to a new blob in an online tier - or adding daysAfterLastTierChangeGreaterThan to the tierToArchive action - avoids both the re-archive and the early-deletion fee.",
+        "The rehydration ran at Standard priority and so took up to fifteen hours; High priority would have finished inside an hour and completed before the nightly policy evaluation, which is what allowed the re-archive to occur.",
+        "Lifecycle management can move blobs out of Archive as well as into it, so the administrator should have added a tierToHot action rather than calling Set Blob Tier; the early-deletion charge is the per-read retrieval fee for the archived copy.",
+        "Archived blobs can be read in place once a shared access signature carrying the archive-access permission is issued, so the rehydration was unnecessary work and the charge simply reflects the redundant retrieval."
+      ],
+      "correct_option": "A",
+      "explanation": "Changing a blob's tier with Set Blob Tier leaves the last-modified timestamp untouched, so a lifecycle rule keyed on daysAfterModificationGreaterThan still sees a four-month-old blob and re-archives it. Two documented remedies exist: rehydrate by copying to a new blob, which creates a new last-modified time and leaves the source in Archive so no early-deletion fee applies, or add daysAfterLastTierChangeGreaterThan to the tierToArchive action so the rule respects the recent tier change. The early-deletion fee arose because Set Blob Tier changed the tier of a blob that had not completed the 180-day archive minimum.",
+      "distractor_rationale": "B is built from two true facts - Standard priority can take up to fifteen hours, High priority under one - welded to a false conclusion that timing rather than the last-modified timestamp is the mechanism. C is the most common misconception in this area: lifecycle policies deliberately cannot rehydrate blobs out of Archive, and the option also mislabels the early-deletion fee as a retrieval charge. D asserts archived blobs are readable given the right credential; they are offline by definition, which is precisely what rehydration exists to solve.",
+      "skills_covered": ["Azure Blob Storage"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Blob rehydration from the archive tier",
+      "source_url": "https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "VM1's network interface sits in subnet Subnet-App. NSG-Subnet is associated with Subnet-App and contains an inbound rule at priority 200 allowing TCP 443 from the Internet service tag. NSG-NIC is associated with VM1's network interface, and its only inbound custom rule is at priority 300, allowing TCP 3389 from a jump host. Clients on the internet cannot reach VM1 on port 443. Routing, public IP and the guest firewall have all been ruled out. Which explanation accounts for the failure?",
+      "options": [
+        "Inbound traffic is evaluated against the subnet NSG first and then the NIC NSG, and both must permit the flow; NSG-NIC has no rule matching TCP 443, so the default DenyAllInbound rule at priority 65500 drops the packets at the interface.",
+        "The rule in NSG-Subnet is overridden because NSG-NIC's rule carries the larger priority number 300, and at the more specific of two scopes the higher number takes precedence.",
+        "Once an NSG is associated with a network interface, the subnet NSG stops being evaluated for that interface, so only 3389 is permitted; removing NSG-Subnet would restore HTTPS access.",
+        "The default AllowVNetInBound rule at priority 65000 matches the flow before the custom rule at priority 200 is reached, and because processing stops at the first match the allow rule for 443 is never applied."
+      ],
+      "correct_option": "A",
+      "explanation": "When NSGs are associated at both the subnet and the network interface, they are evaluated in series, not merged: inbound traffic passes the subnet NSG first and then the NIC NSG, and the flow is only delivered if both allow it. NSG-NIC permits nothing on 443, so evaluation falls through its custom rule to the DenyAllInbound default at 65500 and the packet is dropped. Adding an allow rule for TCP 443 to NSG-NIC is the fix.",
+      "distractor_rationale": "B inverts the priority rule - in an NSG a lower number is processed first and therefore wins - and this inversion is one of the most persistent errors among people who have configured firewalls where higher weight means stronger. C is the intuition that the more specific association replaces the broader one, the same mental model that is correct for many override systems and wrong here. D is dangerous because both clauses it cites are individually true (AllowVNetInBound exists at 65000, processing does stop at the first match) but 65000 is a far larger number than 200 so it is evaluated much later, and an Internet-sourced flow does not match the VirtualNetwork service tag anyway.",
+      "skills_covered": ["Subnetting", "Microsoft Azure"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Azure network security groups overview",
+      "source_url": "https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "A private endpoint for storage account st1 is created in Subnet-Data within VNet-Hub, and the account's public network access is set to Disabled. A virtual machine in VNet-Spoke, peered to VNet-Hub and using the Azure-provided default DNS, still cannot reach https://st1.blob.core.windows.net; nslookup on that VM returns a public IP address. The peering is healthy and no NSG denies the traffic. Which diagnosis and fix are correct?",
+      "options": [
+        "The privatelink.blob.core.windows.net private DNS zone is not linked to VNet-Spoke, so the public name still resolves through public DNS to the service's public IP; linking that private DNS zone to VNet-Spoke makes the CNAME chain terminate at the A record for the private endpoint's private IP.",
+        "Private endpoints serve only the virtual network they are deployed into and their traffic cannot traverse a peering, so a second private endpoint has to be created inside VNet-Spoke.",
+        "Disabling public network access removes the account's DNS registration entirely, so public access must be re-enabled and a Microsoft.Storage service endpoint added to the VM's subnet to restore private routing.",
+        "The VM has to target the private endpoint's IP address rather than the FQDN, because storage TLS certificates are issued for the privatelink subdomain and will not validate against the public host name."
+      ],
+      "correct_option": "A",
+      "explanation": "Creating a private endpoint updates the public name st1.blob.core.windows.net to a CNAME pointing at st1.privatelink.blob.core.windows.net, and the A record for that privatelink name lives in the private DNS zone. A virtual network only sees that zone if the zone has a virtual network link to it. VNet-Spoke has no such link, so resolution falls through to public DNS and returns the public IP - which now refuses the connection because public access is disabled. Linking privatelink.blob.core.windows.net to VNet-Spoke resolves it; no second endpoint is needed, since private endpoint traffic routes fine over peering.",
+      "distractor_rationale": "B is the common belief that a private endpoint is scoped to its own VNet, which makes people over-provision one endpoint per spoke instead of fixing DNS once. C conflates the network control with name resolution and then reaches for service endpoints, the older feature people frequently treat as interchangeable with private endpoints. D sounds authoritative and inverts the actual certificate behaviour - the public host name is exactly what remains valid, which is why the CNAME indirection is used at all.",
+      "skills_covered": ["DNS", "Microsoft Azure"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Use private endpoints for Azure Storage",
+      "source_url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "A SaaS platform runs forty tenant databases. Each is idle for most of the day but each occasionally spikes to near the ceiling of an S3 single database, and measurement shows the spikes rarely coincide. Cost is the binding constraint. Each tenant must keep its own database - the application cannot be rewritten onto a shared schema. Which deployment choice fits, and on what mechanism does the saving rest?",
+      "options": [
+        "Place all forty databases in one elastic pool sized on aggregate demand rather than the sum of per-database peaks, because pooled databases draw from a shared eDTU or vCore budget and only those active at a given moment consume it.",
+        "Provision forty single databases at S3, because only a single database gives each tenant a guaranteed resource floor, and elastic pools require the participating databases to share one schema.",
+        "Deploy one Azure SQL Managed Instance in the General Purpose tier and host all forty databases on it, because Managed Instance is the only deployment option billed on the DTU model and is therefore the cheapest at low utilisation.",
+        "Create forty serverless single databases in the Hyperscale tier, because serverless is billed per query executed and auto-pause removes compute charges entirely regardless of the workload pattern."
+      ],
+      "correct_option": "A",
+      "explanation": "An elastic pool assigns a shared pool of resources to a set of databases, each of which still keeps its own schema, data and connection string. Because the pool is sized on the aggregate rather than the sum of individual peaks, a workload of many mostly-idle databases whose spikes do not overlap is the textbook fit: the pool absorbs one tenant's spike out of capacity the other thirty-nine are not using. No application change is required.",
+      "distractor_rationale": "B states the real strength of single databases - a guaranteed per-database resource floor - and then attaches a false constraint about shared schemas, a confusion with sharding patterns that is very common among people new to Azure SQL. C is wrong on the mechanism it names: Managed Instance is vCore-only and has no DTU model, and its General Purpose tier has a substantial minimum footprint, so it is unlikely to be the cheapest option here. D misstates serverless billing - it is metered per vCore-second while the database is active, not per query - and overstates auto-pause, which only helps genuinely idle databases and would not cover forty separate instances economically.",
+      "skills_covered": ["SQL"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Manage multiple databases with elastic pools in Azure SQL Database",
+      "source_url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/elastic-pool-overview",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A production tier runs on five virtual machines in a single availability set in one Azure region, protected by a nightly Azure Backup policy writing to a Recovery Services vault configured for LRS. The business now requires that the tier be serving traffic again within 15 minutes of an outage that takes the entire region offline, with data loss measured in minutes rather than hours. Which change meets both targets, and why do the others fall short?",
+      "options": [
+        "Enable Azure Site Recovery replication of the virtual machines to the paired region, because it replicates changes continuously to give a recovery point objective of minutes and provides a recovery plan that fails the tier over in one orchestrated action.",
+        "Redistribute the five virtual machines across three availability zones in the same region, because availability zones are physically separate datacentres with independent power, cooling and networking and therefore cover a regional outage.",
+        "Switch the Recovery Services vault to GRS and enable cross-region restore, because restoring the most recent nightly recovery point into the secondary region satisfies both the 15-minute and the minutes-of-data-loss targets.",
+        "Expand the availability set to the maximum of 3 fault domains and 20 update domains, because a wider spread across independent power and network sources is what protects a workload from correlated infrastructure failure at any scale."
+      ],
+      "correct_option": "A",
+      "explanation": "The requirement combines a recovery time objective of 15 minutes with a recovery point objective of minutes, across a whole-region failure. Only continuous replication to a second region meets both: Azure Site Recovery ships changes to the paired region as they happen and a recovery plan performs the failover as a single orchestrated operation, so both the data-loss and the time-to-serve targets are achievable.",
+      "distractor_rationale": "B is the most seductive answer because availability zones really are physically separate datacentres - but they are separate datacentres inside the same region, so a regional outage takes all of them. This zone-versus-region confusion is the single most common resilience error. C describes a real and useful capability, and cross-region restore does require a GRS vault, but the recovery point can be up to a full backup interval old and a restore of five machines takes hours, so it misses both targets. D confuses the scale of the protection: fault domains separate racks within one datacentre, which addresses hardware failure and nothing wider.",
+      "skills_covered": ["Azure Virtual Machines", "Backup and Recovery", "manage disaster recovery plans"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Study guide for Exam AZ-104 (Implement backup and recovery: configure Azure Site Recovery, perform a failover to a secondary region)",
+      "source_url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "An engineer builds a workbook over a Log Analytics workspace covering several key vaults and App Service apps. Platform metrics such as CPU appear in Metrics explorer straight away, and a metric alert on CPU fires within about a minute of a threshold breach. But the resource logs - key vault audit events, App Service HTTP logs - return no rows in the workspace, and a log search alert written against them never fires. Which pair of statements accounts for both halves of this?",
+      "options": [
+        "Resource logs are not collected anywhere until a diagnostic setting on each resource routes them to the workspace, whereas platform metrics are gathered by the platform automatically; and the metric alert responds faster because metric alerts evaluate a near-real-time, stateful metric time series while a log search alert only runs on its configured query interval over data already ingested.",
+        "Both resource logs and platform metrics require a diagnostic setting, and the logs are absent only because the 93-day retention ceiling on that data has already elapsed for these resources.",
+        "Log search alerts are stateful and metric alerts are stateless, so the log alert fired once and then suppressed itself; enabling auto-mitigate on the log alert will make the missing rows appear and let it fire again.",
+        "Resource logs require the Log Analytics agent to be installed on the resource, so platform-as-a-service resources such as Key Vault and App Service cannot send resource logs to a workspace at all and must be scraped through the REST API."
+      ],
+      "correct_option": "A",
+      "explanation": "Platform metrics are collected by default and are available in Metrics explorer with no configuration. Resource logs are different: they are not stored anywhere until a diagnostic setting on the resource specifies a destination, so an empty table means no diagnostic setting, not an empty workload. The alerting difference follows from the same split - metric alerts sit on a near-real-time metric stream and are stateful, notifying once on fire and once on resolve, whereas log search alerts run a query on a schedule against ingested data, which adds both ingestion latency and the evaluation interval.",
+      "distractor_rationale": "B takes the genuine 93-day retention figure for platform metrics and misapplies it to logs, a slip that is easy to make because both numbers appear on the same doc pages. C states the stateful/stateless distinction backwards - metric alerts are the stateful ones - and then offers a fix that would not create data in any case. D reflects the older, agent-based mental model of Azure monitoring, which is correct for guest OS metrics on virtual machines but wrong for PaaS resource logs, which the platform emits directly.",
+      "skills_covered": ["Monitoring and Observability"],
+      "difficulty": "hard",
+      "source_name": "Microsoft Learn - Diagnostic settings in Azure Monitor",
+      "source_url": "https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/diagnostic-settings",
+      "provenance": "adapted"
+    }
+  ]
+}

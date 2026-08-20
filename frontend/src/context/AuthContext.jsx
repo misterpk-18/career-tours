@@ -34,7 +34,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => applySession(await authAPI.login(credentials));
 
-  const register = async (studentData) => applySession(await authAPI.register(studentData));
+  // register no longer returns a session (the account must verify first), so
+  // this just forwards the {message, requires_verification} response.
+  const register = async (studentData) => authAPI.register(studentData);
+
+  // Establish a session from a {token, student} payload obtained outside the
+  // password flow — currently the passwordless OTP login.
+  const establishSession = (data) => applySession(data);
 
   /**
    * Replace the cached session identity after the student edits their profile.
@@ -63,6 +69,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!token && !!student,
     login,
     register,
+    establishSession,
     logout,
     updateStudent,
   };

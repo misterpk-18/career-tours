@@ -1,0 +1,1867 @@
+{
+  "course_code": "NT-C-034",
+  "course_name": "Multimedia",
+  "sections": [
+    {
+      "section_code": "NT-C-034-S01",
+      "skills_assessed": [
+        "Graphic Design Principles",
+        "Typography",
+        "Storytelling",
+        "perform image editing",
+        "Color Correction",
+        "digital compositing",
+        "file-based workflow"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are designing a portrait poster. Current layout and palette:\n```text\nArtboard: 1080x1350 px, 12-col grid (24 px margins, 20 px gutters)\nBackground: full-bleed photo (midtones ~ #666A7A)\nHeadline: spans cols 1–12 at y=120 px\nCTA button: spans cols 9–12 at y=1030 px; padding: 16 px; fill: #2F9CA8; text: #FFFFFF\nIssue: On darker areas the CTA reads fine; on lighter areas it washes out.\nConstraint: Keep CTA within cols 9–12; do not move headline.\nTarget: Improve local contrast under the CTA without flattening the whole image.\n```\nWhich adjustment best fixes the issue while preserving grid alignment and overall image contrast?",
+          "options": [
+            "Add a bottom-to-top global gradient map darkening the entire lower 25% of the poster to 80% of current luminance.",
+            "Insert a rectangle exactly behind the CTA, aligned to cols 9–12 and rows covering the CTA height, filled #000000 at 40% opacity, blend mode Multiply.",
+            "Increase CTA text weight and add a 2 px white stroke around the button, keeping color #2F9CA8.",
+            "Shift CTA left to cols 7–10 where the image is darker, maintaining right edge aligned to col 10."
+          ],
+          "correct_option": "B",
+          "explanation": "A local scrim behind the CTA (a Multiply rectangle aligned to the grid) raises contrast precisely where needed without crushing the entire image. It preserves grid placement and global tonality.",
+          "distractor_rationale": "A is tempting because gradients can improve readability, but it darkens unrelated areas and flattens contrast. C seems like a typography fix, but strokes introduce halos and still fail on similar-luminance pixels. D might improve contrast by relocation, but it breaks the specified grid placement and alignment constraint.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A product photo looks vivid in Adobe Photoshop but dull on the client’s website. Export panel used:\n```text\nWorking space: Adobe RGB (1998)\nSoft-proof: sRGB IEC61966-2.1 (Preview ON)\nExport As: JPEG, Quality 80\nColor: Convert to sRGB [ ]  Embed Color Profile [x]\nMetadata: Copyright Only\n```\nWhich single change most directly prevents the web dullness on standard devices?",
+          "options": [
+            "Tick Convert to sRGB before export.",
+            "Change Quality to 100 to keep color saturation intact.",
+            "Untick Embed Color Profile so browsers don’t misread the tag.",
+            "Assign the sRGB profile in the working document before export."
+          ],
+          "correct_option": "A",
+          "explanation": "Web environments expect sRGB. You must convert pixel values to sRGB at export. Merely embedding the profile without conversion leaves Adobe RGB values that appear desaturated on sRGB-only pipelines.",
+          "distractor_rationale": "B is a common misconception; removing the tag increases ambiguity. C affects compression artifacts, not gamut mapping. D changes the tag without remapping numbers (assign), resulting in wrong colors; conversion is required.",
+          "skills_covered": [
+            "file-based workflow",
+            "Color Correction",
+            "perform image editing"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You need to brighten a portrait without shifting skin tones. Current stack:\n```text\n[Top] Curves 1 (S-curve brighten mids)  Blend: Normal 100%\nHue/Sat (Master +10 Sat)               Blend: Normal 100%\nBackground (sRGB JPEG)\n```\nAfter applying Curves above Hue/Sat, lips and skin hues look oversaturated. Which change best preserves hue while brightening?",
+          "options": [
+            "Move Hue/Sat above Curves and increase saturation to +20 to compensate.",
+            "Change Curves 1 blend mode to Luminosity and leave order as-is.",
+            "Duplicate Curves and set the duplicate to Screen 30% above everything.",
+            "Reduce Hue/Sat saturation to +5 and keep Curves on Normal."
+          ],
+          "correct_option": "B",
+          "explanation": "Using Curves in Luminosity isolates luminance changes from color, avoiding additional saturation from the S-curve interaction with prior saturation boosts.",
+          "distractor_rationale": "B is arbitrary tuning that doesn’t prevent future hue shifts from luminance-curves. C intensifies the problem by saturating after brightening. D brightens globally and amplifies shifts; Screen alters both luminance and perceived saturation.",
+          "skills_covered": [
+            "perform image editing",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You cut a subject from a neutral studio background and place it on a twilight blue scene. A blue fringe appears along hair. Layers:\n```text\n[Top] Color Fix (Solid Fill sampled from BG)  Blend: Color, clipped to Subject, masked to 2 px perimeter (Gaussian Blur 1 px)\nSubject (mask refined; contract 1 px, feather 0.5 px)\nBackground (blue hour)\n```\nWhich additional single-step adjustment most reliably removes the remaining light-colored halo without over-darkening the edge?",
+          "options": [
+            "Apply a levels adjustment clipped to Subject and crush highlights.",
+            "Add an Outer Glow on Subject using sampled BG blue at 15%.",
+            "Lower Subject mask density from 100% to 90% to blend edges.",
+            "Use Decontaminate Colors during Select and Mask at ~50% with new layer and mask."
+          ],
+          "correct_option": "D",
+          "explanation": "Decontaminate Colors replaces edge pixels’ color with nearby subject colors, targeting fringing without dark halos. In combination with a Color blend edge tint, it cleans light spill effectively.",
+          "distractor_rationale": "A lowers opacity and causes see-through edges. B creates dark rims. D paints glow over everything and looks artificial rather than removing contamination.",
+          "skills_covered": [
+            "digital compositing",
+            "perform image editing",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You notice spacing issues in a display headline.\n```text\nString: \"AVATAR To\"\nFont: Gotham Bold 72 pt  | Tracking: 0  | Kerning: Metrics\nIssue: Excess gap between \"A\" and \"V\"; slight collision of \"T\" and \"o\".\n```\nWhat adjustment best resolves both issues while preserving the font’s rhythm?",
+          "options": [
+            "Switch kerning to Optical and keep tracking at 0.",
+            "Convert to outlines and apply −10 baseline shift to the \"o\".",
+            "Manually kern pairs: A–V to −80, T–o to +40; leave rest unchanged.",
+            "Increase tracking to +40 for the entire string."
+          ],
+          "correct_option": "C",
+          "explanation": "Pair-specific kerning addresses localized spacing problems without disturbing overall rhythm. Adjusting A–V negative and opening T–o resolves the two problem areas precisely.",
+          "distractor_rationale": "A uniformly alters all spacing, harming well-kerned pairs. C can help in some fonts but may over-adjust clean pairs and won’t guarantee both fixes. D baseline shift changes vertical alignment, not horizontal spacing, and introduces typographic errors.",
+          "skills_covered": [
+            "Typography"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You are preparing a 2-frame social teaser from this 3-frame set:\n```text\nF1: Close-up of hands planting a seed (action)\nF2: Wide shot of barren field (context, no people)\nF3: Medium shot: sprout emerging; child smiling (result)\nCurrent order used: F2 → F1 → F3\nConstraint: Only 2 frames allowed. Goal: clear, uplifting micro-story.\n```\nWhich 2-frame order best preserves causal storytelling under the constraint?",
+          "options": [
+            "F2 → F3",
+            "F1 → F3",
+            "F2 → F1",
+            "F3 → F1"
+          ],
+          "correct_option": "B",
+          "explanation": "Action then result (F1 → F3) preserves causality and emotional payoff. The barren field context adds tone but isn’t essential for clarity when forced to two frames.",
+          "distractor_rationale": "A provides context and result but loses the cause. C reads as result then unexplained action, breaking logic. D shows setup and action but with no resolution.",
+          "skills_covered": [
+            "Storytelling",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Downscaling a portrait for web causes crisp eyelashes to halo. Current export samples:\n```text\nSource: 4000 px → Output: 1080 px\nResample: Bicubic Sharper (Reduction)\nOutput Sharpening: Screen / High\nObserved: bright halos on high-contrast edges at 100% zoom\n```\nWhich change is most likely to keep acuity while avoiding halos?",
+          "options": [
+            "Keep Bicubic Sharper but drop Output Sharpening to Low.",
+            "Switch to Bicubic Smoother and keep Output Sharpening: High.",
+            "Use Preserve Details 2.0 with Reduce Noise ~10% and Output Sharpening: Screen / Standard.",
+            "Export at 2160 px and let the platform downscale to 1080 px."
+          ],
+          "correct_option": "C",
+          "explanation": "Preserve Details 2.0 with mild noise reduction preserves fine detail without the aggressive edge contrast Bicubic Sharper and High output sharpening add, reducing halos.",
+          "distractor_rationale": "B still applies edge-emphasized resampling; halos may persist. C blurs details then oversharpens, creating mushy edges. D offloads resampling to an unknown algorithm and can produce worse artifacts.",
+          "skills_covered": [
+            "perform image editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You are integrating a product shadow on a warm paper background.\n```text\nBackground: #F3E2C4\nShadow layer: painted neutral black @ 60% opacity, Gaussian Blur 8 px\nIssue: Shadow looks like a gray sticker.\n```\nWhich change produces the most believable contact shadow?",
+          "options": [
+            "Set shadow to Multiply, sample a shadow color from the product, and vary opacity (90% at contact, 20% falloff).",
+            "Add Outer Shadow layer style with default settings.",
+            "Change blend mode to Overlay and paint with 50% gray.",
+            "Keep Normal blend, lower opacity to 30%, increase blur to 20 px."
+          ],
+          "correct_option": "A",
+          "explanation": "Multiply blends with the paper color, and using a sampled warm shadow hue with higher density at contact mimics real light physics.",
+          "distractor_rationale": "A lowers visibility but stays unnatural. C Overlay with 50% gray does little and can shift midtones oddly. D default layer styles rarely match scene lighting and look synthetic.",
+          "skills_covered": [
+            "digital compositing",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A preflight report flags small body copy using rich black.\n```text\nBody text: 9 pt, Process Black: C60 M40 Y40 K100 (rich black)\nOutput: PDF/X for sheetfed CMYK (FOGRA39)\nWarning: Risk of misregistration/blur on small type.\n```\nWhat is the correct fix for print reliability?",
+          "options": [
+            "Leave rich black; the press will tighten registration for small text.",
+            "Enable overprint on the rich black text so plates align better.",
+            "Outline the text to convert it to vectors; keep rich black values.",
+            "Convert small text to 100% K only; keep rich black for large solids if needed."
+          ],
+          "correct_option": "D",
+          "explanation": "Small text should be 100% K to avoid plate registration blur. Rich black is appropriate for large areas, not fine type.",
+          "distractor_rationale": "B overprint doesn’t solve registration issues and can cause color shifts. C outlining does not change multi-ink registration risk. D assumes control the designer does not have; risk remains.",
+          "skills_covered": [
+            "file-based workflow",
+            "Typography",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You must choose a CTA treatment that stands out against a navy hero and nearby teal clothing.\n```text\nBackground area: #2E3A7A (navy)\nNearby garment: #2F9CA8 (teal)\nCTA candidates:\nA) Button #2F9CA8, text #FFFFFF\nB) Button #F15A24 (orange), text #FFFFFF\nC) Button #2E3A7A, text #F15A24 with 1 px white stroke\nD) Button #FFD34E (yellow), text #000000\n```\nWhich option gives the strongest, clean separation amid both navy and teal while minimizing clash artifacts?",
+          "options": [
+            "B",
+            "C",
+            "D",
+            "A"
+          ],
+          "correct_option": "A",
+          "explanation": "Orange (#F15A24) is complementary to nearby teal and contrasts strongly with navy; white text keeps readability without fringing. It maximizes perceptual separation in this context.",
+          "distractor_rationale": "A merges with the garment. C places type color on the same hue as the background with a hairline stroke that can shimmer. D is high-contrast but risks visual noise near highlights and can dominate undesirably; the black-on-yellow combo can also vibrate adjacent to navy.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are laying out a two-page magazine spread featuring a 1,200-word profile and a portrait. The supplied RAW portrait (Adobe RGB) has a green cast and clipped highlights on the forehead. The printer requests CMYK (FOGRA39), PDF with 3 mm bleed, and cautions against rich black in small text. The art director wants an elegant typographic hierarchy and the portrait to feel luminous, not flat, across both print proofs and a web teaser JPEG.",
+          "task": "Describe, in order, the key decisions and steps you will take to: 1) establish typographic hierarchy and page rhythm; 2) correct the portrait’s color and highlights non-destructively; 3) prepare exports for both print (CMYK) and web (sRGB) that match visually as closely as practicable. Justify each choice with respect to risks like hue shifts, registration, and compression.",
+          "expected_answer": "A strong answer sequences: Grid and type system first (baseline grid, column structure, measure ~45–75 CPL, 3+ levels: headline, deck, body with optical sizes, proper kerning/leading). Use K-only for small type, rich black only in large solids. Portrait edit non-destructively in a layered/parametric workflow: white balance correction (gray reference or eyedropper), highlight recovery in RAW, then Curves/Highlight roll-off; use Luminosity blend mode for luminance adjustments to avoid hue shifts; target green cast with HSL using skin-protective masks; avoid global saturation before highlight recovery. Soft-proof to CMYK (FOGRA39) while editing, check total ink limit and preserve skin tones; avoid crushing contrast. For export: convert (not assign) to CMYK for print, embed profile, 3 mm bleed, PDF/X as requested, 300 ppi effective resolution; ensure small text is 100K (no rich black). For web: duplicate from RGB master, convert to sRGB, resize appropriately, gentle sharpening (Preserve Details 2.0 + Screen/Standard), JPEG quality tuned to avoid halos. Verify print/web match via soft-proof and side-by-side sRGB preview, accepting unavoidable gamut mapping differences.",
+          "rubric": [
+            {
+              "criterion": "Establishes a clear typographic hierarchy and grid (levels, measure, leading, kerning specifics) with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies K-only body/small text and restricts rich black to large solids; addresses registration risk",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes non-destructive color correction and highlight recovery sequence, including WB and Curves/Luminosity approach",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains CMYK soft-proofing, conversion (not assign), profile embedding, bleed, resolution, and PDF standard",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines web export from RGB master, sRGB conversion, resample/sharpening choices, and compression trade-offs",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Typography",
+            "Graphic Design Principles",
+            "Color Correction",
+            "perform image editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A hero composite for a campaign must place a stainless bottle (shot at 85 mm, softbox camera-left) on a marble countertop scene (shot at 35 mm, window light camera-right). The bottle rim has bright speculars; its base is slightly warped; perspective and light directions differ. The final must be used for print and social.",
+          "task": "Explain how you will reconcile perspective and lighting, integrate contact shadows and reflections, and manage color so the bottle sits believably on the marble. Specify mask/refine approaches, transforms, shadow construction, and the order of operations. Include how you’ll keep the file non-destructive and export-ready for multiple outputs.",
+          "expected_answer": "Start from the higher-fidelity RAW or 16-bit source. Place assets as Smart Objects. Correct perspective/scale mismatch first: match camera height and focal feel using Transform/Warp for base correction and Perspective/Distort to align verticals; optionally use a match-perspective grid. Flip the marble plate or relight using Dodge/Burn only if direction must change; otherwise fake a key from the correct side with a soft gradient luminance map. Match light direction by painting specular highlights and soft edge falloff on separate 50% gray Overlay layers; reduce left-side specular, add right-side rim consistent with the window. Build contact shadow on a separate layer set to Multiply with a warm sampled hue; tight contact at 85–90% opacity, falloff blur outward; add a soft reflection with low opacity using a vertically flipped bottle masked and faded. Mask hairline edges carefully: Select and Mask with low feather, refine metallic edges with contrast and Decontaminate Colors for any rim light contamination. Color-match using Curves/Hue-Sat clipped to the bottle, finishing with a global LUT or Color Balance to unify. Keep color and luminance separated (Curves in Luminosity). Order: geometry → mask/refine → light/shadow → color-unify → final global contrast. Prepare exports from a master RGB file: convert to sRGB for social, to CMYK for print with soft-proofing. Keep adjustment layers editable; avoid baking until final.",
+          "rubric": [
+            {
+              "criterion": "Addresses perspective/scale reconciliation (focal mismatch, warp, alignment) with concrete tools",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes believable shadows/reflections construction (Multiply shadow, contact vs falloff, reflection fade)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains light direction/specular management and non-destructive approach (separate layers, smart objects)",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers color unification and separation of luminance vs chroma; export considerations for RGB/CMYK",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "digital compositing",
+            "perform image editing",
+            "Color Correction",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must deliver a 5-tile social carousel for an NGO explaining a tree-planting initiative. Assets: one wide establishing photo, two action close-ups, one portrait, one map. Brand colors include a deep green and a bright cyan that can vibrate against photos. Text budget: 10 words per tile max. The client complains prior drafts felt disjointed and some tiles looked fuzzy on upload.",
+          "task": "Propose a specific tile order and typographic/color system that creates a clear narrative arc and visual consistency. Detail margin/grid decisions, type scales, how you’ll prevent color vibration on photos, and exact export settings to avoid platform blurriness. Justify your choices.",
+          "expected_answer": "Order: 1) Establishing wide (context), 2) Action close-up (planting), 3) Action close-up (watering/staking), 4) Portrait (beneficiary), 5) Map/call-to-action. Use a consistent 8-pt baseline and 12-col grid with identical internal margins and safe areas (e.g., 80 px from edges to avoid UI chrome). Type: one family with styles mapped (Title, Kicker, Body microcopy), consistent sizes (e.g., 44/52 for titles, 24/32 for body), tight optical kerning on display. Color: avoid cyan on photographic midtones; place brand colors in solid fields or scrims; use deep green for titles over a 30–40% black gradient scrim when on photos; white text only over scrims meeting contrast. Reuse a subtle LUT or global Color Lookup for coherence. Export: from RGB master, convert to sRGB, size 1080×1350 px (portrait) at 2x variants where platform supports; resample Preserve Details 2.0, sharpening Screen/Standard; keep JPEG quality ~80–85 to avoid recompression blur; verify file <1 MB to reduce platform recompression. Maintain consistent file naming for sequence.",
+          "rubric": [
+            {
+              "criterion": "Coherent narrative order that builds context→action→impact→CTA",
+              "marks": 2
+            },
+            {
+              "criterion": "Consistent grid/margins and typographic system with concrete sizes and kerning/leading decisions",
+              "marks": 2
+            },
+            {
+              "criterion": "Color treatment to prevent vibration and ensure legibility on photos (scrims/solids, contrast)",
+              "marks": 2
+            },
+            {
+              "criterion": "Export settings to maintain sharpness on platforms (sizes, profiles, sharpening, compression)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Graphic Design Principles",
+            "Typography",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your logo lockup (wordmark + mark) fails at small sizes when placed over varied photography on a landing page. At 16 px cap height it looks muddy on midtone images, and thin counters fill in. You may not change the logo shapes. You must supply a set of assets and usage rules that ensure legibility across hero images and thumbnails, including high-DPI displays.",
+          "task": "Define the minimal, standards-compliant set of treatments and exports to guarantee legibility: background handling, stroke/outline rules (if any), color variants, size thresholds, and file formats/resolutions. Explain how you will test and package them so developers apply them correctly.",
+          "expected_answer": "Provide a usage kit: 1) Primary: solid background lockups (brand colors) for use over photos via a required scrim (e.g., 30–50% black gradient or solid behind logo within a defined safe area). 2) Knockout (white) and solid (black) variants for dark/light imagery. 3) Hairline-protected small-size variant using an approved outline (1–2 px) around the entire lockup applied in vector, not as raster halo; specify it only below a threshold (e.g., cap height <24 px). 4) Minimum sizes: e.g., web 16 px cap height, print 4 mm x-height; below that, use the mark-only bug. 5) Pixel-fit snapping for raster exports; export 1x, 1.5x, 2x PNG/SVG as appropriate; keep SVG for scalable contexts, PNG for raster overlays; sRGB color. 6) Provide background scrim components to ensure consistent placement; avoid hairline strokes on type over busy mids. Test at 100% and 200% against representative imagery; include a spec sheet with do/don’t and CSS-friendly sizes. Package vectors, PNGs, and a PDF style guide.",
+          "rubric": [
+            {
+              "criterion": "Defines clear treatments (primary, reversed, small-size variant) and when to use each",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies background handling (scrims/solids) and rules to avoid midtone loss",
+              "marks": 2
+            },
+            {
+              "criterion": "Details export formats/resolutions (SVG/PNG), pixel-fitting, and high-DPI support",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes testing and packaging (spec sheet, usage rules) for developer handoff",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design exercises: Poster and editorial page demonstrating composition, color, typography, and storytelling",
+          "brief": "Produce two designed pages that together demonstrate hierarchy, composition, color use, and a clear micro-story: 1) a one-page poster (1080×1350 px or A4) for a community event; 2) a single editorial page (A4) introducing a 400–600 word article with a pull quote and one image. Include an appended spec sheet page showing grid, palette, and type styles used.",
+          "deliverable": "Design exercises: one multi-page PDF (poster, editorial page, spec sheet) and the packaged working files (INDD/PSD or equivalent) with links; fonts may be substituted with outlines if licensing requires.",
+          "acceptance_criteria": [
+            "Poster page present with headline, subhead, body/CTA; editorial page present with headline, body, and pull quote; spec sheet page present.",
+            "Spec sheet displays: grid overlay, baseline grid values, column/gutter sizes; named color swatches with HEX/CMYK values; type styles (font names, sizes, leading, tracking).",
+            "At least three levels of typographic hierarchy are evident on each page (e.g., H1/deck/body) and align to a consistent baseline grid.",
+            "Color usage is consistent: same palette across both pages; no small text set in rich black; body copy is 100% K in CMYK export.",
+            "Both pages export to PDF with 3 mm bleed (A4) or full-bleed (1080×1350) and embedded profiles; effective image resolution ≥ 300 ppi for A4, ≥ 150 ppi for digital poster.",
+            "File package includes linked images and a readme listing fonts used and any substitutions."
+          ],
+          "rubric": [
+            {
+              "criterion": "Hierarchy and composition: clear focal points, consistent grid/baseline use across both pages",
+              "marks": 5
+            },
+            {
+              "criterion": "Typography: appropriate styles, kerning/tracking, readable measure; three or more levels used correctly",
+              "marks": 5
+            },
+            {
+              "criterion": "Color system: consistent palette, contrast management, correct black usage for small text",
+              "marks": 4
+            },
+            {
+              "criterion": "Spec sheet completeness: grid, swatches with values, type styles documented",
+              "marks": 3
+            },
+            {
+              "criterion": "Technical export quality: bleed, profiles embedded, resolution met; package completeness",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Typography",
+            "Storytelling",
+            "file-based workflow",
+            "Color Correction"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Image series: Retouched and composited mini-series with consistent look, print and web exports",
+          "brief": "Create a series of three related images that tell a visual micro-story (e.g., product-in-use sequence or before→action→after). Each image must include: non-destructive retouching, at least one composited element, and color work that unifies the series. Deliver layered masters and exports for both web and print.",
+          "deliverable": "Image series: a folder with 3 layered master files (PSD/AFPHOTO), their linked assets, and an Exports subfolder containing web JPEGs (sRGB, 1080 px on the long side) and print TIFFs/PDFs (CMYK profile provided or FOGRA39). Include a contact sheet (PDF) with 100% crops of edges and masks.",
+          "acceptance_criteria": [
+            "Each master file contains: at least one masked subject, one color adjustment layer (Curves/Color Balance/HSL), and a separate shadow/reflection layer; adjustment layers named; no destructive erasing.",
+            "Edges show no obvious light halos at 100% zoom; if present initially, fringing addressed via refine/decontaminate or color edge fixes.",
+            "Series uses a consistent color treatment (e.g., shared LUT or matched white balance) demonstrated on the contact sheet.",
+            "Web exports are sRGB at the specified pixel dimensions; print exports are CMYK with embedded profile; filenames include suffixes _WEB and _PRINT appropriately.",
+            "Shadows are built with Multiply (or equivalent) and show higher opacity at contact with soft falloff; reflections (if used) are faint and masked.",
+            "Submission includes a brief (≤150 words) noting which compositing/retouching methods were used and why."
+          ],
+          "rubric": [
+            {
+              "criterion": "Retouching quality: non-destructive workflow, believable corrections without artifacts",
+              "marks": 5
+            },
+            {
+              "criterion": "Compositing integration: masks, shadow/reflection realism, edge handling",
+              "marks": 6
+            },
+            {
+              "criterion": "Color unification across series and per-image tonal control",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical delivery: correct profiles, dimensions, naming, and layered masters provided",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation (contact sheet 100% crops, brief of methods)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "perform image editing",
+            "digital compositing",
+            "Color Correction",
+            "file-based workflow",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-034-S02",
+      "skills_assessed": [
+        "Graphic Design Principles",
+        "Typography",
+        "Storytelling",
+        "Color Correction",
+        "Video Editing",
+        "edit recorded sound",
+        "synchronise sound with images",
+        "design materials for multimedia campaigns",
+        "file-based workflow",
+        "use digital illustration techniques",
+        "follow a brief"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You must deliver a 16 px favicon and a 24 px social avatar derived from a 220 px vector logomark that uses 1.5 pt strokes. In Illustrator, the Transform panel currently shows:\n\n```text\nScale: 10%\nScale Strokes & Effects: OFF\nAlign to Pixel Grid: ON\nArtboard export: PNG @1x, sRGB\n```\nAt 16 px, the inner counters of the mark risk closing up and the outer stroke looks too thin in exported PNGs. Which operation sequence will most reliably preserve recognisability at both 16 px and 24 px?\n",
+          "options": [
+            "Enable \"Scale Strokes & Effects\", uniformly scale the master art to each target size, and export PNGs at 1x from those scaled artboards.",
+            "Export one 220 px PNG and downscale to 16 px and 24 px in the video editor using its high-quality scaler.",
+            "Outline the strokes (Object > Path > Outline Stroke), make optical adjustments to critical shapes for a dedicated small-size variant, then export PNGs at exact pixel artboard sizes.",
+            "Keep strokes live, export a single SVG, and rely on platform rasterisation to produce crisp 16 px and 24 px renditions."
+          ],
+          "correct_option": "C",
+          "explanation": "At tiny sizes, proportional stroke scaling often produces hairlines that drop out and counters that clog. Converting strokes to filled shapes lets you make optical adjustments (thicken key parts, open counters, simplify) for a small-size variant. Exporting from artboards sized to exact pixel dimensions avoids resampling blur.",
+          "distractor_rationale": "A is tempting because it seems consistent, but scaled strokes at 10% become too thin and detail disappears. C sounds flexible, but client platforms rasterise SVG differently, risking inconsistent results. D offloads resampling to the NLE, but starting from one large raster and downscaling twice compounds blur and aliasing; you lose control per size.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "use digital illustration techniques",
+            "Typography"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A brand color `#E65400` looks noticeably duller when composited over video in your timeline. You are working in DaVinci Resolve with these settings and media metadata:\n\n```text\nProject Settings > Color Management:\n  Color Science: DaVinci YRGB Color Managed\n  Timeline Color Space: Rec.709 Gamma 2.4\n  Output Color Space: Rec.709 Gamma 2.4\n\nMedia Pool (logo.png):\n  Color Space: Unknown\n  Gamma: Unknown\n\nExport: H.264, Rec.709, 8-bit\nScopes: Parade shows lower saturation vs original design mockup (sRGB).\n```\nWhich single change will most directly correct the brand color without grading the entire show?\n",
+          "options": [
+            "Set the logo.png clip attributes > Input Color Space to sRGB IEC61966-2.1 so Resolve converts it into the Rec.709 timeline.",
+            "Apply a creative LUT on an adjustment layer above the logo to \"punch\" the orange back to spec.",
+            "Switch export to 10-bit HEVC so the gamut is larger and the orange renders correctly.",
+            "Enable Display Color Management in the viewer so the GUI shows accurate color during editing."
+          ],
+          "correct_option": "A",
+          "explanation": "Still graphics authored in sRGB should be tagged or interpreted as sRGB so the color management pipeline can convert them to the Rec.709 timeline space. Assigning the correct input color space for the PNG fixes the washout without affecting other footage.",
+          "distractor_rationale": "A affects the viewer only, not the timeline or export transforms. C adds an arbitrary grade that will also change other tones and make consistency fragile. D increases precision but does not change the color space transform; the color still sits in Rec.709 and will remain mismatched if the input is misinterpreted.",
+          "skills_covered": [
+            "Color Correction",
+            "file-based workflow",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your Premiere Pro project went offline after a drive letter change. The original camera media and proxies were stored like this before the change:\n\n```text\nD:\\Project\\Media\\Originals\\A001\\*.MP4\nD:\\Project\\Media\\Proxies\\A001\\*.MOV\n```\nNow the disk mounts as E:. Premiere shows the proxy badges but clips are offline. You also need to export the master from full-res media. Which relink sequence avoids re-attaching proxies twice and gets you to full-res export fastest?\n",
+          "options": [
+            "Delete all proxy files, then \"Link Media\" to the originals on E:, and finally regenerate proxies from the linked clips.",
+            "Use \"Attach Proxies\" to point to E:\\Project\\Media\\Proxies\\A001, then disable proxies and relink originals.",
+            "Use \"Link Media\" on one clip, target E:\\Project\\Media\\Originals at the A001 folder; let Premiere auto-find the rest, then toggle proxies off for full-res export.",
+            "Right-click the sequence and choose \"Render and Replace\" with full-resolution; Premiere will auto-relink to originals for the render."
+          ],
+          "correct_option": "C",
+          "explanation": "Relink the full-resolution media at the clip level to the new drive path. Because proxies are attached via metadata on those master clips, once the masters are online you can simply toggle proxies off to export full-res without re-attaching proxies.",
+          "distractor_rationale": "A fixes proxies first but leaves masters offline and wastes time when you still must relink originals. C is overkill and destroys working proxies. D renders from whatever is online; with masters offline it will not restore correct links and can bake in proxy quality.",
+          "skills_covered": [
+            "file-based workflow",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You have one camera file and one dual-system audio file for an interview. Metadata:\n\n```text\nCAM_A_001.MOV  TC Start: 10:00:00:00  Frame Rate: 25\nAUD_A_001.WAV  TC Start: 01:00:00:00  Sample Rate: 48 kHz\nSlate clap visible at CAM timecode 10:00:12:08.\nAudio spike peaks at audio timecode 01:00:02:08.\nNo jam-sync was used.\n```\nYou must sync them quickly and reliably. Which method yields correct alignment with least manual correction?\n",
+          "options": [
+            "Set in-points on the clap frame and clap peak respectively, then merge by in-points.",
+            "Use waveform sync/auto-sync by audio in the NLE; ignore timecode since sources were not jam-synced.",
+            "Slip the audio +10:10:06:00 visually until lips match; skip merge functions.",
+            "Merge by timecode using camera TC as master; the editor will offset automatically."
+          ],
+          "correct_option": "B",
+          "explanation": "With un-jammed timecodes that start at different bases, timecode merge will not align. Waveform sync matches the transient clap peak to the visual event across files and is the fastest robust method. Setting manual in-points also works but is slower and more error-prone across many clips.",
+          "distractor_rationale": "A assumes common reference timecode, which is absent. C can work but scales poorly and is fiddly under time pressure. D is a manual approximation and risks cumulative error; modern waveform sync is faster and more accurate.",
+          "skills_covered": [
+            "synchronise sound with images",
+            "edit recorded sound",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You have this VO timing and a 2-second logo sting the client insists must \"land on the word Bold\". Current cut feels rushed up front and slow at the end.\n\n```text\n00:00.00  [Music starts]\n00:00.60  VO: \"Introducing the new Ardent series—\"\n00:02.10  VO: \"—crafted for those who choose to be\"\n00:03.30  VO: \"bold.\"\n00:03.80  [Logo sting 2.0s]\n```\nWhich re-cut best supports pacing and the brief without adding frames?\n",
+          "options": [
+            "Shorten the sting to 1.5 seconds so it fits after \"bold\" without changes to VO.",
+            "Start the logo sting under \"choose to be\" as a J-cut so its impact peaks exactly at 00:03.30 on \"bold\".",
+            "Hard cut to black at 00:03.30, then start the sting; extend total duration by 2 seconds.",
+            "Move \"crafted for those who choose to be\" earlier by 8 frames and start the sting at 00:03.22 so the hit lands close to \"bold\"."
+          ],
+          "correct_option": "B",
+          "explanation": "A J-cut allows the logo sting to build under the preceding line and crest on the emphasized word without changing total duration, matching the brief's intent and natural pacing.",
+          "distractor_rationale": "B breaks the fixed duration constraint. C drifts timing without controlled build and risks missing the exact emphasis. D ignores the brief's fixed 2-second sting and changes approved assets.",
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A broadcast lower-third must include your wordmark at 64 px height. In test encodes it shimmers on lateral camera moves. The mark uses very thin serifs and 1 px verticals at 1080p. You can only change how you prepare the graphic and how you composite it. What reduces shimmer most reliably without visibly blurring the mark?\n",
+          "options": [
+            "Switch the export to 50 Mbps; more bits reduce shimmer artifacts.",
+            "Enable field rendering (interlaced) so motion is smoother.",
+            "Keep 1080p, add a 0.8 px Gaussian Blur to the wordmark layer in the NLE.",
+            "Render the wordmark at 2160p with 2x stroke weight, then scale down to 1080p using a high-quality filter before compositing."
+          ],
+          "correct_option": "D",
+          "explanation": "Supersampling (render larger and downscale with a good filter) reduces high-frequency detail that aliases during motion while preserving perceived sharpness better than adding blur at final resolution. Slightly heavier strokes at source help survivability.",
+          "distractor_rationale": "B softens everything indiscriminately and is noticeable at text edges. C interlacing can worsen thin-line flicker on modern progressive displays. D bitrate affects compression noise, not subpixel aliasing from resampling and motion.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You must place a semi-transparent watermark logo so that it survives a 1:1 center-crop from a 1920x1080 master for social cutdowns. The client insists on top-left placement. Title safe is 10%.\n\n```text\nMaster: 1920x1080 (16:9)\nCutdown: center-cropped to 1080x1080\nTitle safe inset: 192 px horizontally, 108 px vertically\n```\nWhere should the logo's top-left anchor go on the 1920x1080 master to guarantee it remains fully visible after the 1:1 crop and stays within title safe?\n",
+          "options": [
+            "At x=192, y=108",
+            "At x=420, y=108",
+            "At x=0, y=0",
+            "At x=192, y=0"
+          ],
+          "correct_option": "B",
+          "explanation": "The 1:1 crop keeps the central 1080 px width, meaning 420 px are trimmed from each side (1920-1080=840; half per side=420). To remain visible after center-crop and within title safe vertically, the logo must be at least 420 px from the left. Title safe top inset is 108 px. So x=420, y=108 satisfies both constraints.",
+          "distractor_rationale": "A is within title safe but still inside the 420 px area that will be cropped. B violates title safe and will also be cropped away. D violates title safe vertically.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "In Resolve you composite a brand-orange PNG over footage. The orange clips on scopes when you apply a LUT. Current node graph:\n\n```text\nNode 1: CST (Timeline Rec.709 2.4 -> ARRI LogC) \nNode 2: Creative LUT (LogC LUT)\nNode 3: CST (LogC -> Rec.709 2.4)\nNode 4: Logo Composite (Add)\nNode 5: Broadcast Safe (hard clip)\n```\nThe logo is being clipped and looks darker. Which node re-order and mode change best preserves brand color?\n",
+          "options": [
+            "Place Logo Composite between Node 3 and Node 5 and change blend to \"Normal\" (Over).",
+            "Move Broadcast Safe to the very end and leave everything else; clipping is inevitable.",
+            "Disable both CSTs; apply the LUT in Rec.709 and keep Logo last.",
+            "Place Logo Composite before Node 1 so it travels through the LUT like the footage; keep Add mode."
+          ],
+          "correct_option": "A",
+          "explanation": "Composite graphics in the same display space as output (Rec.709) after look transforms to avoid running solid brand colors through creative LUTs designed for camera log. Using a straight Over composite preserves source RGB values. Apply Broadcast Safe last if needed, but keep it soft if possible.",
+          "distractor_rationale": "A pushes the logo through the log LUT, which remaps its RGB and changes the color. C accepts clipping rather than preventing it; order matters. D breaks the intended look management for footage and still risks logo treatment issues.",
+          "skills_covered": [
+            "Color Correction",
+            "Video Editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your asset handoff must survive XML/AAF conforms across apps. Consider these two batch exports of logo variants:\n\n```text\nBatch 1 filenames:\nArdent-Logo-FullColor-v2-Final.png\nardent_logo_fullcolor_v02_final.png\nARDENT-Logo-Full_Color-V2-final.PNG\n\nBatch 2 filenames:\nARD_Logo_FullColor_v002_master_1080.png\nARD_Logo_FullColor_v002_master_2160.png\nARD_Logo_Mono_v002_master_1080.png\n```\nOn conform, the receiving system sorts alphanumerically and auto-maps variants by common stems. Which batch is safer for downstream automation and why?\n",
+          "options": [
+            "Batch 2, because consistent stems, zero-padded version numbers, and explicit variant/res fields support deterministic matching.",
+            "Batch 1, because using mixed case and hyphens is human-friendly.",
+            "Batch 1, because \"Final\" communicates status better than version numbers.",
+            "Batch 2, because uppercasing the prefix ensures sort order groups logos together."
+          ],
+          "correct_option": "A",
+          "explanation": "Deterministic, machine-friendly naming with consistent stems, zero-padded versions, and explicit resolution/variant fields makes auto-mapping and sort-based grouping reliable across systems that are case- and delimiter-insensitive.",
+          "distractor_rationale": "A/Both mixed delimiters and inconsistent casing create fragile matches. C is a common habit but harmful to automation. D the uppercase prefix alone does not guarantee stable grouping without consistent stems and fields.",
+          "skills_covered": [
+            "file-based workflow",
+            "follow a brief",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You scaled your wordmark from Illustrator into Premiere for a 4-second fade-up. At 75% scale it looks slightly uneven compared to the Illustrator proof. Illustrator Transform:\n\n```text\nScale Strokes & Effects: OFF\nHinting: N/A (vector)\n```\nPremiere sequence and export:\n\n```text\nSequence: 1920x1080, Rec.709 2.4\nImport: AI file (embedded), High Quality Playback\nExport: H.264, 16 Mbps\n```\nWhich preparation yields the most faithful appearance during the animated scale without redesigning the mark?\n",
+          "options": [
+            "Keep the AI file and animate scale up to 150% instead of down to 75% to avoid thinning strokes.",
+            "Export SVG and import into Premiere for true vector scaling during animation.",
+            "Enable \"Scale Strokes & Effects\" in Illustrator and re-import so stroke widths scale with the animation in Premiere.",
+            "Pre-render the wordmark as 3840x2160 PNG with transparency from Illustrator and animate scale down in Premiere to 50% using High Quality scaling."
+          ],
+          "correct_option": "D",
+          "explanation": "Premiere rasterizes Illustrator artwork at sequence resolution. Providing a 2x raster source and downscaling during the animation yields better fidelity (supersampling) than relying on Premiere to resample a single-resolution rasterization of the AI file. Premiere does not support true vector SVG scaling in the Editing panel.",
+          "distractor_rationale": "A changes the Illustrator design intent and still gets rasterized in Premiere. C does not address raster sampling artifacts and changes timing/feel. D Premiere does not support SVG as a true vector layer in the edit timeline; it will rasterize or reject it.",
+          "skills_covered": [
+            "use digital illustration techniques",
+            "Video Editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a brief for a product refresh: create a compact logomark and wordmark set, and cut a 15-second launch video for Instagram and YouTube. Constraints: the logo must remain legible at 24 px (avatar), the brand orange must match existing web assets (sRGB), the video master is Rec.709 1080p, and social cutdowns include a 1:1 center-crop. The client mandates a 2-second logo sting that \"lands on bold\" in the VO. They will reuse your brand assets across web and the video edit.",
+          "task": "Propose a concrete end-to-end workflow that ensures (a) logo legibility at small sizes, (b) consistent brand color across sRGB web assets and Rec.709 video, (c) safe logo placement that survives a 1:1 crop, and (d) pacing that satisfies the sting requirement without increasing total duration. Justify key decisions and list specific settings where relevant.",
+          "expected_answer": "A defensible plan could include: design two logo variants (master and small-size) by outlining strokes and performing optical simplifications for 24 px; export vector masters (SVG/PDF) and raster deliverables (PNG @1x/@2x), with artboards sized exactly to pixel outputs. For color, define the palette in sRGB with precise hex values, then in Resolve/Premiere interpret still graphics as sRGB and convert into a Rec.709 Gamma 2.4 timeline; composite logos post-look transforms and avoid creative LUTs on the logos. Specify Rec.709 tagging on export. For placement, calculate the 1:1 crop (central 1080 px) and keep the watermark/logo at least 420 px from the left edge and 108 px from the top (title safe). For pacing, use a J-cut to introduce the 2-second sting under the VO so the accent lands exactly on the word \"bold\" without extending duration. Include file structure and naming that is machine-friendly, zero-padded versions, and deliver an export at H.264 1080p, 16–20 Mbps, 48 kHz audio, plus a 1:1 render.",
+          "rubric": [
+            {
+              "criterion": "Articulate a small-size logo strategy (outlining strokes/simplification, pixel-fitted artboards, dedicated variant)",
+              "marks": 2
+            },
+            {
+              "criterion": "State a correct color management path (interpret sRGB inputs, Rec.709 timeline/output, composite graphics post-look) with at least one concrete setting",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct 1:1 crop placement logic (420 px side crop from 1920, title safe constraints)",
+              "marks": 1
+            },
+            {
+              "criterion": "Pacing solution that hits the sting on the emphasized word without extending duration (e.g., J-cut justification)",
+              "marks": 2
+            },
+            {
+              "criterion": "File/org details that support reuse (naming/versioning or folder structure)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "use digital illustration techniques",
+            "Color Correction",
+            "Video Editing",
+            "Graphic Design Principles",
+            "Storytelling",
+            "file-based workflow",
+            "follow a brief",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherit a chaotic project folder mid-edit. The editor mixed originals and exports in the same directories, proxies live in user-specific temp folders, and the Premiere project opens with 30% of clips offline. Delivery is due today and requires a full-res master and a clean handoff to the broadcaster and social team.",
+          "task": "Lay out a recovery plan that (a) restores links quickly for full-res export, (b) normalises project structure to reduce future relink issues, and (c) prepares assets for conform/hand-off. Be specific about the order of operations and any automation you would use.",
+          "expected_answer": "A plausible sequence: 1) Do not move anything yet. Identify one offline clip and use Link Media to point to the correct Originals root; allow Premiere to auto-find siblings. 2) Toggle proxies OFF for mastering. 3) If proxies are needed, use Attach Proxies to rebind existing proxies rather than regenerating, but only after masters are online. 4) Export the master. 5) Normalise structure by creating Media/Originals/ and Media/Proxies/ (mirroring subfolders per card), Project/, Exports/, and Assets/Graphics/; move non-source exports out of Originals. 6) Use Project Manager (Premiere) or Media Management (Resolve) to collect and consolidate to the new structure, preserving folder names. 7) Standardise filenames with consistent stems and zero-padded versions. 8) For handoff, include the project file, a readme with drive-relative paths, exported XML/AAF, EDL, and a text inventory of file counts and sizes.",
+          "rubric": [
+            {
+              "criterion": "Clear, efficient relink strategy prioritising full-res masters (Link Media on masters; proxy toggle)",
+              "marks": 2
+            },
+            {
+              "criterion": "Order of operations that avoids breaking existing proxies and prevents wasted work",
+              "marks": 2
+            },
+            {
+              "criterion": "Normalised folder structure proposal that separates Originals/Proxies/Exports/Assets",
+              "marks": 1
+            },
+            {
+              "criterion": "Automation/tools named correctly (Project Manager/Media Management, collect/consolidate)",
+              "marks": 1
+            },
+            {
+              "criterion": "Handoff/conform prep (XML/AAF/EDL, inventory, readme with relative paths)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "Video Editing",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The brand team complains the orange in the end card is off on YouTube but looks fine in your NLE viewer. Your Resolve project is color-managed (Rec.709 2.4). The end card is a flat PNG made in sRGB. You currently place it as the last video track, over the graded footage, before a Broadcast Safe node. You export H.264 MOV without explicit NCLC tags.",
+          "task": "Diagnose the likely points of failure and prescribe corrections that ensure the end card orange matches the sRGB spec across common players. Include at least one scope-based verification step.",
+          "expected_answer": "Two main issues: input interpretation and export tagging. First, set the end card PNG input color space to sRGB so Resolve converts to the Rec.709 2.4 timeline and composite it after creative look transforms to preserve RGB. Confirm on scopes (vectorscope target/saturation and RGB parade vs reference swatch). Second, ensure export writes proper NCLC tags (1-1-1 or 1-2-1 depending on chosen gamma) so QuickTime-compatible players display correctly. Optionally, switch to MP4 with Rec.709 tags. Keep Broadcast Safe last and gentle; avoid clipping brand colors. Validate by sampling the orange in the NLE and in the exported file (frame grab) to confirm delta E or RGB values within tolerance.",
+          "rubric": [
+            {
+              "criterion": "Identify input color space misinterpretation and propose setting PNG input to sRGB with conversion into Rec.709",
+              "marks": 2
+            },
+            {
+              "criterion": "Specify correct compositing order relative to look/LUT nodes (post-look)",
+              "marks": 1
+            },
+            {
+              "criterion": "Address export tagging (NCLC/Rec.709 flags) appropriate to target platforms",
+              "marks": 2
+            },
+            {
+              "criterion": "Describe a verification step using scopes or sampled RGB to confirm match",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Color Correction",
+            "Video Editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A compact logo must be legible at 24 px on dark backgrounds and appear at 64 px in video lower-thirds. The current logo uses live 1.2 pt strokes, tight internal counters, and delicate gaps. At small size the counters close; in video the gaps shimmer on motion.",
+          "task": "Redesign strategy: explain what structural changes you will make in the vector artwork and what preparation you will do for video to preserve clarity. Be specific about Illustrator operations and video prep/export choices.",
+          "expected_answer": "In Illustrator: convert live strokes to outlines, increase minimum stroke-equivalent widths, open counters, simplify internal cuts, and consider alternate small-size geometry (fewer nodes, enlarged negative spaces). Create a pixel-fitted 24 px artboard and check against a dark background. Produce a monochrome variant if needed. For video: render a 2x (2160p) PNG with transparency for the 64 px use and downscale in the NLE; avoid 1 px linework by ensuring even-number pixel widths at target resolution; if motion causes shimmer, apply supersampling via high-res pre-render rather than blur. Keep color in sRGB and convert to Rec.709 in the NLE, compositing post-look. Export both a small-size PNG set (1x/2x) and vector masters (SVG/PDF).",
+          "rubric": [
+            {
+              "criterion": "Vector changes: outlining strokes and optical simplifications (wider minimums, opened counters) explained clearly",
+              "marks": 3
+            },
+            {
+              "criterion": "Pixel-fitted small-size artboard and background testing approach",
+              "marks": 1
+            },
+            {
+              "criterion": "Video prep: 2x render/supersampling rationale for lower-thirds; avoidance of 1 px linework",
+              "marks": 2
+            },
+            {
+              "criterion": "Color management/compositing guidance for video (sRGB to Rec.709, post-look) and appropriate exports listed",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "use digital illustration techniques",
+            "Graphic Design Principles",
+            "Video Editing",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Brand asset mini-pack",
+          "brief": "Produce a compact brand asset pack for the Ardent refresh. It must be ready for web and video use and demonstrate small-size survivability.",
+          "deliverable": "A zipped folder containing: (1) Vector masters: SVG and PDF of the primary lockup and a small-size variant; (2) Raster set: PNGs of both variants at exact artboard sizes of 24 px, 48 px, 64 px, 128 px (all with transparency, sRGB); (3) A one-page PNG/JPG brand sheet showing clearspace, minimum sizes, and the color palette with hex values; (4) A README.txt listing file inventory and naming conventions.",
+          "acceptance_criteria": [
+            "Vector masters open as true vectors (no embedded rasters) and shapes are outlined (no live strokes).",
+            "Raster PNGs are exactly the stated pixel dimensions with transparent backgrounds and tagged sRGB; filenames use consistent stems and zero-padded versioning.",
+            "Small-size variant remains legible at 24 px on both light and dark backgrounds in the brand sheet; clearspace and minimum size are numerically indicated.",
+            "Color palette on the brand sheet includes at least primary and mono variants with hex values; logo colors match within 1 RGB unit across vector preview and PNGs.",
+            "README lists directory tree and explains naming fields (brand, variant, size, version)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Vector build quality (outlined strokes, clean paths, no raster elements)",
+              "marks": 5
+            },
+            {
+              "criterion": "Raster exports correctness (dimensions, transparency, sRGB tagging, file naming discipline)",
+              "marks": 5
+            },
+            {
+              "criterion": "Small-size legibility demonstrated with clearspace/min size documentation",
+              "marks": 5
+            },
+            {
+              "criterion": "Color consistency and documentation (hex values, visual match across formats)",
+              "marks": 3
+            },
+            {
+              "criterion": "README completeness (inventory and naming explanation)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "use digital illustration techniques",
+            "Graphic Design Principles",
+            "design materials for multimedia campaigns",
+            "follow a brief",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "15-second launch edit with brand integration",
+          "brief": "Cut a 15-second promo using provided footage, your brand sting, and the brand assets from Task 1. Organise media, cut for pace, and deliver a master suitable for YouTube and a 1:1 social version.",
+          "deliverable": "A zipped folder containing: (1) Final 1920x1080 MP4 (H.264) and a 1080x1080 MP4; (2) Project file (Premiere or Resolve) with working media links; (3) A text EDL or exported timeline report listing clip order and durations; (4) A screenshot of timeline tracks showing use of J- or L-cuts; (5) A short NOTE.txt describing color management settings used for graphics.",
+          "acceptance_criteria": [
+            "Runtime is 15.0 seconds ± 3 frames for both masters; the 1:1 is a center-crop reframing, not a distorted scale.",
+            "Audio meets: peak at or below -1 dBTP, integrated loudness between -16 and -13 LUFS; no clipping.",
+            "At least one J-cut or L-cut is visible in the timeline screenshot; the brand sting lands on a meaningful VO beat without extending duration.",
+            "Graphics color-managed: stills interpreted/converted from sRGB into a Rec.709 timeline; end card/overlays are composited post-look; NOTE.txt states settings used.",
+            "File organisation: project opens without offline media; directory structure separates Originals/Proxies/Exports/Assets; EDL/timeline report matches the delivered cut order."
+          ],
+          "rubric": [
+            {
+              "criterion": "Pacing and structure (15s timing, effective J/L-cuts, sting landing on beat)",
+              "marks": 6
+            },
+            {
+              "criterion": "Technical audio quality (loudness range, peaks, absence of clipping)",
+              "marks": 4
+            },
+            {
+              "criterion": "Color management/compositing of graphics correctly applied and documented",
+              "marks": 4
+            },
+            {
+              "criterion": "Delivery correctness (both aspect masters, codec/bitrate reasonable, Rec.709)",
+              "marks": 3
+            },
+            {
+              "criterion": "Project organisation and relink integrity (opens cleanly; EDL/timeline report provided)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Video Editing",
+            "Storytelling",
+            "synchronise sound with images",
+            "edit recorded sound",
+            "Color Correction",
+            "file-based workflow",
+            "follow a brief",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-034-S03",
+      "skills_assessed": [
+        "edit recorded sound",
+        "synchronise sound with images",
+        "Motion Graphics",
+        "digital compositing",
+        "principles of animation",
+        "Typography"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive an external recorder file and place it under a 25 fps timeline to sync with camera audio. Over 10 minutes, the external track drifts late by about 0.6 s.\n\n```text\nProject audio: 48000 Hz\nVideo timebase: 25.000 fps\nExternal WAV (MediaInfo): Sampling rate: 48048 Hz\nObserved: After handclap alignment at 00:00:05:00, drift = ~15 frames late by 00:10:00:00\n```\nWhich action eliminates drift across the whole timeline while preserving pitch and timbre?",
+          "options": [
+            "Use a slip edit to nudge the WAV by +15 frames at the head, then relock to picture.",
+            "Modify the WAV’s header to 48000 Hz without resampling so it plays slightly faster on the 48 kHz timeline.",
+            "Change the sequence frame rate to 24.975 fps to match the recorder’s clock error.",
+            "Resample the WAV from 48048 Hz to true 48000 Hz using high‑quality sample‑rate conversion before syncing."
+          ],
+          "correct_option": "D",
+          "explanation": "The file’s clock is running at 48048 Hz. High‑quality resampling to 48000 Hz conforms duration without altering pitch, removing the 0.1% drift over time. Slip edits fix only an offset; header hacks change speed (and pitch); changing the video frame rate is the wrong domain and breaks picture timing.",
+          "distractor_rationale": "A: Fixes only a constant offset; drift returns later. C: Reinterpreting header changes playback speed and pitch; it \"fixes\" drift by speeding audio, but alters tone. D: Video frame rate has nothing to do with the audio clock error and would desync video deliverables.",
+          "skills_covered": [
+            "synchronise sound with images",
+            "edit recorded sound"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You must deliver for web at −16 LUFS with TP ≤ −1.0 dBTP. Your mix meters read:\n\n```text\nIntegrated Loudness (LUFS-I): -19.2\nShort-term Loudness (LUFS-S): -15.5 to -18.0\nTrue Peak (dBTP): -1.2\n```\nWhat should you do to meet spec without clipping?",
+          "options": [
+            "Compress 3:1 at -18 dBFS threshold to lift RMS; ignore integrated loudness and match by ear.",
+            "Apply loudness normalization to -16 LUFS with a true-peak brickwall limiter ceiling at -1.0 dBTP.",
+            "Normalize peaks to -1.0 dBFS; LUFS will follow.",
+            "Raise clip gain by +3.2 dB, then pull the track fader down until peaks are under -1 dBFS."
+          ],
+          "correct_option": "B",
+          "explanation": "You need a 3.2 LU integrated gain increase but must control peaks. LUFS normalization with a TP limiter ceiling at -1.0 dBTP raises integrated loudness while preventing intersample overs.",
+          "distractor_rationale": "A: Adding +3.2 dB would push TP to about +2.0 dBTP before the fader; pulling the fader later doesn’t change rendered headroom or LUFS reliably. C: Compression alone doesn’t target LUFS precisely and may still violate TP. D: Peak normalization ignores loudness and won’t land at -16 LUFS.",
+          "skills_covered": [
+            "edit recorded sound"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A VO track feeds a reverb via a pre‑fader send in your DAW:\n\n```text\nVO Track fader: 0.0 dB (moves during mix)\nSend 'REV' (pre-fader): -12.0 dB\nReverb return on AUX at -6.0 dB\n```\nMid‑mix you pull the VO fader from 0.0 dB to -∞ during a pause. What is heard?",
+          "options": [
+            "The reverb gets louder because the send is fixed while the dry signal drops, increasing wet/dry ratio at the AUX.",
+            "Both dry VO and reverb mute together because the fader is before the send.",
+            "Dry VO mutes but the same reverb level continues (a “ghost” tail) until you lower the send or AUX.",
+            "Dry VO gets quieter and so does the reverb because pre‑fader means it follows the fader."
+          ],
+          "correct_option": "C",
+          "explanation": "A pre‑fader send taps the signal before the track fader, so dropping the track fader mutes only the dry path. The send still feeds the reverb at the same level, so the reverb tail is audible.",
+          "distractor_rationale": "A/C: Reverse the routing. Only post‑fader sends follow the fader. D: The AUX’s absolute wet level doesn’t increase; only the perceived wet/dry ratio changes. The question asks what is heard, not the subjective ratio—what you hear is only the reverb, not a louder reverb.",
+          "skills_covered": [
+            "edit recorded sound"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You align an external mic to camera scratch using a handclap. The offset is constant across the timeline:\n\n```text\nTimeline: 25.000 fps\nClap on camera:  00:00:05:00\nClap on ext.wav: 00:00:04:23  (2 frames early)\nAt 00:20:00:00: still 2 frames early\n```\nWhat is the least destructive correction?",
+          "options": [
+            "Slip the ext.wav by +2 frames so transients line up, then link and continue.",
+            "Add an 80 ms delay plugin on the master bus.",
+            "Time‑stretch the ext.wav by 100.08% so the end lines up too.",
+            "Conform the ext.wav to 48000→48048 Hz to slow it by 0.1%."
+          ],
+          "correct_option": "A",
+          "explanation": "A constant 2‑frame offset needs a slip/nudge so the whole file shifts equally. There’s no drift to fix, so time‑stretching or sample‑rate conforming introduces unnecessary processing. A master‑bus delay would offset everything, not just the problem track.",
+          "distractor_rationale": "B/C: These address drift, not a fixed offset, and risk artifacts or new sync errors. D: Offsets the entire mix, breaking sync with picture and other tracks.",
+          "skills_covered": [
+            "synchronise sound with images"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You hear a click at a dialog edit where two regions butt‑join with no fades:\n\n```text\nEdit point at 00:01:12:00\nIn-sample before cut: +0.21\nFirst sample after cut: -0.26\nCurrent fades: none\n```\nWhat removes the click without changing timing or level balance?",
+          "options": [
+            "Insert a short equal‑power crossfade (~2–5 ms) centered on the cut.",
+            "Normalize both clips to -6 dBFS peak, then re-edit.",
+            "Gate the room tone to below -45 dBFS around the cut.",
+            "Apply DC offset removal on both clips."
+          ],
+          "correct_option": "A",
+          "explanation": "A discontinuity in waveform amplitude at the cut causes a broadband click. A very short equal‑power crossfade smooths the transition without audibly changing timing or dialog level.",
+          "distractor_rationale": "A: DC offset removal fixes a baseline shift, not a bipolar discontinuity. C: Normalization doesn’t address the instantaneous jump. D: Gating removes ambience and can cause chattering; it won’t fix the sample discontinuity at the splice.",
+          "skills_covered": [
+            "edit recorded sound"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your scale animation overshoots at the middle keyframe though you need it to hit exactly 120% with no ring-back:\n\n```text\nLayer: Lower-third background bar\nProperty: Scale\nKF#1 00:00 100%\nKF#2 00:01 120%   (Easy Ease In/Out applied)\nKF#3 00:02 100%\nGraph: Value graph shows bezier tangents at KF#2 causing ~124% overshoot\n```\nWithout changing keyframe times, how do you stop the overshoot while keeping smooth ease elsewhere?",
+          "options": [
+            "Flatten KF#2 value graph tangents (set incoming/outgoing velocity to 0 at KF#2 in the Graph Editor).",
+            "Enable motion blur on the layer so overshoot blends away.",
+            "Convert KF#2 to linear spatial interpolation only.",
+            "Precompose the layer to reset interpolation."
+          ],
+          "correct_option": "A",
+          "explanation": "Overshoot comes from Bezier value tangents at KF#2. Zeroing in/out velocity at the middle keyframe makes it settle exactly at 120% while preserving eased timing into and out of that value.",
+          "distractor_rationale": "A: Spatial vs temporal confusion; overshoot is in the value (temporal) graph. C: Motion blur hides strobing, not value overshoot. D: Precomp doesn’t change the existing keyframe interpolation.",
+          "skills_covered": [
+            "Motion Graphics",
+            "principles of animation"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A white logo renders with dark fringes over footage:\n\n```text\nImported asset: logo_white.tif\nObserved: dark halo on edges over bright backgrounds\nFootage > Interpret Alpha: Premultiplied (black)\nComposite: Normal blend over video\nWorking space: Linearize project ON\n```\nWhat fixes the halo without repainting the asset?",
+          "options": [
+            "Turn off Linearize Project to avoid gamma issues.",
+            "Enable Preserve RGB on the logo layer.",
+            "Switch blend mode to Screen so black disappears.",
+            "Change alpha interpretation to Straight (Unmatted), then re-render."
+          ],
+          "correct_option": "D",
+          "explanation": "A premultiplied-with-black matte will darken edges when composited in linear. Interpreting the alpha as Straight (or removing the black matte) prevents the dark fringe in both linear and non-linear workflows.",
+          "distractor_rationale": "B: Screen hides black but changes the look and won’t correctly composite all scenes. C: Preserve RGB can make it worse and is for color-managed pipelines, not unpremultiplying. D: Turning off linearization dodges the symptom but breaks correct compositing math and is not a fix.",
+          "skills_covered": [
+            "digital compositing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your fast-moving text strobes. Current comp settings:\n\n```text\nComp: 1920x1080 @ 25 fps\nText moves 600 px in 1 frame (hold then jump)\nLayer motion blur: ON\nComp shutter angle: 360°\n```\nTo reduce strobing while keeping the timing window, what change helps most?",
+          "options": [
+            "Disable motion blur so edges are crisp.",
+            "Lower shutter angle to ~180° and replace the jump with eased continuous motion across frames.",
+            "Enable frame blending on the text layer.",
+            "Increase shutter angle to 720° for more blur per frame."
+          ],
+          "correct_option": "B",
+          "explanation": "Strobing comes from large per-frame displacement. Reducing shutter angle tightens blur length; adding eased continuous motion spreads movement across frames so position changes aren’t all in a single frame.",
+          "distractor_rationale": "B: More blur length can worsen smearing without addressing temporal sampling. C: Removes blur but does not fix temporal aliasing; strobes remain. D: Frame blending is for footage with subframe sampling; text is procedurally rendered and not improved by frame blending.",
+          "skills_covered": [
+            "Motion Graphics",
+            "principles of animation"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You need a glow only on animated text, not on the background grade. Current stack:\n\n```text\nAdjustment Layer: Lumetri Color + Glow   (affects whole frame)\nText layer: Lower-third title (animated)\nFootage: Interview BG\n```\nHow do you restrict glow to the text while keeping the color grade as an overall adjustment?",
+          "options": [
+            "Precompose Text+Footage and put Glow on that precomp.",
+            "Change the Adjustment Layer blend mode to Add.",
+            "Apply Glow directly on the Text layer; keep Lumetri on the Adjustment Layer above everything.",
+            "Enable \"Use Text As Mask\" in Glow."
+          ],
+          "correct_option": "C",
+          "explanation": "Glow should be applied to the element that should glow. Leave the grade on the adjustment layer; move Glow onto the text layer so only the text is affected.",
+          "distractor_rationale": "B: Glows the background too. C: Add still affects the entire frame. D: Glow has no generic \"Use Text As Mask\" toggle; masking via set matte/track matte would be another route but simpler is to apply Glow on the text layer.",
+          "skills_covered": [
+            "digital compositing",
+            "Motion Graphics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You animate per‑character reveal with a Text Animator:\n\n```text\nText: \"CareerTours\"\nAnimator: Opacity = 0% (animated to 100% via Range Selector)\nRange Selector: Start=0%, End=100%\nOffset: -50% at 00:00 → +50% at 00:01 (linear)\nBased On: Characters\nRandomize Order: On\n```\nAt 00:00:00:12 (halfway), which characters are fully opaque?",
+          "options": [
+            "None; all characters are at 50% opacity because Offset sweeps midpoint.",
+            "A random 50% of characters across the word.",
+            "Only the first word (\"Career\") because Offset affects words, not characters.",
+            "The first half of the word from left to right (\"Career\")."
+          ],
+          "correct_option": "B",
+          "explanation": "With Randomize Order On and Based On set to Characters, the Range Selector picks characters in randomized order. At halfway through the Offset sweep, about 50% of characters are fully revealed, scattered across the word.",
+          "distractor_rationale": "A: Left‑to‑right applies when Randomize Order is off. C: Based On is Characters, not Words. D: Range Selectors set per‑character inclusion, not a global 50% opacity on all characters.",
+          "skills_covered": [
+            "Motion Graphics",
+            "Typography"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are finishing a 7‑minute interview. Assets:\n\n```text\nVideo: 25.000 fps ProRes, with scratch mic\nLav WAV: MediaInfo shows 48048 Hz, stamped correctly\nGuide clap: 00:00:05:00 (camera), lav aligned to it initially\nObservation: by 00:07:00:00, lav is ~0.42 s (≈10.5 frames) late relative to lips\nLower-third: Animated name bar must land precisely when the guest says their name at 00:01:10:12\nDeliverables: web master (H.264), integrated loudness −16 LUFS, TP ≤ −1 dBTP\n```\nThe producer complains that the name bar no longer lands on the spoken name by the end of the piece because the external audio drifts.\n",
+          "task": "State your end‑to‑end plan to: 1) remove the long‑form audio drift without changing pitch, 2) re‑establish sync for the whole timeline, and 3) ensure the lower‑third animation still lands exactly at 00:01:10:12 after the fix. Justify each step and any settings you choose.",
+          "expected_answer": "A strong answer will: resample the lav from 48048→48000 Hz using high‑quality SRC (or conform in DAW/NLE that performs transparent resampling) to eliminate the 0.1% drift while preserving pitch; replace the timeline audio item with the resampled file, then align via clap (or waveform correlation) once to correct any constant offset; verify sync at the end of the timeline. It will then re‑confirm the lower‑third timing against the fixed audio by checking the word boundary at 00:01:10:12, adjusting only the graphic layer’s keyframes if the picture edit timecode didn’t change. It will mention verifying LUFS/TP at export with a loudness meter and that the drift fix must not alter picture timebase. It may include checks such as placing markers at mouth opening transient, ensuring the name bar’s ease-in/out does not overshoot, and locking picture once audio is fixed.",
+          "rubric": [
+            {
+              "criterion": "Identifies correct cause (clock mismatch 48048 vs 48000) and chooses resampling/conform to remove drift without pitch change",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains re‑alignment strategy (single slip after resample) and verifies sync at head and tail",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes preserving picture timecode and revalidating the lower‑third keyframe landing at 00:01:10:12",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses delivery metering (−16 LUFS, TP limit) and sanity checks (markers, ease integrity)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "synchronise sound with images",
+            "edit recorded sound",
+            "Motion Graphics",
+            "principles of animation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A lyric teaser for social uses per‑character text reveals timed to a 120 BPM beat. The comp was built at 30 fps and exported at 24 fps for upload. On the platform, characters sometimes pop two at a time and miss beats.\n\n```text\nMusic: 120 BPM (0.5 s per beat)\nOriginal comp: 30 fps; keyframes set on exact beats\nExport: 24 fps; render did frame sampling without retiming\nText animator: Based On Characters, Randomize OFF\n```\n",
+          "task": "Diagnose why the reveal timing looks off after export and propose a concrete fix that preserves the intended feel. Include any comp/timebase changes, keyframe adjustments, and export settings needed.",
+          "expected_answer": "The timing error comes from changing frame rate from 30 to 24 without retiming, so beat‑aligned keys land on off‑frames or collapse onto the same 24 fps frame (temporal aliasing). Fix by working and exporting at a consistent timebase: either rebuild the comp at 24 fps and re‑snap keyframes to beats (every 12 frames at 24 fps for 120 BPM) or enable time remapping that properly converts 30→24 with optical flow while keeping animation in its native comp. Alternatively, nest the 30 fps comp in a 24 fps master set to frame-blend or, better, re-time the text layer’s keyframes to 24 fps beat grid (12, 24, 36… frames). Keep per‑character sequencing deterministic (Randomize OFF) and confirm against an audio click track. Export at the same FPS as the comp to avoid resampling.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies frame rate mismatch and temporal sampling as the cause of the pops",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a frame‑accurate retiming plan (24 fps grid: 12‑frame beats at 120 BPM) or rebuilds comp at the delivery fps",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how to implement (nest/re-time vs re-key), including avoiding frame sampling pitfalls",
+              "marks": 2
+            },
+            {
+              "criterion": "Considers audio alignment and validation (click track/markers) and disabling randomization for determinism",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "synchronise sound with images",
+            "Motion Graphics",
+            "principles of animation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A branded opener combines a white TIFF logo over live‑action with a glow and grade.\n\n```text\nLogo: white.tif with alpha (edges show dark halos)\nAE Project: Working space linearized\nStack: [Adj: Lumetri] [Logo + Glow] [Footage]\nClient notes: \"Edges look dirty over bright plates, and glow tints the plate under the logo.\"\n```\n",
+          "task": "Diagnose the cause of the dark edges and unintended background glow. Propose precise import and layer‑stack fixes that yield clean edges and glow only on the logo while keeping the global grade intact. Justify your choices.",
+          "expected_answer": "Edges are dark because the logo was imported as premultiplied with black in a linear workflow; this creates black contamination on edges. Reinterpret as Straight (Unmatted) or remove black matte, then recomposite. To limit glow to the logo, move Glow off the adjustment layer and apply it directly to the logo layer (or use a track matte/Set Matte from the logo to mask an effects‑only adjustment). Keep Lumetri on its own adjustment layer above or below the logo as needed so grade remains global. Verify in linear that edges are clean (no halos) and that glow respects only logo pixels.",
+          "rubric": [
+            {
+              "criterion": "Identifies premultiplication/alpha interpretation as the halo cause in a linear workflow",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies the correct import fix (Straight alpha / unpremultiply)",
+              "marks": 2
+            },
+            {
+              "criterion": "Restricts glow to the logo through proper effect placement or matte usage while retaining global grade",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains ordering and validation (stack order checks, linear compositing rationale)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "digital compositing",
+            "Motion Graphics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need background music to duck transparently under VO on a 60‑second promo with natural pauses.\n\n```text\nVO peaks: -3 dBFS, integrated -19 LUFS\nMusic stems: -14 LUFS integrated, wide dynamics\nGoal mix: Program -16 LUFS, TP ≤ -1 dBTP, ducking only when VO is active, no pumping in pauses\nDAW routing: VO and Music busses available; sidechain compressor and automation tools available\n```\n",
+          "task": "Choose an approach that achieves consistent intelligibility without audible pumping during VO pauses. Describe routing, settings, and how you will verify it meets the loudness spec.",
+          "expected_answer": "Use sidechain ducking on the Music bus keyed from the VO bus, combined with VO activity detection to avoid pumping in pauses. Set a gentle ratio (e.g., 2:1–3:1), threshold so reduction is ~4–6 dB when VO is present, attack ~10–30 ms to avoid chopping consonants, release ~150–300 ms or program‑dependent with lookahead to prevent pumping. Add a floor via automation: write a static under‑VO bed level then let the sidechain make fine adjustments, and manually trim for long pauses. Verify with loudness metering to -16 LUFS integrated and TP ≤ -1 dBTP. Confirm no overs when sidechain disengages and ensure the VO send is pre‑fader if you ride VO levels.",
+          "rubric": [
+            {
+              "criterion": "Selects an approach combining sidechain ducking and strategic automation to avoid pumping",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete routing (VO→key input on Music bus) and sensible attack/release/ratio targets",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses VO pauses (floor, hold, or manual trims) to prevent audible swell/pump",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes verification against -16 LUFS and TP ceiling with appropriate metering",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "edit recorded sound",
+            "synchronise sound with images"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Clean, mix, and sync a 45–60 s audio master to picture",
+          "brief": "Using provided raw dialog and music for a short scene, produce a finished stereo mix that is noise‑managed, balanced, and locked to picture. Address cleanup (e.g., broadband noise/hum, clicks), consistent levels, and precise sync to visible transients. Deliver only the finished audio master aligned to the supplied reference video starting TC.",
+          "deliverable": "Finished audio",
+          "acceptance_criteria": [
+            "Duration 45–60 s; starts at project 00:00:00:00 and matches the provided reference picture length exactly.",
+            "File format: WAV PCM, stereo, 24‑bit, 48000 Hz; filename includes version and date.",
+            "Sync: Handclap (or slate flash) aligned within ±1 frame at the start and within ±1 frame at the end (no cumulative drift).",
+            "Loudness and headroom: Integrated loudness −16.0 ±0.5 LUFS; true peak ≤ −1.0 dBTP; no 0 dBFS samples.",
+            "No hard edits: All dialog region joins have fades ≥2 ms (equal‑power) and no audible clicks on inspection; no gating artifacts chopping syllables."
+          ],
+          "rubric": [
+            {
+              "criterion": "Technical spec met (format, sample rate/bit depth, duration, filename)",
+              "marks": 4
+            },
+            {
+              "criterion": "Sync within ±1 frame at head and tail; no detectable drift",
+              "marks": 5
+            },
+            {
+              "criterion": "Loudness compliance (−16 LUFS ±0.5) and TP ceiling (≤ −1 dBTP), no intersample overs",
+              "marks": 5
+            },
+            {
+              "criterion": "Cleanup quality: clicks addressed with micro‑fades; noise/hum reduced without pumping or chirps",
+              "marks": 3
+            },
+            {
+              "criterion": "Balanced mix: VO intelligible over music/FX with consistent bed level",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "edit recorded sound",
+            "synchronise sound with images"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "7–10 s motion lower‑third with text animation and compositing",
+          "brief": "Design and animate a lower‑third over supplied interview footage. Use keyframes to animate in/out, a per‑character text reveal, and composite cleanly over the plate. Time the in‑animation to a spoken name or clap marker in the footage.",
+          "deliverable": "Motion piece",
+          "acceptance_criteria": [
+            "Final render: 1920×1080, 25 fps, 7–10 s, H.264 or ProRes 422; start at 00:00:00:00.",
+            "The lower‑third on‑animation begins no later than 12 frames before the spoken name (or clap marker) and the title fully lands exactly on the marker frame (±0 frames).",
+            "At least three properties are keyframed across the piece (e.g., position, scale, opacity), with visible easing (non‑linear timing).",
+            "A per‑character text animator is used for reveal (characters do not all appear simultaneously).",
+            "Composite has clean edges (no dark halos); if a logo is used, edges show no premultiply artifacts. Motion blur enabled on moving elements."
+          ],
+          "rubric": [
+            {
+              "criterion": "Technical spec met (resolution, fps, duration, codec)",
+              "marks": 4
+            },
+            {
+              "criterion": "Timing accuracy: lower‑third fully lands on the specified marker frame (±0)",
+              "marks": 5
+            },
+            {
+              "criterion": "Animation craft: ≥3 keyframed properties with evident easing; motion blur used appropriately",
+              "marks": 4
+            },
+            {
+              "criterion": "Per‑character text reveal implemented (sequential or randomized)",
+              "marks": 3
+            },
+            {
+              "criterion": "Composite quality: clean edges with correct alpha handling; no unintended glow/halos",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Motion Graphics",
+            "digital compositing",
+            "principles of animation",
+            "Typography",
+            "synchronise sound with images"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-034-S04",
+      "skills_assessed": [
+        "principles of animation",
+        "Motion Graphics",
+        "digital compositing",
+        "file-based workflow",
+        "design materials for multimedia campaigns",
+        "follow a brief",
+        "Storytelling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit an animation where a control's Y channel shows overshoot after a settle.\n\n```text\nGraph Editor (summary)\nChannel: ctrl_Y\nKeys:\n  f=0   v=0     tangent=Auto (Bezier)\n  f=10  v=100   tangent=Auto (Bezier)\n  f=20  v=100   tangent=Auto (Bezier)\nObserved: Between f10 and f20 the curve peaks at v=110 before settling to 100.\nConstraint: Remove the overshoot without adding keys or changing key times/values, and preserve a smooth ease into f10 with a flat plateau from f10–f20.\n```\nWhich single setting change achieves this most reliably across DCCs?",
+          "options": [
+            "Change the tangent type at f10 to \"Clamped/Auto-Clamped\".",
+            "Reduce the out-tangent weight at f10 by 50%.",
+            "Enable weighted tangents and set both f10 and f20 to Flat.",
+            "Set the interpolation from f10 to f20 to Linear."
+          ],
+          "correct_option": "A",
+          "explanation": "Auto-clamped (a.k.a. clamped auto) tangents preserve smoothness while preventing values from exceeding neighboring key values, eliminating the overshoot without altering timing or adding keys.",
+          "distractor_rationale": "B: Linear stops overshoot but introduces a visible corner at f10, violating the smooth ease constraint.\nC: Manually reducing tangent weight can work for one case but is brittle and not guaranteed to remove overshoot across edits; it also changes the approach shape unpredictably.\nD: Flat at both keys can kill overshoot but also alters the approach into f10 (it flattens too early) and is less robust than using clamped auto designed for this exact issue.",
+          "skills_covered": [
+            "principles of animation"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You receive linear EXR AOVs and must comp with exposure and contrast while keeping energy plausible and AO applied correctly.\n\n```text\nPasses (all 16-bit float, linear):\n- Diffuse\n- Specular\n- Emission\n- AO (white=unoccluded, black=occluded)\nGoal: +1 stop exposure, then contrast curve, no double-darkening of highlights.\n```\nWhich node order is correct?",
+          "options": [
+            "```text\nMerge(Plus): Diffuse + Specular + Emission\n-> Exposure +1 stop\n-> Multiply by AO (in linear)\n-> Contrast curve\n```",
+            "```text\nMerge(Plus): Diffuse + Specular + Emission\n-> Multiply by AO (in linear)\n-> Exposure +1 stop\n-> Contrast curve\n-> Output\n```",
+            "```text\n(Diffuse * AO in linear)\n-> Merge(Plus): + Specular + Emission\n-> Exposure +1 stop\n-> Contrast curve\n-> Output\n```",
+            "```text\nExposure +1 stop\n-> Contrast curve\n-> Merge(Plus): Diffuse + Specular + Emission\n-> Multiply by AO (in linear)\n-> Output\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Ambient occlusion approximates small-scale shadowing on diffuse transport and should not darken specular or emission. Multiply AO into Diffuse only in linear space, then add Specular and Emission, and finally apply grading (exposure, contrast) to the composite.",
+          "distractor_rationale": "A: Multiplying AO after adding Specular/Emission incorrectly darkens highlights and glows.\nB: Grading before lighting assembly changes the relative energy of components and still multiplies AO across highlights.\nC: Applying AO after exposure/contrast distorts AO intensity and can produce clipping artifacts; it still darkens everything.\n",
+          "skills_covered": [
+            "digital compositing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your studio’s publish policy for shot lighting is:\n\n```text\nshots/<shot>/lighting/publish/v###/sh<shot>_lgt_<tag>_v###.<ext>\nExample for shot 010 main Alembic cache: shots/sh010/lighting/publish/v007/sh010_lgt_main_v007.abc\n```\nThe tree currently is:\n\n```text\nproject/\n  shots/\n    sh010/\n      lighting/\n        publish/\n          v006/\n            sh010_lgt_main_v006.abc\n          v007/\n            sh010_lgt_main_v007.abc\n```\nYou are publishing the next version of the same cache. Which path is correct?",
+          "options": [
+            "```text\nproject/shots/sh010/lighting/publish/v008/sh010_lgt_main_v008.abc\n```",
+            "```text\nproject/shots/sh010/lighting/wip/v008/sh010_lgt_main_v008.abc\n```",
+            "```text\nproject/shots/sh010/lighting/publish/v8/sh010_lgt_main_v008.abc\n```",
+            "```text\nproject/shots/sh010/lighting/publish/v008/sh010_lgt_main.abc\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Publishing increments both the directory and filename version to v008 under the publish path, matching the studio pattern.",
+          "distractor_rationale": "B: Missing zero-padding breaks tools that sort on the v### pattern.\nC: Filename lacks the version token, violating the naming scheme and risking overwrites.\nD: Uses the wip branch, not the publish path required by the policy.",
+          "skills_covered": [
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Layout delivered a 100-frame plate at 25 fps. Animation baked keys 0–100 in that scene. Editorial master is 24 fps. When you import the animation into a 24 fps scene without retiming-by-time, what happens and how do you fix it pipeline-safe?",
+          "options": [
+            "The motion becomes 4.167 s long (100/24) instead of 4.0 s; retime by 0.96 (24/25) on import or resample by time to fix.",
+            "Only camera motion is affected; object animation remains the same.",
+            "The motion becomes 3.84 s long; retime by 1.04 to fix.",
+            "No change if you import baked keys; frame numbers match so timing is preserved."
+          ],
+          "correct_option": "A",
+          "explanation": "100 frames at 25 fps is 4.0 seconds. Interpreted at 24 fps, 100 frames play in 4.167 seconds. Convert by time (not frame count) or scale keys by 24/25 ≈ 0.96 to preserve seconds.",
+          "distractor_rationale": "B: The direction is wrong; 24 is slower than 25, so duration increases, not decreases.\nC: Matching frame indices without time conversion changes seconds-per-frame, so timing drifts.\nD: All time-sampled animation is affected; it’s not limited to the camera.",
+          "skills_covered": [
+            "principles of animation",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A signed brief states:\n\n```text\nDeliverable: Instagram Reel\nCanvas: 1080x1920 vertical, <=30s, <=10 MB\nMust include: 2 core beats + CTA\nTone: energetic, brand cyan #00BCD4 prominent\n```\nLate request: \"Add a 5 s animated logo outro.\" You have a 30 s cut that already hits both beats and CTA, and it’s at 9.8 MB.\nWhich decision best honors the brief under the new constraint?",
+          "options": [
+            "Time‑stretch the VO by ~1.17x to squeeze to 30 s without cuts.",
+            "Increase bitrate to fit 35 s while keeping quality, then negotiate after posting.",
+            "Change canvas to 1280x720 to keep file size under 10 MB and leave timing at 35 s.",
+            "Trim or tighten non-essential B‑roll between beats to remain <=30 s and preserve story beats and CTA."
+          ],
+          "correct_option": "D",
+          "explanation": "The length limit is hard. Trimming non-essential material keeps required beats and CTA while accommodating the outro without breaking specs.",
+          "distractor_rationale": "B: Exceeding 30 s violates a non-negotiable platform constraint.\nC: Changing canvas violates the brief and platform expectations; size isn’t the only limit.\nD: Time‑stretching VO harms intelligibility and tone, undermining the brief’s quality bar.",
+          "skills_covered": [
+            "follow a brief",
+            "Storytelling",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your renderer defines shutter open/close as offsets in frames around the frame time. Current settings:\n\n```text\nshutter_open  = 0.0\nshutter_close = 1.0\n```\nAt 24 fps this produces extreme blur (360° shutter). To achieve a 180° shutter centered on the frame time, which settings should you use?",
+          "options": [
+            "```text\nshutter_open  = -0.5\nshutter_close =  0.0\n```",
+            "```text\nshutter_open  = -0.25\nshutter_close =  0.25\n```",
+            "```text\nshutter_open  = 0.0\nshutter_close = 0.5\n```",
+            "```text\nshutter_open  = 0.25\nshutter_close = 0.75\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A 180° shutter exposes for half the frame interval. Centering around the frame time means opening at −0.25 and closing at +0.25 frames.",
+          "distractor_rationale": "B: 0.0→0.5 is 180° but trailing, not centered; it shifts motion smear.\nC: Leading exposure only; not centered and often undesirable for matching live-action plates.\nD: 0.25→0.75 is also 180° but fully trailing; violates the \"centered\" requirement.",
+          "skills_covered": [
+            "principles of animation"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your exporter truncates names to 28 chars, enforces lower_snake_case, and drops duplicates after truncation. Which pair will collide and cause one target to be lost?",
+          "options": [
+            "```text\nbrow_inner_up_left\nbrow_inner_up_right\n```",
+            "```text\nmouth_corner_raise_right_wide\nmouth_corner_raise_left_wide\n```",
+            "```text\nmouth_corner_raise_left_wide\nmouth_corner_raise_left_narrow\n```",
+            "```text\nmouth_corner_raise_left_wide\nmouth_corner_raise_left_wider\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Both strings share the same first 28 characters, truncating to \"mouth_corner_raise_left_wide\" and colliding.",
+          "distractor_rationale": "B: They differ before truncation reaches the side qualifier, so their 28-char prefixes are not identical.\nC: \"narrow\" changes the 25th–28th characters; prefixes differ.\nD: Both are far under 28 characters; no truncation occurs.",
+          "skills_covered": [
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your comp uses ACES with OCIO. Renders are EXR in ACEScg. Client PNG logo is tagged sRGB. You work in ACEScg and view on sRGB.\nWhat I/O tagging avoids double transforms and preserves correct color?",
+          "options": [
+            "Convert EXR to sRGB on read, do all comp in sRGB, then convert back to ACEScg before output.",
+            "Read EXR as \"ACES - ACEScg\"; Read PNG as \"Utility - sRGB - Texture\"; Work in ACEScg; Viewer \"sRGB\".",
+            "Read EXR as \"Utility - Linear - sRGB\"; Read PNG as \"ACES - ACEScg\"; Viewer \"sRGB\".",
+            "Tag both EXR and PNG as \"Raw\" to avoid conversions; Viewer \"sRGB\"."
+          ],
+          "correct_option": "B",
+          "explanation": "EXR renders are already ACEScg; tag accordingly. sRGB textures should be converted to ACEScg on read. View via OCIO sRGB display transform; avoid unnecessary round-trips.",
+          "distractor_rationale": "B: Reading ACEScg renders as linear sRGB is incorrect and shifts primaries; PNG isn’t ACEScg.\nC: Raw bypasses needed colorimetric transforms; the logo will look wrong in ACEScg.\nD: Working in sRGB breaks the ACES pipeline and adds lossy conversions.",
+          "skills_covered": [
+            "digital compositing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A change request updates only a wall’s base color texture. AOVs/light groups are available. What’s the minimal re-render to stay correct in comp?",
+          "options": [
+            "No re-render is needed; use Hue/Sat on the wall matte in comp.",
+            "Re-render DiffuseDirect and DiffuseIndirect (and any GI caches) and update the albedo pass if used; keep Specular and Emission.",
+            "Re-render only the DiffuseColor AOV; lighting will update in comp.",
+            "Re-render Specular only, since reflections pick up the color change."
+          ],
+          "correct_option": "B",
+          "explanation": "Changing albedo affects direct and indirect diffuse lighting. Specular and emission are unaffected by a pure base-color change, so re-render the diffuse lighting components (and any GI caches) and update albedo if it’s a separate AOV.",
+          "distractor_rationale": "A: DiffuseColor alone is unlit; it won’t update lighting interactions.\nC: Specular depends on roughness/IOR/normal, not base albedo; color tint in reflections is negligible/incorrect to fix in isolation.\nD: A comp tint can’t recreate correct GI and contact shading changes across the scene.",
+          "skills_covered": [
+            "digital compositing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You have 5 slides for a 60 s stakeholder pitch video. Current order is:\n\n```text\n2 Solution demo\n3 KPI/Proof\n5 Audience insight\n1 Problem\n4 CTA\n```\nReorder to strengthen narrative flow and land the CTA by 60 s per brief.",
+          "options": [
+            "5 Audience insight → 1 Problem → 2 Solution demo → 3 KPI/Proof → 4 CTA",
+            "2 Solution demo → 1 Problem → 5 Audience insight → 3 KPI/Proof → 4 CTA",
+            "1 Problem → 5 Audience insight → 2 Solution demo → 3 KPI/Proof → 4 CTA",
+            "1 Problem → 2 Solution demo → 4 CTA → 3 KPI/Proof → 5 Audience insight"
+          ],
+          "correct_option": "C",
+          "explanation": "Problem → Insight → Solution → Proof → CTA mirrors audience logic, builds stakes, then validates before asking for action within the time limit.",
+          "distractor_rationale": "B: Leading with insight before establishing the problem weakens stakes.\nC: Showing the solution before the problem reduces relevance; insight is stranded.\nD: CTA before proof risks low conversion; insight after CTA is misplaced.",
+          "skills_covered": [
+            "Storytelling",
+            "follow a brief",
+            "design materials for multimedia campaigns"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A week before delivery, the client changes the hero product’s body color from red to teal across the campaign. You have: (a) a 6-shot 3D sequence mid-render with AOVs and light groups, (b) comps in progress in ACEScg→sRGB, and (c) a 20 s vertical edit using two of those shots. Texture UDIMs are versioned; renders publish to `shots/<shot>/lighting/publish/v###/`. The client insists all social cutdowns match the new color and wants a same-day preview.\nRisks: GI will shift with the new albedo; editorial is already sound-mixed; deadline is tight.",
+          "task": "Propose a concrete pipeline plan that minimizes re-render time while guaranteeing color correctness. Specify exactly what you will re-render (which passes/caches), what you will update only in comp, how you will version/publish so editorial auto-picks the change, and how you will validate before full farm renders. Justify each choice.",
+          "expected_answer": "A strong answer proposes: (1) Change albedo at the material or texture UDIM level and publish a new texture version; (2) Kick a low-sample wedge for each affected shot to validate look with the new color; (3) Re-render only diffuse-dependent AOVs/light groups (DiffuseDirect and DiffuseIndirect) and regenerate any irradiance/GI caches because albedo changed; keep Specular/Transmission/Emission if materials unchanged; (4) Ensure AO is reapplied correctly in comp (affects only diffuse); (5) Maintain file-based workflow by publishing to next `v###` for each shot and updating the comp read nodes via version token or path pattern so Nuke picks up v### automatically; (6) Tag editorial plates as `shXXX_comp_v###.mov` so the NLE relinks when the comp increments; do not re-edit audio; (7) Validate with a same-day preview by rendering half-res or region-of-interest on hero frames first; (8) Log change notes in the brief/revision tracker and call out risks (GI noise, brand teal within ACES pipeline) and acceptance criteria (DeltaE/brand swatch match on sRGB viewer).",
+          "rubric": [
+            {
+              "criterion": "Identifies exactly which renders must be redone (diffuse lighting, GI caches) and which can be kept (specular/emission if unchanged)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes ACES-aware comp updates (AO application, color correctness) and a fast preview strategy (half-res/wedge/ROI)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies versioning/publish paths and how downstream (Nuke/editorial) auto-picks the new versions",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes risks/acceptance checks (brand teal match on sRGB display, GI stability) and justifies choices under time pressure",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "digital compositing",
+            "file-based workflow",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Comps from two shots show dark halos around semi-transparent edges after contrast adjustments. The renders are premultiplied RGBA EXRs (linear ACEScg). The current comp template does:\n\n```text\nRead(EXR RGBA, premultiplied)\n-> Grade(contrast)\n-> Exposure(+0.5)\n-> Merge over BG\n-> Output\n```\nEdges of glass UI elements look dirty.",
+          "task": "Diagnose the failure precisely and propose a corrected node flow. Explain why your fix works in linear/ACES and how you will verify no fringe remains.",
+          "expected_answer": "Issue: Grading premultiplied RGB alters colors where A<1 without compensating, causing edge darkening when later merged. Correct flow: Unpremultiply (divide RGB by A) → Grade/Exposure in linear ACEScg → Premultiply (multiply RGB by A) → Merge over BG. Verify using edge view/matte overlay and difference-matte against a ground truth (e.g., comp over mid-gray and inspect for halos at 200%). Ensure all nodes operate in linear, and viewer transform is OCIO sRGB only.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies premultiplied grading as the root cause in the presence of fractional alpha",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes the proper Unpremult → Grade/Exposure (linear) → Premult order",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains interaction with ACES/linear workflow and viewer transform separation",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines a concrete verification method for edges (zoom/difference/matte checks)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "digital compositing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You receive this capstone brief excerpt:\n\n```text\nGoal: Drive sign-ups for BetaApp.\nPrimary: 15 s vertical video ad for IG Reels.\nSecondary: 1080x1080 thumbnail image.\nMust-have beats: Problem → Solution → CTA.\nConstraints: <=10 MB per video, brand cyan #00BCD4 dominant, voice energetic.\nApprovals: PM (content), Brand lead (visuals).\n```\nEarly feedback in round 1: \"Feels slow; cyan not popping.\"",
+          "task": "Turn this into measurable acceptance criteria and a revision plan for round 2. Include timing for beats, visual checks, file specs, and an approval path that de-risks last-day surprises.",
+          "expected_answer": "Acceptance criteria: 1080x1920, <=10 MB, <=15.0 s; beat timings (Problem 0–4 s, Solution 4–11 s, CTA 11–15 s) with slate/timecode; brand cyan occupies ≥12% frame-average in at least 6 s total (measured via scopes or masked area), and hex value within tolerance after ACES→sRGB; perceived pace increased via tighter cuts/motion accents; audio LUFS within platform norm. Thumbnail at 1080x1080 includes legible logo at ≥64 px on 1080 wide. Deliverables named with v###. Revision plan: produce V02 by trimming interstitials, boosting cyan via grade/graphics (document color swatch), export MP4 H.264 constrained to target, run checklist (dimensions, duration, size, color, LUFS), route PM first for narrative timing, then Brand for color/logo, secure timestamped approvals in tracker. Contingency: preflight a 12 s alt cut if size risks remain.",
+          "rubric": [
+            {
+              "criterion": "Defines concrete, measurable checks for duration, size, and beat timing",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies brand color presence/tolerance and how to measure/validate it",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers deliverable specs and naming/versioning for both video and thumbnail",
+              "marks": 1
+            },
+            {
+              "criterion": "Outlines an approval path and round-2 changes addressing \"slow\" and color feedback",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "follow a brief",
+            "design materials for multimedia campaigns",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your master animation is 24 fps. The campaign requires: (a) a 15 s IG Reel (vertical, 30 fps), (b) a 6 s bumper (16:9, 29.97 fps), and (c) a still for web. All assets come from the same 3D shots. You must keep motion cadence consistent and avoid audio drift. Rendering time is tight.",
+          "task": "Propose a delivery plan: where to do frame rate conversion (render vs comp vs editorial), how to handle motion blur and time samples, and how to maintain file-based consistency across variants. Justify your choices with risks and mitigations.",
+          "expected_answer": "Plan: Render 3D at the native creative cadence (24 fps) with motion blur tuned to 180°; avoid per-target re-renders. Perform frame rate conversions in comp/editorial using time-based resampling (e.g., optical flow or frame blending) with cadence-aware settings: 24→30 for IG Reel, 24→29.97 for bumper using audio-locked timelines to prevent drift. Maintain consistent look by centering shutter in render and keeping conversion in linear domain for post-generated motion vectors if used. Publish per-target outputs to structured paths (e.g., `deliverables/ig_reel30/`, `deliverables/bumper29.97/`) with filenames carrying both fps and AR tokens. Risk: judder on 24→30; mitigate by minor retime (e.g., 100→125%) with motion estimation or add motion accents. Lock audio at 48 kHz; never time-stretch VO without creative approval. Still is a graded frame pulled from 24 fps comp render and exported with correct color transform.",
+          "rubric": [
+            {
+              "criterion": "Chooses sensible locus of conversion (keep 3D at 24 fps; convert in post) and justifies it",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses motion blur/shutter and cadence preservation during conversion",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies file-based organization and naming including fps/AR tokens",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies risks (judder, audio drift) and concrete mitigations",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "design materials for multimedia campaigns",
+            "principles of animation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Short experiment: Interpolation vs shutter — side-by-side motion study",
+          "brief": "Build a minimal scene (2–3 objects) demonstrating how interpolation and shutter settings affect perceived motion and comp integration. Animate a single translate/rotate move with identical keyframe times across three variants; vary only F‑curve/tangent types and render shutter. Present a split-screen comparison and a short note on observations relevant to pipeline handoff (e.g., when linear keys are preferable).",
+          "deliverable": "A zipped folder containing: (1) scene file(s) with three animation variants, (2) one 1920x1080 MP4, <=50 MB, 3× panels split-screen labeled \"Linear / Auto-Clamped / Ease w/ Overshoot\", 3–5 s duration, with frame/timecode burn-in and shutter settings shown; (3) a one-page README.md noting keyframe settings, shutter intervals (e.g., -0.25..0.25), and takeaways for comp.",
+          "acceptance_criteria": [
+            "Three variants share identical key times/values; only interpolation and shutter differ.",
+            "Video is 1920x1080, 3–5 s, clear labels, and visible frame/timecode overlay.",
+            "Shutter intervals include one centered 180° and one 360°; differences are noticeable.",
+            "Scene file(s) and README.md reproduce settings; filenames use lower_snake_case and include v###."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct construction of three variants with identical key times/values but different interpolation",
+              "marks": 6
+            },
+            {
+              "criterion": "Use of at least two distinct shutter intervals and accurate on-screen annotation",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear, properly formatted split-screen MP4 meeting spec (resolution, duration, size)",
+              "marks": 4
+            },
+            {
+              "criterion": "README quality: lists settings, explains observed differences and pipeline implications",
+              "marks": 4
+            },
+            {
+              "criterion": "File-based hygiene: versioned, lower_snake_case naming; reproducible scene files included",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "principles of animation",
+            "file-based workflow",
+            "Motion Graphics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Mini multimedia campaign: Brief→production→revision→presentation",
+          "brief": "Using a self-defined product (or a provided placeholder), produce a mini-campaign from brief to presentation. Deliver: (a) a 15 s vertical video (IG Reel style) hitting Problem→Solution→CTA, (b) a 1080x1080 thumbnail, and (c) a 5-slide presentation deck summarizing the brief, rationale, and results. Complete one revision cycle responding to a mock note: \"Feels slow; brand cyan not prominent.\"",
+          "deliverable": "A zipped folder containing: (1) 1080x1920 MP4 (<=10 MB, <=15.0 s) with slate/timecode at head or burn-in, (2) 1080x1080 PNG thumbnail, (3) deck.pdf with 5 slides (brief, storyboard, design system incl. #00BCD4 usage, v01→v02 change log, results/CTA), (4) brief.md stating acceptance criteria and how v02 addresses the note, (5) exports named with v###.",
+          "acceptance_criteria": [
+            "Video: 1080x1920 vertical, <=15.0 s, <=10 MB, contains Problem→Solution→CTA beats.",
+            "Thumbnail: 1080x1080 PNG with legible logo/text at >=64 px height at 1080 width.",
+            "Deck: 5 slides as specified, includes color usage rationale and before/after v01→v02 comparison.",
+            "Revision: v02 reflects faster perceived pace and increased cyan prominence; change log lists concrete edits.",
+            "Files: versioned lower_snake_case names; deliverables placed in clearly labeled folders."
+          ],
+          "rubric": [
+            {
+              "criterion": "Video meets hard specs (resolution, duration, size) and includes all beats visibly",
+              "marks": 6
+            },
+            {
+              "criterion": "Storycraft and design: pacing improvement in v02 and effective brand color usage",
+              "marks": 4
+            },
+            {
+              "criterion": "Thumbnail clarity and consistency with video branding",
+              "marks": 3
+            },
+            {
+              "criterion": "Deck completeness and clarity (brief, system, change log, results/CTA)",
+              "marks": 4
+            },
+            {
+              "criterion": "File-based workflow: versioned naming and organized folders; brief.md with acceptance criteria",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "follow a brief",
+            "design materials for multimedia campaigns",
+            "Storytelling",
+            "file-based workflow",
+            "Motion Graphics"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

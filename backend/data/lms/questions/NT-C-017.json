@@ -1,0 +1,1822 @@
+{
+  "course_code": "NT-C-017",
+  "course_name": "C++ Programming",
+  "sections": [
+    {
+      "section_code": "NT-C-017-S01",
+      "skills_assessed": [
+        "C++",
+        "Object-Oriented Programming"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following program:\n\n```cpp\n#include <iostream>\nint& bad() {\n    int x = 5;\n    return x; // returns reference to a local\n}\nint main() {\n    int& r = bad();\n    std::cout << r << \"\\n\";\n}\n```\nWhat actually happens when this program runs, and why?",
+          "options": [
+            "It prints an arbitrary value, which is implementation-defined but still defined behavior.",
+            "It fails to compile because returning a reference to a local variable is ill-formed in C++.",
+            "It compiles but has undefined behavior at runtime because r is a dangling reference to a destroyed local.",
+            "It reliably prints 5 because the reference binds to the local variable's memory, which stays valid until after main prints it."
+          ],
+          "correct_option": "C",
+          "explanation": "The code compiles, but the function returns a reference to a local variable that is destroyed at the end of bad(). r becomes a dangling reference. Any use of r has undefined behavior.",
+          "distractor_rationale": "A: Tempting because the address might still appear to hold 5 in a trivial run, but the lifetime has ended and UB can manifest unpredictably. C: The language allows forming such a reference; the error is semantic (lifetime), not ill-formed. D: Tempting if one confuses \"implementation-defined\" with UB; here the behavior is not defined at all.",
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this print and is it safe?\n\n```cpp\n#include <iostream>\n#include <string>\nint main() {\n    const std::string& r = std::string(\"ab\") + \"cd\"; // binds const ref to temporary\n    std::cout << r.size() << \"\\n\";\n}\n```\n",
+          "options": [
+            "Fails to compile because a reference cannot bind to a temporary.",
+            "Prints 4, and it is safe because the temporary's lifetime is extended to match r.",
+            "Compiles, but the result is unspecified because temporary lifetime rules only apply to single objects, not the result of operator+.",
+            "Prints 4, but it is undefined behavior because the temporary is destroyed before the print."
+          ],
+          "correct_option": "B",
+          "explanation": "A const lvalue reference can bind to a temporary, and that temporary's lifetime is extended to the reference's lifetime. The string is \"abcd\", so size() is 4.",
+          "distractor_rationale": "B: Confuses with non-const references; only const lvalue references extend lifetime. C: A common misconception; binding to temporaries is allowed for const lvalue refs. D: Operator+ yields a temporary just like any other expression; lifetime extension still applies.",
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Overload resolution with integral promotions:\n\n```cpp\n#include <iostream>\nvoid f(int)   { std::cout << \"int\"; }\nvoid f(long)  { std::cout << \"long\"; }\nint main() {\n    short s = -1;\n    f(s);\n}\n```\nWhich overload is called?",
+          "options": [
+            "long",
+            "int",
+            "Undefined behavior due to signedness mismatch on promotion",
+            "Ambiguous: both are viable with equal rank"
+          ],
+          "correct_option": "B",
+          "explanation": "short promotes to int via integral promotion, which is a better conversion than conversion to long. So f(int) is selected.",
+          "distractor_rationale": "B: Tempting if one thinks widening to long is always preferred; integral promotion to int is a higher-ranked conversion. C: Both are viable, but not equal rank; promotion beats conversion. D: Signedness is well-defined on promotion; no UB here.",
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Default arguments with virtual dispatch:\n\n```cpp\n#include <iostream>\nstruct Base {\n    virtual void f(int x = 1) { std::cout << \"B:\" << x; }\n};\nstruct Derived : Base {\n    void f(int x = 2) override { std::cout << \"D:\" << x; }\n};\nint main() {\n    Derived d;\n    Base& b = d;\n    b.f();\n}\n```\nWhat is the output?",
+          "options": [
+            "D:1",
+            "B:2",
+            "D:2",
+            "B:1"
+          ],
+          "correct_option": "A",
+          "explanation": "Default arguments are bound statically at the call site based on the static type (Base), so 1 is passed. The function call itself is virtual, so Derived::f is invoked with x=1, printing D:1.",
+          "distractor_rationale": "A: Assumes both default arg and virtual dispatch are dynamic; only the function selection is dynamic. C/D: Misunderstand that the object is a Derived and the call is virtual; Base's body isn't called.",
+          "skills_covered": [
+            "C++",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Object slicing through pass-by-value:\n\n```cpp\n#include <iostream>\nstruct B { virtual void who() { std::cout << \"B\"; } };\nstruct D : B { void who() override { std::cout << \"D\"; } };\nvoid call(B b) { b.who(); }\nint main(){ D d; call(d); }\n```\nWhat is printed?",
+          "options": [
+            "It alternates between B and D across runs",
+            "B",
+            "Undefined behavior because of slicing",
+            "D"
+          ],
+          "correct_option": "B",
+          "explanation": "Passing by value slices the derived part off, creating a separate B subobject. The virtual call on that B object dispatches to B::who, printing B.",
+          "distractor_rationale": "B: Would be true if passing by reference/pointer. C: Slicing is defined behavior (just likely incorrect), not UB. D: There is no nondeterminism here; dispatch is statically well-defined after slicing.",
+          "skills_covered": [
+            "C++",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Destructors and deletion through base pointer:\n\n```cpp\n#include <iostream>\nstruct B { ~B(){ std::cout << \"~B\"; } };\nstruct D : B { ~D(){ std::cout << \"~D\"; } };\nint main(){ B* p = new D; delete p; }\n```\nWhich statement is correct?",
+          "options": [
+            "It prints only ~B, but this is still well-defined.",
+            "It prints ~B~D because destructors chain automatically.",
+            "It fails to compile because delete requires a virtual destructor.",
+            "It has undefined behavior; typically you'll only see ~B printed."
+          ],
+          "correct_option": "D",
+          "explanation": "Deleting through a base pointer without a virtual destructor is undefined behavior. In many builds you will observe only B's destructor run, leaking D's resources, but the behavior is not defined.",
+          "distractor_rationale": "A: Destructors only chain correctly when the base has a virtual destructor and deletion is through that base. B: Observed behavior isn't guaranteed; it's UB. D: The code compiles; virtual is a runtime mechanism, not a compile-time requirement for delete.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Member initialization order vs initializer list order:\n\n```cpp\n#include <iostream>\nstruct S {\n    int x; // declared first\n    int y; // declared second\n    S() : y(x), x(42) { std::cout << y << \"\\n\"; }\n};\nint main(){ S s; }\n```\nWhat is the program's status and why?",
+          "options": [
+            "Compile error because the compiler enforces initializer list order.",
+            "Well-defined, prints 42 because y is initialized from x after x becomes 42.",
+            "Well-defined, prints an unspecified but valid value because y copies from default-initialized x.",
+            "Undefined behavior because y is initialized from an indeterminate x; declaration order controls initialization."
+          ],
+          "correct_option": "D",
+          "explanation": "Members are initialized in declaration order, not the order written in the initializer list. x is indeterminate when y(x) runs. Using that indeterminate value is undefined behavior.",
+          "distractor_rationale": "A: Confuses list order with initialization order. B: Suggests \"unspecified but defined\"; reading an indeterminate int is UB. D: Compilers accept the code; they don't reorder based on the list, they follow declaration order silently.",
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Protected access across objects:\n\n```cpp\nstruct Base { protected: int v = 0; };\nstruct Der : Base {\n    void g(Base& b) { b.v = 5; }\n};\nint main(){ Base b; Der d; d.g(b); }\n```\nWhat happens and why?",
+          "options": [
+            "Fails to compile because Der may access Base::v only through a Der (or further-derived) object, not an arbitrary Base.",
+            "Compiles only if g is marked friend of Base.",
+            "Compiles and sets b.v to 5 because Der can access Base's protected members.",
+            "Runs but is undefined behavior due to violating access control at runtime."
+          ],
+          "correct_option": "A",
+          "explanation": "Protected allows access within Der to Base's protected members on a Der (or further-derived) object. Accessing through a plain Base object b is ill-formed, so the code fails to compile.",
+          "distractor_rationale": "A: Protected isn't the same as \"public to derived for all objects\"; it is restricted to the derived's subobjects. C: Access control is a compile-time rule, not UB. D: A friend declaration would be in Base, not by marking g; and friendship isn't required for correct derivation-based access.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Overload hiding vs overriding:\n\n```cpp\n#include <iostream>\nstruct B { virtual void f(double) { std::cout << \"B\"; } };\nstruct D : B { void f(int) { std::cout << \"D\"; } }; // not an override\nint main(){ D d; B* pb = &d; pb->f(3); }\n```\nWhat is printed and why?",
+          "options": [
+            "B, because D does not override f(double); the call resolves to B::f(double).",
+            "D, because virtual dispatch chooses D for any f.",
+            "Undefined behavior because the name f is hidden in D.",
+            "Ambiguous call because both f(int) and f(double) are viable."
+          ],
+          "correct_option": "A",
+          "explanation": "The static type at the call site is B*, so lookup finds B::f(double). D does not override that signature, so the virtual call targets B::f(double), printing B.",
+          "distractor_rationale": "A: Virtual dispatch only applies among overrides with the same signature. C: Overload set is from B at this call site; D::f(int) is not considered. D: Name hiding is a lookup effect, not UB.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Reference members and constructor requirements:\n\n```cpp\nstruct S {\n    int& r;\n    S(int x) { r = x; } // attempt to assign in body\n};\nint main(){ int a = 1; S s(a); }\n```\nWhat happens and why?",
+          "options": [
+            "Undefined behavior because references cannot be reassigned after binding.",
+            "Compiles and r becomes a reference to x inside S's constructor.",
+            "Fails to compile because reference members must be bound in the initializer list.",
+            "Compiles but r dangles after the constructor because x is destroyed."
+          ],
+          "correct_option": "C",
+          "explanation": "A reference member must be bound during member initialization; by the time the constructor body runs, r is uninitialized and cannot be assigned to bind it. The code is ill-formed.",
+          "distractor_rationale": "A: Misunderstands that assignment in the body can bind a reference; it only assigns to the referent if already bound. B: Invents a temporary x; there is no such parameter-lifetime issue here. D: UB is the wrong category; the compiler rejects it.",
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are reviewing an \"announcer\" utility that should print the sound of any animal type. The current code:\n\n```cpp\n#include <iostream>\n#include <string>\n\nstruct Animal {\n    virtual std::string speak() const = 0;\n    // note: no virtual destructor declared\n};\n\nstruct Dog : Animal {\n    std::string speak() const override { return \"woof\"; }\n};\n\nstd::string announce(Animal a) { // copies by value\n    return a.speak();             // seems fine to the author\n}\n\nint main(){\n    Dog d;\n    std::cout << announce(d) << \"\\n\"; // prints?\n}\n```\nThe team reports that the output is not \"woof\" and that deleting Animals through base pointers elsewhere causes leaks.",
+          "task": "Identify precisely what is going wrong here and why, and propose concrete code changes to fix both issues. Your answer must: 1) name the C++ mechanism at fault in announce, 2) show a corrected announce signature and body, 3) address lifetime and destruction concerns in the hierarchy, and 4) justify your choices.",
+          "expected_answer": "- The function announce takes Animal by value, which slices derived parts off (object slicing). The temporary Animal constructed from Dog loses dynamic type, so speak resolves to Animal's implementation (which doesn't exist here, or if made concrete would be wrong). Even if Animal weren't abstract, you'd still call the base behavior.\n- Fix by taking a reference or pointer: prefer `const Animal&` for no ownership.\n\nCorrected code:\n```cpp\nstruct Animal {\n    virtual std::string speak() const = 0;\n    virtual ~Animal() = default; // ensure proper deletion via base\n};\n\nstd::string announce(const Animal& a) {\n    return a.speak(); // dynamic dispatch preserved, no slicing\n}\n```\n- Justification: Passing by const reference avoids copying and preserves dynamic type. Adding a virtual destructor guarantees that `delete basePtr;` calls through the correct most-derived destructor, preventing leaks and UB. If ownership transfer is needed, use a smart pointer parameter, but for read-only announce a const reference is correct.",
+          "rubric": [
+            {
+              "criterion": "Names object slicing as the root cause in announce and explains its effect on virtual dispatch",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes and shows a correct signature change (const Animal& or Animal*) and body that preserves polymorphism",
+              "marks": 2
+            },
+            {
+              "criterion": "Adds and justifies a virtual destructor in Animal for safe deletion via base pointer",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity and correctness of justification (no unnecessary copying, preserves lifetime semantics)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A utility concatenates two strings and returns a reference so callers avoid copies:\n\n```cpp\n#include <string>\nconst std::string& join(const std::string& a, const std::string& b) {\n    return a + b; // intent: return a reference to the result\n}\n\nint main(){\n    std::string x = \"Ni\";\n    std::string y = \"puna\";\n    const std::string& r = join(x, y);\n    // r is used later in a different function\n}\n```\nIntermittent crashes and garbage output are observed when using r later.",
+          "task": "Diagnose the failure precisely and propose two safe, idiomatic fixes. For each fix, provide the corrected function signature and one-line rationale about performance and lifetime. Mention any relevant C++ guarantees that make the fix acceptable.",
+          "expected_answer": "- Problem: `a + b` creates a temporary `std::string`. Returning a const reference binds to that temporary, which is destroyed at the end of `join`, leaving a dangling reference. Using `r` is undefined behavior.\n\nTwo fixes:\n1) Return by value (relying on NRVO/move elision):\n```cpp\nstd::string join(const std::string& a, const std::string& b) {\n    return a + b; // copy elision/move makes this efficient\n}\n```\nRationale: The returned prvalue constructs the result directly in the caller (copy elision is mandatory in C++17 for prvalues), giving a self-contained string with correct lifetime.\n\n2) Output parameter bound by non-const reference:\n```cpp\nvoid join(const std::string& a, const std::string& b, std::string& out) {\n    out = a + b;\n}\n```\nRationale: The caller supplies storage and controls the lifetime of `out`. No dangling; assignment is explicit and efficient. Choose this when you want to reuse an existing buffer.\n\nEither way, do not return a reference to a temporary.",
+          "rubric": [
+            {
+              "criterion": "Identifies dangling reference to a temporary and explains the lifetime issue",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct return-by-value solution with performance rationale (NRVO/move elision)",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct out-parameter solution with rationale about caller-managed lifetime",
+              "marks": 1
+            },
+            {
+              "criterion": "Uses precise C++ terms (temporary, prvalue, lifetime) and avoids incorrect claims",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A config class attempts to use one member to initialize another, but engineers see sporadic garbage in logs on startup:\n\n```cpp\n#include <iostream>\nstruct Config {\n    int port;      // declared first\n    int effective; // declared second\n    Config() : effective(port), port(8080) {\n        std::cout << effective << \"\\n\";\n    }\n};\n```\nOn some runs, the program prints unpredictable numbers instead of 8080.",
+          "task": "Explain exactly why this occurs in C++. Provide a corrected definition that guarantees effective is initialized with the final port value, and state the rule the compiler follows that caused the bug. Do not change member types.",
+          "expected_answer": "Members are initialized in the order of their declaration, regardless of the order in the initializer list. Here, `port` is indeterminate when `effective(port)` runs, so `effective` is initialized from garbage; later `port` is set to 8080. Reading that indeterminate value is undefined behavior.\n\nCorrected code:\n```cpp\nstruct Config {\n    int port;\n    int effective;\n    Config() : port(8080), effective(port) {}\n};\n```\nRule: Initialization follows declaration order in the class definition; the initializer list order is ignored.",
+          "rubric": [
+            {
+              "criterion": "Accurately describes declaration-order initialization and its consequence here",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct, minimal fix with reordered initializers that yields well-defined behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "States the language rule about member initialization order explicitly",
+              "marks": 1
+            },
+            {
+              "criterion": "Notes UB/indeterminate value aspect correctly (no misuse of 'unspecified')",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A plugin system deletes derived objects via base pointers and sometimes leaks resources. The base class is also used polymorphically elsewhere:\n\n```cpp\nstruct Plugin {\n    virtual void run() = 0;\n    ~Plugin() {} // current code\n};\nstruct ZipPlugin : Plugin {\n    ~ZipPlugin() { /* releases zip handles, logs */ }\n    void run() override { /*...*/ }\n};\n\nvoid unload(Plugin* p) {\n    delete p; // occasionally only base dtor seems to run\n}\n```\nQA noticed logs from ZipPlugin's destructor are missing in some builds.",
+          "task": "Explain the root cause and demonstrate the minimal, correct change to make deletion through base pointers safe in all cases. Also explain whether making Plugin abstract changes your answer, and why.",
+          "expected_answer": "Deleting through a base pointer requires a virtual destructor to ensure the most-derived destructor runs. Here, Plugin's destructor is non-virtual, so `delete p;` has undefined behavior; often only the base destructor runs, leaking ZipPlugin resources.\n\nMinimal fix:\n```cpp\nstruct Plugin {\n    virtual ~Plugin() = default; // make it virtual\n    virtual void run() = 0;\n};\n```\nNow `delete p;` dispatches to `ZipPlugin::~ZipPlugin()` first, then `Plugin::~Plugin()`. Whether Plugin is abstract is irrelevant to this requirement; abstract bases still need virtual destructors if deleted via base pointers.",
+          "rubric": [
+            {
+              "criterion": "Identifies undefined behavior from deleting through non-virtual base destructor",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows the minimal, correct code change (virtual destructor) in the base",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains destructor dispatch order and why this fixes leaks",
+              "marks": 1
+            },
+            {
+              "criterion": "Clarifies that abstractness does not remove the need for a virtual destructor",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a numeric stats CLI using functions, control flow, and references",
+          "brief": "Write a program stats that reads signed 32-bit integers from standard input until EOF. Ignore blank lines and non-numeric tokens with a warning to stderr. Compute and print count, min, max, sum, and mean (to one decimal place) in the exact format below. Structure your solution as small functions. Use references to share and update state (e.g., updateMinMax(int x, int& minV, int& maxV)). Do not use global variables.",
+          "deliverable": "A single C++ source file main.cpp that builds with: g++ -std=c++17 -O2 -Wall -Wextra -pedantic main.cpp -o stats, plus a README.txt showing build and run commands.",
+          "acceptance_criteria": [
+            "Compiles with the provided command without warnings.",
+            "Reads integers from stdin until EOF; ignores non-integers and prints a warning to stderr for each ignored token.",
+            "Correctly computes and prints exactly:\n```text\ncount=N\nmin=...\nmax=...\nsum=...\nmean=...(.1)\n```",
+            "Mean formatted with one decimal digit; rounding matches iostreams default rounding.",
+            "Uses at least three nontrivial functions, including one that updates min/max via non-const references and one that returns a computed value.",
+            "Handles empty input by printing count=0 and prints min=max=sum=0 and mean=0.0.",
+            "Handles 32-bit range extremes without overflow in count; sum may use 64-bit accumulator.",
+            "Includes minimal inline tests in main demonstrating behavior with the sample below:\n```text\nInput:\n10\nx\n-5\n\n7\nEOF\nOutput:\ncount=3\nmin=-5\nmax=10\nsum=12\nmean=4.0\n```"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct input handling and error reporting to stderr for non-integers",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate computation of count, min, max, sum, and mean with required formatting",
+              "marks": 6
+            },
+            {
+              "criterion": "Decomposition into functions; appropriate use of references and const where applicable",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust edge-case handling (empty input, negatives, large values within 32-bit)",
+              "marks": 3
+            },
+            {
+              "criterion": "Code quality (compiles cleanly with given flags; readable, idiomatic control flow)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C++"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Polymorphic shape reporter using classes, constructors, inheritance, and virtual functions",
+          "brief": "Implement a CLI shapes that reads one shape description per line from stdin and prints its name and area. Supported inputs:\n- rect w h\n- circle r\n- tri b h\nFor each line, construct an object of the corresponding derived class on the stack, then pass it by reference to a function that accepts a Shape& and prints the result. Do not store shapes; process each line as it arrives. Use proper constructors to initialize dimensions, validate arguments (>0), and use virtual dispatch to compute area.",
+          "deliverable": "Source file main.cpp that builds with: g++ -std=c++17 -O2 -Wall -Wextra -pedantic main.cpp -o shapes, plus a README.txt describing supported inputs and examples.",
+          "acceptance_criteria": [
+            "Defines an abstract base class Shape with: virtual ~Shape() = default; virtual const char* name() const = 0; virtual double area() const = 0;",
+            "Implements Rectangle, Circle, Triangle with appropriate constructors initializing their dimensions; members are private with access via const-qualified methods.",
+            "Validation: if any dimension <= 0, print an error to stderr for that line and skip output for it.",
+            "Implements a function `report(Shape&)` that prints: `name=..., area=...` with area to 3 decimal places.",
+            "Uses dynamic polymorphism via a Shape& parameter; no global state; no containers or dynamic allocation required.",
+            "Exact sample behavior:\n```text\nInput:\nrect 3 4\ncircle 2\ntri 3 5\ntri -1 2\nOutput:\nname=Rectangle, area=12.000\nname=Circle, area=12.566\nname=Triangle, area=7.500\n```",
+            "Compiles cleanly with the provided flags."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct class design (abstract base with virtual destructor and pure virtuals; derived classes overriding correctly)",
+              "marks": 6
+            },
+            {
+              "criterion": "Constructor usage and argument validation; encapsulation and const-correctness",
+              "marks": 5
+            },
+            {
+              "criterion": "Polymorphic reporting via Shape& with correct formatting and per-line processing (no unnecessary storage)",
+              "marks": 5
+            },
+            {
+              "criterion": "Input parsing robustness and error handling for invalid dimensions or tokens",
+              "marks": 2
+            },
+            {
+              "criterion": "Build quality (compiles cleanly with warnings enabled)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "C++"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-017-S02",
+      "skills_assessed": [
+        "C++",
+        "STL containers",
+        "Pointers",
+        "RAII",
+        "Smart pointers"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following program:\n\n```cpp\n#include <iostream>\n#include <memory>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<std::unique_ptr<int>> v;\n    v.emplace_back(new int(3));\n    v.emplace_back(new int(1));\n    v.emplace_back(new int(2));\n\n    std::sort(v.begin(), v.end(), [](auto& a, auto& b){ return *a < *b; });\n\n    for (auto& p : v) std::cout << *p << ' ';\n}\n```\nWhat is the observable program behavior and why?",
+          "options": [
+            "Undefined behavior because `std::sort` moves elements and the comparator may dereference moved-from `unique_ptr`s.",
+            "Prints the pointer addresses unsorted because the comparator compares ownership, not values.",
+            "```text\n1 2 3 \n```",
+            "Compilation error because `std::sort` requires copyable elements and `std::unique_ptr` is non-copyable."
+          ],
+          "correct_option": "C",
+          "explanation": "`std::unique_ptr` is MoveConstructible and MoveAssignable, which is sufficient for `std::sort`. The comparator dereferences the `unique_ptr`s and compares the pointed-to ints, producing a sorted sequence by value. No dereference of moved-from pointers occurs inside the comparator; the comparator only sees references to elements at the time of comparison. Output is `1 2 3 `.",
+          "distractor_rationale": "- B is tempting because many remember non-copyable types can be problematic with algorithms, but `std::sort` only needs movable elements in modern C++.\n- C sounds plausible if one conflates element moves with comparator arguments, but the comparator receives references to valid elements during comparisons.\n- D would be true if the comparator compared the raw pointer addresses (or defaulted to pointer comparison), but the comparator dereferences and compares the ints.",
+          "skills_covered": [
+            "Smart pointers",
+            "STL containers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Examine iterator validity in this snippet:\n\n```cpp\n#include <vector>\n#include <iostream>\n\nint main(){\n    std::vector<int> v;\n    v.reserve(2);\n    v.push_back(10);\n    v.push_back(20);\n    auto it = v.begin();\n    v.push_back(30); // may reallocate\n    std::cout << *it << \"\\n\";\n}\n```\nWhat happens at the `std::cout` line?",
+          "options": [
+            "Undefined behavior because the `push_back` may reallocate and invalidate `it`.",
+            "It reliably prints `30` because the vector grows and shifts elements.",
+            "A standard exception is thrown due to iterator invalidation.",
+            "It reliably prints `10` because the first element did not change."
+          ],
+          "correct_option": "A",
+          "explanation": "`v.reserve(2)` sets capacity to 2. The third `push_back` forces a reallocation, invalidating all iterators, including `it`. Dereferencing an invalidated iterator is undefined behavior. The standard does not specify an exception for this case.",
+          "distractor_rationale": "- A is a common misconception: content stability does not imply iterator validity after reallocation.\n- C confuses element movement with deterministic output; even if elements move, the invalidated iterator cannot be trusted.\n- D is attractive if one expects runtime checks, but the standard does not require exceptions for iterator invalidation.",
+          "skills_covered": [
+            "STL containers"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider erasing from a `std::map` with move-only values:\n\n```cpp\n#include <map>\n#include <memory>\n\nint main(){\n    std::map<int, std::unique_ptr<int>> m;\n    m[1] = std::make_unique<int>(42);\n    for (auto kv : m) { // note: kv is by value\n        if (*kv.second == 42) m.erase(kv.first);\n    }\n}\n```\nWhat is the outcome and the first reason you hit it?",
+          "options": [
+            "Runtime double-free because both the `map` and the local `kv` own the same pointer.",
+            "Compiles and erases element `1` safely, leaving the map empty.",
+            "Undefined behavior due to invalidating the range-for's internal iterator while erasing the current element.",
+            "Compilation error because copying `std::pair<const int, std::unique_ptr<int>>` is ill-formed (moves are not used by range-for by value)."
+          ],
+          "correct_option": "D",
+          "explanation": "The range-based for with `auto kv` copies each element into `kv`. Copying a `std::pair<const int, std::unique_ptr<int>>` tries to copy the `unique_ptr`, which is not allowed. The program does not compile. If written by reference, you'd still have to handle iterator invalidation carefully, but the first failure is at compilation.",
+          "distractor_rationale": "- B is a later-stage problem if the code compiled by reference; it's tempting because erasing while iterating is tricky.\n- C assumes associative containers allow safe erase in any context, but ignores the move-only copy issue.\n- D is a plausible memory-model fear, but `unique_ptr` is non-copyable precisely to prevent double ownership by copy.",
+          "skills_covered": [
+            "Smart pointers",
+            "STL containers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Study this bidirectional link built with `std::shared_ptr`:\n\n```cpp\n#include <memory>\n\nstruct Node {\n    std::shared_ptr<Node> next;\n    std::shared_ptr<Node> prev;\n};\n\nint main(){\n    auto a = std::make_shared<Node>();\n    auto b = std::make_shared<Node>();\n    a->next = b;\n    b->prev = a;\n}\n```\nAfter `main` returns, what best describes object lifetimes and why?",
+          "options": [
+            "They are destroyed only if compiled with optimizations that elide reference counting.",
+            "Both `Node` objects are destroyed because they go out of scope at the end of `main`.",
+            "Both `Node` objects leak because the reference count cycle prevents destruction; break the cycle with a `std::weak_ptr` on one side.",
+            "`a` is destroyed but `b` leaks because its `prev` points to `a`."
+          ],
+          "correct_option": "C",
+          "explanation": "`shared_ptr` reference counting cannot reclaim cycles. `a` and `b` keep each other alive via `next`/`prev`. One side should be a `weak_ptr` to break the cycle so that counts can reach zero.",
+          "distractor_rationale": "- B is a naive view of scope-based destruction ignoring shared ownership semantics.\n- C imagines asymmetric destruction without addressing the cycle.\n- D incorrectly attributes deterministic lifetime to compiler optimizations; reference counting is runtime, not an optimization artefact.",
+          "skills_covered": [
+            "Smart pointers",
+            "RAII"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Exception safety with a custom-deleter `unique_ptr`:\n\n```cpp\n#include <cstdio>\n#include <memory>\n#include <stdexcept>\n\nvoid run(){\n    std::unique_ptr<FILE, decltype(&std::fclose)> f(std::fopen(\"tmp.txt\",\"w\"), &std::fclose);\n    std::fputs(\"hi\", f.get());\n    throw std::runtime_error(\"x\");\n}\n\nint main(){\n    try { run(); } catch(...) {}\n}\n```\nAfter catching the exception, what is true about the `FILE*` resource and why?",
+          "options": [
+            "It leaks because the `throw` bypasses the `fclose` call.",
+            "It is correctly closed via the custom deleter during stack unwinding.",
+            "Behavior is undefined because `decltype(&std::fclose)` is not a valid deleter type.",
+            "It is closed twice: once by the runtime and once by the custom deleter."
+          ],
+          "correct_option": "B",
+          "explanation": "The `unique_ptr`'s destructor runs during stack unwinding and invokes the custom deleter (`fclose`). This is the core of RAII: resources are released when their owners go out of scope, even via exceptions.",
+          "distractor_rationale": "- B is the classic manual-management pitfall; RAII explicitly addresses this.\n- C incorrectly assumes an extra close occurs; only the `unique_ptr` manages the resource.\n- D is false; a function pointer type to `fclose` is a common and valid `unique_ptr` deleter.",
+          "skills_covered": [
+            "RAII",
+            "Smart pointers",
+            "C++"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Iterator operations on ordered containers:\n\n```cpp\n#include <set>\n#include <iostream>\n\nint main(){\n    std::set<int> s{1,2,3};\n    auto it = s.begin();\n    it = it + 1; // attempt to advance by one\n    std::cout << *it << \"\\n\";\n}\n```\nWhat happens and why?",
+          "options": [
+            "Prints `1` because `operator+` on `set` iterators is a no-op.",
+            "Prints `2` because advancing by one works on all standard iterators.",
+            "Undefined behavior because `operator+` compiles but is invalid for sets.",
+            "Compilation error because `std::set` iterators are bidirectional and do not support `operator+`."
+          ],
+          "correct_option": "D",
+          "explanation": "`std::set` provides bidirectional iterators that support `++`/`--` but not random-access operations like `it + 1`. The code fails to compile. Use `++it` or `std::next(it)` instead.",
+          "distractor_rationale": "- B confuses iterator categories; only random-access iterators support `+`.\n- C suggests a runtime issue, but the operation is ill-formed at compile time.\n- D imagines a defined but inert `operator+`; no such operator exists for set iterators.",
+          "skills_covered": [
+            "STL containers"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Consider element removal by index in a `std::vector`:\n\n```cpp\n#include <vector>\n#include <iostream>\n\nint main(){\n    std::vector<int> v{1,2,2,3};\n    for (std::size_t i = 0; i < v.size(); ++i) {\n        if (v[i] % 2 == 0) {\n            v.erase(v.begin() + i);\n        }\n    }\n    for (int x : v) std::cout << x << ' ';\n}\n```\nWhat is the final output and why?",
+          "options": [
+            "```text\n1 2 2 3 \n```\nBecause erasing by index inside the loop is a no-op.",
+            "```text\n1 2 3 \n```\nBecause erasing shifts elements left and the loop skips checking the element that shifted into position `i`.",
+            "Undefined behavior due to invalidated references from `v[i]` after `erase`. ",
+            "```text\n1 3 \n```\nBecause both even numbers are removed as the loop continues."
+          ],
+          "correct_option": "B",
+          "explanation": "After erasing the element at index 1 (the first `2`), the next element (`2`) shifts into index 1. The loop increments `i` to 2 and never checks the new element at index 1. One `2` remains, producing `1 2 3 `.",
+          "distractor_rationale": "- B assumes every even is removed; it ignores the index shift causing a skip.\n- C is incorrect; `erase` removes elements and shifts the tail.\n- D overstates the hazard: `v[i]` is evaluated only when `i < v.size()` holds; while logic is flawed, no UB occurs here.",
+          "skills_covered": [
+            "STL containers"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Erasing while iterating a `std::map`:\n\n```cpp\n#include <map>\n\nint main(){\n    std::map<int,int> m{{1,10},{2,20},{3,30}};\n    for (auto it = m.begin(); it != m.end(); ++it) {\n        if (it->first % 2 == 1) {\n            m.erase(it);\n        }\n    }\n}\n```\nWhat best describes this loop's behavior?",
+          "options": [
+            "Undefined behavior because `++it` runs on an invalidated iterator after `erase`.",
+            "Well-defined only in debug builds; undefined in release builds.",
+            "Well-defined: only the erased iterator is invalidated; the loop removes keys 1 and 3 and ends with `{2:20}`.",
+            "Compilation error because `std::map::erase(iterator)` is ambiguous."
+          ],
+          "correct_option": "A",
+          "explanation": "In standard C++, `map::erase(it)` invalidates only the erased iterator. But this code then applies `++it` in the loop increment on an invalidated iterator. The safe pattern is `it = m.erase(it)` (C++11 and later) or equivalently increment an iterator saved before erasing.",
+          "distractor_rationale": "- B ignores that the loop increment still uses the old iterator.\n- C is false; the overload resolution is not ambiguous here.\n- D suggests build-configuration-dependent semantics; iterator validity rules are not conditional on debug builds.",
+          "skills_covered": [
+            "STL containers"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You want to store `FILE*` in `std::unique_ptr` with per-element deleters in a `std::vector`. One deleter closes, the other flushes then closes, and the latter captures a flag:\n\n```cpp\n#include <cstdio>\n#include <functional>\n#include <memory>\n#include <vector>\n\nint main(){\n    auto d1 = [](FILE* f){ if(f) std::fclose(f); };\n    bool do_flush = true;\n    auto d2 = [do_flush](FILE* f){ if(f){ if(do_flush) std::fflush(f); std::fclose(f);} };\n\n    // Which declaration allows both emplaces to compile?\n    // v.emplace_back(std::fopen(\"a.txt\",\"w\"), d1);\n    // v.emplace_back(std::fopen(\"b.txt\",\"w\"), d2);\n}\n```\nSelect the declaration for `v` that makes both emplaces valid.",
+          "options": [
+            "```cpp\nstd::vector<std::unique_ptr<FILE, void(*)(FILE*)>> v;\n```",
+            "```cpp\nstd::vector<std::unique_ptr<FILE, std::function<void(FILE*)>>> v;\n```",
+            "```cpp\nstd::vector<std::unique_ptr<FILE>> v;\n```",
+            "```cpp\nstd::vector<std::unique_ptr<FILE, decltype(d1)>> v;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`d1` and `d2` have different (lambda) types; `d2` also captures, so it cannot convert to a plain function pointer. Using `std::function<void(FILE*)>` as the deleter type allows storing both deleters in the same `vector` element type.",
+          "distractor_rationale": "- A uses `decltype(d1)`, which cannot accept `d2` because the types differ.\n- B would work for non-capturing lambdas, but `d2` captures and is not convertible to a function pointer.\n- D uses the default deleter type and does not match the provided emplace arguments with custom deleters.",
+          "skills_covered": [
+            "Smart pointers",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Capacity vs. size with `std::vector`:\n\n```cpp\n#include <vector>\n#include <iostream>\n\nint main(){\n    std::vector<int> v;\n    v.reserve(10);\n    v[0] = 42;            // line X\n    std::cout << v.size();\n}\n```\nWhat is the behavior at line X and why?",
+          "options": [
+            "Undefined behavior because `reserve` does not create elements; indexing past `size()` is invalid.",
+            "Well-defined: `reserve` grows the vector so `v[0]` is valid after it.",
+            "Compilation error because `operator[]` is deleted for empty vectors.",
+            "Throws an exception because bounds are checked in `operator[]`. "
+          ],
+          "correct_option": "A",
+          "explanation": "`reserve` increases capacity, not size. No elements exist until inserted, so `v[0]` is out of bounds and dereferencing it is undefined behavior. Bounds checking is provided by `at()`, not `operator[]`.",
+          "distractor_rationale": "- B confuses capacity with size; `operator[]` is only valid when `0 < size()`.\n- C is false; `operator[]` exists but its behavior is undefined out of bounds.\n- D describes `at()`, not `operator[]`.",
+          "skills_covered": [
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You inherit a cleanup routine that crashes intermittently:\n\n```cpp\n#include <vector>\n#include <memory>\n\nstruct Resource { bool expired() const; void close(); };\n\nvoid cleanup(std::vector<std::unique_ptr<Resource>>& rs) {\n    for (auto it = rs.begin(); it != rs.end(); ++it) {\n        if ((*it)->expired()) {\n            // attempt to be \"safe\"\n            (*it)->close();          // A: manual shutdown\n            delete it->get();        // B: manual delete\n            rs.erase(it);            // C: erase from container\n        }\n    }\n}\n```\nIn production this sometimes double-frees or crashes, and sometimes leaks if exceptions are thrown inside `close()`.",
+          "task": "Identify all correctness issues related to ownership and iteration. Propose a corrected implementation that is exception-safe, does not leak, and does not double-delete. Justify each change with the relevant rule (RAII, iterator validity for `vector`, exception safety guarantees).",
+          "expected_answer": "Issues:\n- Calling `delete it->get()` violates `unique_ptr`'s sole ownership contract and causes double-delete; the `unique_ptr`'s destructor will also delete on scope exit or erase.\n- Erasing from `vector` invalidates iterators at and after the point of erase; the loop uses `++it` unconditionally, so after `erase(it)` the iterator is invalid and then incremented (undefined behavior) or the next element is skipped if the code were adjusted improperly.\n- If `close()` throws, the function may leak by skipping `erase`, leaving an expired resource in the vector, and may crash later; manual deletion before `erase` makes exception windows worse.\n\nFix:\n- Do not manually `delete`. Let `unique_ptr` own deletion.\n- Use the erase-return iterator pattern to maintain a valid iterator after erase.\n- Make shutdown idempotent or non-throwing; if `close()` can throw, catch locally and proceed to erase to maintain container invariants.\n\nExample corrected code:\n\n```cpp\nvoid cleanup(std::vector<std::unique_ptr<Resource>>& rs) {\n    for (auto it = rs.begin(); it != rs.end(); /* no ++ here */) {\n        if ((*it)->expired()) {\n            try { (*it)->close(); } catch (...) { /* log and proceed */ }\n            it = rs.erase(it); // returns the next valid iterator\n        } else {\n            ++it;\n        }\n    }\n}\n```\nJustification:\n- RAII: `unique_ptr`'s destructor handles deletion; never call `delete` on its `get()`.\n- Iterator validity: `vector::erase` invalidates iterators at/after the point; assigning the return value preserves a valid iterator to continue.\n- Exception safety: catching around `close()` prevents partially cleaned items remaining; container remains in a valid state (basic guarantee) even if `close()` throws.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies double-delete from `delete it->get()` and ties it to `unique_ptr` ownership semantics (RAII).",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains iterator invalidation on `vector::erase` and why `++it` after erase is undefined/incorrect.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes and correctly applies the erase-return iterator pattern, with no manual delete.",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses exception safety of `close()` (catch/guarantee, or making it noexcept) and maintains container invariants.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Smart pointers",
+            "RAII",
+            "STL containers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A team models a parent-child hierarchy with shared ownership, then observes memory never drops after releasing top-level references:\n\n```cpp\n#include <memory>\n#include <vector>\n#include <map>\n#include <string>\n\nstruct Node {\n    std::string name;\n    std::shared_ptr<Node> parent;\n    std::vector<std::shared_ptr<Node>> children;\n};\n\nstd::map<std::string, std::shared_ptr<Node>> index;\n```\nEach child has `parent` set to its parent; parents keep `children`. After building a tree and clearing `index`, the process memory remains high.",
+          "task": "Diagnose the root cause, propose precise changes to break ownership cycles while preserving ability to traverse up and down, and explain how your choice interacts with container behavior (iterator stability, invalidation). Provide brief corrected code fragments.",
+          "expected_answer": "Root cause: `shared_ptr` cycles (parent <-> children) prevent reference counts from reaching zero; clearing `index` drops one set of owners, but cycles keep objects alive.\n\nChange: Use `std::weak_ptr<Node>` for the `parent` backlink because parent lifetime should not be extended by its children. Downward traversal retains ownership (`shared_ptr` in `children`); upward traversal locks the `weak_ptr` to temporarily access the parent.\n\nContainers: `std::map` and `std::vector` store `shared_ptr`/`weak_ptr` by value and manage counts non-intrusively. `map` iterators remain valid except for erased elements; `vector` reallocation invalidates iterators if you push_back beyond capacity, but pointer semantics (shared/weak) are independent of container iterator stability.\n\nFragments:\n\n```cpp\nstruct Node {\n    std::string name;\n    std::weak_ptr<Node> parent;                   // weak back-link\n    std::vector<std::shared_ptr<Node>> children;  // strong down-links\n};\n\n// Upward traversal\nif (auto p = child->parent.lock()) {\n    // use p safely\n}\n```\nThis breaks cycles while keeping traversal functionality. Clearing `index` will then allow nodes to be destroyed when no other strong owners remain.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies shared_ptr cycle as the reason memory persists after clearing the index.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes replacing the parent link with `weak_ptr` and justifies ownership direction.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how to use `lock()` for upward traversal, including null-check semantics.",
+              "marks": 1
+            },
+            {
+              "criterion": "Discusses relevant container behavior (map vs vector iterator validity and independence from smart-pointer ownership).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Smart pointers",
+            "RAII",
+            "STL containers"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A performance-sensitive path stores iterators to a `std::vector<int>` in another `std::vector` for later use:\n\n```cpp\n#include <vector>\n\nvoid collect(std::vector<int>& src, std::vector<std::vector<int>::iterator>& out) {\n    out.clear();\n    for (auto it = src.begin(); it != src.end(); ++it) {\n        if (*it % 5 == 0) out.push_back(it);\n    }\n    // ... later: mutate src by pushing more elements\n}\n\nvoid consume(const std::vector<std::vector<int>::iterator>& out) {\n    long sum = 0;\n    for (auto it : out) sum += *it; // sometimes crashes after 'src' grows\n}\n```\nCrashes appear after `src` is appended to between `collect` and `consume`.",
+          "task": "Explain precisely why the crashes occur. Propose two distinct, viable fixes that respect the need for fast later access: one that continues to use `std::vector<int>` and one that changes data representation. For each, explain iterator/reference validity and complexity trade-offs.",
+          "expected_answer": "Cause: `std::vector` reallocation on growth invalidates all iterators. The `out` vector stores iterators into `src`; after `src` grows beyond capacity, those iterators dangle, and dereferencing them in `consume` is undefined behavior.\n\nFix A (stay with `vector`):\n- Reserve sufficient capacity in `src` ahead of time (`src.reserve(expected_size)`), or avoid growth between `collect` and `consume`.\n- Alternatively, store stable indices (`size_t`) instead of iterators: `out_idx.push_back(static_cast<size_t>(it - src.begin()))`, then dereference via `src[idx]`. Index validity is preserved across reallocation as long as elements are not erased/reordered.\n\nFix B (change representation):\n- Use a node-based container with stable iterators (not covered here beyond `map`/`set`; however within the taught set, prefer storing keys in `std::map` and taking iterators to `map` elements, which remain valid across insertions and do not invalidate other iterators on erase). Re-model data so later access uses `map` (e.g., map from position to value) or keep selected items in a separate `std::vector<int>` copied by value.\n\nTrade-offs:\n- Reserving capacity maintains O(1) amortized appends and preserves iterators if no reallocation occurs; but it relies on accurate size prediction.\n- Indices are stable across reallocation but break if elements are erased or re-ordered; access remains O(1).\n- Using `map` gives stable iterators and ordered traversal but changes complexity of insertion/lookup to O(log n) and increases memory overhead.\n- Copying selected values into a separate vector avoids aliasing entirely at the cost of extra storage and possible staleness if `src` mutates later.",
+          "rubric": [
+            {
+              "criterion": "Explains vector reallocation and iterator invalidation as the root cause.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes an in-vector solution (reserve or indices) with correct validity and complexity discussion.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes an alternative representation (e.g., map or copy-out) with correct validity and complexity discussion.",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes constraints/limitations of each fix (e.g., erases/reorders break indices; map cost trade-offs).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are designing a resource registry for a game engine. Each resource has a string key and heavy data. Requirements:\n- Iteration must be in key-sorted order.\n- Clients obtain handles that can outlive the registry temporarily but must not keep resources alive unnecessarily.\n- Multiple clients may reference the same resource concurrently.\n- Registry insertions/erasures must not invalidate other clients’ handles.\n\nTwo candidate designs:\n\nA)\n```cpp\nstd::vector<std::pair<std::string, std::shared_ptr<Resource>>> registry;\n// binary-search by key; clients hold std::shared_ptr<Resource>\n```\n\nB)\n```cpp\nstd::map<std::string, std::shared_ptr<Resource>> registry;\n// clients hold std::weak_ptr<Resource>; registry holds shared_ptr\n```\n",
+          "task": "Choose a design (A, B, or a refined variant) and justify it against the requirements. If you modify the design, show the key changes (container choice, pointer types) and explain iterator/handle stability and ownership semantics. Include brief code illustrating safe lookup, handle acquisition, and cleanup.",
+          "expected_answer": "Prefer B with a slight refinement:\n- Use `std::map<std::string, std::shared_ptr<Resource>>` in the registry to provide key-sorted iteration inherently and stable iterators that are not invalidated by other insertions/erasures (except for the erased element itself).\n- Clients should hold `std::weak_ptr<Resource>` handles, so they can observe lifetime without extending it. They convert to `shared_ptr` temporarily when using the resource via `lock()`.\n- This ensures that removing an entry from the registry invalidates only that entry; other client handles remain valid (they may lock to null). Multiple clients can safely access the same underlying object concurrently when they upgrade their `weak_ptr`.\n\nIllustration:\n\n```cpp\nstruct Handle { std::weak_ptr<Resource> wp; };\n\nclass Registry {\n    std::map<std::string, std::shared_ptr<Resource>> reg_;\npublic:\n    Handle getHandle(const std::string& k) const {\n        auto it = reg_.find(k);\n        return Handle{ it == reg_.end() ? std::weak_ptr<Resource>{} : std::weak_ptr<Resource>(it->second) };\n    }\n    void insert(const std::string& k, std::shared_ptr<Resource> r) { reg_[k] = std::move(r); }\n    void erase(const std::string& k) { reg_.erase(k); }\n\n    // iteration in sorted key order is natural for map\n    auto begin() const { return reg_.begin(); }\n    auto end() const { return reg_.end(); }\n};\n\n// Client use\nvoid use(Handle h){ if (auto sp = h.wp.lock()) { sp->doWork(); } }\n```\nRationale vs requirements:\n- Sorted iteration: `map` maintains order by key.\n- Handles that don't extend lifetime: `weak_ptr`.\n- Shared concurrent references: `shared_ptr` on upgrade; thread-safety of the object itself is separate.\n- Iterator/handle stability: Inserting/erasing other keys does not invalidate iterators or existing `weak_ptr`s; only erased entries become non-lockable, which is exactly the desired signal.",
+          "rubric": [
+            {
+              "criterion": "Selects an appropriate container for sorted iteration and explains the choice (map over vector/binary-search).",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies `weak_ptr` for client handles and `shared_ptr` in the registry with correct ownership semantics.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains iterator and handle stability semantics under insert/erase and how erased entries behave for clients.",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides clear, correct code illustrating lookup, handle acquisition (lock), and cleanup.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Smart pointers",
+            "STL containers",
+            "RAII"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Safe resource exercise: RAII wrapper for FILE* with exception safety",
+          "brief": "Build a small C++ library and demo that wraps a C `FILE*` using RAII. The wrapper must manage ownership, support move-only semantics, and guarantee that the file is closed exactly once even if exceptions are thrown during operations. Provide a demo program that intentionally throws after writing to show the destructor still closes the file.",
+          "deliverable": "A repository/folder containing: (1) `unique_file.h/.cpp` (or a header-only) implementing the RAII type; (2) `demo.cpp` showing correct behavior under normal flow and when an exception is thrown; (3) a simple build instruction in `README.md` using a standard compiler; and (4) program output captured in `output.txt`.",
+          "acceptance_criteria": [
+            "`UniqueFile` (name may vary) encapsulates a `FILE*` and closes it in the destructor via `std::fclose` or an equivalent custom deleter.",
+            "Copy operations are disabled; move constructor and move assignment are implemented and tested (moved-from object becomes empty).",
+            "No raw `fclose`/`delete` calls occur outside the RAII type; resource release is centralized.",
+            "Demo writes some bytes to a file, then throws; after catching, subsequent open of the same file path succeeds and the program prints a line confirming closure.",
+            "Buildable with a single compiler command shown in README (e.g., `g++ -std=c++17 demo.cpp -o demo`).",
+            "`output.txt` includes two runs: normal flow and throwing flow, each indicating whether the file was closed (e.g., via printed messages)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct RAII implementation: destructor closes exactly once; no leaks or double-closes in normal and exceptional paths.",
+              "marks": 6
+            },
+            {
+              "criterion": "Move-only semantics implemented correctly and demonstrated (tests show moved-from is safe to destroy/use).",
+              "marks": 5
+            },
+            {
+              "criterion": "Exception safety demonstration: program throws after an operation and still closes the file; evidence present in output.",
+              "marks": 5
+            },
+            {
+              "criterion": "Submission quality: clear README with build/run steps; compiles cleanly; no raw manual closes outside the wrapper.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "RAII",
+            "Smart pointers",
+            "C++",
+            "Pointers"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Container application: Word frequency with map, set, and iterators",
+          "brief": "Implement a console tool that reads text from stdin, counts word frequencies case-insensitively while excluding stopwords, and prints the top N words in descending frequency then ascending lexicographic order. Use `std::map` for counts, `std::set` for stopwords, and a `std::vector` to sort the results for output. Demonstrate correct iterator use (no invalidation bugs) and stable behavior.",
+          "deliverable": "Source files (e.g., `main.cpp`) and `README.md` with build/run instructions. Include a sample input file `sample.txt` and the exact captured output in `expected_output.txt` produced by running `./app < sample.txt 10` (N=10).",
+          "acceptance_criteria": [
+            "Uses `std::set<std::string>` for stopwords and `std::map<std::string,int>` for counts; `std::vector<std::pair<std::string,int>>` (or similar) is used for sorting output.",
+            "Tokenization normalizes to lowercase and strips non-alphabetic characters; empty tokens are ignored.",
+            "No unordered containers are used; iteration over `map` and `set` uses valid iterators; any erases (e.g., removing zero-counts) use the erase-return idiom.",
+            "Sorting comparator orders by descending count, then ascending word; ties are broken lexicographically.",
+            "Program accepts two command-line arguments: optional path to a stopwords file (if provided) and N (top count). If the stopwords file is absent, a built-in small stopword set is used.",
+            "`expected_output.txt` matches the program's output for `sample.txt` with N=10 exactly (line-for-line)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct and idiomatic use of `std::map`, `std::set`, and iterator-based traversal; no invalidation mistakes (e.g., proper erase idioms).",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate tokenization and normalization logic; stopword filtering works from either file or built-in set.",
+              "marks": 5
+            },
+            {
+              "criterion": "Stable, correct sorting by frequency then lexicographic order; output formatting matches specification.",
+              "marks": 5
+            },
+            {
+              "criterion": "Build/run documentation clarity and reproducibility; submission includes sample input and exact expected output.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-017-S03",
+      "skills_assessed": [
+        "C++",
+        "STL containers",
+        "Algorithms",
+        "C++ templates",
+        "Exception handling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following code:\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::vector<int> v{1,2,3,4,5,6};\n    auto it = std::remove_if(v.begin(), v.end(), [](int x){ return x % 2 == 0; });\n    std::cout << (it - v.begin()) << \" \";\n    v.erase(it, v.end());\n    for (int x : v) std::cout << x;\n}\n```\nWhat is the program's output?",
+          "options": [
+            "3 135",
+            "6 135",
+            "3 123456",
+            "3 153"
+          ],
+          "correct_option": "A",
+          "explanation": "std::remove_if compacts the kept elements (odds) to the front and returns an iterator to the new logical end. For the vector {1,2,3,4,5,6} with predicate removing evens, the new end is at index 3, so it - begin() prints 3. After erase, the vector contains {1,3,5}, so the final output is \"3 135\".",
+          "distractor_rationale": "B: 6 is the original size, but remove_if returns the new logical end, not the container size. C: After erase, the vector no longer contains all elements; remove_if leaves garbage in the tail which must be erased. D: 153 suggests the odds were reordered; remove_if preserves the relative order of kept elements.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this print and why?\n```cpp\n#include <vector>\n#include <algorithm>\n#include <functional>\n#include <iostream>\n\nint main() {\n    std::vector<int> v{1,2,3,4,5};\n    std::sort(v.begin(), v.end(), std::greater<int>()); // now 5,4,3,2,1\n    bool found = std::binary_search(v.begin(), v.end(), 3); // default comparator\n    std::cout << found;\n}\n```\n",
+          "options": [
+            "0",
+            "1",
+            "It depends on the implementation but usually 1",
+            "Undefined behavior"
+          ],
+          "correct_option": "A",
+          "explanation": "binary_search requires the range to be sorted according to the same comparator it uses. The vector is sorted in descending order but binary_search uses operator< (ascending), so the precondition is violated and the algorithm will return an incorrect result. In this concrete case it prints 0 (not found).",
+          "distractor_rationale": "B: Tempting because 3 is in the data, but the range is sorted with a different ordering, so the search fails. C: The behavior is not undefined; the algorithm may return an arbitrary boolean, but it stays within the algorithm’s logic. D: Not implementation-defined; the mismatch in ordering means success is not guaranteed and in this case is false.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given the code below, which output is correct?\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::vector<int> v{3, -1, 2, -7, 5, -3};\n    auto is_neg = [](int x){ return x < 0; };\n    std::stable_partition(v.begin(), v.end(), is_neg);\n    for (int x : v) std::cout << x << ' ';\n}\n```\n",
+          "options": [
+            "-7 -3 -1 3 2 5 ",
+            "-1 -7 -3 3 2 5 ",
+            "-7 -1 -3 2 3 5 ",
+            "-1 -7 -3 5 3 2 "
+          ],
+          "correct_option": "B",
+          "explanation": "stable_partition groups negatives first while preserving the original relative order within each group. The negatives in their original order are -1, -7, -3; the non-negatives in their original order are 3, 2, 5. So the final sequence is \"-1 -7 -3 3 2 5 \".",
+          "distractor_rationale": "B: Looks sorted among negatives, but stable_partition does not sort either group. C and D: Both break the original relative order either among negatives or among non-negatives; stability guarantees preservation within groups.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What properties hold after the call to nth_element in this program?\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::vector<int> v{9,1,8,2,7,3,6,4,5};\n    std::nth_element(v.begin(), v.begin()+4, v.end());\n    std::cout << v[4] << \" | \";\n    bool left_sorted = std::is_sorted(v.begin(), v.begin()+4);\n    bool right_sorted = std::is_sorted(v.begin()+5, v.end());\n    std::cout << left_sorted << \" \" << right_sorted;\n}\n```\nChoose the correct statement about the output.",
+          "options": [
+            "```text\n5 | 1 1\n```",
+            "```text\n5 | 1 0\n```",
+            "```text\n4 | 0 0\n```",
+            "```text\n5 | 0 0\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "nth_element arranges the element at the nth position as if the range were sorted, and partitions the range so that elements before are <= it and elements after are >= it. It does not sort either partition. For this input, v[4] becomes 5, and the subranges are not necessarily sorted, hence both flags print 0.",
+          "distractor_rationale": "B and C: Common misconception that nth_element sorts the left partition; it only partially orders. D: The median position is correctly placed at 5 for this permutation; 4 is incorrect.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What does this print?\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint main() {\n    std::vector<int> v{1,2,2,2,3,4};\n    auto r = std::equal_range(v.begin(), v.end(), 2);\n    std::cout << (r.second - r.first) << '\\n';\n}\n```\n",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "Undefined behavior"
+          ],
+          "correct_option": "B",
+          "explanation": "equal_range on a sorted range returns the subrange of all elements equal to the value. There are three 2's in the input, so the distance between the bounds is 3.",
+          "distractor_rationale": "A: Off-by-one temptation. C: Counts all elements up to 3, but equal_range isolates equals only. D: The preconditions (sorted ascending with operator<) are met; behavior is well-defined.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Consider iterator validity in the presence of reallocation:\n```cpp\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::vector<int> v{5,4,3,2,1};\n    auto pivot = std::partition(v.begin(), v.end(), [](int x){ return x%2==0; });\n    // ... later\n    v.push_back(42); // may reallocate\n    // use pivot here (e.g., *pivot or distance)\n}\n```\nWhich statement is correct?",
+          "options": [
+            "Using pivot is safe if push_back adds at most one element.",
+            "Using pivot is always safe because partition doesn't change capacity.",
+            "Using pivot after push_back is undefined behavior because it may be invalidated by reallocation.",
+            "Using pivot is safe because partition returns an index, not an iterator."
+          ],
+          "correct_option": "C",
+          "explanation": "std::vector reallocation invalidates all iterators, including ones returned by algorithms like partition. After a potential reallocation from push_back, using pivot is undefined behavior.",
+          "distractor_rationale": "B: partition’s behavior on capacity is irrelevant; push_back may reallocate regardless. C: Even a single-element growth can reallocate and invalidate iterators. D: partition returns an iterator, not an index; iterators are invalidated on reallocation.",
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "How do exceptions interact with algorithms that apply a callable to elements?\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n#include <stdexcept>\n\nint main(){\n    std::vector<int> v{1,2,3};\n    try {\n        std::for_each(v.begin(), v.end(), [](int& x){\n            if (x == 2) throw std::runtime_error(\"boom\");\n            x *= 10;\n        });\n    } catch (...) {}\n    std::cout << v[0] << ' ' << v[1] << ' ' << v[2] << '\\n';\n}\n```\nWhat is printed?",
+          "options": [
+            "10 2 3",
+            "1 2 3",
+            "10 20 3",
+            "10 2 30"
+          ],
+          "correct_option": "A",
+          "explanation": "The callable multiplies 1 by 10, then throws on 2 before modifying it. The third element is never visited. After catching, the vector is {10,2,3}.",
+          "distractor_rationale": "B: Assumes the second element was modified before throwing. C: Assumes no elements were modified; for_each does not roll back. D: Assumes the third element was processed; iteration stops at the throw.",
+          "skills_covered": [
+            "Algorithms",
+            "Exception handling",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Which behavior occurs on reallocation for these two types when pushing back into a vector?\n```cpp\n#include <vector>\n#include <iostream>\n\nstruct MoveNoexcept {\n    MoveNoexcept()=default;\n    MoveNoexcept(const MoveNoexcept&){ std::cout << \"C\"; }\n    MoveNoexcept(MoveNoexcept&&) noexcept { std::cout << \"M\"; }\n};\n\nstruct MoveMayThrow {\n    MoveMayThrow()=default;\n    MoveMayThrow(const MoveMayThrow&){ std::cout << \"c\"; }\n    MoveMayThrow(MoveMayThrow&&) noexcept(false) { std::cout << \"m\"; }\n};\n\nint main(){\n    {\n        std::vector<MoveNoexcept> a; a.reserve(1);\n        a.push_back({}); // no output yet\n        a.push_back({}); // reallocate\n        std::cout << '\\n';\n    }\n    {\n        std::vector<MoveMayThrow> b; b.reserve(1);\n        b.push_back({}); // no output yet\n        b.push_back({}); // reallocate\n        std::cout << '\\n';\n    }\n}\n```\nChoose the most accurate description of the two lines printed.",
+          "options": [
+            "First line contains C (copies), second line contains m (moves).",
+            "Both lines contain M (moves).",
+            "First line contains M (moves), second line contains c (copies).",
+            "Both lines contain c (copies)."
+          ],
+          "correct_option": "C",
+          "explanation": "On reallocation, vector prefers move if it is noexcept; otherwise it falls back to copy for strong exception safety. MoveNoexcept moves (prints M). MoveMayThrow’s move may throw, so vector copies (prints c).",
+          "distractor_rationale": "B: Inverts the noexcept rule. C and D: Assume the same behavior regardless of noexcept; vector’s guarantee drives the choice.",
+          "skills_covered": [
+            "STL containers",
+            "Algorithms",
+            "Exception handling",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Which calls compile given this constraint that attempts to restrict to random-access iterators?\n```cpp\n#include <type_traits>\n#include <iterator>\n#include <vector>\n#include <list>\n\ntemplate<class It,\n         class = std::enable_if_t<\n           std::is_same<\n             typename std::iterator_traits<It>::iterator_category,\n             std::random_access_iterator_tag\n           >::value\n         >\n>\nvoid only_random_access(It, It) {}\n\nint main(){\n    std::vector<int> v{1,2,3};\n    std::list<int>   l{1,2,3};\n    // Which of these are valid?\n    // A\n    only_random_access(v.begin(), v.end());\n    // B\n    //only_random_access(l.begin(), l.end());\n}\n```\n",
+          "options": [
+            "A fails; B compiles.",
+            "Both fail because iterator_category is not usable in enable_if.",
+            "Both A and B compile.",
+            "A compiles; B fails."
+          ],
+          "correct_option": "D",
+          "explanation": "std::vector’s iterator_category is std::random_access_iterator_tag, so A satisfies the equality check. std::list uses std::bidirectional_iterator_tag, so B fails the enable_if. Using is_same is strict but works for vector iterators; a more general approach would use is_base_of.",
+          "distractor_rationale": "B: Lists are not random-access. C: Inverts the categories. D: iterator_category is exactly intended for such traits-based constraints; SFINAE with enable_if is valid.",
+          "skills_covered": [
+            "C++ templates",
+            "Algorithms",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Catch ordering with exceptions thrown from inside an algorithm callback:\n```cpp\n#include <vector>\n#include <algorithm>\n#include <iostream>\n#include <stdexcept>\n\nstruct MyError : std::runtime_error {\n    using std::runtime_error::runtime_error;\n};\n\nint main(){\n    std::vector<int> v{1};\n    try {\n        std::transform(v.begin(), v.end(), v.begin(), [](int){\n            throw MyError(\"x\");\n            return 0;\n        });\n    } catch (const std::exception&){\n        std::cout << \"base\\n\";\n    } catch (const MyError&){\n        std::cout << \"derived\\n\";\n    }\n}\n```\nWhat is printed?",
+          "options": [
+            "Undefined behavior",
+            "base",
+            "Nothing; the exception is swallowed by transform",
+            "derived"
+          ],
+          "correct_option": "B",
+          "explanation": "Catch blocks are matched in order. The base-class handler catches MyError before the derived one is considered. Algorithms do not swallow exceptions; they propagate them out to the caller.",
+          "distractor_rationale": "B: Tempting because the thrown type is MyError, but the base handler appears first and matches. C: Standard algorithms do not catch and suppress exceptions from user callables. D: There is no undefined behavior here; exception flow is well defined.",
+          "skills_covered": [
+            "Exception handling",
+            "Algorithms",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You have an event log loader that builds a vector<string> lines. A downstream stage must remove any line containing the substring \"DEBUG\" while preserving the relative order of the remaining lines. A teammate wrote this:\n```cpp\nvoid purge_debug(std::vector<std::string>& lines) {\n    auto it = std::partition(lines.begin(), lines.end(), [](const std::string& s){\n        return s.find(\"DEBUG\") == std::string::npos; // keep non-DEBUG first\n    });\n    // erase the tail\n    lines.erase(it, lines.end());\n}\n```\nIn production, an instrumentation change appends a large trailer to some lines, and a custom string type used in other builds can throw on move when it needs to allocate. Occasionally, after purge_debug, the order of kept lines matches input, but in other builds some unexpected reordering appears, and once a crash was reported after a later push_back on lines followed by using it (the iterator from partition) retained in a local variable.",
+          "task": "Decide whether the algorithm choice is correct for the stability and exception-safety requirements, and propose a concrete fix if needed. Justify: 1) stability of ordering, 2) exception behavior (what can throw, which guarantees you meet), and 3) iterator validity across later growth of the vector. Provide corrected code if you change the approach.",
+          "expected_answer": "- partition does not guarantee stability; it may reorder the kept and removed groups internally. Thus using partition violates the requirement to preserve the relative order of kept lines. The correct choice is stable_partition or the remove-erase idiom with a stable predicate.\n- stable_partition preserves order of kept elements but still moves elements; if the string type's move can throw, stable_partition offers only basic guarantee: if an exception is thrown, the container remains valid but with unspecified element ordering. If we require a strong guarantee for purge_debug, the standard approach is the remove-erase idiom, which moves elements only to compact kept lines. Moves can still throw, but remove_if + erase either completes or leaves the vector in a valid state with some elements possibly already moved; strong guarantee cannot be given without non-throwing moves. We can, however, state and document the basic guarantee given throws-from-move.\n- Never retain iterators across potential reallocation. After any growth operation (push_back, insert) that can reallocate, discard saved iterators.\n- Proposed fix that preserves order and avoids saving iterators:\n```cpp\nvoid purge_debug(std::vector<std::string>& lines) {\n    auto new_end = std::remove_if(lines.begin(), lines.end(), [](const std::string& s){\n        return s.find(\"DEBUG\") != std::string::npos;\n    });\n    lines.erase(new_end, lines.end());\n}\n```\nThis preserves the relative order of kept lines. Document that if string move can throw, the function provides the basic guarantee: on throw, lines remains valid but its order may be partially compacted. If non-throwing moves are available (e.g., small-string optimization or noexcept move), the operation is exception-safe and efficient. Also, do not store iterators like new_end for later use across mutations; recompute after any operation that might reallocate.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that std::partition is unstable and violates the order-preservation requirement",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains exception-safety implications (what operations may throw, guarantees achievable with stable_partition vs remove-erase)",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses iterator invalidation on reallocation and advises not to reuse saved iterators after growth",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes correct, concrete code using a stable approach (e.g., remove-erase) and ties it back to the requirements",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "Exception handling",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are asked to provide a reusable generic median function for analytics pipelines. It must accept a pair of iterators to a RandomAccess range and optionally a comparator. It should not fully sort the data, and must leave the element at median position correctly placed while making no promises about the rest. Some pipelines use std::list; others use std::vector. A few types have moves that can throw.",
+          "task": "Design the function template signature and internal algorithm, specify constraints so that list iterators are rejected at compile time, and document the exception guarantees. Justify your choices. Provide a self-contained code snippet.",
+          "expected_answer": "- Use nth_element to place the median in amortized linear time without fully sorting.\n- Constrain the template to RandomAccessIterator using iterator_traits and a static_assert or enable_if/is_base_of on iterator_category, so list iterators are rejected at compile time.\n- Support an optional comparator template parameter defaulting to std::less<>{}.\n- Exception guarantees: nth_element may move elements; if moves/compares throw, the algorithm provides the basic guarantee (range remains valid but partially permuted). If element moves are noexcept and comparator doesn't throw, the operation is non-throwing. Document that.\n- Example implementation:\n```cpp\n#include <iterator>\n#include <type_traits>\n#include <algorithm>\n\ntemplate<class It, class Compare = std::less<>>\nstd::enable_if_t<\n    std::is_base_of<\n        std::random_access_iterator_tag,\n        typename std::iterator_traits<It>::iterator_category\n    >::value,\nvoid>\nmedian_inplace(It first, It last, Compare comp = Compare{}) {\n    auto n = std::distance(first, last);\n    if (n == 0) return; // or throw std::invalid_argument\n    It mid = first + n/2;\n    std::nth_element(first, mid, last, comp);\n}\n```\n- Rationale: Random access is required because nth_element uses iterator arithmetic; rejecting std::list avoids a runtime failure. Using comparator keeps it reusable across types. Document basic guarantee under throwing moves and comparator.",
+          "rubric": [
+            {
+              "criterion": "Uses nth_element appropriately to avoid full sort and meets the median positioning requirement",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly constrains the template to random-access iterators (compile-time rejection for list)",
+              "marks": 2
+            },
+            {
+              "criterion": "States clear exception-safety guarantees and conditions under which the function can throw",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides coherent justification and correct, self-contained code",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "C++ templates",
+            "Exception handling",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A team sorts records by a key using a comparator that accidentally captures state and violates strict weak ordering:\n```cpp\nstruct Rec { int id; int score; };\nstruct Cmp {\n    mutable int calls = 0;\n    bool operator()(const Rec& a, const Rec& b) const {\n        ++calls; // stateful and mutating\n        if ((a.score % 2) != (b.score % 2)) return (a.score % 2) < (b.score % 2);\n        return a.id < b.id; // ties broken by id\n    }\n};\nstd::vector<Rec> v = { {1,10}, {2,11}, {3,12}, {4,13} };\nstd::sort(v.begin(), v.end(), Cmp{});\n```\nUnder heavy loads they observe occasional crashes or out-of-order results that differ between builds.",
+          "task": "Diagnose precisely what is wrong with the comparator and why it can cause undefined behavior during sort. Propose a corrected comparator and discuss how you would test it. Mention any exception-related concerns with the comparator and sort.",
+          "expected_answer": "- The comparator is stateful and mutates internal state (calls) on each comparison, breaking the requirement that the comparator induce a strict weak ordering with a consistent, transitive relation. Comparator must be pure (no side effects affecting ordering); mutability makes comparisons context-dependent and can yield cycles.\n- Furthermore, parity-based ordering combined with id tiebreaker is fine in itself, but it must be independent of prior calls. Incrementing calls violates transitivity and antisymmetry.\n- sort relies on strict weak ordering; violating it results in undefined behavior, explaining crashes or inconsistent results across builds.\n- Fix by making the comparator immutable and pure:\n```cpp\nstruct CmpFixed {\n    bool operator()(const Rec& a, const Rec& b) const noexcept {\n        if ((a.score % 2) != (b.score % 2)) return (a.score % 2) < (b.score % 2);\n        return a.id < b.id;\n    }\n};\n```\n- Testing: property-based tests to verify transitivity and irreflexivity; check that for all a,b, !(comp(a,b) && comp(b,a)) unless values are equivalent; and that equivalent elements do not cause comparator contradictions across runs. Run with sanitizers and compare output stability across multiple seeds.\n- Exceptions: The comparator should be noexcept; if it throws during sort, sort provides only the basic guarantee (range remains valid but partially permuted). Marking it noexcept enables stronger assumptions and possibly better codegen.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies violation of strict weak ordering due to mutable state and side effects",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains the undefined behavior consequences for std::sort",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a corrected, pure and noexcept comparator",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines a reasonable test strategy to validate the comparator’s properties",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "C++",
+            "Exception handling"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need to transform a vector<string> inputs into a vector<int> outputs using std::transform with std::stoi. Some inputs are invalid and throw std::invalid_argument. The requirement is: keep successfully parsed integers in their transformed positions, and collect failures (with the original string) into a separate vector<string> errors, without terminating the transformation. The order of outputs and errors must match the original order. Performance matters on large datasets.",
+          "task": "Propose a concrete implementation using STL algorithms and exception handling, describing how you minimize allocations and keep strong invariants about order. Provide code. Explain the exception-safety guarantees you provide and why.",
+          "expected_answer": "- Use a single pass over inputs. Reserve outputs.size() = inputs.size() to avoid intermediate reallocations. For each element, try stoi; on success push_back the value, on failure push_back the original string into errors. Because we cannot express this with a single std::transform that continues after exceptions, use a for loop or for_each_n with a lambda that catches internally.\n- Code:\n```cpp\nvoid parse_all(const std::vector<std::string>& inputs,\n               std::vector<int>& outputs,\n               std::vector<std::string>& errors)\n{\n    outputs.clear(); errors.clear();\n    outputs.reserve(inputs.size());\n    errors.reserve(inputs.size() / 10 + 1); // heuristic\n\n    for (const auto& s : inputs) {\n        try {\n            size_t idx = 0;\n            int v = std::stoi(s, &idx, 10);\n            if (idx != s.size()) throw std::invalid_argument(\"trailing\");\n            outputs.push_back(v);\n        } catch (const std::exception&) {\n            errors.push_back(s);\n        }\n    }\n}\n```\n- Order: Iteration preserves order in both outputs and errors relative to inputs.\n- Allocations: Pre-reserving reduces growth reallocations.\n- Exception safety: Inside the loop, exceptions are caught per-element, so the function provides the strong guarantee for its own contract (either pushes the parsed int or pushes the original string to errors). If push_back throws due to allocation, both vectors remain valid; partially filled containers reflect progress up to the throw. No retained iterators are used, so no invalid accesses.",
+          "rubric": [
+            {
+              "criterion": "Correctly structures processing to continue after per-element exceptions and preserves order in both outputs and errors",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses STL containers/algorithms appropriately and addresses allocation/performance (e.g., reserve)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains clear exception-safety guarantees and their limits (push_back allocation, per-element try/catch)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "Exception handling",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Algorithm exercises: selection, partitioning, and erase-remove on STL containers",
+          "brief": "Build a small console program that demonstrates correct use of key STL algorithms on realistic data. Implement and exercise the following on std::vector<int> and std::vector<std::string>: 1) remove-erase to drop elements matching a predicate, 2) stable_partition to group elements while preserving order, 3) nth_element to place the median, and 4) equal_range on a sorted range to count duplicates. Print concise, verifiable outputs for each step. Include a README with build/run instructions.",
+          "deliverable": "A compilable project containing source files and a README. The program when run prints the required results to stdout. This serves as the \"Algorithm exercises\" completion evidence.",
+          "acceptance_criteria": [
+            "Program builds with a single standard C++17 compiler command (e.g., g++ -std=c++17 main.cpp -O2) or via a provided simple CMakeLists.txt.",
+            "remove-erase: Starting from the integers 1..10, remove evens and print the resulting sequence exactly as: \"odds: 1 3 5 7 9\".",
+            "stable_partition: On input strings {\"a\",\"X\",\"bb\",\"Y\",\"ccc\"}, partition to keep alphabetic strings first (isalpha-only), preserving order, and print: \"alpha: a bb ccc | other: X Y\".",
+            "nth_element: On integers {9,1,8,2,7,3,6,4,5}, place the median and print exactly: \"median: 5 left_sorted: 0 right_sorted: 0\" using is_sorted on the partitions.",
+            "equal_range: On sorted vector {1,2,2,2,3,4,4}, query value 2 and print exactly: \"count(2)=3\".",
+            "No undefined behavior (e.g., no use of invalidated iterators). All outputs must match exactly as specified."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, idiomatic use of remove-erase with exact output formatting",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct use of stable_partition preserving order with exact output",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct nth_element placement and partition-sortedness checks with exact output",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct equal_range usage and exact output",
+              "marks": 4
+            },
+            {
+              "criterion": "Buildability and README clarity",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Reusable component: header-only top_k and median utilities with error handling",
+          "brief": "Create a small, header-only library that provides two generic algorithms: 1) top_k(first,last,k,comp) returning a vector of the k largest elements by comparator without fully sorting, and 2) median_inplace(first,last,comp) that positions the median via nth_element. top_k must validate k (0 <= k <= n) and throw std::invalid_argument on bad k. Provide overloads that accept containers by reference and forward to iterator-based implementations. Include a minimal demo program that exercises both utilities on ints and strings and prints results.",
+          "deliverable": "A header file (e.g., algoutils.hpp) plus a demo source that compiles and runs to show correctness. This serves as the \"Reusable component\" completion evidence.",
+          "acceptance_criteria": [
+            "Header-only: No compiled library; all templates in headers.",
+            "top_k uses nth_element (or partial_sort) to achieve O(n + k log k) or O(n log k) behavior; document the chosen complexity in comments.",
+            "top_k validates k and throws std::invalid_argument for k < 0 or k > distance(first,last). The demo must show the exception being thrown and caught, printing the exception message exactly: \"bad k\".",
+            "median_inplace places the median element (lower median for even n) at the correct position without fully sorting. Demo must print the median value before and after to show change in position, not full sort.",
+            "Iterator constraints: Both functions reject non-random-access iterators at compile-time using iterator_category and enable_if or static_assert with a clear message.",
+            "Demo output includes: a) top 3 strings by length, b) top 5 integers by natural order, c) thrown exception for bad k with the exact message, and d) a median example with left/right partitions not fully sorted.",
+            "Builds with: g++ -std=c++17 demo.cpp -O2, and the demo prints clear, labeled results."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct template design with iterator-based core and container overloads",
+              "marks": 5
+            },
+            {
+              "criterion": "Algorithmic correctness and complexity choice (nth_element/partial_sort) with documentation",
+              "marks": 5
+            },
+            {
+              "criterion": "Proper validation and exception handling for k with exact demo behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "Median function correctness (element placement without full sort) with demo evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Compile-time constraints for RandomAccess iterators with clear diagnostics",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Algorithms",
+            "C++ templates",
+            "Exception handling",
+            "STL containers",
+            "C++"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-017-S04",
+      "skills_assessed": [
+        "C++",
+        "File I/O",
+        "Unit Testing",
+        "Debugging",
+        "Git",
+        "CMake"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the code below on a system where the file does not exist:\n\n```cpp\n#include <fstream>\n#include <string>\n\nint main() {\n    std::ifstream in(\"missing.txt\"); // file does not exist\n    in.exceptions(std::ifstream::failbit | std::ifstream::badbit);\n    std::string s;\n    std::getline(in, s);\n}\n```\nAt runtime, where does the first exception get thrown, and why?",
+          "options": [
+            "In the constructor `std::ifstream in(...)`, because failed opens throw by default.",
+            "No exception is thrown; streams never throw on open failures.",
+            "On the call to `in.exceptions(...)`, because `failbit` was already set by the failed open and enabling it triggers a throw immediately.",
+            "On the call to `std::getline(in, s)`, because that's the first formatted operation after enabling exceptions."
+          ],
+          "correct_option": "C",
+          "explanation": "`std::ifstream(\"missing.txt\")` fails to open and sets `failbit`. When you call `exceptions(failbit|badbit)`, the standard requires it to throw immediately if any of the bits being enabled are already set. Hence the throw occurs on `exceptions(...)`.",
+          "distractor_rationale": "B: Many believe failed opens throw by default, but streams are non-throwing unless exceptions are enabled. C: Reasonable guess because formatted ops typically surface errors, but here the throw occurs earlier when enabling exceptions. D: Streams can throw, but only when exceptions are enabled; here they are, and the state is already failed.",
+          "skills_covered": [
+            "File I/O",
+            "Debugging",
+            "C++"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this program print?\n\n```cpp\n#include <sstream>\n#include <iostream>\n\nint main(){\n    std::istringstream in(\"42\\nalpha\\nbeta\");\n    int n;\n    std::string line1, line2;\n    in >> n;\n    std::getline(in, line1);\n    std::getline(in, line2);\n    std::cout << \"[\" << line1 << \"] [\" << line2 << \"]\\n\";\n}\n```\n",
+          "options": [
+            "[alpha] [beta]",
+            "[ ] [alpha]",
+            "[ ] [beta]",
+            "[alpha] [ ]"
+          ],
+          "correct_option": "B",
+          "explanation": "After `in >> n`, the newline remains in the stream. The first `getline` consumes just that newline, yielding an empty `line1`. The second `getline` then reads \"alpha\" into `line2`.",
+          "distractor_rationale": "B: Assumes `getline` skips the remaining newline automatically; it does not. C/D: Each mixes up which call sees the newline versus the next line.",
+          "skills_covered": [
+            "File I/O",
+            "C++"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "On Windows, the unit test below fails because the captured output contains a stray `\\r` at the end of the line.\n\n```cpp\n#include <fstream>\n#include <iostream>\n\nint main(){\n    std::ofstream(\"cfg.txt\", std::ios::binary) << \"name=alpha\\r\\n\";\n    std::ifstream in(\"cfg.txt\", std::ios::binary);\n    std::string line;\n    std::getline(in, line);\n    std::cout << line << \"\\n\"; // test expects: name=alpha\\n\n}\n```\nWhat is the minimal change that makes this test pass on Windows and Linux without post-processing the string?",
+          "options": [
+            "Open the streams in text mode by removing `std::ios::binary`.",
+            "Trim `\\r` manually after `getline` using `if (!line.empty() && line.back()=='\\r') line.pop_back();`.",
+            "Call `std::ios::sync_with_stdio(false);` before I/O.",
+            "Use `std::getline(in >> std::ws, line)` to consume whitespace including `\\r`."
+          ],
+          "correct_option": "A",
+          "explanation": "In text mode on Windows, the runtime translates `\\r\\n` to `\\n` during input, and `getline` strips the `\\n`, avoiding stray `\\r`. Opening in binary mode disables translation and leaves `\\r` in the buffer.",
+          "distractor_rationale": "B: Works but adds logic instead of fixing the mode that caused the problem; the question asks for a minimal change to I/O behavior. C: `std::ws` does not affect `getline` nor strip `\\r` before it; `getline` reads until `\\n`. D: Syncing with stdio only affects coordination with C I/O; it does nothing to CRLF translation.",
+          "skills_covered": [
+            "File I/O",
+            "Unit Testing",
+            "C++"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "This project builds a library `util` and an app `app`:\n\n```text\nadd_library(util src/util.cpp)\ntarget_include_directories(util PRIVATE ${CMAKE_SOURCE_DIR}/include)\n\nadd_executable(app src/main.cpp)\ntarget_link_libraries(app PRIVATE util)\n```\n`src/main.cpp` includes `#include <util/format.h>` located in `include/util/format.h`. The build fails for `app` with \"file not found\". What single change fixes it without adding include dirs to `app`?",
+          "options": [
+            "Change `target_include_directories(util PRIVATE ...)` to `PUBLIC`.",
+            "Add `include_directories(${CMAKE_SOURCE_DIR}/include)` at the top level.",
+            "Change `target_link_libraries(app PRIVATE util)` to `PUBLIC`.",
+            "Set `CMAKE_CXX_STANDARD 20` for both targets."
+          ],
+          "correct_option": "A",
+          "explanation": "`#include` paths are usage requirements. Marking the include dir `PUBLIC` on `util` propagates it to link dependents like `app`. Keeping it `PRIVATE` hides the header path from `app`.",
+          "distractor_rationale": "B: Link visibility (`PRIVATE`/`PUBLIC`) here controls propagation of compile/link usage requirements from `util` to `app`, but changing the linkage on `app` doesn't export headers out of `util`. C: Works, but global include dirs are a step backward; the minimal, modern fix is to declare proper usage requirements. D: Language standard does not affect header search paths.",
+          "skills_covered": [
+            "CMake"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You rebase a feature branch and try to push:\n\n```text\nA---B---C  origin/main\n         \\\n          D---E   origin/feature\n\n# local\n$ git checkout feature\n$ git rebase origin/main\n# history becomes linear locally\nA---B---C---D'---E'\n\n$ git push origin feature\n# rejected: non-fast-forward\n```\nYou want to update the remote `feature` with your rebased commits while protecting teammates against accidental overwrites. What is the next command?",
+          "options": [
+            "```bash\ngit push --force-with-lease origin feature\n```",
+            "```bash\ngit pull --rebase origin feature && git push origin feature\n```",
+            "```bash\ngit merge origin/main && git push origin feature\n```",
+            "```bash\ngit push origin feature\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "After a rebase, the remote needs a forced update; `--force-with-lease` is the safe variant that refuses to overwrite remote changes you don't have locally.",
+          "distractor_rationale": "B: Merging after a rebase defeats the purpose and still won't fast-forward the remote feature to your rewritten history. C: Repeating the same push won't change the non-fast-forward error. D: Pulling won't reconcile your rewritten local history with the remote without a force push.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "On Windows with the Visual Studio generator, you configure, build Release, then run tests:\n\n```bash\ncmake -S . -B build\ncmake --build build --config Release\nctest --test-dir build\n```\nCTest runs Debug binaries by default and several performance tests are slow. How do you run the Release tests without reconfiguring?",
+          "options": [
+            "```bash\nctest --use-release\n```",
+            "```bash\nctest --test-dir build -C Release\n```",
+            "```bash\ncmake -S . -B build -DCMAKE_BUILD_TYPE=Release\n```",
+            "```bash\nctest --build-config Release\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Multi-config generators select the configuration at build and test time with `--config`/`-C`. `ctest -C Release` selects the Release artifacts for execution.",
+          "distractor_rationale": "B: There is no `--build-config` flag in CTest. C: `CMAKE_BUILD_TYPE` is ignored by multi-config generators; and you don't need to reconfigure. D: Not a real CTest option.",
+          "skills_covered": [
+            "CMake"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A test reads a bundled resource:\n\n```cpp\n// tests/reader_test.cpp\nstd::ifstream in(\"data/sample.txt\");\nREQUIRE(in.good());\n```\n`sample.txt` lives at `${CMAKE_SOURCE_DIR}/tests/data/sample.txt`. Locally it passes, but on CI CTest runs from the build tree and the test fails to find the file.\n\nCMake:\n\n```text\nadd_executable(reader tests/reader_test.cpp src/reader.cpp)\nadd_test(NAME reader COMMAND reader)\n```\nWhat is the best fix that keeps tests hermetic and does not bake source-tree paths into the binary?",
+          "options": [
+            "```cpp\n// Hardcode in code\nauto p = std::string(\"${CMAKE_SOURCE_DIR}/tests/data/sample.txt\");\nstd::ifstream in(p);\n```",
+            "```text\n# CMake\nconfigure_file(${CMAKE_SOURCE_DIR}/tests/data/sample.txt\n               ${CMAKE_CURRENT_BINARY_DIR}/data/sample.txt COPYONLY)\n# test code keeps: std::ifstream in(\"data/sample.txt\");\n```\n",
+            "```cpp\n// Test code at runtime\nchdir(\"/absolute/path/to/source\"); // set working dir to source tree\n```\n",
+            "```text\nRely on the IDE to set the test's working directory to tests/.\n```\n"
+          ],
+          "correct_option": "B",
+          "explanation": "Copying resources to the binary dir at configure/build time and reading them via a relative path keeps tests hermetic and independent of the source layout. It works the same under CTest on CI.",
+          "distractor_rationale": "B/D: Baking absolute source paths makes binaries non-portable and breaks in packaged/test environments. C: IDE-specific behavior is not reliable on CI.",
+          "skills_covered": [
+            "Unit Testing",
+            "CMake",
+            "File I/O"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A unit test assumes this function allows `p==nullptr` if and only if `n==0`:\n\n```cpp\nint sum_positive(const int* p, int n) {\n    assert(p != nullptr);\n    int s = 0;\n    for (int i = 0; i < n; ++i) s += p[i];\n    return s;\n}\n```\nThe test passes in Debug but crashes in Release when calling `sum_positive(nullptr, 0)`. What change prevents the crash while preserving the contract?",
+          "options": [
+            "Replace the assert with `if (!p) return 0;` for all cases.",
+            "Compile Release with `-UNDEBUG` so asserts stay enabled.",
+            "Keep the assert and change the test.\n",
+            "Replace the assert with an explicit check that allows `nullptr` only when `n==0`, otherwise guards:\n```cpp\nif (!p) { if (n==0) return 0; else throw std::invalid_argument(\"p\"); }\n```\n"
+          ],
+          "correct_option": "D",
+          "explanation": "`assert` is removed in Release, so dereferencing through `p` can crash. Enforcing the contract at runtime with a conditional that permits `nullptr` only when `n==0` preserves behavior across build types.",
+          "distractor_rationale": "A: Silently accepting `nullptr` even when `n>0` weakens the contract. B: The test captures a real requirement; build-type-sensitive logic is a bug. D: Keeping asserts in Release is not a robust contract mechanism, and many toolchains don't recommend it.",
+          "skills_covered": [
+            "Debugging",
+            "Unit Testing",
+            "C++"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "CTest discovers no tests:\n\n```text\nadd_executable(tests unit/test_main.cpp)\nenable_testing()\n# ctest -N prints: \"No tests were found.\"\n```\nWhat is the minimal change to make `ctest -N` list a test and allow `ctest` to run it?",
+          "options": [
+            "```text\nset(BUILD_TESTING ON)\n```",
+            "```text\ninclude(CTest)\n```",
+            "```text\nadd_executable(test unit/test_main.cpp) # rename target to 'test'\n```",
+            "```text\nadd_test(NAME unit COMMAND tests)\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "CTest only runs tests that are registered with `add_test`. Enabling testing without registering any tests still yields zero tests.",
+          "distractor_rationale": "B/D: `include(CTest)` and `BUILD_TESTING` control whether testing is enabled, not whether any specific test exists. C: Target names don't matter to CTest unless you register them.",
+          "skills_covered": [
+            "CMake",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A binary reader accepts partial reads at EOF. The current code reports an error when a short read happens:\n\n```cpp\nstd::ifstream in(\"blob.bin\", std::ios::binary);\nchar buf[4096];\nin.read(buf, sizeof(buf));\nif (!in) {\n    std::cerr << \"read error\\n\";\n}\n```\nWith a 1000-byte file, it prints \"read error\" even though 1000 bytes were read. Which condition correctly distinguishes an I/O error from a short read at EOF?",
+          "options": [
+            "Check `if (in.fail() && !in.eof())`.",
+            "Use `if (in.good())` to report success.",
+            "Use `if (in.bad())` to report actual I/O errors only.",
+            "Report success if `in.gcount() > 0`."
+          ],
+          "correct_option": "C",
+          "explanation": "After `read`, a short read sets `failbit` and possibly `eofbit`, but not `badbit`. Testing `bad()` detects true I/O failures and ignores expected short reads at EOF.",
+          "distractor_rationale": "B: Also correct in spirit for many cases, but it conflates `failbit` set for formatting vs. raw reads and is more verbose than needed here. C: `gcount()>0` doesn't detect a mid-stream I/O error that still delivered some bytes. D: `good()` will be false for short reads at EOF, making it unsuitable if short reads are intended to be non-errors.",
+          "skills_covered": [
+            "File I/O",
+            "Debugging",
+            "C++"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your test `Reader.CanOpenBundledSample` passes locally but fails on CI. The test opens `data/sample.txt` with `std::ifstream in(\"data/sample.txt\");` and asserts `in.good()`. Under CTest, the working directory is the build tree and the file lives in `${CMAKE_SOURCE_DIR}/tests/data/sample.txt`. The project uses CMake and runs `ctest -j` on CI.",
+          "task": "Propose a fix that makes the test hermetic and portable across platforms and build layouts. Justify your choice versus two alternatives you reject. Provide any required CMake and minimal code changes.",
+          "expected_answer": "A robust fix is to copy test resources into the binary dir and reference them via a path relative to the test’s working directory or pass the path as a test argument.\n\nOne minimal pattern:\n\nCMake at configure/build time:\n```text\n# CMakeLists.txt in the test directory\nfile(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data)\nconfigure_file(${CMAKE_CURRENT_SOURCE_DIR}/data/sample.txt\n               ${CMAKE_CURRENT_BINARY_DIR}/data/sample.txt COPYONLY)\nadd_executable(reader tests/reader_test.cpp src/reader.cpp)\nadd_test(NAME reader COMMAND reader)\n```\n\nTest code remains:\n```cpp\nstd::ifstream in(\"data/sample.txt\");\nREQUIRE(in.good());\n```\n\nAlternatively, make the path explicit via `add_test` arguments:\n```text\nadd_test(NAME reader COMMAND reader ${CMAKE_CURRENT_BINARY_DIR}/data/sample.txt)\n```\n\nand in code:\n```cpp\nint main(int argc, char** argv){\n  std::filesystem::path p = argc>1 ? argv[1] : \"data/sample.txt\";\n  std::ifstream in(p);\n  REQUIRE(in.good());\n}\n```\n\nWhy this is preferred: it avoids baking source-tree absolute paths into the binary (portable, works in install trees and CI), avoids IDE-only working directory assumptions, and plays well with parallel `ctest -j` because each test uses its own binary dir.\n\nRejected alternatives:\n- Hardcoding `${CMAKE_SOURCE_DIR}` in the binary (breaks relocatability, fails in packaged or install tests).\n- `chdir` to the source directory in the test (test becomes environment-dependent and violates hermeticity).",
+          "rubric": [
+            {
+              "criterion": "Identifies working-directory mismatch under CTest as the root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a hermetic solution (copy resource to binary dir or pass binary-dir path) with correct CMake commands",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows minimal code change to consume the resource path (or none if using relative path post-copy)",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies choice versus at least two concrete, inferior alternatives",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "CMake",
+            "File I/O",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are asked to build a small CLI that summarizes a large CSV log (gigabytes). The current proof-of-concept reads the entire file into a `std::string`, splits, and times out; tests are slow and flaky.",
+          "task": "Propose an architecture and build layout that streams the file, is unit-testable, and supports fast tests. Provide component boundaries, how you inject dependencies for tests, and the CMake target structure. Justify how your design enables debugging and performance investigation.",
+          "expected_answer": "Architecture:\n- `ILogReader` interface (pure C++) with `bool next(Row&);` implemented by `CsvStreamReader` that wraps an `std::istream&` and parses rows incrementally.\n- `Aggregator` that consumes `Row`s and updates statistics. No I/O inside; pure logic functions to ease testing.\n- `main` wires `std::ifstream` to `CsvStreamReader` and the `Aggregator`. CLI parses `--file` and parameters.\n\nDependency injection for tests:\n- Provide `MockReader` that returns canned rows from a `std::vector<Row>`. Unit tests cover edge cases without touching the filesystem.\n- For file I/O tests, open small temp files via `std::filesystem::temp_directory_path()` and run targeted integration tests.\n\nCMake layout:\n```text\nadd_library(csvcore\n    src/csv_stream_reader.cpp\n    src/aggregator.cpp)\ntarget_include_directories(csvcore PUBLIC include)\n\nadd_executable(csvsummarize src/main.cpp)\ntarget_link_libraries(csvsummarize PRIVATE csvcore)\n\n# Tests\nadd_executable(csv_tests tests/aggregator_tests.cpp tests/reader_tests.cpp)\ntarget_link_libraries(csv_tests PRIVATE csvcore)\nadd_test(NAME csv_tests COMMAND csv_tests)\n```\n\nTesting strategy:\n- Unit tests hit `Aggregator` with synthetic rows (milliseconds runtime).\n- Reader tests feed tiny in-memory streams using `std::istringstream` to avoid disk.\n- A single integration test with a small on-disk CSV verifies the plumbing; resource copied to binary dir via `configure_file`.\n\nDebugging and perf:\n- Add `--profile` flag to emit counts and processing rate periodically; guard behind runtime flag to keep tests stable.\n- Structure code so `Aggregator` is trivially benchmarkable with synthetic data; add `-DCMAKE_BUILD_TYPE=RelWithDebInfo` for CI perf runs and use `ctest -C RelWithDebInfo`.\n- Log parse errors with row/column indices; make parse error handling injectable (strategy pattern) to test failure paths deterministically.",
+          "rubric": [
+            {
+              "criterion": "Streams-based design that avoids loading full file and cleanly separates parsing from aggregation",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear testability plan (mocks/in-memory streams) and minimal use of filesystem in unit tests",
+              "marks": 2
+            },
+            {
+              "criterion": "CMake target structure with library/executable split and proper include/link usage",
+              "marks": 1
+            },
+            {
+              "criterion": "Debugging/performance considerations (flags, profiling hooks, reproducibility) with concrete steps",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C++",
+            "File I/O",
+            "Unit Testing",
+            "CMake",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your CLI `tool --version` must print the project version. Requirement: use Git tags when available (e.g., `v1.2.3-4-gabcdef`), else fall back to the CMake project version. Releases are tagged on `main`. CI builds on Linux and Windows.",
+          "task": "Design a cross-platform solution that embeds the version into the binary at build time and outline the Git release steps. Provide the necessary CMake snippet and explain how your approach behaves in a shallow clone or on a developer machine without Git.",
+          "expected_answer": "Approach: query Git at configure time and generate a header with a macro, with a robust fallback.\n\nCMake:\n```text\n# Try to get a Git description\nfind_package(Git QUIET)\nset(PROJECT_SEMVER ${PROJECT_VERSION})\nset(GIT_DESC \"\")\nif (Git_FOUND)\n  execute_process(\n    COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --always\n    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}\n    RESULT_VARIABLE GIT_DESCR_OK\n    OUTPUT_VARIABLE GIT_DESC\n    OUTPUT_STRIP_TRAILING_WHITESPACE)\nendif()\nif (NOT GIT_DESCR_OK EQUAL 0 OR GIT_DESC STREQUAL \"\")\n  set(GIT_DESC ${PROJECT_SEMVER})\nendif()\nconfigure_file(${CMAKE_SOURCE_DIR}/cmake/version.h.in\n               ${CMAKE_BINARY_DIR}/generated/version.h @ONLY)\n\n# Consumers\ntarget_include_directories(app PRIVATE ${CMAKE_BINARY_DIR}/generated)\n```\n\n`version.h.in`:\n```cpp\n#pragma once\n#define APP_VERSION \"@GIT_DESC@\"\n```\n\nRuntime:\n```cpp\nstd::cout << APP_VERSION << \"\\n\";\n```\n\nBehavior without Git or in shallow clones: `git describe` fails; the code falls back to `PROJECT_VERSION`. Works on Windows and Linux (no POSIX-only tools).\n\nGit release steps:\n- Ensure `main` is green on CI.\n- Bump `project(VERSION x.y.z)` if needed; commit.\n- Tag: `git tag -a vX.Y.Z -m \"Release vX.Y.Z\" && git push --tags`.\n- Build on CI; binaries will embed the tag (e.g., `vX.Y.Z`).\n- Post-release: branch cuts (if applicable) and changelog update in a follow-up commit.\n\nOptional: add a CTest that invokes the binary and checks `APP_VERSION` contains either a tag-like string or `PROJECT_VERSION`.",
+          "rubric": [
+            {
+              "criterion": "Correct CMake implementation generating a header with Git-derived version and a safe fallback",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains cross-platform aspects and behavior in shallow/no-Git environments",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, correct Git release steps tied to the versioning mechanism",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how the binary consumes the generated header",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CMake",
+            "Git",
+            "C++",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "A test intermittently crashes when sorting views of lines from a file:\n\n```cpp\nstd::vector<std::string_view> views;\nstd::string line;\nwhile (std::getline(in, line)) {\n    views.push_back(std::string_view{line}); // later, sort(views.begin(), views.end())\n}\n```\nSometimes the sort dereferences dangling views and UB ensues. Locally it's fine; under ASan it reproduces.",
+          "task": "Diagnose precisely why this is undefined behavior and propose two production-safe fixes. For each fix, show the core code change and how you would test it to prevent regressions.",
+          "expected_answer": "Diagnosis: `std::string_view` refers to `line`'s internal buffer. Each `getline` may reallocate `line`, invalidating all previously stored views. After the loop, `views` hold pointers to memory that may have moved or been overwritten. Sorting dereferences dangling pointers, causing UB.\n\nFix 1 (own the data): store `std::string` in a vector, not views:\n```cpp\nstd::vector<std::string> lines;\nstd::string line;\nwhile (std::getline(in, line)) lines.push_back(line);\nstd::sort(lines.begin(), lines.end());\n```\nTest: unit test reads a small file with varying line lengths to force reallocations and asserts sorted order. Run under ASan to catch regressions.\n\nFix 2 (stable backing storage for views): append to a `std::deque<std::string>` whose elements don't relocate on push_back, then take views:\n```cpp\nstd::deque<std::string> store;\nstd::vector<std::string_view> views;\nfor (std::string line; std::getline(in, line); ) {\n  store.push_back(line);\n  views.push_back(store.back());\n}\nstd::sort(views.begin(), views.end());\n```\nTest: same as above; also add a test that shuffles `views` and compares to a separately sorted copy of `store` to ensure view validity.\n\nBoth fixes remove dependency on a mutating buffer's address, eliminating the UB and making the code robust across platforms and optimization levels.",
+          "rubric": [
+            {
+              "criterion": "Accurate root-cause analysis tied to `string_view` lifetime and `getline` reallocation",
+              "marks": 3
+            },
+            {
+              "criterion": "First fix: own the data (`vector<string>`) with correct code and trade-offs",
+              "marks": 2
+            },
+            {
+              "criterion": "Second fix: stable storage + views (`deque<string>` or arena) with correct code",
+              "marks": 1
+            },
+            {
+              "criterion": "Concrete regression tests that would catch the original UB",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Debugging",
+            "C++",
+            "Unit Testing",
+            "File I/O"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a tested file I/O utility: uniqcount",
+          "brief": "Implement a small command-line utility `uniqcount` that reads a UTF-8 text file and reports the number of total lines, number of non-empty lines, and the top N most frequent non-empty lines. Provide focused unit tests around parsing and counting, including platform newline differences.",
+          "deliverable": "A folder `uniqcount/` containing C++ source, CMakeLists.txt, tests, and a short README. The assessor will run: `cmake -S uniqcount -B build && cmake --build build && ctest --test-dir build` and `build/uniqcount --file sample.txt --top 3`.",
+          "acceptance_criteria": [
+            "Builds with CMake on Linux and Windows using `cmake -S uniqcount -B build && cmake --build build` without editing files.",
+            "Running `build/uniqcount --file sample.txt --top 3` prints a single line of JSON to stdout with keys total_lines, non_empty_lines, top (array of {line,count}), in deterministic order for ties (lexicographic).",
+            "At least 6 unit tests run under CTest and pass, covering: empty file; CRLF vs LF handling; duplicate lines; `--top` > unique count; large input simulated via repeated small strings; and error on missing file.",
+            "No absolute source paths baked into the binary. Test resources (if any) are copied to the binary dir via CMake. Temporary files use `std::filesystem::temp_directory_path()`.",
+            "`uniqcount --help` prints brief usage. Non-zero exit codes are used for invalid args or unreadable file.",
+            "No data races or UB flagged by AddressSanitizer if built with `-fsanitize=address` (Linux) or MSVC ASan; document how to enable in README."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness of counting, tie-breaking, and JSON output format",
+              "marks": 6
+            },
+            {
+              "criterion": "Unit test quality and coverage (cases listed in acceptance) integrated with CTest",
+              "marks": 6
+            },
+            {
+              "criterion": "Robust, portable file I/O (LF/CRLF handling, error paths) without hardcoded source paths",
+              "marks": 4
+            },
+            {
+              "criterion": "CMake build reliability on Linux and Windows; clear README with build/run instructions",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "File I/O",
+            "Unit Testing",
+            "C++",
+            "CMake",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone mini-project: library + CLI with versioning and Git",
+          "brief": "Create a small but complete C++ project: a reusable library `textops` (e.g., trim, to_lower, split, dedup) and a CLI `texttool` that applies operations to a file. Include a clean architecture, CMake build with proper target usage requirements, embedded version from Git tags, basic documentation, and a Git history demonstrating good practice.",
+          "deliverable": "A Git repository (submit as a zip including the `.git` directory) named `texttool/` with: `include/`, `src/`, `apps/texttool/`, `tests/`, `cmake/`, `CMakeLists.txt`, and docs (README). The assessor will inspect Git history and run: `cmake -S texttool -B build && cmake --build build --config Release && ctest --test-dir build -C Release && build/apps/texttool/texttool --version`.",
+          "acceptance_criteria": [
+            "CMake targets: `textops` library (headers in `include/`, sources in `src/`), and `texttool` executable in `apps/texttool/` linking PRIVATE to `textops`. Public headers exposed via `target_include_directories(textops PUBLIC include)`.",
+            "Unit tests (≥5) exercising `textops` functions; registered with CTest and passing in Release and Debug. Any test data copied to the binary dir via CMake (no absolute paths).",
+            "Version string embedded at build time using a generated header from CMake. If Git tags exist, `--version` prints `git describe` output; otherwise falls back to `project(VERSION ...)`.",
+            "Git history: at least 5 meaningful commits with messages; a lightweight or annotated tag `v1.0.0`; a short-lived feature branch merged back (no unrelated history rewriting).",
+            "README explains architecture (library vs app), build instructions, test instructions, and `--version` behavior. Project builds on Linux and Windows without source edits.",
+            "No global include_directories or compile_options that leak; usage requirements are correctly scoped (PUBLIC/PRIVATE)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Architecture and target hygiene (library/app split, proper PUBLIC/PRIVATE usage, headers layout)",
+              "marks": 6
+            },
+            {
+              "criterion": "Build and test integration (CTest tests pass across configs; resource handling)",
+              "marks": 4
+            },
+            {
+              "criterion": "Version embedding from Git with a robust fallback; `--version` works as specified",
+              "marks": 4
+            },
+            {
+              "criterion": "Git history quality and required tag/branch present",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation clarity and completeness (README, build/test instructions)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "CMake",
+            "Git",
+            "Unit Testing",
+            "C++",
+            "File I/O"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

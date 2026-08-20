@@ -1,0 +1,1875 @@
+{
+  "course_code": "NT-C-038",
+  "course_name": "Tally Prime with GST",
+  "sections": [
+    {
+      "section_code": "NT-C-038-S01",
+      "skills_assessed": [
+        "Tally Prime",
+        "Accounting Basics",
+        "Company setup in TallyPrime",
+        "Ledgers and groups in TallyPrime",
+        "Security and user controls in TallyPrime"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your books begin on 01-Apr. You had paid Rs. 60,000 annual office rent on 01-Jan. To avoid overstating April–June rent in TallyPrime during company setup, what is the correct way to carry this into opening balances and groups?",
+          "options": [
+            "Post an opening debit of Rs. 45,000 to Rent Expense (Indirect Expenses) so that P&L absorbs the past months.",
+            "Create Prepaid Rent under Indirect Expenses with an opening debit of Rs. 45,000 to be written off monthly.",
+            "Reduce Capital Account by Rs. 45,000 via an opening credit to neutralize future rent.",
+            "Create a ledger Prepaid Rent under Loans & Advances (Asset) with an opening debit of Rs. 45,000 and expense rent from April onward."
+          ],
+          "correct_option": "D",
+          "explanation": "As of 01-Apr, 3 months have expired and 9 months (Rs. 45,000) remain prepaid. Classify it as an asset (Loans & Advances) with a debit balance. Expense April–June rent normally so only Rs. 15,000 hits the P&L in the quarter.",
+          "distractor_rationale": "B: Tempting because the amount relates to rent, but opening debits to Indirect Expenses would overstate April P&L. C: Equity adjustment hides the timing issue and misstates Balance Sheet composition. D: The ledger name is right but grouping under Indirect Expenses pushes it to P&L instead of Balance Sheet.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A ledger Wages Payable (for month-end accrued wages) was mistakenly grouped under Indirect Expenses instead of Current Liabilities. What is the most accurate consequence?",
+          "options": [
+            "Both P&L and Balance Sheet are unaffected because grouping does not impact reports; only ratios change.",
+            "P&L is unaffected but Balance Sheet overstates assets and understates liabilities; the trial balance will not tally.",
+            "P&L shows an extra expense and Balance Sheet understates liabilities; the trial balance still tallies.",
+            "Only the trial balance will show a difference until the ledger is regrouped."
+          ],
+          "correct_option": "C",
+          "explanation": "Classifying a liability as an expense overstates expenses and hides the liability. Grouping does not change DR/CR equality, so the trial balance still tallies.",
+          "distractor_rationale": "B: Grouping does not change assets; TB will still tally. C: Grouping drives financial statement placement; it does impact reports. D: TB equality is unaffected by regrouping because the ledger’s balance and sign are unchanged.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "During opening balance setup, which pairing of ledger nature and opening balance side is correct?",
+          "options": [
+            "Sundry Debtors generally have debit opening balances; Sundry Creditors generally have credit opening balances.",
+            "Sundry Debtors should be credited and Sundry Creditors debited to reverse old-year balances.",
+            "Either can be entered on any side; TallyPrime auto-detects nature from the ledger name.",
+            "Both Sundry Debtors and Sundry Creditors must have debit opening balances to appear in receivables/payables reports."
+          ],
+          "correct_option": "A",
+          "explanation": "By nature, receivables are debit and payables are credit. TallyPrime relies on group and balance sign, not just names, to place them in reports.",
+          "distractor_rationale": "B: Tempting if thinking \"positive = debit\", but creditors are liabilities (credit). C: Reverses the logic and misstates both AR and AP. D: Names don’t drive placement; group and DR/CR sign do.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Company setup in TallyPrime",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You need a data-entry user to post only current-month vouchers and block any back-dated entries. What is the most targeted control in TallyPrime?",
+          "options": [
+            "Change the company’s current period to the current month; users then cannot date vouchers earlier.",
+            "Enable Use Security Control; create a restricted Security Level with Restrict to specific dates set to the current month; assign the user to this level.",
+            "Set voucher numbering to Automatic so Tally prevents earlier dates.",
+            "Set a TallyVault password; this alone prevents back-dated entries."
+          ],
+          "correct_option": "B",
+          "explanation": "Date-range restriction is set per Security Level under Use Security Control. Assigning a user to that level prevents back-dated entries while allowing current ones.",
+          "distractor_rationale": "B: TallyVault encrypts data but does not govern voucher dates. C: Current period does not stop users from entering back-dated vouchers. D: Numbering style does not control allowed voucher dates.",
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Tally Prime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Right after entering opening balances, a difference appears in the trial balance. Which is the most likely cause?",
+          "options": [
+            "Assets and debit-nature balances were not equal to liabilities and credit-nature balances at opening (e.g., capital not entered).",
+            "A single-sided journal voucher was posted; TallyPrime allows it for openings.",
+            "Some ledgers were grouped under the wrong heads, so the trial balance cannot tally.",
+            "Indirect expenses were overstated; P&L differences always break the trial balance."
+          ],
+          "correct_option": "A",
+          "explanation": "Only an imbalance in opening DR vs CR (e.g., missing Capital) can cause a trial balance difference. Grouping affects statements, not TB equality; Tally disallows one-sided non-opening entries.",
+          "distractor_rationale": "B: Misgrouping affects P&L/BS placement but not TB equality. C: Tally blocks one-sided postings except via controlled features; openings still must balance. D: P&L over/understatement doesn’t break TB since every expense has a credit somewhere.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "At setup you must create a Bank Overdraft account with Rs. 200,000 outstanding. How should this ledger be created and what opening balance sign is correct?",
+          "options": [
+            "Under Bank Accounts with an opening debit balance of Rs. 200,000.",
+            "Under Bank OD group with an opening credit balance of Rs. 200,000.",
+            "Under Loans (Liability) with an opening debit balance of Rs. 200,000.",
+            "Under Sundry Creditors with an opening credit balance of Rs. 200,000."
+          ],
+          "correct_option": "B",
+          "explanation": "Bank OD is a liability. In TallyPrime, use the Bank OD group (or Borrowings) and credit the opening balance for the amount owed.",
+          "distractor_rationale": "B: Bank Accounts is for positive bank balances (debit nature), not overdrafts. C: Creditors is for trade payables, not bank facilities. D: Liabilities carry credit balances; a debit would invert the nature.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "How should Drawings (owner withdrawals) be represented at opening so equity is correctly shown?",
+          "options": [
+            "Create Drawings under Indirect Expenses with a debit balance so it appears in P&L.",
+            "Create Drawings under Capital Account with a credit balance to show funds taken by owner.",
+            "Create a Drawings ledger under Capital Account with an opening debit balance to reduce owner’s capital.",
+            "Create Drawings under Current Assets with a debit balance since cash left the business."
+          ],
+          "correct_option": "C",
+          "explanation": "Drawings reduce equity and are shown under Capital with a debit balance (contra to capital), not as an expense or an asset.",
+          "distractor_rationale": "B: Tempting because it’s a cash outflow, but drawings are not an expense. C: Not an asset; there is no future benefit. D: A credit would increase equity, the opposite effect.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You bought office equipment on 30-day credit from supplier ABC. Which posting and grouping best reflects this in books and in TallyPrime?",
+          "options": [
+            "Debit Indirect Expenses: Office Equipment; Credit Bank Accounts.",
+            "Debit ABC under Sundry Debtors; Credit Capital Account.",
+            "Debit Purchase Accounts; Credit ABC under Sundry Creditors.",
+            "Debit Office Equipment under Fixed Assets; Credit ABC under Sundry Creditors."
+          ],
+          "correct_option": "D",
+          "explanation": "A capital asset purchase is debited to Fixed Assets and the supplier is a trade payable (Sundry Creditor) credited.",
+          "distractor_rationale": "B: Equipment is not an expense and no bank was involved. C: Purchases is for inventory, not fixed assets. D: Reverses the nature and involves Capital incorrectly.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Which action could cause a genuine liability to no longer appear as a Balance Sheet liability while the trial balance still agrees?",
+          "options": [
+            "Changing the ledger’s parent group from Current Liabilities to Indirect Expenses without altering its balance.",
+            "Renaming the ledger from \"Accrued Expenses\" to \"Expense Payable\" without other changes.",
+            "Deleting the voucher that created the liability while leaving reports unchanged.",
+            "Disabling Maintain P&L in features so liabilities move to P&L."
+          ],
+          "correct_option": "A",
+          "explanation": "Regrouping a ledger into a P&L head moves it out of liabilities but does not change DR/CR totals, so the TB still tallies.",
+          "distractor_rationale": "B: Renaming alone doesn’t move statement placement. C: Deleting vouchers changes balances and would disturb TB unless offset elsewhere. D: There is no feature to disable P&L to move liabilities; and statement toggles don’t reclassify liabilities.",
+          "skills_covered": [
+            "Ledgers and groups in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You want a user to be able to create new ledgers but not alter or delete any existing ones. What Security Control configuration is most appropriate?",
+          "options": [
+            "Set Masters: Display = No; this hides ledgers and prevents changes.",
+            "Under Use Security Control, in the user’s Security Level set Masters: Create = Yes, Alter = No, Delete = No; assign the user to this level.",
+            "Enable TallyVault; encrypted companies disallow master changes by non-admin users.",
+            "Disallow Vouchers: All; this automatically blocks master alteration."
+          ],
+          "correct_option": "B",
+          "explanation": "Security Levels allow granular rights by function. Permit Create while denying Alter/Delete under Masters to meet the requirement.",
+          "distractor_rationale": "B: Voucher permissions don’t govern master alteration. C: TallyVault encrypts data but does not define per-function rights. D: Hiding Display doesn’t necessarily block alteration and prevents legitimate lookup.",
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "On 01-Apr, you set up a company in TallyPrime. Opening balances entered: Bank OD (credit) 200,000; Furniture (debit) 150,000; Inventory (debit) 100,000; Sundry Debtors (debit) 250,000; Sundry Creditors (credit) 120,000. The trial balance difference is 180,000 (credit side short). The accountant also created Wages Payable with an opening debit 30,000 under Indirect Expenses. April activity includes only an equipment purchase on credit from ABC for 50,000 (no other postings yet). Balance Sheet now shows an unexplained P&L loss and no accrued wages liability.",
+          "task": "Identify precisely what is wrong in the opening setup and why the financial statements look off. State the correcting entries or master changes in TallyPrime to fix both the trial balance difference and the missing accrued wages liability, and quantify the corrected Capital balance after fixes. Justify your choices.",
+          "expected_answer": "Two issues: (1) Missing Capital is causing the TB difference. Sum of debit-nature openings: Furniture 150,000 + Inventory 100,000 + Debtors 250,000 = 500,000. Credit-nature openings: Bank OD 200,000 + Creditors 120,000 = 320,000. Difference 180,000 must be Capital (credit). Create Capital Account under Capital Account group with opening credit 180,000. (2) Wages Payable is a liability but was created as an expense with a debit balance; this both hides the liability and overstates P&L expense. Regroup Wages Payable under Current Liabilities and set its opening balance to a credit of 30,000 (not a debit). After these fixes, the Balance Sheet will show Capital 180,000 credit and Wages Payable 30,000 credit; P&L no longer shows a spurious opening expense. The April credit purchase of equipment is correctly posted as Dr Fixed Assets 50,000, Cr ABC (Sundry Creditors) 50,000 and does not affect opening capital. Final Capital at opening remains 180,000 credit.",
+          "rubric": [
+            {
+              "criterion": "Correctly computes the trial balance difference and identifies missing Capital as the cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Correctly diagnoses misclassification and sign error of Wages Payable and proposes regrouping with a credit balance under Current Liabilities",
+              "marks": 2
+            },
+            {
+              "criterion": "States the precise TallyPrime actions (create Capital ledger; alter Wages Payable ledger’s group and opening balance)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a coherent justification tying grouping to financial statement effects (removing P&L distortion; showing the liability)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Accounting Basics",
+            "Company setup in TallyPrime",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A firm requires tight access control in TallyPrime. Requirements: (a) Only the Senior Accountant can create/alter ledgers and view all reports; (b) Sales Clerk may enter only current-month Receipts vouchers and cannot view or print Final Accounts or any ledger reports; (c) No user except the Owner can access data if the company file is copied out of the office.",
+          "task": "Propose an exact TallyPrime security configuration: which features to enable, which Security Levels to create and their key allow/disallow settings (masters, vouchers, reports, date restrictions), and how to satisfy the offsite data protection requirement. Explain why your configuration meets each requirement and any trade-offs.",
+          "expected_answer": "Enable Use Security Control. Create three Security Levels: Owner (full access), Senior Accountant, and Sales Clerk. For Sales Clerk level: set Restrict to specific dates to the current month; Allow Vouchers: Receipts = Yes (Create/Alter), all other voucher types = No; Masters: Create/Alter/Delete = No; Reports: Disallow Final Accounts (Balance Sheet, P&L) and Ledger-related reports (Ledger Vouchers/Monthly). For Senior Accountant: Masters Create/Alter/Delete = Yes; Vouchers All = Yes; Reports All = Yes; no date restriction. Create users and assign them to these levels. For offsite protection, set a TallyVault password at the company level so a copied data folder remains encrypted and cannot be opened without the vault key. This meets (a) via Senior Accountant permissions, (b) via voucher-type restriction, date-range control, and report disallows (the clerk can still select ledgers during entry but cannot view reports), and (c) via TallyVault encryption.",
+          "rubric": [
+            {
+              "criterion": "Identifies and enables the correct features (Use Security Control, TallyVault)",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines appropriate Security Levels with precise allow/disallow settings for Masters, Vouchers, Reports",
+              "marks": 3
+            },
+            {
+              "criterion": "Implements date restriction correctly for the Sales Clerk (current month only)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains how the design satisfies all three requirements, noting limitations/trade-offs (e.g., ledger selection vs report visibility)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Tally Prime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are migrating mid-year to TallyPrime on 01-Oct. The manual Balance Sheet totals: Assets 1,450,000 and Liabilities (excluding owner’s funds) 520,000. Debtors total 380,000 (debit), Creditors 260,000 (credit). No suspense account exists in the manual books. After entering all assets and third-party liabilities in TallyPrime, the trial balance shows a credit shortfall equal to 930,000.",
+          "task": "Determine the missing opening ledger(s) and the exact balances/signs needed to balance the trial balance. Describe the TallyPrime steps to correct the opening, and explain why this approach is preferable to using a Suspense ledger.",
+          "expected_answer": "The shortfall equals owner’s funds (Capital less Drawings). With Assets 1,450,000 and third-party Liabilities 520,000, owner’s equity is 930,000 credit. Create Capital Account under Capital Account with an opening credit balance of 930,000. No suspense is required because the opening balances are known and the difference clearly represents owner’s equity. Steps: Alter/Create a Capital ledger and enter 930,000 as an opening credit; recheck the trial balance, which should now tally. Using Suspense hides the true nature of the difference and complicates downstream reconciliation.",
+          "rubric": [
+            {
+              "criterion": "Correct computation of owner’s equity from given totals and identification of Capital as the missing ledger",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct sign and grouping for the Capital ledger (Capital Account, credit nature)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear TallyPrime steps to implement the correction (create/alter Capital; verify TB)",
+              "marks": 1
+            },
+            {
+              "criterion": "Justification for avoiding Suspense in this scenario",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Accounting Basics",
+            "Company setup in TallyPrime",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "At opening you have three customers: (1) Riya Traders owes 120,000 (invoice due), (2) Kavin Exports has a credit balance of 35,000 (advance received), (3) Nisha & Co. owes 60,000 but also holds a 10,000 advance you paid them for a service. You want ageing for outstanding receivables to be meaningful and liabilities to show correctly.",
+          "task": "Decide how to structure ledgers and opening balances in TallyPrime for these cases. Specify groups, whether to keep or split advances to separate ledgers, and the DR/CR signs for each. Justify the design in terms of receivable ageing and Balance Sheet clarity.",
+          "expected_answer": "Riya Traders remains a Sundry Debtor with a debit opening of 120,000; it will appear in ageing. Kavin Exports’ 35,000 is not a receivable but a liability (customer advance). Best practice: create Advance from Customers under Current Liabilities (or a dedicated customer-advance ledger) and credit 35,000, optionally keep Kavin as a party ledger with no opening; this preserves ageing accuracy (no negative-age credits in receivables). For Nisha & Co., separate the vendor prepayment: create Advances to Suppliers under Loans & Advances (Asset) with a debit of 10,000, and keep Nisha as Sundry Debtor with a debit 60,000; netting inside one party ledger would distort receivable ageing and hide the nature of the advance. Thus DR balances remain in Debtors or Advances (assets), and CR balances in Customer Advances (liabilities), improving both AR ageing and Balance Sheet classification.",
+          "rubric": [
+            {
+              "criterion": "Correct grouping and DR/CR signs for all three cases",
+              "marks": 3
+            },
+            {
+              "criterion": "Decision to isolate customer advances into a liability ledger and supplier advances into an asset ledger",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification tied to ageing report fidelity and Balance Sheet clarity",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Accounting Basics",
+            "Ledgers and groups in TallyPrime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Accounting Exercise Pack: Journalization to Trial Balance and Statements",
+          "brief": "Using the transaction list below for April (books begin 01-Apr), prepare complete accounting working papers: journals, ledger postings, a trial balance as at 30-Apr, and April Profit & Loss and a Balance Sheet as at 30-Apr. Transactions: (1) Owner introduces cash 300,000. (2) Open bank account, deposit 200,000. (3) Purchase furniture for cash 80,000. (4) Buy goods on credit from ABC Traders 120,000. (5) Sell goods on credit to Riya Traders 160,000. (6) Receive 150,000 from Riya Traders with Rs. 10,000 cash discount allowed. (7) Pay ABC Traders 115,000, discount received Rs. 5,000. (8) Pay office rent 15,000. (9) Prepay insurance for 6 months 24,000 on 15-Apr. (10) Accrue wages 18,000 at month-end. Use standard accounting principles for debits/credits and classify accounts into appropriate heads to enable P&L and Balance Sheet preparation.",
+          "deliverable": "A single spreadsheet or PDF containing: (a) General Journal with narrations; (b) Ledger accounts with postings and balances; (c) Trial Balance as at 30-Apr; (d) April Profit & Loss; (e) Balance Sheet as at 30-Apr. File must show working for discounts and prepaid/ accrued items.",
+          "acceptance_criteria": [
+            "Journal includes all 10 transactions with correct debit/credit amounts and clear narrations",
+            "Ledger postings agree to the journal and balances are carried forward correctly",
+            "Trial balance totals match exactly (DR = CR)",
+            "P&L shows Discount Allowed as an expense and Discount Received as income; rent and one-month insurance expense recognized (with remaining prepaid as asset)",
+            "Balance Sheet shows correct classifications: Capital, Cash/Bank, Furniture (Fixed Asset), Debtors/Creditors, Prepaid Insurance (asset), Wages Payable (liability)",
+            "All figures are arithmetically consistent across journal, ledgers, TB, P&L, and Balance Sheet"
+          ],
+          "rubric": [
+            {
+              "criterion": "Accurate journalization and narrations for all transactions",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct ledger postings and balances",
+              "marks": 5
+            },
+            {
+              "criterion": "Balanced trial balance with no arithmetic errors",
+              "marks": 4
+            },
+            {
+              "criterion": "Proper period-end adjustments (prepaid insurance, accrued wages, discounts classification) reflected in P&L",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct Balance Sheet classification and agreement with TB",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Configure a TallyPrime Company with Masters, Openings, and Controls",
+          "brief": "Set up a new TallyPrime company named \"NTC Demo Co.\" with books beginning 01-Apr of the current year. Configure essential features and masters, enter specified opening balances, and implement security controls. Required masters and openings: Capital (credit 500,000), Drawings (debit 20,000 under Capital), Bank OD (credit 150,000 under Bank OD), Furniture (debit 120,000 under Fixed Assets), Sundry Debtors: Riya Traders (debit 80,000), Sundry Creditors: ABC Traders (credit 60,000), Prepaid Insurance (debit 12,000 under Loans & Advances), Wages Payable (credit 25,000 under Current Liabilities). Security: enable Use Security Control, set a TallyVault password, create two users—SeniorAccountant (full rights) and Clerk-April (can enter only current-month Receipts; cannot alter masters; cannot view/print Final Accounts). Export List of Accounts and Balance Sheet to PDF.",
+          "deliverable": "1) TallyPrime data backup of the configured company, and 2) exported PDFs: List of Accounts and Balance Sheet as at opening date, plus 3) a one-page text note listing the Security Level settings applied for Clerk-April (screenshots acceptable).",
+          "acceptance_criteria": [
+            "Company books begin on 01-Apr with correct financial year and base currency; List of Accounts shows all required ledgers under correct parent groups",
+            "Opening balances match the brief and trial balance tallies at opening",
+            "Security Control is enabled and TallyVault is set (assessor is not required to know the vault password, but backup must be vault-enabled)",
+            "User SeniorAccountant exists with full access; user Clerk-April exists with: Masters Create/Alter/Delete = No; Vouchers allowed = Receipts only; Restrict to specific dates = current month; Reports disallowed = Final Accounts",
+            "Exported Balance Sheet reflects openings with Drawings reducing Capital and Wages Payable appearing under Current Liabilities",
+            "Submission includes the Tally backup file and the requested PDFs/note; files open without errors"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct company creation details (books-from date, FY, currency) and List of Accounts grouping",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate creation of ledgers with proper groups and opening balances; opening TB agrees",
+              "marks": 6
+            },
+            {
+              "criterion": "Security configuration correctness (Use Security Control, users, permissions, date restriction)",
+              "marks": 6
+            },
+            {
+              "criterion": "TallyVault enabled and backup/PDF exports provided as specified",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity of the security settings note/screenshots",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Tally Prime",
+            "Company setup in TallyPrime",
+            "Ledgers and groups in TallyPrime",
+            "Security and user controls in TallyPrime"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-038-S02",
+      "skills_assessed": [
+        "Tally Prime",
+        "Accounting Basics",
+        "Vouchers in TallyPrime",
+        "Inventory management in TallyPrime"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A supplier’s purchase invoice includes a separate Freight Inward line that should be capitalized into the stock value of the items on that invoice. In TallyPrime, which approach most reliably ensures the freight gets included in inventory valuation and remains auditable against the invoice?",
+          "options": [
+            "Increase the item rates manually to absorb freight and also post Freight to an expense ledger for disclosure",
+            "Enter a Payment voucher to the transporter using a Freight ledger; Tally automatically rolls it into stock values of the last purchase",
+            "In the Purchase voucher, add a Freight Inward ledger configured with Affect inventory values = Yes and allocate it to the items proportionally before saving",
+            "Pass a Journal debiting Freight Inward (Affect inventory values = No) and crediting Cash; inventory will update when you later view Stock Summary"
+          ],
+          "correct_option": "C",
+          "explanation": "Only an expense ledger marked Affect inventory values = Yes and allocated within a voucher that supports item allocations (e.g., Purchase) will add to item cost and inventory valuation in TallyPrime in an auditable way.",
+          "distractor_rationale": "B: Debiting a non-inventory-affecting ledger will not change item costs, so inventory valuation won’t move. C: A Payment voucher won’t alter item costs; it just records a cash outflow. D: Manually inflating rates while also posting an expense risks double-counting and breaks auditability; even without the expense post, it obscures the additional cost trail.",
+          "skills_covered": [
+            "Tally Prime",
+            "Vouchers in TallyPrime",
+            "Inventory management in TallyPrime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A stock sale was mistakenly recorded as an Accounting Invoice (no item allocations) instead of an Item Invoice in TallyPrime. What is the immediate effect on books and inventory after saving this voucher?",
+          "options": [
+            "Stock reduces based on the item ledger, but revenue is held until a Delivery Note is posted",
+            "Revenue is recognized and receivable raised, but stock quantity is unchanged and no COGS is posted, overstating gross profit",
+            "Revenue and COGS are both recognized using the last purchase rate, and stock reduces accordingly",
+            "Only the receivable increases; neither revenue nor stock is affected until delivery"
+          ],
+          "correct_option": "B",
+          "explanation": "An Accounting Invoice posts to ledgers without item allocations. It will not touch inventory or COGS, so profit is overstated until corrected.",
+          "distractor_rationale": "B: COGS and stock movement require item allocations (Item Invoice). C: An Accounting Invoice definitely books revenue. D: Delivery Notes aren’t required to recognize revenue in a standard Sales voucher; stock won’t reduce without items.",
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You buy in BOX (12 pieces per box) but sell in PCS. You want purchase rates per BOX and sales rates per PCS, with clean conversions and no rounding. What is the best unit configuration for the item in TallyPrime?",
+          "options": [
+            "Set base unit = BOX and alternate unit = PCS with 1 PCS = 0.0833 BOX for all entries",
+            "Define a compound unit PCS of 12 BOX to force conversions automatically",
+            "Keep BOX and PCS as separate base units and manually convert in each voucher",
+            "Set base unit = PCS and alternate unit = BOX with 1 BOX = 12 PCS; use alternate on purchase and base on sale"
+          ],
+          "correct_option": "D",
+          "explanation": "Using PCS as base and BOX as alternate (1 BOX = 12 PCS) preserves exact conversions and lets you price cleanly per BOX on purchases and per PCS on sales.",
+          "distractor_rationale": "B: Compound units are for showing quantities in mixed units, not for base conversion and pricing control here. C: Manual conversion invites errors and inconsistent valuation. D: Defining PCS as a fractional BOX risks rounding errors and awkward rate entry.",
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A Stock Group is set to FIFO, but one item within it is set to Weighted Average. How does TallyPrime determine valuation for that item?",
+          "options": [
+            "The item’s own method (Weighted Average) overrides the group setting",
+            "Tally averages FIFO and Weighted Average for that item to minimize variance",
+            "Tally uses FIFO until the item accumulates two purchases, then switches to Weighted Average",
+            "The group’s method (FIFO) overrides the item setting to keep the group consistent"
+          ],
+          "correct_option": "A",
+          "explanation": "Item-level valuation overrides group defaults in TallyPrime.",
+          "distractor_rationale": "B: Group settings are defaults; item-specific settings take precedence. C: There’s no threshold purchase count to switch methods. D: Tally never blends methods.",
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Negative stock is allowed. A sale is posted before the month’s purchase is entered. Which statement is true about valuation and P&L under methods like FIFO/Weighted Average in TallyPrime?",
+          "options": [
+            "Tally permanently values the issue at zero, so profit is overstated for the period",
+            "Tally prevents saving the voucher if the issue causes negative stock",
+            "Tally uses a temporary estimate but recomputes COGS as later purchases are posted, so gross profit can change retrospectively",
+            "Tally uses the last known purchase rate and never revises it for that issue"
+          ],
+          "correct_option": "C",
+          "explanation": "When negative stock is allowed, TallyPrime recomputes costs per the chosen valuation method when back-dated/late purchases are recorded, so interim margins can change.",
+          "distractor_rationale": "A: Zero-cost is not permanently used. C: Costs are recomputed per method when information changes. D: Tally can allow saving negative stock if the feature is enabled.",
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A customer pays 50,000 as an advance before any sales invoice is raised. In a Receipt voucher against the customer ledger, which reference type should you use to ensure proper later adjustment?",
+          "options": [
+            "Advance",
+            "New Reference",
+            "On Account",
+            "Against Reference"
+          ],
+          "correct_option": "A",
+          "explanation": "Use the Advance reference type so the amount is clearly tracked as an advance and can be adjusted against a future Sales invoice.",
+          "distractor_rationale": "B: Against Reference is for settling an existing bill. C: New Reference is typically created by the invoice, not the advance receipt. D: On Account parks the money without clear bill-adjustable advance tracking.",
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You book a capital asset purchase using a Purchase voucher by selecting a Fixed Assets ledger (no stock items). What is the effect on inventory reports?",
+          "options": [
+            "No impact on Stock Summary; only the Fixed Assets ledger changes",
+            "A Journal voucher is required to avoid inventory impact; Purchase would change stock",
+            "Stock quantity increases but with zero value since no item was selected",
+            "Both the Purchase ledger and Stock increase, but the asset is reclassified in closing"
+          ],
+          "correct_option": "A",
+          "explanation": "A Purchase voucher without item allocations won’t touch inventory. Posting to a Fixed Assets ledger updates the balance sheet, not stock.",
+          "distractor_rationale": "B: Without items, stock never moves. C: Purchase ledger may not even be used; and without items, stock cannot increase. D: No Journal is needed just to avoid stock impact; omitting items already ensures that.",
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Month-end accruals are posted via a Journal voucher (e.g., Salaries Outstanding). Which is accurate about its impact?",
+          "options": [
+            "It appears in the Purchase Register because it relates to period costs",
+            "Inventory is unaffected; expense hits P&L and a liability is created",
+            "It must be a Payment voucher; Journal won’t affect P&L",
+            "Inventory value reduces under Weighted Average as accruals raise period expenses"
+          ],
+          "correct_option": "B",
+          "explanation": "A pure accrual Journal will not affect inventory. It debits expense (P&L) and credits a liability ledger.",
+          "distractor_rationale": "B: Inventory valuation isn’t driven by accruals; it’s driven by item movements and cost allocations that affect inventory. C: Journals don’t appear in Purchase Register. D: Journals do affect P&L when they debit expense.",
+          "skills_covered": [
+            "Accounting Basics",
+            "Vouchers in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "On 31-Dec you change a stock item’s valuation method from Average Cost to FIFO and then view the Stock Summary for Apr–Dec. What will TallyPrime show?",
+          "options": [
+            "Only closing stock at 31-Dec is revalued; historical COGS remains unchanged",
+            "It revalues the entire Apr–Dec period using FIFO at report time",
+            "The change requires a manual revaluation journal to affect past periods",
+            "Only Jan onward will use FIFO; Apr–Dec stays as originally valued"
+          ],
+          "correct_option": "B",
+          "explanation": "Valuation methods are applied when reports are generated; Tally recomputes historical valuations per the method in effect for the report.",
+          "distractor_rationale": "B: Historical periods are recomputed at report time. C: Both issues and closing are recomputed, not just closing. D: No manual revaluation journal is required for method changes to reflect in reports.",
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "In a Purchase voucher with multiple items and an expense ledger marked Affect inventory values = Yes for 1,000, how does TallyPrime allocate that 1,000 by default across items?",
+          "options": [
+            "Equally by the number of line items",
+            "All to the first item entered unless manually changed",
+            "Proportionally to the quantities only, ignoring values",
+            "Proportionally to each item’s line value in the voucher"
+          ],
+          "correct_option": "D",
+          "explanation": "By default, Tally apportions additional costs across items based on their line values, preserving value-weighted costing.",
+          "distractor_rationale": "B: Equal split ignores relative values and isn’t the default. C: There is no default to push all cost to the first line. D: Quantity-only allocation is not the default; it would distort per-unit cost when prices differ.",
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Vouchers in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "On 1-Apr you purchased 40 units of Item-X @ 90 each. On 15-Apr you purchased another 40 units @ 110 each. On 10-Apr you sold 50 units using a Sales voucher with item allocations. The item’s valuation method is FIFO. You need to finalize April results.",
+          "task": "Compute the COGS for the 10-Apr sale and the closing quantity and value at 30-Apr. Justify your computation in terms of voucher dates and FIFO flow.",
+          "expected_answer": "Under FIFO, issues consume the oldest available layers by date. By 10-Apr, only the 1-Apr layer (40 @ 90) exists; the 15-Apr layer does not exist yet for that sale. Therefore the 50-unit sale on 10-Apr consumes: 40 units @ 90 = 3,600 and the remaining 10 units from the next available layer when it arrives (15-Apr) @ 110 = 1,100. COGS = 3,600 + 1,100 = 4,700. Total purchased = 80 units; sold = 50; closing qty at 30-Apr = 30 units. Remaining layer after the sale is 30 from the 15-Apr batch @ 110 = closing value 3,300. Justification: FIFO is applied based on chronological receipt layers from Purchase vouchers; sales before the second purchase temporarily cause negative stock for 10 units that Tally later resolves to the 15-Apr rate when recomputing valuations.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of FIFO layers consumed by the 10-Apr sale (oldest first)",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate COGS calculation for 50 units (3,600 + 1,100 = 4,700)",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct closing quantity and value at 30-Apr and explanation (30 units @ 110 = 3,300)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "On 5-May a customer remits 50,000 as an advance for a custom order. No invoice is raised yet. A staff member mistakenly books a Sales voucher with items on 5-May to record the receipt. The actual sale (with delivery) is invoiced on 18-May for 47,200.",
+          "task": "State the impact of the mistaken Sales voucher on ledgers and inventory, and prescribe the correct voucher flow for advances. Then outline how to rectify the books so the advance is adjusted properly against the 18-May invoice without distorting stock or revenue.",
+          "expected_answer": "Impact: The mistaken 5-May Sales voucher recognizes revenue and reduces stock, and raises a receivable instead of recording a liability-free advance receipt; it overstates May revenue and distorts inventory/COGS. Correct flow: Use a Receipt voucher against the customer ledger, reference type = Advance, to hold 50,000 until an invoice exists. Raise the Sales (Item) voucher on 18-May for 47,200 and adjust the advance against it; any excess would remain as advance. Rectification: Delete/alter the erroneous 5-May Sales voucher (or reverse via a Credit Note if deletion is not permitted) to restore stock and remove premature revenue/receivable. Record a Receipt voucher dated 5-May to the customer with reference type Advance for 50,000. Keep inventory unchanged until 18-May. On 18-May, raise the Sales Item invoice for 47,200, then adjust the advance in the settlement screen so receivable clears and no new cash entry is made. Verify: Stock movement only on 18-May; P&L shows revenue on 18-May; customer ledger shows correct adjustment of the advance.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the accounting and inventory impact of the mistaken Sales voucher",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies the correct use of Receipt voucher with Advance reference for upfront money and Sales Item voucher on delivery/invoice date",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a clear rectification plan (reverse/alter, rebook advance, adjust against invoice) with verification points",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You posted a Purchase voucher for 100 units of Item-A @ 200 per unit. A separate transporter bill of 3,000 arrives later that must be included in Item-A’s inventory cost without changing the original purchase rate on the invoice.",
+          "task": "Explain the precise ledger configuration and voucher steps in TallyPrime to capitalize the freight into Item-A’s stock value retroactively while keeping the transporter payable distinct from the supplier.",
+          "expected_answer": "Configure an expense ledger “Freight Inward” (under Direct Expenses or similar) with Affect inventory values = Yes. Post a Journal voucher dated as appropriate: Dr Freight Inward 3,000 (allocate the full 3,000 to Item-A in the Item Allocations screen against 100 units); Cr Transporter (Sundry Creditors) 3,000. This preserves the original purchase invoice rate with the supplier, creates/updates the payable to the transporter, and increases the item’s cost layer by 3,000 in inventory valuation. Verify the Stock Summary/Item Monthly Summary to see the item value increased by 3,000 without altering the purchase rate shown on the supplier’s bill.",
+          "rubric": [
+            {
+              "criterion": "Chooses an expense ledger with Affect inventory values = Yes and places it appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses a Journal voucher with correct Dr/Cr and item-level allocation to capitalize cost",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains separation of liabilities (supplier vs transporter) and verification in reports",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Mid-year, management wants Item-B to shift from Weighted Average to FIFO to better reflect physical flow. Books for Apr–Sep are already reviewed but not audited. You must decide how to apply this in TallyPrime and communicate effects.",
+          "task": "Decide when and how to change the valuation method to FIFO, what historical periods/reports will change, and what controls or disclosures you will use so that stakeholders are not misled. Justify your decision.",
+          "expected_answer": "Change the valuation method on the Item-B master to FIFO effective immediately; TallyPrime will recompute Apr–Sep valuations and COGS at report time using FIFO, which will alter historical gross margins and closing stock for those months. To avoid confusion, implement the change at a period boundary (e.g., from 1-Oct) if comparability is a priority; otherwise proceed mid-year but (1) freeze prior management reports, (2) regenerate Apr–Sep reports under FIFO and document the restatement impact (variance in COGS/closing stock), and (3) communicate a policy change note to auditors and management. Controls: lock vouchers for closed months, retain an export of prior valuations, and ensure that all stakeholders use the same method when running reports so that margins tie to disclosed figures.",
+          "rubric": [
+            {
+              "criterion": "Explains Tally’s retrospective recomputation of valuations/COGS when method changes",
+              "marks": 3
+            },
+            {
+              "criterion": "Makes a sound timing decision (period boundary vs immediate) with rationale",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies controls/disclosures to prevent report mismatch and to document impact",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Post and validate an April transaction set with correct stock impact and party settlements",
+          "brief": "Using a fresh company in TallyPrime, create the necessary ledgers, units, stock groups, and two stock items, then enter the following April transactions and produce the specified reports: 1) 05-Apr Purchase (Party: Alpha Traders): Widget-A 100 PCS @ 200; Widget-B 50 PCS @ 300; add Freight Inward 3,000 (ledger must Affect inventory values = Yes) allocated proportionally across items in the Purchase voucher. 2) 10-Apr Sales (Party: Beta Retail): Widget-A 60 PCS @ 260; Widget-B 20 PCS @ 380 as an Item invoice. 3) 12-Apr Receipt from Beta Retail: 20,000 to Bank against the 10-Apr invoice. 4) 20-Apr Payment to Alpha Traders: 25,000 from Bank against the 05-Apr purchase bill. 5) 28-Apr Journal: Bank Charges 150 (Dr Expense, Cr Bank). Do not use GST. Ensure stock groups (e.g., Finished Goods), units (PCS), and parties are created appropriately.",
+          "deliverable": "Transaction set: Exported Day Book for 01–30 Apr, Ledger Outstandings for Alpha Traders and Beta Retail as of 30-Apr, Stock Summary as of 30-Apr, and April Profit & Loss — all as Tally exports (XML/Excel/PDF).",
+          "acceptance_criteria": [
+            "Exactly 5 vouchers dated as specified: 1 Purchase, 1 Sales (Item), 1 Receipt, 1 Payment, 1 Journal",
+            "Supplier Alpha Traders closing balance at 30-Apr = 13,000 Cr; Customer Beta Retail closing balance at 30-Apr = 3,200 Dr",
+            "Stock quantities at 30-Apr: Widget-A = 40 PCS; Widget-B = 30 PCS",
+            "Inventory values at 30-Apr (Weighted Average from the single purchase layer with apportioned freight): Widget-A ≈ 8,685.60; Widget-B ≈ 9,771.30; Total ≈ 18,456.90 (tolerance ±1.00 due to rounding)",
+            "COGS for the 10-Apr sale ≈ 19,542.60 and Sales value = 23,200; April gross profit on those items ≈ 3,657.40 (tolerance ±1.00)",
+            "Freight Inward ledger is configured with Affect inventory values = Yes and is allocated to items in the Purchase voucher (evident in voucher print/export)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct masters: parties, items, stock group, units, and required ledgers (including Freight Inward with Affect inventory = Yes)",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate voucher posting sequence and types (Purchase with additional cost allocation; Sales as Item invoice; Receipt/Payment against bills; Journal for bank charges)",
+              "marks": 6
+            },
+            {
+              "criterion": "Party balances match required amounts as of 30-Apr",
+              "marks": 3
+            },
+            {
+              "criterion": "Stock quantities and valuation totals match acceptance criteria within tolerance",
+              "marks": 5
+            },
+            {
+              "criterion": "Profit figures (sales, COGS, gross profit) match acceptance criteria within tolerance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Inventory management in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build inventory masters with groups, units, items, and valuation settings; verify via reports",
+          "brief": "In a clean TallyPrime company (or a new dataset), configure inventory records only (no new April transactions): 1) Stock Groups: Finished Goods (valuation default = Weighted Average), and Accessories (valuation default = Weighted Average). 2) Units: PCS (base); BOX as alternate for Gadget-X with 1 BOX = 8 PCS. 3) Stock Items: Gadget-X under Finished Goods with base unit PCS and alternate BOX; set valuation method at item level = FIFO; Opening balance on 01-Apr: 24 PCS @ 150. Gizmo-Y under Accessories with unit PCS; Opening balance on 01-Apr: 40 PCS @ 220. Do not enable batches/serials; no GST. Generate and export the master lists and key inventory reports as of 01-Apr.",
+          "deliverable": "Inventory records: Exports of Stock Groups list, Units of Measure list, Stock Items list (showing opening balances and valuation methods), and Stock Summary as of 01-Apr.",
+          "acceptance_criteria": [
+            "Stock Groups created exactly as specified; group default valuation = Weighted Average",
+            "Units list shows PCS (base) and BOX with conversion 1 BOX = 8 PCS; BOX visible as alternate on Gadget-X",
+            "Stock Items present: Gadget-X (valuation method FIFO overriding group), Gizmo-Y (valuation method inherited as Weighted Average)",
+            "Opening balances reflected in Stock Summary dated 01-Apr: Gadget-X = 24 PCS valued 3,600; Gizmo-Y = 40 PCS valued 8,800; Total inventory value = 12,400",
+            "Item master print/export for Gadget-X shows valuation method FIFO; Gizmo-Y shows group default (Weighted Average)",
+            "No transactions posted in April in this dataset (Day Book for 01–30 Apr is empty)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct creation of groups, units, and items with specified relationships and conversions",
+              "marks": 6
+            },
+            {
+              "criterion": "Valuation method configuration: group defaults set, item-level override for Gadget-X to FIFO",
+              "marks": 5
+            },
+            {
+              "criterion": "Opening balances correctly entered and reflected in Stock Summary totals",
+              "marks": 5
+            },
+            {
+              "criterion": "Complete and correct exports of required lists/reports; no extraneous April vouchers present",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Inventory management in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-038-S03",
+      "skills_assessed": [
+        "Tally Prime",
+        "Accounting Basics",
+        "GST",
+        "Company setup in TallyPrime",
+        "Ledgers and groups in TallyPrime",
+        "Vouchers in TallyPrime",
+        "Bank reconciliation in TallyPrime",
+        "Tax invoices and returns reports in TallyPrime"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "On 31 Mar, you recorded a supplier payment via bank. The bank statement shows it cleared on 02 Apr. In TallyPrime’s bank reconciliation screen, what is the correct way to reconcile this entry?",
+          "options": [
+            "Edit the voucher to change its date to 02 Apr so the bank and books match, then mark it reconciled for March.",
+            "Keep the voucher dated 31 Mar, enter 02 Apr as the bank date in reconciliation, and mark it reconciled.",
+            "Pass a Contra voucher on 31 Mar to adjust the difference to zero, then reverse it on 02 Apr.",
+            "Temporarily mark it as reconciled without a bank date; Tally will auto-fill the date on next import."
+          ],
+          "correct_option": "B",
+          "explanation": "The book (voucher) date remains 31 Mar; the bank date in the reconciliation is set to 02 Apr. This preserves proper accounting period recognition while matching the bank clearance date.",
+          "distractor_rationale": "A: Tempting to ‘make dates match’, but it distorts period reporting. C: Using Contra to bridge periods creates artificial entries and audit issues. D: Reconciliation requires a bank date; deferring it is not a correct match and can leave hidden differences.",
+          "skills_covered": [
+            "Bank reconciliation in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You want to use auto bank reconciliation by importing a bank statement. Which ledger setup is essential to make this work reliably in TallyPrime?",
+          "options": [
+            "Create the bank ledger under Bank Accounts with account number/IFSC, enable banking configuration, and set the import/mapping for your bank’s format.",
+            "Create the bank ledger under Cash-in-Hand and fill bank details so Tally recognises it as a bank.",
+            "Just enable e-payments in F11; auto reconciliation will work without ledger changes.",
+            "Create the bank ledger under Sundry Debtors and link it to the party; Tally will map by name during import."
+          ],
+          "correct_option": "A",
+          "explanation": "The bank ledger must be under Bank Accounts with proper bank details and banking configuration. Auto reconciliation uses the bank statement import/mapping tied to that bank ledger.",
+          "distractor_rationale": "A: Bank under Cash-in-Hand disables banking features. C: A debtor ledger is for parties, not bank accounts. D: E-payments alone do not enable statement import or mapping.",
+          "skills_covered": [
+            "Ledgers and groups in TallyPrime",
+            "Bank reconciliation in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You are clearing an outstanding supplier bill that includes GST through a bank payment. Bill-wise tracking is enabled. How should you apply the payment so the bill closes correctly?",
+          "options": [
+            "Use a Payment voucher, select the supplier ledger, choose Against Reference, pick the bill, and enter the full gross amount (including GST).",
+            "Use a Journal voucher to debit the supplier and credit the bank to keep GST unaffected.",
+            "Use a Payment voucher On Account for the net-of-GST amount; Tally will auto-adjust the tax linkage later.",
+            "Use a Purchase voucher in ‘As Payment’ mode so GST remains linked to the bill."
+          ],
+          "correct_option": "A",
+          "explanation": "Bills close against their full gross amount via a Payment voucher using Against Reference. Journal or On Account postings will leave the bill open or misallocate.",
+          "distractor_rationale": "B: Journal won’t tie to the bill reference and breaks the payment workflow. C: Purchase is for recording purchases, not settlements. D: On Account leaves the bill open and does not auto-relate to its GST.",
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "For intra-state sales invoices to calculate GST automatically, which ledger configuration is correct?",
+          "options": [
+            "Enter the GST percentage in the Sales ledger; separate tax ledgers aren’t needed.",
+            "Create one IGST ledger at 18% under Duties & Taxes; Tally will split it into CGST and SGST automatically.",
+            "Create Input CGST and Input SGST ledgers and use them in the sales invoice so taxes post to input accounts.",
+            "Create separate Output CGST and Output SGST ledgers under Duties & Taxes and include them in the sales invoice; set rates at item or ledger as required."
+          ],
+          "correct_option": "D",
+          "explanation": "Intra-state outward tax is posted to Output CGST and Output SGST ledgers. These are separate from sales and input tax ledgers and are included in the sales voucher.",
+          "distractor_rationale": "A: IGST is for inter-state, not split automatically. C: Rate on Sales ledger alone won’t post to the correct output tax ledgers. D: Input ledgers are for purchases/inputs, not sales.",
+          "skills_covered": [
+            "Ledgers and groups in TallyPrime",
+            "GST",
+            "Tax invoices and returns reports in TallyPrime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your company is in Karnataka. A registered customer in Tamil Nadu should be charged IGST, but the sales invoice calculated CGST/SGST. What configuration is most likely wrong?",
+          "options": [
+            "HSN/SAC codes are missing on items; add HSN/SAC to make IGST apply.",
+            "The IGST ledger’s rate is set to 0%; set the correct percentage in the IGST ledger to override.",
+            "The Sales ledger is set to ‘Calculate tax on net’; switch to ‘item rate’ to get IGST.",
+            "The party ledger’s State/registration is set as Karnataka/unregistered; correct the party’s state and registration type to trigger IGST."
+          ],
+          "correct_option": "D",
+          "explanation": "Place of supply is derived from company state vs party state/registration. If the party ledger is set to the company’s state or marked unregistered incorrectly, Tally will apply CGST/SGST.",
+          "distractor_rationale": "B: A zero-rate IGST ledger wouldn’t make CGST/SGST appear; the place-of-supply logic is at fault. C: Missing HSN affects reporting, not the choice between IGST and CGST/SGST. D: Calculation basis doesn’t select the tax type.",
+          "skills_covered": [
+            "GST",
+            "Company setup in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Mid-year, management wants a new invoice prefix (e.g., ABC/23-24/) while keeping numbering unique and compliant. What is the correct approach in TallyPrime?",
+          "options": [
+            "Turn on Restart Numbering mid-year and start from 001 again.",
+            "Switch the voucher type to Manual numbering and begin from 1 with the new prefix.",
+            "Create a new series with the desired prefix and a suitable ‘Start from’ number; keep ‘Prevent duplicates’ enabled.",
+            "Delete the existing Sales voucher type and recreate it with the new prefix to reset numbers."
+          ],
+          "correct_option": "C",
+          "explanation": "Create a new series/prefix and continue numbering without duplicates. Restarting mid-year or manual resets risk duplicate numbers and compliance issues.",
+          "distractor_rationale": "A: Restarting mid-year can create duplicates and audit issues. B: Manual resets break traceability and controls. D: Deleting voucher types to reset numbering compromises history and audit trail.",
+          "skills_covered": [
+            "Tax invoices and returns reports in TallyPrime",
+            "Company setup in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "The bank statement shows a debit of 1,180 described as ‘Bank charges 1,000 + GST’. Books have a payment voucher for 1,000 only. During reconciliation, a 180 difference remains. What is the correct fix to reconcile and keep GST accurate?",
+          "options": [
+            "Edit the payment voucher to add Input CGST 90 and Input SGST 90 (or IGST 180 if inter-state) and post the gross 1,180, then reconcile.",
+            "Ignore the difference; it will reverse in the next cycle.",
+            "Pass a Journal: Dr Bank Charges 180 Cr Suspense 180; reconcile now and clear Suspense next month.",
+            "Enter 180 as a reconciliation-only difference; Tally will auto-adjust on posting."
+          ],
+          "correct_option": "A",
+          "explanation": "Adjust the voucher to the gross bank debit and recognise the tax via appropriate input GST ledgers. Then the book entry equals the bank entry and can be reconciled.",
+          "distractor_rationale": "A: Reconciliation doesn’t create postings; it can’t ‘auto-adjust’ unposted tax. C: Suspense hides the problem and adds cleanup work. D: Differences don’t ‘vanish’; they persist and impair BRS.",
+          "skills_covered": [
+            "Bank reconciliation in TallyPrime",
+            "GST",
+            "Accounting Basics",
+            "Vouchers in TallyPrime"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You move 50,000 from the Current Account to the Overdraft Account (same bank). Which voucher type should you use and how does it affect reconciliation?",
+          "options": [
+            "Journal voucher; since both are balance sheet accounts, no reconciliation is needed.",
+            "Contra voucher; it transfers between bank ledgers, and each side reconciles against the single bank entry on its respective statement.",
+            "Receipt voucher; since OD increases, the bank treats it as a receipt, which you then reconcile.",
+            "Payment voucher; it will appear as a withdrawal and you can reconcile it twice (once per account)."
+          ],
+          "correct_option": "B",
+          "explanation": "Inter-bank (within books) transfers use Contra. Each bank ledger will reconcile against its respective statement entry.",
+          "distractor_rationale": "A: Payment is for outflows to external parties, not internal bank-to-bank transfers. C: Receipt is the mirror of Payment and still wrong for bank-to-bank transfers. D: Bank ledgers still reconcile; Journal doesn’t create bank allocation.",
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Bank reconciliation in TallyPrime"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "After switching the company to the GST Composition scheme in TallyPrime, how should sales invoices be configured and printed?",
+          "options": [
+            "Hide tax in print but keep tax ledgers in the voucher so you can claim returns as before.",
+            "Turn off all GST features; composition dealers do not need GST settings.",
+            "Do not show tax components on the invoice (bill of supply); use a composition-appropriate sales ledger and set/alter GST details at company level for composition rate.",
+            "Show CGST/SGST separately as before, but add a note that you are a composition taxpayer."
+          ],
+          "correct_option": "C",
+          "explanation": "Composition dealers issue a bill of supply without tax line items. Configure company GST as Composition and use appropriate ledgers so invoices print without tax breakup.",
+          "distractor_rationale": "A: Composition invoices cannot show tax components. C: Keeping output tax ledgers contradicts composition billing. D: Composition still requires GST configuration for returns and compliance.",
+          "skills_covered": [
+            "GST",
+            "Tax invoices and returns reports in TallyPrime",
+            "Company setup in TallyPrime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You sell items taxed at 5% and 18%. What configuration yields correct tax on a single sales invoice containing both kinds of items?",
+          "options": [
+            "Create separate Sales ledgers for 5% and 18% and choose the right sales ledger per line; no GST on items needed.",
+            "Use one Sales ledger; set HSN and tax rates on stock items; create CGST/SGST/IGST tax ledgers without fixed rates so item-level tax drives calculation.",
+            "Set the tax rate in the voucher type; Tally applies it uniformly across lines.",
+            "Set the rates only in tax ledgers (e.g., IGST 18%); Tally will apply the ledger rate to all items."
+          ],
+          "correct_option": "B",
+          "explanation": "Item-level HSN/rates handle mixed-rate invoices correctly. Tax ledgers post the computed amounts; they need not carry fixed rates when rates vary by item.",
+          "distractor_rationale": "A: Multiple sales ledgers complicate reporting and still won’t compute mixed tax correctly. C/D: A single fixed rate would mis-apply tax across items of different rates.",
+          "skills_covered": [
+            "Tax invoices and returns reports in TallyPrime",
+            "Ledgers and groups in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You imported a bank statement (April) for HDFC-Current. Tally auto-matched 42 of 50 entries. The 8 unmatched include: (1) An inward NEFT Rs 25,000 from a customer that you mistakenly recorded earlier as a Contra from Cash; (2) A cheque deposited on 30 Mar that the bank credited on 01 Apr; (3) Bank service charges Rs 450 plus GST Rs 81 debited by bank but not in books; (4) An outward UPI of Rs 2,360 where your payment voucher’s narration/reference number doesn’t match the bank’s and the date differs by one day.",
+          "task": "Describe the exact steps you would take in TallyPrime to reconcile all 8 remaining entries to reach Difference: 0, without distorting period reporting or GST records. For each category above, state what to alter/create, which dates you would change (if any), how you would handle GST, and how you would ensure the entries match on import (e.g., instrument/reference). Justify each step briefly.",
+          "expected_answer": "- NEFT wrongly posted as Contra: Locate the voucher and change it to a Receipt voucher to the correct customer (or a Journal to rectify) and allocate Against Reference if bill-wise. Credit Bank, debit the customer; remove erroneous Cash ledger. Use the bank’s UTR/ref in the instrument/reference field for better auto-match.\n- Cheque deposit 30 Mar credited 01 Apr: Do not change voucher date. In Bank Reconciliation for HDFC-Current, enter bank date = 01 Apr for that receipt and mark reconciled. This preserves March book date and April bank clearance.\n- Bank charges + GST: Edit or create a Payment voucher to reflect the gross debit 531 (450 + 81). Post expense to Bank Charges 450 and recognise input GST via Input CGST 40.50 and Input SGST 40.50 (or IGST 81 if inter-state as per bank’s GST). Now the book amount equals the bank debit and ITC is properly captured.\n- Outward UPI with mismatched reference/date: Do not re-date to the bank date. Keep the voucher date as per book; in reconciliation, enter the bank date from the statement. Add the exact UPI reference/narration to the voucher’s instrument/cheque fields to align with import rules. If amount/payee is correct, it will match once refs/dates align.\nOutcome: After these fixes, re-run auto match or manually mark matched; the BRS shows Difference: 0 for April. No period distortion occurred; GST on bank fees is posted; and references are consistent with the bank statement.",
+          "rubric": [
+            {
+              "criterion": "Identifies and corrects the wrong Contra by reclassifying to Receipt (or equivalent) tied to the party and bank, with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Handles date mismatches by using bank dates in reconciliation while preserving voucher dates",
+              "marks": 2
+            },
+            {
+              "criterion": "Books bank service charges with correct GST treatment so book entry equals bank debit",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains use of instrument/reference alignment to aid auto-match and finalises reconciliation to zero difference",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Bank reconciliation in TallyPrime",
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "GST"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your firm crossed the threshold on 15 July and obtained a GSTIN the same day. Up to 14 July you issued non-GST invoices. From 15 July you must issue tax invoices and configure GST in TallyPrime.",
+          "task": "Explain how you will configure registration details and invoicing in TallyPrime effective 15 July, what you will do about invoices raised earlier in July, and how you will ensure numbering/compliance without recreating history. Be specific on screens/settings you would change and justify why.",
+          "expected_answer": "- Company GST setup: Gateway of Tally > F11 > Statutory & Taxation > Enable GST; Set/alter GST details: Registration type = Regular, enter GSTIN, State, and Effective From = 15-Jul. Set ‘Enable tax calculation’ in vouchers.\n- Tax ledgers: Create Output CGST/SGST/IGST under Duties & Taxes (Type: GST), and link them in sales vouchers. Define HSN/SAC and tax rates at item/ledger level as needed.\n- Party ledgers: Update GST Registration type and GSTIN for registered customers/suppliers; ensure correct State.\n- Voucher type/numbering: Create a new invoice numbering series effective 15-Jul with a distinct prefix (e.g., INV/23-24/) and keep ‘Prevent duplicates’ on. Do not restart numbering mid-year for the pre-registration series; preserve history.\n- Pre-15 Jul invoices: Leave as issued (bills of supply/non-GST). Do not retrospectively add GST. From 15 Jul onward, issue tax invoices only.\nJustification: Effective date ensures GST applies prospectively; separate series preserves audit trail and uniqueness; party master updates drive correct IGST vs CGST/SGST.",
+          "rubric": [
+            {
+              "criterion": "Correctly sets company GST registration with effective date and enables GST features",
+              "marks": 2
+            },
+            {
+              "criterion": "Creates appropriate GST output tax ledgers and item/ledger tax configuration",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains treatment of pre-registration invoices (no retroactive GST) and preserves audit trail",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes numbering/series strategy to remain compliant and avoid duplicates",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "GST",
+            "Company setup in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A sales invoice to a registered customer in another state wrongly posted CGST/SGST because the party ledger’s State was set to your company’s State. Payment was received and already reconciled in bank.",
+          "task": "Describe how you would correct master data and the sales voucher so GST is fixed (IGST instead of CGST/SGST) while keeping the bank receipt and reconciliation intact. Include options if the invoice has/has not been filed in returns.",
+          "expected_answer": "- Fix the root cause: Alter the party ledger, set correct State and Registration type, and record the customer’s GSTIN.\n- If return not yet filed: Alter the sales invoice—replace Output CGST/SGST with Output IGST; verify place-of-supply now triggers IGST; keep the same voucher number/series as per policy. Item values stay unchanged.\n- If already filed: Pass a Credit Note to reverse the incorrect tax (reduce CGST/SGST) and issue a revised/corrected Tax Invoice with IGST; link the documents for audit. Do not touch the bank receipt.\n- Bank reconciliation: No change; receipt voucher and its reconciliation remain valid. Only the sales voucher/tax lines change. Ensure the customer’s bill reference remains consistent so AR aging isn’t broken.",
+          "rubric": [
+            {
+              "criterion": "Identifies incorrect party master data as the cause and specifies correct fields to update",
+              "marks": 2
+            },
+            {
+              "criterion": "Details compliant correction for unfiled invoices (alter voucher to use IGST)",
+              "marks": 2
+            },
+            {
+              "criterion": "Details compliant correction for filed invoices (credit note + corrected invoice)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why bank receipt/reconciliation remain unaffected",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "GST",
+            "Vouchers in TallyPrime",
+            "Bank reconciliation in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "You owe a supplier for two invoices: INV-101 (goods at 18%) and INV-099 (goods at 5%). You are paying Rs 50,000 today by bank, which fully settles INV-101 except for an early payment discount of Rs 1,000 that the supplier offered. INV-099 remains unpaid.",
+          "task": "Explain how you will book the Payment voucher with bill-wise allocation, how you will account for the cash discount, and how you will ensure GST on the original purchase remains correct. State the ledgers you will use and the references you will select.",
+          "expected_answer": "- Use a Payment voucher: Cr Bank; Dr Supplier ledger. In bill-wise allocation choose Against Reference for INV-101 and enter the paid amount net of discount (e.g., if gross due is 51,000 and discount is 1,000, enter 50,000). Post the Rs 1,000 to ‘Cash Discount Received’ (income) in the same voucher.\n- Do not alter purchase GST: The original purchase voucher retains GST as booked; payment and discount do not change input tax.\n- Keep INV-099 outstanding: Do not allocate any amount to INV-099; its reference remains open for future payment.",
+          "rubric": [
+            {
+              "criterion": "Correct use of Payment voucher with Against Reference to settle only INV-101",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct accounting of discount to an income/discount ledger within the voucher",
+              "marks": 2
+            },
+            {
+              "criterion": "States that purchase GST remains unaffected by payment/discount",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "GST"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Bank reconciliation for current month",
+          "brief": "Reconcile one complete month for a real (or trainer-provided) bank ledger in TallyPrime, handling date mismatches, service charges with GST, and internal transfers. Demonstrate that the bank ledger is fully reconciled with no difference for the chosen period.",
+          "deliverable": "Reconciled bank",
+          "acceptance_criteria": [
+            "Bank ledger is under Bank Accounts with bank details configured (account no., IFSC) and banking features enabled.",
+            "All bank-side entries for the month are recorded in books; statement imported or entries keyed so that each bank line corresponds to a voucher.",
+            "Bank Reconciliation Statement (for the month) shows Difference: 0 with all entries reconciled and bank dates populated where clearance differs from voucher date.",
+            "Service charges/fees that include GST are posted with appropriate Input GST ledgers so the reconciled book amount equals the bank amount.",
+            "Internal transfers between bank accounts are recorded via Contra vouchers, not Payment/Receipt.",
+            "Submission includes evidence: exported BRS (PDF/Excel) or screenshots from TallyPrime showing reconciled status, plus brief notes on at least two reconciled mismatches (e.g., date difference, charges)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct bank ledger setup under Bank Accounts with banking configuration",
+              "marks": 2
+            },
+            {
+              "criterion": "Completeness of month’s entries and accurate linkage to statement lines (import or manual)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proper handling of bank vs book dates in reconciliation (bank dates populated appropriately)",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate posting of charges/fees with GST to match bank debits/credits",
+              "marks": 4
+            },
+            {
+              "criterion": "Zero difference proven via BRS/export with all items reconciled",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity of evidence/notes explaining at least two mismatch resolutions",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Bank reconciliation in TallyPrime",
+            "Vouchers in TallyPrime",
+            "Accounting Basics",
+            "Tally Prime",
+            "Ledgers and groups in TallyPrime"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Configure a GST-ready company and validate invoices",
+          "brief": "Configure GST for a company in TallyPrime with correct registration details and tax ledgers. Create sample intra-state and inter-state sales to prove automatic GST computation and produce clean invoice prints with proper numbering.",
+          "deliverable": "GST-ready company",
+          "acceptance_criteria": [
+            "Company GST is enabled with correct State, Registration type (e.g., Regular), GSTIN, and effective date visible in Set/alter GST details.",
+            "Output tax ledgers (CGST, SGST, IGST) exist under Duties & Taxes (Type: GST) with appropriate configuration.",
+            "Party ledgers for at least one registered intra-state and one inter-state customer include correct State, Registration type, and GSTIN.",
+            "Stock items or sales ledgers carry HSN/SAC and tax rates sufficient to auto-compute GST on invoices.",
+            "Two sales vouchers are provided: one intra-state (showing CGST+SGST) and one inter-state (showing IGST), with accurate tax amounts and totals.",
+            "Invoice numbering uses a defined series/prefix with Prevent Duplicates enabled; invoice prints show correct titles (Tax Invoice) and statutory fields.",
+            "Submission includes screenshots/exports showing GST setup screens, tax ledgers, party masters, voucher entries, and printed invoice samples."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accurate company GST configuration (State, type, GSTIN, effective date)",
+              "marks": 4
+            },
+            {
+              "criterion": "Creation and correct classification of CGST/SGST/IGST output tax ledgers",
+              "marks": 4
+            },
+            {
+              "criterion": "Party master setup for intra-state and inter-state cases",
+              "marks": 3
+            },
+            {
+              "criterion": "Item/ledger GST settings such that tax auto-calculates correctly",
+              "marks": 5
+            },
+            {
+              "criterion": "Invoice numbering/print compliance (series, prevent duplicates, correct titles/fields)",
+              "marks": 2
+            },
+            {
+              "criterion": "Quality and completeness of submitted evidence (screenshots/exports)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "GST",
+            "Company setup in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime",
+            "Ledgers and groups in TallyPrime",
+            "Tally Prime",
+            "Vouchers in TallyPrime"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-038-S04",
+      "skills_assessed": [
+        "Tally Prime",
+        "Accounting Basics",
+        "GST",
+        "Tax invoices and returns reports in TallyPrime",
+        "Report generation and error review in TallyPrime",
+        "Backup and Recovery",
+        "Security and user controls in TallyPrime",
+        "Payroll/TDS awareness"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You computed (but have not filed) April GSTR-1 in TallyPrime. An April 28 sales invoice that previously sat in Exceptions for missing HSN is corrected on May 10 by adding the HSN and re-accepting the voucher. In April’s GSTR-1 Return View, how should this voucher now appear and what is the correct month-close action?",
+          "options": [
+            "Included for April after you recompute the return; file April with it and document the late correction.",
+            "Still in Exceptions; use “Accept as is” to push it to Included without recompute.",
+            "Moves to April’s Amendment section automatically; file April unchanged and report the delta in May.",
+            "Excluded from April because the edit happened in May; shift it to May via Amendments."
+          ],
+          "correct_option": "A",
+          "explanation": "Because the return isn’t filed, correcting the voucher/master updates the April period. Recompute the return; the voucher moves from Exceptions to Included for April. Amendments are for already-filed periods.",
+          "distractor_rationale": "B: Tempting if you think edit-date drives tax period; GST is period-of-supply, not edit date. C: “Accept as is” is for unresolved discrepancies; once corrected, a recompute is needed. D: Amendment tables apply when the original period is filed; not the case here.",
+          "skills_covered": [
+            "Tax invoices and returns reports in TallyPrime",
+            "Report generation and error review in TallyPrime",
+            "GST",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You recorded freight inward from a GTA liable to Reverse Charge. How should you configure it so that GSTR-3B shows liability correctly and ITC is claimed appropriately?",
+          "options": [
+            "Use a Journal voucher to credit GST ledgers manually; 3B picks up from ledger balances regardless of classifications.",
+            "Mark the purchase/ledger as “Is reverse charge applicable? = Yes” and use RCM-classified tax ledgers; 3B shows taxable value in 3.1(d) and eligible ITC in 4(A)(3) upon payment.",
+            "Record it as a normal taxable purchase; 3B auto-classifies to RCM if the supplier is unregistered.",
+            "Set ledger Nature of transaction to Exempt Purchase; use standard tax ledgers so 3B shows it in 3.1(a) Outward supplies."
+          ],
+          "correct_option": "B",
+          "explanation": "RCM requires correct GST classification. In TallyPrime, mark RCM at the ledger/transaction and use RCM tax ledgers so 3B maps to 3.1(d) (liability) and 4(A)(3) (ITC) if eligible.",
+          "distractor_rationale": "A: Exempt purchases do not create liability or ITC. C: 3B mapping uses GST classifications, not bare balances. D: Registration status alone doesn’t flip a normal taxable purchase into RCM; classification is required.",
+          "skills_covered": [
+            "GST",
+            "Tax invoices and returns reports in TallyPrime",
+            "Report generation and error review in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You export goods under LUT (no tax charged). Which classification and 3B impact are correct in TallyPrime?",
+          "options": [
+            "Classify as Interstate Taxable with 0% rate; it appears in 3.1(a).",
+            "Classify the sales ledger as Exempt; amounts appear in 3.2 and HSN can be omitted.",
+            "Classify as Export (Zero Rated) with LUT; value appears in 3.1(b) Zero rated supplies and HSN is reported.",
+            "Mark as Deemed Export; value appears in 3.2 Deemed exports."
+          ],
+          "correct_option": "C",
+          "explanation": "Zero-rated supplies under LUT are exports. They map to 3.1(b) and require HSN reporting. They are not ‘exempt’ nor ‘0% intrastate’ transactions.",
+          "distractor_rationale": "A: Zero-rated is not exempt; different tables and implications. C: 0% intrastate is wrong for exports. D: Deemed exports are specific notified supplies within India, not LUT exports.",
+          "skills_covered": [
+            "GST",
+            "Tax invoices and returns reports in TallyPrime",
+            "Report generation and error review in TallyPrime"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your GSTR-3B output tax liability in TallyPrime doesn’t agree with tax ledger balances. What is the most effective next step inside Tally to identify the cause?",
+          "options": [
+            "Export both to a spreadsheet and adjust values manually for filing.",
+            "From GSTR-3B Return View, drill down into Included and Exceptions, then use Day Book/Tax Analysis to locate vouchers with mismatched classifications/rates.",
+            "Post a reversing journal next month to absorb the difference.",
+            "Edit tax ledger opening balances to match 3B and proceed."
+          ],
+          "correct_option": "B",
+          "explanation": "Use Return View drill-downs and Tax Analysis to locate misclassified or exception vouchers, then correct them at source. Tally’s mappings drive 3B.",
+          "distractor_rationale": "A: Papering over differences hides the root cause. C: Manual adjustments risk non-reproducible filings. D: Deferring the issue breaks period accuracy and compliance.",
+          "skills_covered": [
+            "Report generation and error review in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You book Professional Fees for a consultant under Sec 194J but the party has no PAN. What will Tally’s TDS computation/reporting reflect if configured correctly?",
+          "options": [
+            "TDS at 5% as a conservative placeholder until PAN arrives.",
+            "No TDS will be deducted; the voucher appears under ‘Transactions without TDS’.",
+            "TDS at 10% with no special flag because the section is 194J.",
+            "TDS at 20% (higher rate for no PAN) and the transaction flagged as higher deduction in the TDS report."
+          ],
+          "correct_option": "D",
+          "explanation": "Where PAN is not available, TDS is at a higher rate (typically 20%). Tally’s TDS report flags higher-deduction transactions for visibility and compliance.",
+          "distractor_rationale": "A: TDS doesn’t get skipped; higher rate applies. B: 10% is the standard rate when PAN is available. D: 5% is not the prescribed higher rate.",
+          "skills_covered": [
+            "Payroll/TDS awareness",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You are about to close April. Which backup approach best guarantees you can restore the exact pre-close state, including GST configs and user rights?",
+          "options": [
+            "Export Masters and Ledgers to XML; that’s sufficient to rebuild later.",
+            "Take a full Company Backup (enable TallyVault if used) after clearing return exceptions and before locking; verify via a test restore.",
+            "Lock the period first to stop changes; take backup later when convenient.",
+            "Copy the application install folder; data and security will be preserved."
+          ],
+          "correct_option": "B",
+          "explanation": "A full company backup captured at the point of clean returns and before lock, with a verified restore, is the reliable recovery point. Exports or app-folder copies miss state.",
+          "distractor_rationale": "A: Master export omits transactions, security, and return states. C: Backing up after lock risks capturing unclean state or later drift. D: Installation folder copy often excludes live data directories and configurations.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Security and user controls in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You need Data Entry users to create vouchers but not view/alter GST returns or tax ledgers; a Returns Preparer must view returns but not alter vouchers. What minimal-permission design in TallyPrime satisfies this?",
+          "options": [
+            "Create two roles: Data Entry (Voucher Entry: Yes; Accounts Masters: No; Statutory & GST Reports: No) and Returns Preparer (Display: Statutory/GST Reports: Yes; Voucher Alteration: No).",
+            "Hide the GST menu using the menu configuration; hidden menus act as access control.",
+            "Create a single ‘Accounts’ role with everything enabled except Backup/Restore.",
+            "Make both users ‘Owner’ and instruct them verbally not to change returns."
+          ],
+          "correct_option": "A",
+          "explanation": "Separate roles with explicit denies on Statutory/GST reports and masters for Data Entry, and read-only access for the returns user, enforce least privilege.",
+          "distractor_rationale": "A: Too permissive; can still alter masters/reports. C: Menu hiding isn’t access control. D: Reliance on trust is not a control.",
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "To minimise risk of GST return mismatches at month close, what is the correct operational sequence?",
+          "options": [
+            "Resolve exceptions and reconcile -> Generate/validate GSTR-1/3B -> Back up -> Lock period -> File.",
+            "Back up and lock immediately on last day; investigate mismatches later.",
+            "File returns first to avoid delays, then reconcile and back up.",
+            "Lock period -> Back up -> Resolve exceptions -> File returns."
+          ],
+          "correct_option": "A",
+          "explanation": "Clean exceptions and reconciliations first, validate returns, then take a point-in-time backup before locking and filing. This preserves a reproducible filing state.",
+          "distractor_rationale": "A/D: Locking before cleaning creates friction or forces unlocks. C: Filing before validation risks incorrect compliance.",
+          "skills_covered": [
+            "Report generation and error review in TallyPrime",
+            "Backup and Recovery",
+            "Accounting Basics",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "June GSTR-1 has been filed. You later find an invoice with overstated taxable value. What is the correct way to reflect this in July using TallyPrime?",
+          "options": [
+            "Alter the original June invoice; the portal will update automatically on next upload.",
+            "Post a journal reducing Sales; GST returns ignore it so no knock-on effect.",
+            "Record a Sales Credit Note in July linked to the original invoice and mark it as an amendment; it will appear in GSTR-1 amendment tables and flow into 3B.",
+            "Delete the June invoice and re-enter it in July with the correct value."
+          ],
+          "correct_option": "C",
+          "explanation": "Once filed, the original period cannot be altered. Use a CN/DN in the subsequent period, flagged as amendment and linked to the original, so it appears in the amendment section.",
+          "distractor_rationale": "A: Filed returns won’t auto-update from altered historical vouchers. C: Journals won’t properly update statutory tables. D: Deleting booked tax documents breaks audit trail and compliance.",
+          "skills_covered": [
+            "GST",
+            "Tax invoices and returns reports in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your HSN Summary shows quantity/unit mismatches because items use ‘Nos’ while the portal expects ‘NOS’. What is the correct fix in TallyPrime?",
+          "options": [
+            "Remove HSN on those items to bypass UQC validation.",
+            "Change the stock item’s base unit name to ‘NOS’ only; returns will auto-correct.",
+            "Post a manual adjustment in the HSN Summary to fix units for this period.",
+            "In Unit alteration, set the GST Unit Name (UQC) to NOS while keeping the internal unit as ‘Nos’, then recompute returns."
+          ],
+          "correct_option": "D",
+          "explanation": "Map the internal unit to the correct UQC (NOS) in unit configuration so statutory reports generate with compliant units without disrupting internal UOM.",
+          "distractor_rationale": "A: Renaming the internal unit may break other items and doesn’t set UQC. C: Manual edits are non-repeatable and error-prone. D: Removing HSN sacrifices compliance and analytics.",
+          "skills_covered": [
+            "Report generation and error review in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your May GSTR-3B in TallyPrime shows Rs. 2,40,000 under 3.1(d) ‘Inward supplies liable to reverse charge’, but your expense analysis indicates Rs. 3,00,000 of GTA freight was posted as RCM. On drill-down, 6 freight vouchers appear as normal taxable purchases with CGST/SGST at 0% and suppliers marked ‘Registered’. Returns are not filed. Month close is due tomorrow.",
+          "task": "Diagnose why 3.1(d) is understated and outline precise corrections in Tally (voucher/ledger/supplier settings), the recomputation/validation steps, and the expected effect on 3B and ITC for May. Justify each step.",
+          "expected_answer": "Cause: Misclassification—those 6 vouchers are not tagged as RCM; suppliers are treated as normal registered vendors and tax ledgers are non-RCM, so they bypass 3.1(d). Corrections: (1) Alter the freight expense ledger or voucher to set ‘Is reverse charge applicable? = Yes’ and select the correct RCM nature (e.g., Purchase Taxable - RCM/GTA). (2) Ensure supplier GST Registration type matches reality (often ‘Registered—RCM applicable’ or ‘Unregistered’ for GTA billed by transporter). (3) Replace normal CGST/SGST ledgers with RCM-classified tax ledgers or let Tally compute tax under RCM through Tax Analysis; there should be no forward-charge tax on supplier’s invoice. (4) Save vouchers and recompute GSTR-3B Return View; check Exceptions until zero. Validation: 3.1(d) should total Rs. 3,00,000; eligible ITC should show in 4(A)(3) if conditions met (tax paid in cash). Reconcile with Day Book > Tax Analysis and vendor-wise listings. Justification: RCM must be mapped via GST classifications to flow to 3.1(d); only then does corresponding ITC populate 4(A)(3).",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies classification error (non-RCM vouchers/supplier types/tax ledgers) as root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies precise voucher/ledger corrections (RCM flag, nature of transaction, RCM tax ledgers)",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes recomputation and validation in Return View and clearing Exceptions",
+              "marks": 2
+            },
+            {
+              "criterion": "States expected 3B/ITC impact (3.1(d) to 3,00,000 and ITC in 4(A)(3) if eligible)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "GST",
+            "Tax invoices and returns reports in TallyPrime",
+            "Report generation and error review in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You locked April after generating clean GSTR-1/3B. Next morning, two April 30 vouchers appeared: a sales invoice and a purchase voucher posted by a Data Entry user. Review shows the role allowed voucher alteration and back-dated entry for 3 days. Filing is pending. You have last night’s pre-lock backup.",
+          "task": "Propose an immediate remediation plan that preserves compliance and audit trail, and redesign security/period controls to prevent recurrence. Explain how you will validate that the returns remain clean post-fix.",
+          "expected_answer": "Immediate: (1) Take a fresh backup of the current state. (2) Compare April Return View (pre-lock backup vs current) to identify the two rogue vouchers. (3) If returns not filed, either restore the pre-lock backup to a staging instance and export the clean returns OR remove the two vouchers in current books via proper documents (e.g., cancel/withdraw with notes) so that the April dataset matches the pre-lock state; avoid silent deletes—use Tally Audit/remarks. (4) Recompute April GSTR-1/3B to confirm zero Exceptions and figures match the pre-lock snapshot. Hardening: Create separate roles—Data Entry (Voucher Create: Yes; Voucher Alter: No; Statutory/GST Reports: No) and Returns Preparer (Display returns: Yes; Voucher Alter: No); set user-wise limits to disallow back-dated entries beyond 0 days for closed periods; enable Tally Audit; disallow Master alteration; restrict Backup/Restore to Admin; implement a formal ‘Freeze from’ date for closed months. Validation: Log in as Data Entry and attempt to post/alter April vouchers (should be denied); re-run Return View and exception reports; archive the post-fix backup with a change log.",
+          "rubric": [
+            {
+              "criterion": "Clear, low-risk remediation using backups/change control that preserves audit trail",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific security redesign (least-privilege roles, deny back-dated entries, restrict master/backup access, enable audit)",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct handling given returns are not filed (no amendments; restore/clean before filing)",
+              "marks": 1
+            },
+            {
+              "criterion": "Concrete validation steps (user test of permissions, recompute returns, archive)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Backup and Recovery",
+            "Report generation and error review in TallyPrime",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "On May 5 you paid a consultant Rs. 1,00,000 as advance without deducting TDS. On May 20 you received the invoice (Sec 194J, PAN available). You must close May with correct TDS in TallyPrime.",
+          "task": "Describe how to configure ledgers and record entries so TDS is correctly recognized and reported for May, despite the earlier advance. Explain how this appears in TDS reports and outstanding.",
+          "expected_answer": "Setup: Consultant party ledger marked for TDS; Professional Fees expense ledger set ‘Is TDS applicable? = Yes’, Sec 194J at 10%. Entries: (1) On May 20, book the expense using a TDS-compliant voucher (e.g., Journal/Purchase per org policy) so Tally computes TDS Rs. 10,000 and posts TDS Payable. Since Rs. 1,00,000 was already paid as advance, raise a Debit Note on the consultant for Rs. 10,000 (or adjust during next payment) to recover TDS—or adjust the original advance by reclassification JV: Dr Party 10,000 / Cr TDS Payable 10,000. (2) Map the earlier advance against the bill so net payable becomes negative/zero appropriately. Reporting: The transaction appears in TDS reports under Sec 194J with base Rs. 1,00,000 and TDS Rs. 10,000 due for May; the higher-rate rule is not triggered since PAN is present. TDS Outstanding shows Rs. 10,000 payable until challan booking; party outstanding reflects the debit/adjustment.",
+          "rubric": [
+            {
+              "criterion": "States correct timing principle (deduct TDS at booking/payment whichever earlier; here deduction on booking with recovery from party)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct ledger configuration for TDS (party/expense section mapping)",
+              "marks": 1
+            },
+            {
+              "criterion": "Voucher flow that records TDS and adjusts the prior advance (CN/DN or JV)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains how the entries reflect in TDS Reports/Outstanding",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Payroll/TDS awareness",
+            "Accounting Basics",
+            "Tally Prime",
+            "Report generation and error review in TallyPrime"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your company operates two GSTINs (MH and GJ) maintained as separate companies in TallyPrime. A user entered 12 June sales invoices for GJ customers in the MH company by mistake. Invoices were printed and shared; returns are not filed yet.",
+          "task": "Choose the correction approach that minimises compliance risk and preserves audit trail. Detail the steps in Tally, expected impact on both companies’ Return Views/numbering, and controls you would use during the fix.",
+          "expected_answer": "Because invoices were issued, avoid silent deletes. In MH company: issue Sales Credit Notes for the 12 invoices, referencing originals and narration ‘Wrong GSTIN—rebooked in GJ’; this nets the MH Return View to zero impact while preserving the document trail and invoice numbers. In GJ company: re-create the 12 invoices with correct series/dates, referencing the MH documents in narration if policy requires. Steps: (1) Take backups of both companies. (2) Post CNs in MH, verify GSTR-1 shows the 12 CNs against the 12 SIs; Exceptions cleared. (3) Enter SIs in GJ and validate GSTR-1 (Included shows all 12; HSN/tax correct). (4) Reconcile 3B previews in both: MH netted to nil for those supplies; GJ shows the taxable value/tax. (5) File from the corrected companies. Controls: lock other months, restrict roles during the fix, and archive a ‘before/after’ pack. If invoices hadn’t been shared, documented cancellation and re-entry could replace CNs, but here CN+reissue is the defensible path.",
+          "rubric": [
+            {
+              "criterion": "Selects CN-in-MH + reissue-in-GJ (not delete/edit) given invoices were shared",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear, ordered Tally steps including backups and Return View validation in both companies",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains impact on returns and numbering/audit trail (MH net to nil; GJ carries tax; references maintained)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Tax invoices and returns reports in TallyPrime",
+            "GST",
+            "Report generation and error review in TallyPrime",
+            "Backup and Recovery",
+            "Tally Prime"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Compile and submit a GST Reporting Pack for a closed month",
+          "brief": "Using TallyPrime, produce a complete, reproducible GST reporting pack for one monthly period of your choice in your training dataset. Clear exceptions, ensure classifications are correct (incl. RCM, zero-rated vs exempt), and include a brief reconciliation note to the books.",
+          "deliverable": "GST reporting pack (single ZIP containing exported GSTR-1 summary/detail, GSTR-3B summary/detail, HSN/SAC summary, Return View Exceptions, Included/Excluded voucher lists with reasons, RCM computations, and a reconciliation note)",
+          "acceptance_criteria": [
+            "ZIP contains: GSTR-1 (summary and drill-down export), GSTR-3B (summary and drill-down export), HSN/SAC summary, Return View Exceptions report, and lists of Included and Excluded vouchers (with reason columns).",
+            "A separate reconciliation note (PDF/TXT) ties 3B tax values to tax ledger balances and sales/purchase registers; any residual differences are explained.",
+            "RCM section shows mapping to 3.1(d) and corresponding ITC in 4(A)(3), or a note explains ineligibility.",
+            "HSN/SAC quantities/units use valid UQC names and match item masters; any unit mapping changes are listed.",
+            "Zero-rated vs exempt supplies are correctly classified and shown in the correct tables; sample invoice numbers are referenced.",
+            "All reports are clearly period-labelled and totals are internally consistent across reports.",
+            "Exceptions report is either empty or each exception is annotated in the note with the resolution taken.",
+            "File naming follows pattern: CompanyName_Period_ReportName.ext; the ZIP opens without errors."
+          ],
+          "rubric": [
+            {
+              "criterion": "Mandatory reports present and period-labelled (GSTR-1, 3B, HSN/SAC, Exceptions, Included/Excluded lists)",
+              "marks": 6
+            },
+            {
+              "criterion": "Reconciliation note ties returns to ledgers/registers with no unexplained gaps",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct GST classifications (RCM, zero-rated vs exempt) evident in reports or documented",
+              "marks": 4
+            },
+            {
+              "criterion": "Exceptions cleared or properly annotated with reasons/resolutions",
+              "marks": 2
+            },
+            {
+              "criterion": "Organisation and file integrity (naming, ZIP opens, readable exports)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Tax invoices and returns reports in TallyPrime",
+            "Report generation and error review in TallyPrime",
+            "GST",
+            "Tally Prime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Submit a Complete Accounts File ready for month close",
+          "brief": "Prepare your TallyPrime company for month close with working security controls, a clean GST return state, demonstrable TDS awareness, and a restorable backup. Prove that Data Entry users cannot alter the closed month while Returns Preparer can view returns.",
+          "deliverable": "Complete accounts file (Tally company backup + short README detailing roles/passwords for assessment and the month-close controls applied)",
+          "acceptance_criteria": [
+            "Backup file restores successfully into a clean TallyPrime instance with the stated company name and period.",
+            "Three users/roles exist: Admin (full), ReturnsPreparer (can view statutory/GST reports but cannot alter vouchers/masters/backup), DataEntry (can create current-month vouchers but cannot view statutory/GST reports or alter prior-period vouchers).",
+            "Closed month is locked: attempts by DataEntry to create/alter vouchers dated in the closed month are denied; screenshot or exported access denied log provided.",
+            "GST Return View for the closed month recomputes without Exceptions; Included/Excluded totals reconcile to registers.",
+            "At least one TDS-configured example exists (e.g., Sec 194J on a sample voucher) visible in TDS reports; PAN-driven rate logic demonstrated if applicable.",
+            "HSN/SAC summary uses correct UQC mappings; no negative/mismatched quantities.",
+            "Backup date/time and README state the exact period closed and the order of operations (reconcile -> validate -> backup -> lock).",
+            "Security: Backup/Restore is denied to non-admin roles; master alteration is denied to DataEntry; user-wise back-dated limits set to 0 days for the closed period."
+          ],
+          "rubric": [
+            {
+              "criterion": "Backup is valid and restorable; README clear on period and controls",
+              "marks": 5
+            },
+            {
+              "criterion": "Roles/permissions enforce least privilege (as specified)",
+              "marks": 5
+            },
+            {
+              "criterion": "Closed-period lock works in practice (denied operations evidenced)",
+              "marks": 4
+            },
+            {
+              "criterion": "TDS awareness demonstrated via correct configuration and reporting example",
+              "marks": 3
+            },
+            {
+              "criterion": "GST readiness: Return View clean and HSN/UQC consistent",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Security and user controls in TallyPrime",
+            "Backup and Recovery",
+            "Tally Prime",
+            "Payroll/TDS awareness",
+            "Report generation and error review in TallyPrime",
+            "Tax invoices and returns reports in TallyPrime",
+            "Accounting Basics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

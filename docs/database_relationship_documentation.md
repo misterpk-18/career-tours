@@ -55,13 +55,15 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Referenced By:** `projects`, `resumes`, `questionnaire_responses`, `student_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`
 **Relationships:** Root entity of the entire schema — one student fans out into every other domain (1 → many everywhere).
 **Notable constraints:** `email` UNIQUE; CHECK on `internship_preference` ∈ {free, paid, both}; CHECK on `work_mode_preference` ∈ {office, remote, hybrid}.
+**`email_verified`** (bool, default false; migration 018): a new account must confirm its email before password login. Accounts that predated the column were grandfathered to `true`. Also referenced by `auth_email_challenges` and `course_section_sittings` (both ON DELETE CASCADE).
 
 ## projects
 **Purpose:** A discrete career-exploration "session" owned by a student (e.g., one resume-driven matching run). Has a `status` lifecycle (default `active`).
 **Primary Key:** `project_id` (uuid)
 **Foreign Keys:** `student_id` → `students.student_id` (ON DELETE CASCADE)
-**Referenced By:** `resumes`, `project_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`
+**Referenced By:** `resumes`, `project_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`, `project_section_sittings`
 **Relationships:** One student → many projects (1:N). One project → many resumes/skills/matches/gaps/recommendations/summaries (1:N each).
+**`deleted_at`** (timestamp, nullable; migration 018): **soft delete.** NULL = active; a timestamp = hidden. `get_by_id`/`get_by_student_id` filter `deleted_at IS NULL`, so a deleted project 404s everywhere while its rows (and cascaded sittings/scores/recommendations) survive. A partial unique index `(student_id, project_name) WHERE deleted_at IS NULL` enforces **one active project name per student** (exact match; a deleted name is reusable).
 
 ## resumes
 **Purpose:** Stores an uploaded resume file (URL, raw extracted text, parse timestamp) for a student, optionally tied to a specific project.
@@ -621,3 +623,170 @@ flowchart TD
 ```
 
 **Pipeline summary:** `students → projects → resumes → project_skills → (skills-engine join) → occupation_skills → student_career_matches → career_skill_gaps → (skills-engine join) → course_skills → course_recommendations → llm_summaries`, with `student_skills` and the `questionnaires` subsystem feeding parallel, currently FK-unlinked, signal into the matching process.
+
+
+---
+
+# Assessment tables
+
+Three tables added after the course corpus: the questions, the sittings that run
+them, and the answers inside those sittings. Migrations `013`–`015`.
+
+## course_section_questions
+
+2,560 rows — 16 per section across all 160 sections. One table with a
+`question_type` discriminator rather than three, because a section's paper is all
+sixteen questions in order, not three fetches a caller has to interleave.
+
+| Column | Notes |
+|---|---|
+| `question_id` | uuid PK |
+| `section_code` | FK → `course_sections.section_code` ON DELETE CASCADE |
+| `question_type` | `mcq` \| `scenario` \| `practical` |
+| `question_number` | 1-based within its type |
+| `marks` | mcq 3, scenario 7 or 8, practical 20 — 100 per section |
+| `stem`, `options`, `correct_option`, `explanation`, `distractor_rationale` | mcq only |
+| `scenario`, `task`, `expected_answer` | scenario only |
+| `title`, `brief`, `deliverable`, `acceptance_criteria` | practical only |
+| `rubric` | jsonb, the two human-marked types |
+| `skills_covered` | **text[], and queried** — see below |
+| `modules_covered` | integer[] |
+
+Per-type `CHECK` constraints make the nullable columns honest: an `mcq` without
+four options, or a `practical` without a deliverable, is rejected by Postgres
+rather than discovered by a learner.
+
+`options` / `acceptance_criteria` / `rubric` are jsonb because they are ordered
+lists the application renders whole and never queries into. **`skills_covered` is
+`text[]` instead, because it IS queried** — "which questions exercise this skill"
+is the reason skill names are recorded per question. Names must match
+`skills.skill_name` exactly; a wrong name is not a foreign-key error, it is a row
+that loads cleanly and joins to nothing forever. The loader canonicalises case and
+reports anything unmatched (currently `Bash` and `desktop publishing`, which exist
+in the course profiles but not in `skills`).
+
+Natural key `(section_code, question_type, question_number)`, so re-running the
+loader updates the same 2,560 rows.
+
+## project_section_sittings
+
+One run at a section's questions. Scoped to `project_id`, not `student_id` — a
+project is the student's workspace and a student may hold several; storing both
+would let them disagree about who a sitting belongs to.
+
+| Column | Notes |
+|---|---|
+| `sitting_id` | uuid PK |
+| `project_id` | FK → `projects` ON DELETE CASCADE |
+| `section_code` | FK → `course_sections` ON DELETE CASCADE |
+| `mode` | `graded` \| `practice` |
+| `status` | `in_progress` \| `paused` \| `submitted` \| `abandoned` |
+| `time_limit_seconds`, `seconds_remaining`, `resumed_at` | the clock, below |
+| `marks_awarded`, `marks_available` | locked at submit; `marks_available` is 30 (MCQ total) |
+
+Four constraints carry the behaviour:
+
+- **`running_check`** — `(status = 'in_progress') = (resumed_at IS NOT NULL)`. The
+  clock runs iff the sitting is in progress, so a paused sitting cannot keep a
+  `resumed_at` and quietly bleed time while nobody is looking.
+- **`submitted_check`** — submitted means scored *and* stamped; anything else means
+  neither. This is what makes "the first submit decides the score" enforceable
+  rather than merely intended.
+- **`project_section_sittings_one_graded`** — a partial unique index on
+  `(project_id, section_code) WHERE mode = 'graded'`. One graded sitting per
+  section, ever. "Start new" therefore **deletes** the unsubmitted row rather than
+  marking it abandoned — an abandoned row would occupy the slot forever.
+- **`one_open_practice`** — at most one practice sitting `in_progress`/`paused`, so
+  "resume practice" is unambiguous. Submitted practice runs accumulate freely.
+
+**The clock is stored as remaining, not as a deadline**, because pause must stop it
+— which a deadline column cannot express. On pause the elapsed time since
+`resumed_at` is subtracted in SQL against `CURRENT_TIMESTAMP`; on read the same
+subtraction is computed in the query that fetches the row.
+
+**Question and option order are not stored.** Both are a deterministic SHA-256
+permutation of `sitting_id`, so any process recomputes the exact layout a student
+saw. A stored permutation would be a second source of truth able to disagree with
+the answers keyed against it.
+
+## project_question_attempts
+
+One row per answer inside a sitting. Natural key `(sitting_id, question_id)` — so
+revising an answer is an upsert, and a new sitting is new rows.
+
+| Column | Notes |
+|---|---|
+| `attempt_id` | uuid PK |
+| `sitting_id` | FK → `project_section_sittings` ON DELETE CASCADE |
+| `question_id` | FK → `course_section_questions` **ON DELETE RESTRICT** |
+| `selected_option` | the **corpus** letter — what `is_correct` was decided against |
+| `presented_option` | the letter the student actually clicked in the shuffle |
+| `is_correct`, `marks_awarded`, `max_marks` | |
+| `graded_by` | `pending` \| `auto` \| `assessor` |
+
+`ON DELETE RESTRICT` on the question, deliberately: reloading the corpus upserts
+and deletes nothing, so it never fires — but if someone ever prunes a question, a
+learner's marked answer must not disappear with it. Better a failed delete than a
+silently shortened transcript.
+
+Both letters are kept because deriving either from the other means recomputing a
+shuffle to read a result.
+
+## What is deliberately NOT a table
+
+- **Per-section progress** — a query over the attempts, taking only the latest
+  attempt per question. A stored column that can disagree with the rows it
+  summarises is a bug waiting for the first partial submission.
+- **XP, levels, streaks, badges, the leaderboard** — all derived from
+  `project_section_sittings` on request. Streaks come from a gaps-and-islands query
+  over `DATE(submitted_at)`. Nothing to backfill, and a score submitted a second
+  ago already counts.
+
+---
+
+# Course assessment tables — the project-independent track (migration 016)
+
+A second sitting track, keyed by **student** rather than project, so a section
+can be sat both inside a project and standalone from the catalogue with neither
+score touching the other. Same schema and constraints as the project track,
+`student_id` in place of `project_id`.
+
+## course_section_sittings
+Mirror of `project_section_sittings`, owned by `student_id` → `students` (CASCADE)
+and `section_code` → `course_sections` (CASCADE). Same clock model (stored
+`seconds_remaining`, not a deadline), same CHECK constraints, and the same
+"first graded submit locks the score" partial unique index — here on
+`(student_id, section_code) WHERE mode = 'graded'`, plus one open practice per
+`(student_id, section_code)`.
+
+## course_question_attempts
+Mirror of `project_question_attempts`, owned by `student_id`, FK `sitting_id` →
+`course_section_sittings` (CASCADE), question `ON DELETE RESTRICT`. Natural key
+`(sitting_id, question_id)`.
+
+Course-track **XP/level/streak/badges** are a separate pool, derived only from
+`course_section_sittings` (`CourseAchievementRepository`), so the two tracks'
+gamification never move each other.
+
+---
+
+# Auth email table (migration 018)
+
+## auth_email_challenges
+One table for every emailed secret: the **verify-email** link, the
+**reset-password** link, and the **login OTP** code.
+
+| Column | Notes |
+|---|---|
+| `challenge_id` | uuid PK |
+| `student_id` | FK → `students` ON DELETE CASCADE |
+| `purpose` | CHECK ∈ {`verify_email`, `reset_password`, `login_otp`} |
+| `secret_hash` | SHA-256 of the raw token/code — the raw value is emailed, never stored |
+| `expires_at` | verify 24h · reset 1h · OTP 10m |
+| `consumed_at` | single-use: set on redemption (or when an OTP's attempts run out) |
+| `attempts` | OTP only — caps guesses at the 6-digit code (5) |
+
+Issuing a new challenge of a purpose consumes any earlier unconsumed one of the
+same purpose, so only the latest link/code works — which is what makes "resend"
+safe. Link flows are looked up by `secret_hash` (the link carries no id); the OTP
+flow is looked up by `(student_id, purpose)`.

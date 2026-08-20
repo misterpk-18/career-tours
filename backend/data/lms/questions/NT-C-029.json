@@ -1,0 +1,1869 @@
+{
+  "course_code": "NT-C-029",
+  "course_name": "Linux Administration",
+  "sections": [
+    {
+      "section_code": "NT-C-029-S01",
+      "skills_assessed": [
+        "Linux",
+        "Shell Scripting",
+        "Bash",
+        "User Management",
+        "Linux Security",
+        "Filesystems"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You create a symlink to a file under /srv and try to read it as an unprivileged user.\n\n```text\n$ ls -ld /srv /srv/shared /srv/shared/report.txt\n drwx------  root root      4096  /srv\n drwxr-xr-x  root root      4096  /srv/shared\n -rw-r--r--  root root      1024  /srv/shared/report.txt\n\n$ ls -l ~/link\n lrwxrwxrwx 1 alice alice  26    link -> /srv/shared/report.txt\n\n$ whoami\n alice\n\n$ cat ~/link\n```\nWhat happens and why?",
+          "options": [
+            "The symlink is followed but nothing prints, because /srv/shared is not readable.",
+            "No such file or directory, because the symlink cannot resolve across /srv.",
+            "Permission denied, because alice lacks execute (traverse) permission on /srv.",
+            "The file prints, because the symlink is readable and the target file is world-readable."
+          ],
+          "correct_option": "C",
+          "explanation": "Following a symlink requires execute (x) on every directory component of the target path. /srv is 700, so alice cannot traverse it. cat receives EACCES before it ever checks the file's 0644 mode.",
+          "distractor_rationale": "A: Tempting because the file itself is 0644, but directory traversal is required and blocked by /srv's 0700.\nC: Resolution fails with EACCES, not ENOENT, since the path exists but is not accessible.\nD: Read permission on directories controls listing, not traversal; /srv/shared is 755 but the block is at /srv.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Filesystems",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You need to append a setting to a root-owned file safely.\n\n```text\n$ ls -l /etc/sysctl.conf\n-rw-r--r-- 1 root root  ... /etc/sysctl.conf\n```\nWhich command appends the exact line vm.swappiness=10 without truncating the file or failing due to redirection permissions?",
+          "options": [
+            "```bash\nsudo echo \"vm.swappiness=10\" >> /etc/sysctl.conf\n```",
+            "```bash\nsudo dd of=/etc/sysctl.conf <<< \"vm.swappiness=10\"\n```",
+            "```bash\necho \"vm.swappiness=10\" >> /etc/sysctl.conf\n```",
+            "```bash\necho \"vm.swappiness=10\" | sudo tee -a /etc/sysctl.conf > /dev/null\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Shell redirections (>>) are evaluated by your shell before sudo, so A and C fail. Piping to sudo tee -a writes as root and appends safely. Using dd as in D overwrites from the start of the file unless special flags are used, so it is unsafe.",
+          "distractor_rationale": "A: Common misconception: sudo applies to echo but not to the redirection, so permission is denied.\nC: Fails with EACCES because the shell opens the file for append without privilege.\nD: Looks privileged, but dd will clobber from offset 0 unless oflag=append,conv=notrunc are set.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Shell Scripting",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider this ACL on a file:\n\n```text\n# file: report.txt\n# owner: root\n# group: project\nuser::rw-\nuser:alice:rw-\ngroup::r--\nmask::r--\nother::---\n```\nAlice tries to append to report.txt. What happens and why?",
+          "options": [
+            "Write succeeds, because the group project has r-- and mask only applies to the owning group.",
+            "Write fails, because the ACL mask r-- limits alice's effective rights to read-only.",
+            "Write fails, because other is --- and blocks all non-owners.",
+            "Write succeeds, because a named user entry grants rw- to alice."
+          ],
+          "correct_option": "B",
+          "explanation": "Effective rights for named users and groups are intersected with the mask. alice's rw- is reduced by mask r-- to r--, so appending fails with EACCES.",
+          "distractor_rationale": "A: Ignores the mask rule. Named user rights are not final; they are capped by the mask.\nC: The mask applies to named users and groups, not just the owning group.\nD: other controls users who are neither owner nor matched by any named entry; alice has a named entry, so other is irrelevant.",
+          "skills_covered": [
+            "Linux",
+            "Linux Security",
+            "Filesystems",
+            "User Management"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A shell has umask 027. You then run:\n\n```bash\nmkdir -m 777 testdir\nstat -c %a testdir\n```\nWhat numeric mode does stat print?",
+          "options": [
+            "770",
+            "755",
+            "750",
+            "777"
+          ],
+          "correct_option": "C",
+          "explanation": "The actual mode is mode & ~umask. 0777 & ~0027 = 0777 & 0750 = 0750. So stat prints 750.",
+          "distractor_rationale": "A: Assumes -m ignores umask; it does not.\nC: 755 would be 777 masked by 022, not 027.\nD: 770 would require umask 007.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Filesystems"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given this file:\n\n```text\n$ cat data.txt\nerror\ninfo\nerror\nwarn\nerror\nINFO\n```\nYou run:\n\n```bash\nsort data.txt | uniq -c | sort -nr | head -1\n```\nWhat single line prints?",
+          "options": [
+            "```text\n3 error\n```",
+            "```text\n3 INFO\n```",
+            "```text\n2 error\n```",
+            "```text\n3 warn\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Default sort/uniq are case-sensitive, so 'error' appears three times. After counting and sorting numerically descending, the top line is '3 error'.",
+          "distractor_rationale": "B: Under-counts; ignores that 'error' appears three times.\nC: 'INFO' (uppercase) appears once and is distinct from 'info'.\nD: 'warn' appears once.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You must list files under /var/www that are writable by group OR others. Which find invocation matches any file with at least one of those write bits set?",
+          "options": [
+            "```bash\nfind /var/www -type f -perm -022\n```",
+            "```bash\nfind /var/www -type f -perm -g=w,o=w\n```",
+            "```bash\nfind /var/www -type f -perm 022\n```",
+            "```bash\nfind /var/www -type f -perm /022\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "With find -perm, '/MODE' matches files with any of the MODE bits set. /022 means group write or other write. '-MODE' requires all bits; '022' matches exact modes only. The symbolic form shown in D is invalid here.",
+          "distractor_rationale": "A: '-022' requires both group-write and other-write bits; too strict.\nC: Exact 022 modes are rare for files; most also have user bits.\nD: Symbolic split with comma is not accepted in -perm; even if it were, - requires all bits in a single class, not either-or across classes.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Filesystems"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A shared project directory is prepared as follows:\n\n```text\n$ ls -ld /srv/projects\n drwxrwsr-x 2 root dev 4096 /srv/projects\n\n$ getfacl -p /srv/projects\n# file: /srv/projects\n# owner: root\n# group: dev\nuser::rwx\ngroup::rwx\nother::r-x\ndefault:user::rwx\ndefault:group::rwx\ndefault:group:qa:rwx\ndefault:mask::rwx\ndefault:other::r-x\n```\nAlice's primary group is alice, and she is a member of dev and qa. She creates a new file in /srv/projects. What will be the file's group owner?",
+          "options": [
+            "dev",
+            "alice",
+            "qa",
+            "whichever group appears first in alice's supplementary list"
+          ],
+          "correct_option": "A",
+          "explanation": "The setgid bit on the directory (rwxrwsr-x) causes new files to inherit the directory's group, dev. Default ACLs do not change ownership; they set default permissions.",
+          "distractor_rationale": "A: Primary group is overridden by directory setgid.\nC: Default ACL for qa grants permissions but does not confer group ownership.\nD: Supplementary group order is irrelevant when setgid is set on the parent directory.",
+          "skills_covered": [
+            "Linux",
+            "Filesystems",
+            "Linux Security",
+            "User Management"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "On a typical Linux system:\n\n```text\n$ ls -ld /tmp\n drwxrwxrwt 10 root root 4096 /tmp\n\n$ sudo -u alice touch /tmp/alice.tmp\n$ sudo -u bob   rm /tmp/alice.tmp\nrm: cannot remove '/tmp/alice.tmp': Operation not permitted\n```\nWhy can't bob remove alice.tmp?",
+          "options": [
+            "Because alice's umask 077 prevents other users from removing her files.",
+            "Because the sticky bit on /tmp restricts deletion to the file owner or root.",
+            "Because /tmp is mounted noexec, which blocks unlink operations by other users.",
+            "Because alice.tmp is 0644 and bob lacks write permission on it."
+          ],
+          "correct_option": "B",
+          "explanation": "The sticky bit (t) on a world-writable directory prevents users from removing or renaming files they do not own. /tmp is 1777 by convention.",
+          "distractor_rationale": "B: Umask affects new file modes, not directory deletion rules.\nC: Deletion is controlled by the directory's write/execute permissions and sticky bit, not the file's mode.\nD: noexec only affects execution, not unlink.",
+          "skills_covered": [
+            "Linux",
+            "Linux Security",
+            "Filesystems"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your tree contains files with spaces in their names:\n\n```text\n$ find . -maxdepth 1 -type f -name \"*.txt\" -printf '%f\\n'\nQuarter report.txt\ndata.txt\n```\nWhich command reliably lists only the .txt files that contain the string TOTAL, regardless of spaces?",
+          "options": [
+            "```bash\ngrep -rl --include=\"*.txt\" TOTAL .\n```",
+            "```bash\nfind . -name \"*.txt\" -print0 | xargs grep -l0 TOTAL\n```",
+            "```bash\nfind . -name \"*.txt\" | xargs grep -l TOTAL\n```",
+            "```bash\nfor f in $(find . -name \"*.txt\"); do grep -l TOTAL $f; done\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "grep -r with --include matches file globs and handles filenames with spaces safely. A and C split on whitespace. D mismatches -print0 with grep -l0 (which is invalid; -0 is an xargs option, not grep).",
+          "distractor_rationale": "A: xargs without -0 splits on whitespace; breaks on 'Quarter report.txt'.\nC: Command substitution splits on whitespace and glob characters; also unsafe.\nD: -print0 must be paired with xargs -0, and grep has no -0/-l0 switch.",
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You added alice to group dev:\n\n```bash\nsudo usermod -aG dev alice\n```\nWithout logging out or starting a new login shell, which one-liner lets alice immediately create files with group dev in a shared setgid directory and gain group write there?",
+          "options": [
+            "```bash\nsu - alice\n```",
+            "```bash\nnewgrp dev\n```",
+            "```bash\ngroups dev\n```",
+            "```bash\nid -nG\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "newgrp dev starts a subshell with the effective (primary) group set to dev, immediately applying group access and ownership semantics in setgid directories. The others do not change the current shell's effective groups (and su - starts a login shell).",
+          "distractor_rationale": "B: Only displays groups; does not change them.\nC: Starts a new login shell and typically requires a password; the constraint forbids a new login shell.\nD: Displays members of the group; no effect on alice's session.",
+          "skills_covered": [
+            "User Management",
+            "Linux Security",
+            "Linux"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your team needs /srv/eng to be a collaboration area.\n- Engineers (group eng) must have full access and all new content must stay in group eng.\n- Interns (group interns) must have read/execute across /srv/eng, but write access only in /srv/eng/drafts.\n- No world access.\n\nCurrent state:\n```bash\nsudo mkdir -p /srv/eng/drafts\nsudo chown -R root:root /srv/eng\nsudo chmod -R 755 /srv/eng\n```",
+          "task": "Propose the exact commands (ownership, modes, setgid, and ACLs) to meet the requirements, and justify why each step is needed. Include how you would verify the result without guessing.",
+          "expected_answer": "A correct answer sets group ownership, enforces setgid on /srv/eng, denies world, grants interns RO everywhere but RWX within drafts via default and access ACLs, and verifies via getfacl/ls and a write test.\n\nExample solution:\n```bash\n# Groups assumed to exist: eng, interns\nsudo chgrp -R eng /srv/eng\nsudo chmod 2770 /srv/eng              # rwx for owner/group, setgid, no world\n\n# Baseline ACLs on /srv/eng: eng full, interns read/exec, no others\nsudo setfacl -b /srv/eng               # clear any stray ACLs (optional)\nsudo setfacl -m g:eng:rwx,g:interns:r-x,o:--- /srv/eng\nsudo setfacl -m m::rwx /srv/eng        # ensure mask doesn't cap group perms\n\n# Default ACLs so new items inherit desired perms in /srv/eng\nsudo setfacl -d -m u::rwx,g:eng:rwx,g:interns:r-x,o:--- /srv/eng\nsudo setfacl -d -m m::rwx /srv/eng\n\n# drafts: interns may write here too; enforce via access and default ACLs\nsudo chmod 2770 /srv/eng/drafts        # keep group eng and block world\nsudo setfacl -m g:interns:rwx /srv/eng/drafts\nsudo setfacl -d -m g:interns:rwx /srv/eng/drafts\n\n# Verification\nls -ld /srv/eng /srv/eng/drafts\ngetfacl -p /srv/eng /srv/eng/drafts\n# Test writes as a representative user (e.g., via sudo -u)\nsudo -u alice touch /srv/eng/t1        # alice in eng -> should succeed\nsudo -u intern1 touch /srv/eng/t2      # intern1 in interns -> should fail\nsudo -u intern1 touch /srv/eng/drafts/t3  # should succeed\n```\nJustification: setgid ensures all new items inherit group eng. Access ACLs grant interns r-x globally; additional ACL on drafts elevates interns to rwx in that subtree. Default ACLs make inheritance persistent for new files/dirs. The mask ACL is set to avoid accidental capping of group entries. getfacl output and actual write tests prove compliance.",
+          "rubric": [
+            {
+              "criterion": "Sets /srv/eng ownership to group eng and enables setgid (chmod 2770 or equivalent) with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Configures base ACLs on /srv/eng to grant eng rwx, interns r-x, others ---; explains mask interaction",
+              "marks": 2
+            },
+            {
+              "criterion": "Configures /srv/eng default ACLs so new files/dirs inherit the intended perms; justifies persistence",
+              "marks": 2
+            },
+            {
+              "criterion": "Adjusts /srv/eng/drafts with access and default ACLs to grant interns rwx there only; blocks world",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes concrete verification (getfacl/ls and positive/negative write tests)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux",
+            "Filesystems",
+            "Linux Security",
+            "User Management",
+            "Bash"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A developer reports: \"I can't append to /srv/app/config.yaml even though I was granted write.\" You check:\n\n```text\n$ getfacl -p /srv/app/config.yaml\n# file: /srv/app/config.yaml\n# owner: root\n# group: app\nuser::rw-\nuser:dev1:rw-\ngroup::rw-\nmask::r--\nother::---\n```\n/dev is in group app and has a named user ACL with rw-.",
+          "task": "Diagnose precisely why writes fail and provide the minimal, correct fix that preserves intended access for other entries. Explain your reasoning and show the command(s).",
+          "expected_answer": "The ACL mask r-- caps the effective rights of all named users and groups to read-only. Although dev1 and group:: have rw-, the mask reduces them to r--, causing EACCES on append.\n\nMinimal fix (access ACL only):\n```bash\nsudo setfacl -m m::rw /srv/app/config.yaml\n```\nIf this issue is systemic for new files in /srv/app, also fix the directory's default mask:\n```bash\nsudo setfacl -d -m m::rw /srv/app\n```\nReasoning: The mask defines the maximum for named user/group entries. Adjusting it to rw restores intended writes without over-granting execute. Verification: re-run getfacl to confirm mask::rw and test an append as dev1.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the ACL mask as the cause and explains effective permission capping",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes the minimal access ACL fix (setfacl -m m::rw <file>) with correct syntax",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses persistence via default ACL on the parent directory when appropriate",
+              "marks": 1
+            },
+            {
+              "criterion": "Outlines verification (getfacl recheck and successful append test)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux",
+            "Linux Security",
+            "Filesystems"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You need a robust one-liner to extract the top 5 most frequent error codes like ERR1234 from mixed plain and rotated gzip logs under /var/log/myapp, excluding lines that contain DEBUG. Filenames may contain spaces. Some logs require root to read.",
+          "task": "Write the exact command(s) to produce a descending frequency table of only the error codes (no surrounding text). Justify each option/flag you use for correctness, safety, and performance.",
+          "expected_answer": "One correct approach:\n```bash\nsudo sh -c '\n  zgrep -h -Eo \"ERR[0-9]{4}\" /var/log/myapp/*.log /var/log/myapp/*.log*.gz \\\n  | sort \\\n  | uniq -c \\\n  | sort -nr \\\n  | head -5\n'\n```\nor using find to be more flexible and space-safe:\n```bash\nsudo bash -c '\n  find /var/log/myapp \\( -name \"*.log\" -o -name \"*.log*.gz\" \\) -type f -print0 \\\n  | xargs -0 zgrep -h -Eo --line-buffered \"ERR[0-9]{4}\" \\\n  | sort | uniq -c | sort -nr | head -5\n'\n```\nJustification:\n- sudo reads root-only logs.\n- zgrep handles both plain and .gz. -h suppresses filenames to leave pure codes; -Eo extracts only the code token.\n- find -print0 + xargs -0 is robust to spaces/newlines in filenames.\n- sort | uniq -c counts; second sort -nr ranks by frequency; head limits to top 5.\n- Excluding DEBUG is implicit because we only extract ERR#### tokens; alternately, add --exclude=DEBUG prefilter but not necessary when matching only the code token.",
+          "rubric": [
+            {
+              "criterion": "Produces a correct, executable pipeline that handles both .log and .gz and extracts only codes",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains space-safe handling (either glob choice or find -print0/xargs -0)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains need for sudo/root context and -h/-Eo choices in zgrep",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains sorting, counting, and limiting to top 5 with appropriate flags",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must let members of group deploy restart a single service myapp.service via systemctl without a password, while preventing them from stopping/starting other services or running arbitrary systemctl subcommands. The rest of sudo access should remain unchanged.",
+          "task": "Propose an exact sudoers configuration that meets the requirement, placed in the correct file, and explain why it is safe. Include how you would validate it without risking a broken sudo setup.",
+          "expected_answer": "Use a sudoers drop-in validated by visudo, scoping to the exact command and argument vector.\n\nFile and content:\n```bash\nsudo visudo -f /etc/sudoers.d/deploy\n```\n```ini\n# Allow deploy group to restart only myapp.service without password\n%deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart myapp.service\n```\nRationale: Fully qualified path to systemctl plus the fixed subcommand and service name yields a precise command specification; sudoers matches the argv vector, so users cannot inject extra commands or different units. Nothing else is granted (no stop/disable). Validation:\n```bash\nsudo visudo -c                       # syntax check all sudoers\nsudo -l -U someuser_in_deploy        # confirm listed command\nsudo -g deploy -- /usr/bin/systemctl restart myapp.service  # test\nsudo -g deploy -- /usr/bin/systemctl stop myapp.service     # should be denied\n```\nIf PATH varies, confirm the path to systemctl with which -a systemctl and match it exactly in sudoers.",
+          "rubric": [
+            {
+              "criterion": "Provides a correct sudoers entry with exact path, subcommand, and unit; includes NOPASSWD and proper group syntax",
+              "marks": 3
+            },
+            {
+              "criterion": "Places config in /etc/sudoers.d/deploy and uses visudo for safe editing/validation",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the rule is constrained/safe (argv matching, no arbitrary systemctl)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes concrete verification steps (sudo -c, sudo -l, positive and negative tests)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "User Management",
+            "Linux"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Command lab",
+          "brief": "Build a small toolkit that demonstrates competent use of shell, paths, and text tools. Focus on safety with spaces/newlines, large inputs, and privilege boundaries.",
+          "deliverable": "Command lab (a directory named command-lab/ containing scripts and captured outputs)",
+          "acceptance_criteria": [
+            "command-lab/log_summary.sh exists, is executable, and when pointed at a directory of mixed .log and .gz files prints a descending frequency table of tokens matching ^ERR[0-9]{4}$ (one per line: count space code).",
+            "log_summary.sh uses a space-safe file enumeration (grep --include or find -print0/xargs -0) and zgrep (or equivalent) to read .gz without pre-extraction.",
+            "command-lab/safe_append.sh exists, is executable, and idempotently ensures a given KEY=VALUE line is present in a target file, appending only if absent. Must not use sudo with shell redirection (>>) and must use a safe method (e.g., tee -a via sudo or editing a temp file and moving into place).",
+            "safe_append.sh supports a dry-run mode (-n/--dry-run) that prints the change instead of applying it. README shows a sample dry-run and an applied run against a non-system temp file.",
+            "command-lab/space_rename.sh exists, is executable, and safely renames files under a target tree by replacing spaces with underscores without breaking on special characters. Must use find -print0 with while read -d ''/xargs -0 or equivalent.",
+            "A README.md in command-lab/ documents exact invocation examples for each script and includes pasted outputs from a sample run (or separate files under command-lab/output/)."
+          ],
+          "rubric": [
+            {
+              "criterion": "log_summary.sh correctness: extracts only ERR#### tokens across .log and .gz, aggregates and sorts descending",
+              "marks": 6
+            },
+            {
+              "criterion": "Space/newline safety in log_summary.sh (e.g., --include or -print0/-0) and performance considerations explained in README",
+              "marks": 3
+            },
+            {
+              "criterion": "safe_append.sh performs idempotent append (detects presence, appends only if missing) and avoids sudo with >> redirection",
+              "marks": 5
+            },
+            {
+              "criterion": "safe_append.sh implements and documents a dry-run mode and safe privilege strategy (tee or temp+mv)",
+              "marks": 3
+            },
+            {
+              "criterion": "space_rename.sh safely handles spaces/newlines (null-delimited flow) and avoids clobbers; README examples present",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Linux",
+            "Bash",
+            "Shell Scripting",
+            "Filesystems",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Access lab",
+          "brief": "Create a controlled collaboration area with users, groups, ownership, ACLs, and a minimal sudo permission, and prove it works.",
+          "deliverable": "Access lab (a directory named access-lab/ containing commands used and evidence outputs)",
+          "acceptance_criteria": [
+            "Groups projectA and qa exist; users alice and bob exist and are assigned (alice in projectA; bob in qa). Evidence: commands used plus output of getent group and id for both users.",
+            "/srv/projectA exists with owner root, group projectA, mode 2770. Evidence: ls -ld /srv/projectA.",
+            "Access ACLs on /srv/projectA grant projectA rwx, qa r-x, others ---; default ACLs ensure new items inherit the same. Evidence: getfacl -p /srv/projectA.",
+            "Subdirectory /srv/projectA/incoming allows qa write (access and default ACLs grant qa rwx) while the parent keeps qa read-only. Evidence: getfacl -p for both paths and a write test that fails in parent and succeeds in incoming.",
+            "A sudoers drop-in at /etc/sudoers.d/projectA allows members of projectA to run /usr/bin/tail -n 50 /var/log/projectA.log without a password and nothing broader. Evidence: the exact file content plus output of sudo visudo -c and sudo -l -U alice.",
+            "A single evidence file access-lab/evidence.txt (or README.md) includes: the exact commands run, their outputs (copied), and brief notes explaining each verification step."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct group and user setup with verifiable evidence (getent/id)",
+              "marks": 3
+            },
+            {
+              "criterion": "/srv/projectA ownership, permissions (2770), and setgid correctly applied and evidenced",
+              "marks": 4
+            },
+            {
+              "criterion": "Access and default ACLs on /srv/projectA enforce projectA rwx, qa r-x, others ---; mask handled correctly",
+              "marks": 5
+            },
+            {
+              "criterion": "incoming subdirectory grants qa write via access and default ACLs; negative and positive write tests included",
+              "marks": 4
+            },
+            {
+              "criterion": "Sudoers drop-in is precise (/usr/bin/tail -n 50 /var/log/projectA.log), validated with visudo and sudo -l outputs",
+              "marks": 3
+            },
+            {
+              "criterion": "Clarity and completeness of evidence file (commands plus outputs, organized and reproducible)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "User Management",
+            "Filesystems",
+            "Linux",
+            "Bash"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-029-S02",
+      "skills_assessed": [
+        "Linux",
+        "Bash",
+        "systemd",
+        "Filesystems",
+        "LVM"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A custom service fails on boot because it starts before `/data` is mounted.\n\nUnit file:\n```ini\n# /etc/systemd/system/app.service\n[Unit]\nDescription=App\nAfter=network.target\n\n[Service]\nExecStart=/usr/local/bin/app -d /data\nRestart=on-abnormal\n\n[Install]\nWantedBy=multi-user.target\n```\n\n`/etc/fstab`:\n```text\nUUID=1111-2222 /data xfs defaults 0 2\n```\nWhich change best ensures the service only starts after `/data` is mounted and will be retried on failure?",
+          "options": [
+            "```ini\n# add to /etc/systemd/system/app.service\n[Unit]\nPartOf=local-fs.target\n\n[Service]\nRestart=on-failure\n```",
+            "```ini\n# add to /etc/systemd/system/app.service\n[Unit]\nWants=local-fs.target\n\n[Service]\nRestart=always\n```",
+            "```ini\n# add to /etc/systemd/system/app.service\n[Unit]\nAfter=network-online.target local-fs.target\nRequiresMountsFor=/data\n\n[Service]\nRestart=on-failure\n```",
+            "```ini\n# add to /etc/systemd/system/app.service\n[Unit]\nAfter=remote-fs.target\n\n[Service]\nExecStartPre=/bin/mount -a\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`RequiresMountsFor=/data` creates an implicit dependency on the mount unit for `/data` and pulls in the correct ordering; pairing it with `After=local-fs.target` (and `network-online.target`) ensures the service starts only when local filesystems are mounted. Switching `Restart` to `on-failure` provides retries for real failures without tight loops.",
+          "distractor_rationale": "B: `Wants` is weaker than `Requires` and does not guarantee the mount is up; `Restart=always` may restart after clean exits, not desired here. C: `remote-fs.target` is irrelevant for a local XFS mount; `ExecStartPre=/bin/mount -a` is brittle and fights systemd's mount management. D: `PartOf=local-fs.target` ties stop/start lifecycles but doesn't order or require the `/data` mount.",
+          "skills_covered": [
+            "systemd",
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You launched a long-running job, logged out, and later found it wasn't running anymore.\n\nTranscript:\n```bash\n$ sleep 600 &\n[1] 4242\n$ disown\n$ exit\n```\nAfter relogin:\n```bash\n$ pgrep -a sleep\n# no output\n```\nWhat would have kept the job alive across logout, without leaving a shell job that gets SIGHUP?",
+          "options": [
+            "```bash\nnohup sleep 600 &\n```",
+            "```bash\ndisown -a\n```",
+            "```bash\nbg %1 && exit\n```",
+            "```bash\nkill -HUP %1\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`nohup` makes the process ignore SIGHUP so logout won't terminate it. A plain `disown` removes the job from the shell's job table but, without `-h`, does not change its SIGHUP handling.",
+          "distractor_rationale": "B: `bg` only backgrounds the job; it still receives SIGHUP on logout. C: `disown -a` removes all jobs from the table but, again, doesn't change signal disposition unless `-h` is used. D: Sending HUP explicitly would terminate it immediately, the opposite of the goal.",
+          "skills_covered": [
+            "Bash",
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You extended a logical volume but the filesystem size didn't change.\n\nCommands and outputs:\n```bash\n# lvextend -L +20G /dev/vgdata/lvdata\n  Size of logical volume vgdata/lvdata changed from 80.00 GiB to 100.00 GiB.\n# df -hT /data\nFilesystem     Type  Size Used Avail Use% Mounted on\n/dev/mapper/vgdata-lvdata xfs  80G   70G   10G  88% /data\n```\nWhat command correctly grows the mounted XFS filesystem online?",
+          "options": [
+            "```bash\nlvextend -r -L +0 /dev/vgdata/lvdata\n```",
+            "```bash\nresize2fs /dev/vgdata/lvdata\n```",
+            "```bash\nmount -o remount,grow /data\n```",
+            "```bash\nxfs_growfs /data\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "For XFS, grow the filesystem with `xfs_growfs` pointed at the mount point while mounted. `resize2fs` is for ext* filesystems. Remount doesn't grow XFS. `lvextend -r` would have worked if used during the LV extension, but running it later with `+0` does nothing.",
+          "distractor_rationale": "B: Wrong tool and will error on XFS. C: `remount` cannot resize XFS. D: `-r` integrates filesystem resize at the time of LV change; here the LV is already extended, and `+0` is a no-op.",
+          "skills_covered": [
+            "Filesystems",
+            "LVM",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A host drops to emergency shell at boot. Excerpt from `/etc/fstab`:\n```text\nUUID=aaaa-bbbb /data xfs defaults 0 2\n```\n`journalctl -b -p err` shows fsck errors for `/data`. What single-line correction avoids fsck on this XFS filesystem during boot and prevents the emergency target?",
+          "options": [
+            "```text\nUUID=aaaa-bbbb /data xfs defaults 0 0\n```",
+            "```text\nUUID=aaaa-bbbb /data xfs defaults,ro 0 2\n```",
+            "```text\nUUID=aaaa-bbbb /data xfs x-systemd.automount 1 2\n```",
+            "```text\nUUID=aaaa-bbbb /data xfs defaults 1 1\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "XFS is not checked by fsck at boot; its fs_passno must be 0. Setting `0 0` avoids boot-time fsck and the resulting emergency drop.",
+          "distractor_rationale": "B: Pass 1 attempts fsck and fails for XFS. C: Read-only doesn't fix the fsck ordering problem; pass 2 still triggers fsck. D: Automount is unrelated to fsck order and keeps pass 2, causing the same issue.",
+          "skills_covered": [
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You created a new partition `sdb1` for LVM and tried to add it to a VG, but got an error.\n\nTranscript:\n```bash\n# parted -s /dev/sdb mklabel gpt\n# parted -s /dev/sdb mkpart primary 1MiB 100%\n# partprobe /dev/sdb\n# vgextend vgdata /dev/sdb1\n  Physical volume '/dev/sdb1' not found.\n```\nWhat is the correct next step?",
+          "options": [
+            "```bash\ndmsetup create /dev/sdb1\n```",
+            "```bash\npvcreate /dev/sdb1\n```",
+            "```bash\nmkfs.xfs /dev/sdb1\n```",
+            "```bash\nvgcreate vgdata /dev/sdb1\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A block device must be initialized as an LVM Physical Volume before it can join a Volume Group. `pvcreate /dev/sdb1` writes the PV label so `vgextend` can see it.",
+          "distractor_rationale": "B: `dmsetup` is not used to create LVM PVs. C: Making a filesystem would preclude using it as an LVM PV. D: `vgcreate` creates a new VG; here we want to add to the existing `vgdata`.",
+          "skills_covered": [
+            "LVM",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A flapping service hits restart limits. Logs show:\n```text\nsystemd[1]: app.service: Start request repeated too quickly.\nsystemd[1]: app.service: Failed with result 'start-limit-hit'.\n```\nYou need limited retries but a higher burst allowance during a brief recovery window. Where and how should you raise the limit?",
+          "options": [
+            "```ini\n# in /etc/systemd/system/app.service\n[Unit]\nStartLimitIntervalSec=60\nStartLimitBurst=10\n```",
+            "```bash\nsystemctl reset-failed app.service && systemctl start app\n```",
+            "```ini\n# kernel cmdline\nsystemd.start-limit=10/60\n```",
+            "```ini\n# in /etc/systemd/system/app.service\n[Service]\nStartLimitIntervalSec=60\nStartLimitBurst=10\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Since systemd 230, `StartLimitIntervalSec` and `StartLimitBurst` belong in the `[Unit]` section of the affected unit (or in a drop-in). Raising them there allows more retries within the interval. Resetting the failed state is temporary and doesn't change limits.",
+          "distractor_rationale": "B: Placing these directives under `[Service]` is ignored in modern systemd. C: There's no such kernel parameter for per-unit limits. D: `reset-failed` clears state once but doesn't adjust the policy.",
+          "skills_covered": [
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You installed a templated unit `myapp@.service`. You need instance `alpha` to start at boot and run now.\n\n`ls /usr/lib/systemd/system/` shows:\n```text\nmyapp@.service\n```\nWhat is the correct pair of commands?",
+          "options": [
+            "```bash\nsystemctl preset-all && systemctl start myapp@alpha\n```",
+            "```bash\nsystemctl start myapp@.service && systemctl enable myapp@.service\n```",
+            "```bash\nsystemctl enable --now myapp@alpha.service\n```",
+            "```bash\nsystemctl enable --now myapp.service\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Templated units require specifying the instance. `enable --now myapp@alpha.service` both enables the specific instance for boot and starts it immediately.",
+          "distractor_rationale": "B: `myapp.service` doesn't exist; it's a template. C: You cannot start or enable the template without an instance name. D: `preset-all` applies vendor presets, not specific enabling of a new instance.",
+          "skills_covered": [
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You edited a unit and changed `ExecStart`. You then ran:\n```bash\nsystemctl restart app.service\n```\nThe old `ExecStart` is still used. What step did you miss?",
+          "options": [
+            "```bash\nsystemctl reset-failed app.service\n```",
+            "```bash\nsystemctl daemon-reload\n```",
+            "```bash\nsystemctl reload app.service\n```",
+            "```bash\nsystemctl reexec\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "After changing unit files, `systemctl daemon-reload` tells PID 1 to reload unit definitions. Without it, restarts keep using the cached command.",
+          "distractor_rationale": "B: `reexec` restarts PID 1 binary and is not needed for ordinary unit changes. C: `reset-failed` clears failure state only. D: `reload` sends SIGHUP/USR1 to the service, not to systemd's unit metadata.",
+          "skills_covered": [
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Before removing `libfoo`, you want to see which installed packages depend on it on a RHEL-like system. Which command gives you that from the local RPM database?",
+          "options": [
+            "```bash\nldd /usr/lib64/libfoo.so\n```",
+            "```bash\nrpm -q --whatrequires libfoo\n```",
+            "```bash\ndnf repoquery --whatrequires libfoo --installed\n```",
+            "```bash\ndnf remove libfoo --assumeno\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`rpm -q --whatrequires` queries local RPM metadata for reverse dependencies of an installed package or capability. `dnf repoquery --whatrequires --installed` can also work, but the rpm query directly uses local DB and is the standard low-level tool.",
+          "distractor_rationale": "B: This can work but depends on dnf plugins and repo metadata; `rpm -q --whatrequires` is the canonical local DB query. C: `--assumeno` previews removals but doesn't show the explicit reverse dependency list cleanly. D: `ldd` inspects binaries' shared libs, not package dependencies.",
+          "skills_covered": [
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You add this line to `/etc/fstab` to delay mounting until first access:\n```text\nUUID=9999-8888 /mnt/data xfs noatime,x-systemd.automount 0 0\n```\nAfter reboot, what behavior should you expect when running `ls /mnt/data`?",
+          "options": [
+            "The mount will block boot until it completes, because `automount` is processed at boot.",
+            "The filesystem will be mounted read-only until explicitly remounted rw.",
+            "`ls` will fail with \"Transport endpoint not connected\" until you run `mount -a`.",
+            "`ls` will trigger systemd to mount `/mnt/data` on demand, and subsequent accesses see it mounted."
+          ],
+          "correct_option": "D",
+          "explanation": "`x-systemd.automount` creates an autofs-managed mount unit that is mounted on first access, such as listing the directory. It avoids blocking boot and mounts read-write with default options unless specified otherwise.",
+          "distractor_rationale": "B: `automount` makes it mount on access; no need for `mount -a`. C: The point of `automount` is to avoid blocking boot. D: `ro` wasn't specified; default remains rw unless set.",
+          "skills_covered": [
+            "Filesystems",
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "On a database server, `/var/lib/pgdata` is an XFS filesystem on an LVM LV. After a reboot during maintenance, PostgreSQL fails to start on boot but starts fine if you run `systemctl start postgresql` manually after the system settles. Logs show at boot:\n```text\npostgresql.service: Failed to start PostgreSQL database server\nExecStart=/usr/pgsql/bin/postgres -D /var/lib/pgdata (code=exited, status=1)\npostgres[1234]: FATAL:  could not create lock file \"postmaster.pid\": No such file or directory\nsystemd[1]: postgresql.service: Failed with result 'timeout'.\n```\n`/etc/fstab` has:\n```text\nUUID=dead-beef /var/lib/pgdata xfs defaults 0 2\n```\n`systemctl list-units --type=mount` at the failing boot shows `/var/lib/pgdata.mount` activating late. The DBA insists \"Postgres should just wait longer\".",
+          "task": "Propose a robust, systemd-native fix so the database service only starts after `/var/lib/pgdata` is mounted. Include the exact directives and where to place them, and explain why this is superior to raising timeouts. Mention how you would validate the change without rebooting.",
+          "expected_answer": "Create a drop-in for `postgresql.service` that binds it to the mount:\n\n1) `mkdir -p /etc/systemd/system/postgresql.service.d` and write `/etc/systemd/system/postgresql.service.d/storage.conf` with:\n```ini\n[Unit]\nAfter=local-fs.target\nRequiresMountsFor=/var/lib/pgdata\n```\nThis ensures the mount unit `/var/lib/pgdata.mount` is required and ordered before the service.\n\n2) Optionally keep `Restart=on-failure` in `[Service]` (already present in vendor unit or add via drop-in) to retry transient failures.\n\n3) `systemctl daemon-reload` and `systemctl start postgresql` to test ordering; verify with `systemd-analyze critical-chain postgresql.service` that `/var/lib/pgdata.mount` precedes it. Also check `systemctl show -p After,RequiresMountsFor postgresql.service`.\n\nThis is better than bumping `TimeoutStartSec` because it enforces the real dependency (the mount) rather than masking the race. No reboot is required to validate; a stop/start cycle and `systemctl status`/`journalctl -u` confirm correct ordering.",
+          "rubric": [
+            {
+              "criterion": "Identifies the true dependency on the mount unit rather than proposing a timeout increase",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies `RequiresMountsFor=/var/lib/pgdata` and appropriate ordering (`After=local-fs.target` or equivalent) in a drop-in for the right unit",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why dependency-based ordering is superior to extending timeouts (addresses race vs wait)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes correct validation steps (daemon-reload, start, and checking ordering via critical-chain or `show`)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A fileserver’s `/data` is an XFS filesystem on `/dev/vgdata/lvdata`. Users report low space. Current state:\n```bash\n# vgs\nVG     #PV #LV VSize   VFree\nvgdata   1   2 300.00g 50.00g\n\n# lvs -a -o+devices\nLV      VG     Attr       LSize   Data%  Devices\nroot    vgdata -wi-ao---- 100.00g        /dev/sdb1(0-255)\nlvdata  vgdata -wi-ao---- 150.00g 92.67  /dev/sdb1(256-639)\n\n# df -hT /data\nFilesystem                 Type Size Used Avail Use% Mounted on\n/dev/mapper/vgdata-lvdata  xfs  150G 139G   11G  93% /data\n```\nYou’ve been asked to add 30 GiB online with minimal downtime.",
+          "task": "State the exact, safe command sequence to grow both the LV and the mounted filesystem online, and explain how you would verify success and make the change auditable. Include any caveats if the filesystem were ext4 instead of XFS.",
+          "expected_answer": "For XFS, extend the LV and grow the FS online in one step using fsadm via LVM, or do it explicitly:\n\nOption A (single step):\n```bash\nlvextend -r -L +30G /dev/vgdata/lvdata\n```\n`-r` resizes the filesystem online using fsadm.\n\nOption B (two steps):\n```bash\nlvextend -L +30G /dev/vgdata/lvdata\nxfs_growfs /data\n```\nVerify:\n```bash\ndf -hT /data\nlvs -o +lv_size\njournalctl -u lvm2-monitor --since \"now-5m\"\n```\nAudit: capture commands and outputs in a change log (e.g., `script(1)` session) and note the new sizes. Caveat: if it were ext4, you’d use `resize2fs` (online if the kernel and FS support it) instead of `xfs_growfs`; `-r` would still work because fsadm calls `resize2fs` appropriately.",
+          "rubric": [
+            {
+              "criterion": "Provides a correct LV extension command with the right target and size (+30G)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides the correct filesystem growth method for XFS (either `-r` or `xfs_growfs /data`)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes verification steps that show both LV and FS grew (df/lvs and/or journal)",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions the ext4 caveat (use of `resize2fs` or `-r` portability) and auditability/recording changes",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "LVM",
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A web app fails after a routine update. The service log shows:\n```text\nmyapp.service: Failed to locate binary: /opt/myapp/bin/myapp\nExecStart=/opt/myapp/bin/myapp --port 8080\n```\nInvestigation finds the new vendor package now places the binary at `/usr/bin/myapp` and ships a drop-in that expects you to override the path. Your goal is to get the app up quickly and keep the change across updates.",
+          "task": "Describe the cleanest systemd- and package-friendly way to fix this without editing the vendor unit file in place. Include the exact file location, minimal content of the override, and the reload/restart steps. Mention one command to confirm the effective `ExecStart` afterward.",
+          "expected_answer": "Create a unit drop-in so changes survive package updates:\n\n1) `systemctl edit myapp.service` (or create `/etc/systemd/system/myapp.service.d/override.conf`).\n2) In the drop-in, reset and set `ExecStart`:\n```ini\n[Service]\nExecStart=\nExecStart=/usr/bin/myapp --port 8080\n```\nThe first blank `ExecStart=` clears the previous value. The second sets the new path.\n3) `systemctl daemon-reload && systemctl restart myapp.service`.\n4) Verify with `systemctl show -p ExecStart myapp.service` (or `systemctl status`) that the effective `ExecStart` is `/usr/bin/myapp --port 8080`. This approach leaves vendor files untouched and persists across updates.",
+          "rubric": [
+            {
+              "criterion": "Chooses a drop-in override rather than editing the vendor unit",
+              "marks": 3
+            },
+            {
+              "criterion": "Includes the necessary `ExecStart=` reset line followed by the correct new `ExecStart`",
+              "marks": 2
+            },
+            {
+              "criterion": "Lists correct reload/restart sequence to apply changes",
+              "marks": 1
+            },
+            {
+              "criterion": "Shows a valid method to verify the effective ExecStart",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A server boots to emergency mode with the message \"can’t mount /backup\". You had recently recreated the filesystem on the LVM LV for `/backup`. Current clues:\n```bash\n# blkid /dev/mapper/vg0-backup\n/dev/mapper/vg0-backup: UUID=\"8f1e-1234\" TYPE=\"xfs\"\n\n# grep backup /etc/fstab\nUUID=7e9a-0000 /backup xfs defaults 0 2\n```\nYou need the system to boot normally and mount `/backup` reliably.",
+          "task": "Explain exactly what to change in `/etc/fstab` and why, including corrections for both the identifier and the fsck/pass behavior. Provide the commands you will run to test the fix without rebooting, and how to confirm systemd sees the corrected unit dependency.",
+          "expected_answer": "Update `/etc/fstab` to use the current UUID and avoid fsck for XFS:\n```text\nUUID=8f1e-1234 /backup xfs defaults 0 0\n```\nThe UUID changed when the filesystem was recreated; using the old one caused the mount failure. XFS should have `fs_passno` 0 to prevent boot-time fsck. Test without reboot:\n```bash\nmount -a\nsystemctl status backup.mount\n```\nOptionally verify ordering/dependency:\n```bash\nsystemd-analyze verify /etc/fstab\nsystemctl show -p What,Where,After backup.mount\n```\nNow the system will not enter emergency mode due to `/backup`, and the mount will activate normally at boot.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the stale UUID as the cause and updates it to the current one",
+              "marks": 3
+            },
+            {
+              "criterion": "Sets fs_passno to 0 for XFS and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides non-reboot test steps (`mount -a` and checking the mount unit)",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions verifying systemd mount unit properties or ordering",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Service lab: Build a resilient, dependency-aware health-check service with a timer",
+          "brief": "Create a systemd service that periodically checks an HTTP endpoint and logs the result to a file. The service must be network-aware, restart on failure with sensible rate limits, and be invokable on-demand. Use only standard tools available on the host (e.g., curl). Create a matching systemd timer to run it every minute. Do not edit vendor units in place; use your own unit files under `/etc/systemd/system`.",
+          "deliverable": "Service lab",
+          "acceptance_criteria": [
+            "A file `/etc/systemd/system/webhealth.service` exists with: network awareness (`After=network-online.target` and `Wants=network-online.target`), rate limiting (`StartLimitIntervalSec`/`StartLimitBurst`), and failure handling (`Restart=on-failure`, `RestartSec` >= 5).",
+            "Service executes `/usr/bin/curl -fsS <URL>` (URL may be `https://example.org/` or a lab-provided URL) and appends a timestamped one-line result to `/var/log/webhealth.log`.",
+            "A file `/etc/systemd/system/webhealth.timer` exists, is enabled and active, and triggers `webhealth.service` every 1 minute using `OnUnitActiveSec=60s` or `OnCalendar=*:*:00/60`.",
+            "`systemctl list-timers webhealth.timer` shows the timer scheduled; `journalctl -u webhealth.service --since \"-5m\"` shows at least two successful activations.",
+            "`systemctl cat webhealth.service` shows only files under `/etc/systemd/system` (no vendor file edits).",
+            "A command transcript (text file) demonstrates `systemctl daemon-reload`, enabling, starting, checking status, and one manual `systemctl start webhealth.service` invocation working end-to-end."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, network-aware unit with appropriate After/Wants and failure policy (Restart, RestartSec, StartLimit*)",
+              "marks": 6
+            },
+            {
+              "criterion": "Functional logging behavior: curl command, exit handling, and log line with timestamp to /var/log/webhealth.log",
+              "marks": 5
+            },
+            {
+              "criterion": "Working timer that invokes the service every minute and is enabled",
+              "marks": 4
+            },
+            {
+              "criterion": "Operational verification: daemon-reload, enable/start, status, journal evidence of multiple runs",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses drop-ins or own unit files under /etc/systemd/system only (no vendor file edits)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Linux",
+            "Bash"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Storage exercise: Create, mount, persist, and grow an LVM-backed filesystem",
+          "brief": "Provision a new LVM-backed filesystem at `/data` with persistence and then grow it online. Use a spare disk (e.g., `/dev/sdb`) or a provided virtual disk. Initialize LVM properly, create a VG and LV, format with XFS or ext4, mount it at `/data`, add it to `/etc/fstab` with correct options (including correct fsck pass number), and verify it survives reboot. Finally, grow the LV and filesystem online by 10 GiB and verify the new size.",
+          "deliverable": "Storage exercise",
+          "acceptance_criteria": [
+            "Commands used and their outputs captured in a transcript (text) including: `lsblk -f`, `pvs`, `vgs`, `lvs`, `blkid`, `df -Th`.",
+            "LVM is correctly set up: `pvcreate` on the correct device/partition, `vgcreate` (or `vgextend`) to create a VG, and `lvcreate` to create an LV for `/data`.",
+            "Filesystem is created with `mkfs.xfs` or `mkfs.ext4` on the LV; `/etc/fstab` contains a correct entry using UUID, appropriate mount options, and correct fs_passno (0 for XFS, 1/2 as appropriate for ext*).",
+            "`mount -a` runs cleanly with no errors; `df -Th /data` shows it mounted. Evidence that the mount persists after a reboot (or `systemctl daemon-reload && systemd-analyze verify /etc/fstab` plus a reboot screenshot/log).",
+            "LV and filesystem are grown online by +10G using either `lvextend -r` or `lvextend` followed by the correct filesystem grow command for the chosen FS, and the new size is visible in `df -Th` and `lvs`.",
+            "No incorrect use of raw disks for `/etc/fstab` (must use LV path and UUID); no leftover stale UUIDs. Error-free final state."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct LVM provisioning sequence (pvcreate/vgcreate/lvcreate) on the right devices",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate filesystem creation and proper `/etc/fstab` entry (UUID, options, correct pass number)",
+              "marks": 6
+            },
+            {
+              "criterion": "Successful mount verification pre- and post-reboot (or equivalent verification acceptable)",
+              "marks": 3
+            },
+            {
+              "criterion": "Online growth of LV and filesystem by +10G with evidence of new sizes",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear transcript with commands and outputs; no critical errors or misconfigurations",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "LVM",
+            "Filesystems",
+            "Linux"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-029-S03",
+      "skills_assessed": [
+        "Linux",
+        "Firewall",
+        "DNS",
+        "TCP/IP",
+        "systemd",
+        "SSH",
+        "Logging"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run the following on a host with this resolver config.\n\n```ini\n# /etc/resolv.conf\nsearch corp.local\nnameserver 10.1.1.53\noptions ndots:1 timeout:2 attempts:1\n```\n\n```bash\ncurl -s http://api:8080\n```\n\nAssuming DNS has an A record only for `api.corp.local`, which exact DNS name will the resolver query first?",
+          "options": [
+            "api.local",
+            "api.",
+            "api",
+            "api.corp.local"
+          ],
+          "correct_option": "D",
+          "explanation": "With ndots:1, names containing fewer than 1 dot (\"api\" has 0) are looked up using the search list before trying the absolute name. The first query will therefore be for api.corp.local.",
+          "distractor_rationale": "B: Tempting if you assume the resolver always tries the bare name first, but with ndots:1 the search list is used first for 0-dot names. C: A trailing dot forces an absolute query; that would be tried only after the search list in this case. D: \"local\" is not in the search list; unless mDNS is used and the name ends with .local, this is not queried.",
+          "skills_covered": [
+            "DNS",
+            "TCP/IP",
+            "Linux"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider name resolution order on this host:\n\n```ini\n# /etc/nsswitch.conf (hosts line)\nhosts: files mdns4_minimal [NOTFOUND=return] dns\n```\n\n```text\n# /etc/hosts\n127.0.0.1   localhost\n127.0.1.1   backend\n```\n\nWhat IP will `ping -c1 backend` use?",
+          "options": [
+            "10.0.2.10 from DNS",
+            "Attempts mDNS for backend.local first",
+            "NXDOMAIN",
+            "127.0.1.1"
+          ],
+          "correct_option": "D",
+          "explanation": "The hosts database is consulted before DNS. The exact match for \"backend\" exists in /etc/hosts pointing to 127.0.1.1, so ping uses that address.",
+          "distractor_rationale": "B: Plausible if you think DNS overrides hosts, but nsswitch prefers files first. C: mDNS is consulted only for .local names here; \"backend\" does not match .local. D: An /etc/hosts match prevents NXDOMAIN.",
+          "skills_covered": [
+            "DNS",
+            "Linux",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your SSH client config is:\n\n```text\n# ~/.ssh/config\nHost webprod\n  HostName 203.0.113.10\n  User deploy\n  IdentityFile ~/.ssh/id_ed25519\n\nHost web*\n  User admin\n  IdentityFile ~/.ssh/admin_rsa\n```\n\nYou run:\n\n```bash\nssh webprod whoami\n```\n\nWhich user and key are used?",
+          "options": [
+            "Default user with default key because both stanzas conflict",
+            "User deploy with ~/.ssh/id_ed25519",
+            "User deploy with ~/.ssh/admin_rsa because later stanza overrides the key only",
+            "User admin with ~/.ssh/admin_rsa because wildcard overrides later"
+          ],
+          "correct_option": "B",
+          "explanation": "OpenSSH processes config top-to-bottom and applies all matching stanzas; for each parameter, the first value wins. The first matching stanza is the exact \"webprod\" block, which sets both User and IdentityFile. The later wildcard stanza cannot override them.",
+          "distractor_rationale": "B: Sounds right if you think \"more general later\" overrides, but ssh uses first value wins. C: Even with multiple matches, ssh does not discard them; it applies them in order. D: Selective override does not happen when a value was already set by an earlier match.",
+          "skills_covered": [
+            "SSH",
+            "Linux"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A server shows these firewall rules:\n\n```bash\niptables -S\n-P INPUT DROP\n-P FORWARD DROP\n-P OUTPUT ACCEPT\n-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT\n-A INPUT -i lo -j ACCEPT\n-A INPUT -p tcp --dport 22 -s 192.168.10.0/24 -j ACCEPT\n-A INPUT -p tcp --dport 80 -j ACCEPT\n```\n\nTwo tests are performed:\n\n1) From 198.51.100.5 on the Internet: `curl -s http://server/`\n2) From 192.168.10.20 on the office LAN: `ssh server`\n\nWhich outcome pair is correct?",
+          "options": [
+            "1) succeeds; 2) succeeds",
+            "1) succeeds; 2) blocked",
+            "1) blocked; 2) blocked",
+            "1) blocked; 2) succeeds"
+          ],
+          "correct_option": "A",
+          "explanation": "HTTP (tcp/80) is accepted from anywhere, and SSH (tcp/22) is accepted from 192.168.10.0/24. The ESTABLISHED rule allows the return traffic.",
+          "distractor_rationale": "B: Would be true if port 80 weren't allowed, but it is. C: The SSH source is on the allowed subnet. D: Default drop is mitigated by specific accepts that match both tests.",
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "Linux"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A custom service has this unit:\n\n```ini\n# /etc/systemd/system/app.service\n[Unit]\nDescription=App\nWants=network-online.target\nAfter=network-online.target\nStartLimitIntervalSec=30\nStartLimitBurst=2\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/app\nRestart=on-failure\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n```\n\nThe binary exits with code 1 immediately when started. You run `systemctl start app`, and it fails, restarts, then fails again within a few seconds. What is the unit's state right after the third immediate failure within 30 seconds?",
+          "options": [
+            "activating (auto-restart) and will retry in 5s regardless of StartLimit settings",
+            "failed with StartLimitHit until the interval elapses",
+            "active (running) because Restart=on-failure keeps trying",
+            "active (exited) because Type=simple and the process ended"
+          ],
+          "correct_option": "B",
+          "explanation": "StartLimitBurst=2 within 30s means after two restarts in the interval, further attempts are suppressed and the unit is left failed with StartLimitHit until the interval passes.",
+          "distractor_rationale": "A: Restart policy is still subject to StartLimit. C: Type=simple does not mark failed processes as active-exited. D: StartLimit prevents further restarts despite RestartSec.",
+          "skills_covered": [
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your journald is configured as below and the system has been rebooted once since the app last ran.\n\n```ini\n# /etc/systemd/journald.conf\nStorage=volatile\n```\n\nYou run:\n\n```bash\njournalctl -u myapp -b -1\n```\n\nWhat happens?",
+          "options": [
+            "No entries are shown; previous boot logs are not kept with volatile storage",
+            "Previous boot logs are shown because journald keeps one boot in RAM",
+            "The command flushes RAM logs to disk and then shows them",
+            "An error is thrown because -b -1 is invalid with volatile storage"
+          ],
+          "correct_option": "A",
+          "explanation": "With Storage=volatile, logs are kept in memory and discarded at reboot. Querying the previous boot with -b -1 yields no entries.",
+          "distractor_rationale": "B: Volatile storage does not retain past-boot logs. C: The command is valid; it just returns nothing. D: journald does not auto-flush to disk when configured for volatile storage.",
+          "skills_covered": [
+            "Logging",
+            "systemd"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your logrotate config for nginx is:\n\n```ini\n/var/log/nginx/*.log {\n    daily\n    rotate 7\n    compress\n    missingok\n    notifempty\n    create 0640 www-data adm\n    postrotate\n        systemctl reload nginx > /dev/null 2>&1 || true\n    endscript\n}\n```\n\nAfter rotation, where do new access log lines go and why?",
+          "options": [
+            "Into the new access.log because nginx reload reopens log files",
+            "Into the old, renamed file because descriptors stay open without copytruncate",
+            "They are lost until nginx restarts fully",
+            "They go to journald because reload switches logging backend"
+          ],
+          "correct_option": "A",
+          "explanation": "Sending reload causes nginx to reopen its log files, so it starts writing to the newly created access.log after rotation.",
+          "distractor_rationale": "B: True without a reload (or USR1), but the postrotate reload handles descriptor reopening. C: A reload is sufficient; a full restart isn't required. D: Reload does not change the logging backend.",
+          "skills_covered": [
+            "Logging",
+            "Linux"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A BIND zone file contains:\n\n```text\n$ORIGIN example.com.\nwww           IN CNAME web-frontend\nweb-frontend  IN A     203.0.113.20\napi           IN A     203.0.113.30\nwww           IN A     203.0.113.40\n```\n\nWhat happens when you reload the zone?",
+          "options": [
+            "The CNAME wins and the A is ignored",
+            "Both records are served; clients randomly get the A or the CNAME",
+            "The zone fails to load due to \"CNAME and other data\" at www",
+            "The A wins and the CNAME is ignored"
+          ],
+          "correct_option": "C",
+          "explanation": "A name with a CNAME cannot have any other records at the same owner name. BIND rejects the zone with a \"CNAME and other data\" error for www.",
+          "distractor_rationale": "B/C/D: Some resolvers are lenient in theory, but authoritative servers like BIND reject the zone; it won't serve mixed data.",
+          "skills_covered": [
+            "DNS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Connectivity fails to the Internet. You collect:\n\n```bash\nip -4 addr show dev eth0\n2: eth0    inet 10.10.1.10/24 brd 10.10.1.255 scope global eth0\n```\n\n```bash\nip route\ndefault via 10.10.0.1 dev eth0\n10.10.1.0/24 dev eth0 proto kernel scope link src 10.10.1.10\n```\n\n```bash\nip neigh show | grep 10.10.0.1 || echo \"no ARP entry\"\nno ARP entry\n```\n\nWhy do pings to 8.8.8.8 fail?",
+          "options": [
+            "MTU is mismatched causing fragmentation to drop packets",
+            "DNS is misconfigured so 8.8.8.8 cannot be resolved",
+            "The default gateway is not on the local subnet, so ARP for 10.10.0.1 fails",
+            "The firewall is blocking outbound traffic by default"
+          ],
+          "correct_option": "C",
+          "explanation": "The default gateway must be reachable at L2. With 10.10.1.10/24, a next-hop of 10.10.0.1 is outside the local subnet and cannot be ARPed, so packets never leave.",
+          "distractor_rationale": "B: OUTPUT policy is not shown and default route is already invalid. C: 8.8.8.8 is an IP literal; DNS isn't involved. D: MTU issues would not prevent ARP resolution for the gateway.",
+          "skills_covered": [
+            "TCP/IP",
+            "Linux"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A service binds to 0.0.0.0:8080 on boot but intermittently fails at startup with `EADDRNOTAVAIL`. Current unit:\n\n```ini\n[Unit]\nAfter=network.target\n\n[Service]\nExecStart=/usr/local/bin/myapp --port 8080\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target\n```\n\nWhich change most reliably fixes the race with networking?",
+          "options": [
+            "Add `ExecStartPre=/bin/sleep 5` to delay arbitrarily",
+            "Add `Wants=network-online.target` and `After=network-online.target`, and enable the appropriate wait-online service",
+            "Keep `After=network.target` but add `Restart=always`",
+            "Switch to `Type=notify` so systemd waits for readiness"
+          ],
+          "correct_option": "B",
+          "explanation": "`network-online.target` is reached after interfaces are configured and routes are set. Adding Wants+After and enabling the distribution's wait-online service avoids the race. Restart policy or arbitrary sleeps do not make the dependency explicit.",
+          "distractor_rationale": "B: Restarts mask symptoms but don't guarantee network readiness. C: Sleeps are brittle and environment-dependent. D: Type=notify changes readiness signalling to systemd but doesn't ensure the network is up.",
+          "skills_covered": [
+            "systemd",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Users report that after every reboot, the first minute of requests to https://shop.example.com return 502 Bad Gateway. After that, it stabilizes. Evidence collected:\n\n```bash\n# nginx upstream config\nproxy_pass http://127.0.0.1:5000;\n```\n\n```bash\n# ss -ltnp | egrep '(:80|:5000)'\nLISTEN 0 511 127.0.0.1:5000 users:(\"myapp\",pid=412,fd=5)\nLISTEN 0 511    0.0.0.0:80   users:(\"nginx\",pid=398,fd=6)\n```\n\n```bash\njournalctl -u myapp -b | tail -8\nMar 21 09:00:03 myapp[412]: ERROR db: getaddrinfo(db.internal): Name or service not known\nMar 21 09:00:03 systemd[1]: myapp.service: Main process exited, code=exited, status=1/FAILURE\nMar 21 09:00:03 systemd[1]: myapp.service: Scheduled restart job, restart counter is at 1.\nMar 21 09:00:08 myapp[515]: INFO server: starting on 127.0.0.1:5000\n```\n\n```ini\n# /etc/resolv.conf\nsearch corp.local\nnameserver 10.1.1.53\noptions timeout:1 attempts:1\n```\n\n```ini\n# /etc/systemd/system/myapp.service (current)\n[Unit]\nAfter=network.target\n\n[Service]\nExecStart=/usr/local/bin/myapp --bind 127.0.0.1:5000\nRestart=on-failure\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n```",
+          "task": "Identify the most likely root cause of the 502s immediately after boot and propose concrete changes (unit and/or service config) to make the startup robust. Justify why your changes fix the observed behavior and describe how you would verify in logs after the next reboot.",
+          "expected_answer": "Root cause: myapp starts before full network readiness and fails on its first attempt to resolve db.internal, exiting with status 1. Nginx then returns 502 because the upstream is down until systemd restarts myapp successfully a few seconds later. The timing window explains the initial failures that disappear once DNS resolves and myapp stays up.\n\nFixes:\n- Make network readiness an explicit dependency: in [Unit], add Wants=network-online.target and After=network-online.target, and enable the appropriate wait-online service (e.g., systemd-networkd-wait-online or NetworkManager-wait-online) so the unit does not start until interfaces and routes are up.\n- Harden startup so transient DNS issues do not crash the service: add Restart=on-failure (already present) with StartLimit tuned if needed, and include an ExecStartPre check like `ExecStartPre=/usr/bin/getent hosts db.internal` with a simple retry loop (or configure the app to retry DNS/DB connection internally). This avoids an exit on the first lookup failure.\n- Keep the localhost bind (127.0.0.1:5000) since nginx proxies locally; no firewall change is needed.\n\nVerification: Reboot, then:\n- `systemd-analyze critical-chain myapp.service` should show myapp after network-online.target.\n- `journalctl -u myapp -b` should show no early Name or service not known errors and a single clean start.\n- `curl -s -o /dev/null -w \"%{http_code}\\n\" http://127.0.0.1:5000/health` should return 200 immediately after boot, and nginx access/error logs should have no 502s.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the boot-time dependency/race and ties it to DNS resolution failure causing myapp to exit and nginx to return 502",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes precise unit dependency changes (Wants/After network-online.target) and enabling the wait-online service, not just vague \"delay startup\"",
+              "marks": 2
+            },
+            {
+              "criterion": "Adds a robust retry/check strategy (ExecStartPre/getent or app retry/backoff) and explains why it prevents transient DNS failures from crashing the service",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes concrete, checkable verification steps after reboot (journalctl evidence, critical-chain, immediate healthcheck)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "DNS",
+            "Logging",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Admins from the management subnet 10.0.0.0/24 cannot SSH to a server at 10.0.0.20. Firewall shows port 22 open, but connections time out. Evidence:\n\n```bash\n# ss -ltnp | grep :22\nLISTEN 0 128 192.168.1.10:22 users:(\"sshd\",pid=521,fd=3)\n```\n\n```ini\n# /etc/ssh/sshd_config (relevant lines)\nListenAddress 192.168.1.10\nPasswordAuthentication no\nPubkeyAuthentication yes\n```\n\n```bash\n# ip -4 addr show\n2: eth0    inet 192.168.1.10/24\n3: eth1    inet 10.0.0.20/24\n```\n\n```bash\n# firewall-cmd --list-ports\n22/tcp 80/tcp\n```",
+          "task": "Determine the real reason 10.0.0.0/24 clients cannot connect and propose the minimal, correct fix. Explain why the firewall is not the blocker here, and specify how you would validate the change without rebooting.",
+          "expected_answer": "Root cause: sshd is bound only to 192.168.1.10 via ListenAddress, so it does not listen on 10.0.0.20. Connections to 10.0.0.20:22 time out because no process is listening on that IP/port. The firewall is already allowing 22/tcp and is not the blocker.\n\nFix: Remove the restrictive ListenAddress or add an additional ListenAddress for 10.0.0.20 (or 0.0.0.0 to bind all interfaces), then reload sshd.\n\nExample change:\n- In sshd_config: either comment out ListenAddress or add:\n  `ListenAddress 10.0.0.20`\n- Then `sshd -t && systemctl reload sshd`\n\nValidation:\n- `ss -ltnp | grep \":22\\b\"` should show sshd listening on 0.0.0.0:22 or 10.0.0.20:22.\n- From a 10.0.0.0/24 host: `ssh -vv 10.0.0.20` should reach the banner.\n- `journalctl -u sshd -n 20` should show the reload and new bind with no errors.",
+          "rubric": [
+            {
+              "criterion": "Identifies service bind (ListenAddress) as the cause rather than firewall or routing",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes the minimal, correct sshd_config change and uses safe reload (`sshd -t` then reload)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains convincingly why the firewall is not responsible given evidence",
+              "marks": 1
+            },
+            {
+              "criterion": "Provides explicit, checkable validation steps showing listening on 10.0.0.20 and successful connection",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SSH",
+            "Linux",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A server's root filesystem hit 95% due to application logs. After `logrotate` ran overnight, `df -h` still shows high usage. Evidence:\n\n```bash\nlogrotate -d /etc/logrotate.d/myapp\n# shows rename to myapp.log.1.gz and creation of a new myapp.log\n```\n\n```bash\nlsof | grep myapp.log | grep deleted\nmyapp   734  www-data  12w   REG  253,0 12G /var/log/myapp.log (deleted)\n```\n\n```ini\n# /etc/logrotate.d/myapp\n/var/log/myapp.log {\n  daily\n  rotate 7\n  compress\n  missingok\n  notifempty\n  create 0640 www-data adm\n}\n```\n\n```ini\n# /etc/systemd/system/myapp.service (relevant)\n[Service]\nExecStart=/usr/local/bin/myapp --log /var/log/myapp.log\nRestart=on-failure\n```\n",
+          "task": "Explain why disk usage didn't drop after rotation, propose an immediate, low-risk recovery to reclaim space without stopping the app, and propose a permanent fix. Include exact commands/config changes and how you'd confirm success.",
+          "expected_answer": "Reason: logrotate renamed the file, but myapp kept the old file descriptor open and continued writing to the unlinked (deleted) file, which still consumes space until the descriptor is closed.\n\nImmediate recovery (no stop): signal the app to reopen logs or reload the service. If it lacks a SIGHUP handler, a `systemctl reload myapp` (if supported) or `systemctl restart myapp` is needed. Safer first: `kill -HUP 734` if the app honors HUP to reopen logs; otherwise `systemctl restart myapp` off-peak.\n\nPermanent fix options:\n- Preferred: add a `postrotate` to notify/reload the service so it reopens logs after rotation:\n  ```ini\n  /var/log/myapp.log {\n    daily\n    rotate 7\n    compress\n    missingok\n    notifempty\n    create 0640 www-data adm\n    postrotate\n      systemctl reload myapp >/dev/null 2>&1 || systemctl kill -s HUP myapp || true\n    endscript\n  }\n  ```\n- If the service cannot reopen logs on reload, use `copytruncate` as a last resort to truncate in place (risk of lost lines under high write rates):\n  ```ini\n  copytruncate\n  ```\n\nConfirmation:\n- `lsof | grep '(deleted)'` should no longer show myapp.log.\n- `du -sh /var/log/myapp*` should reflect rotated sizes and a small active log.\n- `df -h` shows recovered space.\n- `journalctl -u myapp -n 20` shows reload/restart around rotation time.",
+          "rubric": [
+            {
+              "criterion": "Correctly explains open-file-descriptor to deleted inode behavior causing space to remain used",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a safe, immediate recovery that does not require stopping the app when possible (HUP/reload), with exact commands",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a robust permanent fix via postrotate reload (or justified copytruncate fallback) with correct syntax",
+              "marks": 1
+            },
+            {
+              "criterion": "Gives concrete verification steps to prove space was reclaimed and logs continue correctly",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your app cannot resolve internal services; startup takes ~30s longer and then fails closed. Evidence shows an egress-restrictive host firewall:\n\n```bash\niptables -S OUTPUT\n-P OUTPUT DROP\n-A OUTPUT -o lo -j ACCEPT\n-A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT\n-A OUTPUT -p tcp --dport 80 -j ACCEPT\n-A OUTPUT -p tcp --dport 443 -j ACCEPT\n```\n\n```ini\n# /etc/resolv.conf\nnameserver 10.1.1.53\noptions timeout:1 attempts:2\n```\n\n```bash\n# while true; do date; dig +time=1 +tries=1 @10.1.1.53 db.internal A | grep -m1 status; sleep 1; done\n;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 1234\n;; connection timed out; no servers could be reached\n```\n",
+          "task": "Identify the blocker and propose precise firewall changes to restore DNS resolution with minimal privilege. Include both UDP and TCP considerations and how to validate quickly. Justify why established/related is not sufficient here.",
+          "expected_answer": "Blocker: OUTPUT policy is DROP and there is no rule permitting DNS egress to 10.1.1.53, so UDP/53 queries (and occasional TCP/53 for large/responses or DNSSEC) are dropped. ESTABLISHED,RELATED only allows return traffic for connections you already initiated; it does not create new DNS queries.\n\nFix (minimal privilege): allow DNS specifically to the resolver IP on both UDP and TCP:\n\n```bash\niptables -A OUTPUT -p udp -d 10.1.1.53 --dport 53 -j ACCEPT\niptables -A OUTPUT -p tcp -d 10.1.1.53 --dport 53 -j ACCEPT\n```\n\nOptionally place these rules before a final logging/drop chain if used. Keep ESTABLISHED,RELATED to allow replies back.\n\nValidation:\n- `dig @10.1.1.53 db.internal A +time=1 +tries=1` should return NOERROR with an answer.\n- `conntrack -L | grep 'dport=53'` should show DNS flows.\n- `journalctl -k -n 50` should no longer show firewall drops (if logged).",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies OUTPUT DROP lacking DNS egress as the cause and explains why ESTABLISHED,RELATED does not help",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes precise, least-privilege OUTPUT rules for both UDP and TCP to the resolver IP",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete, fast validation steps to prove resolution works",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Firewall",
+            "DNS",
+            "TCP/IP",
+            "Linux"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Network lab: Name resolution, SSH policy, and host firewall",
+          "brief": "Prepare a Linux VM as a controlled network lab. Implement and document: (1) resolver behavior with a search domain, (2) SSH access restricted to a specific subnet while key-based auth works for you, and (3) a host firewall that permits HTTP from anywhere, SSH only from the allowed subnet, and drops other inbound traffic. Capture commands and outputs demonstrating success and intentional failure cases.",
+          "deliverable": "A single tar/zip archive containing: (a) a lab-report.md with exact commands and their raw outputs; (b) snapshots of relevant configs (/etc/resolv.conf, /etc/nsswitch.conf, /etc/ssh/sshd_config, firewall export such as iptables-save or firewall-cmd --list-all); and (c) any helper scripts used.",
+          "acceptance_criteria": [
+            "lab-report.md shows `cat /etc/resolv.conf` including a non-empty `search` line and a `dig` run where a short name is resolved via the search domain (answer section includes FQDN with the search suffix)",
+            "lab-report.md shows `ssh` from an allowed-source test (simulated with `ssh -oBindAddress` or from a second VM) succeeds, and the same attempt from a disallowed source fails (timeout or tcp reset). Both attempts include `sshd` log excerpts (`journalctl -u sshd -n 50`) proving acceptance/denial",
+            "Firewall configuration file or export proves: default inbound deny (e.g., iptables `-P INPUT DROP` or firewalld zone with only services/ports listed), explicit accept for tcp/22 from the specified subnet, explicit accept for tcp/80 from anywhere, and ESTABLISHED,RELATED rule",
+            "lab-report.md includes `ip -4 addr`, `ip route`, and `ss -ltnp` outputs at the time of testing to evidence the environment",
+            "All changed config files are included and syntactically valid (`sshd -t` output included)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Resolver behavior demonstrated with search domain and correct dig evidence (short name resolves to FQDN)",
+              "marks": 4
+            },
+            {
+              "criterion": "SSH policy correctly implemented and evidenced: allowed-subnet success + denied outside-subnet, with server logs",
+              "marks": 6
+            },
+            {
+              "criterion": "Host firewall policy implemented as specified and shown via rules export, including ESTABLISHED,RELATED and explicit allows",
+              "marks": 6
+            },
+            {
+              "criterion": "Environment evidence complete and consistent (ip/route/listen) and configs included, validated (e.g., sshd -t)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "TCP/IP",
+            "DNS",
+            "SSH",
+            "Firewall",
+            "Linux"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Hosted service under systemd with logging and rotation",
+          "brief": "Deploy a minimal HTTP service under systemd that exposes a `/health` endpoint on port 8080, starts reliably after networking is up, logs requests to a file under /var/log/myapp/, and rotates those logs daily. Open port 8080 on the host firewall. Document tests that prove the service is running, reachable, and logs rotate correctly.",
+          "deliverable": "A tar/zip archive containing: (a) systemd unit file (myapp.service) and any drop-ins; (b) application code or command used (e.g., a tiny Flask app + gunicorn config), and the logrotate config (/etc/logrotate.d/myapp); (c) firewall export (iptables-save or firewall-cmd --list-all); (d) a runbook.md with command transcripts: enabling/starting the service, `ss -ltnp`, `systemctl status myapp`, `curl -s -i http://127.0.0.1:8080/health`, `journalctl -u myapp -n 50`, and a forced rotation (`logrotate -f`) showing rotated files and continued logging.",
+          "acceptance_criteria": [
+            "myapp.service includes Wants=network-online.target and After=network-online.target and is enabled (runbook shows `systemctl enable --now myapp` and status active)",
+            "The service listens on 0.0.0.0:8080 (runbook shows `ss -ltnp` with the myapp PID bound to :8080) and `curl` to `/health` returns HTTP/1.1 200 with an \"OK\" body or similar",
+            "A firewall export shows tcp/8080 allowed inbound and default deny or equivalent policy in place; tests demonstrate access from localhost and indicate intended exposure (e.g., from another host if available)",
+            "Logs are written to /var/log/myapp/myapp.log; the logrotate config rotates daily with `create`, `compress`, and a `postrotate` that reloads/reopens logs (or a justified use of `copytruncate`). After `logrotate -f`, a new myapp.log is created and new requests appear in it while rotated files exist",
+            "runbook.md includes `journalctl -u myapp` output from the last start and the output of `logrotate -d` or `-f` to demonstrate rotation behavior"
+          ],
+          "rubric": [
+            {
+              "criterion": "Systemd unit correctness: explicit network-online dependency, proper ExecStart, Restart policy, enabled and running; evidence provided",
+              "marks": 6
+            },
+            {
+              "criterion": "Service reachability and binding: listens on 0.0.0.0:8080, healthcheck returns 200; evidence via ss/curl",
+              "marks": 5
+            },
+            {
+              "criterion": "Firewall correctly opened for tcp/8080 with coherent default policy; evidence via rules export and testing notes",
+              "marks": 3
+            },
+            {
+              "criterion": "Logging and rotation implemented correctly: file path under /var/log/myapp, rotation config with reload/postrotate or justified copytruncate; forced rotation shows continued logging into new file",
+              "marks": 6
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Logging",
+            "Firewall",
+            "TCP/IP",
+            "Linux"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-029-S04",
+      "skills_assessed": [
+        "Linux",
+        "Shell Scripting",
+        "Bash",
+        "Linux Security",
+        "Firewall",
+        "SSH",
+        "Logging",
+        "Backup and Recovery",
+        "Monitoring and Observability",
+        "systemd"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run this script as root on a host where `/backup` is mounted read-only due to an error:\n\n```bash\n#!/usr/bin/env bash\nset -e\nbackup() {\n  tar cf - /var/www | gzip > /backup/site.tgz\n  echo \"OK\"\n}\nbackup | tee /var/log/backup.log\n```\n\nWhat actually happens at runtime and what exit status does the script return?",
+          "options": [
+            "`echo \"OK\"` still runs, so `tee` logs OK; overall exit status is non‑zero because `gzip` failed.",
+            "`tar` prints filenames which `tee` logs; overall exit status is 0 because `tee` succeeds.",
+            "The shell exits immediately on `gzip` failure; nothing is logged; script exit status is non‑zero.",
+            "The `backup` subshell exits on error, `tee` runs and returns 0; nothing is logged; overall script exit status is 0."
+          ],
+          "correct_option": "D",
+          "explanation": "`set -e` causes the subshell running `backup` (first element of the outer pipeline) to exit when the inner pipeline fails on `gzip`. Because `backup` is in a pipeline with `tee`, Bash runs it in a subshell; the outer pipeline's status is that of the last command (`tee`), which succeeds and returns 0. No output reaches `tee` because the failure happens before `echo \"OK\"`. The failure is masked without `set -o pipefail` and without avoiding the outer pipeline.",
+          "distractor_rationale": "A: Sounds right about `set -e`, but ignores that `backup` runs in a pipeline subshell and the outer pipeline's status comes from `tee`.\nC: Assumes execution continues to `echo \"OK\"`, but `set -e` exits the subshell before that line.\nD: `tar` is not verbose by default; also its output is piped to `gzip`, so nothing would reach `tee` even if it were verbose.",
+          "skills_covered": [
+            "Shell Scripting",
+            "Bash",
+            "Linux"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A nightly cron job fails with \"rsync: command not found\". The script is:\n\n```bash\n#!/usr/bin/env bash\nset -eu -o pipefail\nrsync -a --delete /var/www/ /backup/www/\n```\n\nCrontab entry:\n\n```text\n0 2 * * * /usr/local/sbin/backup_www.sh\n```\n\nWhich change most reliably fixes this across hosts with different cron environments without relying on global cron settings?",
+          "options": [
+            "Add `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin` to the user’s crontab.",
+            "Wrap the command in the crontab as `bash -lc /usr/local/sbin/backup_www.sh`.",
+            "Prefix absolute paths to all invoked commands in the script, for example `\"/usr/bin/rsync\"`.",
+            "Migrate to a systemd timer; cron’s environment is too limited to be made reliable."
+          ],
+          "correct_option": "C",
+          "explanation": "Cron’s PATH is often minimal. Making the script self-contained by using absolute paths for commands (e.g. `/usr/bin/rsync`) avoids dependency on environment and is portable. Setting PATH in crontab can work but is brittle across users/hosts; wrapping with `bash -lc` still relies on shell init files; moving to systemd may be fine but is not necessary to fix this issue.",
+          "distractor_rationale": "B: Tempting, but depends on crontab ownership and host differences; it’s easy to miss a binary.\nC: Appears to force Bash, but `-l` sources profiles conditionally and still relies on environment. It also hides failures behind shell init issues.\nD: Overkill. systemd timers are good, but cron can be made reliable by fully-qualifying binaries.",
+          "skills_covered": [
+            "Shell Scripting",
+            "Bash",
+            "Linux",
+            "systemd"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider these unit files:\n\n```ini\n# /etc/systemd/system/nightly-backup.service\n[Unit]\nDescription=Nightly backup\n\n[Service]\nType=oneshot\nExecStart=/usr/local/sbin/backup.sh\n\n# /etc/systemd/system/nightly-backup.timer\n[Unit]\nDescription=Nightly backup timer\n\n[Timer]\nOnCalendar=02:00\nPersistent=true\n\n[Install]\nWantedBy=timers.target\n```\n\nThe server is powered off at 02:00 and boots at 05:00. What happens?",
+          "options": [
+            "The backup is skipped; `Persistent=true` only logs the miss.",
+            "The backup runs once at 05:00 because `Persistent=true` queues the missed run.",
+            "The timer starts, but the service won’t run until the next 02:00 because `Type=oneshot` blocks catch-up.",
+            "Nothing happens because `WantedBy=timers.target` is missing in the service unit."
+          ],
+          "correct_option": "B",
+          "explanation": "With `Persistent=true`, systemd timers run the unit immediately on boot if a scheduled time was missed. `Type=oneshot` is correct for a task-like service. The `WantedBy=timers.target` belongs on the timer (present).",
+          "distractor_rationale": "A: Misunderstands `Persistent=true`; it is specifically for catch-up execution.\nC: The `WantedBy` is needed on the timer, not on the service; the service is started by the timer via `Unit` defaulting to the same basename.\nD: `Type=oneshot` does not affect timer catch-up behavior.",
+          "skills_covered": [
+            "systemd",
+            "Backup and Recovery",
+            "Linux"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What does this print?\n\n```bash\nv=foobar\nif [ \"$v\" = foo* ]; then echo one; else echo two; fi\nif [[ $v = foo* ]]; then echo three; else echo four; fi\n```",
+          "options": [
+            "two\nthree",
+            "one\nfour",
+            "two\nfour",
+            "one\nthree"
+          ],
+          "correct_option": "A",
+          "explanation": "`[` does a literal string comparison, so `\"$v\" = foo*` compares to the literal `foo*` and is false → `two`. `[[ ... ]]` performs pattern matching with `=` so `foo*` matches `foobar` → `three`.",
+          "distractor_rationale": "A/B/D: Each assumes either that `[` does globbing (it doesn’t) or that `[[` does literal comparison (it doesn’t when using `=` with an unquoted pattern).",
+          "skills_covered": [
+            "Bash",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A backup script uses restic and currently writes the repository password to a temp file:\n\n```bash\necho \"$RESTIC_PASS\" > /tmp/restic.pass\nrestic -r s3:s3.example.com/backup --password-file=/tmp/restic.pass backup /srv/data\nrm -f /tmp/restic.pass\n```\n\nYou want to eliminate on-disk exposure of the password while keeping non-interactive execution. What change achieves this?",
+          "options": [
+            "Pass the secret via environment: `export RESTIC_PASSWORD=\"$RESTIC_PASS\"` and omit `--password-file`.",
+            "Use `--password-command 'cat /proc/$$/environ'` so it reads from the process environment.",
+            "`chmod 600 /tmp/restic.pass` before running restic.",
+            "Use a here-string: `restic ... --password-file=<(printf %s \"$RESTIC_PASS\")`. "
+          ],
+          "correct_option": "A",
+          "explanation": "Restic supports the `RESTIC_PASSWORD` environment variable. Supplying the password via env avoids writing it to disk. Correct process and system hardening still apply to protect env leakage, but disk exposure is removed.",
+          "distractor_rationale": "A: Reduces exposure window but still writes to disk.\nC: Misuses `--password-command`; exposing `/proc/.../environ` is insecure and often inaccessible to non-root.\nD: Process substitution creates a real readable file (usually under `/proc/self/fd/...`) that may be visible; some tools still treat it as a file descriptor; it doesn’t address process listing concerns and is more complex than needed.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Linux Security",
+            "Bash"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You run:\n\n```bash\nfirewall-cmd --add-port=8080/tcp\nfirewall-cmd --add-service=ssh --permanent\nsystemctl restart firewalld\nreboot\n```\n\nAfter the reboot, which access is allowed by firewalld defaults (no custom zones)?",
+          "options": [
+            "Only TCP/8080 is allowed; permanent changes apply only after `--reload`.",
+            "Both SSH and TCP/8080 are allowed, because runtime changes persist across reboots.",
+            "Only SSH is allowed; TCP/8080 was a runtime-only change and is lost after restart.",
+            "Neither is allowed; restarting firewalld clears all rules until reloaded."
+          ],
+          "correct_option": "C",
+          "explanation": "`--add-service=ssh --permanent` updates the permanent config; firewalld loads permanent config on restart/boot. The `--add-port=8080/tcp` without `--permanent` affects only the runtime config and is lost on restart/boot.",
+          "distractor_rationale": "A: Confuses runtime with permanent config.\nC: Firewalld loads its permanent config on start; defaults are not empty.\nD: Permanent changes do not require a manual `--reload` if the daemon is restarted/booted; they are read on start.",
+          "skills_covered": [
+            "Firewall",
+            "Linux Security",
+            "Linux"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Given this `sshd_config` snippet:\n\n```text\nPermitRootLogin prohibit-password\nPasswordAuthentication no\nPubkeyAuthentication yes\n``` \n\nWhat is the effect on SSH logins?",
+          "options": [
+            "Root login is fully disabled, regardless of key use.",
+            "Root can log in with a key, but no accounts can use passwords.",
+            "All users, including root, can log in with either key or password.",
+            "Non-root users can use keys; root must use a password."
+          ],
+          "correct_option": "B",
+          "explanation": "`PasswordAuthentication no` disables password auth for everyone. `PermitRootLogin prohibit-password` allows root login with keys but not with a password. `PubkeyAuthentication yes` enables key-based auth.",
+          "distractor_rationale": "A: Misreads `prohibit-password`; it still allows key-based root login.\nC: Contradicts `PasswordAuthentication no`.\nD: Inverts the setting; root is specifically prohibited from using passwords.",
+          "skills_covered": [
+            "SSH",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What does this print on Bash by default?\n\n```bash\ncount=0\nfind /var/log -type f -name '*.log' -print0 | while IFS= read -r -d '' f; do\n  ((count++))\ndone\nprintf '%d\\n' \"$count\"\n```",
+          "options": [
+            "It prints nothing because `count` is local to the loop.",
+            "It prints 0 because the `while` runs in a subshell and `count` in the parent stays 0.",
+            "It prints the number of matching files.",
+            "It prints 1 because only the last filename is counted outside the loop."
+          ],
+          "correct_option": "B",
+          "explanation": "In Bash, each element of a pipeline runs in a subshell by default. The `while` loop runs in a subshell, so increments affect only the subshell’s `count`. The parent’s `count` remains 0. Use process substitution or `shopt -s lastpipe` (in non-interactive shells on some distros) to avoid this.",
+          "distractor_rationale": "A: True in shells that don’t spawn subshells for pipelines or if using process substitution, but not in default Bash.\nC: The issue isn’t locality of the variable; it’s process scoping.\nD: There’s no partial carry-over; the parent never sees updates from the subshell.",
+          "skills_covered": [
+            "Bash",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You used this incremental backup pattern for months on `/backups` and then moved `/backups` to another filesystem.\n\n```bash\nrsync -a --delete \\\n  --link-dest=../current \\\n  /srv/data/ /backups/next/\n```\n\nAfter the move, backups \"work\" but disk usage grows rapidly. Why?",
+          "options": [
+            "Relative `--link-dest` paths break across filesystems and cause rsync to symlink instead of hardlink.",
+            "Rsync errors on every file due to cross-device links and writes sparse files that look large.",
+            "`--delete` stops working across filesystems, so tombstoned files reappear, growing disk usage.",
+            "`--link-dest` is ignored across filesystems, so rsync copies files instead of hard-linking, consuming extra space."
+          ],
+          "correct_option": "D",
+          "explanation": "Hard links cannot span filesystems. When the destination filesystem changed, rsync could no longer hard-link to `../current`. Rsync doesn’t error; it simply copies files, which increases disk usage. You must ensure `current` and `next` are on the same filesystem or change strategy (e.g., use deduplicating backups).",
+          "distractor_rationale": "B: `--delete` behavior is independent of filesystems in this context.\nC: Rsync does not silently create symlinks in place of hardlinks due to `--link-dest`.\nD: Rsync does not error per-file here; cross-device is an issue for hard linking, not copying.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Linux"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A monitoring script runs fine interactively but fails from cron with `/bin/sh: 1: mapfile: not found`. The script starts with:\n\n```bash\n#!/bin/sh\nset -eu\nmapfile -t errs < <(journalctl -p err -n 100)\n...\n```\n\nHow do you fix this robustly?",
+          "options": [
+            "Change the shebang to `#!/usr/bin/env bash` and ensure `/usr/bin/env bash` exists on the host.",
+            "Add `SHELL=/bin/bash` to the crontab so cron uses Bash.",
+            "Keep the shebang, but run it from cron as `bash /path/to/script.sh`.",
+            "Replace `mapfile` with `readarray` which is POSIX."
+          ],
+          "correct_option": "A",
+          "explanation": "`mapfile`/process substitution are Bash-specific. The correct fix is to declare the required interpreter in the shebang so any invoker (cron or otherwise) executes with Bash. Ensure Bash is available at the stated path.",
+          "distractor_rationale": "B: Works only for that one invocation and hides the real interpreter requirement from other callers.\nC: Cron will use Bash to parse the crontab entry, but the script’s shebang still dictates interpreter when executed directly.\nD: `readarray` is just an alias for `mapfile` in Bash; it is not POSIX.",
+          "skills_covered": [
+            "Bash",
+            "Shell Scripting",
+            "Monitoring and Observability",
+            "Logging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your current cron-based database backup sometimes overlaps with itself when a run takes longer than expected, and missed runs during downtime aren’t caught up. Backups should log to journald with clear identifiers, run as soon as possible after a miss, and never overlap. You also want a maximum runtime to avoid a hung backup blocking the next one.",
+          "task": "Design the systemd service and timer to meet these requirements. Provide the necessary unit directives and any command-line wrappers you would use, and justify your choices.",
+          "expected_answer": "A good answer proposes a oneshot service triggered by a persistent timer, with flock-based mutual exclusion and a runtime cap. Example:\n\n```ini\n# /etc/systemd/system/db-backup.service\n[Unit]\nDescription=PostgreSQL nightly backup\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=oneshot\n# Prevent overlap using flock on a lockfile in a writable runtime dir\nExecStart=/usr/bin/flock -n /run/db-backup.lock \\\n  /usr/local/sbin/db_backup.sh\n# Cap runtime so a hung job cannot block catch-up forever\nRuntimeMaxSec=3h\n# Stronger logging identity\nSyslogIdentifier=db-backup\n# Ensure output lands in the journal\nStandardOutput=journal\nStandardError=inherit\n\n# /etc/systemd/system/db-backup.timer\n[Unit]\nDescription=PostgreSQL nightly backup timer\n\n[Timer]\nOnCalendar=02:00\nPersistent=true\nAccuracySec=1min\nRandomizedDelaySec=0\n\n[Install]\nWantedBy=timers.target\n```\n\nJustifications:\n- `Type=oneshot` suits task-style jobs. The timer provides scheduling; `Persistent=true` ensures missed runs execute at boot.\n- `flock -n` ensures only one instance runs even if the timer fires while another run is in progress or an admin triggers manually.\n- `RuntimeMaxSec` prevents indefinite hangs from blocking later runs. Combined with non-overlap, the next run will start when allowed.\n- Journal logging via `StandardOutput=journal` and `SyslogIdentifier` makes it easy to query with `journalctl -u db-backup.service`.\n- `After=`/`Wants=` ensure network availability for remote storage.\n- Optionally add `StartLimitIntervalSec`/`StartLimitBurst` to avoid rapid retries if the service is misconfigured, and `SuccessExitStatus` if the script uses special codes.",
+          "rubric": [
+            {
+              "criterion": "Timer uses `OnCalendar` with `Persistent=true` and is enabled via `WantedBy=timers.target`.",
+              "marks": 2
+            },
+            {
+              "criterion": "Service prevents overlap (e.g., `flock -n` or equivalent) and explains why this is necessary.",
+              "marks": 2
+            },
+            {
+              "criterion": "Service constrains runtime (e.g., `RuntimeMaxSec`) with reasoning.",
+              "marks": 2
+            },
+            {
+              "criterion": "Logging to journald with identifiable unit output and justification.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Backup and Recovery",
+            "Logging",
+            "Monitoring and Observability",
+            "Linux"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are hardening a small web server that only needs SSH for admin and HTTP/HTTPS for the app. Admins should use keys only and must be in the `webadmin` group. SSH should be further limited to the corporate IP range 203.0.113.0/24. Firewalld should persist rules across reboot. Root should not be able to use passwords.",
+          "task": "Propose the specific `sshd_config` changes and firewalld commands to enforce these requirements, and explain why each is necessary.",
+          "expected_answer": "A strong answer includes concrete config and commands with rationale.\n\n`/etc/ssh/sshd_config` (key points):\n```text\nPasswordAuthentication no\nChallengeResponseAuthentication no\nPubkeyAuthentication yes\nPermitRootLogin prohibit-password\nAllowGroups webadmin\n# Optional: disable empty passwords\nPermitEmptyPasswords no\n```\n\nRationale: Disables all password-based auth. Root cannot use a password; keys still allowed if needed for root (or set `PermitRootLogin no` if root access is unneeded). Restricting to `webadmin` group centralizes admin control.\n\nFirewalld (default zone assumed `public`):\n```bash\n# Persistently allow HTTP/HTTPS\nfirewall-cmd --permanent --add-service=http\nfirewall-cmd --permanent --add-service=https\n# Restrict SSH to corporate range only\nfirewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address=203.0.113.0/24 service name=\"ssh\" accept'\n# Ensure SSH is not otherwise open (remove broad ssh allowance if present)\nfirewall-cmd --permanent --remove-service=ssh || true\nfirewall-cmd --reload\n```\n\nRationale: Rich rule limits SSH access to the specified source CIDR. `--permanent` ensures persistence; `--reload` applies immediately without reboot. Removing the general ssh service avoids accidental wide exposure. Verify with `sshd -T` and `firewall-cmd --list-rich-rules`.",
+          "rubric": [
+            {
+              "criterion": "Correct `sshd_config` directives to enforce key-only auth and group restriction, with reasoning.",
+              "marks": 3
+            },
+            {
+              "criterion": "Firewalld commands that persist and limit SSH to 203.0.113.0/24, plus HTTP/HTTPS open.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains persistence (`--permanent` + `--reload`) and verifies or removes broad ssh service.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SSH",
+            "Linux Security",
+            "Firewall",
+            "Linux"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Backups for `/srv/appdata` must support point-in-time recovery for 30 days with minimal storage. Nightly backups should be fast by avoiding re-copying unchanged files. You can store on the same server to `/backups` and also sync offsite daily. You observed occasional partial directories in `/backups/next` when a run is interrupted.",
+          "task": "Design a directory rotation scheme and rsync commands to provide efficient nightly incrementals with 30-day retention, avoid partial visibility during runs, and support offsite sync. Explain how you will verify backup integrity daily.",
+          "expected_answer": "A good design uses hard-link based incrementals with atomic rotation and validation.\n\nPattern:\n```bash\n# 1) Stage into a hidden temp dir, then atomically move\nstamp=$(date +%F)\nstage=/backups/.staging-${stamp}\ntarget=/backups/${stamp}\ncurrent=/backups/current\nmkdir -p \"$stage\"\nrsync -a --delete \\\n  --link-dest=\"$current\" \\\n  /srv/appdata/ \"$stage\"/\n# Atomic publish\nmv \"$stage\" \"$target\"\nln -sfn \"$target\" \"$current\"\n```\n\nNotes:\n- `--link-dest` hard-links unchanged files to the `current` tree, minimizing storage and runtime.\n- Stage in a hidden temp dir to avoid readers seeing partial trees; publish via `mv` which is atomic within a filesystem.\n- Ensure `/backups` remains on one filesystem so hard links work; if not, switch to a deduplicating backup tool.\n\nOffsite:\n```bash\nrsync -a --delete /backups/ user@offsite:/backups/host1/\n```\n\nDaily verification:\n- Compute and store checksums during backup (`rsync --checksum` is too expensive nightly; instead maintain a rolling manifest) or run a daily `find` that ensures directory counts and spot-checks using `sha256sum` against a manifest from the source before backup.\n- Verify destination structure (30 dated dirs + `current` symlink), no `.staging-*` remains, and `rsync --dry-run` shows zero changes immediately after a run.\n- Alert on anomalies via exit codes and by logging to journald; integrate with monitoring to page on non-zero exit or missing expected directory.",
+          "rubric": [
+            {
+              "criterion": "Uses `--link-dest` with a `current` pointer to achieve incremental, storage-efficient backups.",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids partial visibility via staging directory and atomic rename, with correct reasoning.",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses filesystem constraint for hard links and proposes an alternative or mitigation.",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines offsite sync approach and retention scheme (30 dated dirs + `current`).",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes concrete daily verification steps beyond \"it runs\" (e.g., manifests, dry-run, journald alerts).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "Shell Scripting",
+            "Linux",
+            "Monitoring and Observability",
+            "Logging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "An in-house daemon `metrics-collector.service` occasionally crashes. You must ensure it auto-restarts, emits useful failure logs, and a separate notification script runs on failure to page the on-call. You prefer to avoid polling logs from cron.",
+          "task": "Propose the systemd configuration to meet these requirements, including failure handling and logging. Explain how you would test it.",
+          "expected_answer": "Use systemd’s restart and failure hooks, plus a notifier unit.\n\n```ini\n# /etc/systemd/system/metrics-collector.service\n[Unit]\nDescription=Metrics collector\nAfter=network-online.target\nWants=network-online.target\nOnFailure=metrics-collector-notify@%n.service\n\n[Service]\nExecStart=/usr/local/bin/metrics-collector\nRestart=on-failure\nRestartSec=5s\n# Bound runtime logs to journald\nStandardOutput=journal\nStandardError=inherit\n# Optional hardening\nNoNewPrivileges=yes\nProtectSystem=strict\nProtectHome=true\n\n# /etc/systemd/system/metrics-collector-notify@.service\n[Unit]\nDescription=Notify on failure of %I\n\n[Service]\nType=oneshot\nExecStart=/usr/local/sbin/notify_on_failure.sh %I\n```\n\nRationale: `Restart=on-failure` ensures auto-restart. `OnFailure=` triggers a templated unit to run the notification script with the failed unit name as the instance parameter. Journald captures logs; use `journalctl -u metrics-collector.service -b` to inspect. Hardening is a bonus where possible.\n\nTesting: Intentionally crash the service (send `SIGABRT`), confirm restart attempts (`systemctl status` shows `Restart=` counter), verify the notifier runs (logs, email/page received), and confirm logs contain the failure with correct identifiers. Also test that repeated rapid failures respect `StartLimit*` defaults or set them explicitly.",
+          "rubric": [
+            {
+              "criterion": "Uses `Restart=on-failure` (or similar) and reasonable backoff to auto-restart.",
+              "marks": 2
+            },
+            {
+              "criterion": "Configures `OnFailure=` to trigger a notification unit with correct parameterization.",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures logs are captured in journald and mentions how to inspect them.",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes a concrete test plan to validate restart and notification behavior.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "systemd",
+            "Monitoring and Observability",
+            "Logging",
+            "Linux Security",
+            "Linux"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Admin scripting pack: safe incremental backup, log triage, and scheduled execution",
+          "brief": "Build a small, production-ready admin scripting pack that: (1) performs an efficient nightly incremental backup of `/etc` and `/var/www` using hard links and atomic rotation, (2) triages security-relevant logs from the last 24 hours into a report, and (3) schedules both tasks reliably. The scripts must be robust to cron’s limited environment or use systemd timers.",
+          "deliverable": "A tarball or Git repo containing: `backup_sites.sh`, `security_report.sh`, a rotation scheme (`current` symlink, dated dirs), unit files or crontab for scheduling, and a README with exact invocation and verification commands. Include one sample run’s outputs (logs and report).",
+          "acceptance_criteria": [
+            "`backup_sites.sh` uses `rsync --link-dest` to `/backups` with a staging directory and atomic publish (rename), and exits non-zero on failure.",
+            "A `current` symlink points to the latest dated directory; exactly one `.staging-*` dir exists only during the run.",
+            "`security_report.sh` produces a plaintext report under `/var/log/security_report-YYYYMMDD.txt` summarizing at least: last 24h failed SSH logins (journalctl or /var/log/auth.log), new privileged escalations (sudo), and firewall drops (if present).",
+            "Scheduling is implemented via either: (a) a `systemd` oneshot service + persistent timer, or (b) a crontab entry plus absolute paths to all binaries. Submission includes unit files or crontab line.",
+            "README shows verification commands that an assessor can run (e.g., `journalctl -u backup-sites.service -b`, `ls -l /backups`, and a dry-run to show zero changes right after a run)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Backup script correctness: `--link-dest` incrementals, staging + atomic rotate, proper exit codes.",
+              "marks": 8
+            },
+            {
+              "criterion": "Security report coverage and correctness: SSH failures, sudo uses, firewall drops with clear time window.",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust scheduling: correct systemd timer/service with `Persistent=true` or crontab with absolute paths.",
+              "marks": 4
+            },
+            {
+              "criterion": "Operationalization: clear README and included sample outputs/logs; verifiable commands provided.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Shell Scripting",
+            "Bash",
+            "Backup and Recovery",
+            "Logging",
+            "Monitoring and Observability",
+            "systemd",
+            "Linux"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Managed Linux server hardening, backup, monitoring, and recovery drill",
+          "brief": "Prepare a configuration bundle that hardens SSH access, enforces a minimal firewall, configures journald persistence, installs and schedules a backup to `/backups` with 14-day retention, and demonstrates a recovery drill that restores a file to a point-in-time snapshot. Include verification outputs proving the state without requiring remote access to your machine.",
+          "deliverable": "A tarball or Git repo containing: `sshd_config`, a script with the exact `firewall-cmd` commands used (or an Ansible play), journald config (`/etc/systemd/journald.conf` snippet) for persistent logging, backup scripts and systemd timer/service or crontab entries, and a `RECOVERY-DEMO.md` with exact commands and captured terminal outputs showing a file restored from backup. Include `verification.txt` with outputs of key checks.",
+          "acceptance_criteria": [
+            "`sshd_config` enforces key-only auth (`PasswordAuthentication no`), disallows root password (`PermitRootLogin prohibit-password` or `no`), and restricts admins via `AllowGroups` or `AllowUsers`.",
+            "Firewall script sets permanent rules allowing only SSH (optionally source-limited), HTTP/HTTPS, and drops unsolicited traffic; includes `--reload` and a command to list and verify rules.",
+            "Journald configured for persistence (`Storage=persistent`) with a captured `journalctl --boot` output showing logs across reboots (simulated or real).",
+            "Backup job implemented with `rsync --link-dest` or an equivalent, retention of at least 14 daily snapshots, and scheduled (systemd timer with `Persistent=true` or crontab with absolute paths).",
+            "`RECOVERY-DEMO.md` shows creating a test file, backing up, deleting it, and restoring from the correct dated snapshot with exact commands and successful diffs.",
+            "`verification.txt` contains outputs of: `sshd -T | egrep 'passwordauthentication|permitrootlogin'`, `firewall-cmd --list-all` (or equivalent), `systemctl list-timers | grep backup` (if systemd used) or `crontab -l` snippet, and `ls -l /backups` showing `current` and dated dirs."
+          ],
+          "rubric": [
+            {
+              "criterion": "SSH hardening configuration correctness and verifiability via `sshd -T`.",
+              "marks": 5
+            },
+            {
+              "criterion": "Firewall hardening: permanent minimal rules, correctness, and verification evidence.",
+              "marks": 4
+            },
+            {
+              "criterion": "Logging: journald persistence correctly configured and proven via captured output.",
+              "marks": 3
+            },
+            {
+              "criterion": "Backup and scheduling: retention implemented with efficient method and persistent schedule.",
+              "marks": 4
+            },
+            {
+              "criterion": "Recovery drill: clear, correct, and reproducible restore steps with evidence.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "SSH",
+            "Firewall",
+            "Logging",
+            "Backup and Recovery",
+            "Monitoring and Observability",
+            "systemd",
+            "Linux",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

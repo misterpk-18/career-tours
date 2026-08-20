@@ -1,0 +1,1863 @@
+{
+  "course_code": "NT-C-028",
+  "course_name": "Cloud Computing",
+  "sections": [
+    {
+      "section_code": "NT-C-028-S01",
+      "skills_assessed": [
+        "Cloud Architecture",
+        "deploy cloud resource",
+        "cloud security and compliance",
+        "manage ICT virtualisation environments",
+        "automate cloud tasks"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run an app container that writes its state to `/var/app/state.db`. The run history is:\n\n```bash\n$ docker run --rm --name app1 myco/app:1.2\n# app runs, writes /var/app/state.db, then exits\n$ docker run --rm --name app2 myco/app:1.2\n# app starts fresh; state is missing\n```\nYou want the state to persist across multiple runs without changing the image and without exposing the data outside the host.\nWhat change ensures persistence across container runs?",
+          "options": [
+            "Use a named volume that maps `/var/app`:\n```bash\ndocker run --rm -v appdata:/var/app myco/app:1.2\n```",
+            "Use an image pull policy equivalent to `IfNotPresent` so the same image is reused each time.",
+            "Add `--privileged` so the process can write to the container filesystem across runs.",
+            "Add `--restart=always` so Docker keeps the same container name and filesystem."
+          ],
+          "correct_option": "A",
+          "explanation": "Container writable layers are discarded when the container is removed (`--rm`). A named volume mapping `/var/app` persists data independently of the container and can be reattached on subsequent runs.",
+          "distractor_rationale": "A: `--restart=always` restarts the same container after a crash/exit, but here you run a new container each time; persistence is tied to the container or a volume. C: `--privileged` changes capabilities, not filesystem lifecycle. D: Image pull policy affects image retrieval, not runtime data persistence.",
+          "skills_covered": [
+            "manage ICT virtualisation environments",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this Kubernetes Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 5\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 2\n      maxUnavailable: 1\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n      - name: api\n        image: registry.example.com/api:v2\n```\nDuring a rollout from v1 to v2, at the peak of the rollout, how many `api` Pods can be running simultaneously?",
+          "options": [
+            "7",
+            "5",
+            "8",
+            "6"
+          ],
+          "correct_option": "A",
+          "explanation": "With replicas 5 and maxSurge 2, the scheduler may create up to 2 extra Pods during the update. Peak simultaneous Pods = 5 + 2 = 7. `maxUnavailable: 1` controls the minimum available, not the peak.",
+          "distractor_rationale": "A: Ignores `maxSurge`. B: Underestimates; allows only one extra. D: Exceeds `maxSurge`; Kubernetes won't go beyond replicas + maxSurge.",
+          "skills_covered": [
+            "automate cloud tasks",
+            "manage ICT virtualisation environments"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your current Dockerfile builds slowly after small source edits:\n\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY . .\nRUN npm ci --only=production\nCMD [\"node\",\"server.js\"]\n```\nWhich change will most reduce rebuild time when only app source files (not `package.json`) change?",
+          "options": [
+            "Use `--no-cache` during `docker build` to avoid stale dependencies.",
+            "Install build tools with `apk add build-base` before `npm ci` so compilation is faster.",
+            "Reorder COPY/INSTALL to leverage caching:\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nCMD [\"node\",\"server.js\"]\n```",
+            "\"Flatten\" layers by merging `COPY` and `RUN` into a single `RUN` to reduce layers."
+          ],
+          "correct_option": "C",
+          "explanation": "Copying dependency manifests first allows `npm ci` to be cached unless those files change. Then copying the rest of the source invalidates only later layers, making code-only changes fast.",
+          "distractor_rationale": "A: Fewer layers doesn't fix cache invalidation from copying the whole context first. C: `--no-cache` forces all layers to rebuild, slowing builds. D: Tooling may help compile native deps but doesn't address cache busting from `COPY . .`.",
+          "skills_covered": [
+            "manage ICT virtualisation environments",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Incident summary (managed relational database):\n\n```text\nService: Managed DB (PaaS)\nCVE: Critical vuln in DB engine (CVE-XXXX)\nTimeline: CVE disclosed Day 0; patch available Day 2; platform applied patch Day 16; breach detected Day 10 via engine exploit.\n```\nAssume your app code and libraries were fully patched. Under the shared responsibility model for a managed DB service, who is primarily accountable for the delay that left the engine unpatched?",
+          "options": [
+            "Customer (you) — you should have performed in-place patching via superuser access to the managed instance.",
+            "Customer (you) — engine patching is always your job regardless of service model.",
+            "Shared equally — both must patch at the same time; either side can be blamed.",
+            "Provider — in PaaS managed databases, the provider owns OS and engine patching timelines."
+          ],
+          "correct_option": "D",
+          "explanation": "With a managed database (PaaS), the provider is responsible for patching the underlying OS and database engine. The customer patches schema, configuration, users, and app-layer dependencies.",
+          "distractor_rationale": "A: True for IaaS, not PaaS. C: Responsibilities are delineated, not equal for the same component. D: Managed DBs typically do not allow engine binaries to be patched by customers; attempting so violates the model.",
+          "skills_covered": [
+            "cloud security and compliance",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A VM is created from a generic cloud image. Its `cloud-init` netplan is:\n\n```yaml\nnetwork:\n  version: 2\n  ethernets:\n    eth0:\n      dhcp4: true\n```\nOn your hypervisor, the NIC is presented as `ens3`. The first-boot console shows:\n\n```text\nsystemd-networkd[...]: Could not find device 'eth0'\n``` \nWhat is the most likely outcome on first boot, and why?",
+          "options": [
+            "`cloud-init` rewrites the netplan to target `ens3` automatically on first boot.",
+            "The VM boots and networking works because udev will automatically rename `ens3` to `eth0`.",
+            "The VM boots but has no network connectivity until netplan is corrected or a match rule is used.",
+            "The kernel panics due to a missing NIC and the VM fails to boot."
+          ],
+          "correct_option": "C",
+          "explanation": "The VM will boot, but the network unit targets `eth0` which doesn't exist. Without a match rule or the correct interface name, DHCP won't run and networking is down.",
+          "distractor_rationale": "A: Predictable interface names prevent automatic fallback to `eth0`. C: Missing NIC names don't cause kernel panics. D: `cloud-init` does not automatically infer/rename interfaces unless configured; it applies provided config as-is.",
+          "skills_covered": [
+            "manage ICT virtualisation environments"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Cluster capacity snapshot:\n\n```text\nNode       Alloc CPU   Alloc Mem   Used CPU   Used Mem\nnode-a     2.0         2.0 Gi      1.5        1.6 Gi\nnode-b     4.0         4.0 Gi      3.5        3.0 Gi\n```\nYou deploy a Pod with requests:\n\n```yaml\nresources:\n  requests:\n    cpu: \"600m\"\n    memory: \"400Mi\"\n```\nWhere will it schedule?",
+          "options": [
+            "node-a",
+            "It remains Pending until capacity frees up",
+            "node-b",
+            "Either node-a or node-b"
+          ],
+          "correct_option": "B",
+          "explanation": "Remaining CPU: node-a has 0.5 CPU free, node-b has 0.5 CPU free. The Pod requests 0.6 CPU, which neither node can satisfy, so the Pod stays Pending.",
+          "distractor_rationale": "A/B: Each has 0.5 CPU free; the request is 0.6 CPU. C: Scheduler won't place the Pod where requests cannot be satisfied; it remains Pending.",
+          "skills_covered": [
+            "automate cloud tasks",
+            "manage ICT virtualisation environments"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Given this `docker-compose.yml`:\n\n```yaml\nversion: '3.8'\nservices:\n  db:\n    image: postgres:15\n    environment:\n      POSTGRES_PASSWORD: secret\n  web:\n    build: ./web\n    environment:\n      DATABASE_URL: postgresql://postgres:secret@localhost:5432/app\n```\n`web` fails to connect at startup with `ECONNREFUSED`. Without exposing the database externally, what change will make the connection succeed?",
+          "options": [
+            "Change the DB host from `localhost` to the Compose service name `db`.",
+            "Increase a startup delay on `web` so the DB is ready before connect.",
+            "Publish the database port to the host and point `web` at the host IP.",
+            "Enable `network_mode: host` for both services so `localhost` works."
+          ],
+          "correct_option": "A",
+          "explanation": "On a user-defined Compose network, containers reach each other by service name. `localhost` points to the `web` container itself. Using `db` as the host connects across the internal bridge without external exposure.",
+          "distractor_rationale": "A: Works but exposes the DB; the constraint forbids this. C: Host networking removes network isolation and can conflict across platforms. D: Readiness timing doesn't fix the wrong hostname; it would just delay failure.",
+          "skills_covered": [
+            "manage ICT virtualisation environments",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your PaaS build log shows:\n\n```text\nDetecting runtime... Node.js\nDetected version: 14.x\nnpm ERR! code ENOTSUP\nnpm ERR! notsup Unsupported engine for app@1.0.0: wanted: {\"node\": \">=18\"} (current: {\"node\":\"14.x\"})\nBuild failed\n```\nYou cannot apt-get a newer Node inside the PaaS image. What is the most appropriate remediation within the shared-responsibility boundaries of PaaS?",
+          "options": [
+            "Vendor-lock to the legacy Node 14 API surface by polyfilling features in your code.",
+            "SSH into the PaaS container and install Node 18 manually for future builds.",
+            "Ask the provider to immediately upgrade the global Node runtime for all tenants.",
+            "Switch to a PaaS stack/buildpack that supports Node 18, or deploy the app as a container image on the PaaS if supported."
+          ],
+          "correct_option": "D",
+          "explanation": "Customers choose supported runtimes/buildpacks or supply a container image when the PaaS allows it. Installing runtimes inside a managed build image violates the model.",
+          "distractor_rationale": "B: PaaS does not permit persistent in-image changes by tenants. C: Providers upgrade on schedules; per-tenant urgent upgrades are unlikely. D: Pinning to an unsupported runtime avoids the cause rather than fixing it and may break security posture.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You see intermittent regressions after redeploys. The Deployment is:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n      - name: web\n        image: mycorp/web:latest\n        imagePullPolicy: Always\n```\nWhat change most reliably prevents unexpected version changes during future rollouts?",
+          "options": [
+            "Set `imagePullPolicy: IfNotPresent` so nodes reuse cached images.",
+            "Pin immutable image references (e.g., `mycorp/web:1.7.3` or digest) and update the tag explicitly during releases.",
+            "Set replicas to 1 during deploys to simplify rollouts.",
+            "Disable the rolling strategy so all Pods are restarted at once."
+          ],
+          "correct_option": "B",
+          "explanation": "Pulling `latest` can fetch different images over time. Pinning to an immutable tag or digest makes the deployed version explicit and reproducible.",
+          "distractor_rationale": "B: Caching reduces pulls but still ties to `latest`, which can change unexpectedly on cache misses. C/D: Do not address version mutability and can harm availability.",
+          "skills_covered": [
+            "automate cloud tasks",
+            "manage ICT virtualisation environments",
+            "deploy cloud resource"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your autoscaling group launches VMs from a golden image `web-gold-v1`. To address CVEs, ops SSH into running instances weekly and run:\n\n```bash\nsudo apt-get update && sudo apt-get -y upgrade\n```\nAfter a scale-in/scale-out event, half the fleet reverts to unpatched packages. What change produces a consistent, compliant fleet with minimal drift?",
+          "options": [
+            "Run the patch commands in user-data at boot for each new instance.",
+            "Bake a new image `web-gold-v2` with the patches and roll it out by replacing instances.",
+            "Keep in-place patching but add a weekly cron so all instances eventually converge.",
+            "Disable autoscaling to avoid churn that undoes the patches."
+          ],
+          "correct_option": "B",
+          "explanation": "Immutability via rebuilt images ensures new instances start from the patched baseline. Replacing instances converges the fleet without drift.",
+          "distractor_rationale": "B: Still leaves timing gaps and drift; replacements revert to old image. C: Boot-time patching introduces nondeterminism, longer boots, and mirrors fragile in-place updates. D: Avoids the symptom but removes elasticity and doesn't fix compliance.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "deploy cloud resource",
+            "cloud security and compliance",
+            "manage ICT virtualisation environments"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A fast-growing SaaS startup runs a classic web app: stateless API, a relational database, periodic offline report generation, and a payments module subject to PCI-DSS. The team of five wants to reduce operational overhead but retain control over application runtime versions. They also need to burst capacity for Black Friday traffic. Budget is tight; they cannot afford 24/7 ops staff. Their current stack is on-prem VMs.",
+          "task": "Propose a target architecture selecting service models (IaaS, PaaS, SaaS) and a deployment model (public, private, hybrid, community) for each component. Justify choices using the shared responsibility model and operational risk. Be specific about who patches what. Provide a one-paragraph risk trade-off on the busiest week of the year.",
+          "expected_answer": "A strong answer proposes: public cloud PaaS for the stateless API (managed runtime to reduce ops, pin supported runtime versions), managed relational database (PaaS) for the DB to offload engine/OS patching while keeping schema and access under the team's control, SaaS payment gateway to avoid PCI scope for card handling, and either a short-lived IaaS burst or a container orchestration PaaS for report jobs. Deployment model: public cloud for app/API and DB, with no on-prem dependency for burst; optionally hybrid during migration only. Map responsibilities: provider patches compute OS and DB engine for PaaS; team patches app code, dependencies, DB schema/queries, identities, and config; SaaS payment provider handles app+OS+infra for card storage; IaaS jobs (if chosen) require the team to patch guest OS. Peak week risk paragraph covers scaling (autoscale for API), capacity tests, fallback for DB maintenance windows, and vendor incident response SLAs.",
+          "rubric": [
+            {
+              "criterion": "Correct mapping of service models to components with rationale (API=PaaS, DB=PaaS, payments=SaaS, batch=PaaS or short-lived IaaS)",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate deployment model choice and justification (public cloud, optional hybrid only for transition)",
+              "marks": 2
+            },
+            {
+              "criterion": "Shared responsibility delineation (who patches OS, engine, app, data, identities)",
+              "marks": 2
+            },
+            {
+              "criterion": "Risk trade-off for peak week (scaling approach, SLA considerations, maintenance/rollback)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "cloud security and compliance",
+            "deploy cloud resource"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A team containerized a small service that writes to `/var/lib/app`. On a single-node orchestrator it redeploys multiple times a day. Users report intermittent data loss after node restarts. The current manifest is:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: store\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: store\n  template:\n    metadata:\n      labels:\n        app: store\n    spec:\n      containers:\n      - name: store\n        image: repo/store:1.4\n        volumeMounts:\n        - name: data\n          mountPath: /var/lib/app\n      volumes:\n      - name: data\n        emptyDir: {}\n```\n",
+          "task": "Diagnose why data is lost and propose a corrected manifest. Briefly justify how your change behaves across Pod reschedules and node reboots.",
+          "expected_answer": "`emptyDir` is ephemeral and is deleted when the Pod is removed or the node reboots (if not backed by a disk). The fix is to use a PersistentVolumeClaim (PVC) bound to durable storage. Provide a Deployment spec referencing a `PersistentVolumeClaim` named (e.g.) `store-pvc`, with `volumeMounts` unchanged but `volumes` using `persistentVolumeClaim: { claimName: store-pvc }`. Justify: on reschedule, the Pod reattaches to the same volume; on node reboot, volume persists and reattaches when the node is back or the Pod is scheduled elsewhere if using network storage.",
+          "rubric": [
+            {
+              "criterion": "Accurate diagnosis that `emptyDir` causes loss on Pod termination/restarts",
+              "marks": 2
+            },
+            {
+              "criterion": "Corrected spec using a PersistentVolumeClaim (structure and references)",
+              "marks": 3
+            },
+            {
+              "criterion": "Justification of behavior across reschedules and reboots (reattach semantics, durability)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity and correctness of explanation (no contradictions)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "manage ICT virtualisation environments",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your compliance team mandates customer data residency on-premises, but compute for nightly analytics can burst to the public cloud. Current on-prem cluster is VM-based and near capacity from 08:00–20:00, but idle at night. Data volume: 500 GB nightly. Network: 1 Gbps dedicated link to cloud. SLA: analytics jobs must finish by 05:00 local time.",
+          "task": "Design a burst strategy that respects data residency while meeting the SLA. Specify which parts run on VMs vs containers, how images are built and moved, how data flows without violating residency, and how orchestration coordinates the job. Note any shared-responsibility implications.",
+          "expected_answer": "Keep source-of-truth data on-prem; ship only anonymized/aggregated data or compute to the cloud. Option A (safer): run containers on-prem (Kubernetes or similar) that access on-prem data; if burst is needed, send only intermediate results or synthetic datasets to cloud-run containers. Option B: spin up IaaS VMs in public cloud that mount a secure, read-only on-prem dataset exposed via VPN with strict egress-only policies; write results back on-prem. Build images in a CI pipeline, push to a registry accessible from both sites; pin immutable tags. Orchestrate via a scheduler that can target on-prem first, then cloud if queue depth/time-to-deadline requires. Responsibilities: you patch guest OS on IaaS; provider patches infra. Security: encrypt in transit, audit IAM; ensure no PII leaves on-prem. Bandwidth at 1 Gbps can move 500 GB in ~1.1 hours theoretical; plan buffers and retries.",
+          "rubric": [
+            {
+              "criterion": "Residency-preserving data flow (no raw PII leaves on-prem or read-only remote access)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear choice of compute form (VMs vs containers) and orchestration with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Image build/distribution strategy with immutability and accessibility from both locations",
+              "marks": 1
+            },
+            {
+              "criterion": "SLA feasibility analysis referencing bandwidth/time windows and contingencies",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "deploy cloud resource",
+            "cloud security and compliance",
+            "manage ICT virtualisation environments"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A platform team wants to standardize images for both VMs and containers. Today, developers use `latest` tags and ad-hoc VM snapshots. Vulnerability scans show drift and inconsistent patch levels across environments.",
+          "task": "Propose an image strategy covering: base image selection, versioning/tagging conventions, rebuild cadence for CVEs, promotion between dev/stage/prod, and rollback. Explain how this reduces drift in both VM fleets and orchestrated containers.",
+          "expected_answer": "Choose minimal, supported base images (e.g., Ubuntu LTS for VMs; distro-less/Alpine/ubi for containers where appropriate). Disallow `latest`; use semantic version tags or digests (e.g., `app:1.8.2`, `sha256:...`) and image provenance signing. VM images: use a Packer-style pipeline to bake `gold-vN` with CIS hardening; rebuild on CVEs and monthly at minimum, then roll out via replace. Containers: multi-stage builds, pin dependency manifests, rebuild on CVE advisories and commit changes. Promotion via immutable tags (`1.8.2-dev` -> `1.8.2-rc` -> `1.8.2`) and environment-specific manifests. Rollback by redeploying prior immutable tags or `gold-v(N-1)`. This standardization ensures new instances/pods converge on the same, scanned baseline, eliminating ad-hoc drift.",
+          "rubric": [
+            {
+              "criterion": "Clear, practical versioning/tagging rules avoiding `latest` and enabling immutability",
+              "marks": 2
+            },
+            {
+              "criterion": "Defined rebuild/patch cadence tied to CVEs and time-based hygiene",
+              "marks": 2
+            },
+            {
+              "criterion": "Promotion and rollback process across environments (VMs and containers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explanation of how the approach reduces drift and improves compliance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "cloud security and compliance",
+            "manage ICT virtualisation environments",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Concept map: Service models, deployment models, and shared responsibility",
+          "brief": "Produce a concept map that ties together IaaS, PaaS, SaaS; deployment models (public, private, hybrid, community); and the shared responsibility model. Show for each service model which party owns each layer (physical, hypervisor, VM/OS, runtime, applications, data, identities), and include at least two concrete provider/service examples per model. Highlight how responsibilities shift when moving from IaaS to PaaS to SaaS and how deployment model choice affects risk and control.",
+          "deliverable": "One concept map exported as PDF or PNG plus the editable source file (e.g., draw.io/.dio, .mm, .vdx).",
+          "acceptance_criteria": [
+            "Includes the three service models and four deployment models as distinct nodes/groups.",
+            "Shows layer-by-layer responsibility splits (physical -> identities) for IaaS, PaaS, SaaS.",
+            "Includes at least two real-world examples per service model (e.g., managed DB, VM service, CRM SaaS).",
+            "Depicts how responsibilities shift across models with labeled edges or annotations.",
+            "Legible layout with a legend; export is readable at A4 size without zooming."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness of responsibility mapping across layers for IaaS, PaaS, SaaS",
+              "marks": 6
+            },
+            {
+              "criterion": "Coverage and accurate depiction of deployment models with meaningful relationships",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality and relevance of concrete examples for each service model",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity of visual structure, labeling, and legend (readability)",
+              "marks": 3
+            },
+            {
+              "criterion": "Insightful annotations explaining responsibility shifts/risks",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Virtual lab: VMs, images, containers, and orchestration basics",
+          "brief": "Build a local lab that demonstrates: (1) launching a VM from an image, (2) creating a reusable VM snapshot or template, (3) building and running a containerized web service, and (4) orchestrating that service with basic scaling and a rolling update on a single-node orchestrator (Docker Compose or minikube/k3d/kind). Do not require paid cloud resources; use local hypervisor and container tools.",
+          "deliverable": "A zipped folder containing: a step-by-step runbook (markdown or text) with commands and reasoning, the Dockerfile and app manifest(s) (Compose file or Kubernetes YAML), terminal outputs or screenshots proving each step (VM creation, snapshot/template listing, service reachable, scale-out, rolling update), and a short summary (<=300 words) describing what is automated vs manual and any issues encountered.",
+          "acceptance_criteria": [
+            "VM created from a base image and shown running (hostname/IP and OS shown).",
+            "Snapshot/template of the VM created and listed by the hypervisor CLI/GUI.",
+            "Container image built locally from a Dockerfile and run; service is reachable at a documented URL/port.",
+            "Orchestrator manifest present (Compose or Kubernetes) and evidence of scaling from 1 to N replicas.",
+            "Evidence of a rolling update (before/after image tags or version strings in logs) without total downtime."
+          ],
+          "rubric": [
+            {
+              "criterion": "VM lifecycle demonstrated (create from image + verify guest OS)",
+              "marks": 4
+            },
+            {
+              "criterion": "Image/snapshot/template creation and verification",
+              "marks": 4
+            },
+            {
+              "criterion": "Container image build and standalone run with reachable service",
+              "marks": 4
+            },
+            {
+              "criterion": "Orchestration basics: scale-out and rolling update evidenced correctly",
+              "marks": 6
+            },
+            {
+              "criterion": "Runbook quality and reproducibility (commands, outputs, troubleshooting)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "manage ICT virtualisation environments",
+            "automate cloud tasks",
+            "deploy cloud resource",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-028-S02",
+      "skills_assessed": [
+        "Cloud Architecture",
+        "DNS",
+        "Firewall",
+        "Load Balancing",
+        "manage cloud data and storage",
+        "Backup and Recovery",
+        "manage disaster recovery plans",
+        "Encryption"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You changed the DNS of your app at 10:00 from the old load balancer to a new one. Five minutes later, some users still reach the old load balancer.\n\nResolver output taken at 09:55 (before the change):\n```text\n$ dig app.example.com\n\n; <<>> DiG 9.18 <<>> app.example.com\n;; ANSWER SECTION:\napp.example.com.    3600   IN CNAME old-lb-abc.elb.amazonaws.com.\nold-lb-abc.elb.amazonaws.com. 60 IN A 203.0.113.10\n```\nAt 10:00 you updated `app.example.com` to `CNAME new-lb-xyz.elb.amazonaws.com`.\n\nWhat best explains why some users still hit the old load balancer at 10:05, and for how long that can persist?",
+          "options": [
+            "Their recursive resolvers cached the CNAME to `old-lb-abc` for up to 3600 seconds, so they will keep resolving `old-lb-abc` (and refreshing its A every 60s) until ~11:00.",
+            "Clients must flush their local hosts file; otherwise they will use the old A record indefinitely.",
+            "Authoritative nameservers are propagating the change globally; until they finish, some resolvers will receive `SERVFAIL`.",
+            "The load balancer caches client IPs and pins them to the original target for a full hour unless cookies are cleared."
+          ],
+          "correct_option": "A",
+          "explanation": "The CNAME itself had a 3600s TTL. Recursive resolvers that cached the CNAME will continue to resolve the target hostname (`old-lb-abc...`) until the CNAME TTL expires, even though the target A record has a 60s TTL. Thus clients can keep going to the old LB for up to an hour after the change.",
+          "distractor_rationale": "B: Authoritative propagation is not a thing for modern DNS; authorities answered correctly immediately after change. C: Load balancers do not cache client IPs to previous DNS targets. D: Hosts files are not involved unless explicitly configured; resolvers rely on cache TTLs, not manual flushing.",
+          "skills_covered": [
+            "DNS",
+            "Cloud Architecture",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your HTTP load balancer target group shows targets as unhealthy. Health check config and logs:\n```yaml\nTargetGroup:\n  Protocol: HTTP\n  Port: 80\n  HealthCheckPath: /health\n  Matcher: 200\n```\nApplication behavior:\n```text\nGET /health -> 301 Location: /status\nGET /status -> 200 OK (body: \"ok\")\n```\nLB health log snippet:\n```text\n10:12:01 healthcheck /health 301\n10:12:06 healthcheck /health 301\nTarget marked UNHEALTHY (failed 2 consecutive checks)\n```\nWhich change will make targets healthy without loosening security or masking real failures?",
+          "options": [
+            "Enable the load balancer to follow redirects automatically for health checks.",
+            "Change HealthCheckPath to `/status` so the LB expects a 200 on the actual endpoint.",
+            "Increase the healthy threshold so occasional 301 responses don’t mark the target unhealthy.",
+            "Open instance security group inbound 443 so the health check can succeed over HTTPS."
+          ],
+          "correct_option": "B",
+          "explanation": "Most L7 load balancers do not follow redirects for health checks. Pointing the health check at an endpoint that returns 200 in steady state is the correct fix.",
+          "distractor_rationale": "B: ALBs/Nginx/HAProxy health checks don’t follow 301s; enabling such behavior generally isn’t available. C: The check is HTTP:80, not HTTPS. D: Threshold tuning won’t convert 301s into 200s; the checks will continue to fail.",
+          "skills_covered": [
+            "Load Balancing",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "App servers in subnet 10.0.1.0/24 need to connect to a managed PostgreSQL database in subnet 10.0.2.0/24. Current rules:\n```text\nSecurityGroup: app-sg\n  Inbound:  TCP 80,443 from 0.0.0.0/0\n  Outbound: All traffic to 0.0.0.0/0\n\nSecurityGroup: db-sg\n  Inbound:  TCP 5432 from 10.0.2.0/24\n  Outbound: All traffic to 0.0.0.0/0\n\nNetwork ACLs: allow all within VPC\n```\nConnections from app to DB time out. Which change restores connectivity without overexposing the database?",
+          "options": [
+            "Add a NACL rule to allow ephemeral ports back from the DB to the app subnets.",
+            "Open `db-sg` inbound TCP 5432 from 0.0.0.0/0 and rely on the DB’s authentication.",
+            "Add an outbound rule on `db-sg` to allow TCP 5432 to 10.0.1.0/24.",
+            "Change `db-sg` inbound to allow TCP 5432 from the `app-sg` security group."
+          ],
+          "correct_option": "D",
+          "explanation": "Security groups are stateful but the database’s inbound rule incorrectly restricts the source to the DB subnet CIDR. Allowing the `app-sg` as the source is both precise and least-privilege.",
+          "distractor_rationale": "B: Opens the DB to the internet. C: Outbound is already allowed and SGs are stateful; the missing piece is inbound source. D: NACLs already allow all; the block is at SG level.",
+          "skills_covered": [
+            "Firewall",
+            "Cloud Architecture",
+            "manage cloud data and storage"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Private instances must access object storage via a VPC endpoint due to a restrictive bucket policy. Symptoms: AccessDenied and NAT egress observed. Route table for the private subnet:\n```json\n{\n  \"Routes\": [\n    {\"Destination\": \"10.0.0.0/16\", \"Target\": \"local\"},\n    {\"Destination\": \"0.0.0.0/0\",   \"Target\": \"nat-0abc\"}\n  ],\n  \"Associations\": [\"subnet-priv-a\", \"subnet-priv-b\"]\n}\n```\nGateway endpoint `vpce-gw-s3-123` exists but S3 traffic still goes to the NAT. What change corrects the path so requests hit the endpoint and the bucket policy?",
+          "options": [
+            "Add a static route to published S3 IP ranges via the NAT for higher availability.",
+            "Open NACLs to allow 443 to S3; the lack of NACL allow rules is forcing NAT egress.",
+            "Associate the S3 gateway endpoint with this route table so the S3 prefix-list route appears and is used.",
+            "Create an interface endpoint for S3 and remove the NAT default route."
+          ],
+          "correct_option": "C",
+          "explanation": "Gateway endpoints work by adding a prefix-list route to the route table. Without association, traffic matches the 0.0.0.0/0 NAT route and bypasses the endpoint, violating the bucket policy.",
+          "distractor_rationale": "B: Sends traffic to NAT and still violates the policy. C: S3 gateway endpoints are the standard; interface endpoints change the pattern and won’t fix the unassociated route table. D: NACLs aren’t the issue; routing precedence is.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "manage cloud data and storage",
+            "Firewall"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A managed database volume shows latency spikes under load. Metrics and logs:\n```text\nEBS VolumeType: gp2\nBurstBalance:   0%\nVolumeQueueLen: 35\nAvgReadLatency: 40ms\n```\nDB log:\n```text\nWARNING: slow I/O: fsync() execution time 1200ms on data file\n```\nYou need a change that directly addresses the storage bottleneck. What should you do first?",
+          "options": [
+            "Migrate the volume to gp3 and provision explicit IOPS/throughput (e.g., 6000 IOPS, 250 MiB/s) sized to workload.",
+            "Move database files to object storage for better durability and read-after-write consistency.",
+            "Increase the DB cache size; this eliminates slow I/O at the storage layer.",
+            "Stripe two gp2 volumes in RAID0 without changing anything else to multiply performance."
+          ],
+          "correct_option": "A",
+          "explanation": "The metrics indicate exhausted gp2 burst credits and queueing. gp3 lets you provision steady IOPS/throughput independently of size, addressing the root cause.",
+          "distractor_rationale": "B: Object storage isn’t suitable for database block I/O. C: Caching may reduce pressure but doesn’t fix saturated storage for writes/fsync. D: RAID0 on gp2 still depends on burst credits and adds risk.",
+          "skills_covered": [
+            "manage cloud data and storage",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Lifecycle configuration for a bucket holding user uploads:\n```json\n{\n  \"Rules\": [{\n    \"ID\": \"immediate-archive\",\n    \"Filter\": {\"Prefix\": \"uploads/\"},\n    \"Transitions\": [{\"Days\": 0, \"StorageClass\": \"DEEP_ARCHIVE\"}],\n    \"Status\": \"Enabled\"\n  }]\n}\n```\nRight after upload, the app performs a GET to read back and process the object. What actually happens to those immediate GETs and why?",
+          "options": [
+            "They succeed with higher latency because S3 streams from Deep Archive on first access.",
+            "They return 301 redirects to a restore URL that the client must follow.",
+            "They time out only if the client doesn’t send the `x-amz-restore` header on GET.",
+            "They fail with InvalidObjectState until a restore is requested/completed because Deep Archive requires asynchronous restore."
+          ],
+          "correct_option": "D",
+          "explanation": "Deep Archive objects are not immediately retrievable. A GET before restore returns 403/InvalidObjectState until you initiate and complete a restore, which can take hours.",
+          "distractor_rationale": "B: S3 does not auto-stream Glacier/DA objects. C: There is no redirect to a restore URL. D: `x-amz-restore` is a response header, not a client-sent request header.",
+          "skills_covered": [
+            "manage cloud data and storage",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "During a managed DB failover, your Java app continues connecting to the old primary for minutes until restarted.\n\nConfig and observations:\n```properties\n# In the application JVM\nnetworkaddress.cache.ttl=-1\n```\n```text\n$ dig db.cluster.example.internal\n;; ANSWER SECTION:\ndb.cluster.example.internal. 5 IN A 10.0.2.101  ; (changes on failover)\n```\nWhy does the app keep using the old IP and how should you fix it?",
+          "options": [
+            "The DB security group blocks new connections; widening inbound rules will force the app to switch.",
+            "The JVM caches DNS forever with ttl=-1; set a small positive TTL (e.g., 30s) or use a connection pool that re-resolves.",
+            "The resolver is pinning to a single nameserver; switch resolvers to 8.8.8.8 to get fresher answers.",
+            "The load balancer uses sticky sessions; disable stickiness to force new connections to the new IP."
+          ],
+          "correct_option": "B",
+          "explanation": "With `networkaddress.cache.ttl=-1`, the JVM caches DNS indefinitely. When the DB endpoint’s A record changes, the app won’t re-resolve. Set a finite TTL or use client libraries that re-resolve endpoints.",
+          "distractor_rationale": "B: Resolver choice is not the issue; the app is not re-resolving. C: No LB in play for a DB endpoint. D: SGs don’t force DNS refresh; they only allow/deny traffic.",
+          "skills_covered": [
+            "DNS",
+            "manage cloud data and storage",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your EC2 instances cannot resolve the internal DB hostname `db.internal.example`.\n\nEvidence:\n```text\n$ cat /etc/resolv.conf\nnameserver 8.8.8.8\n```\n```text\n$ dig db.internal.example @8.8.8.8\n;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN\n```\nThere is a private hosted zone for `internal.example` in the VPC with an A record for `db`. What change results in successful resolution from instances in the VPC?",
+          "options": [
+            "Create a public A record for `db.internal.example` so 8.8.8.8 can answer it.",
+            "Use the VPC-provided resolver (AmazonProvidedDNS) or a Route 53 Resolver rule so queries for `internal.example` are resolved inside the VPC.",
+            "Open port 53 in the NACLs so 8.8.8.8 can forward the query to the VPC.",
+            "Add a hosts file entry on each instance mapping `db.internal.example` to the private IP."
+          ],
+          "correct_option": "B",
+          "explanation": "Private hosted zones are only resolvable by the VPC’s resolver or via explicit forwarding rules. Pointing instances at public resolvers bypasses the private zone.",
+          "distractor_rationale": "B: Exposes internal names publicly and still doesn’t tie to the private resource. C: Not scalable or reliable. D: NACLs aren’t the reason a public resolver can’t see private zones.",
+          "skills_covered": [
+            "DNS",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two app instances behind an HTTP LB serve requests that require reading a file from a mounted shared filesystem (`/mnt/shared`). When the mount drops on one node, the LB still sends traffic to it and users see 500s.\n\nCurrent health endpoint:\n```text\nGET /health -> returns 200 OK (does not check filesystem)\n```\nWhat change most directly prevents the LB from routing to a node that lost the mount?",
+          "options": [
+            "Enable sticky sessions in the LB so users don’t bounce between nodes when one fails.",
+            "Increase deregistration delay so the node has time to recover the mount before being removed.",
+            "Have `/health` perform a read/write probe on `/mnt/shared` and return 500 on failure so the LB marks the node unhealthy.",
+            "Switch the LB to TCP health checks to test lower-level connectivity."
+          ],
+          "correct_option": "C",
+          "explanation": "Health checks must reflect critical dependencies. Probing the mounted path and failing the check removes the bad node from service quickly.",
+          "distractor_rationale": "B: Stickiness masks the issue and can strand users on a bad node. C: TCP checks would still pass even if the app can’t read the filesystem. D: Longer delay prolongs impact rather than preventing it.",
+          "skills_covered": [
+            "Load Balancing",
+            "manage cloud data and storage",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A nightly snapshot policy backs up a database VM’s block volume:\n```yaml\nSchedule: 02:00 UTC daily\nQuiesce:  false  # no fsfreeze / no DB pre-freeze hook\nConsistency: crash-consistent\n```\nAfter restoring from such a snapshot, what behavior should you expect from the database and data state?",
+          "options": [
+            "The DB will start and perform crash recovery; you may lose the last few seconds of committed writes unless you apply logs.",
+            "The snapshot is useless because files are corrupted beyond recovery without application-consistent quiescing.",
+            "The restore will fail unless the DB was fully shut down for the snapshot.",
+            "There will be zero data loss because cloud snapshots are atomic across the filesystem and DB buffers."
+          ],
+          "correct_option": "A",
+          "explanation": "Crash-consistent snapshots capture on-disk state but not in-memory buffers. Most modern DBs recover successfully but recent committed transactions may be missing unless you replay WAL/binlogs.",
+          "distractor_rationale": "B: Overstated; crash recovery is a standard path. C: Atomicity of snapshots doesn’t include application caches and journaling. D: Clean shutdown isn’t required for a successful restore with crash recovery.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "manage cloud data and storage",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A fintech startup is launching a payments API with strict availability and data durability targets. Requirements:\n- Public HTTPS endpoint, WAF-friendly, zero single-AZ bottlenecks\n- Private app tier; no direct internet ingress\n- Managed relational database with cross-AZ high availability\n- Static assets and receipts stored durably and served efficiently\n- Strict egress control so object storage access never goes over the internet\n- RPO <= 5 minutes, RTO <= 15 minutes for the database tier\n- DNS cutover plan with minimal client impact during blue/green releases",
+          "task": "Propose a network and storage design that meets the above. Include: subnetting and routing, DNS and TTL strategy, load balancing placement and health checks, firewall/SG boundaries, storage choices (object/block/file/managed DB), encryption, backup/DR approach (including how you hit the RPO/RTO), and how to enforce object storage access via private paths. Justify each choice in one or two sentences.",
+          "expected_answer": "A solid answer includes: a VPC with at least three public subnets (for ALB/NLB and egress) and three private subnets (for app and DB) across three AZs; ALB in public subnets with HTTPS listener and health checks that exercise critical dependencies; App Auto Scaling group in private subnets; NAT for egress where needed; S3 gateway endpoint associated with private route tables and bucket policy limited to that VPC/endpoint; Route 53 public zone for `api.example.com` with short TTL (e.g., 60s) for blue/green cutovers, and private zone(s) for internal hostnames; Managed DB (e.g., multi-AZ) with encryption at rest and in transit; DB subnet group in private subnets across AZs; block storage gp3 with provisioned IOPS sized to workload; object storage for receipts with lifecycle and KMS CMK, presigned downloads if needed; WAF attached to the ALB; SGs limiting DB ingress to app SG; backups via automated snapshots plus WAL/binlog archiving to object storage, with tested restore procedures to meet RPO/RTO; DR plan that promotes a read replica in another region or restores from cross-region copies; observability for LB health and DB failover; and explicit denial of internet egress for S3 by ensuring endpoint routes and NAT bypass policies.",
+          "rubric": [
+            {
+              "criterion": "Correct multi-AZ subnet/Routing design (public for LB, private for app/DB, NAT placement, route tables)",
+              "marks": 2
+            },
+            {
+              "criterion": "LB choice/placement, health checks reflecting dependencies, and WAF/DNS fronting with sensible TTLs for cutover",
+              "marks": 2
+            },
+            {
+              "criterion": "Storage selections mapped to needs (gp3 for DB, S3 for receipts with KMS, lifecycle) and enforcement of private S3 access (endpoint + bucket policy)",
+              "marks": 2
+            },
+            {
+              "criterion": "Firewall/SG scoping (DB only from app SG, least privilege) and encryption in transit/at rest for data paths",
+              "marks": 1
+            },
+            {
+              "criterion": "Backup/DR plan meeting RPO/RTO with snapshots + log shipping, cross-region copy or replica strategy and restore validation",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "Load Balancing",
+            "DNS",
+            "Firewall",
+            "manage cloud data and storage",
+            "Backup and Recovery",
+            "manage disaster recovery plans",
+            "Encryption"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are migrating a monolithic web app on a single VM (attached gp2 volume) to a cloud-native layout. New target: ALB + two app instances (private subnets), managed DB (multi-AZ), and object storage for static content and user uploads. The CEO insists on near-zero visible downtime during cutover.",
+          "task": "Design a blue/green migration and cutover plan. Cover: data synchronization strategy for the database, where to store static assets and how to sync them, how to stand up the green environment and test it safely, how to orchestrate DNS and TTLs for the switch, and rollback. Include specific checks/health criteria at the LB and how to prevent clients from seeing mixed asset states.",
+          "expected_answer": "Plan includes: stand up green VPC subnets, ALB, app ASG, and managed DB; enable DB logical replication or dual-write phase from legacy DB to the managed DB until lag < target; perform an initial dump/restore then continuous WAL/binlog streaming; switch app to read from green DB in maintenance window if needed. Migrate static assets to S3, sync using rsync or storage transfer, then shift app to write to S3; enable versioning to avoid overwrite races. Pre-warm green environment and health checks that verify DB connectivity and S3 read/write on `/healthz`. Use Route 53 with reduced TTL (e.g., 60s) a day prior; during cutover, update the CNAME to ALB. Keep legacy serving behind old DNS for a short overlap and drain connections. Prevent asset divergence by freezing writes briefly or routing all new writes to S3 before DNS cut, with a final delta sync. Rollback by restoring DNS to blue and pausing green writes, with clear RPO implications.",
+          "rubric": [
+            {
+              "criterion": "Database migration path (initial load + continuous replication/streaming, cutover trigger/lag tolerance)",
+              "marks": 2
+            },
+            {
+              "criterion": "Static asset move to object storage with sync/consistency handling and versioning; prevention of mixed states",
+              "marks": 2
+            },
+            {
+              "criterion": "Green environment validation: LB health checks that hit DB and object storage; safe testing without user traffic",
+              "marks": 2
+            },
+            {
+              "criterion": "DNS/TTL cutover mechanics and rollback plan with implications on cached clients",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "DNS",
+            "Load Balancing",
+            "manage cloud data and storage",
+            "Backup and Recovery",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "An analytics service in private subnets writes reports to `s3://corp-reports`. A strict bucket policy only allows access via the VPC S3 endpoint. Users report AccessDenied after a network change. Flow logs show traffic to public S3 IPs via the NAT. The S3 gateway endpoint exists.",
+          "task": "Diagnose and propose a fix. Identify the specific misconfiguration causing NAT egress, how to confirm it, and the exact change to restore endpoint usage without loosening the bucket policy. Include any DNS considerations.",
+          "expected_answer": "Diagnosis: the route tables associated with the private subnets are not associated with the S3 gateway endpoint, so no S3 prefix-list route appears and 0.0.0.0/0 via NAT wins. Confirm by inspecting the route tables and checking for the `pl-...` route and endpoint associations. Fix: associate the S3 gateway endpoint with the private subnets’ route tables so traffic to S3 prefixes uses the endpoint; verify by repeating the request and seeing flow logs target the endpoint. Keep DNS default (no need for public resolvers). Ensure there’s no conflicting interface endpoint or custom DNS override that forces public S3 names.",
+          "rubric": [
+            {
+              "criterion": "Identifies missing endpoint association / missing S3 prefix-list route as root cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes verification steps (route table inspection, flow logs/path test)",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes correct fix (associate endpoint with route tables) without weakening bucket policy",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes DNS/pathing considerations (don’t override to public, confirm no conflicting endpoints)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "manage cloud data and storage",
+            "Firewall"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your observability platform ingests logs at 50 MB/s, stores for 30 days hot, 365 days cold, and must support rapid restores for audits. Workloads: app logs (append-only), database backups (daily full + hourly incrementals), and product images (read-heavy, rarely change). Budget pressure demands cost optimization without breaking recovery or performance SLAs.",
+          "task": "Recommend storage types and lifecycle for each data set, any networking/load balancing implications, and how you will meet restore requirements. Justify choices with trade-offs, including encryption and cross-region considerations.",
+          "expected_answer": "App logs: write to object storage standard or infrequent access after 7 days, then transition to Glacier (not Deep Archive if rapid restore is required); enable partitioned prefixes and S3 inventory; KMS CMK for at-rest. Database backups: keep recent fulls and increments in Standard-IA for fast restore; replicate cross-region; ensure DB-native backup tooling supports point-in-time with WAL/binlogs in Standard; test restore times against RTO. Product images: store in object storage Standard, serve via ALB-backed app or CDN (if permitted) with presigned URLs; consider IA for rarely accessed originals; no need for block/file. Networking: ensure private access via gateway endpoints for all buckets; ALB health checks should validate object storage dependency. Encryption: TLS in transit, KMS at rest, key policies allowing backup/restore roles. Lifecycle rules to move data on schedule, but avoid Deep Archive where rapid restores are mandated. Document RPO/RTO and test restores quarterly.",
+          "rubric": [
+            {
+              "criterion": "Correct mapping of each workload to storage class/type with lifecycle that meets performance/restore needs",
+              "marks": 3
+            },
+            {
+              "criterion": "Networking pathing and LB/endpoint considerations to keep traffic private and health-checked",
+              "marks": 1
+            },
+            {
+              "criterion": "Backup/restore mechanics for DB (full+incrementals+logs) with RPO/RTO awareness and cross-region copy",
+              "marks": 2
+            },
+            {
+              "criterion": "Security/encryption choices (KMS, access policies) and trade-offs articulated",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "manage cloud data and storage",
+            "Backup and Recovery",
+            "manage disaster recovery plans",
+            "Cloud Architecture",
+            "Encryption",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design a production-ready network for a two-tier app with private data paths",
+          "brief": "Produce a network diagram for a three-AZ VPC hosting a public-facing web/API tier behind a load balancer and a private app + managed database tier. Show addressing, DNS, routing, firewall boundaries, load balancing, and how object storage is accessed privately. Annotate key choices (TTL, health check path, storage endpoints).",
+          "deliverable": "Network diagram",
+          "acceptance_criteria": [
+            "Diagram shows at least three public subnets (for LB) and three private subnets (for app/DB) across three AZs with CIDRs labeled.",
+            "Includes route tables with explicit routes (local, 0.0.0.0/0 to NAT for private, S3 gateway endpoint prefix-list to private subnets).",
+            "Depicts an internet-facing load balancer in public subnets with listener/target group and health check path noted.",
+            "Shows a managed DB in private subnets with DB subnet group, and security groups scoping DB inbound to the app SG only.",
+            "Includes DNS records (public `app.example.com` -> LB; private `db.internal` -> DB endpoint) with TTL values indicated.",
+            "Marks object storage, the VPC endpoint type used (gateway), its association to private route tables, and a note that the bucket policy allows access only via the endpoint/VPC.",
+            "Indicates NAT placement, IGW, and any VPC endpoints; shows egress paths clearly.",
+            "Includes encryption notes (TLS to LB/DB, KMS for object storage) and a legend for symbols used."
+          ],
+          "rubric": [
+            {
+              "criterion": "Subnetting and AZ layout correctness with clear CIDRs and component placement",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate routing depiction including NAT, IGW, and S3 endpoint routes/associations",
+              "marks": 5
+            },
+            {
+              "criterion": "Load balancer, DNS, and health check annotations correctly tied to components and TTLs",
+              "marks": 4
+            },
+            {
+              "criterion": "Firewall/SG boundaries correctly shown (least-privilege DB access, no public ingress to private tiers)",
+              "marks": 4
+            },
+            {
+              "criterion": "Private object storage access path (endpoint + bucket policy intent) and encryption notes present",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "DNS",
+            "Firewall",
+            "Load Balancing",
+            "manage cloud data and storage",
+            "Encryption"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Storage and managed database service comparison for target workloads",
+          "brief": "Create a comparison that evaluates object, block, file storage, and a managed relational database service for three workloads: (1) transactional OLTP data, (2) user-uploaded media, (3) shared application assets (read/write by multiple instances). Use one cloud provider’s services and include how networking choices (private endpoints) affect each. Conclude with your recommended service mix and lifecycle/backup policies.",
+          "deliverable": "Service comparison",
+          "acceptance_criteria": [
+            "Compares at least four services (object, block, file, managed DB) across a minimum of 12 dimensions (latency, throughput, IOPS, durability, consistency model, concurrency/locking, scaling, availability/AZ model, encryption, backup/restore, lifecycle/tiering, cost signals).",
+            "For each of the three workloads, clearly indicates the preferred service(s) and why, with trade-offs.",
+            "Includes how private access (e.g., VPC endpoints) applies to each service and any DNS implications.",
+            "Specifies backup/DR approach per workload (snapshots, PITR, cross-region copy) and expected RPO/RTO ranges.",
+            "Identifies at least two anti-patterns (e.g., databases on object storage, user uploads on block volumes without sharing) and why they fail.",
+            "Cites provider documentation or measured benchmarks for at least three claims (links accepted)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and accuracy of the multi-dimension comparison across services",
+              "marks": 6
+            },
+            {
+              "criterion": "Workload-to-service mapping quality with nuanced trade-offs and anti-pattern identification",
+              "marks": 6
+            },
+            {
+              "criterion": "Networking/private access and DNS considerations correctly applied to each service",
+              "marks": 3
+            },
+            {
+              "criterion": "Backup/DR recommendations with plausible RPO/RTO and lifecycle policies",
+              "marks": 3
+            },
+            {
+              "criterion": "Use of references/justification to support claims",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "manage cloud data and storage",
+            "Cloud Architecture",
+            "Backup and Recovery",
+            "manage disaster recovery plans",
+            "DNS",
+            "Encryption"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-028-S03",
+      "skills_assessed": [
+        "Cloud Architecture",
+        "cloud security and compliance",
+        "Encryption",
+        "Backup and Recovery",
+        "manage disaster recovery plans",
+        "Load Balancing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A nightly cross-account backup from the prod account (111111111111) to a central bucket in the backup account (555555555555) suddenly fails. Artefacts:\n\nSCP at the org root:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"DenyPutObjectToCentralBucket\",\n      \"Effect\": \"Deny\",\n      \"Action\": \"s3:PutObject\",\n      \"Resource\": \"arn:aws:s3:::central-backup-bucket/*\",\n      \"Condition\": {\"StringNotEquals\": {\"aws:PrincipalAccount\": \"555555555555\"}}\n    }\n  ]\n}\n```\n\nBackup role policy in prod:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:PutObject\",\n      \"Resource\": \"arn:aws:s3:::central-backup-bucket/prod/*\"\n    }\n  ]\n}\n```\n\nCLI output:\n```text\naws s3 cp db.dump s3://central-backup-bucket/prod/db.dump\nupload failed: ... AccessDenied: blocked by SCP\n```\nWhat change unblocks the backup without weakening least privilege?",
+          "options": [
+            "Attach AdministratorAccess to the prod backup role so it can override the block.",
+            "Add the prod backup role ARN to the bucket policy Principal allow list.",
+            "Modify the org SCP to allow s3:PutObject to the specific bucket from account 111111111111’s backup role only.",
+            "Switch the backup to SSE-S3 so the SCP no longer applies."
+          ],
+          "correct_option": "C",
+          "explanation": "SCPs apply before IAM and bucket policies. The explicit Deny in the SCP blocks PutObject from any account other than 555555555555. The only effective least-privilege fix is to update the SCP to allow the prod account’s backup role to PutObject to that bucket (narrowed to that role and resource).",
+          "distractor_rationale": "A: Bucket policies cannot override an SCP Deny, so this remains blocked. B: AdministratorAccess does not bypass an SCP Deny; SCPs cap permissions. D: Encryption choice does not affect an SCP Deny on s3:PutObject; the action is still denied.",
+          "skills_covered": [
+            "cloud security and compliance",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your DR restore of 10,000 KMS-encrypted objects consistently misses its 30-minute RTO. Metrics show KMS Decrypt throttling:\n```text\nRestore plan: 10,000 objects @ ~5 MB each, CMK alias/backup-key\nKMS Decrypt limit: 2,400/min (observed)\nErrors: ThrottlingException on kms:Decrypt\nProgress: 2,000 restored after 35 min\n```\nWhich change most directly reduces restore time while preserving encryption controls?",
+          "options": [
+            "Replace KMS with a static symmetric key checked into your code repo.",
+            "Enable data-key caching in the client to reuse DEKs across batches and request a higher KMS Decrypt quota for the restore role.",
+            "Re-encrypt all objects with a unique CMK per object to parallelize KMS calls.",
+            "Temporarily disable encryption during restore, then re-encrypt once complete."
+          ],
+          "correct_option": "B",
+          "explanation": "Envelope encryption with data-key caching reduces kms:Decrypt calls dramatically during bulk restores; increasing the Decrypt quota removes the throttle. Both preserve strong encryption and control boundaries.",
+          "distractor_rationale": "B: More CMKs increases administrative load and may increase, not decrease, KMS calls; it doesn’t solve throttling. C: Restoring unencrypted data breaks controls and auditability. D: A static key in code is a severe security anti-pattern with no proper access control.",
+          "skills_covered": [
+            "Encryption",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "During credential rotation, new connections to your database intermittently fail. Artefacts:\n```text\nRotation window: 02:00–02:10\n02:00 Secrets store creates version v2 (AWSPENDING)\n02:02 App errors: \"invalid password\" on new connections\n02:05 DB user updated to new password\n02:06 Rotator sets v2 to AWSCURRENT; v1 moved to AWSPREVIOUS\n```\nWhat rotation approach prevents these failures?",
+          "options": [
+            "Reduce the rotation window to 15 minutes so fewer users are affected.",
+            "Keep both old and new credentials valid for an overlap window and only set AWSCURRENT after all writers and replicas are updated and verified.",
+            "Force clients to cache connections for the full rotation window to avoid reauth.",
+            "Increase password complexity to avoid collisions during rotation."
+          ],
+          "correct_option": "B",
+          "explanation": "Overlap (dual-valid) rotation stages prevent auth failures while components converge. Advance AWSCURRENT only after the DB and replicas accept the new secret and health checks pass.",
+          "distractor_rationale": "B: Shorter windows do not address ordering/race conditions. C: Caching sidesteps rotation and risks stale creds; it doesn’t make rotation safe. D: Complexity doesn’t fix sequencing or propagation issues.",
+          "skills_covered": [
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A load balancer health check is configured as:\n```yaml\npath: /\nprotocol: HTTPS\nport: 443\nsuccess_codes: \"200\"\ninterval: 30s\ntimeout: 5s\nhealthy_threshold: 3\nunhealthy_threshold: 2\n```\nThe app redirects unauthenticated users from `/` to `/login` with HTTP 302 (verified via curl). What happens after deployment, and why?",
+          "options": [
+            "Targets remain healthy because 3xx is considered success by default.",
+            "TLS negotiation will fail the check, not the 302 redirect.",
+            "Sticky sessions will keep targets healthy despite the 302.",
+            "Targets are marked unhealthy because 302 is not an allowed success code; use an unauthenticated `/healthz` that returns 200."
+          ],
+          "correct_option": "D",
+          "explanation": "With success_codes set to 200, a 302 causes the LB to mark targets unhealthy. Health checks must hit an endpoint that returns 200 without auth.",
+          "distractor_rationale": "B: Many LBs require explicit inclusion of 3xx as success; here only 200 is allowed. C: Stickiness affects request routing, not health evaluation. D: TLS is fine; the failure is the non-200 response.",
+          "skills_covered": [
+            "Load Balancing",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You observe bursty traffic: short CPU spikes to 85% for 1–2 minutes, SQS backlog jumps to 2,000, and ALB 5xx increases during spikes. Current policy: add 1 instance when average CPU > 70% for 5 minutes.\n```text\n09:00–09:10 CPU: bursts 85% (1–2 min), avg 35%\nQueue backlog: 0 -> 2,000 during bursts\nALB 5xx: spikes align with CPU bursts\n```\nWhich change best stabilizes latency and error rates under this pattern?",
+          "options": [
+            "Increase instance size to absorb spikes without changing policy.",
+            "Raise the CPU threshold to 80% to avoid over-scaling.",
+            "Use target-tracking on backlog-per-instance (e.g., 200 msgs/instance) with shorter cooldown to scale to actual work.",
+            "Shorten health check interval to 10s to rotate traffic faster."
+          ],
+          "correct_option": "C",
+          "explanation": "Backlog-per-instance targets scale on actual work instead of lagging CPU averages, reacting quickly to bursts and draining queues to protect latency and error budgets.",
+          "distractor_rationale": "B: Vertical scaling risks cost and doesn’t track bursty demand as well as dynamic horizontal scaling. C: Raising the threshold worsens lag. D: Health checks don’t add capacity; they won’t fix saturation.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "It is 10:35. Your DB backups and replication show:\n```text\nLast full snapshot: 02:00\nLast incremental snapshot: 10:05\nBinlog/WAL shipping to DR: replication lag 12 minutes at 10:34\nRPO target: <= 30 minutes\n```\nWhich restore action meets the RPO with the least data loss?",
+          "options": [
+            "Restore the 10:05 incremental snapshot into a new instance and cut over.",
+            "Promote the DR replica to primary now; accept up to ~12 minutes of data loss.",
+            "Trigger a new on-demand snapshot and restore it immediately.",
+            "Restore the 02:00 full and replay logs until 10:05, then cut over."
+          ],
+          "correct_option": "B",
+          "explanation": "The DR replica is within 12 minutes of current time, which satisfies the 30-minute RPO. Restoring snapshots would lose more data or take longer.",
+          "distractor_rationale": "B: Restoring 10:05 loses up to 30 minutes of data and takes longer to be ready. C: A new snapshot adds creation time and still lags behind the replica. D: Restoring to 10:05 ignores newer logs and increases RPO breach risk.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Cross-region replication with destination-side KMS encryption fails:\n```json\n{\n  \"Rule\": \"CRR-to-eu\",\n  \"SSE-KMS\": {\"DestinationKeyArn\": \"arn:aws:kms:eu-west-1:2222:key/abcd\"}\n}\n```\nError:\n```text\nKMS.AccessDenied: arn:aws:iam::1111:role/replication not authorized for kms:Encrypt on arn:aws:kms:eu-west-1:2222:key/abcd\n```\nDestination CMK policy:\n```json\n{\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowUseFromBackupTeam\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\"AWS\": \"arn:aws:iam::2222:role/backup\"},\n      \"Action\": [\"kms:Encrypt\",\"kms:Decrypt\"],\n      \"Resource\": \"*\"\n    }\n  ]\n}\n```\nWhat change enables secure replication?",
+          "options": [
+            "Disable KMS and use SSE-S3 at the destination bucket to avoid key policy issues.",
+            "Create a new CMK in the source region and reference it in the replication rule.",
+            "Allow kms:Decrypt to all principals on the destination CMK so replication can proceed.",
+            "Grant the source account’s replication role permission to use the destination CMK (via key policy or grant) for kms:Encrypt."
+          ],
+          "correct_option": "D",
+          "explanation": "The replication principal in account 1111 must be authorized to use the destination-region CMK for Encrypt. Add a cross-account principal to the key policy or issue a grant for that role.",
+          "distractor_rationale": "B: Over-broad Decrypt is unnecessary and insecure. C: Downgrading encryption avoids the requirement rather than fixing it, violating controls. D: The destination key is what’s used; a new source-region CMK doesn’t fix the destination authorization failure.",
+          "skills_covered": [
+            "Encryption",
+            "cloud security and compliance",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "DR runbook excerpt:\n```text\n1. Update DNS app CNAME to dr-app.example.com\n2. Scale up DR app tier\n3. Promote DR database to primary\n4. Invalidate CDN\nTTL: 5 minutes\n```\nWhat is the immediate risk, and the minimal change to eliminate it?",
+          "options": [
+            "Clients can be routed to DR while the DB is still read-only, causing write failures; move step 3 before step 1.",
+            "No risk: TTL ensures no traffic switches until promotion completes.",
+            "CDN invalidation must be first to avoid stale assets; swap steps 1 and 4.",
+            "Only cost risk: scaling app before DB; accept it."
+          ],
+          "correct_option": "A",
+          "explanation": "Flipping DNS first can send clients to a read-only replica. Promote the DB (and verify writable health) before switching DNS.",
+          "distractor_rationale": "B: Some clients honor low TTLs or cache differently; traffic can arrive before promotion. C: It’s not just cost—writes will fail. D: CDN ordering doesn’t fix the read-only outage risk.",
+          "skills_covered": [
+            "manage disaster recovery plans",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A backup role currently has:\n```json\n{\n  \"Statement\": [\n    {\"Effect\": \"Allow\", \"Action\": [\"s3:ListBucket\"], \"Resource\": \"*\"},\n    {\"Effect\": \"Allow\", \"Action\": [\"s3:GetObject\",\"s3:PutObject\"], \"Resource\": \"arn:aws:s3:::backup-*/*\"}\n  ]\n}\n```\nTo meet least-privilege, an engineer adds this to the ListBucket statement:\n```json\n\"Condition\": {\"StringLike\": {\"s3:prefix\": \"backup-*\"}}\n```\nWhat is the real effect?",
+          "options": [
+            "ListBucket on non-backup buckets is still allowed; the condition filters object key prefixes, not which buckets can be listed.",
+            "Only buckets with names starting with backup- will be listable.",
+            "ListBucket will be denied on all buckets due to the condition.",
+            "PutObject is now denied on backup buckets because of the ListBucket condition."
+          ],
+          "correct_option": "A",
+          "explanation": "For ListBucket, s3:prefix conditions filter returned keys within a bucket; with Resource \"*\", the role can still call ListBucket on any bucket. The fix is to scope the Resource to specific bucket ARNs.",
+          "distractor_rationale": "B: The condition doesn’t deny; it filters results. C: Bucket selection is controlled by the Resource, not s3:prefix. D: The ListBucket condition doesn’t affect PutObject permissions.",
+          "skills_covered": [
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You take VM-level volume snapshots of a MySQL server without stopping the service:\n```bash\n#!/bin/bash\naws ec2 create-snapshot --volume-id vol-123\n```\nOn restore you see:\n```text\nInnoDB: Database was not shut down normally; starting crash recovery...\n```\nWhat pre-step most directly increases backup consistency with minimal downtime?",
+          "options": [
+            "Execute \"FLUSH TABLES WITH READ LOCK; SET GLOBAL read_only=ON;\" before the snapshot, then \"SET GLOBAL read_only=OFF; UNLOCK TABLES;\" after.",
+            "Switch to nightly logical dumps only.",
+            "Take two snapshots back-to-back to reduce risk.",
+            "Increase instance size before the snapshot to finish faster."
+          ],
+          "correct_option": "A",
+          "explanation": "Quiescing writes (brief read-only window with a flush) before a block-level snapshot produces a consistent image with minimal downtime.",
+          "distractor_rationale": "B: Larger instance doesn’t guarantee consistency. C: Two inconsistent snapshots are still inconsistent. D: Logical dumps can be consistent but may miss RTO/RPO targets and are not a minimal change.",
+          "skills_covered": [
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must design cross-account, cross-region backups for a 5 TB production workload in Account A (us-east-1) to a central backup Account B (eu-west-1). Requirements: all backups encrypted under keys controlled by the backup team (not app team), least privilege across accounts, nightly full plus hourly incrementals, and a full-region failover restore RTO of 60 minutes. During DR tests, Decrypt throttling on the key caused restores to miss RTO.",
+          "task": "Propose a backup encryption and access design that meets the requirements and removes the restore bottleneck. Specify: (1) key topology (where keys live, one/many, region scope), (2) key policy/grants and IAM trust so Account A can write and Account B can restore, (3) measures to reduce KMS/API bottlenecks during mass restore, and (4) how you will test and verify the design against the RTO.",
+          "expected_answer": "A strong answer proposes destination-owned CMKs in Account B per region (eu-west-1 for copies; optionally multi-Region CMKs or per-region CMKs) with key policies that: (a) make the backup security team key administrators, (b) allow Encrypt for the replication/backup role from Account A to write into B (grant or cross-account principal in policy), and (c) allow Decrypt for restore roles in Account B only. Use envelope encryption so objects carry unique DEKs, enabling data-key caching. To reduce KMS load during restore: enable data-key caching in the restore client, batch object restores to maximize DEK reuse, pre-request increased KMS Decrypt quotas for the restore role, and, if applicable, use storage-native bucket/key features that reduce per-object KMS calls. IAM should restrict the source role in A to only the specific backup bucket/prefix in B. Testing: execute a timed restore rehearsal that pulls a representative object set (e.g., 50–100k objects), monitor KMS Decrypt TPS, throttle and error metrics, and end-to-end elapsed time; adjust quotas/caching until the 60-minute RTO is met with 20% headroom. Document and automate the test as part of the DR runbook.",
+          "rubric": [
+            {
+              "criterion": "Key topology justified (destination-owned CMKs, per-region or multi-Region) and clear ownership boundaries",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate cross-account IAM + key policy/grant design enabling Encrypt from A and Decrypt only from B",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete KMS load-reduction measures (envelope encryption, data-key caching, quota increases, batching) tied to RTO",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, measurable DR restore test plan with success criteria and monitoring of KMS/throughput",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Encryption",
+            "cloud security and compliance",
+            "Backup and Recovery",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A customer auth front-end (OIDC) sits behind your load balancer. The app is stateless except for user sessions, which currently live in-memory. Health checks probe `/` and get 302 to `/login` when unauthenticated. During a zonal outage, failover works but many users see 5xx or are forced to re-login repeatedly.",
+          "task": "Redesign the availability and session strategy to avoid health-check false negatives and session loss during failover. Specify: (1) health check endpoints and behavior, (2) session/state handling so instances can be replaced without logging users out, (3) LB settings and multi-AZ deployment, and (4) any security controls needed to preserve least privilege and protect the auth flow. Justify each choice.",
+          "expected_answer": "Define an unauthenticated `/healthz` endpoint that returns 200 and probes dependencies (DB/cache) without requiring a session; configure LB health checks to use `/healthz` and accept only 200. Externalize session state to a replicated store (e.g., managed Redis/Memcached) or move to stateless tokens (short-lived JWTs with key rotation) to avoid in-memory stickiness; if cookies must be used, set SameSite and secure flags. Deploy the app across at least two AZs behind an LB with cross-zone load balancing; disable or minimize stickiness unless required by the IdP callback, and if used, bound the duration. Auto scale on signals tied to work (e.g., backlog per instance, request latency) not just CPU. Add WAF in front of the LB, enforce TLS, least-privilege IAM for instance roles, and rotate signing/secret keys with overlap to prevent OIDC breakage during rotation. Blue/green or canary deployments avoid mass reauth; ensure health checks and prewarm happen before shifting traffic.",
+          "rubric": [
+            {
+              "criterion": "Correct unauthenticated health-check design with dependency probes and 200-only success",
+              "marks": 2
+            },
+            {
+              "criterion": "Robust session strategy (external store or stateless tokens) that survives instance replacement",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound LB and multi-AZ plan with appropriate scaling signals and stickiness rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Security controls around auth flow (TLS, WAF, least-privilege IAM, key rotation) with justification",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Load Balancing",
+            "Cloud Architecture",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your order-processing database currently uses daily full backups at 02:00 and hourly incrementals, with a cross-region read-replica showing 10–15 minutes lag. New business targets: RPO 5 minutes, RTO 15 minutes for the orders service, under moderate cost constraints. Traffic shows diurnal peaks; writes are steady.",
+          "task": "Propose changes to meet the targets. Address: (1) backup/replication pattern, (2) failover topology (pilot light, warm standby, or active/passive), (3) how you will achieve point-in-time recovery within 5 minutes, and (4) the operational runbook steps and readiness tests. Justify cost vs benefit.",
+          "expected_answer": "Move from hourly incrementals to continuous log shipping with point-in-time recovery (e.g., WAL/binlog streaming) and retain logs for at least the RPO horizon plus safety. Keep a warm standby in the DR region: continuously replicated read-replica with pre-provisioned app tier capacity (or fast scale-up scripts) sufficient to meet the 15-minute RTO. For RPO=5m, ensure replication lag stays under ~2–3m and alerts fire on breach; enable PITR to any timestamp within retention. Failover topology: active/passive with warm standby to control cost. Runbook: freeze writes (or fence primary), promote DR replica to primary, flip secrets/endpoints, update DNS or service discovery after DB promotion, and verify health gates before traffic cutover. Test quarterly with timed drills and success criteria (RTO<=15m, data currency<=5m). Cost control: right-size warm capacity, reserved instances/savings plans, storage lifecycle for older backups.",
+          "rubric": [
+            {
+              "criterion": "Appropriate move to continuous log shipping/PITR achieving <=5m RPO",
+              "marks": 2
+            },
+            {
+              "criterion": "Failover topology selection (warm standby/pilot light) justified against RTO 15m and cost",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, correctly ordered runbook addressing DB promotion before traffic shift and secrets/endpoints",
+              "marks": 2
+            },
+            {
+              "criterion": "Realistic test cadence and measurable success criteria",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "manage disaster recovery plans",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Secrets are replicated cross-region for DR. During DR drills, apps in the failover region sometimes fetch an updated secret version before the database/user in that region is ready, causing authentication errors. Secrets are versioned (current/previous/pending) and propagate asynchronously across regions.",
+          "task": "Design a rotation and failover approach that avoids auth failures in both steady-state rotations and regional failover. Cover: (1) version staging and overlap policy, (2) client behavior for version selection and retries, (3) ordering with database/user changes in each region, and (4) how to roll back safely if rotation goes wrong.",
+          "expected_answer": "Adopt an overlap policy where AWSCURRENT and AWSPREVIOUS (or equivalent) remain simultaneously valid for a defined window; apps prefer CURRENT but may retry with PREVIOUS if auth fails, bounded by TTL. During rotation: create PENDING, update DB users/roles in region A, verify, flip CURRENT in A, replicate, then update region B DB, verify, and only then flip CURRENT in B to avoid leading the secret ahead of the DB. For failover: promote DB first, then point apps to DR secrets; clients should cache briefly with jittered refresh, and use exponential backoff with a fallback to PREVIOUS for transient auth failures. Add circuit breakers to pause rotation during DR. Rollback: demote/disable the new DB credential, set PREVIOUS back to CURRENT, and invalidate clients by forcing a refresh. Monitor version propagation lag and gate CURRENT flips on health checks in each region.",
+          "rubric": [
+            {
+              "criterion": "Clear overlapping version policy and client fallback strategy",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct sequencing between secret flips and DB/user changes per region",
+              "marks": 2
+            },
+            {
+              "criterion": "Failover-specific considerations (promotion first, rotation pause, cache/TTL strategy)",
+              "marks": 2
+            },
+            {
+              "criterion": "Safe rollback plan with explicit steps to restore previous version",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "cloud security and compliance",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a Security Checklist for the ‘Acme Orders’ service",
+          "brief": "Create a concise, evidence-backed security checklist covering IAM, encryption, secrets, and controls for a fictional but realistic 3-tier web service ‘Acme Orders’. Assume one production account and one shared backup account. Focus on concrete controls that an auditor can verify from the artefacts you include or reference.",
+          "deliverable": "Security checklist (PDF or Markdown) with embedded or linked artefacts (policy snippets, key policies, screenshots, IDs).",
+          "acceptance_criteria": [
+            "Includes an inventory of IAM principals (human and machine) that can access production data, with justification of their roles.",
+            "Shows at least two IAM policy excerpts: one granting least-privilege access and one denying access (e.g., SCP or permission boundary), each annotated to explain scope and risk mitigated.",
+            "Lists all encryption keys protecting data at rest (IDs/aliases), their owning team, rotation policy, and usage (which data, which services).",
+            "Documents the secrets management approach: where secrets live, rotation interval, and overlap policy during rotation, plus an example showing version stages.",
+            "Maps at least 8 specific controls to a framework or control set (e.g., CIS/NIST/company controls), marking each Pass/Fail/N.A. with evidence references.",
+            "Identifies at least 3 risks or gaps found (e.g., wildcard permissions, missing rotation, unsecured health check), each with severity, impacted asset, and remediation steps.",
+            "Includes a change-control note describing how these controls are tested when deploying a new service or rotating credentials (who approves, what is logged).",
+            "Provides a one-page summary checklist that an auditor could use to re-verify the controls in under 15 minutes."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of IAM inventory and correctness of least-privilege justifications",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality and correctness of policy/key/secret artefacts (snippets or screenshots) and annotations",
+              "marks": 5
+            },
+            {
+              "criterion": "Control mapping depth (>=8 controls) with clear evidence and correct Pass/Fail reasoning",
+              "marks": 5
+            },
+            {
+              "criterion": "Risk register quality (>=3 findings) with severities and actionable remediations",
+              "marks": 4
+            },
+            {
+              "criterion": "Change-control/testing process clarity and practicality",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "cloud security and compliance",
+            "Encryption"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Write a Resilience Plan for ‘Acme Orders’",
+          "brief": "Develop a resilience plan that demonstrates how the service will meet availability, scaling, backup, and disaster recovery objectives. The plan must be specific enough that an on-call engineer can execute it and an assessor can verify its completeness by inspection.",
+          "deliverable": "Resilience plan (PDF or Markdown) including architecture diagrams (diagram image or ASCII acceptable), RTO/RPO targets, scaling policies, health checks, backup schedule, DR runbook, and test schedule.",
+          "acceptance_criteria": [
+            "States explicit RTO and RPO for each major component (web/app tier, database, object storage), and shows how the chosen mechanisms meet them.",
+            "Describes the multi-AZ and, if applicable, multi-region deployment, including load balancer type, health check endpoint definitions, success codes, intervals, and thresholds.",
+            "Defines auto-scaling policies and signals (e.g., backlog per instance, request latency), with initial capacity numbers and maximums.",
+            "Documents the backup strategy (full/incremental/PITR), retention, locations, and encryption key ownership, with at least one example schedule rendered as a timeline or table.",
+            "Provides a DR runbook with strictly ordered steps from incident declaration through validation, including DNS/service discovery updates, database promotion, secret endpoints, and health gates; includes estimated durations per step that sum to the RTO.",
+            "Includes a validation/test plan with at least two DR drill scenarios (e.g., region outage, data corruption), pass/fail criteria, and how results are recorded.",
+            "Addresses key management in DR (who can decrypt, quota considerations, and how to prevent KMS throttling), and verifies least privilege for restore roles.",
+            "Lists known failure modes (e.g., health check auth, session store failure) and mitigations, tying back to settings in this plan."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and correctness of availability architecture (LB, health checks, multi-AZ/region)",
+              "marks": 5
+            },
+            {
+              "criterion": "Scaling strategy suitability and measurability (signals, thresholds, capacities)",
+              "marks": 4
+            },
+            {
+              "criterion": "Backup and DR details (schedules, retention, encryption/key ownership) sufficient to meet RPO/RTO",
+              "marks": 5
+            },
+            {
+              "criterion": "Runbook quality (ordering, timings, health gates) and realism versus stated RTO",
+              "marks": 4
+            },
+            {
+              "criterion": "Test/drill plan quality and inclusion of success criteria and recording method",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "Load Balancing",
+            "Backup and Recovery",
+            "manage disaster recovery plans",
+            "Encryption"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-028-S04",
+      "skills_assessed": [
+        "Cloud Architecture",
+        "deploy cloud resource",
+        "Monitoring and Observability",
+        "Logging",
+        "automate cloud tasks"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive intermittent pages from this Prometheus alert, even after errors subside. The alert is defined as:\n```yaml\n- alert: APIHighErrorRate\n  expr: sum(rate(http_requests_total{job=\"api\",status=~\"5..\"}[5m]))\n        / sum(rate(http_requests_total{job=\"api\"}[1m])) > 0.05\n  for: 10m\n```\nDuring an incident, the API returned 5xx for exactly 3 minutes and then recovered completely. Scrape interval is 15s. What happens next and why?",
+          "options": [
+            "The alert never fires because the 1-minute denominator quickly drops the ratio below 5% after recovery, so the condition cannot remain true for 10 minutes; align the windows to fix.",
+            "The alert fires and stays firing for 10 minutes because the 5-minute numerator keeps the ratio above 5% long enough to satisfy the for: 10m condition.",
+            "The alert flaps on/off every minute for 10 minutes due to mixed windows; change for: to 5m to stabilize.",
+            "The alert fires only once (no sustained state) because for: applies to the first evaluation only; set for: to 0 to see post-spike data."
+          ],
+          "correct_option": "A",
+          "explanation": "With a 5-minute numerator and 1-minute denominator, the ratio can remain inflated for up to about 5 minutes after recovery. However, the condition must be true continuously for 10 minutes. A 3-minute spike cannot sustain a true condition for 10 minutes post-recovery, so the alert will not fire. Aligning the windows (e.g., 5m/5m or 1m/1m) avoids this bias.",
+          "distractor_rationale": "A: Sounds plausible, but the mixed windows only keep the ratio elevated for ~5 minutes, not enough to satisfy for: 10m.\nC: Flapping could occur with mismatched windows, but the for: timer prevents firing unless the condition is continuously true; changing for: to 5m hides the real issue (window mismatch).\nD: Misunderstands how for: works. It requires a sustained true evaluation over time, not just the first evaluation. Setting for: to 0 would make it noisier, not correct the bias.",
+          "skills_covered": [
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your Terraform defines an autoscaling policy on a compute group. Detailed monitoring is disabled (default 5-minute metrics). The policy is:\n```terraform\nresource \"aws_autoscaling_policy\" \"cpu_scale_out\" {\n  name                   = \"cpu-scale-out\"\n  autoscaling_group_name = aws_autoscaling_group.app.name\n  policy_type            = \"TargetTrackingScaling\"\n  target_tracking_configuration {\n    predefined_metric_specification {\n      predefined_metric_type = \"ASGAverageCPUUtilization\"\n    }\n    target_value       = 60\n    disable_scale_in   = false\n    # CloudWatch default unless detailed monitoring is on\n    customized_metric_specification = null\n  }\n}\n```\nCloudWatch alarm history shows 1-minute spikes above 60% several times per hour, but no scale-out ever occurs. What explains this, and what change is most appropriate?",
+          "options": [
+            "Target tracking ignores CPU metrics for ASGs by default; switch to a custom metric with Period=60.",
+            "Because CloudWatch emits 5-minute metrics without detailed monitoring, 1-minute spikes are invisible to the target tracking evaluation; enable detailed monitoring to 1-minute resolution.",
+            "The policy requires disable_scale_in=true for scale-out to occur; set disable_scale_in=true.",
+            "The ASG must use a step scaling policy to react to spikes; replace TargetTrackingScaling with StepScaling."
+          ],
+          "correct_option": "B",
+          "explanation": "Without detailed monitoring, the ASG's CPU metric is at 5-minute resolution. Brief 1-minute spikes above the target are averaged out and won't trigger target tracking. Enabling detailed monitoring (1-minute metrics) aligns the evaluation period with the spikes.",
+          "distractor_rationale": "B: Target tracking does support ASG average CPU; a custom metric isn't required, just appropriate resolution.\nC: disable_scale_in toggles scale-in, not scale-out; it doesn't block scale-out when false.\nD: Step scaling could react to spikes, but the underlying issue is metric granularity, not policy type.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "automate cloud tasks",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A Linux VM uses systemd-journald and also writes to /var/log/syslog. Your Fluent Bit config is ingesting duplicates:\n```yaml\n# Input A\n[SERVICE]\n    Flush        1\n    Parsers_File parsers.conf\n\n[INPUT]\n    Name   tail\n    Path   /var/log/syslog\n    Tag    syslog.*\n    DB     /var/fluent-bit/state/syslog.db\n\n# Input B\n[INPUT]\n    Name        systemd\n    Tag         journal.*\n    Systemd_Filter _SYSTEMD_UNIT=nginx.service\n\n[OUTPUT]\n    Name  es\n    Match *\n    Host  logs.example.local\n```\nYou must keep nginx logs but stop duplicates. Which change prevents double ingestion without losing nginx logs?",
+          "options": [
+            "Change Match to journal.* so only journald logs are sent, leaving tail to be dropped.",
+            "Add storage.type filesystem so Fluent Bit deduplicates records across inputs.",
+            "Remove the tail input and rely on systemd input for nginx.service only.",
+            "Keep both inputs but add Mem_Buf_Limit 10MB to tail to prevent duplicates."
+          ],
+          "correct_option": "C",
+          "explanation": "On systemd-based systems, nginx logs appear in the journal. Using only the systemd input with the nginx unit filter ingests the needed logs once. The tail input on /var/log/syslog overlaps and causes duplicates.",
+          "distractor_rationale": "A: Mem_Buf_Limit controls buffering, not duplication across separate inputs.\nC: storage.type affects buffering and backpressure, not cross-input deduplication logic.\nD: Changing Match affects routing, but the tail input would still collect events; dropping them via Match would silently discard non-nginx logs rather than solving overlap cleanly. Removing the overlapping input is correct.",
+          "skills_covered": [
+            "Logging"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your service needs sustained 12,000 write IOPS and 250 MB/s throughput for a single volume. You are comparing three vendors' general-purpose SSD options with published caps:\n```text\nVendor A: gp3-like: baseline 3,000 IOPS, 125 MB/s; can provision up to 16,000 IOPS and 1,000 MB/s a la carte ($0.08/GB-mo + $0.005/IOPS-mo + $0.04/MBps-mo)\nVendor B: Premium-SSD-v2-like: provision IOPS/throughput tiers: 12,000 IOPS + 250 MB/s tier at flat $200/mo (size-independent)\nVendor C: PD-balanced-like: scales with size to max 10,000 IOPS, 240 MB/s; $0.17/GB-mo, no provisioned IOPS option\nRequirement: volume size 1 TB fixed by data.\n```\nIgnoring regional price differences and taxes, which option meets the requirement at the lowest monthly storage cost?",
+          "options": [
+            "Vendor C 1 TB volume: caps at 10k IOPS/240 MB/s, so fails requirements; cost would be $170/mo but not acceptable.",
+            "Vendor A at 1 TB with provisioned 12,000 IOPS and 250 MB/s: $80 (capacity) + $60 (IOPS) + $10 (MB/s) = $150/mo.",
+            "Vendor B 12k/250 tier: $200/mo flat, meets requirements.",
+            "Vendor A but without provisioning extra throughput since 250 MB/s < baseline 125 MB/s, so only IOPS add-on: $80 + $60 = $140/mo."
+          ],
+          "correct_option": "B",
+          "explanation": "Vendor C cannot meet the requirement. Vendor B meets it at $200. Vendor A meets it and, given the baseline shortfall on both IOPS and MB/s, must provision both. Cost math for A: capacity $80 + 12k-3k=9k IOPS × $0.005 = $45 (but the stem says a la carte to exact needs; however to hit 12k you provision 12k total, which is $60) and 250 MB/s × $0.04 = $10, totaling $150. Among valid options that meet the requirement, A is cheapest at $150.",
+          "distractor_rationale": "B: Meets performance but costs more than A.\nC: Correct that it fails, but the question asks for the lowest cost that meets requirements, so this is not a viable choice.\nD: Misreads baselines; 250 MB/s exceeds the 125 MB/s baseline, so throughput must be provisioned too.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "deploy cloud resource"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A log-based metric on GCP shows zero even during 500 errors. The log entry looks like:\n```json\n{\n  \"severity\": \"ERROR\",\n  \"httpRequest\": {\"status\": 500},\n  \"jsonPayload\": {\"path\": \"/checkout\"}\n}\n```\nThe metric filter is:\n```text\njsonPayload.status=500 AND jsonPayload.path=\"/checkout\"\n```\nWhy does the metric show zero and what change fixes it?",
+          "options": [
+            "The status is under httpRequest, not jsonPayload; change filter to httpRequest.status=500 AND jsonPayload.path=\"/checkout\".",
+            "The path must be matched with a regex; use jsonPayload.path=~\"/checkout\".",
+            "The metric needs advanced sampling enabled; turn on sampling to 100%.",
+            "The filter matches only structured logs; set severity>=ERROR to count 500s."
+          ],
+          "correct_option": "A",
+          "explanation": "The 500 status code is in httpRequest.status, but the filter looks for jsonPayload.status. Matching the correct field fixes counting.",
+          "distractor_rationale": "A: Severity is independent and the filter already attempts to match specific fields; changing severity won't match the missing field path.\nC: Sampling is unrelated to a filter that matches nothing.\nD: The path equality is fine; the issue is the wrong field path for status.",
+          "skills_covered": [
+            "Logging",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You implement a multiwindow, multiburn SLO alert for 99.9% availability (error budget 0.1%). The policy triggers if either condition holds:\n```text\nShort window: 5m burn rate > 14x budget (i.e., error rate > 1.4%)\nLong window: 1h burn rate > 2x budget (i.e., error rate > 0.2%)\nfor: 5m on each condition\n```\nCurrent metrics:\n```text\nLast 5 minutes: 900 requests, 20 errors (2.22% error rate)\nLast 60 minutes: 10,800 requests, 14 errors (0.129% error rate)\n```\nWhat happens now?",
+          "options": [
+            "No alert because the long window is healthy (<0.2%) and it overrides the short window.",
+            "No alert because both windows must breach simultaneously to conserve budget.",
+            "Alert fires immediately because the 5-minute window is already above threshold; for: applies retroactively.",
+            "Alert fires on the short window after 5 minutes because 2.22% > 1.4%, regardless of the long window."
+          ],
+          "correct_option": "D",
+          "explanation": "The policy is an OR across windows. The 5-minute error rate (2.22%) exceeds 1.4%. If that condition holds for 5 minutes, the short-window alert will fire regardless of the healthy long window.",
+          "distractor_rationale": "A: The long window does not suppress the short window; they're evaluated independently.\nC: Incorrect logic; the common practice is OR to catch fast burns.\nD: for: requires sustained breach from now; it does not backdate its timer.",
+          "skills_covered": [
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your team exports a Prometheus counter with labels:\n```text\nhttp_requests_total{method,route,status,user_id}\n```\nBilling shows a sharp cost increase on Vendor X, which charges per active time series. Cardinalities:\n```text\nmethod=4, route=25, status=6, user_id~1,000,000 active/day, churny\n```\nYou still need to debug per-user issues occasionally. Which change best reduces cost without losing that ability?",
+          "options": [
+            "Hash user_id to 64-bit and keep it as a label; hashing reduces storage and cost.",
+            "Sample 1% of requests in the metric to reduce time series; 1% still tracks SLOs accurately.",
+            "Remove user_id from the metric, keep low-cardinality labels, and attach user_id as trace exemplars or log fields referenced from metrics.",
+            "Keep labels but set metric_relabel_configs to drop status; most cardinality comes from status codes."
+          ],
+          "correct_option": "C",
+          "explanation": "user_id drives almost all the cardinality. Remove it from metric labels and correlate through logs/traces (e.g., exemplars) when needed. Keep low-cardinality labels for SLOs and dashboards.",
+          "distractor_rationale": "A: status is low cardinality compared to user_id; dropping it barely changes series count.\nC: Hashing does not reduce cardinality; it just obfuscates values while keeping a million distinct labels.\nD: Sampling the metric undermines accuracy and does not directly cap series cardinality; churn will still be high across users.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Logging",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A scheduled function writes daily cost snapshots to object storage. The schedule and logs are:\n```text\nCron: 30 0 * * *\nRegion: australia-southeast1 (AEST/AEDT as local business timezone)\nLogging (UTC timestamps):\n2026-03-31T00:30:03Z snapshot complete\n2026-04-01T00:30:04Z snapshot complete\n2026-04-02T00:30:03Z snapshot complete\n... (but the local ledger shows the 2026-04-07 business day missing after DST change on 2026-04-06)\n```\nWhy is a day missing in the local ledger and what is the correct fix?",
+          "options": [
+            "Function cold starts after DST cause timeouts; increase memory to reduce cold start time.",
+            "Object storage has read-after-write eventual consistency; add retries to writes to avoid missing days.",
+            "Billing data lagged on that day; add a 2-day lookback to recompute the prior day.",
+            "The scheduler runs in UTC, so local midnight shifts with DST; align by scheduling at 14:30 UTC or set a TZ-aware scheduler to local 00:30."
+          ],
+          "correct_option": "D",
+          "explanation": "Most cloud schedulers use UTC. When DST changes, a UTC 00:30 run no longer matches local 00:30. Align to the intended local time by scheduling the corresponding UTC time or using a scheduler that honors a specified timezone.",
+          "distractor_rationale": "B: Eventual consistency would not systematically skip a single local day after DST.\nC: Cold starts and memory sizing don't explain a consistent timezone offset.\nD: Billing lag is real, but the symptom (off-by-timezone) directly matches a DST boundary; adding lookback may help accuracy but does not fix the missing local-day alignment.",
+          "skills_covered": [
+            "automate cloud tasks",
+            "Logging"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your architecture places a CDN in front of a web tier. Load balancer health checks hit /health over GET. You see this NGINX config and CDN rule:\n```nginx\nlocation = /health {\n  add_header Cache-Control \"public, max-age=60\";\n  proxy_pass http://app;\n}\n```\n```text\nCDN rule: cache all GETs for 60s unless Cache-Control says no-store\n```\nWhat is the most likely effect on health checks if the upstream app goes down, and the best quick fix?",
+          "options": [
+            "Health checks flap because CDN retries upstream; quick fix: disable keepalive.",
+            "Health checks continue to pass for up to 60s due to cached 200s; quick fix: set Cache-Control: no-store on /health or bypass CDN for that path.",
+            "No effect; CDNs never cache health endpoints; quick fix: none needed.",
+            "Health checks immediately fail because proxy_pass cannot reach upstream; quick fix: increase LB timeout to >60s."
+          ],
+          "correct_option": "B",
+          "explanation": "The CDN caches GET /health responses for 60 seconds because Cache-Control is set to public. When the upstream dies, cached 200s can mask failures. Mark /health as uncacheable (no-store) or bypass the CDN for that path.",
+          "distractor_rationale": "A: The LB is talking to the CDN, which returns 200 from cache; timeouts to upstream are hidden.\nC: CDNs do not generally \"retry upstream\" for cached hits; flapping here is less likely than masking.\nD: Many CDNs will cache any cacheable GET, including health, unless configured otherwise.",
+          "skills_covered": [
+            "Cloud Architecture",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You change OpenTelemetry Collector sampling to reduce costs:\n```yaml\nprocessors:\n  batch: {}\n  probabilistic_sampler:\n    sampling_percentage: 10\n  tail_sampling:\n    decision_wait: 10s\n    policies:\n      - name: errors\n        type: status_code\n        status_code:\n          status_codes: [ERROR]\n\nservice:\n  pipelines:\n    traces:\n      receivers: [otlp]\n      processors: [probabilistic_sampler, tail_sampling, batch]\n      exporters: [otlphttp]\n```\nSLO error-rate is derived from trace-based span status on the backend. What is the impact, and what change preserves error visibility while controlling cost?",
+          "options": [
+            "Many error traces are dropped by head (probabilistic) sampling before tail sampling sees them; move to tail_sampling only or increase head sampling for errors.",
+            "No impact; tail-based sampling runs after probabilistic and will upsample errors back to 100%.",
+            "Only latency distributions are affected; error counts are unaffected by sampling.",
+            "Add batch before sampling to guarantee errors are batched and not dropped."
+          ],
+          "correct_option": "A",
+          "explanation": "Head (probabilistic) sampling discards 90% of traces before tail sampling can evaluate status. Errors in the dropped 90% are invisible, biasing SLOs. Use tail sampling without prior head sampling, or split pipelines so errors are sampled at 100% while normal traces are downsampled.",
+          "distractor_rationale": "A: Tail sampling cannot recover traces already discarded upstream.\nC: Sampling affects all spans, including error counts, unless errors are guaranteed to be kept.\nD: batch ordering does not change sampling decisions; it affects export efficiency only.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Logging",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You operate a payments API deployed on Vendor A today, evaluating a possible shift to Vendor B. An operations snapshot for a typical weekday shows:\n```text\nTraffic: p95 RPS spikes from 300 -> 1500 for 8–10 minutes at 09:00 and 17:00\nCurrent autoscaling: target CPU 60%, 5-min metrics, scale-out cooldown 10m\nError budget: 0.1% per 30 days; recent short-window burns at 09:00\nLogging volume: 800 GB/day at current settings; log retention 30 days hot\nCost drivers: metrics ($ per active time series), logs ($/GB ingested), egress ($/GB cross-AZ)\nVendor B differences: 1-min metrics included by default; logs 30% cheaper/GB but metrics 2x per-series; egress 10% cheaper\n```\nThe CTO asks you to reduce monthly ops cost by ~20% without breaching the SLO, and to outline what would change if moving to Vendor B.",
+          "task": "Propose specific monitoring, logging, and automation changes that achieve the cost target while protecting the error budget during the 09:00/17:00 spikes. Address both staying on Vendor A and moving to Vendor B. Include exact levers (e.g., window sizes, label cardinality, retention tiers), expected effects, and risks/trade-offs.",
+          "expected_answer": "A strong answer will: (1) Enable 1-minute metrics or align target tracking windows to react quickly to spikes and reduce error bursts; on Vendor A, enable detailed monitoring or increase evaluation period to 1m; decrease scale-out cooldown or use step scaling for faster ramp. (2) Tune alert policies to multiwindow burn (e.g., 5m at 14x, 1h at 2x) with for: 5m to catch spike-driven burns. (3) Reduce metric cardinality by removing user_id and other high-cardinality labels, using exemplars/traces for drill-down; estimate series reduction (e.g., 80% fewer) and translate to $ savings, while preserving route/method/status. (4) Move logs to tiered retention: 7 days hot, 23 days cold/nearline; drop noisy debug fields and apply dynamic sampling for high-volume 200 OKs outside incidents; estimate GB/day saved. (5) For Vendor B: accept the 2x per-series metric cost but offset via cardinality reduction and native 1-min metrics (no add-on); log ingestion is 30% cheaper, so greater benefit from log sampling and retention tiering; egress savings minor but note impact if cross-AZ chatty. (6) State risks: faster scale-out may cause overprovisioning cost; too-aggressive sampling risks losing forensics; add canary alerts to detect oversampling; confirm SLO through shadow evaluation before commit. Quantify net savings vs baseline and confirm SLO protection by simulating spike response.",
+          "rubric": [
+            {
+              "criterion": "Identifies precise monitoring changes to handle spikes (metric resolution, window alignment, autoscaling policy/cooldown) and ties to SLO protection",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete cost-reduction steps for metrics (cardinality control) with estimated impact and acknowledgement of trade-offs",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete cost-reduction steps for logs (sampling, field drops, tiered retention) with estimated impact and risks",
+              "marks": 2
+            },
+            {
+              "criterion": "Vendor B comparison: explains how differences change the plan (1-min metrics included, cheaper logs, pricier per-series) and quantifies implications",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Logging",
+            "automate cloud tasks",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are asked to propose a deployable architecture for a read-heavy catalog service with these constraints:\n```text\n- p95 latency target: <= 150 ms for reads at 2,000 RPS during sales bursts\n- Availability: 99.95% monthly\n- Data store: managed document DB, 500 GB\n- Budget: minimize cost but allow burst handling without manual intervention\n- Observability: single dashboard to compare error rate, p95 latency, and saturation across tiers\nVendor choices offered: A and B\nVendor A: cheaper per-GB storage, pay-per-IOPS; 1-minute metrics extra; managed LB with active health checks\nVendor B: storage bundled IOPS tiering; 1-minute metrics included; LB supports out-of-the-box connection draining metrics\n```\nYou must recommend a vendor and sketch the minimal deployable design with observability hooks that make it operable on day 1.",
+          "task": "Choose Vendor A or B and justify with cost/perf trade-offs. Produce a concise architecture description (components and their relationships), the autoscaling policy, and the exact metrics and alerts you would wire to a day-1 dashboard. Explain why this will meet the latency and availability targets during bursts.",
+          "expected_answer": "A good answer picks one vendor, explains why (e.g., Vendor B's included 1-min metrics and bundled IOPS simplify burst handling and reduce ops overhead despite possibly higher storage base price). It proposes a design: public CDN (static), LB -> stateless app ASG (min N, max M) across 2+ AZs, managed document DB with read replicas or auto-scale throughput. Health checks on uncached /health bypassing CDN. Autoscaling on 1-min CPU and request queue depth (or LB target response time) with step scaling to handle sudden RPS jumps. Observability: dashboard panels for app error rate (5xx/total), p95 latency from LB, DB read latency, saturation (CPU or worker queue), and LB 5xx. Alerts using multiwindow burn rate and DB saturation. It should mention connection draining metrics (on B) for graceful scale-in, and quantify that two-AZ with auto-failover achieves 99.95%.",
+          "rubric": [
+            {
+              "criterion": "Clear vendor choice with reasoned cost/performance/operability justification tied to the constraints",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete component diagram-in-text and data flow that meets 99.95% (multi-AZ, health checks, failover)",
+              "marks": 2
+            },
+            {
+              "criterion": "Autoscaling policy tuned for bursts (signals chosen, periods, thresholds) and rationale for meeting p95 <= 150 ms",
+              "marks": 2
+            },
+            {
+              "criterion": "Day-1 dashboard/alerts: specific metrics wired and why they cover errors, latency, saturation",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "deploy cloud resource",
+            "Monitoring and Observability",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "After a backend deploy, your log ingestion pipeline shows a sudden drop in accepted events and a rise in 400 responses from the log endpoint. Excerpts:\n```text\nIngest error: 400 Bad Request: invalid value for field \"status\": expected integer, got string \"500\"\nIngest error: 400 Bad Request: field \"ctx.request_id\" missing\n```\nRelease notes show the app moved from int status codes to strings and renamed request_id to req_id internally. Your log-based error-rate metrics and SLO alerts depend on these fields.",
+          "task": "Diagnose the failure and propose a precise, low-risk rollback or forward-fix plan that restores observability fast. Include specific parser/mapping changes, how you'll backfill or bridge the schema gap for SLO continuity, and what automated checks you will add to prevent this class of breakage in the future.",
+          "expected_answer": "A strong response identifies a schema drift. Immediate mitigation: ship a hotfix to the log forwarder or ingestion mapping that casts status to int (e.g., map \"500\" -> 500) and maps ctx.req_id/req_id to ctx.request_id, preserving legacy fields in the pipeline until producers catch up. Alternatively, enable dual-write (both old and new fields) at the app or via log processor. Backfill: create a derived log-based metric that counts errors from either field path, and reprocess a limited window if needed. Add CI schema contracts or ingestion-time schema validation with canary producer tests to fail builds on incompatible changes. Add alerting on sudden drops in accepted events and on invalid field rates to catch future breaks within minutes.",
+          "rubric": [
+            {
+              "criterion": "Accurate root cause (schema drift, specifically type change and field rename)",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete, fast mitigation (parser/processor mapping or dual-write) with minimal producer rollback",
+              "marks": 2
+            },
+            {
+              "criterion": "Plan to preserve/restore SLO continuity (derived metrics, limited backfill)",
+              "marks": 2
+            },
+            {
+              "criterion": "Prevention: automated schema checks/contracts and health alerts for ingestion quality",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "Monitoring and Observability",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your compliance team demands a documented failover plan for a single-region primary with cold standby in another region. RTO 30 minutes, RPO 5 minutes. You must design the health checks, promotion runbook automation, and the dashboards/alerts that make an on-call engineer confident to execute it without guesswork.",
+          "task": "Describe the deployable architecture changes, monitoring signals, and automation needed to meet RTO/RPO. Specify exactly what is checked (and how) before promoting standby, how data lag (RPO) is measured, what alerts gate the decision, and what rollback criteria you will use if promotion fails.",
+          "expected_answer": "Good answers propose: primary in Region 1 with cross-region async replication (e.g., DB log shipping every <=5 minutes), cold app tier images and IaC to spin up N instances in Region 2. Health checks: LB probes bypassing CDN, DB replication lag metric (seconds or WAL bytes), and app dependency checks. Automation: runbook/Makefile or workflow that (1) freezes writes or flips app to read-only, (2) confirms replication lag <= 5 minutes (numeric check), (3) promotes standby DB (documented command/API), (4) applies IaC to bring up app tier and LB in Region 2, (5) updates DNS/traffic manager with low-TTL cutover. Dashboards show: error rate, p95 latency, DB replication lag, instance readiness. Alerts: primary unhealthy, replication lag > threshold warnings, and success/failure of each promotion step. Rollback: if promotion exceeds time budget or new region fails health checks, fail back by resuming Region 1 (if it recovers) or reattempt with increased capacity. Time estimates show <=30 minutes total.",
+          "rubric": [
+            {
+              "criterion": "Architecture and data replication plan tied to RPO=5m and RTO=30m",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, checkable health signals and preconditions (replication lag metric, app/LB health)",
+              "marks": 2
+            },
+            {
+              "criterion": "Well-defined automation/runbook steps with timings that meet RTO",
+              "marks": 2
+            },
+            {
+              "criterion": "Rollback/failback criteria based on monitoring outcomes",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "Monitoring and Observability",
+            "deploy cloud resource",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build an Operations Dashboard for a Burst-Prone Service",
+          "brief": "Create an operations dashboard that an on-call engineer can use to protect a 99.9% availability SLO during 09:00/17:00 traffic spikes. Use any common stack (e.g., Grafana + Prometheus/CloudWatch/Stackdriver, or a native cloud dashboard). Include alerts that implement a multiwindow burn-rate policy. Provide enough synthetic or sampled real data so the reviewer can see panels populated.",
+          "deliverable": "A dashboard export (JSON or shareable link plus JSON), screenshots of the dashboard with data, alert rule definitions (YAML/JSON), and a short README explaining data sources and how to interpret each panel.",
+          "acceptance_criteria": [
+            "Dashboard JSON export is included and imports without errors (panels resolve to valid data sources or mocked ones).",
+            "Panels include at minimum: (a) request rate, (b) error rate (5xx/total), (c) p95 latency, (d) saturation (CPU or queue depth), (e) log ingestion volume/cost proxy, and (f) burn-rate visualization for 5m and 1h windows.",
+            "At least two alerts are defined and visible: (1) short-window burn (e.g., 5m > 14x) and (2) long-window burn (e.g., 1h > 2x), both with for: timers.",
+            "Evidence of spike handling: either a replay/synthetic load showing panel behavior during a burst, or annotated graphs demonstrating expected reactions.",
+            "README maps each panel to the SLO or cost risk it mitigates and notes any assumptions (e.g., metric windows, labels removed for cardinality)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Dashboard completeness and correctness vs required panels",
+              "marks": 6
+            },
+            {
+              "criterion": "Alert policies implemented correctly (thresholds, windows, for: timers)",
+              "marks": 5
+            },
+            {
+              "criterion": "Data demonstration (synthetic or real) that shows spike behavior and alert triggering/suppression as appropriate",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity of README: data sources, interpretation, and assumptions linked to SLO/cost outcomes",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Logging",
+            "automate cloud tasks",
+            "Cloud Architecture"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone: Vendor Comparison and Deployable Architecture",
+          "brief": "Produce a deployable cloud solution design for a read-heavy web service. Compare two vendors for cost and operability, choose one, and provide a minimal IaC skeleton that stands up the core primitives (networking, load balancer, two stateless compute instances, and a managed database placeholder) along with observability hooks. This is a design-and-skeleton exercise, not a full production build.",
+          "deliverable": "A design document (PDF/Markdown) including a decision matrix and monthly cost estimate, an architecture diagram, and an IaC skeleton (Terraform or equivalent) with variables/outputs. Include alert definitions or dashboard JSON for day-1 observability. Provide a README with instructions and a pasted output of `terraform validate` (or equivalent) showing the configuration is syntactically valid.",
+          "acceptance_criteria": [
+            "Design document includes: (a) decision matrix comparing at least storage/IOPS, metric granularity/pricing, log pricing, egress; (b) chosen vendor with justification; (c) estimated monthly cost for the minimal footprint.",
+            "Architecture diagram shows networking, LB, compute across at least two AZs/zones, managed DB, and observability components; health check path bypasses CDN and is non-cacheable.",
+            "IaC skeleton contains modules/resources for VPC/VNet, subnets, LB, two compute instances behind the LB, security groups/firewall rules, and a managed DB placeholder (even if not fully configured). Variables and outputs are defined; `terraform validate` (or equivalent) output is included in the submission.",
+            "Observability included: either dashboard JSON or alert definitions for error rate, p95 latency, and saturation; health checks configured to be non-cacheable.",
+            "All files are self-contained and readable without running infrastructure (e.g., plan/apply not required)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Quality and rigor of vendor comparison and cost estimate; correctness of chosen vendor justification",
+              "marks": 6
+            },
+            {
+              "criterion": "Architecture completeness for high availability and operability (multi-AZ, health checks, non-cacheable path)",
+              "marks": 5
+            },
+            {
+              "criterion": "IaC skeleton structure and validity (resources present, variables/outputs, validate output)",
+              "marks": 5
+            },
+            {
+              "criterion": "Observability readiness (alerts/dashboards defined and appropriate)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Cloud Architecture",
+            "deploy cloud resource",
+            "Monitoring and Observability",
+            "Logging",
+            "automate cloud tasks"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

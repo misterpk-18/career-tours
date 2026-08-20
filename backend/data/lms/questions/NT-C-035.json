@@ -1,0 +1,1852 @@
+{
+  "course_code": "NT-C-035",
+  "course_name": "UI/UX Design",
+  "sections": [
+    {
+      "section_code": "NT-C-035-S01",
+      "skills_assessed": [
+        "User Research",
+        "use methodologies for user-centered design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive this draft design brief from a stakeholder for a retention problem:\n```text\nBackground: Retention dropped 12% QoQ among new sign-ups.\nProposed solution: Add gamified badges to nudge daily use across all users.\nTarget: Increase DAU by 20%.\nEthics: N/A\n```\nGiven user-centred design and ethics, which revision best strengthens the brief before any design work?",
+          "options": [
+            "Keep the solution but add more KPIs and a tighter DAU target:\n```text\nSolution: Gamified badges.\nKPIs: DAU +20%, session length +15%, push open rate +10%.\n```",
+            "Generalize the audience to cover more cases so insights scale:\n```text\nAudience: All users, all markets.\n```",
+            "Rewrite the problem as a user need with a measurable outcome and a specific audience, and capture an ethics risk:\n```text\nProblem framing: New sign-ups who explore 1–3 times in week 1 stop returning because they can’t see immediate value.\nOutcome: Increase 14-day return rate for new sign-ups who completed onboarding by 10%.\nAudience: New sign-ups who finished onboarding.\nEthics: Avoid manipulative streak mechanics; disclose any engagement nudges.\n```",
+            "Delay ethics until after the first retention experiment so constraints don’t block speed:\n```text\nEthics: To be added after initial rollout.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "User-centred design demands framing around user needs, a defined audience, and measurable outcomes, plus anticipating ethical risks. Option A reframes the problem, narrows the audience, specifies an outcome metric tied to the problem, and flags an ethical risk before solutions. The others keep or worsen solution-first framing or defer ethics.",
+          "distractor_rationale": "B tempts by being metrics-driven but keeps a solution-first, engagement-maximization framing that can conflict with user well-being. C looks scalable but destroys focus; insights blur across heterogeneous users. D reflects a common \"move fast\" mindset but ethics must be considered prior to interventions that may shape behavior.",
+          "skills_covered": [
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Interview excerpt from session 3 shows the moderator’s phrasing:\n```text\nInterviewer: “Most people find the checkout confusing — was that your experience too?”\nParticipant: “Yeah, I guess it was confusing.”\n```\nYou already ran 2 sessions with neutral phrasing and 3 with this leading phrasing before noticing. What is the best next step to preserve validity and ethics under time pressure?",
+          "options": [
+            "Discard all five to avoid any chance of bias and switch to a survey to make up numbers quickly.",
+            "Rewrite the transcript wording to be neutral so it aligns with earlier sessions, then treat all five equally.",
+            "Keep all five sessions but down-weight the contaminated three by 50% so they don’t dominate themes.",
+            "Quarantine the three contaminated sessions in analysis, schedule two replacement interviews with neutral phrasing, and do not merge their quotes with the neutral set."
+          ],
+          "correct_option": "D",
+          "explanation": "Leading questions bias responses. The ethical and analytical fix is to isolate biased data and replace it with properly collected data, not to massage it in analysis. Option A preserves validity and transparency.",
+          "distractor_rationale": "B is tempting because it feels statistical, but down-weighting does not remove systematic bias in qualitative themes. C overreacts and changes method midstream for the wrong reason; a survey won’t fix missed depth and may repeat bias. D is unethical data tampering and still leaves biased responses.",
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Survey draft for sizing onboarding issues:\n```text\nQ4: How satisfied are you with the speed and reliability of the app?\nScale: Very dissatisfied / Dissatisfied / Neutral / Satisfied / Very satisfied\n```\nYou need to minimize measurement error without lengthening the survey more than one additional item. What change best reduces bias here?",
+          "options": [
+            "Keep a single item but change the scale to 7 points for more nuance.",
+            "Split Q4 into two separate items, one for speed and one for reliability, each with the same 5-point scale.",
+            "Swap to a binary Yes/No to simplify choices and speed completion.",
+            "Keep Q4 as is but add an open-text follow-up for details."
+          ],
+          "correct_option": "B",
+          "explanation": "The current item is double-barrelled, conflating speed and reliability. Splitting it into two items addresses the bias source within the allowed one additional item.",
+          "distractor_rationale": "B adds qualitative detail but keeps the biased single rating, not fixing the measurement problem. C increases scale granularity but still mixes constructs. D reduces burden but further degrades measurement quality.",
+          "skills_covered": [
+            "User Research"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Recruitment screener vs. actual participants:\n```text\nScreener target: Self-employed freelancers who invoice monthly.\nActual recruits: 7 in-house designers at mid-size companies.\n```\nYou already ran 5 interviews with these recruits. What is the most defensible action now?",
+          "options": [
+            "Acknowledge the mismatch, analyze these 5 as a separate internal-employee subgroup, and recruit 5 freelancers matching the screener for the primary analysis.",
+            "Proceed as planned; in-house designers also invoice monthly, so the difference is minor.",
+            "Discard the sessions and switch to desk research to avoid more delays.",
+            "Weight the in-house interviews less in synthesis to approximate the target population."
+          ],
+          "correct_option": "A",
+          "explanation": "The current sample does not represent the target population. Keeping them as a clearly labeled subgroup preserves some learning while recruiting the correct audience for primary insights maintains validity.",
+          "distractor_rationale": "B assumes similarity without evidence; context of invoicing differs substantially. C cannot statistically correct a qualitative sampling frame error. D throws away useful but misaligned data; better to salvage as a subgroup and fix future recruits.",
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Desk research extract on competitor conversion rates:\n```text\nReport A: Competitor X signup conversion = 68% (sessions → account created)\nReport B: Competitor X signup conversion = 34% (landing visits → first purchase)\n```\nYour brief asks for a comparison table. What should you do before synthesizing these figures side-by-side?",
+          "options": [
+            "Normalize definitions by aligning funnels to the same denominator and stage, or present them in clearly separated rows with explicit definitions and caveats.",
+            "Exclude Report B as an outlier because it is much lower than Report A.",
+            "Use the lower figure (34%) to avoid overpromising in the brief.",
+            "Average the two numbers to present a single conservative estimate (~51%)."
+          ],
+          "correct_option": "A",
+          "explanation": "The two sources measure different funnels and denominators. A valid synthesis requires aligning definitions or explicitly presenting them as incomparable with clear notes.",
+          "distractor_rationale": "B fabricates a meaningless average across different constructs. C cherry-picks the lower number without justification. D dismisses conflicting data without examining definitions.",
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Early affinity map snapshot:\n```text\nCluster A (labeled “Students”):\n- “I compare 3–4 options before choosing.” (P2, 35yo professional)\n- “If there’s no price up front, I bounce.” (P4, student)\n- “I don’t trust deals that look too good.” (P5, retiree)\n```\nWhat’s the best correction to improve synthesis quality?",
+          "options": [
+            "Keep persona labels; they help stakeholders remember who said what.",
+            "Merge all quotes into one large pool to avoid premature structuring; label nothing until the very end.",
+            "Relabel clusters by behavioral themes (e.g., “comparison shopping,” “price transparency”) and use participant attributes (student/professional/retiree) as tags for later cuts.",
+            "Split clusters strictly by demographics first, then look for behaviors within each."
+          ],
+          "correct_option": "C",
+          "explanation": "Clustering should group by behavioral or attitudinal themes first; demographic labels can bias synthesis. Tagging attributes allows later segmentation checks without driving the themes.",
+          "distractor_rationale": "B is memorable but encourages confirmation bias. C front-loads demographics and can hide cross-demographic patterns. D delays structure so far that themes become harder to see and justify.",
+          "skills_covered": [
+            "User Research"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Consent sheet draft for interviews:\n```text\nWe will record audio. Participation is voluntary. Data will be used to improve our product.\n```\nBefore starting sessions, which addition is REQUIRED to meet basic ethical expectations for this study?",
+          "options": [
+            "State that participation implies consent to future marketing emails.",
+            "Add clear statements on data retention period, how data will be stored, and how participants can withdraw consent and request deletion.",
+            "Include a clause transferring IP of all ideas expressed to the company.",
+            "Offer a small bonus for positive feedback to encourage candid responses."
+          ],
+          "correct_option": "B",
+          "explanation": "Ethical consent must inform participants about retention, storage, and withdrawal/deletion rights. Anything less undermines informed, revocable consent.",
+          "distractor_rationale": "B may be relevant for co-creation workshops but is not a basic ethical requirement and can chill speech. C introduces unethical inducement and response bias. D inappropriately couples research to marketing without consent.",
+          "skills_covered": [
+            "use methodologies for user-centered design",
+            "User Research"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You’re entering an unfamiliar problem space with limited prior knowledge. The draft plan shows:\n```text\n1) Launch a 10-question survey to 2,000 users next week\n2) Use results to write interview questions\n```\nUnder user-centred design principles, what change is most appropriate?",
+          "options": [
+            "Run usability tests on existing flows first; interviews can follow if needed.",
+            "Conduct a small set of exploratory interviews first, then design a scoped survey to size validated themes.",
+            "Skip interviews entirely; desk research is enough for unknown spaces.",
+            "Keep the plan; large-N first ensures questions are representative."
+          ],
+          "correct_option": "B",
+          "explanation": "In a generative phase with high uncertainty, exploratory qualitative work informs what to measure. Then a survey can size validated themes.",
+          "distractor_rationale": "B risks asking the wrong questions at scale. C neglects user voice in a new domain. D is evaluative; without understanding the problem space, tests risk measuring the wrong tasks.",
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Mixed-methods snapshot:\n```text\nSurvey (n=412): NPS = +42 overall\nOpen-ends (n=138): 46% mention “confusing coupons”\nUsage logs: 68% never opened Coupons\nInterviews (n=6): All coupon users report frustration\n```\nWhat’s the most plausible explanation and next step?",
+          "options": [
+            "Non-users inflate overall NPS; the coupon issue is concentrated among a smaller segment. Segment by coupon exposure and run follow-up interviews with exposed users.",
+            "Interviews are too few to trust; replace them with a second survey immediately.",
+            "The logs must be wrong; 68% non-exposure contradicts 46% open-end mentions.",
+            "Coupons aren’t a real problem; NPS is strong, so ignore qualitative complaints."
+          ],
+          "correct_option": "A",
+          "explanation": "High NPS can coexist with severe pain in a feature used by a subset. Segmenting by exposure clarifies impact. Focused follow-ups deepen understanding of the pain within that segment.",
+          "distractor_rationale": "B assumes NPS dominance and dismisses important segment pain. C discards valuable qualitative depth instead of targeting it. D misreads that people can complain about coupons without opening the feature recently (memory, brand comms, checkout prompts).",
+          "skills_covered": [
+            "User Research"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Excerpt from a research plan meant to explain abandonment causes:\n```text\nGoal: Understand why students abandon onboarding at step 2.\nMethod: A/B test a shorter form next sprint; success = +20% completion.\n```\nWhat is the primary flaw to correct before proceeding?",
+          "options": [
+            "The success metric should be NPS, not completion rate.",
+            "The audience should be broadened beyond students to get more data quickly.",
+            "The plan should add more variants (A/B/C/D) to explore the space better.",
+            "The method jumps to solution evaluation without first generating explanations; replace with interviews/contextual inquiry on step 2, then consider experiments."
+          ],
+          "correct_option": "D",
+          "explanation": "The method is evaluative and solution-first, which does not produce causal understanding. Start with qualitative methods to uncover reasons, then test solutions.",
+          "distractor_rationale": "B swaps in a broad attitudinal metric unrelated to the causal question. C broadens at the cost of relevance. D doubles down on premature experimentation without understanding.",
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A clinic’s no-show rate for first-time telehealth appointments has risen from 12% to 24% in three months. The operations lead proposes: “Add a late-cancel fee and a red warning banner in the app.” Early desk research:\n```text\nIndustry paper A: Top drivers of no-shows: forgetting, transport issues, anxiety about first visit.\nLocal context: 35% of patients on subsidized plans; SMS reminders currently sent 24h prior; no pre-visit guidance.\nConstraints: Must comply with patient rights policy; avoid undue coercion.\n```\nDraft brief you received:\n```text\nSolution: Add financial penalties and warnings to reduce no-shows by 50%.\nAudience: All patients.\n```\n",
+          "task": "Rewrite the problem framing and scope to be user-centred and ethically sound. Specify: the primary audience, user need(s), measurable outcome(s), out-of-scope items for this iteration, and key ethics/risks plus how you will mitigate them. Justify each choice using the evidence given and reasonable assumptions you’d validate next.",
+          "expected_answer": "A strong answer reframes around first-time patients’ needs (e.g., clarity, reassurance, memory support), narrows the audience to first-time telehealth patients on subsidized plans or those with no prior app usage, and sets outcomes like reduction in no-shows among that audience, measured as show-up rate within 30 days. It marks punitive fees as out of scope due to coercion risk and patient rights, proposes mitigations such as opt-in reminder schedules, plain-language pre-visit guides, and anxiety-reducing onboarding messages, and states specific ethical controls (no shaming language, clear consent for notifications, ability to opt out). It explains why the industry drivers imply interventions beyond penalties and ties constraints to design choices. It also notes unknowns to validate (e.g., reminder timing, language comprehension) and how they’d be checked in research.",
+          "rubric": [
+            {
+              "criterion": "Problem framing anchored in user needs and specific audience; excludes solution-first language",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, measurable outcome(s) tied to the audience and problem (e.g., show-up rate for first-time patients)",
+              "marks": 2
+            },
+            {
+              "criterion": "Defined scope and out-of-scope items with rationale (e.g., exclude punitive fees)",
+              "marks": 1
+            },
+            {
+              "criterion": "Ethical risks identified with concrete mitigations aligned to constraints",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification tying choices to provided evidence and stated assumptions to validate",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "use methodologies for user-centered design",
+            "User Research"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your team investigated low profile completion. You have:\n```text\nInterviews (n=6; recruited via app intercept after step 1 exit):\n- 5/6 cite privacy uncertainty: “Why do they need my ID?”\n- 4/6 mention poor lighting when taking ID photo.\nSurvey (n=180; sent to all new users):\n- Top selected reason for exit: “Too busy right now” (59%)\n- “Privacy concerns” selected by 14%\n```\nPM says interviews are over-indexing privacy; survey shows time is the real reason.",
+          "task": "Diagnose plausible sources of discrepancy and propose a synthesis plan that reconciles the signals. Include at least: sampling differences, instrument effects, and a concrete next step to validate which reason dominates for whom.",
+          "expected_answer": "Good responses explain that interview recruits were intercepted immediately after exiting step 1 (in-the-moment, higher salience of privacy and photo context), while the survey went to all new users (including those who never saw the ID step), causing dilution by a broad audience. Instrument bias may include leading survey options or social desirability (“too busy” as a face-saving selection). The plan should segment the survey by exposure to the ID step and device conditions, re-contact exposed users for brief follow-ups, and triangulate with telemetry (e.g., photo retake counts). A next step is a targeted mini-survey to only those who attempted ID upload, plus 5–6 focused interviews, to size vs. explain within the right subpopulation.",
+          "rubric": [
+            {
+              "criterion": "Explains sampling frame differences and their impact on distributions",
+              "marks": 3
+            },
+            {
+              "criterion": "Identifies instrument biases (question wording/order, social desirability, recall)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes concrete segmentation and triangulation steps to reconcile signals",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines a targeted next step to validate within the exposed subpopulation",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "User Research"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must study account recovery for seniors using a banking app. Constraints:\n```text\n- Timeline: 2 weeks total\n- Participants: 8–10 seniors (65+), some with mild vision or memory challenges\n- Data: Must avoid collecting real credentials or sensitive PII\n- Goal: Identify barriers and anxieties in recovery initiation\n```\n",
+          "task": "Propose a research approach and ethics controls. Specify recruitment criteria, methods and instruments, data handling, and how you will minimize harm while still getting actionable evidence. Prioritize decisions that fit timeline and constraints.",
+          "expected_answer": "A strong plan recruits 8–10 seniors via a panel or community partner using a clear screener for 65+, self-reported confidence levels, and device types. Methods: 60-minute moderated task-based interviews using a high-fidelity prototype or mocked flows with fictitious data, plus a short pre-session survey to capture context. Instruments include a neutral task script and think-aloud prompts; avoid real credentials by using seeded demo accounts on test servers. Ethics controls: large-print consent, plain-language study purpose, the right to pause/stop, no collection of sensitive PII, anonymized recordings, explicit retention period, and instructions for safe device handling. Data handling describes encryption, limited access, and deletion timelines. Actionability: capture funnel points (initiation findability, error recovery, copy comprehension) and anxiety triggers with quotes and timings.",
+          "rubric": [
+            {
+              "criterion": "Feasible mixed-method approach that fits timeline and goal (tasks + brief survey/interview)",
+              "marks": 2
+            },
+            {
+              "criterion": "Recruitment criteria align to seniors with relevant variation (vision/memory, device)",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete ethics controls (consent readability, withdrawal, data minimization, test data)",
+              "marks": 2
+            },
+            {
+              "criterion": "Data handling specifics (storage, access, retention/anonymization)",
+              "marks": 1
+            },
+            {
+              "criterion": "Captures actionable evidence (tasks/instruments tied to barriers/anxieties)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "use methodologies for user-centered design",
+            "User Research"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You have raw notes from three discovery interviews about a grocery app’s list feature:\n```text\nP1: “I add stuff while commuting; if I lose signal, my list is blank later.”\nP2: “Hate that my partner can’t see what I added unless I send a screenshot.”\nP3: “I don’t mind ads, but the pop-up when I open list covers half the items.”\nP1: “I’m not sure if items are saved; there’s no ‘saved’ tick.”\nP2: “We both add milk, then there are duplicates.”\n```\n",
+          "task": "Produce three insight statements with evidence, one prioritized opportunity area phrased as a How-might-we, and one explicit out-of-scope note for this iteration. Justify your prioritization.",
+          "expected_answer": "Example insights: (1) Lossy offline behavior creates trust gaps in persistence (P1 quotes). (2) Collaboration is hindered by lack of real-time sync and duplicate handling (P2 quotes). (3) Intrusive ad placement blocks core list scanning (P3 quote). Priority HMW: “How might we make lists reliable and collaborative across connections and households?” Prioritization justified by frequency and task criticality (list reliability/collaboration touch every session vs. ad annoyance is secondary). Out of scope: ad network changes this iteration; mitigate with less intrusive placement later. Answers that tie to evidence, avoid solutioning in insights, and show a rationale for priority earn credit.",
+          "rubric": [
+            {
+              "criterion": "Three insight statements grounded in quotes without premature solutions",
+              "marks": 3
+            },
+            {
+              "criterion": "One well-phrased HMW aligned to high-impact insight(s) with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "One explicit, reasonable out-of-scope boundary",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear prioritization rationale (e.g., frequency, severity, alignment to goals)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design Brief: First-time Ride-share Onboarding",
+          "brief": "Create a user-centred, ethically sound design brief for improving first-week activation for a ride-share app’s new riders. You must ground the brief in problem framing and plan how research will inform decisions before design. Do not propose UI solutions; focus on the problem, users, outcomes, risks, and learning plan.",
+          "deliverable": "Design brief document (PDF or Markdown) of 2–4 pages.",
+          "acceptance_criteria": [
+            "Includes background and current problem signal (e.g., activation metrics or a plausible proxy)",
+            "Defines a specific primary audience (e.g., new riders in their first 7 days who completed signup) and articulates their key need(s) or pain(s)",
+            "States measurable outcome(s) for success (e.g., 7-day ride completion rate among defined audience) and leading indicators",
+            "Explicitly lists in-scope and out-of-scope areas for this iteration",
+            "Outlines an initial research plan appropriate to the uncertainty (e.g., 5–7 discovery interviews, 1 sizing survey draft, and desk research sources)",
+            "Documents ethical considerations (consent, data retention, avoidance of coercive nudges) and mitigation steps",
+            "Identifies assumptions and unknowns to validate, and proposed evidence sources for each",
+            "Names key stakeholders, constraints, and a 2–4 week timeline with checkpoints"
+          ],
+          "rubric": [
+            {
+              "criterion": "Problem framing tied to a defined audience and user need; no solution-first language",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear, relevant, and measurable outcomes plus leading indicators",
+              "marks": 4
+            },
+            {
+              "criterion": "Scope boundaries (in-scope/out-of-scope) and constraints articulated",
+              "marks": 3
+            },
+            {
+              "criterion": "Research plan appropriate to uncertainty and methods in this section",
+              "marks": 4
+            },
+            {
+              "criterion": "Ethical considerations and mitigations are concrete and appropriate",
+              "marks": 3
+            },
+            {
+              "criterion": "Assumptions/unknowns with evidence plan; stakeholders and timeline clear",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "use methodologies for user-centered design",
+            "User Research"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Research Summary: Sizing and Explaining Barriers to First Purchase on a Local Food Delivery App",
+          "brief": "Plan and execute a lightweight mixed-methods study to understand barriers to first purchase for new registrants in a local food delivery app. You must gather primary data (small interviews and a short survey) and synthesize it with desk research. Keep it within 2–4 hours by scoping tightly and using pragmatic sampling (friends/family or panel).",
+          "deliverable": "Research summary (PDF or Markdown, 4–6 pages) with appendices for instruments and raw notes.",
+          "acceptance_criteria": [
+            "States research goals, key questions, and hypotheses/assumptions",
+            "Recruitment criteria for participants are explicit and align to the target (e.g., registered in last 30 days; no prior purchase)",
+            "Includes instruments: an interview guide (10–12 neutral prompts) and a 6–8 item survey with defensible scales",
+            "Collects primary data: at least 4 short interviews (15–20 min each) with anonymized notes/quotes and a survey with at least 15 responses",
+            "Includes at least two credible desk research sources and cites them",
+            "Synthesizes data: coded themes or an affinity map snapshot, plus one simple chart or table from the survey",
+            "Produces at least three evidence-backed insights and two How-might-we opportunity statements",
+            "Documents ethics: consent approach, data retention period, anonymization, and participant rights",
+            "States limitations and next-step recommendations tied to uncertainties"
+          ],
+          "rubric": [
+            {
+              "criterion": "Methodological completeness: goals/questions, recruitment criteria, and appropriate instruments",
+              "marks": 5
+            },
+            {
+              "criterion": "Data quality and ethics: presence of raw notes/quotes, anonymization, consent/retention details",
+              "marks": 4
+            },
+            {
+              "criterion": "Synthesis quality: clear coding/affinity themes and a correct, readable survey summary",
+              "marks": 5
+            },
+            {
+              "criterion": "Insight/opportunity quality: at least 3 insights and 2 HMWs grounded in evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Limitations and next steps are realistic and tied to uncertainties",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "User Research",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-035-S02",
+      "skills_assessed": [
+        "User Research",
+        "use methodologies for user-centered design",
+        "information architecture",
+        "software interaction design",
+        "use experience map",
+        "Storytelling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are auditing where a post-purchase journey drops off. Analytics and the journey map show this:\n\n```csv\nStage,User task,Observed pain point,Drop-off%\nPurchase,Complete checkout,None,5%\nPost-purchase,Track order status,\"Can't find 'Track order' on mobile; buried under Account > Orders\",38%\nPost-purchase,Edit delivery address,\"Thinks it's in Help; bounces between Help and Account\",19%\n```\n\nCurrent global navigation (mobile):\n\n```yaml\nnav:\n  primary:\n    - Shop\n    - Categories\n    - Deals\n    - Help Center\n    - Account\n  utility:\n    - Cart\n    - Search\naccount_menu:\n  - Orders\n  - Addresses\n  - Payment methods\n  - Sign out\nhelp_center:\n  - FAQs\n  - Contact us\n  - Policies\n```\n\nWhich IA change most directly reduces the 38% drop-off without hurting product discovery for new shoppers?",
+          "options": [
+            "Add \"Track order\" as a persistent footer link on all pages to avoid reworking the Account menu.",
+            "Add a context-aware utility item \"Track order\" in the top bar that appears only when the user has a recent order, linking directly to the most recent order status.",
+            "Move \"Track order\" into Help Center and rely on search autosuggest to surface it from the home screen.",
+            "Keep the current IA but add a first-run tutorial that shows where \"Track order\" lives."
+          ],
+          "correct_option": "B",
+          "explanation": "A context-aware, scoped utility link surfaces the red-route action exactly when relevant and does not compete with core product discovery. It shortens the post-purchase path while leaving browsing IA intact.",
+          "distractor_rationale": "B is tempting because search can help, but it adds a context switch into Help and depends on query formulation under stress. C feels quick, but footers have low salience on mobile and do not address immediacy. D educates once, but offloads recall to the user and does not fix the structural findability issue.",
+          "skills_covered": [
+            "information architecture",
+            "use experience map",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You ran an open card sort (n=28) on terms around paying and subscriptions. Pairwise co-occurrence counts (how often two cards were grouped together) are below:\n\n```csv\nA,B,count\nInvoices,Payments,22\nInvoices,Billing,21\nRefunds,Support,20\nRefunds,Payments,6\nSubscriptions,Account,19\nSubscriptions,Billing,7\nPayment methods,Billing,23\nPayment methods,Account,9\n```\n\nYou also observed two common tasks: T1 \"Update card on file\" and T2 \"Find refund policy\". Which top-level grouping best aligns the IA to users’ mental models and these tasks?",
+          "options": [
+            "Place Invoices and Payment methods under \"Billing\"; place Subscriptions under \"Account\"; place Refunds under \"Help/Support\".",
+            "Place all four (Invoices, Payment methods, Refunds, Subscriptions) under \"Account\" to keep financial items together.",
+            "Put \"Support\" as a sub-item within \"Billing\" so people looking for Refunds can start at Billing.",
+            "Create a single mega-category \"Billing\" containing Invoices, Payment methods, Refunds, and Subscriptions."
+          ],
+          "correct_option": "A",
+          "explanation": "Co-occurrence shows two strong clusters: Billing with Invoices/Payment methods, Account with Subscriptions, and Refunds with Support. Splitting respects mental models and routes T1 to Billing and T2 to Help without cross-traffic.",
+          "distractor_rationale": "A matches an org-chart view but conflicts with observed clustering for Refunds and Subscriptions. C is tidy but ignores that refunds are sought as help, not account. D inverts the relationship and would bury all help content under a finance concept users don't pick when seeking a refund policy.",
+          "skills_covered": [
+            "User Research",
+            "information architecture"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A tree test (n=96) for the task \"Find your API keys\" produced:\n\n```csv\nFirst click path,Success%,Median time (s)\nSettings > Security,82,22\nDevelopers,0,12\nDevelopers > API docs,0,27\nSite Search,18,35\n```\n\nSession notes: 41% clicked \"Developers\" first expecting keys; they then backtracked to Settings.\n\nWithout adding nodes or duplicating links, which single label change most likely reduces first-click errors?",
+          "options": [
+            "Rename \"Security\" to \"Security & API keys\".",
+            "Rename \"Developers\" to \"Docs & SDKs\".",
+            "Move \"API keys\" to the top-level navigation.",
+            "Add \"API keys\" as an alias that appears under both \"Developers\" and \"Security\"."
+          ],
+          "correct_option": "B",
+          "explanation": "The miscue is the \"Developers\" label suggesting credential management. Renaming it to \"Docs & SDKs\" sets the right expectation, reducing false first clicks, while the successful path remains under Security.",
+          "distractor_rationale": "A helps those already in Settings but does not stop the initial wrong click. C duplicates entry points (disallowed by the constraint) and can create maintenance drift. D elevates a niche setting to top-level, harming IA balance and discoverability for broader tasks.",
+          "skills_covered": [
+            "information architecture",
+            "User Research"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Sitemap excerpt and user context:\n\n```yaml\nsitemap:\n  - Home\n  - Account\n    - Orders\n      - Order details\n        - Print invoice\n  - Help Center\n    - Orders\n      - Returns\n```\n\nPersona: Guest Gina, completing a return from the order confirmation email on mobile. Analytics show 72% of return attempts begin on `Order details`.\n\nWhich IA/flow change best shortens the red route with minimal IA disruption?",
+          "options": [
+            "Keep IA as-is but add an FAQ at `Help Center > Orders` explaining where Returns lives.",
+            "Move \"Returns\" into `Account > Orders` and deprecate its presence in Help Center.",
+            "Add a top-level global nav item \"Returns\" next to Account to make it prominent for all users.",
+            "Add a local action button \"Start return\" on `Order details` that deep-links into the Returns flow with the order preselected."
+          ],
+          "correct_option": "D",
+          "explanation": "Placing \"Start return\" at the highest-success entry point removes hops and pre-populates context. It’s a targeted change aligned to the observed journey start.",
+          "distractor_rationale": "B clutters global nav for everyone to benefit a narrow moment. C forces non-logged-in or email-driven users into Account, adding friction. D informs but preserves the inefficient path length.",
+          "skills_covered": [
+            "software interaction design",
+            "information architecture",
+            "use experience map"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Journey map excerpt for choosing a laptop:\n\n```csv\nStage,User goal,Emotion (1-5),Notes\nDiscover,See what's available,3,\"OK browsing\"\nNarrow,Compare 3-4 models,2,\"Overwhelmed by specs; opens many tabs\"\nDecide,Pick one with confidence,3,\"Worried about missing a detail\"\n```\n\nTwo design alternatives are under consideration for the Compare view.\n\nOption X:\n```text\nSingle dense table with 40+ attributes per product; all visible by default; no grouping; full horizontal scroll on mobile.\n```\n\nOption Y:\n```text\nProgressive disclosure: default view shows 5 most discriminating attributes based on prior filters; groups attributes; \"Show more\" toggles; sticky column headers; desktop shows full table on demand.\n```\n\nWhich option better addresses the observed pain without degrading expert scanning?",
+          "options": [
+            "Option X",
+            "Option Y",
+            "Add a wizard that requires sign-in before showing any compare data.",
+            "Neither; remove Compare and force users into product detail pages."
+          ],
+          "correct_option": "B",
+          "explanation": "Progressive disclosure targets the overwhelm at Narrow with a concise default and lets experts expand. It preserves expert efficiency while improving novice comprehension.",
+          "distractor_rationale": "A worsens overload, especially on mobile. C removes a needed capability identified in the journey. D adds authentication and a forced flow, increasing friction at a critical choice point.",
+          "skills_covered": [
+            "use experience map",
+            "software interaction design",
+            "information architecture"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Facet usage logs for a parts catalog (n=11,204 sessions) and persona context:\n\n```csv\nFacet,Applied in session%\nPrice,57%\nCompatibility (Vehicle),49%\nBrand,18%\nColor,7%\nRating,12%\n```\n\nPersona: Novice Nina starts from a broad category page on mobile.\n\nWhich default facet configuration best aligns with observed behavior and reduces empty-result traps?",
+          "options": [
+            "Pin Brand to the top expanded, because recognizable names reduce choice paralysis for novices.",
+            "Collapse all facets by default to save vertical space; require a tap to reveal each.",
+            "Expand Price and Compatibility by default; show live result counts; keep Brand collapsed; persist selections as chips above results.",
+            "Auto-apply a hidden Brand filter to the top 3 brands to reduce results for Nina."
+          ],
+          "correct_option": "C",
+          "explanation": "Surfacing the two most-used facets with counts supports common narrowing moves, while keeping Brand collapsed prevents premature bias and minimizes scroll. Chips increase transparency and reduce dead ends.",
+          "distractor_rationale": "B saves space at the cost of extra taps for the most common actions. C misreads logs: novices are not prioritizing Brand. D violates transparency and can hide desired options, risking mistrust.",
+          "skills_covered": [
+            "User Research",
+            "software interaction design",
+            "information architecture"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Mobile wayfinding data and patterns:\n\n```csv\nMetric,Value\nAvg page depth when task succeeds,4.1\nSessions arriving from results list,62%\nBreadcrumb taps (when shown),11%\nBack button leads to empty list (lost filters),27% of returns\n```\n\nYou can implement only one change now. Which breadcrumb/back-nav pattern most improves wayfinding without harming task continuity?",
+          "options": [
+            "Always show full-path breadcrumbs on mobile, even if they wrap to two lines.",
+            "Hide breadcrumbs on mobile to save space; rely on OS back only.",
+            "Replace breadcrumbs with a home icon that always goes to Home.",
+            "Show a dynamic first crumb \"Back to results\" when the user arrived from a filtered list; otherwise show a breadcrumb with middle ellipsis (keep last two nodes visible)."
+          ],
+          "correct_option": "D",
+          "explanation": "A context-aware back-to-results preserves filters and addresses the 27% failure, while an ellipsized breadcrumb maintains orientation on deep pages within tight space.",
+          "distractor_rationale": "A removes a secondary but useful affordance. C over-consumes space and risks tap targets. D destroys task context and increases pogo-sticking.",
+          "skills_covered": [
+            "software interaction design",
+            "information architecture"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Two checkout flows under variable connectivity (avg 250ms RTT, occasional drops). Both validate the same fields.\n\nFlow A:\n```text\nStep 1: Cart -> server validate\nStep 2: Address -> server validate\nStep 3: Shipping -> server validate\nStep 4: Payment -> server validate\nStep 5: Review -> server validate & submit\nTotal server round trips: 5\n```\n\nFlow B:\n```text\nSingle-page capture with local validation for Address/Shipping/Payment;\nOne server call to create order; payment gateway call at submit.\nTotal server round trips: 2 (+gateway)\n```\n\nPersona: Rural Ryan on spotty 3G.\n\nWhich flow yields fewer context-breaking failures for Ryan without reducing validation quality?",
+          "options": [
+            "Flow A with an added spinner after every step to reassure Ryan.",
+            "Neither; both are equivalent under poor networks.",
+            "Flow B",
+            "Flow A"
+          ],
+          "correct_option": "C",
+          "explanation": "Reducing the number of server round trips lowers the chance of mid-flow failures and repeated backtracking. Local validation maintains quality until final submission.",
+          "distractor_rationale": "A multiplies failure points. C ignores network math. D treats the symptom (reassurance) but not the underlying brittleness.",
+          "skills_covered": [
+            "software interaction design",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Content audit excerpt for policies:\n\n```csv\nURL,Page Title,Unique pageviews,Bounce%,Primary intent,Overlap with others\n/policies/shipping,Shipping Information,12,400,62,Shipping details,High with /help/delivery\n/help/delivery,Delivery Options & Times,9,900,48,Delivery help,High with /policies/shipping\n/policies/returns,Returns Policy,15,200,44,Returns policy,Low\n```\n\nWhich IA action most improves findability and reduces duplication debt with minimal disruption?",
+          "options": [
+            "Merge Shipping and Delivery into a single canonical page \"Shipping & delivery\" under Policies and 301 redirect the duplicate; cross-link from Help.",
+            "Keep both pages but add a banner to each saying the other exists.",
+            "Move all policy content into Help to centralize customer communications.",
+            "Delete the Help page and force all traffic to Policies to reduce maintenance overhead."
+          ],
+          "correct_option": "A",
+          "explanation": "High overlap warrants consolidation. Housing the canonical under Policies aligns with authoritative content, while a 301 and cross-links preserve paths and SEO equity.",
+          "distractor_rationale": "B loses a useful help entry point and breaks inbound links without redirects. C acknowledges duplication but keeps the problem operationally. D collapses distinct content types and blurs authority signals.",
+          "skills_covered": [
+            "information architecture",
+            "User Research"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Label A/B test for the same nav slot:\n\n```csv\nVariant,Label,CTR to pricing content,Bounce from pricing,Task success: \"Understand cost\" (%)\nA,Plans,6.8%,42%,61\nB,Pricing,9.7%,33%,74\n```\n\nPersona: First-time buyer seeking total cost quickly.\n\nWhich label should you ship, and why?",
+          "options": [
+            "Ship B (Pricing). It improves both discovery (CTR) and comprehension (lower bounce, higher task success).",
+            "Ship A (Plans). It attracts fewer price-only visitors and sets expectation of tiers.",
+            "Keep both labels side by side to capture different intents.",
+            "Neither; hide pricing until after signup to avoid anchoring effects."
+          ],
+          "correct_option": "A",
+          "explanation": "Variant B clearly improves discovery and goal completion for the cost-seeking intent without harming comprehension, so it best serves the persona’s priority.",
+          "distractor_rationale": "A misreads the goal; the persona prioritizes cost clarity. C duplicates a primary nav slot and causes choice paralysis. D conflicts with transparency at a key decision point.",
+          "skills_covered": [
+            "User Research",
+            "information architecture",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A vocational learning platform shows a sharp abandonment before checkout. Journey research produced two personas and a map. Excerpt:\n\n```csv\nPersona,Stage,Goal,Pain,Evidence\nCareer Switcher Sam,Narrow,Compare course bundles,\"Doesn't know what's included; tabs between 6 pages\",Session replays, interviews\nCareer Switcher Sam,Decide,See total cost upfront,\"Fees scattered across FAQ and cart\",Surveys, analytics\nHR Hayley (B2B),Discover,Find team licenses,\"Pricing only shows individual plans\",Support tickets\n```\n\nCurrent IA snippets:\n\n```yaml\nprimary_nav: [Courses, Tracks, Instructors, Resources, Plans]\npricing_pages:\n  - /plans (Individual)\nhelp_center:\n  - /help/billing/fees\ncompare:\n  - None (users cross-open course pages)\n```",
+          "task": "Propose a concrete IA and flow change set that addresses the observed pains without bloating global nav. Specify: (1) where and how \"Compare\" should live, (2) how to expose total cost earlier, and (3) how to serve HR Hayley without fragmenting pricing. Justify each change using the journey evidence and show the expected user path for Sam from Courses to checkout after your changes.",
+          "expected_answer": "A strong answer recommends adding a Compare entry point as a contextual control on course and track listings (not a new global item), rendering a compact compare drawer/table with 5-7 discriminating attributes and \"Show fees\" inline. It moves or duplicates fees into a canonical Pricing > Fees component surfaced within Pricing and the compare UI (progressive disclosure) and adds a B2B tab or toggle in Pricing (e.g., tabs: Individual | Teams) rather than a new nav item. The expected path for Sam becomes Courses > Track listing (select 2-3) > Compare (see total cost incl. fees) > Choose bundle > Checkout. Justification ties each change to the journey pains: reducing tabbing overload at Narrow, surfacing total cost at Decide, and addressing HR needs via scoped, not global, IA expansion. It avoids adding new top-level nav and uses contextual entry points and cross-links.",
+          "rubric": [
+            {
+              "criterion": "Places Compare as a contextual affordance (list/detail) and describes its behavior (attributes, progressive disclosure)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes surfacing total cost (fees/taxes) earlier with canonicalization (e.g., Pricing > Fees) and inline exposure in compare",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses B2B need via scoped IA (e.g., Pricing tabs/toggle) rather than a new global nav item, with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a clear end-to-end expected path for Sam and ties each change back to the journey evidence",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "use experience map",
+            "information architecture",
+            "use methodologies for user-centered design",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A retailer’s support content generates high contact volume. Evidence:\n\n```csv\nQuery,Top clicked page,Self-serve success%\n\"start a return\",\"Help > Orders > Returns\",38%\n\"exchange size\",\"Help > Orders > Exchanges\",27%\n\"warranty claim\",\"Help > Products > Warranty\",22%\n```\n\nCard sort and interviews show users expect to start returns from order context and see exchanges as part of returns. Current structure:\n\n```yaml\nhelp:\n  - Orders\n    - Returns\n    - Exchanges\n  - Products\n    - Warranty\naccount:\n  - Orders\n    - Order details\n```",
+          "task": "Redesign the IA and associated flows to reduce support contacts for returns/exchanges/warranty. Provide: (1) a revised sitemap snippet showing where Returns/Exchanges/Warranty live, (2) the entry points you’ll add to `Order details` and product pages, and (3) a task flow for \"Start a return\" that respects guest users from email. Explain trade-offs.",
+          "expected_answer": "Good answers merge Exchanges into Returns (Returns & exchanges) under Help while adding a primary action on `Account > Orders > Order details` (and in guest order status pages) to Start return, deep-linking into the flow with the order preselected. Warranty remains under Products but gets cross-links from product detail and Help landing. The flow for guests: Email link -> Order status -> Start return (preselected order) -> Choose items -> Select exchange/refund -> Print/QR label. Trade-offs noted: duplication risk between Help and Account mitigated via canonicalization and cross-links; surface area in Order details balanced by conditional display; warranty stays separate due to different policies and identifiers.",
+          "rubric": [
+            {
+              "criterion": "Revised sitemap places Returns/Exchanges together and keeps Warranty appropriately scoped, with reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines concrete contextual entry points on Order details and product pages (guests and logged-in)",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a clear, stepwise task flow for Start return, including guest entry from email",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses at least one trade-off and how it’s mitigated (duplication, clutter, policy variance)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "information architecture",
+            "use experience map",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "In a SaaS IoT dashboard, users cannot find where to assign device roles. Evidence:\n\n```csv\nTask,Tree test success%,Common wrong path\n\"Assign a device role\",31%,Settings > Users\n\"Change device role permissions\",44%,Devices > Overview\n```\n\nCurrent IA snippet:\n\n```yaml\nprimary: [Overview, Devices, Alerts, Reports, Settings]\nsettings:\n  - Users\n  - Security\n  - Billing\n```\n\nInterviews: People distinguish \"who\" (users) from \"what\" (devices).",
+          "task": "Propose an IA change and supporting flows that improve success for both tasks without creating redundant sections. Include: (1) where \"Device roles\" should live, (2) cross-links to reduce wrong-path dead ends, and (3) a before/after flow for assigning a role starting from Devices.",
+          "expected_answer": "Place \"Device roles\" under Devices (Devices > Roles) because roles are attributes of the \"what\" entity. Keep permission templates under Settings > Security. Add cross-links: from Settings > Users and Devices > Overview to Devices > Roles with copy clarifying the distinction. Before: Devices > Overview -> (hunts) Settings > Users (dead end) -> backtrack. After: Devices > Roles -> Select device(s) -> Assign role (modal) -> Confirm. This reduces concept drift while preserving security configuration in Settings.",
+          "rubric": [
+            {
+              "criterion": "Justifies relocating or adding Devices > Roles based on entity ownership (who vs what)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides sensible cross-links that intercept common wrong paths",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a clear after flow from Devices to role assignment",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids redundant sections and explains separation from permission templates",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "information architecture",
+            "use methodologies for user-centered design",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your product has shifted to 75% mobile traffic. Red routes from the journey map:\n\n```csv\nRoute,Share of tasks\nBrowse categories,28%\nSearch and filter,32%\nTrack order,15%\nAccount actions,25%\n```\n\nCurrent nav is a hamburger with a long list. User feedback: \"Too many taps to get to common tasks.\"",
+          "task": "Recommend a mobile navigation model and concrete IA that prioritize these routes. Specify: (1) which 4–5 tabs or primary actions go into a bottom tab bar and why, (2) where secondary items should live, and (3) how Track order should appear contextually. Justify each choice with journey evidence and IA principles.",
+          "expected_answer": "Adopt a bottom tab bar with 5 items: Home (or Browse), Search, Categories (if Home is promotional), Cart, Account. Alternatively combine Home/Categories to free a slot for Help if support is critical. Place Track order as a contextual action in Account and as a transient utility button when an active order exists (badge in Account or a floating utility). Secondary items (Help, Policies, About) live in an overflow menu from Account or a top-right menu. Rationale ties each tab to the highest-share routes and reduces taps: Search and Categories get single-tap access; Account clusters account actions; contextual Track order reduces path length post-purchase.",
+          "rubric": [
+            {
+              "criterion": "Chooses an appropriate mobile nav model (bottom tabs) and selects items aligned to task share",
+              "marks": 2
+            },
+            {
+              "criterion": "Places secondary/low-frequency items appropriately (overflow, within Account)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies contextual exposure of Track order and explains when/how it appears",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides clear justification linking choices to journey evidence and IA principles (frequency, proximity, recognition)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "use experience map",
+            "information architecture",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Persona and Journey Set for a City Bike Rental Service",
+          "brief": "Produce a concise, evidence-backed set of personas and journeys for a city bike rental app and kiosks. Focus on needs, pain points, scenarios, and journey maps that will inform later IA decisions.",
+          "deliverable": "Persona/journey set",
+          "acceptance_criteria": [
+            "2–3 primary personas, each including goals, needs, pain points, context (device/environment), and constraints.",
+            "At least 1 key scenario per persona (e.g., \"Find a nearby bike and unlock\"), written as a short narrative with trigger, steps, and success criteria.",
+            "One journey map per scenario with clearly labeled stages (e.g., Discover, Prepare, Start ride, During ride, End ride), touchpoints, pain points, and opportunities.",
+            "Each journey map includes at least two measurable signals (e.g., time on task, error rate) and an emotional curve or sentiment per stage.",
+            "Evidence notes: cite inputs used (e.g., assumptions, quick intercepts, analytics proxies) and how they shaped each persona/journey.",
+            "Artifacts are legible and structured (tables or diagrams), and each persona maps to its journey(s)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Personas capture goals, needs, pain points, and context clearly and are scoped to primary users (2–3)",
+              "marks": 6
+            },
+            {
+              "criterion": "Scenarios are concrete, actionable, and map to personas with clear success criteria",
+              "marks": 4
+            },
+            {
+              "criterion": "Journey maps include stages, touchpoints, pain points, opportunities, and measurable signals",
+              "marks": 6
+            },
+            {
+              "criterion": "Clarity, coherence, and traceability (evidence cited; personas linked to journeys)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "User Research",
+            "use experience map",
+            "Storytelling",
+            "use methodologies for user-centered design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Information Architecture: Site Map and Task Flow for City Bike Rental",
+          "brief": "Using your personas and journeys from Task 1, design the content structure, flows, and navigation for the same bike rental service. Prioritize red routes such as finding a nearby bike, unlocking, and viewing ride history.",
+          "deliverable": "Site map and flow",
+          "acceptance_criteria": [
+            "A site map (or app nav map) showing global navigation, local navigation, and hierarchy down to at least level 3 where applicable. Include labels that reflect user language, not internal jargon.",
+            "Indicate at least two navigation systems where relevant (e.g., primary tabs + contextual actions or breadcrumbs).",
+            "Two task flows: (1) Find and unlock a bike, (2) Pause and resume a ride or View ride history. Each flow shows steps, decision points, and entry/exit points (including from push/email/deep link).",
+            "Traceability: a short note mapping at least three IA decisions to specific persona needs or journey pain points from Task 1.",
+            "Include handling for offline/poor connectivity in at least one flow (e.g., cached map, QR fallback)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Site map completeness and labeling quality (global/local nav, depth to L3 where relevant)",
+              "marks": 6
+            },
+            {
+              "criterion": "Multiple navigation systems applied appropriately (e.g., tabs + contextual actions/breadcrumbs)",
+              "marks": 4
+            },
+            {
+              "criterion": "Task flows are precise, show decisions/entry/exit points, and reflect constraints (incl. one offline consideration)",
+              "marks": 6
+            },
+            {
+              "criterion": "Traceability from IA decisions back to personas/journeys and red routes",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "information architecture",
+            "software interaction design",
+            "use methodologies for user-centered design",
+            "use experience map"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-035-S03",
+      "skills_assessed": [
+        "Wireframing",
+        "design user interface",
+        "software interaction design",
+        "Prototyping",
+        "Figma",
+        "design systems",
+        "Typography"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You’re reviewing a low‑fi wireframe prototype with the following navigation map and back-button settings:\n\n```text\nFrames:\nA: Product list\nB: Product details\nC: Cart\nD: Checkout – Shipping\nE: Checkout – Payment\nF: Order confirmation\n\nTransitions:\nA -> B  (Tap product)\nB -> C  (Tap “Add to cart”)\nC -> D  (Tap “Checkout”)\nD -> E  (Tap “Continue”)\nE -> F  (Tap “Pay”)\n\nBack actions:\nB (Back): Back to previous\nC (Back): Navigate to A (hard link)\nD (Back): Navigate to C (hard link)\nE (Back): Back to previous\n```\n\nA user lands on B via a deep link (they never visited A), then proceeds B → C → D → E. On E they tap the back icon twice quickly. Where do they land after the two taps, and what subtle modeling issue does this reveal?",
+          "options": [
+            "They land on D; mixing soft back with hard links causes no issue because history is linear here.",
+            "They land on A; two backs always take the user to the start of the flow regardless of how they arrived.",
+            "They remain on E; rapid taps are debounced and only one back action will fire.",
+            "They land on C; mixing stack-pop (Back to previous) with hard links creates an artificial history that won’t match real OS back behavior."
+          ],
+          "correct_option": "D",
+          "explanation": "First back from E uses “Back to previous” → D. Second back on D is a hard link → C. So they land on C. Because C’s and D’s backs are hard links, the prototype manufactures a path that may not reflect an OS back stack (e.g., a true back on D would return to E if it had been reached via an intercept). Mixing back-to-previous with hard links drifts from realistic stack behavior.",
+          "distractor_rationale": "A: Feels plausible because history looks linear, but the mix of back types does matter. C: Sounds like a common misconception that back rewinds to origin; not how a stack works. D: Figma doesn’t debounce back actions by default; two taps can execute two transitions.",
+          "skills_covered": [
+            "Wireframing",
+            "software interaction design",
+            "Prototyping"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A button component is set up in Figma:\n\n```text\nComponent: Button / Primary\nAuto layout: Horizontal, spacing=8, padding=12/16\nLayers (left→right): [Icon-16] [Label]\nIcon layer: 16×16, visibility controlled by boolean property `icon`\nLabel: Auto width\nButton resizing (inside parent): Fill container (width)\nProblem: When `icon=false`, icon is hidden but 8px left gap remains before the label in instances.\n```\n\nWhat change best guarantees there’s no leftover gap when the icon is off, across all instances and sizes?",
+          "options": [
+            "Wrap [Icon-16] and [Label] in a nested auto‑layout frame and use a variant where left padding is reduced by 8px when `icon=false`.",
+            "Change the label to Fill container so it absorbs the space when the icon is hidden.",
+            "Switch the button’s horizontal distribution to Space Between so hidden layers collapse to zero.",
+            "Set the frame’s alignment to Left; center alignment causes the phantom gap."
+          ],
+          "correct_option": "A",
+          "explanation": "When a layer is hidden, spacing between items remains. Tying padding to a variant (icon on/off) removes the extra left gap reliably. Space Between doesn’t collapse spacing; label Fill doesn’t remove inter‑item spacing; changing alignment doesn’t address spacing persistence.",
+          "distractor_rationale": "A: Tempting because Space Between redistributes space, but it doesn’t eliminate inter‑item spacing with hidden layers. C: Common attempt to soak space, but spacing is between items, not inside the label. D: Alignment changes positioning, not inter‑item spacing.",
+          "skills_covered": [
+            "Figma",
+            "design user interface",
+            "design systems"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A desktop UI kit specifies both a spacing grid and a typographic baseline:\n\n```text\nLayout spacing scale: 8px steps (8, 16, 24, 32, ...)\nTypography baseline: 4px grid\n\nSpec excerpt\n- Card internal padding: 24\n- Body text line-height: 20\n- Spacing between components: 12\n- Primary button height: 36\n```\n\nWhich single measurement is off-spec for inter-component spacing and will create ragged vertical rhythm between components?",
+          "options": [
+            "Card internal padding: 24",
+            "Primary button height: 36",
+            "Spacing between components: 12",
+            "Body text line-height: 20"
+          ],
+          "correct_option": "C",
+          "explanation": "Inter-component spacing is defined on the 8px scale, so 12px breaks the layout rhythm. A 20px line-height and 36px control height both sit on the 4px baseline and are acceptable for type and control metrics. Padding 24 is on the 8px spacing scale.",
+          "distractor_rationale": "A: 24 is a multiple of 8, so it’s fine. B: 20 isn’t on the 8px scale, but line-heights follow the 4px baseline, not the spacing scale. D: 36 breaks 8px but aligns to the 4px baseline, which is acceptable for controls.",
+          "skills_covered": [
+            "design user interface",
+            "Typography"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You need two equal-width cards on a 360px-wide mobile artboard using this grid:\n\n```text\nColumns: 4\nGutter: 8\nOuter margins: 16\n```\n\nEach card spans exactly 2 columns. What width should each card be to sit perfectly on the grid?",
+          "options": [
+            "172px",
+            "160px",
+            "168px",
+            "152px"
+          ],
+          "correct_option": "B",
+          "explanation": "Content width = 360 − (2×16 margins) − (3×8 gutters) = 360 − 32 − 24 = 304. One column = 304/4 = 76. A 2‑column span includes one gutter: 2×76 + 8 = 160.",
+          "distractor_rationale": "A: 152 ignores the included gutter within a 2‑column span. C/D: Overestimates by adding extra gutters or ignoring margins.",
+          "skills_covered": [
+            "design user interface",
+            "Figma"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A modal in your wireframe prototype is configured as follows:\n\n```text\nTrigger: Tap “Filter”\nAction: Open overlay → Modal/Filters\nOverlay position: Center\nBackground: Dimmed (40%)\nClose when clicking outside: Disabled\n‘Esc’ key closes: Enabled\nModal has a Close (X) button wired to Close overlay\n```\n\nDuring a usability review on desktop, users click outside the modal and nothing happens. What is the most accurate fix to reflect expected desktop behavior without compromising mobile behavior (where accidental dismiss is risky)?",
+          "options": [
+            "Enable “Close when clicking outside” and remove the Close (X) button to reduce duplicate affordances.",
+            "Enable outside click and increase the background dim to 60% to make the intent clearer.",
+            "Create a desktop variant of the overlay with outside click enabled, and keep the mobile variant with it disabled; swap variants by breakpoint.",
+            "Keep outside click disabled; add a second Close (X) in the modal footer for redundancy."
+          ],
+          "correct_option": "C",
+          "explanation": "Desktop patterns commonly allow clicking the backdrop to dismiss, while mobile often avoids accidental dismissals. Using variants by breakpoint models the differing expectations accurately.",
+          "distractor_rationale": "A: Removing the Close (X) reduces explicit affordance and doesn’t address platform differences. B: Adds clutter without solving the mismatch. D: Dim level doesn’t change dismissal behavior; enabling outside click globally hurts mobile.",
+          "skills_covered": [
+            "Wireframing",
+            "software interaction design",
+            "Prototyping"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You are modeling form validation logic at low fidelity. Current prototype wiring:\n\n```text\nScreen: Payment\nElements: [Card #] [Expiry] [CVV] [Name] [Pay button]\nStates:\nS0: Empty (Pay disabled)\nS1: Some invalid input (Pay enabled by mistake)\nS2: All valid (Pay enabled)\nSerr: Error from gateway (inline error under Pay)\n\nCurrent issue: In S1, tapping Pay navigates to Confirmation due to a hard link on the button.\n```\n\nWhat change best communicates the intended interaction without code, and prevents the erroneous navigation in S1?",
+          "options": [
+            "Link Pay in S1 to a toast overlay saying “Invalid fields”, but still allow proceeding to Confirmation after dismissing the toast.",
+            "Use two Pay button variants (enabled/disabled). In S1 show the disabled variant with no interaction; only S2’s enabled variant links to Confirmation.",
+            "Keep the hard link but add an intermediate “Validating…” screen before Confirmation to imply a check.",
+            "Replace the Pay interaction with a sticky note that says “Validate here” and remove the link."
+          ],
+          "correct_option": "B",
+          "explanation": "Variant gating makes the prototype behave correctly: disabled has no interaction, enabled proceeds. This communicates logic through interaction rather than annotation or leaky flows.",
+          "distractor_rationale": "A: Non-interactive notes don’t demonstrate behavior. C: Still allows invalid progression and implies server-side only checks. D: Still proceeds on invalid input, normalizing a broken path.",
+          "skills_covered": [
+            "Wireframing",
+            "software interaction design",
+            "Prototyping",
+            "Figma"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your design system is defining color tokens. Two proposals are on the table:\n\n```text\nProposal 1 (brand-first):\n- brand/blue-500, brand/blue-600\n- brand/green-500, brand/green-600\n- text/on-dark, text/on-light\n- button/primary/bg → brand/blue-600\n- button/primary/text → text/on-dark\n\nProposal 2 (semantic-first):\n- action/primary/bg\n- action/primary/text\n- action/secondary/bg\n- action/secondary/text\n- surface/default\n- text/high, text/medium\n- theme/brand/blue-600 (alias)\n- action/primary/bg → alias(theme/brand/blue-600)\n```\n\nYou must add a “warning” emphasis next quarter and support a seasonal theme. Which proposal better scales, and why?",
+          "options": [
+            "Both are equivalent if you document a mapping table in the README.",
+            "Proposal 1; brand hues are already listed so adding warning is just another color.",
+            "Proposal 1; it’s closer to developer variables that often use raw colors.",
+            "Proposal 2; semantic tokens allow new emphases and themes by re-aliasing without renaming component references."
+          ],
+          "correct_option": "D",
+          "explanation": "Semantic tokens decouple meaning from brand. New emphases (warning) and themes can be supported by pointing semantic tokens to new brand aliases without refactoring components.",
+          "distractor_rationale": "A: Adding raw colors doesn’t propagate meaning or handle themes cleanly. C: Developer familiarity doesn’t solve scalability. D: Documentation cannot offset hard-coded brand dependencies.",
+          "skills_covered": [
+            "design systems",
+            "design user interface"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You’re converting a card to be responsive in Figma. Requirements: the hero image must keep a 16:9 ratio as the card width changes. Current setup:\n\n```text\nCard: Auto layout (Vertical), padding 16, gap 12\nImage layer: 640×360 placed inside a frame\nImage fill: Image (Crop)\nImage layer resizing: Fill container (width), Fixed height (360)\n```\n\nWhen the card width shrinks, the image distorts or crops awkwardly. What change preserves 16:9 without manual overrides?",
+          "options": [
+            "Wrap the image in its own frame sized by auto layout, and set that wrapper frame’s constraints to Scale; then resize the wrapper proportionally from the card.",
+            "Use Space Between in the card’s auto layout so the image keeps its space.",
+            "Set the image layer to Fill container for both width and height; Figma will keep the aspect ratio automatically.",
+            "Switch the card from Auto layout to a fixed-size group so children don’t resize."
+          ],
+          "correct_option": "A",
+          "explanation": "Placing the image inside a wrapper that scales preserves its aspect as the wrapper resizes proportionally with the card. Fill container + fixed height distorts; groups/fixed sizes break responsiveness; Space Between affects gaps, not aspect ratio.",
+          "distractor_rationale": "A: Fill both axes forces stretching; aspect isn’t preserved. C: Freezes layout, losing responsiveness. D: Misapplies distribution to a sizing problem.",
+          "skills_covered": [
+            "Figma",
+            "design user interface",
+            "Prototyping"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You’re laying out filter chips in a responsive toolbar.\n\n```text\nToolbar frame: Auto layout (Horizontal)\nWrap: Enabled\nGap between items: 8\nPadding: 12/16\nChip: Auto width, min width 64, horizontal padding 12\n```\n\nAs the toolbar width changes, rows wrap but spacing within each row becomes visually uneven. Which configuration yields the most consistent row appearance across widths?",
+          "options": [
+            "Keep Left alignment with a fixed 8px gap; let wrap handle line breaks naturally.",
+            "Center align the row so the ragged right edge is balanced.",
+            "Increase the gap to 12 so it divides evenly into more widths.",
+            "Set horizontal distribution to Space Between so chips expand to fill each row evenly."
+          ],
+          "correct_option": "A",
+          "explanation": "Left alignment with a fixed gap yields predictable, even intra-row spacing. Space Between redistributes gaps unevenly per row. Arbitrary gap increases don’t solve unevenness; centering emphasizes ragged edges.",
+          "distractor_rationale": "A: Common but causes variable intra-row spacing. C: Numerology doesn’t align with available widths. D: Centering may look tidy but doesn’t address spacing consistency.",
+          "skills_covered": [
+            "Figma",
+            "design user interface"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You’re testing a responsive header in Figma. Current constraints:\n\n```text\nHeader frame width: resizes\nLogo: Constraints → Left & Right\nLeft action (☰): Constraints → Left\nRight action (🔍): Constraints → Right\n```\n\nOn wider screens the logo drifts off-center. What change correctly locks the logo to center across widths while keeping actions pinned to edges?",
+          "options": [
+            "Fix the header width to prevent drift.",
+            "Set the logo’s constraints to Center and remove Left & Right.",
+            "Set the header to Space Between and let auto layout center the logo between actions.",
+            "Group the logo with the left action so they scale together."
+          ],
+          "correct_option": "B",
+          "explanation": "Using the Center constraint keeps the logo centered as the header resizes, independent of edge‑pinned actions. Grouping with the left action pulls it off-center; Space Between centers the free space, not necessarily the logo; fixing width defeats responsiveness.",
+          "distractor_rationale": "B: Feels like it keeps relative positions, but ruins centering. C: Space Between aligns outer edges, not a centered middle element. D: Avoids the problem by removing responsiveness.",
+          "skills_covered": [
+            "Figma",
+            "design user interface",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your low‑fi wireframes for a 3‑step checkout reveal user confusion in testing. The flow is:\n\n```text\nCart → Shipping → Payment → Confirmation\n- Back on Shipping: hard link to Cart\n- Back on Payment: back to previous\n- \"Edit\" links on Payment open field-specific overlays (e.g., Change address)\n- Errors: gateway decline should keep the user on Payment with an inline message\nTest observation: When users deep-link into Payment (promo email) and then tap Back, some end up on Cart unexpectedly. Several try to re-enter details thinking they lost progress.\n```",
+          "task": "Propose changes to the wireframe structure and interaction logic to make back-navigation and error handling predictable for deep-linked and linear entries alike. Specify exactly which frames change, which links become back-to-previous vs hard links, and how overlays return focus. Justify each choice against the observed confusion.",
+          "expected_answer": "A solid answer will replace hard links on intermediate steps with back-to-previous so the stack reflects real entry order; ensure Cart is only reached by an explicit \"View cart\" action; move Edit overlays to modal overlays that close back to Payment and restore focus to the edited field; model Payment errors as an inline message under the Pay button with the form state retained; ensure a consistent breadcrumb or progress indicator that is purely informational (not hard-linked) to avoid jumps. Deep link to Payment should prefill Shipping state and set back-to-previous targeting the entry source (e.g., PDP or email), not Cart. If a user reaches Payment from Shipping, back returns to Shipping; if they deep-link and then open Edit Address, closing returns to Payment, not Cart. Confirmation is only reachable from successful Pay. All back actions should be \"back to previous\" except where a clear forward-only transition is required; remove hard links that skip steps.",
+          "rubric": [
+            {
+              "criterion": "Identifies and corrects the hard-link causing unexpected jump to Cart (switch to back-to-previous).",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains deep-link handling: establishes a valid history stack and preserves form state on return.",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies overlay behavior: close returns focus to invoking control/field on Payment; no unintended navigation.",
+              "marks": 2
+            },
+            {
+              "criterion": "Models error handling: inline message on Payment with state retention and no navigation on error.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Wireframing",
+            "software interaction design",
+            "Prototyping"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must convert mobile wireframes of a content feed into high‑fidelity screens for mobile and tablet. Constraints:\n\n```text\nContent density: 6–10 cards per view on tablet, 3–5 on mobile\nText: Title, metadata line, 2 lines body\nMedia: 16:9 thumbnail per card\nGrid proposals:\n- Mobile: 4 cols, 16 margins, 8 gutters\n- Tablet: 8 cols, 24 margins, 12 gutters\nType ramp candidates:\n- A: Title 18/24, Meta 12/16, Body 14/20\n- B: Title 20/28, Meta 12/18, Body 16/24\n```\nTesting shows truncation on mobile titles and overly airy tablet layouts.",
+          "task": "Select a grid and type ramp combination and describe exact column spans, paddings, and line-heights to hit the density targets without truncation beyond 2 lines on mobile. Explain how you’ll enforce a consistent 8px spacing scale and 4px baseline across both breakpoints, and how the 16:9 media will be maintained without manual overrides.",
+          "expected_answer": "Choose the given 4/8 column grids. For mobile: two-across cards at 2-column spans (width = 2 col + 1 gutter), padding 16, gap 8, title 18/24 (2 lines max), body 14/20. For tablet: 3-across at 2- or 3-column spans depending on target density, padding 20–24, gap 12; type ramp B for tablet titles (20/28) to use space while keeping 2‑line cap. Use 8px spacing scale for inter-card spacing; 4px baseline for line-heights (20, 24, 28, etc.). Maintain 16:9 via nested frame with Scale constraints or component with fixed aspect wrapper; set image to Fill width inside wrapper. Provide explicit spans (e.g., tablet card spans 2 cols for 4-up or 3 cols for 3-up) to hit density. Justify choices against truncation and density observations.",
+          "rubric": [
+            {
+              "criterion": "Chooses appropriate type ramp per breakpoint and justifies against truncation/airiness.",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies precise column spans, paddings, gaps consistent with given grids.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains baseline (4px) and spacing (8px) enforcement across components.",
+              "marks": 2
+            },
+            {
+              "criterion": "Details a robust method to maintain 16:9 media responsively (wrapper + constraints).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "design user interface",
+            "Typography",
+            "Figma"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A new design system must support theming and growing component complexity. Current draft shows buttons built directly with brand tokens and ad‑hoc states:\n\n```text\nButton Primary (light theme)\n- Background: #1463FF\n- Text: #FFFFFF\n- Hover: #2A75FF\n- Pressed: #0F4ED1\n- Disabled: #9CB9FF @ 40% opacity\nVariants: size (sm/md/lg) only\n```\n\nRoadmap: add Secondary and Destructive emphases; add dark theme; ship i18n with long labels.",
+          "task": "Propose a token and component variant structure that scales. Specify semantic tokens and their aliasing to brand tokens, state mapping (default/hover/pressed/disabled), size variants, icon boolean, and how you’ll avoid opacity hacks for disabled. Explain how this structure reduces overrides when themes or emphases are added.",
+          "expected_answer": "Define semantic tokens (action/primary/bg, action/primary/text, action/primary/bg/hover, /pressed, /disabled/bg, /disabled/text). Alias them to brand for each theme (theme/light/brand/blue-600, etc.). Build button variants with properties: emphasis (primary/secondary/destructive), size (sm/md/lg), icon (boolean), state (interactive variants or prototyping states). Disabled uses dedicated semantic tokens (e.g., action/primary/disabled/bg) not opacity of active colors to preserve contrast and consistency across themes. Sizes set paddings and min heights; icon boolean adjusts padding/spacing without leftover gaps. Result: adding new themes only re-aliases tokens; adding emphases adds a new semantic set without refactoring components.",
+          "rubric": [
+            {
+              "criterion": "Defines a clear semantic token set and explains aliasing to theme/brand tokens.",
+              "marks": 2
+            },
+            {
+              "criterion": "Maps states without opacity hacks; provides disabled-specific tokens.",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies component variant properties (emphasis, size, icon, state) and their effects on spacing.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how the approach minimizes overrides when adding themes/emphases/i18n.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "design systems",
+            "design user interface",
+            "Figma"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "In a click‑through prototype of a search flow, users fail to notice the primary action on mobile. Current high‑fi:\n\n```text\nHeader: 16px margins\nResults list: cards with Title 18/24, Body 14/20\nPrimary CTA: “Save search” as a ghost button at top-right of results\nAccent color: Blue 600 for CTAs; Blue 500 on hover\nSecondary CTA: “Create alert” as text link at bottom\n```\n\nObservation: Participants scroll past the header quickly and never use the primary CTA. They do tap \"Create alert\" often.",
+          "task": "Recommend changes to typography, color usage, grid placement, and component treatment to fix the affordance issue without adding more elements. Justify how each change will alter attention and tap behavior on mobile.",
+          "expected_answer": "Move the primary CTA into a sticky footer action area or pin it at the end of the first viewport using the grid (full-width or aligned to column span) so it’s in the scroll path. Switch from ghost to filled primary (action/primary/bg) to increase contrast. Adjust type hierarchy so card titles don’t overpower the CTA: keep Title 18/24 but set CTA label to 16/24 with medium weight and ensure 44px min hit target. Maintain 16px outer margins; use 8px gaps. Consider in-card inline CTA if it aligns with task. Ensure secondary link uses secondary token, not primary blue, to reduce competition. Result: primary CTA becomes visible and touchable at first scroll stop; secondary is visually subordinate.",
+          "rubric": [
+            {
+              "criterion": "Repositions primary CTA using the grid to where it will be encountered (e.g., sticky/footer or first viewport end).",
+              "marks": 2
+            },
+            {
+              "criterion": "Improves CTA visual prominence via filled style and correct tokens vs ghost/text.",
+              "marks": 2
+            },
+            {
+              "criterion": "Adjusts typography and hit-area to improve tapability without harming content hierarchy.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains expected behavior change grounded in attention flow on mobile.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "design user interface",
+            "Typography",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Low‑fidelity wireframe prototype: 3‑step checkout with edge cases",
+          "brief": "Produce a clickable low‑fidelity prototype that models the complete checkout flow with realistic interaction logic, including deep-link entry and error handling. Keep visuals to wires and greys; focus on layout and logic.",
+          "deliverable": "Wireframe prototype",
+          "acceptance_criteria": [
+            "Frames for: Cart, Shipping, Payment, Confirmation, and necessary overlays (Edit address, 3DS challenge, Error).",
+            "Back navigation modeled with back-to-previous (no hard links that skip steps).",
+            "Primary actions disabled until prerequisites met; enabled states only link forward.",
+            "Error paths modeled: declined payment stays on Payment with inline error; 3DS opens overlay and returns to Payment on success/failure.",
+            "Deep-link entry to Payment modeled; back from Payment returns to true previous, not Cart, when deep-linked.",
+            "Clickable prototype link with sharing enabled; all hotspots labeled; page and frames named consistently."
+          ],
+          "rubric": [
+            {
+              "criterion": "Flow completeness: all required screens and overlays present and reachable.",
+              "marks": 5
+            },
+            {
+              "criterion": "Interaction logic: correct gating of actions, realistic back behavior, no leaky success on invalid states.",
+              "marks": 6
+            },
+            {
+              "criterion": "Error/deep-link handling: inline error behavior and deep-link back path modeled accurately.",
+              "marks": 5
+            },
+            {
+              "criterion": "Organization and clarity: consistent naming, labeled hotspots, clean wire visuals focused on structure.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Wireframing",
+            "software interaction design",
+            "Prototyping",
+            "Figma"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "High‑fidelity UI screens: responsive checkout (mobile + desktop) with systemized components",
+          "brief": "Design high‑fidelity screens for the same checkout, using a grid, type ramp, color tokens, and reusable components. Deliver mobile and desktop breakpoints showing key states.",
+          "deliverable": "High-fidelity screens",
+          "acceptance_criteria": [
+            "Two breakpoints delivered: mobile (e.g., 360×640) and desktop (e.g., 1440×900).",
+            "Grids applied: declare columns, gutters, and margins for both breakpoints; elements align to grid.",
+            "Typography uses a consistent ramp with 4px baseline-aligned line-heights; body copy <= 2 lines where specified.",
+            "Buttons, inputs, and alerts built as components with variants (size, emphasis, state, icon boolean) and Auto Layout; no manual per-instance spacing fixes.",
+            "Color tokens used semantically (e.g., action/primary/bg) and aliased to brand colors; no hard-coded hex in components.",
+            "Images maintain 16:9 aspect via wrappers; hit targets meet 44px minimum on mobile.",
+            "Export or prototype link showing default, error, and success states for Payment; annotation or inspectable tokens page included."
+          ],
+          "rubric": [
+            {
+              "criterion": "Grid and alignment: correct, consistent application across both breakpoints.",
+              "marks": 5
+            },
+            {
+              "criterion": "Typography: coherent ramp, baseline alignment, and readable measures without unintended truncation.",
+              "marks": 5
+            },
+            {
+              "criterion": "Components and variants: reusable, tokenized, with correct Auto Layout behavior and states.",
+              "marks": 6
+            },
+            {
+              "criterion": "Tokens and theming: semantic tokens and aliasing used; no hard-coded styling in instances.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "design user interface",
+            "Typography",
+            "design systems",
+            "Figma",
+            "Prototyping"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-035-S04",
+      "skills_assessed": [
+        "Prototyping",
+        "usability engineering",
+        "Web Accessibility",
+        "Figma",
+        "software interaction design",
+        "design systems",
+        "design user interface",
+        "Storytelling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You ran two rounds of usability testing on the same interactive prototype with different labels. Excerpt of your task data for Task 2 (\"Change your plan\"):\n```text\nRound 1 (n=10)\n- Nav labels: Home, Plans, Billing, Support\n- Success rate: 40%\n- First-click on \"Plans\": 20%\n- First-click on \"Billing\": 60%\n- Median time-to-first-meaningful-click: 19s\n- Notes: 7/10 said they were looking for \"subscription\".\n\nChange between rounds: Renamed \"Plans\" to \"Subscriptions\". No layout changes.\n\nRound 2 (n=10)\n- Nav labels: Home, Subscriptions, Billing, Support\n- Success rate: 75%\n- First-click on \"Subscriptions\": 70%\n- First-click on \"Billing\": 20%\n- Misroutes that still succeed via \"Billing\": 4/10\n- Median time-to-first-meaningful-click: 8s\n```\nGiven this, what is the most defensible next iteration to address the remaining misroutes without adding new nav items?",
+          "options": [
+            "Add a tooltip on hover over \"Billing\" that explains plan management is under Subscriptions.",
+            "Revert the rename back to \"Plans\" and move it to the first position in the nav for higher salience.",
+            "Increase the visual weight (bold + primary color) of \"Subscriptions\" in the nav to overpower \"Billing\".",
+            "Add a lightweight cross-link on the Billing landing page: \"Looking to manage or cancel a plan? Go to Subscriptions\" as the first element above the fold."
+          ],
+          "correct_option": "D",
+          "explanation": "The rename improved first-click success and time-to-click, indicating label match. The residual misroutes start on Billing, which is still a plausible entry point. A contextual cross-link on the Billing page preserves the improved IA while rescuing misroutes with minimal change, likely converting those 4/10 faster without creating new confusion.",
+          "distractor_rationale": "B is tempting because prominence can increase clicks, but Round 2 shows label match, not position, is the driver; moving it may disrupt other tasks. C sounds helpful but hover tooltips don’t exist on touch and are unreliable/annoying even on desktop. D tweaks visual weight but doesn’t help users who already clicked into Billing; it also risks harming overall nav balance.",
+          "skills_covered": [
+            "usability engineering",
+            "Prototyping",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A modal overlay in your Figma prototype won’t scroll on mobile during tests. Inspect of the prototype connection and frame:\n```text\nPrototype connection\n- Trigger: On click (Open overlay)\n- Position: Center\n- Close when clicking outside: On\n- Add background behind overlay: 20% blur\n- No scroll through: On\n- While overlay open: Prevent interaction with background: Off\n\nOverlay frame\n- Auto layout: Vertical\n- Clip content: On\n- Scrolling: None\n- Height: 520 px (content can exceed)\n```\nWhat change will most likely allow users to scroll overlay content while keeping background locked?",
+          "options": [
+            "Set the overlay frame to Scrolling: Vertical and turn Clip content Off so overflow content becomes scrollable within the overlay.",
+            "Turn \"No scroll through\" Off so the page behind can scroll, which users can use to reach more content.",
+            "Switch overlay Position to Manual and enable \"Fix position when scrolling\" on the overlay.",
+            "Replace the overlay interaction with \"Open link in new page\" so the modal becomes a full screen that naturally scrolls."
+          ],
+          "correct_option": "A",
+          "explanation": "The overlay frame itself is non-scrollable (Scrolling: None) and clips overflow, so content cannot scroll. Making the frame vertically scrollable and allowing overflow to render within it enables scrolling while keeping the background locked via \"No scroll through: On\".",
+          "distractor_rationale": "A changes position behavior but not scrollability. B re-enables background scroll, which fails the modal pattern and confuses users. D changes the UX to a new page, invalidating your modal test and potentially altering task performance.",
+          "skills_covered": [
+            "Figma",
+            "Prototyping",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You are validating text color choices against WCAG AA. Export from your contrast checker:\n```csv\npair,label,foreground,background,contrast_ratio,sample_text_size_px\n1,Primary on White,#1E62F0,#FFFFFF,4.3,14\n2,Slate on White,#4A5568,#FFFFFF,5.4,14\n3,Muted on Warm Grey,#7A7A7A,#F5F2EE,3.8,14\n4,Primary on Off-Black,#1E62F0,#0E0E10,7.8,14\n```\nFor 14px normal body text, which pair can you keep as-is for AA compliance?",
+          "options": [
+            "Keep pairs 2 and 4.",
+            "Keep pairs 1 and 3.",
+            "Keep pair 2 only.",
+            "Keep pair 1 only."
+          ],
+          "correct_option": "A",
+          "explanation": "WCAG AA requires at least 4.5:1 for normal text at 14px. Pair 2 is 5.4:1 and pair 4 is 7.8:1, so both pass. Pair 1 is 4.3 (fails), pair 3 is 3.8 (fails).",
+          "distractor_rationale": "A is close but 4.3 is below the 4.5 threshold. B ignores that pair 4 massively exceeds the minimum. D includes two failing ratios, which might tempt if you misremember the threshold as 4.0 or assume off-black backgrounds relax it (they do not).",
+          "skills_covered": [
+            "Web Accessibility",
+            "design user interface"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Developers misapplied spacing on cards: horizontal padding matches the spec but vertical is too tight. Your current tokens:\n```json\n{\n  \"spacing\": {\"sm\": \"8px\", \"md\": \"16px\", \"lg\": \"24px\"},\n  \"component\": {\n    \"card\": {\"padding\": \"{spacing.md}\"}\n  }\n}\n```\nWhich revision most reduces ambiguity in handoff without over-specifying per screen?",
+          "options": [
+            "```json\n{\n  \"spacing\": {\"sm\": \"8px\", \"md\": \"16px\", \"lg\": \"24px\"},\n  \"component\": {\n    \"card\": {\"padding\": {\"vertical\": \"auto\", \"horizontal\": \"{spacing.md}\"}}\n  }\n}\n```",
+            "```json\n{\n  \"spacing\": {\n    \"inline-200\": \"16px\",\n    \"block-300\": \"24px\"\n  },\n  \"component\": {\n    \"card\": {\"padding\": {\"inline\": \"{spacing.inline-200}\", \"block\": \"{spacing.block-300}\"}}\n  }\n}\n```",
+            "```json\n{\n  \"spacing\": {\"sm\": \"8px\", \"md\": \"16px\", \"lg\": \"24px\"},\n  \"component\": {\n    \"card\": {\"padding\": \"16px 24px\"}\n  }\n}\n```",
+            "```json\n{\n  \"spacing\": {\"sm\": \"8px\", \"md\": \"16px\", \"lg\": \"24px\"},\n  \"component\": {\n    \"card\": {\"padding\": {\"all\": \"{spacing.md}\"}}\n  }\n}\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Separating inline (left/right) and block (top/bottom) padding makes the intent explicit and maps cleanly to platform properties. Using semantically named global tokens and aliasing them in a component token reduces ambiguity across layouts.",
+          "distractor_rationale": "A still hides directionality in a single value. C hard-codes a shorthand string that may not translate across platforms or into token-aware tooling. D leaves vertical ambiguous with \"auto\", which is not implementable as a token value.",
+          "skills_covered": [
+            "design systems",
+            "Figma"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You are rewriting a task in your unmoderated test plan. Current wording:\n```text\n\"Find the nearest clinic and book an appointment in under 2 minutes.\"\n```\nWhich rewrite best reduces bias and still yields a measurable outcome?",
+          "options": [
+            "\"Find the nearest clinic and book an appointment.\"\n\nSeparate timing is measured by the platform, not stated in the prompt.",
+            "\"Find any clinic and tell us how long you think it would take to book.\"\n\nRelies on self-reported time to reduce pressure.",
+            "\"Prove you can book in under 2 minutes by following the fastest route.\"\n\nMotivates performance via competitive framing.",
+            "\"Use the map to find the nearest clinic and try to book quickly.\"\n\nGives a hint to aid discoverability and encourages speed."
+          ],
+          "correct_option": "A",
+          "explanation": "Removing the time constraint from the prompt avoids demand characteristics while still allowing precise timing via instrumentation. This preserves comparability of measured time without nudging behavior.",
+          "distractor_rationale": "B injects a hint (map) that biases path choice. C creates performance pressure and primes speed over natural behavior. D replaces objective timing with unreliable self-report.",
+          "skills_covered": [
+            "usability engineering"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "First-click data for the task \"Cancel your subscription\" on your prototype nav:\n```text\nNav items: Home, Subscriptions, Billing, Help\nFirst-click distribution (n=30):\n- Subscriptions: 33%\n- Billing: 50%\n- Help: 13%\n- Home: 4%\nQual notes: \"Cancel\" perceived as a billing action; some expect it under plan management.\n```\nWithout adding new nav items, which change most likely improves first-click success?",
+          "options": [
+            "Add a confirmation page after cancel to reassure users they've completed the task.",
+            "Rename \"Billing\" to \"Billing & Subscriptions\" to acknowledge management actions live there.",
+            "Rename \"Billing\" to \"Billing & Payments\" and keep \"Subscriptions\" as-is.",
+            "Move \"Subscriptions\" to first position in the nav to increase salience for the task."
+          ],
+          "correct_option": "B",
+          "explanation": "Data shows most users click Billing first and associate cancelation with it. Making that label explicitly include Subscriptions aligns with their mental model and should increase correct first clicks without adding nav items.",
+          "distractor_rationale": "A keeps the ambiguity between billing and subscription management. C changes position but not the underlying label mismatch. D is post-action reassurance; it doesn’t change first-click behavior.",
+          "skills_covered": [
+            "usability engineering",
+            "design user interface"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A dev shipped icon buttons at 36×36 px because the Figma handoff only showed the visible frame size. Inspect excerpt:\n```text\nComponent: IconButton / Primary\nFrame size: 36 × 36 px\nAuto layout: Centered\nPadding: 8 px all sides\nNotes: —\n```\nWhich addition to the handoff most reliably prevents this issue across platforms?",
+          "options": [
+            "Link to Apple HIG and Material docs about 44–48 px targets and trust devs to apply it.",
+            "Annotate the frame with a 44 × 44 px redline and a note: \"Min touch area 44 px\".",
+            "Define and reference a token in the component docs, e.g., `size.touchTarget.min = 44dp` and include it in the Inspect panel via a property.",
+            "Embed a prototype hotspot that is 44 × 44 px to simulate the hit area during testing."
+          ],
+          "correct_option": "C",
+          "explanation": "Encoding the requirement as a named token and referencing it in the component ensures it survives platform translation and shows up in Inspect/handoff tools. It’s actionable and enforceable.",
+          "distractor_rationale": "A is easy to miss and not machine-readable. C is generic guidance, not a spec. D helps in testing but doesn’t carry through to implementation semantics.",
+          "skills_covered": [
+            "design systems",
+            "Figma",
+            "Web Accessibility"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Testers were able to click a disabled CTA in your interactive component. Variant setup excerpt:\n```text\nComponent: Button\nVariants (properties): state = {enabled, disabled}; emphasis = {primary, secondary}\nPrototype connections: Node \"Label\" (inside Button) has On Click → Navigate to Checkout.\nAll variants share the same Label node.\n```\nWhat is the minimal wiring change to prevent activation of the disabled state without altering visuals?",
+          "options": [
+            "Move the navigation interaction to the component set level so it applies only when state=enabled.",
+            "Disable \"Include in Interaction\" for the Label node in disabled variants; leave enabled variants unchanged.",
+            "Add an invisible overlay on top of the disabled variant to block clicks while leaving interactions as-is.",
+            "Remove the On Click interaction from the Label and add it only to the Button frame in the enabled variants."
+          ],
+          "correct_option": "D",
+          "explanation": "Interactions in Figma are attached to specific nodes and carry across variants if shared. By moving the interaction to the Button frame and scoping it to enabled variants, disabled variants won’t inherit it, preventing activation.",
+          "distractor_rationale": "B obscures the issue and complicates hit areas. C sounds right, but Figma doesn’t offer per-variant \"Include in Interaction\" toggles for a shared node without splitting it; the reliable pattern is scoping interactions to enabled variants. D doesn’t exist as a conditional at the set level; interactions are per-node/variant.",
+          "skills_covered": [
+            "Figma",
+            "Prototyping",
+            "software interaction design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You are preparing a portfolio case. Metrics collected around your redesign:\n```text\nBefore (4 weeks):\n- Signup completion: 42% (n=12,400 sessions)\n- Mobile share: 70%\n- Promo campaign: None\n\nAfter (4 weeks):\n- Signup completion: 54% (n=18,900 sessions)\n- Mobile share: 78%\n- Promo campaign: Running (20% discount)\n- Control geo (no redesign): 44% → 46%\n```\nWhich analytic framing best supports a credible causal story in your case study?",
+          "options": [
+            "Aggregate 8 weeks before/after to smooth noise and report the overall lift.",
+            "Show the 12-point increase as a headline and attribute it to the redesign with selected user quotes.",
+            "Use a difference-in-differences view comparing the redesigned geo vs control over time, and discuss the promo as a confound.",
+            "Normalize by mobile share and report a mobile-only conversion increase."
+          ],
+          "correct_option": "C",
+          "explanation": "A difference-in-differences comparison with a control segment strengthens causal claims and explicitly acknowledges concurrent confounds like the promo, making your story credible.",
+          "distractor_rationale": "A over-attributes and cherry-picks. C addresses mix shift but ignores the promo and time trends. D smooths but still lacks a control and ignores confounds.",
+          "skills_covered": [
+            "Storytelling",
+            "usability engineering"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your unmoderated test has high drop-off on the first screen. Current intro and consent:\n```text\nWelcome to our study! Please read this 3-page consent carefully. Keep this tab open.\nYou must think aloud at all times. If you stop speaking, the session will be terminated.\nTasks (8 total) will take ~25–30 minutes. Click Start to enable camera, mic, and screen.\n```\nWhich change is most likely to reduce attrition without biasing behavior?",
+          "options": [
+            "Add more reassurance copy about privacy across all task screens.",
+            "Shorten and plain-language the consent into a single screen, get permissions inline after a 30-second practice task, and keep tasks to 4–5 focused flows.",
+            "Increase incentive size to compensate for effort and keep the flow unchanged.",
+            "Replace think-aloud with a mandatory post-task survey to shorten tasks."
+          ],
+          "correct_option": "B",
+          "explanation": "Reducing cognitive load and front-loaded friction (long consent, immediate permissions) and trimming task count reduces attrition while preserving natural behavior. A short practice also sets expectations without biasing task performance.",
+          "distractor_rationale": "A changes the method and loses rich behavioral data. C masks the UX problem instead of fixing it. D is helpful tone-wise but doesn’t materially reduce the barriers causing early exits.",
+          "skills_covered": [
+            "usability engineering",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You tested an interactive checkout prototype (mobile) with 8 participants. Key findings excerpt:\n```text\nTask: Apply a promo code and check total.\n- 6/8 attempted to type the code into the \"Notes\" field on the Cart.\n- The promo input lives on the Payment step as a small link: \"Have a code?\"\n- Time-to-discovery of \"Have a code?\": median 42s; 3/8 never found it.\n- 2/8 tapped back when the keyboard covered the total; they thought the promo didn’t apply.\n- Error message after invalid code is inline, 12px gray text below input.\n```\nConstraints: must keep a two-step checkout (Cart → Payment). You own the prototype and the next test plan; devs will not build anything until after your next round.",
+          "task": "Propose specific prototype and content changes to address the issues, and define a focused follow-up usability test plan (participants, tasks, success metrics and thresholds) to validate them. Justify why your changes target the observed failures without introducing new ones.",
+          "expected_answer": "A strong answer specifies: moving promo entry affordance closer to where users expect it (Cart) or increasing prominence at Payment; elevating \"Have a code?\" to a button or field with clear label; ensuring the promo input is visible without scrolling and not obscured by the keyboard (use safe area / sticky summary); revising error styles to meet contrast and hierarchy; showing applied promo feedback adjacent to the total with a delta and removable chip. Follow-up test plan: 5–8 participants, mobile, task to apply code and verify total; success defined as first-click on the correct affordance within ~10s, success rate ≥80%, time-to-complete median under ~30–40s, zero participants misusing Notes, all can see updated total without dismissing keyboard; include a negative test (invalid code) to observe error legibility; instrument first-click, time, and path; compare against prior round. Justification ties each change to a specific failure mode (discoverability, placement, visibility under keyboard) and calls out how sticky order summary prevents misinterpretation. Mentions WCAG AA for error contrast.",
+          "rubric": [
+            {
+              "criterion": "Concrete prototype changes address discoverability (placement/label/prominence) and visibility under keyboard",
+              "marks": 3
+            },
+            {
+              "criterion": "Error handling and feedback design (contrast, inline placement, removable state) is specified",
+              "marks": 2
+            },
+            {
+              "criterion": "Follow-up test plan includes participants, tasks, metrics with explicit pass thresholds",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear justification mapping each change to an observed failure; risks/side-effects considered",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Prototyping",
+            "usability engineering",
+            "design user interface",
+            "Web Accessibility"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your accessibility review of the account settings prototype found these issues:\n```text\n- Focus indicator on primary buttons is a 1px low-contrast outline; fails non-text contrast.\n- Keyboard trap inside country dropdown (custom menu) when opened in a modal.\n- Empty placeholder icons used instead of text labels in the bottom tab bar.\n- Success toast auto-dismisses in 2s with important content (\"Email changed\").\n```\nYou will not write code, but you control the design system specs and handoff package.",
+          "task": "Specify the design and system-level changes you will make so these issues are unlikely to recur. Reference the relevant WCAG criteria and describe what you will annotate or tokenize for the handoff so engineers can implement unambiguously.",
+          "expected_answer": "Propose system-level tokens/specs: focus style token with ≥3:1 contrast against adjacent colors and ≥2px or dual-outline focus ring; WCAG 2.1 1.4.11 Non-text Contrast. For custom dropdowns in modals, spec focus management: on open, focus first selected/active option; Escape/Outside click close; Tab/Shift+Tab cycle within modal (focus trap with sentinel elements); on close, return focus to trigger; WCAG 2.1.2 Keyboard, 2.4.3 Focus Order. Replace unlabeled icons in navigation with visible labels or accessible names in spec; ensure designers provide text labels; WCAG 3.3.2 Labels or Instructions and 1.3.1 Info and Relationships. For toasts with critical updates, require persistent confirmation or at least longer duration with dismiss, and ensure it is not the sole modality (also reflect change in the page state); WCAG 2.2.1 Timing Adjustable and 4.1.3 Status Messages. Provide Figma components with annotated behaviors, tokens (e.g., focusRing.color/width/offset), and interaction notes in the component docs; include acceptance criteria in handoff checklist.",
+          "rubric": [
+            {
+              "criterion": "Maps each issue to a concrete spec/token change usable in handoff (focus, dropdown behavior, labels, toast timing)",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct WCAG criteria referenced for each issue",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how annotations/documentation will make implementation unambiguous",
+              "marks": 1
+            },
+            {
+              "criterion": "Considers persistence/alternative feedback for status messages and focus return",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Web Accessibility",
+            "design systems",
+            "Figma"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Engineering reports inconsistent paddings and states across implemented buttons despite a shared component. Current Figma structure excerpt:\n```text\nComponent: Button\nVariants: size={sm, md, lg}, emphasis={primary, secondary}\nPadding in Inspect: shown as numbers per variant, no tokens referenced.\nFocus state: a separate local style, not part of the component set.\n```\nThere’s no centralized token mapping; designers override paddings per variant.",
+          "task": "Redesign the handoff so engineers can implement buttons consistently across platforms. Propose a token schema and component spec, including how to expose it in Figma Inspect, and explain how this will prevent drift as the system scales.",
+          "expected_answer": "Introduce a token schema that separates global and component tokens: e.g., size.scale (sm=32dp, md=40dp, lg=48dp), spacing.inline/block, radius, and state tokens (focusRing.color/width). Button component aliases: `button.padding.inline = {spacing.inline-200}`, `button.padding.block = {spacing.block-200}`, `button.size = {size.scale.md}`, and state variants include focus/hover/pressed within the same component set. In Figma, attach tokens via a plugin or design tokens feature so Inspect shows token names, not just numbers. Document platform mappings (dp/pt) and include an implementation checklist. This prevents drift by removing local numeric overrides and making changes cascade through tokens; variants inherit states uniformly.",
+          "rubric": [
+            {
+              "criterion": "Token schema proposed (global vs component) with clear aliases and properties relevant to buttons",
+              "marks": 3
+            },
+            {
+              "criterion": "Component spec includes states within variants and references tokens, not raw numbers",
+              "marks": 2
+            },
+            {
+              "criterion": "Plan for exposing tokens in Figma Inspect/handoff and cross-platform mapping",
+              "marks": 1
+            },
+            {
+              "criterion": "Explanation of how the approach prevents future drift",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "design systems",
+            "Figma",
+            "design user interface"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are assembling a portfolio case for a feature that failed to move its primary KPI but produced strong qualitative wins and several accessibility fixes. You have these assets:\n```text\n- Pre/post funnel data: +1% (not significant) in completion\n- Task data: time-on-task -25% for key flows (n=12 moderated sessions)\n- Heuristic + a11y audit: 14 issues → 0 critical, 3 minor remaining\n- Before/after prototypes and component updates merged to design system\n- Clips of 3 participants praising clarity; 1 participant still confused by copy\n- A concurrent promo likely influenced overall traffic quality\n```\nYou want to tell a credible story that still reflects your impact.",
+          "task": "Outline the narrative arc and artifact sequence you will use in the case study. Explain how you will present the mixed results ethically and what you will foreground to show value, including how accessibility work and systemization appear in the story.",
+          "expected_answer": "A strong outline frames the problem and constraints, then the approach (research → prototype → test → iterate), shows the mixed results honestly: limited KPI lift due to confounds, but meaningful efficiency gains (time-on-task), resolved a11y issues (mapped to WCAG), and systemized the fixes into the design system. Sequence: Problem + hypothesis → key usability findings → specific design changes (before/after) → test evidence (task metrics, clips) → a11y audit deltas → system handoff (tokens/components PR) → reflection/next steps. Explicitly note the promo confound and small KPI movement; do not over-claim. Foreground user efficiency, error reduction, and a11y risk mitigation; include links/screens of tokenized focus styles and tap-target updates. Close with what you’d test next to target KPI movement.",
+          "rubric": [
+            {
+              "criterion": "Clear narrative structure with logical artifact sequence from problem to outcomes",
+              "marks": 3
+            },
+            {
+              "criterion": "Ethical handling of mixed results and confounds; no over-claiming",
+              "marks": 2
+            },
+            {
+              "criterion": "Highlights accessibility improvements and their systemization",
+              "marks": 2
+            },
+            {
+              "criterion": "States next steps or hypotheses to move the primary KPI",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "usability engineering",
+            "Web Accessibility",
+            "design systems"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Usability Test Report on Interactive Prototype",
+          "brief": "Plan and run a small usability evaluation of your interactive prototype focusing on one critical user journey. Iterate the prototype once based on findings and report the results. Use remote moderated or unmoderated methods as appropriate, but the report must make your design decisions and their impact auditable.",
+          "deliverable": "Test report",
+          "acceptance_criteria": [
+            "Includes a concise objective and hypothesis for the chosen journey.",
+            "Provides the test protocol: participant profile, recruitment, task scripts (non-leading), environment, and data to be captured.",
+            "Reports raw metrics for each task (success rate, time-on-task, first-click success) and observations; includes at least 5 participants’ data.",
+            "Links to or embeds the exact prototype version tested (v1) and the iterated version (v2) with a changelog of what changed and why.",
+            "Presents prioritized findings with severity, supporting evidence (timestamps or clips), and maps each to a design change in v2.",
+            "Shows before/after evidence of impact on at least two metrics, with a short analysis of learnability vs discoverability effects.",
+            "Includes at least one accessibility consideration observed and how it was addressed in v2 (e.g., contrast, target sizes, focus order).",
+            "Ends with a decision: ship, iterate again, or pivot, with explicit success thresholds for a next round."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clear objective, hypothesis, and non-leading tasks (auditable protocol)",
+              "marks": 4
+            },
+            {
+              "criterion": "Complete, credible data (≥5 participants) with core metrics and observations",
+              "marks": 5
+            },
+            {
+              "criterion": "Traceable prototype iteration (v1→v2) with rationale and changelog",
+              "marks": 4
+            },
+            {
+              "criterion": "Findings prioritized with severity and evidenced; metric deltas analyzed",
+              "marks": 4
+            },
+            {
+              "criterion": "Accessibility consideration identified and addressed",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "usability engineering",
+            "Prototyping",
+            "Figma",
+            "Web Accessibility"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Portfolio Product Design Case with Accessibility and Handoff",
+          "brief": "Create a portfolio-ready case that tells the story of a feature you designed, emphasizing accessibility improvements and an implementation-ready handoff. The case should be consumable by hiring managers and engineers.",
+          "deliverable": "Product design case",
+          "acceptance_criteria": [
+            "A written narrative (PDF or web) 800–1500 words covering problem, constraints, approach, decision points, outcomes, and reflection.",
+            "Before/after visuals: key screens and flows with callouts to specific changes and why.",
+            "A section summarizing accessibility work: issues found (mapped to WCAG), design changes, and how these were validated.",
+            "A handoff package: link to a Figma file with components, variant states, and Inspect showing token names (not just numbers) for at least buttons and form fields; include exported design tokens (JSON) or documented mapping.",
+            "Evidence of impact: at least two artifacts such as task metrics, a short clip, or an audit delta table. If metrics are inconclusive, explain confounds and show qualitative/a11y value.",
+            "A checklist for engineers in the case or Figma file outlining interaction behaviors (focus, keyboard, error states) and platform mappings (e.g., dp/pt).",
+            "All external links accessible to a reviewer without special permissions (or provide view-only access)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Narrative clarity and completeness with defensible, ethical storytelling",
+              "marks": 5
+            },
+            {
+              "criterion": "Before/after artifacts and callouts clearly tie design choices to problems",
+              "marks": 4
+            },
+            {
+              "criterion": "Accessibility section maps issues to WCAG and shows concrete fixes/validation",
+              "marks": 4
+            },
+            {
+              "criterion": "Handoff quality: tokens present in Inspect, component variants/states, and dev checklist",
+              "marks": 5
+            },
+            {
+              "criterion": "Evidence of impact or clear handling of inconclusive results",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "design systems",
+            "Figma",
+            "Web Accessibility",
+            "design user interface"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

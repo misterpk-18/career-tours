@@ -1,0 +1,1822 @@
+{
+  "course_code": "NT-C-016",
+  "course_name": "C Programming",
+  "sections": [
+    {
+      "section_code": "NT-C-016-S01",
+      "skills_assessed": [
+        "C",
+        "Control flow (C)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this program and assume it is compiled with a conforming C compiler:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int i = 3;\n    int r = i++ + ++i;\n    printf(\"%d %d\\n\", i, r);\n    return 0;\n}\n```\nWhat is the correct judgement about its behavior?",
+          "options": [
+            "It reliably prints \"5 7\" with -O0 and \"5 8\" with -O2.",
+            "The behavior is undefined; different builds may print different results or anything at all.",
+            "It reliably prints \"5 8\" on all optimizing compilers.",
+            "It fails to compile because modifying a variable twice on one line is a syntax error."
+          ],
+          "correct_option": "B",
+          "explanation": "The expression i++ + ++i modifies i more than once between sequence points, which is undefined behavior in C. A conforming implementation may produce any output, or even optimize in surprising ways, and still be correct by the standard.",
+          "distractor_rationale": "A: Many learners memorize a particular compiler's output, but UB has no guaranteed result. B: Optimizations can change outcomes for UB, but there is no rule that ties results to -O levels. D: It's legal syntax; the issue is semantic undefined behavior, not a parse error.",
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this print?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int x = 1;\n    int n = 2;\n    switch (n) {\n        case 1: x += 10;\n        case 2: x *= 3;\n        default: x -= 1;\n    }\n    printf(\"%d\\n\", x);\n}\n```",
+          "options": [
+            "The behavior is undefined due to fallthrough.",
+            "33",
+            "30",
+            "2"
+          ],
+          "correct_option": "D",
+          "explanation": "n == 2 selects case 2; there is no break, so execution continues into default. Starting from x=1: x*=3 gives 3, then default subtracts 1 to give 2.",
+          "distractor_rationale": "B: Assumes case 1 runs (adding 10) before case 2, but control starts at the matching label, not from the top. C: Assumes all cases run including case 1, 2, and default applied to the original x; but case 1 is skipped because n != 1. D: Fallthrough is defined in C; it's not UB. It only surprises if you expect implicit breaks.",
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider the loop:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    for (unsigned i = 3; i >= 0; --i) {\n        printf(\"%u \", i);\n    }\n}\n```\nWhich outcome best describes its runtime behavior?",
+          "options": [
+            "It prints 3 2 1 0 and terminates normally.",
+            "It fails to compile because comparing an unsigned to 0 is illegal.",
+            "It prints 3 2 1 0, then underflows to a large value and continues forever.",
+            "It prints 3 2 1 and skips 0 because the condition is evaluated before the body."
+          ],
+          "correct_option": "C",
+          "explanation": "For unsigned types, i >= 0 is always true. After printing 0, --i wraps to UINT_MAX, and the loop continues indefinitely, printing many values.",
+          "distractor_rationale": "A: True for signed counters, but unsigned comparison with 0 never becomes false. C: Legal in C; unsigned comparisons are well-defined. D: The body executes before the condition check only in do-while; here it's a for-loop with a standard condition.",
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What does this print, and why? Note the operators used.\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    unsigned a = 5;   // 0101\n    unsigned b = 1;   // 0001\n    printf(\"%d\\n\", a & b == 0);\n}\n```",
+          "options": [
+            "0, because (b == 0) is evaluated first, then a & 0 is 0.",
+            "1, because a & b is 1 which is logically true.",
+            "It is implementation-defined; precedence between & and == varies by compiler.",
+            "1, because & has higher precedence than == so (a & b) == 0 is true."
+          ],
+          "correct_option": "A",
+          "explanation": "Equality (==) binds tighter than bitwise AND (&), so the expression is parsed as a & (b == 0). Since b == 0 is false (0), the result is a & 0, which is 0, and printing with %d yields 0.",
+          "distractor_rationale": "A: Assumes (a & b) is used as a logical condition, but the precedence causes a different grouping. C: The precedence claim is backward; == binds tighter than & in C. D: Operator precedence is fixed by the C standard; it's not implementation-defined.",
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Evaluate the side effects precisely:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int x = 1, y = 2;\n    int z = x++ ? y++ : ++y;\n    printf(\"%d %d %d\\n\", x, y, z);\n}\n```\nWhat is printed?",
+          "options": [
+            "2 2 3",
+            "2 3 2",
+            "2 3 3",
+            "1 3 3"
+          ],
+          "correct_option": "B",
+          "explanation": "x++ yields 1 (true) then increments x to 2. The true branch y++ yields 2 then increments y to 3. So x=2, y=3, z=2.",
+          "distractor_rationale": "A: Treats z as the incremented y and leaves x unincremented. C: Confuses pre/post increment timing. D: Adds an extra increment to z or mis-evaluates the branch result.",
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You run this with input consisting of the three characters \"5 x\" (digit five, a space, the letter x), and then the program ends.\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int n; char c;\n    scanf(\"%d\", &n);\n    scanf(\"%c\", &c);\n    printf(\"%d-%d\\n\", n, (int)c);\n}\n```\nWhat is printed on a POSIX system?",
+          "options": [
+            "5-10",
+            "It blocks waiting for input because %c skips whitespace.",
+            "5-120",
+            "5-32"
+          ],
+          "correct_option": "D",
+          "explanation": "%d consumes the 5, leaving the space in the stream. %c does not skip whitespace, so it reads that space, whose code is 32 on POSIX. Thus it prints 5-32.",
+          "distractor_rationale": "A: Assumes %c will read 'x', but it takes the next byte, which is the space. C: Assumes the next byte is a newline code, but the provided bytes are space then 'x'. D: %c never skips whitespace; only formats with a leading space or %d/%s do.",
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "What does this program print?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int a = 5, b = 2;\n    double d1 = (double)(a / b);\n    double d2 = (double)a / b;\n    printf(\"%.1f %.1f\\n\", d1, d2);\n}\n```\nChoose the only correct output.",
+          "options": [
+            "2.5 2.0",
+            "2.0 2.0",
+            "2.0 2.5",
+            "2.5 2.5"
+          ],
+          "correct_option": "C",
+          "explanation": "a/b is integer division (2), which is then cast to double, yielding 2.0 for d1. Casting a to double before division yields floating division 5.0/2 = 2.5 for d2.",
+          "distractor_rationale": "A and C: Mix up where the cast occurs. D: Assumes both divisions are integer before any cast, which is only true for d1.",
+          "skills_covered": [
+            "C"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "How many is printed, and why?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int count = 0;\n    for (int i = 0; i < 3; i++) {\n        if (count = i % 2) {\n            ++count;\n        }\n    }\n    printf(\"%d\\n\", count);\n}\n```\nNote the single '=' in the if condition.",
+          "options": [
+            "0",
+            "Undefined behavior because assignment in conditions is illegal.",
+            "1",
+            "2"
+          ],
+          "correct_option": "A",
+          "explanation": "On each iteration, count is assigned i % 2, then used as the condition. i=0 sets count=0 (false). i=1 sets count=1 (true) then ++count makes it 2. i=2 sets count=0 again (false). Final count is 0.",
+          "distractor_rationale": "B or C: Both ignore the final assignment on i=2 that resets count to 0. D: Assignment in conditions is legal in C; it's a common source of logic bugs, not UB.",
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Given this source:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    printf(\"%d\\n\", 3.14);\n}\n```\nWhich command will fail to compile due to diagnostics being treated as errors?\n",
+          "options": [
+            "```bash\ngcc -std=c11 -Wall -Werror main.c\n```",
+            "```bash\ngcc -std=c11 main.c\n```",
+            "```bash\ngcc -std=c11 -Wall main.c\n```",
+            "```bash\ngcc -std=c11 -Wall -Wextra main.c\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Passing a double where %d expects an int triggers -Wformat under -Wall. Only -Werror turns that warning into a hard error that fails the build.",
+          "distractor_rationale": "A: Compiles with no diagnostics (behavior at runtime is undefined but compiles). B and D: Emit warnings but still link; without -Werror they do not fail the build.",
+          "skills_covered": [
+            "C"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Consider summing integers from stdin until a non-integer is seen:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int x, sum = 0;\n    while (scanf(\"%d\", &x) == 1) {\n        sum += x;\n    }\n    printf(\"%d\\n\", sum);\n}\n```\nWhat is printed when the input is:\n\n```text\n10 20 x 30\n```",
+          "options": [
+            "60",
+            "30",
+            "0",
+            "It loops forever on the 'x' token."
+          ],
+          "correct_option": "B",
+          "explanation": "scanf returns 1 for 10 and 20, adding them to sum. On 'x' it returns 0, the loop ends, and the leftover 'x 30' remains unread. The program prints 30.",
+          "distractor_rationale": "A: Assumes the 30 is also added, but the loop stops at the first non-integer. C: Would only be true if nothing was read before the non-integer. D: scanf returns 0 and the loop exits; it does not get stuck.",
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A junior has written a quick divider that sometimes crashes or gives \"weird\" results:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int a, b;\n    printf(\"Enter a and b: \");\n    scanf(\"%d %d\", &a, &b);\n    printf(\"%d\\n\", a / b);\n    return 0;\n}\n```\nUsers report crashes on some inputs, and confusion about results like 3/2 printing 1. The team wants a minimum-change fix that keeps it a tiny console tool.",
+          "task": "Identify every distinct failure/risk in this program that can occur from user input alone, and propose concrete code changes that address them without adding libraries. Justify each change briefly. If you change the division semantics, explain when and why.",
+          "expected_answer": "Risks and fixes:\n- Unchecked scanf: If input doesn't contain two ints, a or b is uninitialized and used, which is undefined. Fix by checking the return value: ensure scanf(\"%d %d\", &a, &b) == 2, otherwise print an error and exit nonzero.\n- Zero divisor: If b == 0, a/b is a runtime error (SIGFPE on many systems). Guard with an explicit check before dividing; report the error and exit nonzero.\n- Integer division truncation: If the tool intends mathematical (real) division, a/b truncates. Either document that it's integer division, or cast one operand to double for floating-point division. If floating is chosen, change the format to %f/%.6f as needed.\nConcrete minimal patch (integer division retained, with guards):\n\n```c\nint a, b;\nif (scanf(\"%d %d\", &a, &b) != 2) {\n    fprintf(stderr, \"Invalid input\\n\");\n    return 1;\n}\nif (b == 0) {\n    fprintf(stderr, \"Division by zero\\n\");\n    return 1;\n}\nprintf(\"%d\\n\", a / b);\n```\nOr, if real-number output is required:\n\n```c\nif (b == 0) { fprintf(stderr, \"Division by zero\\n\"); return 1; }\nprintf(\"%.6f\\n\", (double)a / (double)b);\n```\nRationales: checking scanf prevents use of uninitialized values; guarding b prevents a hardware trap; choosing integer vs floating division aligns behavior with user expectations.",
+          "rubric": [
+            {
+              "criterion": "Identifies missing scanf return-value check and explains the undefined-behavior risk",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies divide-by-zero risk and specifies a correct guard with control flow to handle it",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses integer vs floating division semantics and proposes a justified choice with correct format specifiers if changed",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete corrected code snippet that compiles and matches the justification",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "This code tries to count digits on a line until the newline. Sometimes it behaves strangely at end-of-file:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    char c;\n    int digits = 0;\n    while ((c = getchar()) != '\\n' && c != EOF) {\n        if (c >= '0' && c <= '9') digits++;\n    }\n    printf(\"%d\\n\", digits);\n}\n```\nOn some inputs, at EOF it loops or miscounts.",
+          "task": "Diagnose the root cause precisely and rewrite the loop so it is correct and portable. Explain why your changes fix the issue and any ordering you rely on.",
+          "expected_answer": "Root cause: getchar() returns an int in the range of unsigned char or EOF (-1). Storing it in char loses the EOF sentinel, so comparisons like c != EOF are unreliable (EOF may become 255). Also, the loop condition must evaluate the same fetched character against both '\\n' and EOF without reading twice.\nCorrected loop:\n\n```c\nint ch;            // must be int to hold EOF\nint digits = 0;\nwhile ((ch = getchar()) != '\\n' && ch != EOF) {\n    if (ch >= '0' && ch <= '9') digits++;\n}\nprintf(\"%d\\n\", digits);\n```\nThis reads once per iteration, stores into an int, and compares to both '\\n' and EOF reliably. Short-circuiting ensures that if ch == '\\n', the EOF check is not evaluated (but that doesn't matter because ch holds the same value). At true EOF with no newline, the second comparison stops the loop without extra reads.",
+          "rubric": [
+            {
+              "criterion": "Explains the type-width issue: getchar returns int and why char cannot represent EOF",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a corrected loop using an int and a single read per iteration",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains short-circuit evaluation and ordering in the condition",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses portability/robustness at end-of-file or missing newline cases",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A teammate wrote a countdown over a size_t:\n\n```c\nvoid work(size_t n) {\n    for (size_t i = n - 1; i >= 0; --i) {\n        /* do something with i */\n    }\n}\n```\nIn testing, passing n = 0 hangs, and other values behave oddly.",
+          "task": "Explain precisely why this control flow is broken for unsigned types, what happens at n = 0 and in general at i == 0, and propose two safe iteration patterns that cover the same intent without undefined or unintended behavior. Justify when each is preferable.",
+          "expected_answer": "Problem: size_t is unsigned. If n == 0, computing n - 1 underflows before the loop even begins, yielding a very large value; the loop then likely runs \"forever\". Even for n > 0, i >= 0 is always true for unsigned, so after i reaches 0 and is decremented, it wraps to SIZE_MAX and the loop continues.\nTwo safe patterns:\n1) Use the well-known i-- > 0 test that avoids comparing to 0 directly:\n\n```c\nfor (size_t i = n; i-- > 0; ) {\n    /* i goes from n-1 down to 0 exactly once */\n}\n```\nThis never evaluates i >= 0; the post-decrement compares the prior value to 0.\n2) If negative indices are valid logic, use a signed type sized appropriately:\n\n```c\nfor (long long i = (long long)n - 1; i >= 0; --i) { /* ... */ }\n```\nThis uses a signed comparison that can become false. Choose a signed type wide enough for n.\nAlternatively, an ascending loop is simplest and avoids pitfalls:\n\n```c\nfor (size_t i = 0; i < n; ++i) { /* ... */ }\n```\nPrefer ascending when order doesn’t matter; prefer the i-- > 0 idiom when descending order is required over an unsigned domain.",
+          "rubric": [
+            {
+              "criterion": "Explains unsigned wraparound and why i>=0 is always true for unsigned",
+              "marks": 3
+            },
+            {
+              "criterion": "Analyzes the n==0 case and initialization underflow clearly",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides two correct, idiomatic alternatives (e.g., i-- > 0 and/or ascending loop or signed index)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies when to choose each alternative",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "A simple menu asks for a number and then a yes/no confirmation. Users type:\n\n```text\n42<Enter>\ny<Enter>\n```\nBut the program behaves as if they entered 'No'.\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int n; char ans;\n    printf(\"Number: \");\n    scanf(\"%d\", &n);\n    printf(\"Confirm [y/n]: \");\n    scanf(\"%c\", &ans);\n    if (ans == 'y') puts(\"Yes\"); else puts(\"No\");\n}\n```",
+          "task": "Identify the cause and propose at least two minimal, correct fixes. For each, explain why it works and any trade-offs. Do not change to file I/O or add libraries.",
+          "expected_answer": "Cause: After reading the integer, the newline from pressing Enter remains in stdin. %c does not skip whitespace, so it reads that '\\n', which is not 'y'.\nFixes:\n- Whitespace in the format string to skip leading whitespace:\n\n```c\nscanf(\" %c\", &ans);  // leading space tells scanf to skip any whitespace\n```\nTrade-off: still uses scanf; be mindful of unchecked return values.\n- Consume the rest of the line explicitly, then read the answer:\n\n```c\nint ch;\nwhile ((ch = getchar()) != '\\n' && ch != EOF) { }\nans = getchar();\n```\nTrade-off: Two reads; you must handle EOF carefully. Use int for getchar.\n- Or prompt for the answer with a conversion that skips whitespace inherently, e.g., using %1s into a char buffer and taking the first char; but the simplest in this context is the leading space in \"%c\".\nAll fixes rely on understanding that whitespace handling differs between %c and numeric formats and that getchar returns int for EOF.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the leftover newline as the cause and explains %c whitespace behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a correct scanf-based fix using a leading space and explains why it works",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a second correct fix using getchar (with int) and explains EOF/ordering concerns",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Control flow (C)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Multiplication Table Generator (basic program)",
+          "brief": "Write a C program mul_table.c that reads two positive integers R and C from stdin (rows and columns, 1..20) and prints an R by C multiplication table (1-based) where each cell is the product r*c. Use only standard I/O (scanf/printf) and loops/conditions. If inputs are out of range or not read successfully, print \"INVALID\" with a trailing newline and exit with status 1. Otherwise, print the table with one row per line, values separated by a single space, and a trailing newline at the end of each line. No extra spaces at line ends.",
+          "deliverable": "A folder containing mul_table.c and a README.txt that shows the exact gcc command used to compile (no warnings) and an example run.",
+          "acceptance_criteria": [
+            "Compiles with: gcc -std=c11 -Wall -Wextra -Werror mul_table.c -o mul_table (no warnings).",
+            "On input \"3 4\", output is exactly:\n```text\n1 2 3 4\n2 4 6 8\n3 6 9 12\n```",
+            "On input \"0 5\" or \"21 1\" or non-integer tokens, the program prints exactly \"INVALID\\n\" and exits with status code 1.",
+            "No trailing spaces at the end of any printed line.",
+            "No use of non-standard libraries; only stdio.h is required."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct reading of two integers and range checking with appropriate exit status and message",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct nested-loop logic producing the exact R by C products starting from 1",
+              "marks": 7
+            },
+            {
+              "criterion": "Exact formatting: single spaces between numbers, newline per row, no trailing spaces",
+              "marks": 4
+            },
+            {
+              "criterion": "Build hygiene: compiles with the specified flags and no warnings",
+              "marks": 2
+            },
+            {
+              "criterion": "Code clarity: reasonable variable names and straightforward control flow",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Menu-Driven Integer Calculator (logic exercise)",
+          "brief": "Create calc.c, an interactive integer calculator. Repeatedly prompt for an operation and two integers, perform the operation, print the result, and continue until the user chooses to quit. Supported ops: +, -, *, /, %. Requirements: 1) Prompt exactly as in the sample; 2) For division or modulo by zero, print \"ERR\" and continue; 3) For an unknown op, print \"ERR\" and continue; 4) Input format: a single character op, then two ints separated by whitespace; 5) The loop ends when the op read is 'q' or 'Q' (no operands are read in that case).",
+          "deliverable": "A folder containing calc.c and a README.txt with the build command and at least one transcript of a session captured with script(1) or copy-paste.",
+          "acceptance_criteria": [
+            "Compiles with: gcc -std=c11 -Wall -Wextra -Werror calc.c -o calc (no warnings).",
+            "Follows this exact I/O contract (spaces and newlines matter):\n```text\nop [+ - * / % q]: + 7 5\n12\nop [+ - * / % q]: / 8 0\nERR\nop [+ - * / % q]: x 1 2\nERR\nop [+ - * / % q]: % 9 4\n1\nop [+ - * / % q]: q\n```\nNote: A leading space in the %c format (e.g., scanf(\" %c\", &op)) is acceptable to skip newlines.",
+            "For 'q' or 'Q', the program should not attempt to read operands and should terminate cleanly (exit status 0).",
+            "Exact integer semantics: subtraction and multiplication as normal; division is integer truncating division; modulo uses % on ints.",
+            "Robustness to leftover newlines: reading op should not accidentally consume a previous newline."
+          ],
+          "rubric": [
+            {
+              "criterion": "Loop control: continues prompting until 'q'/'Q' and does not read operands on quit",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct implementation of +, -, *, /, % with integer semantics",
+              "marks": 6
+            },
+            {
+              "criterion": "Error handling for divide/mod by zero and unknown ops prints exactly \"ERR\" and continues",
+              "marks": 5
+            },
+            {
+              "criterion": "I/O contract and formatting match the sample transcript (including prompts and newlines)",
+              "marks": 2
+            },
+            {
+              "criterion": "Build hygiene: no warnings with the specified flags",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-016-S02",
+      "skills_assessed": [
+        "C",
+        "Functions (C)",
+        "Arrays and strings (C)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider LP64 (8-byte pointers, 4-byte int).\n\n```c\n#include <stdio.h>\n\nvoid f(int a[]) {\n    printf(\"%zu\\n\", sizeof(a));\n}\n\nint main(void) {\n    int a[10];\n    printf(\"%zu\\n\", sizeof(a));\n    f(a);\n}\n```\nWhat is the program output?",
+          "options": [
+            "```text\n40\n8\n```",
+            "```text\n40\n40\n```",
+            "```text\n10\n10\n```",
+            "```text\n10\n8\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "In main, a is an array of 10 ints: sizeof(a) = 10 * 4 = 40. In f, the parameter a is adjusted to int*, so sizeof(a) is the size of a pointer (8 on LP64).",
+          "distractor_rationale": "B: Confuses element count (10) with bytes and still recognizes pointer decay. C: Assumes arrays don't decay in parameters. D: Doubly confuses bytes with element count and misses decay.",
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does the C standard guarantee for this program?\n\n```c\n#include <stdio.h>\n\nchar *make(void) {\n    char buf[4] = \"OK\";  // local automatic array\n    return buf;          // returning pointer to local\n}\n\nint main(void) {\n    char *p = make();\n    printf(\"%s\\n\", p);\n}\n```",
+          "options": [
+            "It reliably prints an empty string",
+            "Undefined behavior",
+            "It reliably prints \"OK\"",
+            "It fails at compile time in conforming C"
+          ],
+          "correct_option": "B",
+          "explanation": "The function returns a pointer to a dead stack object; any use is undefined behavior. A print might appear to work or crash; neither is guaranteed.",
+          "distractor_rationale": "B: Observed on some runs but not guaranteed. C: A specific outcome with no basis. D: Many compilers accept this; the error is semantic, not a required compile-time diagnostic.",
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have this project:\n\n```text\nutil.h\nutil.c\nmain.c\n```\n\nutil.h contains a full function definition:\n\n```c\n// util.h\n#include <stddef.h>\nint sum(const int *a, size_t n) { int s = 0; for (size_t i=0;i<n;i++) s+=a[i]; return s; }\n```\n\nBoth util.c and main.c include util.h. Linking fails with multiple definitions of sum. Which change fixes the link error while keeping exactly one externally visible definition?",
+          "options": [
+            "Make the function static in util.h",
+            "Move the function body into util.c and leave only a prototype in util.h",
+            "Put extern before the definition in util.h and keep the body there",
+            "Add include guards to util.h"
+          ],
+          "correct_option": "B",
+          "explanation": "A single external definition should live in one .c; the header should only declare it. Include guards only prevent duplicate inclusion within one translation unit, not across different TUs. static changes linkage (not one shared definition). extern with a body is still a definition.",
+          "distractor_rationale": "B: Guards don't stop two separate TUs each defining the function. C: Would link, but changes API to internal linkage and creates per-TU copies. D: extern does not negate that a definition is emitted in each TU.",
+          "skills_covered": [
+            "C",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What happens at runtime on a typical hosted C implementation?\n\n```c\nchar *s = \"hi\";\ns[0] = 'H';\n```",
+          "options": [
+            "Undefined behavior; often a crash due to read-only storage",
+            "It compiles and runs but silently ignores the write",
+            "It always causes a compile-time error in standard C",
+            "It works and the literal becomes \"Hi\""
+          ],
+          "correct_option": "A",
+          "explanation": "String literals have static storage duration and attempting to modify them is undefined behavior. Commonly they reside in read-only memory and the program faults when writing.",
+          "distractor_rationale": "B: Modifying string literals is not allowed. C: There's no defined silent ignore. D: Many compilers accept it; the failure is not mandated at compile time.",
+          "skills_covered": [
+            "C",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What does this print?\n\n```c\n#include <stdio.h>\n\nvoid bump(void) {\n    static int c = 0;\n    printf(\"%d \", ++c);\n}\n\nint main(void) {\n    bump();\n    bump();\n}\n```",
+          "options": [
+            "```text\n0 0 \n```",
+            "```text\n0 1 \n```",
+            "```text\n1 1 \n```",
+            "```text\n1 2 \n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A static local retains its value between calls. c starts at 0 once, then pre-increment prints 1 then 2.",
+          "distractor_rationale": "B: Thinks initialization occurs on each call before increment. C: Forgets the increment. D: Misunderstands both static lifetime and increment.",
+          "skills_covered": [
+            "C",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Consider LP64 again.\n\n```c\n#include <stdio.h>\n#include <stddef.h>\n\nsize_t len(const char s[]) {\n    return sizeof(s) - 1; // attempt to get length of string\n}\n\nint main(void) {\n    char x[5] = \"abc\";  // {'a','b','c','\\0','\\0'}\n    printf(\"%zu %zu\\n\", sizeof(x), len(x));\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n5 3\n```",
+            "```text\n4 3\n```",
+            "```text\n5 7\n```",
+            "```text\n5 4\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "In main, sizeof(x)=5 bytes. In len, parameter s is a pointer, sizeof(s)=8 on LP64, so 8-1=7. This illustrates array-to-pointer decay and why sizeof can't measure string length in a function parameter.",
+          "distractor_rationale": "B: Assumes sizeof(s) equals array size from caller. C/D: Mix up character count with bytes, and ignore pointer decay.",
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You have a 3x4 matrix and want to sum it.\n\n```c\nint a[3][4] = {0};\nprintf(\"%d\\n\", sum2d(a, 3));\n```\nWhich prototype both compiles and lets sum2d correctly traverse the matrix?",
+          "options": [
+            "```c\nint sum2d(int **a, int rows, int cols);\n```",
+            "```c\nint sum2d(int a[][4], int rows);\n```",
+            "```c\nint sum2d(int *a, int rows, int cols);\n```",
+            "```c\nint sum2d(int a[rows][cols], int rows, int cols);\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "For a true 2D array, the compiler must know the second dimension to compute element addresses. Using a fixed column size in the parameter matches the declaration. B is wrong because int** is not compatible with int (*)[4]. C loses 2D shape and requires manual indexing with rows*cols. D would need VLA parameters with rows/cols earlier in the parameter list and is not written correctly here.",
+          "distractor_rationale": "B: A common but incorrect assumption that a 2D array is an int**. C: Tempting if you think decay erases all dimensions for free indexing. D: Looks modern but is syntactically and semantically wrong as written.",
+          "skills_covered": [
+            "C",
+            "Arrays and strings (C)",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "The function attempts to fill a buffer with 'A's and then null-terminate it.\n\n```c\nvoid fill(char s[], size_t n) {\n    for (size_t i = 0; i <= n; i++) s[i] = 'A';\n    s[n] = '\\0';\n}\n```\nWhich change prevents overflow while keeping the same API?",
+          "options": [
+            "```c\nvoid fill(char s[], size_t n) {\n    for (size_t i = 0; i < n; i++) s[i] = 'A';\n    /* no terminator needed */\n}\n```",
+            "```c\nvoid fill(char s[], size_t n) {\n    for (size_t i = 1; i <= n; i++) s[i] = 'A';\n    s[n] = '\\0';\n}\n```",
+            "```c\nvoid fill(char s[], size_t n) {\n    for (size_t i = 0; i + 1 < n; i++) s[i] = 'A';\n    s[n - 1] = '\\0';\n}\n```",
+            "```c\nvoid fill(const char s[], size_t n) {\n    for (size_t i = 0; i < n; i++) ((char*)s)[i] = 'A';\n    s[n] = '\\0';\n}\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "You can store at most n-1 characters and then write the terminator at index n-1. The loop condition ensures the last write is within bounds.",
+          "distractor_rationale": "B: Omits the terminator, risking consumers reading past the buffer. C: Casts away const and still writes out of bounds at s[n]. D: Still writes s[n] inside the loop and again after, overflowing.",
+          "skills_covered": [
+            "C",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A header and its implementation disagree:\n\n```c\n// api.h\nint idx_of(const char *s, char ch);\n\n// api.c\n#include \"api.h\"\nint idx_of(char *s, int ch) { /* ... */ }\n```\nWhat will a conforming C compiler do when building api.c?",
+          "options": [
+            "Compile silently; behavior is only undefined at runtime",
+            "Compile both and defer the problem to the linker",
+            "Succeed only on LP64 but fail on ILP32",
+            "Emit a compile-time diagnostic about conflicting types for idx_of"
+          ],
+          "correct_option": "D",
+          "explanation": "Including the header exposes a conflicting declaration versus the definition; the compiler must diagnose the mismatch.",
+          "distractor_rationale": "B: Linkers see only symbol names, but the compiler must reject conflicting types. C: UB arises when calls don't match prototypes, but here the conflict is in one TU. D: ABI width doesn't rescue a type mismatch.",
+          "skills_covered": [
+            "C",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "What does the C standard say about this subtraction?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int a[5], b[5];\n    int *p = &a[4];\n    int *q = &b[0];\n    printf(\"%td\\n\", p - q);\n}\n```",
+          "options": [
+            "It is undefined behavior",
+            "It is well-defined: yields the element distance across arrays",
+            "It always prints 4 on flat address spaces",
+            "It is implementation-defined but safe to rely on"
+          ],
+          "correct_option": "A",
+          "explanation": "Pointer subtraction is defined only for pointers into the same array (or one past). Across different arrays it is undefined behavior.",
+          "distractor_rationale": "B: A common but incorrect intuition based on addresses. C: Not merely implementation-defined; it's UB. D: Coincidental on some platforms, not guaranteed.",
+          "skills_covered": [
+            "C",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are designing a reusable text utility module. Current code returns a pointer to an internal static buffer, which causes surprising interactions between calls.\n\n```c\n// textutil.h\nchar *join_words(const char *a, const char *b, const char *sep);\n\n// textutil.c\nstatic char buf[256];\nchar *join_words(const char *a, const char *b, const char *sep) {\n    buf[0] = '\\0';\n    // naive concatenation using strncat-like logic\n    // writes into buf and returns buf\n    return buf;\n}\n```\nA caller chains two calls:\n\n```c\nprintf(\"%s\\n\", join_words(join_words(\"alpha\",\"beta\",\"-\"), \"gamma\", \":\"));\n```\nIt sometimes prints \"alpha-beta:gamma\" and sometimes just \":gamma\" or worse. You must fix the API and module layout so that:\n- No hidden shared buffer state leaks across calls.\n- Callers control destination storage.\n- Headers are safe to include from multiple .c files.",
+          "task": "Propose a new function signature (or signatures) and header layout, and describe precisely how the implementation should change. Justify your choices with reference to scope, lifetime, and array decay. Include the exact header content (with include guards) and one safe call site that demonstrates correct behavior.",
+          "expected_answer": "A robust design accepts a destination buffer and its size, and returns a status/length so the caller manages memory and detects truncation. Example:\n\n```c\n// textutil.h\n#ifndef TEXTUTIL_H\n#define TEXTUTIL_H\n#include <stddef.h>\nsize_t join_words(char *dst, size_t dstsz,\n                  const char *a, const char *b, const char *sep);\n#endif\n```\n\nImplementation removes any file-scope buffers and only writes to caller-provided memory. It ensures it never writes beyond dstsz and always null-terminates when dstsz>0. It computes lengths using strnlen-like logic rather than sizeof on parameters (because s parameters are pointers after decay). No static locals with module lifetime are used.\n\nA safe call:\n\n```c\nchar out[64];\nsize_t n = join_words(out, sizeof out, \"alpha\", \"beta\", \"-\");\n// n is the number of characters written (excluding NUL) or truncated length\nprintf(\"%s\\n\", out);\n```\n\nJustification: Passing the destination and its capacity lets the function respect the caller's storage and avoids returning pointers to ephemeral or shared buffers. Include guards prevent multiple inclusion. Using size parameters acknowledges that function parameters are pointers (array-to-pointer decay) and sizeof cannot recover the original array length.",
+          "rubric": [
+            {
+              "criterion": "Proposed signature(s) give caller-owned destination and capacity (no hidden static/global buffers)",
+              "marks": 3
+            },
+            {
+              "criterion": "Header uses correct include guards and only declarations; implementation contains the definitions",
+              "marks": 2
+            },
+            {
+              "criterion": "Implementation strategy prevents overflow, guarantees termination when possible, and avoids sizeof on pointer parameters",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear justification referencing scope/lifetime and array-to-pointer decay; correct safe call-site example",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A library function titlecase modifies its input string in place.\n\n```c\n// title.h\nchar *titlecase(char *s);\n\n// title.c\n#include <ctype.h>\nchar *titlecase(char *s) {\n    int cap = 1;\n    for (char *p = s; *p; ++p) {\n        if (cap && *p >= 'a' && *p <= 'z') *p = (char)toupper((unsigned char)*p);\n        cap = (*p == ' ');\n    }\n    return s;\n}\n```\nMany callers pass string literals: titlecase(\"the quick brown fox\"); The program sometimes crashes. Your team wants to keep a convenient API but avoid crashes and still allow in-place operation when the buffer is writable.",
+          "task": "Diagnose the fault precisely and propose an API that supports both safe in-place operation and formatting into a separate destination buffer. Specify header changes and show two correct call examples: one in-place with a char array and one into a separate output buffer when starting from a literal.",
+          "expected_answer": "Fault: Modifying a string literal is undefined behavior. Even though C types string literals as char[], writing to them is not allowed and often segfaults.\n\nOne approach is to provide two overload-like functions via different signatures:\n\n```c\n// title.h\n#ifndef TITLE_H\n#define TITLE_H\n#include <stddef.h>\n// In-place, for writable buffers only\nchar *titlecase_inplace(char *s);\n// Out-of-place: writes into dst and null-terminates when dstsz>0\nsize_t titlecase_copy(char *dst, size_t dstsz, const char *src);\n#endif\n```\n\nImplementation of inplace is the current loop but applied to s (assumed writable). Implementation of copy reads from src (const) and writes into dst, never exceeding dstsz-1 and always null-terminating when possible.\n\nCalls:\n\n```c\nchar buf[] = \"the quick brown fox\";\nputs(titlecase_inplace(buf));  // in-place safe on a writable array\n\nchar out[64];\n(void)titlecase_copy(out, sizeof out, \"the quick brown fox\");\nputs(out);                    // safe when starting from a literal\n```\n",
+          "rubric": [
+            {
+              "criterion": "Accurate diagnosis: modifying string literals is UB leading to crashes",
+              "marks": 2
+            },
+            {
+              "criterion": "Header/API design distinguishes writable vs read-only input (const-correctness) and supports out-of-place formatting with size",
+              "marks": 3
+            },
+            {
+              "criterion": "Safe implementation considerations (termination, bounds) clearly described",
+              "marks": 1
+            },
+            {
+              "criterion": "Two correct and contrasted call examples provided",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A shared scratch buffer is declared in a header and used by multiple .c files.\n\n```c\n// scratch.h\nchar scratch[1024];  // intended to be one shared buffer\n\n// a.c\n#include \"scratch.h\"\nvoid fa(void) { scratch[0] = 'A'; }\n\n// b.c\n#include \"scratch.h\"\nvoid fb(void) { scratch[1] = 'B'; }\n```\nThe linker reports: multiple definition of `scratch`. You must fix the design so there is exactly one global buffer visible to both a.c and b.c, declared in the header without causing multiple definitions.",
+          "task": "Propose the correct header and one .c definition, and explain why this resolves the linkage error. Additionally, explain when making the object static in a header would be appropriate and why that would change behavior.",
+          "expected_answer": "Use extern in the header and a single definition in one .c:\n\n```c\n// scratch.h\n#ifndef SCRATCH_H\n#define SCRATCH_H\nextern char scratch[1024];\n#endif\n\n// scratch.c (new)\nchar scratch[1024];\n```\n\nNow each including TU sees only a declaration; the single definition in scratch.c provides storage. This resolves multiple definitions and gives a single shared buffer across the program.\n\nMaking it static in the header (e.g., static char scratch[1024];) would give each translation unit its own private copy (internal linkage). That can be appropriate for per-file temporaries, but it changes semantics: a.c and b.c would no longer observe each other's writes.",
+          "rubric": [
+            {
+              "criterion": "Correct use of extern in header and a single definition in a .c file with include guards",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear explanation of external vs internal linkage and why the original code failed",
+              "marks": 3
+            },
+            {
+              "criterion": "Appropriate discussion of when static in a header might be used and the semantic change it causes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "A function is declared in a header but main.c declares its own prototype instead of including the header.\n\n```c\n// strutil.h\nsize_t safe_copy(char *dst, size_t dstsz, const char *src);\n\n// strutil.c\n#include \"strutil.h\"\nsize_t safe_copy(char *dst, size_t dstsz, const char *src) { /* ... */ }\n\n// main.c\n// forgot: #include \"strutil.h\"\nsize_t safe_copy(char *dst, size_t dstsz, char *src); // local, wrong prototype\n\nint main(void){\n    char out[8];\n    // UB: argument types don't match the real declaration\n    safe_copy(out, sizeof out, \"ABCDEFG\");\n}\n```\nOn one platform the program appears to run; on another it corrupts memory.",
+          "task": "Identify precisely why this is undefined behavior and specify two concrete changes that eliminate the risk across platforms and compilers. Explain how headers, prototypes, and array-to-pointer decay inform your fixes. Mention any build settings that would have caught this earlier.",
+          "expected_answer": "The call site compiled with a mismatched prototype (src not const; parameter types and promotions may differ). Because main.c didn't include the authoritative header, the compiler assumed a different signature. The call is undefined behavior when the actual definition's calling convention and argument types don't match what the caller generated.\n\nTwo changes:\n1) Include the real header in main.c and delete the local prototype:\n\n```c\n#include \"strutil.h\"\n```\n\n2) Enforce warnings-as-errors for mismatched or missing prototypes (e.g., compile with -Wall -Wextra -Werror and possibly -Wmissing-prototypes) so such issues are caught.\n\nOptionally, make the API const-correct and keep size parameters explicit:\n\n```c\nsize_t safe_copy(char *dst, size_t dstsz, const char *src);\n```\n\nRationale: Function parameters that are arrays decay to pointers at the call site; only the prototype in the header defines the true types. Including the header ensures both caller and callee agree on the signature, preventing UB from ABI mismatches.",
+          "rubric": [
+            {
+              "criterion": "Accurate identification of the root cause: mismatched prototype due to not including the header",
+              "marks": 3
+            },
+            {
+              "criterion": "Two concrete and correct fixes (include header/remove local prototype; stricter compiler flags)",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound reasoning tying in prototypes, const-correctness, and array-to-pointer decay",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Modular text statistics program (modular program)",
+          "brief": "Build a small command-line program textstats that reads one line from stdin and prints several statistics using a cleanly modularized design. Implement these functions in textutil.c with declarations in textutil.h:\n- size_t count_words(const char *s);\n- size_t count_alpha(const char *s);\n- void to_uppercase(char *dst, size_t dstsz, const char *src);\n- int is_palindrome(const char *s); // case-insensitive, ignore non-alphanumerics\n\nUse only arrays and standard C string processing (no dynamic allocation). Keep any helper symbols that should not be visible outside textutil.c as file-scope static. main.c should parse the single input line and invoke the functions, printing results exactly as shown below.",
+          "deliverable": "A folder or zip containing: main.c, textutil.c, textutil.h, and a README.txt with build/run instructions.",
+          "acceptance_criteria": [
+            "Compiles with: gcc -std=c11 -Wall -Wextra -Werror -o textstats main.c textutil.c",
+            "textutil.h has include guards and contains only declarations, not definitions or global data",
+            "No writes to string literals; all writes go to caller-owned buffers; all functions that write take (dst, dstsz) and always null-terminate when dstsz>0",
+            "Correct results on sample I/O below and correct handling of empty line and lines longer than destination buffers without overflow",
+            "No undefined behavior (no out-of-bounds writes or reads; no returning pointers to local arrays)",
+            "At least one internal helper function in textutil.c is declared static to demonstrate scope control"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct modularization: headers vs sources, include guards, no global definitions in headers",
+              "marks": 4
+            },
+            {
+              "criterion": "API correctness: parameter types, const-correctness, buffer size parameters, and guaranteed termination",
+              "marks": 5
+            },
+            {
+              "criterion": "Algorithmic correctness for word/alpha counts and palindrome rules (case-insensitive, ignore non-alnum)",
+              "marks": 6
+            },
+            {
+              "criterion": "Memory safety: no overflows/UB; proper use of static for internal helpers",
+              "marks": 3
+            },
+            {
+              "criterion": "Build cleanliness: compiles under the specified flags without warnings; README instructions are accurate",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Array/string utilities library (array/string utilities)",
+          "brief": "Implement a small reusable library stringlib with safe, size-aware utilities using only fixed-size arrays provided by callers (no dynamic memory):\n- size_t split_csv_line(char *line, char fields[][64], size_t max_fields); // parses a single CSV line with commas, no quotes; writes up to max_fields fields into fixed 64-byte slots; fields are null-terminated and truncated if needed\n- size_t join_with(char *dst, size_t dstsz, const char *const parts[], size_t n, const char *sep); // joins parts with sep, returns number of chars written (excluding NUL)\n- size_t safe_strcpy(char *dst, size_t dstsz, const char *src); // copies with truncation, always null-terminates when dstsz>0\n- void reverse_in_place(char *s); // reverses a writable string in place\n\nProvide stringlib.h with declarations and include guards, stringlib.c with definitions, and a test driver test_stringlib.c that demonstrates usage and prints results exactly as in the sample.",
+          "deliverable": "A folder or zip containing stringlib.h, stringlib.c, test_stringlib.c, and README.txt with build/run instructions.",
+          "acceptance_criteria": [
+            "Compiles with: gcc -std=c11 -Wall -Wextra -Werror -o test_stringlib test_stringlib.c stringlib.c",
+            "stringlib.h uses include guards and contains only declarations",
+            "No dynamic allocation; all functions respect caller-provided buffer sizes; no out-of-bounds access",
+            "split_csv_line correctly splits up to max_fields tokens, truncates fields >63 chars, and leaves remaining slots untouched; it returns the number of fields produced",
+            "join_with never writes beyond dstsz-1 and null-terminates when dstsz>0",
+            "safe_strcpy returns the number of characters stored (excluding NUL) and always null-terminates when dstsz>0",
+            "reverse_in_place operates only on writable buffers; test shows it on a char array, not a literal",
+            "Exact sample run output matches the provided transcript below"
+          ],
+          "rubric": [
+            {
+              "criterion": "Header discipline and build cleanliness under specified flags",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct, safe handling of array sizes and termination across all functions",
+              "marks": 6
+            },
+            {
+              "criterion": "Functional correctness of split_csv_line per spec, including truncation and return value",
+              "marks": 5
+            },
+            {
+              "criterion": "Functional correctness of join_with, safe_strcpy, and reverse_in_place per spec",
+              "marks": 3
+            },
+            {
+              "criterion": "Test driver quality: covers edge cases and matches expected output exactly",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "C",
+            "Functions (C)",
+            "Arrays and strings (C)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-016-S03",
+      "skills_assessed": [
+        "C",
+        "Pointers and dynamic memory (C)",
+        "Structures and enums (C)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You investigate an intermittent crash in this program:\n\n```c\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct { char *name; } Person;\n\nint main(void) {\n    Person a = { .name = malloc(4) };\n    strcpy(a.name, \"Bob\");\n\n    Person b = a;              // shallow copy of pointer\n    free(a.name);              // first free\n\n    char *tmp = malloc(100);   // distract the allocator a bit\n    free(tmp);\n\n    printf(\"%s\\n\", b.name);   // use after free?\n    free(b.name);              // second free\n    return 0;\n}\n```\nWhat is the most accurate description of the program's behavior at runtime?",
+          "options": [
+            "It will always print \"Bob\" and exit normally because `b` holds its own copy of the string.",
+            "It only leaks memory (no crash) because the second `free` is ignored by the allocator.",
+            "Undefined behavior: `b.name` becomes a dangling pointer after `free(a.name)`, so the `printf` is a use-after-free and the later `free(b.name)` is a double free. It might print \"Bob\", crash, or do anything.",
+            "It will always crash on the `printf` because reading freed memory is immediately trapped by the OS."
+          ],
+          "correct_option": "C",
+          "explanation": "`Person b = a;` copies the pointer value, not the allocation it points to. After `free(a.name)`, both `a.name` and `b.name` point to freed storage. The `printf` reads freed memory (use-after-free), and `free(b.name)` attempts to free the same block again (double free). Both are undefined behavior; you might see a print then abort, or an immediate crash, or seemingly normal behavior depending on allocator/ASan/UB luck.",
+          "distractor_rationale": "B: A shallow copy does not create a second allocation; believing it does is a common error. C: Some sanitizers abort here, but the OS does not universally trap reads of freed heap memory; UB is not guaranteed immediate crash. D: Many allocators detect double frees and abort; ignoring a double free is not the specified behavior and still UB.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this allocation:\n\n```c\ntypedef struct { int x; double y; } Node;\n\nint main(void) {\n    Node *arr = malloc(10 * sizeof arr); // bug?\n    for (int i = 0; i < 10; i++) arr[i].x = i; // write\n    printf(\"%d\\n\", arr[9].x);\n    free(arr);\n}\n```\nWhat is the most likely runtime behavior on a typical 64-bit platform where `sizeof(Node) > sizeof(Node*)`?",
+          "options": [
+            "Undefined behavior due to heap buffer overflow; the program may print an arbitrary value or crash.",
+            "Compile-time error because `sizeof` cannot be applied to pointers.",
+            "Works correctly but wastes memory because `sizeof arr` is larger than `sizeof(Node)`.",
+            "Works because `sizeof arr` equals `sizeof *arr` after decay in `sizeof` expressions."
+          ],
+          "correct_option": "A",
+          "explanation": "`sizeof arr` is the size of the pointer (`Node*`), not the pointee. If `sizeof(Node)` (commonly 16) is larger than `sizeof(Node*)` (commonly 8), the allocation is too small (80 bytes for 10 elements instead of 160). The writes overflow the heap buffer; result is UB.",
+          "distractor_rationale": "B: The claim is inverted; it under-allocates, not over-allocates. C: `sizeof` does not cause decay; `sizeof *arr` is correct, `sizeof arr` is not. D: `sizeof` applies to any type or expression, including pointers.",
+          "skills_covered": [
+            "C",
+            "Pointers and dynamic memory (C)"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Flexible array member off-by-one:\n\n```c\n#include <stdlib.h>\n#include <stdint.h>\n#include <stdio.h>\n\ntypedef struct {\n    size_t len;\n    uint8_t data[]; // flexible array member\n} Packet;\n\nint main(void) {\n    size_t n = 8;\n    Packet *p = malloc(sizeof *p + n);\n    p->len = n;\n    for (size_t i = 0; i < n; i++) p->data[i] = (uint8_t)i;\n    p->data[p->len] = 0; // sentinel?\n    printf(\"%u %u\\n\", p->data[n-1], p->data[n]);\n    free(p);\n}\n```\nWhat best characterizes the write to `p->data[p->len]`?",
+          "options": [
+            "Safe sentinel write because flexible arrays reserve an extra byte automatically.",
+            "Safe as long as `n` is even, due to alignment padding at the end of the allocation.",
+            "Out-of-bounds write (one past the allocated space), invoking undefined behavior.",
+            "Defined but implementation-defined; the C standard guarantees space for one extra element."
+          ],
+          "correct_option": "C",
+          "explanation": "The allocation is exactly `sizeof(Packet) + n` bytes beyond the header, so valid indices are `0..n-1`. Writing at index `n` is one past the end and UB. Flexible array members do not automatically add a sentinel slot.",
+          "distractor_rationale": "B/D: Common misconceptions. The standard requires you to allocate exactly as much as you will use; it does not add an extra element. C: Alignment/padding at the struct level does not create guaranteed writable space after the flexible array payload.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Dangling pointer to a local struct:\n\n```c\n#include <stdio.h>\n\ntypedef struct { int id; } Item;\n\nItem *make(void) {\n    Item it = { .id = 42 };\n    return &it; // returning address of a local\n}\n\nint main(void) {\n    Item *p = make();\n    printf(\"%d\\n\", p->id);\n}\n```\nWhat is the correct assessment?",
+          "options": [
+            "Well-defined if compiled with optimizations; otherwise undefined.",
+            "Undefined behavior: `p` points to a dead stack frame; access may appear to work but is invalid.",
+            "Well-defined: the compiler performs copy elision of the local and extends its lifetime.",
+            "Defined as long as `Item` contains only POD (plain old data)."
+          ],
+          "correct_option": "B",
+          "explanation": "The function returns the address of a block-scope object whose lifetime ends at function return. The pointer becomes indeterminate, and dereferencing is UB. C does not extend the lifetime of locals or apply copy elision here.",
+          "distractor_rationale": "B: C does not do copy elision across function boundaries for locals like this. C: Optimizations do not legitimize UB. D: POD-ness is irrelevant in C; lifetime rules still apply.",
+          "skills_covered": [
+            "C",
+            "Pointers and dynamic memory (C)"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Assume LP64 (char=1, int=4, pointers=8, int alignment=4). What does this print?\n\n```c\n#include <stdio.h>\n#include <stddef.h>\n\ntypedef struct {\n    char c;  // 1 byte\n    int  x;  // 4 bytes, requires 4-byte alignment\n} S;\n\nint main(void) {\n    printf(\"%zu %zu\\n\", offsetof(S, x), sizeof(S));\n}\n```\n",
+          "options": [
+            "4 12",
+            "4 8",
+            "1 5",
+            "1 8"
+          ],
+          "correct_option": "B",
+          "explanation": "`c` occupies 1 byte; then 3 bytes of padding are inserted to align `x` at offset 4. The structure ends after `x` at total size 8, which is already a multiple of 4. Thus `offsetof(S,x)=4` and `sizeof(S)=8`.",
+          "distractor_rationale": "B/D: Ignore required padding before `x`. C: Suggests extra tail padding to 12; not needed because 8 is already a multiple of `int`'s alignment on LP64 in this layout.",
+          "skills_covered": [
+            "Structures and enums (C)",
+            "C"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Stale pointer after growth of a dynamic array of structs:\n\n```c\n#include <stdlib.h>\n#include <stdio.h>\n\ntypedef struct { int id; } Row;\n\nint main(void) {\n    size_t n = 2;\n    Row *rows = malloc(n * sizeof *rows);\n    rows[0].id = 1; rows[1].id = 2;\n\n    Row *p = &rows[0]; // keep a pointer to element 0\n\n    // grow array\n    n *= 4;\n    rows = realloc(rows, n * sizeof *rows);\n\n    // use the old pointer\n    p->id = 99;\n    printf(\"%d %d\\n\", rows[0].id, p->id);\n    free(rows);\n}\n```\nWhich is correct?",
+          "options": [
+            "Undefined behavior: `p` may be invalid after `realloc`; writing through it can corrupt memory.",
+            "Safe: `realloc` never moves the block when growing, it only extends in place.",
+            "Safe as long as we read, but not if we write, through `p`. Reads do not invalidate caches.",
+            "Safe in this case because we grew by a multiple of the old size, preserving addresses."
+          ],
+          "correct_option": "A",
+          "explanation": "`realloc` may move the allocation to a new address. Any pointer into the old block (like `p`) becomes invalid if the block moves. Using it is UB regardless of read or write.",
+          "distractor_rationale": "B/C: `realloc` is allowed to move; multiples and sizes do not guarantee in-place growth. D: Reads through an invalid pointer are also UB; caching is irrelevant.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Losing the only reference on `realloc` failure:\n\n```c\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct { char *buf; size_t cap; } Buffer;\n\nvoid grow(Buffer *b) {\n    b->buf = realloc(b->buf, b->cap * 2); // no check\n    if (b->buf) b->cap *= 2;\n}\n```\nWhich is the most accurate risk if the allocation fails?",
+          "options": [
+            "No leak: on failure `realloc` leaves `b->buf` unchanged by specification.",
+            "UB only if `b->cap` is not a power of two; otherwise safe.",
+            "Double free risk, but only if `free` is called immediately after `grow`.",
+            "Leak and loss of the original buffer: `realloc` returns NULL and overwrites `b->buf`, losing the only pointer."
+          ],
+          "correct_option": "D",
+          "explanation": "On failure, `realloc` returns NULL and leaves the original block allocated and untouched. Overwriting `b->buf` with NULL loses the only reference to that allocation, causing a leak and data loss. The correct pattern is to assign to a temporary and check for NULL before updating `b->buf`.",
+          "distractor_rationale": "B: It's true that the original pointer is unchanged internally, but this code overwrites the only variable holding it, causing the leak. C: Power-of-two capacity is irrelevant. D: The immediate problem is the lost pointer; double free is not implied here.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Two ways to duplicate an array of records with owned pointers:\n\n```c\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct { char *name; int score; } Record;\n\nRecord *dup_shallow(const Record *src, size_t n) {\n    Record *dst = malloc(n * sizeof *dst);\n    memcpy(dst, src, n * sizeof *dst);\n    return dst;\n}\n\nRecord *dup_deep(const Record *src, size_t n) {\n    Record *dst = malloc(n * sizeof *dst);\n    for (size_t i = 0; i < n; i++) {\n        dst[i].score = src[i].score;\n        dst[i].name  = strdup(src[i].name);\n    }\n    return dst;\n}\n\n// Later: free both the original array and the duplicate arrays with deep frees.\n```\nIf both the original and duplicate arrays are freed by iterating elements and calling `free(r[i].name)`, which statement is correct?",
+          "options": [
+            "`dup_shallow` yields double-free/UB on names; `dup_deep` is correct if all `strdup` calls succeed.",
+            "`dup_deep` still risks double-free because `strdup` shares the same underlying bytes when the strings are equal.",
+            "Both are safe as long as you free the arrays themselves with a single `free` each afterwards.",
+            "`dup_shallow` is safe if the strings are short (fit in the small-string optimization)."
+          ],
+          "correct_option": "A",
+          "explanation": "`dup_shallow` copies the pointers, so original and duplicate reference the same allocations; freeing both causes double frees. `dup_deep` allocates new copies so freeing each element in each array is correct, assuming all `strdup` succeed (check for NULL in production).",
+          "distractor_rationale": "B: Frees of the arrays do not fix the duplicated inner pointers. C: `strdup` always allocates new storage; there is no SSO in C strings. D: There is no small-string optimization in C's `malloc`/`strdup` behavior.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Pass-by-value trap with owned pointer field:\n\n```c\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct { char *name; } Person;\n\nvoid set_name(Person p, const char *n) { // pass-by-value\n    free(p.name);\n    p.name = strdup(n);\n}\n\nint main(void) {\n    Person a = { .name = strdup(\"Ana\") };\n    set_name(a, \"Eli\");\n    printf(\"%s\\n\", a.name);\n    free(a.name);\n}\n```\nWhat is the most accurate outcome?",
+          "options": [
+            "It prints garbage because structs cannot be passed by value when they have pointers.",
+            "It prints \"Eli\" because `set_name` updates the caller's struct field.",
+            "It always crashes because `free(p.name)` frees `a.name` in the caller and then `a.name` is used.",
+            "Undefined behavior if `strdup` fails; otherwise it prints \"Ana\" and leaks or double-frees depend on later code."
+          ],
+          "correct_option": "D",
+          "explanation": "The parameter `p` is a copy. `free(p.name)` frees the same allocation as `a.name`, but the caller's `a.name` still holds the dangling pointer. The assignment to `p.name` does not update `a.name`. The `printf` prints the old value \"Ana\" (UB was invoked earlier by freeing and then later using `a.name`), and freeing `a.name` again can double-free. If `strdup` fails, there's UB from freeing then leaking. The key point: pass-by-value does not update the caller's field.",
+          "distractor_rationale": "B: Would require passing `Person*` or returning the updated struct. C: A crash is not guaranteed; UB may or may not manifest immediately. D: Structs can be passed by value; pointer members do not forbid it.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Memcpy-ing structs with internal pointers across overlapping regions:\n\n```c\n#include <string.h>\n#include <stdlib.h>\n#include <stdio.h>\n\ntypedef struct { char *name; int id; } User;\n\nint main(void) {\n    size_t n = 3;\n    User *a = malloc(n * sizeof *a);\n    for (size_t i = 0; i < n; i++) {\n        a[i].id = (int)i;\n        a[i].name = malloc(8);\n        sprintf(a[i].name, \"U%zu\", i);\n    }\n    // shift right by 1 in-place\n    memmove(a + 1, a, (n - 1) * sizeof *a);\n    // free all names once\n    for (size_t i = 0; i < n; i++) free(a[i].name);\n    free(a);\n}\n```\nWhat subtle risk remains after using `memmove` instead of `memcpy`?",
+          "options": [
+            "No risk: `memmove` fully solves overlapping copies of structs with pointers.",
+            "Logical aliasing of internal pointers causes multiple elements to point to the same `name`, leading to double frees.",
+            "`memmove` corrupts the integer `id` fields only when the shift distance is 1.",
+            "Only a memory leak is possible; double free cannot occur because addresses are unique."
+          ],
+          "correct_option": "B",
+          "explanation": "`memmove` is correct for overlapping copies at the byte level, but it does not deep-copy. After shifting, multiple elements can end up holding identical `name` pointers. Freeing each element's `name` exactly once then double-frees the same allocations. A content-aware deep shift is required if ownership must be preserved per element.",
+          "distractor_rationale": "B: `memmove` preserves bytes; integer corruption is not specific to distance. C: It solves overlap at the outer struct level, not ownership semantics of inner pointers. D: The aliasing precisely enables double frees when freeing each element's `name`.",
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You maintain a small records library. Each `Employee` owns a heap-allocated `name` and a dynamic list of project codes. Operations include assigning one `Employee` to another, duplicating arrays of `Employee`, and destroying them. Current code:\n\n```c\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct {\n    char  *name;     // owned\n    int   *projects; // owned, length proj_count\n    size_t proj_count;\n} Employee;\n\nvoid employee_assign(Employee *dst, const Employee *src) {\n    // current implementation\n    *dst = *src; // shallow copy\n}\n\nvoid employee_destroy(Employee *e) {\n    free(e->name);\n    free(e->projects);\n    *e = (Employee){0};\n}\n\nEmployee *employees_dup(const Employee *a, size_t n) {\n    Employee *b = malloc(n * sizeof *b);\n    memcpy(b, a, n * sizeof *b); // shallow array copy\n    return b;\n}\n```\nAfter adding these, intermittent double frees and use-after-free appear during reassignment and teardown.",
+          "task": "Identify the precise ownership and lifetime problems in the code above and propose concrete, minimal code changes that fix them. Your answer must specify how to implement `employee_assign` and `employees_dup` safely, and explain how your changes prevent the observed bugs without introducing leaks.",
+          "expected_answer": "Root causes: (1) `employee_assign` performs a shallow copy of owned pointers, causing `dst` and `src` to alias `name` and `projects`. Destroying both double-frees. (2) `employees_dup` `memcpy`s `Employee` structs so all pointer members alias; destroying both arrays double-frees and reading through one after destroying the other is use-after-free. Fixes: define deep-copy semantics and ensure exception safety.\n\nOne safe approach:\n\n```c\nint employee_copy(Employee *dst, const Employee *src) {\n    char  *new_name = NULL;\n    int   *new_proj = NULL;\n\n    if (src->name) {\n        new_name = strdup(src->name);\n        if (!new_name) goto fail;\n    }\n    if (src->projects && src->proj_count) {\n        new_proj = malloc(src->proj_count * sizeof *new_proj);\n        if (!new_proj) goto fail;\n        memcpy(new_proj, src->projects, src->proj_count * sizeof *new_proj);\n    }\n    employee_destroy(dst);          // free old ownership\n    dst->name = new_name;\n    dst->projects = new_proj;\n    dst->proj_count = src->proj_count;\n    return 0;\nfail:\n    free(new_name); free(new_proj);\n    return -1;\n}\n\nvoid employee_assign(Employee *dst, const Employee *src) {\n    (void)employee_copy(dst, src); // handle/propagate error in production\n}\n\nEmployee *employees_dup(const Employee *a, size_t n) {\n    Employee *b = calloc(n, sizeof *b);\n    if (!b) return NULL;\n    for (size_t i = 0; i < n; i++) {\n        if (employee_copy(&b[i], &a[i]) != 0) {\n            // roll back\n            for (size_t j = 0; j < i; j++) employee_destroy(&b[j]);\n            free(b);\n            return NULL;\n        }\n    }\n    return b;\n}\n```\nExplanation: (a) Deep-copy each owned pointer and update `proj_count`. (b) Destroy the destination before installing new ownership to avoid leaks. (c) Use temporaries to avoid losing old pointers on allocation failure. (d) In `employees_dup`, perform element-wise deep copies and roll back on failure to avoid leaks and partial aliasing. These changes eliminate pointer aliasing between records, so later `employee_destroy` calls cannot double-free; they also avoid use-after-free because each `Employee` owns independent allocations.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies shallow-copy aliasing of `name` and `projects` as the root cause for double free/use-after-free",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes and explains deep-copy semantics for assignment (duplicate `name`, allocate/copy `projects`, set `proj_count`)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete, safe code changes (or equivalent pseudo-code) for `employee_assign` using temporaries and freeing old ownership in the destination",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a corrected `employees_dup` that deep-copies element-wise and handles allocation failure without leaks (rollback)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A crash appears during sorting by name. Code:\n\n```c\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct {\n    char *name;   // owned\n    int   age;\n} Person;\n\nstatic int cmp_person(const void *a, const void *b) {\n    const Person *pa = a, *pb = b;\n    return strcmp(pa->name, pb->name);\n}\n\nPerson *load_people(size_t n) {\n    // BUGGY loader for demo\n    Person *p = malloc(n * sizeof p); // suspicious\n    for (size_t i = 0; i < n; i++) {\n        p[i].name = malloc(8);\n        strcpy(p[i].name, i % 2 ? \"Bob\" : \"Ana\");\n        p[i].age = 20 + (int)i;\n    }\n    return p;\n}\n\nint main(void) {\n    size_t n = 1000;\n    Person *p = load_people(n);\n    qsort(p, n, sizeof p, cmp_person); // suspicious\n    // ... use p, then cleanup\n}\n```\nOn some runs, AddressSanitizer reports heap-buffer-overflow inside `qsort`.",
+          "task": "Identify all allocation/size-of errors in the snippet that can cause out-of-bounds access during `qsort`, explain why they manifest in sorting, and provide the precise one-line fixes. Also mention any secondary risks you see with the current code.",
+          "expected_answer": "Two `sizeof` errors:\n\n1) `Person *p = malloc(n * sizeof p);` allocates `n * sizeof(Person*)`, not `n * sizeof(Person)`. On 64-bit, this under-allocates, and subsequent writes to `p[i]` overflow.\n2) `qsort(p, n, sizeof p, cmp_person);` passes the size of a pointer, not `sizeof(Person)`, causing the sorter to treat elements as smaller than they are and step through memory with the wrong stride, reading/writing out of bounds.\n\nFixes (two lines):\n\n```c\nPerson *p = malloc(n * sizeof *p);\nqsort(p, n, sizeof *p, cmp_person);\n```\n\nWhy it shows in sorting: `qsort` moves elements assuming the provided element size; a wrong, smaller size causes overlapping moves and out-of-bounds reads/writes, quickly detected by ASan. The under-sized allocation magnifies the issue because even correct element sizes would still overflow the buffer when filling or moving.\n\nSecondary risks: missing NULL checks on allocations; repeated identical `name` strings do not cause correctness issues but may stress comparisons; potential leak if `load_people` fails partway through without cleanup.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies both `sizeof` mistakes (in `malloc` and in `qsort`)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains clearly how each mistake leads to out-of-bounds behavior during sorting",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides exact corrected code for both lines (`sizeof *p`)",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes at least one secondary robustness issue (e.g., NULL checks, partial allocation rollback)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are designing a container that stores heterogenous records tagged by kind, and each record owns heap memory differently. You choose a simple tagged-struct approach without unions:\n\n```c\ntypedef enum { REC_USER, REC_GROUP } RecKind;\n\ntypedef struct {\n    RecKind kind;\n    char *name;      // owned by all kinds\n    // optional owned fields depending on kind\n    char **members;  // owned, only if kind == REC_GROUP (length mcount)\n    size_t mcount;\n} Record;\n\n// The container keeps a dynamic array: Record *recs; size_t len, cap;\n```\nYou must support: push new records, remove by index (compacting the array), and stable external identifiers that clients may cache as pointers to `Record` elements. Records will be reallocated as the array grows via `realloc`.",
+          "task": "Evaluate the safety of allowing clients to cache raw `Record*` pointers as stable identifiers. If unsafe, propose a design that preserves stability while still using a contiguous dynamic array internally. Justify with precise failure modes and concrete changes to the API and data structures.",
+          "expected_answer": "Caching raw `Record*` is unsafe because `realloc` may move the array, invalidating all cached pointers (dangling). Additionally, removals that compact by `memmove` change element addresses, invalidating pointers to subsequent elements. Failure modes: use-after-free, writing through dangling pointers corrupting memory.\n\nSafer designs:\n\n- Indirect via indices plus generation counters: expose a lightweight handle `{size_t index; uint32_t gen;}`. Store a `gen` per slot in the array. On removal, increment `gen`. Clients validate that `handle.gen == recs[index].gen` before use. Moving elements updates their `gen` or invalidates stale handles. No raw pointer exposure.\n\n- Or use a stable indirection table: keep `Record **slots` (vector of pointers to heap-allocated `Record`s). Expose `RecordID` as an index into `slots`. Growing `slots` via `realloc` does not move the `Record` allocations themselves; compaction swaps `slots[i]` values without changing underlying `Record*`. Destruction frees the pointed `Record` and sets `slots[i]=NULL`.\n\nWith a contiguous `Record recs[]` requirement, prefer the index+generation handle: keep `recs` as a normal dynamic array; on remove, swap-with-last and decrement `len` to minimize memmoves, update a side-car `gen[]`, and return updated indices to clients as needed. API change: functions accept/return `RecordHandle` instead of `Record*`; lookup validates the handle, returning `Record*` transiently for immediate use, not for caching.\n\nThese preserve stability at the handle level and prevent dangling raw pointers across `realloc` and compaction.",
+          "rubric": [
+            {
+              "criterion": "Identifies why caching raw `Record*` is unsafe under `realloc` and compaction (dangling/use-after-free)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a specific stable indirection (index+generation or pointer table) and explains how it prevents invalidation",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains required API/data-structure changes concretely (handle type, validation, side-car arrays or slots)",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses element removal/growth implications and how the proposal handles them (swap-with-last, gen bump, or slots updates)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need an in-memory serialization of a struct with padding so it can be sent over a socket as a compact byte sequence. The struct:\n\n```c\n#include <stdint.h>\n#include <stddef.h>\n\ntypedef enum { T_INT=1, T_STR=2 } Type;\n\ntypedef struct {\n    Type   type;    // enum\n    uint32_t id;    // host-endian\n    char  *name;    // owned pointer, not transferable as-is\n} Msg;\n```\nA teammate proposes to send `sizeof(Msg)` bytes by `memcpy`-ing the struct into a buffer. Another proposes to send only the needed fields into a packed buffer and reconstruct on the other side, allocating for `name` as needed. You cannot change the `Msg` definition.",
+          "task": "Decide which approach is correct and justify precisely. Then sketch encode/decode functions that avoid padding and pointer issues without using file I/O, only in-memory buffers. Include the exact sizes written/read and where dynamic allocation is required.",
+          "expected_answer": "Sending `sizeof(Msg)` is incorrect: it includes padding bytes with unspecified content and the `name` pointer, which is meaningless in another address space. Correct approach is to define a packed, explicit layout that contains only transferable data and reconstruct `Msg` with dynamic allocation for `name`.\n\nExample encode (host-endian kept for brevity; in production, define byte order):\n\n```c\n// layout: [1 byte type][4 bytes id][4 bytes name_len][name bytes (no NUL)]\nsize_t msg_size(const Msg *m) { return 1 + 4 + 4 + (m->name ? (uint32_t)strlen(m->name) : 0); }\n\nint msg_encode(uint8_t *out, size_t out_cap, const Msg *m) {\n    uint32_t name_len = m->name ? (uint32_t)strlen(m->name) : 0;\n    size_t need = 1 + 4 + 4 + name_len;\n    if (out_cap < need) return -1;\n    size_t o = 0;\n    out[o++] = (uint8_t)m->type;\n    memcpy(out + o, &m->id, 4); o += 4;\n    memcpy(out + o, &name_len, 4); o += 4;\n    if (name_len) { memcpy(out + o, m->name, name_len); o += name_len; }\n    return (int)o;\n}\n\nint msg_decode(Msg *m, const uint8_t *in, size_t in_len) {\n    if (in_len < 1 + 4 + 4) return -1;\n    size_t o = 0;\n    m->type = (Type)in[o++];\n    memcpy(&m->id, in + o, 4); o += 4;\n    uint32_t name_len = 0; memcpy(&name_len, in + o, 4); o += 4;\n    if (in_len - o < name_len) return -1;\n    m->name = NULL;\n    if (name_len) {\n        m->name = malloc((size_t)name_len + 1);\n        if (!m->name) return -1;\n        memcpy(m->name, in + o, name_len);\n        m->name[name_len] = '\\0';\n        o += name_len;\n    }\n    return (int)o;\n}\n```\nThis avoids padding, does not transmit meaningless pointers, and uses dynamic memory only to rebuild `name` on the receiver.",
+          "rubric": [
+            {
+              "criterion": "Rejects memcpy-of-struct with clear reasons (padding, pointer non-transferability)",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines an explicit packed layout with sizes for each field",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct encode/decode sketches that allocate for `name` and perform bounds checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes assumptions/production concerns (endianness, NUL-termination)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Structures and enums (C)",
+            "Pointers and dynamic memory (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Memory exercises: deep ownership and dynamic vector of structs",
+          "brief": "Build a small C library and demo program that implements a dynamic vector of `Student` records with owned dynamic fields. Each `Student` has `char *name` and `int grade`. Provide operations: init, destroy, push, insert, remove (by index, compacts), get, set_name (replacing owned name), deep_copy (vector -> new vector), and clear. Demonstrate correct behavior and memory hygiene.",
+          "deliverable": "A buildable C project (source files + README with build/run instructions) containing: student.h/c, vec.h/c, main.c that exercises all operations. No external dependencies. Build with `gcc -std=c11 -Wall -Wextra -O0 -g`.",
+          "acceptance_criteria": [
+            "`gcc -std=c11 -Wall -Wextra -O0 -g *.c -o demo` compiles without errors.",
+            "Running `./demo` prints a deterministic transcript that includes: pushes, an insert, a remove, setting a student's name, and shows both original and deep-copied vectors with independent `name` allocations (different addresses).",
+            "`valgrind --leak-check=full ./demo` (or AddressSanitizer) reports 0 leaks and 0 invalid reads/writes.",
+            "Vector growth uses `realloc` safely (temporary pointer pattern) and never leaves stale external pointers. The demo must not keep raw element pointers across growth."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct vector API and functionality (init/destroy/push/insert/remove/get/clear) working as specified",
+              "marks": 6
+            },
+            {
+              "criterion": "Deep ownership semantics implemented correctly (`set_name`, deep vector copy, no aliasing of `name`)",
+              "marks": 6
+            },
+            {
+              "criterion": "Safe dynamic memory management (correct sizes, `realloc` via temporary, NULL checks, no stale pointers)",
+              "marks": 4
+            },
+            {
+              "criterion": "Demonstration program covers operations and shows independence of deep copies; build and run cleanliness (no warnings-as-errors required)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Pointers and dynamic memory (C)",
+            "Structures and enums (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Record application: enum-tagged contact list with in-memory organisation",
+          "brief": "Implement a small contact list application that manages `Contact` records with an enum classification and dynamic fields. Each contact has: `enum ContactType { PERSON, ORG } type; char *name;` and, depending on type, either `char *email` (PERSON) or `char **departments` with a count (ORG). Provide operations: add, list (grouped by type), find by name, update name/email or departments, and delete. Use a dynamic array to store contacts. Avoid exposing raw element pointers to callers inside the module; instead, use indices or handles.",
+          "deliverable": "C sources (contact.h/c, app.c, main.c) and a README explaining how to build with `gcc -std=c11 -Wall -Wextra -O0 -g` and how to run the demo scenario. The demo must run non-interactively, constructing a small dataset, performing updates/deletes, and printing a well-defined output.",
+          "acceptance_criteria": [
+            "`gcc -std=c11 -Wall -Wextra -O0 -g *.c -o contacts` compiles without errors.",
+            "Running `./contacts` prints: (1) initial list grouped by type, (2) results of a find-by-name, (3) updated fields shown after modification, and (4) final list after a deletion.",
+            "All owned dynamic fields are allocated/freed correctly. No double-frees or leaks when deleting or replacing `name`, `email`, or `departments` arrays.",
+            "Growth of the contacts array uses `realloc` safely. The module does not require clients to cache raw `Contact*`; use indices/handles internally to avoid stale pointers.",
+            "`valgrind --leak-check=full ./contacts` (or AddressSanitizer) reports 0 leaks and 0 invalid accesses."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct data model with `enum ContactType` and conditional owned fields; operations add/list/find/update/delete work as specified",
+              "marks": 6
+            },
+            {
+              "criterion": "Memory management correctness (deep copies where needed, safe replacement of fields, delete frees everything)",
+              "marks": 6
+            },
+            {
+              "criterion": "Dynamic array management is safe (sizes, `realloc` pattern, no stale external pointers)",
+              "marks": 4
+            },
+            {
+              "criterion": "Deterministic demo output meeting all print expectations; clean build and sanitizer/valgrind cleanliness",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Structures and enums (C)",
+            "Pointers and dynamic memory (C)",
+            "C"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-016-S04",
+      "skills_assessed": [
+        "C",
+        "Control flow (C)",
+        "Functions (C)",
+        "File I/O (C)",
+        "Debugging",
+        "Unit Testing",
+        "Input validation (C)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Given the file contents:\n```text\nnumbers.txt\n-----------\n1 2 3\n```\nWhat does this program print and why?\n```c\n#include <stdio.h>\n\nint main(void){\n    FILE *fp = fopen(\"numbers.txt\", \"r\");\n    int x, count = 0;\n    while (!feof(fp)) {\n        fscanf(fp, \"%d\", &x);\n        if (!ferror(fp)) count++;\n    }\n    printf(\"%d\\n\", count);\n    fclose(fp);\n}\n```",
+          "options": [
+            "4",
+            "It loops forever",
+            "Undefined behavior due to fscanf",
+            "3"
+          ],
+          "correct_option": "A",
+          "explanation": "feof(fp) is only set after a read attempt hits EOF. The last fscanf fails to convert and sets the EOF indicator. ferror(fp) is still 0, so count++ executes one extra time before the loop exits. With three integers, it prints 4.",
+          "distractor_rationale": "A: Many assume !feof is a correct read loop and forget the extra iteration on the EOF-triggering read. C: fscanf failing to match is not undefined behavior; it returns EOF without setting ferror. D: The feof condition will eventually become true after the failed read, so it won’t loop forever.",
+          "skills_covered": [
+            "File I/O (C)",
+            "Control flow (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider mixing output then input on the same stream:\n```c\n#include <stdio.h>\nint main(void){\n    FILE *fp = fopen(\"data.txt\", \"w+\");\n    fputs(\"abc\", fp);\n    char buf[8] = {0};\n    fgets(buf, sizeof buf, fp);\n    printf(\"[%s]\\n\", buf);\n    fclose(fp);\n}\n```",
+          "options": [
+            "[]",
+            "Behavior is undefined; an intervening fflush/seek is required before the read",
+            "It blocks waiting for a newline because of line buffering",
+            "[abc]"
+          ],
+          "correct_option": "B",
+          "explanation": "After writing, the C standard requires an intervening fflush or a file-positioning call (fseek/rewind/fsetpos) before doing a read on the same stream. Without it, behavior is undefined.",
+          "distractor_rationale": "A: It looks plausible if you think the file position advanced as expected. B: An empty read is a common observed outcome but it’s not guaranteed. D: Line buffering affects terminal streams; here the stream is a file and the issue is mixing I/O without a flush/seek.",
+          "skills_covered": [
+            "File I/O (C)",
+            "C",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "What goes wrong in this EOF loop using fread?\n```c\nsize_t n = 0;\nRecord rec;\nwhile ((n = fread(&rec, sizeof rec, 1, fp)) != EOF) {\n    process(&rec);\n}\n```",
+          "options": [
+            "process receives uninitialized data for the first record",
+            "It skips the last record due to buffer reuse",
+            "Nothing; this is the correct EOF check for fread",
+            "It loops forever at EOF because fread returns 0, not EOF"
+          ],
+          "correct_option": "D",
+          "explanation": "fread returns a count (0 or 1 here). At EOF/short read it returns 0. Comparing that to EOF (-1) yields true, so the loop never terminates. The correct condition is while (fread(...) == 1).",
+          "distractor_rationale": "B: A reused buffer can be a problem elsewhere but here the logic error is the termination check. C: This is a common confusion with getc-style APIs that return EOF. D: The first record is read before the check; uninitialized data is not the primary fault.",
+          "skills_covered": [
+            "File I/O (C)",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Input validation with strtol:\n```c\n#include <stdio.h>\n#include <errno.h>\n#include <stdlib.h>\n\nint main(void){\n    char buf[32];\n    if (!fgets(buf, sizeof buf, stdin)) return 2;\n    errno = 0;\n    long v = strtol(buf, NULL, 10);\n    if (errno != 0) {\n        puts(\"invalid\");\n    } else {\n        printf(\"%ld\\n\", v);\n    }\n}\n```\nIf stdin is \"12x\\n\", what happens?",
+          "options": [
+            "Prints 12 and exits successfully",
+            "errno becomes EINVAL and it prints \"invalid\"",
+            "Undefined behavior due to NULL endptr",
+            "Prints \"invalid\" because of the trailing 'x'"
+          ],
+          "correct_option": "A",
+          "explanation": "strtol stops at the first non-digit and returns the parsed prefix (12). errno remains 0 unless overflow/underflow occurs. Detecting non-numeric suffix requires inspecting the endptr.",
+          "distractor_rationale": "A/D: Both assume strtol sets errno on non-numeric suffix; it does not. C: Passing NULL for endptr is defined if you don’t need to know where parsing stopped.",
+          "skills_covered": [
+            "Input validation (C)",
+            "C",
+            "Debugging"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Stale errno after a successful call:\n```c\n#include <stdio.h>\n#include <errno.h>\n#include <string.h>\n\nint main(void){\n    errno = EACCES;                 // simulate stale errno\n    FILE *fp = fopen(\"data.txt\", \"r\"); // assume this succeeds\n    if (fp) {\n        printf(\"opened: %s\\n\", strerror(errno));\n        fclose(fp);\n    }\n}\n```",
+          "options": [
+            "It prints \"opened: Success\" because successful fopen resets errno to 0",
+            "strerror may return NULL, so output is implementation-defined",
+            "It prints \"opened: Permission denied\" because errno is unchanged on success",
+            "Undefined behavior: reading errno after success is UB"
+          ],
+          "correct_option": "C",
+          "explanation": "Library functions are not required to modify errno on success. Using errno without an error return reads a stale value. The program will likely print the old message.",
+          "distractor_rationale": "A: Common misconception; many APIs leave errno untouched on success. C: strerror returns a pointer to a string; NULL is not a standard outcome here. D: It’s not UB to read errno; it’s just meaningless unless a function signals an error.",
+          "skills_covered": [
+            "Debugging",
+            "File I/O (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Why does this program crash, and which change fixes it correctly?\n```c\n#include <stdio.h>\n\nvoid write_then_close(FILE *fp){\n    fputs(\"hi\", fp);\n    fclose(fp);\n}\n\nint main(void){\n    FILE *fp = fopen(\"out.txt\", \"w\");\n    write_then_close(fp);\n    fputs(\"again\", fp); // crash here\n    return 0;\n}\n```",
+          "options": [
+            "Move the second fputs before fclose or reopen the file before writing again",
+            "Set fp = NULL after fclose and keep using it",
+            "Insert fflush(fp) before the second fputs",
+            "Do not call fclose; rely on program exit to flush"
+          ],
+          "correct_option": "A",
+          "explanation": "After fclose, fp is invalid. The correct fix is to avoid using a closed stream: either write before closing or reopen a new stream for the subsequent write.",
+          "distractor_rationale": "A: fflush doesn’t resurrect a closed stream. B: Avoiding fclose hides the bug and can leak resources; it’s not a correct fix pattern. C: Writing to NULL just crashes differently; it does not fix the misuse.",
+          "skills_covered": [
+            "Debugging",
+            "File I/O (C)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "On Windows, this code reports a size that doesn’t match the file’s byte count on disk:\n```c\nFILE *fp = fopen(\"win.txt\", \"r\");\nfseek(fp, 0, SEEK_END);\nlong sz = ftell(fp);\nprintf(\"%ld\\n\", sz);\nfclose(fp);\n```\nWhat change makes ftell match the on-disk byte size?",
+          "options": [
+            "Call fflush(fp) before fseek",
+            "Open with mode \"rb\" instead of \"r\"",
+            "Subtract the number of '\\n' characters from sz",
+            "Use SEEK_CUR instead of SEEK_END"
+          ],
+          "correct_option": "B",
+          "explanation": "In text mode, the runtime may translate CRLF to LF, so the logical position does not equal byte count. Opening in binary mode (\"rb\") disables translation and makes ftell reflect bytes on disk.",
+          "distractor_rationale": "B: fflush is about output buffers, not input translation. C: Counting newlines is neither reliable nor portable. D: The origin constant does not address text translation issues.",
+          "skills_covered": [
+            "File I/O (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What is the defined behavior of this code?\n```c\n#include <stdio.h>\nint main(void){\n    printf(\"Enter n: \");\n    int n;\n    fflush(stdin);\n    scanf(\"%d\", &n);\n    return 0;\n}\n```",
+          "options": [
+            "It reliably discards any pending input so scanf reads a fresh number",
+            "It’s a defined no-op on input streams",
+            "scanf will fail with EINVAL after fflush(stdin)",
+            "Undefined behavior; fflush is only defined on output/update streams"
+          ],
+          "correct_option": "D",
+          "explanation": "The C standard defines fflush only for output or update streams. Calling it on an input-only stream like stdin is undefined behavior.",
+          "distractor_rationale": "A/C/D: All are common beliefs or platform-specific behaviors, but none are guaranteed by the C standard.",
+          "skills_covered": [
+            "Input validation (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You need a deterministic unit test for the error path in a file-writing function:\n```c\nint save_message(const char* path, const char* msg){\n    FILE* fp = fopen(path, \"w\");\n    if (!fp) return -1;\n    if (fputs(msg, fp) == EOF) { fclose(fp); return -2; }\n    if (fclose(fp) == EOF) return -3;\n    return 0;\n}\n```\nWhich approach is reliable and portable in standard C?",
+          "options": [
+            "Use fmemopen to create a failing stream for fputs",
+            "Refactor to inject a write operation (function pointer) so the test can force a failure",
+            "Use tmpfile, then close its underlying descriptor before fputs to force EOF",
+            "Mount a read-only directory and write there during the test"
+          ],
+          "correct_option": "B",
+          "explanation": "Standard C does not provide a way to force fputs to fail on a real FILE reliably. Introducing a seam (e.g., a function pointer or wrapper around fputs) lets a test double simulate failure deterministically.",
+          "distractor_rationale": "A: Standard C doesn’t expose a safe way to invalidate the FILE’s descriptor. B: Environment-dependent and brittle. D: fmemopen is not standard C (it’s POSIX/GNU), and it doesn’t inherently fail writes.",
+          "skills_covered": [
+            "Unit Testing",
+            "Functions (C)",
+            "Debugging"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You want to redirect stdout to a file portably in C:\n```c\n#include <stdio.h>\nint main(void){\n    FILE *f = fopen(\"out.txt\", \"w\");\n    /* redirect stdout to f here, then */\n    printf(\"hello\\n\");\n    return 0;\n}\n```\nWhich change is correct?",
+          "options": [
+            "Call setvbuf(stdout, NULL, _IONBF, 0) before fopen",
+            "Assign stdout = f; then printf goes to the file",
+            "Use freopen(\"out.txt\", \"w\", stdout);",
+            "Call dup2 on fileno(stdout) to fileno(f) in portable C"
+          ],
+          "correct_option": "C",
+          "explanation": "freopen with stdout is the standard, portable way to re-associate stdout with a file stream in C. After that, printf writes to the file.",
+          "distractor_rationale": "A: stdout is not meant to be reassigned; doing so is undefined. C: Buffering mode doesn’t redirect the stream. D: dup2 is POSIX, not portable standard C.",
+          "skills_covered": [
+            "File I/O (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A CLI utility imports lines from a CSV file, validates each row, and writes a normalized output file. The current implementation does this in one pass using a single path for both input and output:\n```c\nint import(const char* path){\n    FILE* io = fopen(path, \"w+\");           // truncate then try to read!\n    if (!io) return 1;\n    char line[256];\n    while (fgets(line, sizeof line, io)) {\n        if (!valid(line)) return 2;          // on first invalid row, bail\n        normalize(line);\n        fputs(line, io);\n    }\n    fclose(io);\n    return 0;\n}\n```\nUsers report that when the first invalid row is encountered, the original file is already corrupted or empty. You must make the operation safe, testable, and return informative status codes.",
+          "task": "Propose a design and justify it. Specify the correct file-opening modes and the exact I/O sequence to avoid data loss, including how you will handle validation failures. Describe how you would unit test both the success path and the first-failure path without touching production data. State the return codes you will use and what each means.",
+          "expected_answer": "Open the source for reading only and write to a separate temporary output file in the same directory. Example: src = fopen(path, \"r\"); tmp = fopen(\"<path>.tmp\", \"w\"). Read each line from src with fgets, validate using a parser that returns a status; if invalid, abort the import: close tmp, remove the temp file, leave the original file untouched, and return a specific error code (e.g., 2). If valid, write the normalized line to tmp using fputs/fwrite and check return values and ferror. After a successful pass with no invalid lines and no write errors, fclose both streams, then atomically replace the original via rename(\"<path>.tmp\", path). On platforms with non-atomic rename-overwrite semantics, handle EEXIST by removing the target or ensure the destination doesn’t exist beforehand.\nTo avoid mixing I/O on a single stream, never read from the file opened in write mode; use distinct FILE*s and do not read-after-write without fflush/seek. Ensure errors are surfaced: return 1 when the input cannot be opened, 2 for validation failure (and clean up the temp file), 3 for write error (detect via ferror or fputs == EOF), 4 for rename failure, 0 on success.\nFor testing, separate parsing/normalization into pure functions that take a string and return a normalized string plus a status, so they can be unit tested without files. For the import integration, run tests against copies of fixtures in a temp directory; verify that on invalid input the original file is unchanged and the temp file is removed; on success, verify output matches golden data. To simulate write failures deterministically, wrap fputs/fwrite behind an injectable function pointer or interface so a test double can force a failure to hit the write-error path.",
+          "rubric": [
+            {
+              "criterion": "Explains why opening with \"w+\" corrupts the input and identifies the need for separate input and output streams",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies safe I/O sequence with correct modes (\"r\" for input, \"w\" for temp output), checks for errors, and avoids mixing IO without flush/seek",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes failure handling that preserves the original file (cleanup temp on failure, atomic rename on success) and maps clear return codes",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines a test strategy separating parsing from I/O and explains how to test success and failure (including a deterministic write-failure seam)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "File I/O (C)",
+            "Input validation (C)",
+            "Debugging",
+            "Unit Testing",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A counter file stores a single decimal integer. The program should increment it each run. Users sometimes see the counter unchanged, and sometimes the file ends up with junk characters.\n```c\nint bump(const char* path){\n    FILE* f = fopen(path, \"r+\");\n    if (!f) return 1;\n    long n;\n    fscanf(f, \"%ld\", &n);\n    n++;\n    fprintf(f, \"%ld\", n);  // write without repositioning\n    fclose(f);\n    return 0;\n}\n```",
+          "task": "Identify the root cause and provide the corrected sequence of I/O operations, including any necessary flushing, repositioning, truncation, or validation. Justify each step and discuss how you would make this testable.",
+          "expected_answer": "Root cause: After reading the number, the file position is at the end of the parsed token, not necessarily at the start. Writing without repositioning overwrites from the current position, leaving the old digits in place if the new representation is shorter/longer, and may append after the original if there is leftover content. Mixing input and output on an update stream also requires an intervening fflush or reposition call per C. Correct sequence: open with \"r+\" (or create with \"w+\" if missing, handled separately), read the number using fgets + strtol with endptr validation to ensure only digits and optional newline exist; then call fseek(f, 0, SEEK_SET) to reposition; optionally call fflush(f) after the read (strict conformance) or rely on the fseek as the required positioning call; write the new number with fprintf; then call fflush(f) and, if the new text can be shorter than the old, call ftruncate via platform API or rewrite to a fresh temp file scheme (portable approach: write to a temp file and rename). For strict portability, prefer the temp file approach over truncation. For testing, extract parse_number(const char*) and format_number(long, char*, size_t) as pure functions and test them with unit tests; for integration, test with a temp directory and verify exact file contents before/after, including edge cases where digit count changes.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies mixing I/O without reposition and the need to seek before writing",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a valid, standard-conforming sequence (read with validation; fseek/rewind; write; flush) and explains why each step is necessary",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses variable-length write issue (truncate or temp-file+rename) with a justified, portable solution",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a test plan separating parsing/formatting and exercising integration with temp files",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "File I/O (C)",
+            "Input validation (C)",
+            "Debugging",
+            "Functions (C)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A module filters lines from an input file to an output file. A failing unit test shows the last line is missing when the file doesn’t end with a trailing newline.\n```c\nint copy_nonempty(const char* in, const char* out){\n    FILE *fi = fopen(in, \"r\");\n    FILE *fo = fopen(out, \"w\");\n    char buf[256];\n    while (!feof(fi)) {\n        if (!fgets(buf, sizeof buf, fi)) break;\n        if (buf[0] != '\\n' && buf[0] != '\\0') fputs(buf, fo);\n    }\n    fclose(fi); fclose(fo);\n    return 0;\n}\n```\nThe test creates a file with \"abc\" (no newline). The function produces an empty output.",
+          "task": "Explain precisely why the last line is lost and propose a corrected loop that is robust to missing trailing newlines and avoids feof misuse. Include any extra validation needed and how you would test this fix.",
+          "expected_answer": "Problem: Using while (!feof(fi)) with fgets is a classic anti-pattern. feof only becomes true after a read attempt hits EOF. In a one-line, no-newline file, the first fgets succeeds, but the logic places the fgets inside the loop controlled by feof, which initially is false; if the code hits a corner where the conditional flow breaks early, you can easily miss the line. The robust idiom is to use fgets as the loop condition: while (fgets(buf, sizeof buf, fi)) { ... }. With this change, the single line is processed regardless of a trailing newline. Also, the filter condition should not assume a newline terminator; check for non-empty content via buf[0] != '\\0' and optionally strip the trailing newline if present. Tests: add cases for empty file, single line without newline, lines with only \"\\n\", and a long line exceeding the buffer to ensure partial reads are handled per requirements (e.g., skip or handle continuation).",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies feof misuse and explains the EOF indicator timing",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct fgets-controlled loop and explains why it fixes the missing-line case",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses newline/no-newline handling and content validation clearly",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes test cases covering no-newline, empty, and long-line scenarios",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "File I/O (C)",
+            "Debugging",
+            "Input validation (C)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A log parser crashes intermittently. The crash report shows:\n```text\ngdb backtrace\n-------------\n#0  strcmp ()\n#1  classify_line (s=\"INFO parsing started\\x00...\", n=18)\n#2  parse_file (...)\n#3  main\n```\nRelevant code:\n```c\nchar buf[64];\nsize_t n = fread(buf, 1, 64, fp);\n// assume the read filled exactly what we need\nif (classify_line(buf, (int)n) == TYPE_INFO) { ... }\n\nint classify_line(const char* s, int n){\n    // uses strcmp and strncmp internally against literals\n    if (strncmp(s, \"INFO\", 4) == 0) return TYPE_INFO;\n    ...\n}\n```",
+          "task": "Diagnose the fault and propose a robust fix that preserves performance. Explain how you would validate the fix with unit tests and what invariants those tests assert.",
+          "expected_answer": "The buffer from fread is not null-terminated; passing it to strcmp/strncmp-based logic assumes a C string. strcmp reads until a '\\0', which may read past the buffer end when n == 64 or when the data lacks a terminator within bounds, causing UB and crashes. Fixes: either ensure null termination (e.g., read at most sizeof(buf) - 1 bytes and write buf[n] = '\\0' after fread) or refactor classify_line to accept a (ptr,len) pair and never call strcmp—use memcmp against fixed prefixes and length checks (e.g., n >= 4 && memcmp(s, \"INFO\", 4) == 0). Prefer the latter for robustness and performance, avoiding repeated scans for '\\0'. Unit tests: provide inputs with and without embedded NULs, exactly full buffers (n == sizeof(buf) - 1 and == sizeof(buf)), and varying prefixes; assert no out-of-bounds reads (can be checked with sanitizers) and correct classification. Invariants: functions that take (ptr,len) never read past ptr+len; string-based versions always enforce an explicit terminator before calling strcmp.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies the missing NUL terminator and why strcmp/strncmp cause UB",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a robust, performant fix (either enforce termination or use length-based comparisons) with concrete details",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes unit tests that cover boundary conditions (exactly full reads, embedded NULs, prefixes)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Debugging",
+            "Unit Testing",
+            "Functions (C)",
+            "File I/O (C)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Persistent utility: Safe, validated append/list tool",
+          "brief": "Build a small CLI utility that maintains a persistent text file of entries. Two commands: append a validated entry and list all entries. The tool must never corrupt the file: updates must be written to a temporary file and atomically replaced. All input parsing must be robust and return codes must indicate precise failure causes.",
+          "deliverable": "A zip or repository folder containing C source files, a README with build/run instructions, and a sample session transcript. The program name, arguments, and return codes must be documented in README.",
+          "acceptance_criteria": [
+            "Program builds with a standard C compiler (e.g., gcc or clang) with no errors and no undefined-behavior idioms (no fflush on input, no feof-controlled read loops).",
+            "Command `tool add \"<text>\"` validates: non-empty, max length enforced, no newline characters; rejects invalid input and exits with a non-zero status without modifying the data file.",
+            "Command `tool list` prints all stored entries to stdout, one per line, preserving order.",
+            "All file mutations use a temp file in the same directory followed by rename; on any validation or write error, the original file remains byte-for-byte unchanged.",
+            "File I/O paths check and handle errors: open failures, short writes (ferror or EOF on fputs/fwrite), and rename failures produce documented, distinct exit codes.",
+            "Input parsing uses fgets (or equivalent) and strtol/validation where numeric fields are involved; errno and endptr are handled correctly to reject partial parses.",
+            "README documents exact return codes for: bad usage, validation failure, open failure, write failure, rename failure, and success; includes a sample session showing both success and failure cases."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct and safe file I/O (separate temp file, atomic replace, error checks on all operations)",
+              "marks": 8
+            },
+            {
+              "criterion": "Robust input validation using safe APIs (e.g., fgets + strtol with endptr) and clear error messages",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear, documented return codes mapped to failure modes; README and sample session match program behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Code quality: no undefined I/O patterns (no fflush on input, no feof loops), organized functions enabling reuse/testing",
+              "marks": 3
+            },
+            {
+              "criterion": "Buildability and portability: compiles cleanly with a standard C compiler",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "File I/O (C)",
+            "Input validation (C)",
+            "Functions (C)",
+            "Debugging",
+            "C"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Debugging capstone: Modular log summarizer with tests",
+          "brief": "Implement a small C project that reads a log file and prints a summary of counts per severity (INFO/WARN/ERROR), plus the first and last timestamp seen. Structure the project as modules (parsing, aggregation, CLI). Include a minimal unit test runner that validates parsing and aggregation logic, and demonstrate debugging by fixing at least one intentionally triggered failure case (e.g., missing newline at EOF or non-NUL-terminated buffers).",
+          "deliverable": "A repository folder containing: src/*.c, include/*.h, tests/* with a simple test runner (e.g., custom assertions), sample input logs, expected outputs, and a README describing design, build, test, and how to reproduce and verify the fixed bug.",
+          "acceptance_criteria": [
+            "Project split into modules: parser (parse_line API), aggregator (update_stats API), and main (CLI) with headers in include/.",
+            "Parser accepts a buffer and length (ptr,len) and never assumes NUL termination; classifies severity and extracts an ISO-8601 timestamp; returns status codes for success/invalid line/partial line.",
+            "Aggregator maintains counts and first/last timestamps; exposed via a small struct and functions with no global mutable state.",
+            "Main supports: `logsum -i input.log` printing counts and first/last timestamps; exit codes: 0 success, 2 invalid input file, 3 parse errors encountered (still summarize), 4 write error.",
+            "Unit tests cover: severity classification, timestamp extraction (valid/invalid), and aggregator updates; tests run via `tests/run_tests` (shell or C) and report pass/fail with non-zero exit on failure.",
+            "I/O code uses safe patterns: fgets as loop condition or fread with explicit length checks; no fflush on input; no mixing read/write on one stream without reposition.",
+            "README includes: build commands, how to run tests, sample input and exact expected output, and a short note describing a debugging session (the bug, the symptom, the fix)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Modular design with clear interfaces (parser, aggregator, CLI) and no global mutable state leaks",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct, robust parsing using (ptr,len) or explicit NUL-termination; proper status codes for invalid data",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate aggregation and CLI behavior, including documented exit codes and correct formatting of output",
+              "marks": 5
+            },
+            {
+              "criterion": "Comprehensive tests that run non-interactively and catch edge cases; failing tests cause non-zero exit",
+              "marks": 4
+            },
+            {
+              "criterion": "Demonstrated debugging: a described failure reproduced and fixed, with the fix reflected in code/tests/README",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Debugging",
+            "Unit Testing",
+            "Functions (C)",
+            "File I/O (C)",
+            "C"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

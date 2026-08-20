@@ -1,0 +1,1850 @@
+{
+  "course_code": "NT-C-023",
+  "course_name": "SQL",
+  "sections": [
+    {
+      "section_code": "NT-C-023-S01",
+      "skills_assessed": [
+        "SQL",
+        "Database Design",
+        "Database Normalization",
+        "Data Modeling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have a lookup of departments and employees:\n\n```sql\nCREATE TABLE department(\n  dept_id INT PRIMARY KEY,\n  name TEXT\n);\n\nCREATE TABLE employee(\n  emp_id INT PRIMARY KEY,\n  name TEXT NOT NULL,\n  dept_id INT NULL REFERENCES department(dept_id)\n);\n```\n\nA teammate writes:\n\n```sql\nSELECT emp_id, name\nFROM employee\nWHERE dept_id NOT IN (1, 2, NULL);\n```\n\nOn a population where some employees have `dept_id` NULL, what happens and why?",
+          "options": [
+            "Returns only the rows with `dept_id` NULL.",
+            "Returns all rows whose `dept_id` is not 1 or 2, and also includes rows where `dept_id` is NULL.",
+            "Raises an error at runtime because `NOT IN` cannot contain NULL in the list.",
+            "Returns no rows, because the NULL in the list makes every comparison \"unknown\" and the WHERE filters them all out."
+          ],
+          "correct_option": "D",
+          "explanation": "In SQL three-valued logic, `x NOT IN (1,2,NULL)` is equivalent to `NOT (x=1 OR x=2 OR x=NULL)`. `x=NULL` is UNKNOWN, the OR becomes UNKNOWN unless one of the first two equals is TRUE, and `NOT UNKNOWN` is UNKNOWN. WHERE treats UNKNOWN as FALSE, so no rows pass.",
+          "distractor_rationale": "B is tempting because it is how many expect set exclusion to work, ignoring NULL semantics. C mis-applies the idea that NULLs are special; however `NULL NOT IN (...)` is also UNKNOWN and filtered out. D is plausible to those who think NULLs are illegal in IN lists; SQL permits them, they just change truth values.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider shipments with optional ship dates.\n\n```sql\nCREATE TABLE orders(\n  order_id INT PRIMARY KEY,\n  shipped_date DATE NULL\n);\n```\n\nWhich result does this query produce and why?\n\n```sql\nSELECT order_id\nFROM orders\nWHERE shipped_date = NULL;\n```",
+          "options": [
+            "Returns no rows, because `= NULL` is UNKNOWN; `IS NULL` must be used instead.",
+            "Raises a syntax error in standard SQL.",
+            "Returns orders where `shipped_date` is NULL, because `=` compares equality.",
+            "Returns all rows, because any comparison with NULL is treated as TRUE."
+          ],
+          "correct_option": "A",
+          "explanation": "`= NULL` evaluates to UNKNOWN for all rows. The WHERE filters out UNKNOWN. The correct predicate to test nullness is `IS NULL`.",
+          "distractor_rationale": "A is the common but incorrect intuition. C confuses UNKNOWN with TRUE. D is wrong because the syntax is valid; it just never matches.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given a table:\n\n```sql\nCREATE TABLE person(\n  id INT PRIMARY KEY,\n  last_name TEXT NOT NULL,\n  created_at TIMESTAMP NOT NULL\n);\nINSERT INTO person VALUES\n(1,'Ng','2025-01-01 10:00'),\n(2,'Zhao','2025-01-01 10:00'),\n(3,'Alvarez','2025-01-01 10:01');\n```\n\nA report currently runs:\n\n```sql\nSELECT id, last_name FROM person;\n```\n\nOver many runs, the first two rows appear in different orders. Which statement is correct?",
+          "options": [
+            "The implicit order is by insertion time, so results must always be in insert sequence.",
+            "The order is nondeterministic without `ORDER BY`; to make it stable use `ORDER BY created_at, id`.",
+            "Adding an index on `created_at` will stabilize the order without changing the query.",
+            "The implicit order is by primary key, so results must always be 1,2,3."
+          ],
+          "correct_option": "B",
+          "explanation": "SQL result sets are unordered unless an `ORDER BY` is given. A stable, meaningful order requires specifying it explicitly, often with a tiebreaker (e.g., `created_at, id`).",
+          "distractor_rationale": "B and C are common myths; physical/insertion order and PK order are not guaranteed without `ORDER BY`. D mistakes access paths for presentation order; indexes do not impose order on results unless the query asks for it.",
+          "skills_covered": [
+            "SQL",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Orders have a `status` column with values like `new`, `processing`, `NEW`.\n\n```sql\nSELECT DISTINCT status, UPPER(status)\nFROM orders;\n```\n\nAssume the table contains exactly the values: `new`, `processing`, `NEW`. How many rows does the query return?",
+          "options": [
+            "2 rows",
+            "3 rows",
+            "It depends on collation settings.",
+            "1 row"
+          ],
+          "correct_option": "B",
+          "explanation": "`DISTINCT` applies to the entire selected row `(status, UPPER(status))`. The three input rows are `(new, NEW)`, `(processing, PROCESSING)`, `(NEW, NEW)`, which are all distinct as pairs, so 3 rows.",
+          "distractor_rationale": "A and B reflect the mistaken belief that `DISTINCT` applies to only the first expression or to `UPPER(status)` collapsing `new` and `NEW`. D is a red herring here because even with case-insensitive collations on `status`, the pair `(status, UPPER(status))` would still differ by the raw `status` column values.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given users:\n\n```sql\nCREATE TABLE app_user(\n  id INT PRIMARY KEY,\n  role TEXT NOT NULL,\n  active BOOLEAN NOT NULL\n);\nINSERT INTO app_user VALUES\n(1,'admin',TRUE),(2,'owner',FALSE),(3,'editor',TRUE),(4,'owner',TRUE);\n```\n\nWhich IDs does this return?\n\n```sql\nSELECT id\nFROM app_user\nWHERE active = TRUE AND role = 'admin' OR role = 'owner'\nORDER BY id;\n```",
+          "options": [
+            "1, 2, and 4",
+            "1 and 4",
+            "1 only",
+            "4 only"
+          ],
+          "correct_option": "A",
+          "explanation": "`AND` binds tighter than `OR`, so the predicate is `(active=TRUE AND role='admin') OR (role='owner')`. That matches id 1 and both owners (2 and 4), regardless of `active` for owners.",
+          "distractor_rationale": "A assumes the `OR` is grouped with `active=TRUE` for both roles. B assumes `AND` binds across the whole expression. D assumes owners must also be active.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You model advisors assigned to students:\n\n```sql\n-- Current table\nCREATE TABLE student(\n  student_id INT PRIMARY KEY,\n  name TEXT NOT NULL,\n  advisor_id INT NOT NULL,\n  advisor_office TEXT NOT NULL\n);\n-- Functional dependency: advisor_id -> advisor_office\n```\n\nDeleting the last student of an advisor loses the office location. Which redesign prevents that loss while preserving the relationship?",
+          "options": [
+            "Keep the table, add a UNIQUE constraint on `advisor_office`.",
+            "Create a view that selects distinct `(advisor_id, advisor_office)` from `student` when needed.",
+            "Add a surrogate `id` to `student` and keep columns as-is to avoid duplication concerns.",
+            "Split into `student(student_id, name, advisor_id)` and `advisor(advisor_id PRIMARY KEY, advisor_office)` with a foreign key."
+          ],
+          "correct_option": "D",
+          "explanation": "Separating the advisor entity (with its attributes) from student records removes the transitive dependency and preserves advisor data independently of student rows.",
+          "distractor_rationale": "A constrains offices but does not address the dependency or deletion anomaly. C adds an irrelevant key without fixing redundancy. D is brittle: once the last student is deleted, the view shows nothing; the data is still lost.",
+          "skills_covered": [
+            "Database Normalization",
+            "Database Design",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Given:\n\n```sql\nCREATE TABLE customer(\n  id INT PRIMARY KEY\n);\nCREATE TABLE order_header(\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL REFERENCES customer(id)\n);\n```\n\nWhat happens when you run:\n\n```sql\nDELETE FROM customer WHERE id = 42;\n```\n\nand there exists an `order_header` referencing `customer.id = 42`?",
+          "options": [
+            "The delete succeeds and automatically deletes the referencing orders in standard SQL.",
+            "The delete is deferred until commit, after which the database fixes the references.",
+            "The delete fails due to a foreign key violation unless `ON DELETE CASCADE` was declared.",
+            "The delete succeeds and sets `order_header.customer_id` to NULL."
+          ],
+          "correct_option": "C",
+          "explanation": "Without an explicit `ON DELETE` action, the default is to prevent deletion of a parent row referenced by a child. You must either delete children first or declare an appropriate action.",
+          "distractor_rationale": "A would require `ON DELETE SET NULL` with a nullable FK. C would require `ON DELETE CASCADE`. D confuses deferred constraint checking with automatic repairs; standard behavior is to enforce referential integrity, not fix it post hoc.",
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need to model course enrollments that allow the same student to enroll in the same course in different terms, but never more than once per term. Which primary key on the enrollment table enforces this without needing an extra surrogate key?\n\n```sql\n-- Columns available: student_id, course_id, term\n```",
+          "options": [
+            "PRIMARY KEY (student_id, course_id, term)",
+            "PRIMARY KEY (student_id) with a UNIQUE (course_id, term)",
+            "PRIMARY KEY (term) with a UNIQUE (student_id, course_id)",
+            "PRIMARY KEY (student_id, course_id)"
+          ],
+          "correct_option": "A",
+          "explanation": "The natural key for uniqueness is the combination `(student_id, course_id, term)`. That allows multiple terms per student-course pair but prevents duplicates within a term.",
+          "distractor_rationale": "A would block re-enrollment in a different term. C and D do not enforce the required uniqueness across all three columns and allow duplicates for the omitted column(s).",
+          "skills_covered": [
+            "Database Design",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A teammate writes a pricing query:\n\n```sql\nSELECT sku,\n       list_price * (1 - discount) AS net\nFROM product\nWHERE net > 100\nORDER BY net DESC;\n```\n\n`discount` can be NULL. What happens and how should this be addressed?",
+          "options": [
+            "It fails because arithmetic in SELECT is not allowed with ORDER BY.",
+            "It fails: aliases are not visible in WHERE; repeat the expression there and handle NULL with `COALESCE` or similar.",
+            "It works: aliases are visible in WHERE; NULL discounts are treated as 0.",
+            "It works but treats NULL discounts as 1, making `net` 0."
+          ],
+          "correct_option": "B",
+          "explanation": "In standard SQL, the SELECT list is evaluated after WHERE, so the alias `net` is not available in WHERE. Also, `list_price * (1 - discount)` becomes NULL when `discount` is NULL. Use `WHERE list_price * (1 - COALESCE(discount,0)) > 100` or a derived table, and sort by the alias in ORDER BY.",
+          "distractor_rationale": "A incorrectly assumes alias scope and a default for NULL. C invents a rule that NULL becomes 1. D is simply false—ORDER BY can reference expressions or aliases.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Consider:\n\n```sql\nSELECT last_name, first_name\nFROM person\nORDER BY 1, 2 DESC;\n```\n\nWhich ordering is produced?",
+          "options": [
+            "Sorts by `first_name` descending only, because it is the last term.",
+            "Raises an error: ordinal positions are not permitted in ORDER BY in standard SQL.",
+            "Sorts by `last_name` ascending and then `first_name` descending.",
+            "Sorts by literal numbers 1 then 2, which has no effect, so order is arbitrary."
+          ],
+          "correct_option": "C",
+          "explanation": "`ORDER BY 1, 2 DESC` refers to the first and second select-list expressions. This orders by `last_name` ASC (default), then `first_name` DESC.",
+          "distractor_rationale": "A misreads ordinal positions. C ignores the first key. D is incorrect; ordinal positions are valid (though not always recommended).",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "The current student table stores advisor details inline:\n\n```sql\nCREATE TABLE student(\n  student_id INT PRIMARY KEY,\n  student_name TEXT NOT NULL,\n  advisor_id INT NOT NULL,\n  advisor_name TEXT NOT NULL,\n  advisor_office TEXT NOT NULL\n);\n-- Observed FDs: advisor_id -> advisor_name, advisor_office\n-- Observed anomalies: updating an advisor's office requires N row edits; deleting the last student of an advisor loses the advisor's data.\n```",
+          "task": "Propose a normalized schema that removes the anomalies while preserving the ability to assign an advisor to zero or more students. Specify tables, primary keys, foreign keys, and nullability. Briefly justify why your design is in 3NF with respect to the given FDs.",
+          "expected_answer": "Create an `advisor` entity and remove advisor attributes from `student`.\n\nExample:\n```sql\nCREATE TABLE advisor(\n  advisor_id INT PRIMARY KEY,\n  advisor_name TEXT NOT NULL,\n  advisor_office TEXT NOT NULL\n);\nCREATE TABLE student(\n  student_id INT PRIMARY KEY,\n  student_name TEXT NOT NULL,\n  advisor_id INT NOT NULL REFERENCES advisor(advisor_id)\n);\n```\nJustification: With `advisor(advisor_id → advisor_name, advisor_office)` the attributes depend on the whole key and not on a non-key attribute in `student`; thus `student` has no transitive dependency on `advisor_id`. The design is in 3NF: every non-key attribute depends on a key, the whole key, and nothing but the key in its table. Deleting a student does not remove advisor data; updating an office occurs once in `advisor`. If some students can be unassigned, make `student.advisor_id` nullable; otherwise keep it NOT NULL.",
+          "rubric": [
+            {
+              "criterion": "Identifies and separates `advisor` into its own table with correct primary key",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines `student` without advisor descriptive attributes, keeping only `advisor_id` as FK",
+              "marks": 2
+            },
+            {
+              "criterion": "States correct foreign key referencing and appropriate nullability based on business rule",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains 3NF/transitive dependency removal with respect to given FDs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Database Normalization",
+            "Database Design",
+            "Data Modeling",
+            "SQL"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A pricing report misbehaves. Current query:\n\n```sql\nSELECT sku,\n       list_price * (1 - discount) AS net\nFROM product\nWHERE net > 100\nORDER BY net DESC;\n```\n`discount` is NULL for some SKUs to indicate \"no discount\". The team observes missing rows they expected to see and, on some databases, an error about `net` not being found in WHERE.",
+          "task": "Rewrite the query so it (a) correctly treats NULL discount as 0, (b) filters on the computed net price, and (c) orders by the computed value without duplicating the expression in multiple places if possible. Explain why the original fails.",
+          "expected_answer": "One correct approach uses a derived table so the alias is available:\n\n```sql\nSELECT sku, net\nFROM (\n  SELECT sku, list_price * (1 - COALESCE(discount,0)) AS net\n  FROM product\n) p\nWHERE p.net > 100\nORDER BY p.net DESC;\n```\nExplanation: In standard SQL, SELECT expressions (and their aliases) are not visible to WHERE because WHERE is evaluated earlier. Also, arithmetic with NULL yields NULL, so `list_price * (1 - discount)` becomes NULL and fails the `> 100` filter. `COALESCE(discount,0)` maps NULL to 0. Using a derived table or repeating the expression in WHERE solves the alias scope issue; ORDER BY can use the alias.",
+          "rubric": [
+            {
+              "criterion": "Correctly handles NULL discount as 0 (e.g., COALESCE or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses a structure where the computed alias is valid for filtering (derived table or repeats expression properly)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a working ORDER BY that references the computed value without unnecessary duplication",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains both alias scope/evaluation order and NULL arithmetic causing missing rows",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The enrollment table currently permits duplicate enrollments:\n\n```sql\nCREATE TABLE enrollment(\n  id INT PRIMARY KEY,\n  student_id INT NOT NULL,\n  course_id INT NOT NULL,\n  term TEXT NOT NULL\n);\n\n-- Example duplicates (same student, course, term):\n-- (id=10, student_id=7, course_id=3, term='2026S1')\n-- (id=11, student_id=7, course_id=3, term='2026S1')\n```",
+          "task": "Propose DDL changes that prevent duplicates while still allowing the same student to take the same course in a different term. You may keep or drop the surrogate `id`. Provide the exact constraints and justify your choice.",
+          "expected_answer": "Keep `id` if desired for convenience, but enforce natural-key uniqueness across the business key:\n\n```sql\nALTER TABLE enrollment\n  ADD CONSTRAINT uq_enrollment_unique_per_term\n  UNIQUE (student_id, course_id, term);\n```\nAlternatively, make it the primary key:\n```sql\nALTER TABLE enrollment\n  DROP CONSTRAINT enrollment_pkey;\nALTER TABLE enrollment\n  ADD PRIMARY KEY (student_id, course_id, term);\n```\nThis enforces one enrollment per student-course-term while allowing the same pair in different terms.",
+          "rubric": [
+            {
+              "criterion": "Chooses the correct uniqueness columns (student_id, course_id, term)",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides valid DDL to enforce the rule (UNIQUE or composite PK)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why this permits re-enrollment across terms but blocks duplicates within a term",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses whether the surrogate key is retained or replaced and implications",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "Data Modeling",
+            "SQL"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A customer list page shows inconsistent ordering across refreshes. Product asks for alphabetical by last name, then first name descending (to push seniority suffixes last), then by `id` to stabilize ties. Current query has no ORDER BY.",
+          "task": "Write the exact ORDER BY clause that satisfies the requirement. Explain why leaving out ORDER BY caused nondeterministic ordering even though there is an index on `last_name` and the primary key is `(id)`. If your ORDER BY uses aliases, show the full SELECT.",
+          "expected_answer": "Example without aliases:\n\n```sql\nSELECT id, first_name, last_name\nFROM customer\nORDER BY last_name ASC, first_name DESC, id ASC;\n```\nExplanation: Without ORDER BY, SQL does not guarantee any presentation order; access paths and execution plans can vary between runs. Indexes and primary keys do not determine output order unless requested. Adding `id` as a final tiebreaker makes the order stable even when names match.",
+          "rubric": [
+            {
+              "criterion": "Provides an ORDER BY that includes last_name ASC, first_name DESC, and id as a tiebreaker",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows a valid full SELECT if relying on aliases or positions",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains why lack of ORDER BY leads to nondeterministic results regardless of indexes/PK",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions the need for a deterministic tiebreaker to ensure stability",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Schema exercise: Course registrations (3NF with keys and relationships)",
+          "brief": "Design a relational schema for a simple course registration system. Business rules and functional dependencies:\n\n- Each student has a unique `student_id`, a name, and an email. Emails belong to the student (student_id → student_email).\n- Each course has a unique `course_id`, a `course_code` (e.g., CS101) and a title. Codes are unique and identify the course (course_code → course_title, and course_id ↔ course_code).\n- Registrations occur per academic term (e.g., 2026S1). A student may register for the same course in different terms but at most once per term.\n- Optionally track an advisor per student; advisors have an `advisor_id`, name, and office. An advisor can advise many students; an advisor may exist without assigned students.\n\nProduce DDL that is in at least 3NF, defines primary keys and foreign keys, and enforces the one-enrollment-per-student-course-term rule. Include a small seed demonstrating relationships and constraints (e.g., 3 students, 2 courses, 1 advisor, 4 enrollments). Show that violating inserts are rejected by constraints.",
+          "deliverable": "One SQL file named `schema_course_reg.sql` containing: CREATE TABLE statements, constraints, and INSERT statements for seed data, plus commented-out INSERTs that would violate constraints (to be used by the assessor for negative checks).",
+          "acceptance_criteria": [
+            "DDL creates separate tables for students, courses, enrollments, and advisors; no student descriptive attributes repeated in enrollments.",
+            "All tables have explicit primary keys; foreign keys link enrollments->students, enrollments->courses, students->advisors (nullable if advisors optional).",
+            "Uniqueness of enrollments across (student_id, course_id, term) is enforced via composite PK or UNIQUE constraint.",
+            "Seed INSERTs execute successfully; commented negative test INSERTs would fail due to PK/UK/FK constraints when run.",
+            "No repeating groups or multi-valued attributes in any single table; advisor attributes not stored in the student table except advisor_id."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct entity decomposition (students, courses, enrollments, advisors) and 3NF rationale evident in design",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate primary keys and foreign keys with appropriate nullability and referential actions",
+              "marks": 5
+            },
+            {
+              "criterion": "Enforces business rule: one enrollment per student-course-term (composite key or UNIQUE)",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate data types and NOT NULL/UNIQUE constraints for identifiers and codes",
+              "marks": 3
+            },
+            {
+              "criterion": "Seed data correctness and inclusion of at least one commented negative test demonstrating constraint enforcement",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "Database Normalization",
+            "Data Modeling",
+            "SQL"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Query set: Filters, sorting, and expressions on a product catalog",
+          "brief": "Using the following seed schema and data, write queries that satisfy the prompts. Do not use joins, subqueries, or aggregation. Use only SELECT, WHERE, ORDER BY, and scalar expressions.\n\nSeed (run locally to test):\n```sql\nCREATE TABLE product(\n  sku TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  category TEXT NOT NULL,\n  list_price DECIMAL(10,2) NOT NULL,\n  discount DECIMAL(5,2) NULL, -- proportion (e.g., 0.15)\n  active BOOLEAN NULL\n);\nINSERT INTO product(sku,name,category,list_price,discount,active) VALUES\n('A100','Alpha Pen','Stationery',3.50,NULL,TRUE),\n('A200','Apex Notebook','Stationery',5.00,0.10,TRUE),\n('B100','Basic Mug','Kitchen',8.00,NULL,TRUE),\n('B200','Brew Kettle','Kitchen',45.00,0.05,NULL),\n('C100','Cable USB-C','Electronics',9.99,0.20,TRUE),\n('C200','Charger 65W','Electronics',29.99,NULL,FALSE),\n('D100','Desk Lamp','Home',24.99,0.00,TRUE),\n('E100','Earbuds','Electronics',49.99,0.30,TRUE);\n```\n\nPrompts (write one query per prompt):\n1) Return `sku, name, category` for products in category 'Electronics' or 'Home' with list_price >= 25.00. Use parentheses to make intent explicit.\n2) Return `sku, name, net_price` where `net_price = list_price * (1 - COALESCE(discount,0))`. Do not alias columns other than `net_price`.\n3) Return `sku, name` where `active` is NULL (unknown), ordered by `sku` ascending.\n4) Return `category` values without duplicates, sorted alphabetically.\n5) Return `sku, name` for products whose name starts with 'B' followed by any two characters, then 'w' (hint: `_` wildcard). Sort by `name` ASC.\n6) Return `sku, name, list_price` for products where `list_price` NOT BETWEEN 5.00 AND 30.00. Sort by `list_price` DESC, then `sku`.\n7) Return `sku, name` where `active = TRUE` AND (`category = 'Electronics' OR `category` = 'Stationery'`). Sort by `category` ASC, then `name` DESC.\n8) Return `sku, name` for products where `discount = 0` OR `discount IS NULL`, ordered by `sku`.\n\nFor each prompt, include only the requested columns in the SELECT list.",
+          "deliverable": "One SQL file named `query_set_products.sql` containing eight SELECT statements labeled with comments like `-- Q1`, `-- Q2`, ... in the same order as the prompts.",
+          "acceptance_criteria": [
+            "All eight queries run without error against the seed schema.",
+            "No joins, subqueries, or aggregation functions are used.",
+            "Each query returns exactly the requested columns, with specified aliases.",
+            "Queries use correct filtering logic, including explicit parentheses where requested, and correct NULL handling.",
+            "Sorting matches each prompt’s instructions exactly."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct filtering logic for prompts (including AND/OR precedence and BETWEEN/NOT BETWEEN)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate use of expressions and aliasing (especially net_price with COALESCE)",
+              "marks": 5
+            },
+            {
+              "criterion": "Proper handling of NULL predicates (`IS NULL` vs `= NULL`)",
+              "marks": 3
+            },
+            {
+              "criterion": "Sorting correctness and inclusion of required tiebreakers when specified",
+              "marks": 3
+            },
+            {
+              "criterion": "Conformance to constraints (no joins/subqueries/aggregates) and correct column selection",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-023-S02",
+      "skills_assessed": [
+        "SQL",
+        "Joins (SQL)",
+        "Aggregation (SQL)",
+        "Subqueries (SQL)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need all customers, and if they have any orders, only the ones with status 'shipped'. The current query drops customers with no orders:\n\n```sql\nSELECT c.customer_id, c.name, o.order_id, o.status\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nWHERE o.status = 'shipped';\n```\nWhich rewrite returns all customers, showing shipped orders when present and NULLs for customers without shipped orders?",
+          "options": [
+            "```sql\nSELECT c.customer_id, c.name, o.order_id, o.status\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.customer_id AND o.status = 'shipped';\n```",
+            "```sql\nSELECT c.customer_id, c.name, o.order_id, o.status\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nWHERE COALESCE(o.status, 'shipped') = 'shipped';\n```",
+            "```sql\nSELECT c.customer_id, c.name, o.order_id, o.status\nFROM orders o\nRIGHT JOIN customers c ON o.customer_id = c.customer_id AND o.status = 'shipped';\n```",
+            "```sql\nSELECT c.customer_id, c.name, o.order_id, o.status\nFROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.customer_id AND o.status = 'shipped'\n);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Placing the status filter in the JOIN condition preserves the outer-join row even when there is no shipped order. The WHERE clause runs after the join; putting the filter there null-kills the outer join.",
+          "distractor_rationale": "B: Tempting because COALESCE appears to keep NULLs, but if a customer has only non-shipped orders, the rows are filtered out and there is no null-extended row produced by LEFT JOIN.\nC: EXISTS returns only customers who have a shipped order, excluding customers with no orders entirely.\nD: RIGHT JOIN with a predicate in the ON might look symmetric, but it still only returns rows for customers with shipped orders; customers without shipped orders will appear with NULLs for order columns only if the DB preserves the RIGHT OUTER semantics consistently, but the projection and semantics are the same as A only if you remove the WHERE entirely. In practice, A is the standard, clear fix.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given the following data:\n\n```text\nt1(val)\n--------\n1\n1\n2\nNULL\n\nt2(val)\n--------\n1\n3\nNULL\n```\nWhat is the row count of this query?\n\n```sql\nSELECT COUNT(*)\nFROM (\n  SELECT val FROM t1\n  UNION\n  SELECT val FROM t2\n) u;\n```",
+          "options": [
+            "6",
+            "5",
+            "7",
+            "4"
+          ],
+          "correct_option": "D",
+          "explanation": "UNION removes duplicates under set semantics, treating NULLs as equal for duplicate elimination. The distinct values across both tables are {1, 2, 3, NULL}, so the count is 4.",
+          "distractor_rationale": "B/C/D: These assume either UNION ALL semantics (which would produce 7) or that NULLs are not de-duplicated (which could suggest 5 or 6). Under UNION, duplicates including NULL collapse to one.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You need customers whose paid order amount exceeds 1000. The current query risks null-killing groups because the paid-status filter is in WHERE:\n\n```sql\nSELECT c.customer_id, SUM(o.amount) AS total_paid\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nWHERE o.status = 'PAID'\nGROUP BY c.customer_id\nHAVING SUM(o.amount) > 1000;\n```\nWhich rewrite correctly preserves customers without paid orders as groups with 0 so HAVING can exclude them?",
+          "options": [
+            "```sql\nSELECT c.customer_id, SUM(o.amount) AS total_paid\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nGROUP BY c.customer_id\nWHERE SUM(o.amount) > 1000;\n```",
+            "```sql\nSELECT c.customer_id, COALESCE(SUM(o.amount),0) AS total_paid\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.customer_id AND o.status = 'PAID'\nGROUP BY c.customer_id\nHAVING COALESCE(SUM(o.amount),0) > 1000;\n```",
+            "```sql\nSELECT c.customer_id, SUM(o.amount) AS total_paid\nFROM customers c\nINNER JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'PAID'\nGROUP BY c.customer_id\nHAVING SUM(o.amount) > 1000;\n```",
+            "```sql\nSELECT c.customer_id, SUM(o.amount) AS total_paid\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nGROUP BY c.customer_id\nHAVING SUM(o.amount) > 1000 AND o.status = 'PAID';\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Move the status predicate into the JOIN so the LEFT JOIN still produces a null-extended row for customers without paid orders, then use HAVING on the aggregate. COALESCE makes the absence of paid orders read as 0 for the filter.",
+          "distractor_rationale": "B: Works for returning only customers with paid orders, but it no longer preserves customers as groups when there are no paid orders. The question requires preserving them as 0 then filtering via HAVING.\nC: WHERE cannot reference aggregates; also the filter must occur after grouping.\nD: HAVING cannot reference non-grouped columns like o.status unless aggregated or functionally dependent; and the paid filter is still in the wrong place semantically.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider counting orders per customer, keeping customers with zero orders:\n\n```sql\nSELECT c.customer_id,\n       COUNT(*)        AS cnt_star,\n       COUNT(o.order_id) AS cnt_id\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id\nGROUP BY c.customer_id;\n```\nFor a customer with no matching orders, what values do cnt_star and cnt_id have?",
+          "options": [
+            "cnt_star = 1, cnt_id = 1",
+            "cnt_star = 0, cnt_id = 0",
+            "cnt_star = 1, cnt_id = 0",
+            "cnt_star = 0, cnt_id = NULL"
+          ],
+          "correct_option": "C",
+          "explanation": "LEFT JOIN produces one null-extended row per unmatched customer. COUNT(*) counts rows (1), while COUNT(o.order_id) counts only non-NULL values (0).",
+          "distractor_rationale": "B: Assumes no row exists for unmatched customers, but LEFT JOIN guarantees a null-extended row.\nC: COUNT never returns NULL; it returns 0 when there are no non-NULLs.\nD: COUNT(o.order_id) ignores NULLs; it is not 1 when no orders exist.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must list products that have never been sold. Table `sales` contains some rows where `product_id` is NULL. Which query returns the correct set?",
+          "options": [
+            "```sql\nSELECT p.product_id\nFROM products p\nLEFT JOIN sales s ON s.product_id = p.product_id\nWHERE s.product_id IS NULL;\n```",
+            "```sql\nSELECT p.product_id\nFROM products p\nWHERE p.product_id NOT IN (SELECT s.product_id FROM sales s);\n```",
+            "```sql\nSELECT p.product_id\nFROM products p\nWHERE p.product_id IN (\n  SELECT s.product_id FROM sales s GROUP BY s.product_id HAVING COUNT(*) = 0\n);\n```",
+            "```sql\nSELECT p.product_id\nFROM products p\nWHERE NOT EXISTS (\n  SELECT 1 FROM sales s WHERE s.product_id = p.product_id\n);\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "NOT EXISTS is null-safe and correctly excludes products that appear in sales, even when `sales.product_id` contains NULLs. LEFT JOIN ... IS NULL is also valid if written correctly but is sensitive to additional join predicates; here, NOT EXISTS is the safest choice among the options.",
+          "distractor_rationale": "A: This pattern can work, but it only returns correct results if all predicates are in the JOIN. It is vulnerable if other filters end up in WHERE. C is the unambiguously null-safe anti-join.\nB: NOT IN with a subquery that can return NULL yields UNKNOWN for all comparisons, returning no rows in many SQL engines.\nD: HAVING COUNT(*) = 0 can never be true for a grouped result; groups exist only when there is at least one row.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You need each order with its most recent payment timestamp (or NULL if unpaid). Which query avoids duplication and nondeterministic values?",
+          "options": [
+            "```sql\nSELECT o.order_id,\n       (SELECT MAX(paid_at)\n        FROM payments p\n        WHERE p.order_id = o.order_id) AS last_paid_at\nFROM orders o;\n```",
+            "```sql\nSELECT o.order_id, MAX(p.paid_at) AS last_paid_at\nFROM orders o\nLEFT JOIN payments p ON p.order_id = o.order_id\nGROUP BY o.order_id;\n```",
+            "```sql\nSELECT DISTINCT o.order_id, p.paid_at AS last_paid_at\nFROM orders o\nLEFT JOIN payments p ON p.order_id = o.order_id\nWHERE p.paid_at = (\n  SELECT MAX(p2.paid_at) FROM payments p2 WHERE p2.order_id = o.order_id\n);\n```",
+            "```sql\nSELECT o.order_id, p.payment_id, MAX(p.paid_at) AS last_paid_at\nFROM orders o\nLEFT JOIN payments p ON p.order_id = o.order_id\nGROUP BY o.order_id;\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A correlated scalar subquery computing MAX(paid_at) per order returns one row per order without risking nondeterministic selection of other payment columns. Option A also works but only if you don’t project non-aggregated payment columns. Options B and D risk invalid or duplicated rows without care for ties.",
+          "distractor_rationale": "A: Correct for the specific requirement, but many learners then add non-aggregated payment columns (like payment_id) and create nondeterministic results. C is robust and avoids that trap.\nB: Invalid in standard SQL (non-grouped column p.payment_id in SELECT), or else returns arbitrary values.\nD: Filters to latest payments but can duplicate rows if there are ties on paid_at; DISTINCT hides but doesn’t fix the logic. Also excludes orders with no payments entirely unless rewritten with an outer join and careful handling.",
+          "skills_covered": [
+            "SQL",
+            "Subqueries (SQL)",
+            "Aggregation (SQL)"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You must compute total order value per customer but also join to payments (which may have multiple rows per order). The following overcounts because the join multiplies order_items by payments:\n\n```sql\nSELECT c.customer_id,\n       SUM(oi.quantity * oi.unit_price) AS total_value\nFROM customers c\nJOIN orders o       ON o.customer_id = c.customer_id\nJOIN order_items oi ON oi.order_id = o.order_id\nLEFT JOIN payments p ON p.order_id = o.order_id   -- multiple rows here\nGROUP BY c.customer_id;\n```\nWhich rewrite correctly avoids double counting?",
+          "options": [
+            "```sql\nSELECT c.customer_id,\n       SUM(oi.quantity * oi.unit_price) AS total_value\nFROM customers c\nJOIN orders o       ON o.customer_id = c.customer_id\nJOIN order_items oi ON oi.order_id = o.order_id\nWHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.order_id = o.order_id)\nGROUP BY c.customer_id;\n```",
+            "```sql\nSELECT c.customer_id,\n       SUM(DISTINCT oi.quantity * oi.unit_price) AS total_value\nFROM customers c\nJOIN orders o       ON o.customer_id = c.customer_id\nJOIN order_items oi ON oi.order_id = o.order_id\nLEFT JOIN payments p ON p.order_id = o.order_id\nGROUP BY c.customer_id;\n```",
+            "```sql\nWITH order_totals AS (\n  SELECT o.order_id,\n         SUM(oi.quantity * oi.unit_price) AS order_value\n  FROM orders o\n  JOIN order_items oi ON oi.order_id = o.order_id\n  GROUP BY o.order_id\n)\nSELECT c.customer_id, SUM(ot.order_value) AS total_value\nFROM customers c\nJOIN orders o  ON o.customer_id = c.customer_id\nJOIN order_totals ot ON ot.order_id = o.order_id\nLEFT JOIN (\n  SELECT DISTINCT order_id FROM payments\n) p ON p.order_id = o.order_id\nGROUP BY c.customer_id;\n```",
+            "```sql\nSELECT c.customer_id,\n       SUM(oi.quantity * oi.unit_price) / NULLIF(COUNT(p.payment_id),0) AS total_value\nFROM customers c\nJOIN orders o       ON o.customer_id = c.customer_id\nJOIN order_items oi ON oi.order_id = o.order_id\nLEFT JOIN payments p ON p.order_id = o.order_id\nGROUP BY c.customer_id;\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Aggregate order_items to one row per order first, then join that to payments (deduplicated to one row per order if needed) before rolling up to customer. Pre-aggregation prevents multiplicative joins from inflating sums.",
+          "distractor_rationale": "B: DISTINCT on a product of quantity and price is meaningless; duplicates across different items are not guaranteed to be identical and DISTINCT cannot fix multiplicative joins.\nC: Excludes orders that have any payment, which changes the population being summed.\nD: Dividing by count of payments is an ad-hoc correction that produces the wrong result when payment counts vary or are zero.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given the data below, what does the INTERSECT return?\n\n```text\nt1(email)\n-----------\na@x\nb@x\nNULL\n\nt2(email)\n-----------\nb@x\nc@x\nNULL\n```\nQuery:\n\n```sql\nSELECT email FROM t1\nINTERSECT\nSELECT email FROM t2;\n```\nWhat is the result set?",
+          "options": [
+            "```text\nb@x\n```",
+            "```text\nb@x\nNULL\n```",
+            "```text\nNULL\n```",
+            "```text\n(empt y set)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Under SQL set semantics, NULLs are treated as equal for duplicate elimination and set operations. Since NULL appears in both inputs and b@x is common, the result contains b@x and one NULL.",
+          "distractor_rationale": "B: Assumes NULLs never compare equal, but set operations handle NULLs as a single value for set membership.\nC: Misses b@x which is clearly in both.\nD: Would be true only if both sets had no overlap, which they do.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Find customers who have purchased in both categories 'A' and 'B' (at least one purchase in each). Given tables `orders(o_id, customer_id)`, `order_items(o_id, product_id)`, `products(product_id, category)` which query satisfies the requirement robustly?",
+          "options": [
+            "```sql\nSELECT oi.customer_id\nFROM orders o\nJOIN order_items oi ON oi.o_id = o.o_id\nJOIN products p     ON p.product_id = oi.product_id\nWHERE p.category IN ('A','B')\nGROUP BY oi.customer_id\nHAVING COUNT(p.category) = 2;\n```",
+            "```sql\nSELECT oi.customer_id\nFROM orders o\nJOIN order_items oi ON oi.o_id = o.o_id\nJOIN products p     ON p.product_id = oi.product_id\nWHERE p.category IN ('A','B')\nGROUP BY oi.customer_id\nHAVING COUNT(DISTINCT p.category) = 2;\n```",
+            "```sql\nSELECT DISTINCT o.customer_id\nFROM orders o\nWHERE EXISTS (\n  SELECT 1\n  FROM order_items oi\n  JOIN products p ON p.product_id = oi.product_id\n  WHERE oi.o_id = o.o_id AND p.category = 'A'\n);\n```",
+            "```sql\nSELECT oi.customer_id\nFROM orders o\nJOIN order_items oi ON oi.o_id = o.o_id\nJOIN products p     ON p.product_id = oi.product_id\nGROUP BY oi.customer_id\nHAVING SUM(CASE WHEN p.category = 'A' THEN 1 ELSE 0 END) > 0\n   AND SUM(CASE WHEN p.category = 'B' THEN 1 ELSE 0 END) = 0;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Counting DISTINCT categories within the filtered set ensures the customer has at least one purchase in each of A and B, regardless of duplicate items or multiple lines per order.",
+          "distractor_rationale": "B: COUNT without DISTINCT will exceed 2 if there are multiple items in A or B; it fails the requirement.\nC: Explicitly excludes B, contradicting the requirement.\nD: Checks only for category A, not both A and B.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Return orders where all items are from discontinued products. Tables: `orders(o_id)`, `order_items(o_id, product_id)`, `products(product_id, discontinued BOOLEAN)`.\nWhich query is correct?",
+          "options": [
+            "```sql\nSELECT o.o_id\nFROM orders o\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM order_items oi\n  JOIN products p ON p.product_id = oi.product_id\n  WHERE oi.o_id = o.o_id AND p.discontinued = FALSE\n);\n```",
+            "```sql\nSELECT o.o_id\nFROM orders o\nLEFT JOIN order_items oi ON oi.o_id = o.o_id\nLEFT JOIN products p ON p.product_id = oi.product_id\nGROUP BY o.o_id\nHAVING SUM(CASE WHEN p.discontinued = TRUE THEN 1 ELSE 0 END) >= 1;\n```",
+            "```sql\nSELECT DISTINCT o.o_id\nFROM orders o\nJOIN order_items oi ON oi.o_id = o.o_id\nWHERE oi.product_id IN (\n  SELECT product_id FROM products WHERE discontinued = TRUE\n);\n```",
+            "```sql\nSELECT o.o_id\nFROM orders o\nWHERE EXISTS (\n  SELECT 1 FROM order_items oi\n  WHERE oi.o_id = o.o_id\n)\nAND o.o_id NOT IN (\n  SELECT oi.o_id\n  FROM order_items oi\n  JOIN products p ON p.product_id = oi.product_id\n  WHERE p.discontinued = TRUE\n);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Use a NOT EXISTS anti-join to assert there is no non-discontinued item for the order. This correctly handles orders with at least one item and requires all items to be discontinued.",
+          "distractor_rationale": "B: IN ensures at least one discontinued item, not that all items are discontinued.\nC: Checks for at least one discontinued item (>=1), not that there are zero non-discontinued ones. Changing the condition to equal the item count would be needed.\nD: Excludes orders that have any discontinued item; the NOT IN logic is inverted and also risks NULL-related issues.",
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A monthly revenue report shows customer totals almost exactly doubled for customers who split payments across two transactions. The current query sums order_items while joining to payments directly:\n\n```sql\nSELECT c.customer_id,\n       DATE_TRUNC('month', o.order_date) AS month,\n       SUM(oi.quantity * oi.unit_price) AS gross_revenue\nFROM customers c\nJOIN orders o       ON o.customer_id = c.customer_id\nJOIN order_items oi ON oi.order_id = o.order_id\nLEFT JOIN payments p ON p.order_id = o.order_id  -- multiple rows per order possible\nWHERE o.order_date >= DATE '2026-01-01'\nGROUP BY c.customer_id, DATE_TRUNC('month', o.order_date);\n```\nThe finance team confirms items and prices are correct; only orders with two payment rows appear inflated.",
+          "task": "Diagnose precisely why the inflation occurs and propose a corrected query that produces one gross revenue total per order regardless of payment rows, while still allowing finance to filter to paid orders only when they add `p.status = 'CAPTURED'`. Justify your approach and show the final SQL.",
+          "expected_answer": "Root cause: the join to payments multiplies order_items rows by the number of payment rows per order (row multiplication), inflating SUM. Remedy: pre-aggregate order_items to one row per order, then join to a de-duplicated payments relation or move payment status filtering into the JOIN and avoid using payment columns in aggregation. Example fix:\n\n```sql\nWITH order_totals AS (\n  SELECT o.order_id,\n         DATE_TRUNC('month', o.order_date) AS month,\n         SUM(oi.quantity * oi.unit_price) AS order_gross\n  FROM orders o\n  JOIN order_items oi ON oi.order_id = o.order_id\n  WHERE o.order_date >= DATE '2026-01-01'\n  GROUP BY o.order_id, DATE_TRUNC('month', o.order_date)\n),\npaid_orders AS (\n  SELECT DISTINCT p.order_id\n  FROM payments p\n  -- optional filter can be added here safely\n  -- WHERE p.status = 'CAPTURED'\n)\nSELECT c.customer_id, ot.month, SUM(ot.order_gross) AS gross_revenue\nFROM customers c\nJOIN orders o   ON o.customer_id = c.customer_id\nJOIN order_totals ot ON ot.order_id = o.order_id\nLEFT JOIN paid_orders po ON po.order_id = o.order_id\n-- If finance wants only captured, switch LEFT JOIN to INNER JOIN and enable the filter in paid_orders\nGROUP BY c.customer_id, ot.month;\n```\nJustification: Aggregating to one row per order removes multiplicative effects. Any payment-related filters must live in the join (or in a de-duplicated subquery) to avoid null-killing the outer relation pre-aggregation. This keeps semantics correct whether there are 0, 1, or many payment rows.",
+          "rubric": [
+            {
+              "criterion": "Identifies row-multiplication from joining to multi-row payments as the cause of inflation",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why moving payment filters into JOIN (or a deduped payments CTE) preserves outer rows",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a corrected query that pre-aggregates order_items per order",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how the solution accommodates an optional payment-status filter without reintroducing overcounting",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Marketing wants a list of active customers who purchased in Q1 2026 but not in Q2 2026. The schema: `customers(customer_id, active BOOLEAN)`, `orders(order_id, customer_id, order_date)`. Orders exist for both quarters; some customers have orders in both. There are also customers with no orders at all.",
+          "task": "Propose an approach using either set operations or joins/subqueries to return customer_id for active customers who have at least one order in Q1 2026 and zero orders in Q2 2026. Explain how your approach behaves for customers with no orders and discuss NULL safety and performance tradeoffs.",
+          "expected_answer": "Two solid approaches.\n\nSet-based:\n```sql\nWITH q1 AS (\n  SELECT DISTINCT o.customer_id\n  FROM orders o\n  WHERE o.order_date >= DATE '2026-01-01' AND o.order_date < DATE '2026-04-01'\n),\nq2 AS (\n  SELECT DISTINCT o.customer_id\n  FROM orders o\n  WHERE o.order_date >= DATE '2026-04-01' AND o.order_date < DATE '2026-07-01'\n)\nSELECT c.customer_id\nFROM customers c\nJOIN (\n  SELECT * FROM q1\n  EXCEPT\n  SELECT * FROM q2\n) only_q1 ON only_q1.customer_id = c.customer_id\nWHERE c.active = TRUE;\n```\n\nJoin/anti-join:\n```sql\nSELECT c.customer_id\nFROM customers c\nWHERE c.active = TRUE\n  AND EXISTS (\n    SELECT 1 FROM orders o1\n    WHERE o1.customer_id = c.customer_id\n      AND o1.order_date >= DATE '2026-01-01' AND o1.order_date < DATE '2026-04-01'\n  )\n  AND NOT EXISTS (\n    SELECT 1 FROM orders o2\n    WHERE o2.customer_id = c.customer_id\n      AND o2.order_date >= DATE '2026-04-01' AND o2.order_date < DATE '2026-07-01'\n  );\n```\nBehavior: Customers with no orders fail the Q1 EXISTS (or aren’t in q1) and are excluded, as required. NULLs are not an issue because the date predicates are sargable and do not involve NULL-sensitive IN/NOT IN. Performance: EXCEPT requires materializing both sets and deduplication; the NOT EXISTS approach can leverage indexes on (customer_id, order_date) and short-circuit. Both are correct; choose based on engine and indexes.",
+          "rubric": [
+            {
+              "criterion": "Correctly constrains Q1 and Q2 windows and ensures at least one Q1 order and zero Q2 orders",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides either EXCEPT or NOT EXISTS solution that returns only active customers",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains behavior for customers with no orders",
+              "marks": 1
+            },
+            {
+              "criterion": "Discusses NULL safety and performance/index considerations",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Inventory ops asks for suppliers all of whose products are currently out of stock. Tables: `suppliers(supplier_id)`, `products(product_id, supplier_id, in_stock_qty INT)`. Some suppliers have no products yet.",
+          "task": "Choose a strategy and write SQL that returns suppliers for whom no product has in_stock_qty > 0. Ensure that suppliers with no products are included or excluded as you judge appropriate, and justify that decision. Explain why alternative common patterns fail or are risky.",
+          "expected_answer": "Preferred anti-join with NOT EXISTS, excluding suppliers with no products unless explicitly required otherwise:\n\n```sql\n-- Excluding suppliers with no products (common interpretation: \"all of whose products ...\")\nSELECT s.supplier_id\nFROM suppliers s\nWHERE EXISTS (\n  SELECT 1 FROM products p WHERE p.supplier_id = s.supplier_id\n)\nAND NOT EXISTS (\n  SELECT 1 FROM products p\n  WHERE p.supplier_id = s.supplier_id AND p.in_stock_qty > 0\n);\n```\nRationale: The first EXISTS requires at least one product; the second ensures no product has positive stock. Alternative with LEFT JOIN ... IS NULL is correct if all predicates are in ON, e.g. LEFT JOIN products p ON p.supplier_id = s.supplier_id AND p.in_stock_qty > 0 WHERE p.supplier_id IS NULL; however, placing filters in WHERE null-kills the outer join. Using `HAVING SUM(CASE WHEN in_stock_qty > 0 THEN 1 ELSE 0 END) = 0` can include suppliers with products only if you GROUP suppliers and ensure there’s at least one product, but it’s easier to reason about with NOT EXISTS. If the interpretation must include suppliers with no products (vacuously true), simply drop the first EXISTS.",
+          "rubric": [
+            {
+              "criterion": "Presents a correct NOT EXISTS anti-join and explains inclusion/exclusion of no-product suppliers",
+              "marks": 3
+            },
+            {
+              "criterion": "Discusses LEFT JOIN ... IS NULL variant and where it can go wrong",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why HAVING with conditional aggregation can work but is more error-prone",
+              "marks": 1
+            },
+            {
+              "criterion": "Uses precise, runnable SQL with proper predicates",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Subqueries (SQL)",
+            "Aggregation (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must deliver a net revenue by product report for 2026-Q1 with these columns: product_id, gross_sales (sum of quantity*price from order_items), refunds_amount (sum of refund amounts from returns), net_revenue (gross - refunds). Some products have sales but no returns; some have returns but no sales (promotions test). Tables: `order_items(order_id, product_id, quantity, unit_price)`, `orders(order_id, order_date)`, `returns(return_id, order_id, product_id, refund_amount)`.",
+          "task": "Produce a single SQL query that outputs the columns above for 2026-01-01 to 2026-03-31 inclusive, including products with only sales or only returns. Filter to products with net_revenue > 1000. Explain how your joins and HAVING/WHERE placement avoid null-killing and double counting.",
+          "expected_answer": "A safe pattern is to pre-aggregate each side to product granularity over the date range, then outer join and compute net:\n\n```sql\nWITH sales AS (\n  SELECT oi.product_id,\n         SUM(oi.quantity * oi.unit_price) AS gross_sales\n  FROM order_items oi\n  JOIN orders o ON o.order_id = oi.order_id\n  WHERE o.order_date >= DATE '2026-01-01' AND o.order_date <= DATE '2026-03-31'\n  GROUP BY oi.product_id\n),\nrefunds AS (\n  SELECT r.product_id,\n         SUM(r.refund_amount) AS refunds_amount\n  FROM returns r\n  JOIN orders o ON o.order_id = r.order_id\n  WHERE o.order_date >= DATE '2026-01-01' AND o.order_date <= DATE '2026-03-31'\n  GROUP BY r.product_id\n)\nSELECT COALESCE(s.product_id, f.product_id) AS product_id,\n       COALESCE(s.gross_sales, 0) AS gross_sales,\n       COALESCE(f.refunds_amount, 0) AS refunds_amount,\n       COALESCE(s.gross_sales, 0) - COALESCE(f.refunds_amount, 0) AS net_revenue\nFROM sales s\nFULL OUTER JOIN refunds f ON f.product_id = s.product_id\nHAVING COALESCE(s.gross_sales, 0) - COALESCE(f.refunds_amount, 0) > 1000;\n```\nExplanation: Aggregating first prevents multiplicative joins between items and returns. FULL OUTER JOIN includes products present on either side. Filters on the aggregated results must be applied after the join: use HAVING (or wrap and WHERE) to avoid null-killing via WHERE on base tables. In engines without FULL OUTER JOIN, simulate with `LEFT JOIN ... UNION ALL ... RIGHT JOIN ... WHERE` anti-overlap or coalesce keys in a UNION of both sides grouped again.",
+          "rubric": [
+            {
+              "criterion": "Correct pre-aggregation on both sales and returns to product level to avoid double counting",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate use of FULL OUTER JOIN (or equivalent) and COALESCE to include one-sided products",
+              "marks": 2
+            },
+            {
+              "criterion": "Computes net_revenue and filters using HAVING/outer SELECT without null-killing",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides an alternative for systems without FULL OUTER JOIN or explains simulation",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Multi-table querying suite: joins and set operations",
+          "brief": "Using the provided retail schema (customers, orders, order_items, products, payments), write a suite of SQL queries that answer five business questions. Focus on correct join semantics, correct handling of NULLs, and using at least one set operation. Avoid row-multiplication bugs by pre-aggregating where necessary.",
+          "deliverable": "A single .sql file containing 5 labeled queries (Q1–Q5), each runnable independently with comments explaining key join/filter choices.",
+          "acceptance_criteria": [
+            "Includes at least one INNER JOIN and one OUTER JOIN (LEFT/RIGHT or simulated FULL).",
+            "Uses at least one set operation (UNION/UNION ALL/INTERSECT/EXCEPT) appropriately, with a comment justifying the choice over the alternatives.",
+            "Q1: Top 10 customers by total revenue in 2026 with their last order date. Customers with no orders must not appear.",
+            "Q2: Products never sold (null-safe anti-join) — must use NOT EXISTS or LEFT JOIN ... IS NULL and explain NULL safety.",
+            "Q3: Customers who purchased in Q1 2026 but not in Q2 2026 — implemented via EXCEPT or NOT EXISTS anti-join.",
+            "Q4: Order-level gross totals joined to payments without duplication (pre-aggregate items before any join to multi-row tables).",
+            "Q5: A reconciliation listing product_ids present in sales but not in returns and vice versa (two-sided anti-join or set ops).",
+            "All queries run without syntax errors and return the stated columns, with no obvious duplication inflation."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct join choices and placement of predicates to preserve outer-join semantics (Q1, Q4)",
+              "marks": 5
+            },
+            {
+              "criterion": "Null-safe anti-joins demonstrated and explained (Q2, Q5)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct and justified use of set operations (Q3 and/or Q5)",
+              "marks": 4
+            },
+            {
+              "criterion": "Pre-aggregation to avoid multiplicative joins where needed (Q4)",
+              "marks": 4
+            },
+            {
+              "criterion": "Code quality: clear labeling, runnable statements, and inline comments explaining key decisions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Joins (SQL)",
+            "Aggregation (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a summary report: customer-segment monthly performance with HAVING and subqueries",
+          "brief": "Produce a monthly summary report for 2026 showing, per customer segment, the number of orders, distinct customers, total revenue, and average order value. Segments are defined by a lookup `segments(customer_id, segment_name)`. Include segments with zero orders as rows with 0 metrics. Filter the final report to segments with total revenue > 50,000 using HAVING (or an outer SELECT). Use subqueries where appropriate; window functions are not required.",
+          "deliverable": "A .sql file that creates the report as a single SELECT (you may use CTEs) with columns: month, segment_name, orders_count, distinct_customers, total_revenue, avg_order_value. Include comments explaining WHERE vs HAVING choices and how zero-order segments are preserved.",
+          "acceptance_criteria": [
+            "Aggregates by calendar month in 2026 and segment_name.",
+            "Computes orders_count, distinct_customers, total_revenue (sum of quantity*unit_price), and avg_order_value = total_revenue / NULLIF(orders_count,0).",
+            "Preserves segments with zero orders via an outer join from the segment/customer universe to monthly sales aggregates.",
+            "Filters to total_revenue > 50000 using HAVING (or wraps the grouped result and filters in an outer WHERE).",
+            "At least one subquery or CTE is used to pre-aggregate order_items per order before joining to customers/segments.",
+            "Query runs without syntax errors and returns the required columns with correct data types."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct monthly and segment grouping, with accurate aggregate calculations",
+              "marks": 6
+            },
+            {
+              "criterion": "Proper use of HAVING/outer filter to apply the revenue threshold post-aggregation",
+              "marks": 4
+            },
+            {
+              "criterion": "Use of outer join to preserve zero-order segments and correct COALESCE/NULL handling",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate use of subquery/CTE to pre-aggregate order_items to order revenue",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and correctness of comments explaining design choices",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Aggregation (SQL)",
+            "Joins (SQL)",
+            "Subqueries (SQL)"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-023-S03",
+      "skills_assessed": [
+        "SQL",
+        "Database Design",
+        "Aggregation (SQL)",
+        "CTEs (SQL)",
+        "Window functions (SQL)"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit an `orders` table with 1,000,000 rows.\n\n```sql\n-- existing\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT,\n  created_at TIMESTAMP\n);\n\n-- change applied during a deployment\nALTER TABLE orders\n  ADD COLUMN status VARCHAR(10) NOT NULL DEFAULT 'new';\n\n-- later\nINSERT INTO orders (id, customer_id, created_at)\nVALUES (1000001, 42, TIMESTAMP '2026-01-15 10:00:00');\n```\nWhat is the state of `orders.status` after these statements?",
+          "options": [
+            "Existing rows get `'new'`, but future inserts must specify `status` explicitly or they error.",
+            "The column is added with `NULL` for existing rows; `NOT NULL` is enforced only for new rows.",
+            "All existing rows have `status = 'new'`; future inserts that omit `status` get `'new'`; `NOT NULL` is enforced.",
+            "The `ALTER TABLE` fails because you cannot add a `NOT NULL` column when the table already has rows."
+          ],
+          "correct_option": "C",
+          "explanation": "Mainstream RDBMS apply the DEFAULT when adding a NOT NULL column, rewriting existing rows to the default and enforcing NOT NULL thereafter. Omitting the column on future inserts uses the default.",
+          "distractor_rationale": "B: Plausible if you think NOT NULL blocks the change, but the DEFAULT enables backfill.\nC: A common belief that existing rows are left NULL, but that would violate NOT NULL.\nD: Reverses default semantics; DEFAULT continues to apply to future inserts.",
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this constraint and insert:\n\n```sql\nCREATE TABLE shipments (\n  id INT PRIMARY KEY,\n  order_date DATE,\n  ship_date DATE,\n  CONSTRAINT chk_ship_after_order CHECK (ship_date >= order_date)\n);\n\nINSERT INTO shipments (id, order_date, ship_date)\nVALUES (1, NULL, DATE '2023-05-01');\n```\nWhat happens and why?",
+          "options": [
+            "The insert succeeds because the CHECK evaluates to UNKNOWN when `order_date` is NULL, and UNKNOWN does not violate a CHECK.",
+            "The insert fails because comparisons with NULL are not allowed in CHECK constraints.",
+            "The insert succeeds and `order_date` is automatically set to `ship_date` to satisfy the CHECK.",
+            "The insert succeeds but `ship_date` is set to NULL to avoid violating the CHECK."
+          ],
+          "correct_option": "A",
+          "explanation": "CHECK constraints reject only FALSE. When `order_date` is NULL, `ship_date >= order_date` is UNKNOWN, which passes. If you need to forbid NULLs, add an explicit NOT NULL on `order_date`.",
+          "distractor_rationale": "B: Many think NULL comparisons \"error\", but in SQL they yield UNKNOWN, not an error.\nC: SQL does not auto-correct values to satisfy constraints.\nD: Also invents silent mutation; constraints never rewrite data unless defined triggers do so.",
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You attempt to define this foreign key:\n\n```sql\nCREATE TABLE customers (\n  id INT PRIMARY KEY\n);\n\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  CONSTRAINT fk_order_customer\n    FOREIGN KEY (customer_id)\n    REFERENCES customers(id)\n    ON DELETE SET NULL\n);\n```\nWhat is the outcome at DDL time?",
+          "options": [
+            "The DDL succeeds and deleting a customer sets `orders.customer_id` to 0 instead of NULL.",
+            "The DDL is rejected because `ON DELETE SET NULL` conflicts with `customer_id` being NOT NULL.",
+            "The DDL succeeds, but deleting a customer later will fail at DELETE time.",
+            "The DDL succeeds and `ON DELETE` is ignored, acting like RESTRICT."
+          ],
+          "correct_option": "B",
+          "explanation": "A foreign key cannot request `SET NULL` on delete while the referencing column is `NOT NULL`. RDBMSs enforce this at DDL time to avoid impossible actions.",
+          "distractor_rationale": "B: Sounds reasonable, but systems block the contradiction earlier.\nC: There is no implicit sentinel substitution.\nD: Engines do not silently change referential actions; they'd error instead.",
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You need a 7-day trailing average revenue per calendar day, including days with no sales as zero. Data:\n\n```sql\nCREATE TABLE sales (dt DATE, amount DECIMAL(12,2));\n```\nWhich query correctly includes zero-sales days and computes the trailing 7-calendar-day average?",
+          "options": [
+            "```sql\nWITH daily AS (\n  SELECT dt, SUM(amount) AS revenue FROM sales GROUP BY dt\n)\nSELECT dt,\n       AVG(revenue) OVER (ORDER BY dt RANGE BETWEEN INTERVAL '6' DAY PRECEDING AND CURRENT ROW) AS avg7\nFROM daily\nORDER BY dt;\n```",
+            "```sql\nWITH daily AS (\n  SELECT dt, SUM(amount) AS revenue FROM sales GROUP BY dt\n)\nSELECT dt,\n       AVG(revenue) OVER (PARTITION BY 1 ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg7\nFROM daily\nORDER BY dt;\n```",
+            "```sql\nSELECT dt,\n       AVG(amount) OVER (ORDER BY dt ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg7\nFROM sales\nORDER BY dt;\n```",
+            "```sql\nWITH RECURSIVE calendar AS (\n  SELECT MIN(dt) AS d, MAX(dt) AS max_d FROM sales\n), days AS (\n  SELECT d, max_d FROM calendar\n  UNION ALL\n  SELECT d + INTERVAL '1' DAY, max_d FROM days WHERE d < max_d\n), daily AS (\n  SELECT d AS dt\n  FROM days\n), rev AS (\n  SELECT dt, COALESCE(SUM(amount),0) AS revenue\n  FROM daily d LEFT JOIN sales s ON s.dt = d.dt\n  GROUP BY dt\n)\nSELECT dt,\n       AVG(revenue) OVER (ORDER BY dt ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg7\nFROM rev\nORDER BY dt;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Only A manufactures a complete calendar using a recursive CTE, left joins sales to fill zeros, and uses a 7-row frame aligned to days. The other options compress gaps and so misstate a calendar-day window or rely on nonportable RANGE INTERVAL frames.",
+          "distractor_rationale": "B: Skips missing days entirely; the window spans 7 rows of sales, not 7 days.\nC: Some systems support RANGE with INTERVAL, but it still ignores truly absent days.\nD: `PARTITION BY 1` is a no-op; without a complete calendar, gaps still compress.",
+          "skills_covered": [
+            "CTEs (SQL)",
+            "Window functions (SQL)",
+            "Aggregation (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You need the first recorded status per order, deterministically, even when two events share the same timestamp. Data:\n\n```sql\nCREATE TABLE order_status_log (\n  id INT PRIMARY KEY,\n  order_id INT,\n  status TEXT,\n  logged_at TIMESTAMP\n);\n```\nWhich query guarantees a single, deterministic first row per `order_id`?",
+          "options": [
+            "```sql\nSELECT *\nFROM (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY order_id\n           ORDER BY logged_at, id\n         ) AS rn\n  FROM order_status_log\n) s\nWHERE rn = 1;\n```",
+            "```sql\nSELECT osl.*\nFROM order_status_log osl\nJOIN (\n  SELECT order_id, MIN(logged_at) AS first_ts\n  FROM order_status_log GROUP BY order_id\n) m ON m.order_id = osl.order_id AND m.first_ts = osl.logged_at;\n```",
+            "```sql\nSELECT * FROM order_status_log osl\nWHERE NOT EXISTS (\n  SELECT 1 FROM order_status_log x\n  WHERE x.order_id = osl.order_id AND x.logged_at < osl.logged_at\n);\n```",
+            "```sql\nSELECT *\nFROM (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY order_id\n           ORDER BY logged_at\n         ) AS rn\n  FROM order_status_log\n) s\nWHERE rn = 1;\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Ties on `logged_at` must be broken with a stable secondary key. Ordering by `(logged_at, id)` inside ROW_NUMBER ensures deterministic selection of exactly one row per order.",
+          "distractor_rationale": "B: When multiple rows share the same minimal timestamp, it returns multiple rows per order.\nC: Without a tie-breaker, the chosen row is non-deterministic across executions.\nD: Also returns all rows tied at the minimum timestamp.",
+          "skills_covered": [
+            "Window functions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You must select all orders created in calendar year 2023 from a `TIMESTAMP` column `created_at` that stores times. Which filter is correct and robust?",
+          "options": [
+            "```sql\nWHERE created_at BETWEEN TIMESTAMP '2023-01-01 00:00:00'\n                     AND TIMESTAMP '2023-12-31 23:59:59'\n```",
+            "```sql\nWHERE EXTRACT(YEAR FROM created_at) = 2023\n```",
+            "```sql\nWHERE DATE(created_at) BETWEEN DATE '2023-01-01' AND DATE '2023-12-31'\n```",
+            "```sql\nWHERE created_at >= TIMESTAMP '2023-01-01 00:00:00'\n  AND created_at <  TIMESTAMP '2024-01-01 00:00:00'\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A half-open interval is sargable and includes all times in 2023 without missing sub-second values or depending on function calls that defeat indexes.",
+          "distractor_rationale": "B: Misses rows with fractional seconds after 23:59:59.999..., and assumes a max time.\nC: Works logically but forces a function on the column, often killing index use.\nD: Casting can strip times and is non-sargable in many engines; also time zone casts may bite.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This query errors because window functions are not allowed in `WHERE`:\n\n```sql\nSELECT customer_id,\n       SUM(amount) OVER (PARTITION BY customer_id) AS total\nFROM payments\nWHERE SUM(amount) OVER (PARTITION BY customer_id) > 1000;\n```\nWhich rewrite preserves the intended logic?",
+          "options": [
+            "```sql\nWITH t AS (\n  SELECT customer_id,\n         SUM(amount) OVER (PARTITION BY customer_id) AS total\n  FROM payments\n)\nSELECT * FROM t WHERE total > 1000;\n```",
+            "```sql\nSELECT customer_id,\n       SUM(amount) OVER (PARTITION BY customer_id) AS total\nFROM payments\nQUALIFY total > 1000;\n```",
+            "```sql\nSELECT customer_id\nFROM payments\nGROUP BY customer_id\nHAVING SUM(amount) > 1000;\n```",
+            "```sql\nSELECT customer_id,\n       SUM(amount) OVER (PARTITION BY customer_id) AS total\nFROM payments\nWHERE total > 1000;\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Compute the windowed column in a CTE or subquery, then filter by it. HAVING changes the result to grouped rows. QUALIFY is nonstandard and not portable. Aliases are not visible to WHERE in the same SELECT block.",
+          "distractor_rationale": "B: Produces a grouped result (one row per customer) and loses the original row-level detail.\nC: Works only in certain dialects; the course targets portable SQL.\nD: Aliases from SELECT are not usable in WHERE; window still not allowed there.",
+          "skills_covered": [
+            "CTEs (SQL)",
+            "Window functions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You want exactly one primary address per customer, the most recently created. Table:\n\n```sql\nCREATE TABLE addresses (\n  id INT PRIMARY KEY,\n  customer_id INT,\n  created_at TIMESTAMP,\n  is_primary INT -- 1 or 0\n);\n```\nWhich statement correctly sets `is_primary` across all rows in one pass?",
+          "options": [
+            "```sql\nUPDATE addresses SET is_primary = 0;\nUPDATE addresses SET is_primary = 1\nWHERE (customer_id, created_at) IN (\n  SELECT customer_id, MAX(created_at) FROM addresses GROUP BY customer_id\n);\n```",
+            "```sql\nUPDATE addresses a\nSET is_primary = 1\nWHERE created_at = (\n  SELECT MAX(created_at) FROM addresses WHERE customer_id = a.customer_id\n);\n```",
+            "```sql\nWITH ranked AS (\n  SELECT id,\n         ROW_NUMBER() OVER (\n           PARTITION BY customer_id ORDER BY created_at DESC, id DESC\n         ) AS rn\n  FROM addresses\n)\nUPDATE addresses a\nSET is_primary = CASE WHEN r.rn = 1 THEN 1 ELSE 0 END\nFROM ranked r\nWHERE a.id = r.id;\n```",
+            "```sql\nWITH ranked AS (\n  SELECT id,\n         RANK() OVER (PARTITION BY customer_id ORDER BY created_at DESC) AS rk\n  FROM addresses\n)\nUPDATE addresses a\nSET is_primary = CASE WHEN r.rk = 1 THEN 1 ELSE 0 END\nFROM ranked r\nWHERE a.id = r.id;\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "ROW_NUMBER with a deterministic tie-break (id) ensures exactly one row per customer gets rn = 1, and the joined UPDATE sets a single primary unambiguously.",
+          "distractor_rationale": "B: If two rows share the same MAX timestamp, both become primary.\nC: RANK yields multiple 1s on ties, violating uniqueness of primary.\nD: Two-step updates are race-prone and still duplicate primaries on ties.",
+          "skills_covered": [
+            "Window functions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have a view and then rename a referenced column:\n\n```sql\nCREATE TABLE products (\n  id INT PRIMARY KEY,\n  price DECIMAL(10,2)\n);\n\nCREATE VIEW product_prices AS\nSELECT id, price FROM products;\n\nALTER TABLE products RENAME COLUMN price TO base_price;\n\nSELECT * FROM product_prices;\n```\nWhat happens at the final SELECT in mainstream RDBMS?",
+          "options": [
+            "It silently redirects `price` to `base_price` on first use only.",
+            "It fails because the view definition still references `price`; the view must be recreated or altered.",
+            "It succeeds because views automatically update to follow column renames.",
+            "It returns `NULL` for `price` until the view is refreshed."
+          ],
+          "correct_option": "B",
+          "explanation": "Dependency metadata is not auto-rewritten on column renames in common systems. The view becomes invalid or errors on use until fixed.",
+          "distractor_rationale": "B: Tempting but unsafe assumption; engines don't rewrite view SQL text.\nC: Views don't fill with NULLs when a referenced column disappears.\nD: There is no silent remapping of names; failing fast protects correctness.",
+          "skills_covered": [
+            "Database Design",
+            "SQL"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Given possible duplicate timestamps, what does this query output for rows sharing the same `ts`?\n\n```sql\nSELECT ts, val,\n       AVG(val) OVER (\n         ORDER BY ts\n       ) AS running_avg\nFROM readings\nORDER BY ts, val;\n```\nAssume SQL's default window frame semantics and no PARTITION clause.",
+          "options": [
+            "Peers at the same `ts` are averaged one-by-one (ROWS), so their `running_avg` changes across peer rows.",
+            "Rows with the same `ts` get the same `running_avg`, averaging all rows with `ts` less than or equal to that timestamp (including all peers).",
+            "The query errors because `ORDER BY ts` must be unique for window functions.",
+            "Each row computes its own average independently, so peers at the same `ts` have different `running_avg`."
+          ],
+          "correct_option": "B",
+          "explanation": "With ORDER BY, the default frame is RANGE UNBOUNDED PRECEDING to CURRENT ROW. RANGE groups peers (same ORDER BY value), so all peers share the same frame and thus the same running average.",
+          "distractor_rationale": "B: Confuses ROWS with RANGE and ignores peer grouping.\nC: Window ORDER BY does not require uniqueness.\nD: Describes ROWS semantics; default is RANGE in standard defaults for numeric/date ORDER BY.",
+          "skills_covered": [
+            "Window functions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A legacy `orders` table allows NULL `customer_id` and free-text `status`. Analytics are noisy because orphan orders and inconsistent statuses leak into reports. You must: (1) backfill and enforce `customer_id` as NOT NULL with a foreign key to `customers(id)` using `ON DELETE RESTRICT`, and (2) migrate `orders.status` to a controlled `order_status(id, code)` with a foreign key. You cannot take the system offline for long and want to avoid failed DDL on dirty data.",
+          "task": "Propose a concrete, stepwise migration plan using DDL and DML that avoids long blocking and guarantees integrity at the end. Include example SQL for: (a) detecting violations before adding constraints (you may use a CTE), (b) backfilling or quarantining bad rows, (c) adding constraints in a safe order, and (d) ensuring new writes comply during the migration.",
+          "expected_answer": "A good answer lays out phases:\n\n1) Diagnose with read-only queries:\n```sql\n-- orphan candidates\nWITH orphans AS (\n  SELECT o.id FROM orders o\n  LEFT JOIN customers c ON c.id = o.customer_id\n  WHERE o.customer_id IS NULL OR c.id IS NULL\n)\nSELECT COUNT(*) FROM orphans;\n\n-- uncontrolled statuses\nSELECT status, COUNT(*) FROM orders GROUP BY status ORDER BY COUNT(*) DESC;\n```\n\n2) Backfill/clean:\n- Decide handling for `customer_id IS NULL`: if legitimate test data, move to a quarantine table; otherwise map to real customers via a mapping table or delete.\n```sql\n-- quarantine example\nCREATE TABLE orders_quarantine AS\nSELECT * FROM orders WHERE customer_id IS NULL;\nDELETE FROM orders WHERE customer_id IS NULL;\n```\n- Create `order_status` reference and map normalized codes:\n```sql\nCREATE TABLE order_status (\n  id INT PRIMARY KEY,\n  code VARCHAR(20) UNIQUE NOT NULL\n);\nINSERT INTO order_status(id, code) VALUES\n  (1,'new'),(2,'paid'),(3,'shipped'),(4,'cancelled');\n\nALTER TABLE orders ADD COLUMN status_id INT; -- nullable temporarily\nUPDATE orders SET status_id = CASE LOWER(TRIM(status))\n  WHEN 'new' THEN 1 WHEN 'paid' THEN 2 WHEN 'shipped' THEN 3 WHEN 'cancelled' THEN 4\n  ELSE NULL END;\nDELETE FROM orders WHERE status_id IS NULL; -- or quarantine/augment mapping until none remain\n```\n\n3) Protect new writes early by adding defaults and CHECKs before strictness:\n```sql\nALTER TABLE orders ALTER COLUMN status_id SET DEFAULT 1; -- 'new'\n```\n\n4) Add foreign keys and finally NOT NULLs in the safe order (FK references must be valid first):\n```sql\nALTER TABLE orders\n  ADD CONSTRAINT fk_orders_customer\n    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT;\n\nALTER TABLE orders\n  ADD CONSTRAINT fk_orders_status\n    FOREIGN KEY (status_id) REFERENCES order_status(id);\n\nALTER TABLE orders ALTER COLUMN customer_id SET NOT NULL;\nALTER TABLE orders DROP COLUMN status;\nALTER TABLE orders ALTER COLUMN status_id SET NOT NULL;\n```\n\n5) Optional: supporting indexes on FKs to protect DELETE performance and analytics:\n```sql\nCREATE INDEX ON orders(customer_id);\nCREATE INDEX ON orders(status_id);\n```\n\n6) For long tables, batch backfills and verify progress with CTE probes after each batch. Justification: detect -> clean -> constrain, so DDL doesn't fail; make writes safe early with defaults; enforce referential integrity before NOT NULL so no impossible states are created.",
+          "rubric": [
+            {
+              "criterion": "Identifies and queries dirty data up front (CTE or equivalent orphan/status probes)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear backfill/quarantine strategy with concrete SQL (mapping, deletes or quarantine)",
+              "marks": 2
+            },
+            {
+              "criterion": "Adds constraints in a correct, safe order with justification (FKs before NOT NULL; default to protect new writes)",
+              "marks": 3
+            },
+            {
+              "criterion": "Mentions performance/operational concerns (batching/indices/minimal blocking)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Database Design",
+            "CTEs (SQL)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Product analytics wants monthly revenue for the last 12 months, showing months with zero revenue, and a 3-month trailing average. The `orders` table has `created_at TIMESTAMP` and `total DECIMAL`. Some months may have no orders.",
+          "task": "Write and justify a query that produces one row per calendar month for the last 12 months relative to `CURRENT_DATE`, with columns: `month_start` (DATE), `revenue` (sum of totals in that month, zero if none), and `avg3` (average of the last three months' revenue including the current month). Use a CTE to generate the month series and a window function for `avg3`. Explain how you handle boundaries and gaps.",
+          "expected_answer": "Answer should use a months CTE and a left join:\n```sql\nWITH RECURSIVE months AS (\n  SELECT DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11' MONTH AS m_start, 0 AS n\n  UNION ALL\n  SELECT m_start + INTERVAL '1' MONTH, n + 1 FROM months WHERE n < 11\n), revenue AS (\n  SELECT DATE_TRUNC('month', created_at) AS m_start,\n         SUM(total) AS revenue\n  FROM orders\n  WHERE created_at >= (DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11' MONTH)\n    AND created_at <  DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1' MONTH\n  GROUP BY DATE_TRUNC('month', created_at)\n), merged AS (\n  SELECT m.m_start AS month_start,\n         COALESCE(r.revenue, 0) AS revenue\n  FROM months m\n  LEFT JOIN revenue r ON r.m_start = m.m_start\n)\nSELECT month_start,\n       revenue,\n       AVG(revenue) OVER (\n         ORDER BY month_start ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\n       ) AS avg3\nFROM merged\nORDER BY month_start;\n```\nJustification: the recursive CTE materializes exactly 12 month starts; the revenue CTE aggregates by month using a half-open interval; left join fills missing months with zero. The window computes a 3-row trailing average aligned to months so gaps don't compress.",
+          "rubric": [
+            {
+              "criterion": "Generates a complete 12-month series via CTE (recursive or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses correct half-open date bounds and aggregates to month",
+              "marks": 2
+            },
+            {
+              "criterion": "Left join to fill gaps with zero revenue",
+              "marks": 1
+            },
+            {
+              "criterion": "Computes trailing 3-month average with proper ROWS frame and ordering",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CTEs (SQL)",
+            "Window functions (SQL)",
+            "Aggregation (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A KPI uses this query to compute a running total of shipped quantity by `shipped_at` date. Analysts report that on days with multiple shipments at the same timestamp, the running total jumps by more than the day's sum.\n\n```sql\nSELECT shipped_at, qty,\n       SUM(qty) OVER (ORDER BY shipped_at) AS running_qty\nFROM shipments\nORDER BY shipped_at;\n```\nSample data show duplicated `shipped_at` values.",
+          "task": "Diagnose precisely why the running total \"jumps\" on tied timestamps and provide a corrected query that makes the running total advance by each row (or by each logical day) as intended. Justify your choice of frame/order.",
+          "expected_answer": "The default frame for `ORDER BY` is RANGE UNBOUNDED PRECEDING to CURRENT ROW, which groups peers with the same `shipped_at`. Each peer row sees the same frame (including all peers) so amounts are effectively added all at once. Fix by switching to an explicit ROWS frame, or by adding a deterministic tie-breaker to the ORDER BY:\n```sql\n-- Option A: row-based running total (counts each row)\nSELECT shipped_at, qty,\n       SUM(qty) OVER (\n         ORDER BY shipped_at, id\n         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n       ) AS running_qty\nFROM shipments\nORDER BY shipped_at, id;\n\n-- Option B: day-based running total (one step per day)\nWITH daily AS (\n  SELECT DATE(shipped_at) AS d, SUM(qty) AS day_qty\n  FROM shipments GROUP BY DATE(shipped_at)\n)\nSELECT d,\n       SUM(day_qty) OVER (\n         ORDER BY d ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n       ) AS running_qty\nFROM daily\nORDER BY d;\n```\nExplanation: ROWS uses physical row order (with tie-breaker) so peers don't expand the frame; or aggregate by day first to step per day.",
+          "rubric": [
+            {
+              "criterion": "Correct diagnosis referencing RANGE default and peer grouping on tied ORDER BY values",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a corrected query using ROWS with a deterministic tie-breaker or pre-aggregation",
+              "marks": 3
+            },
+            {
+              "criterion": "Justifies why the chosen frame/order fixes the jump and matches business intent",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Window functions (SQL)",
+            "Aggregation (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A marketplace wants to prevent negative money from entering the system and keep analytics stable. Current tables:\n\n```sql\nCREATE TABLE products (\n  id INT PRIMARY KEY,\n  sku TEXT UNIQUE NOT NULL,\n  price DECIMAL(10,2) NOT NULL\n);\n\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  created_at TIMESTAMP NOT NULL\n);\n\nCREATE TABLE order_items (\n  id INT PRIMARY KEY,\n  order_id INT NOT NULL,\n  product_id INT NOT NULL,\n  qty INT NOT NULL,\n  unit_price DECIMAL(10,2) NOT NULL\n);\n```\nRequirements: (1) Enforce that `qty > 0` and `unit_price >= 0`; (2) prevent deleting a product that appears in `order_items`; (3) an analytics query must return, for each order, the percentage that each item contributes to the order's total, stable under row reorderings.",
+          "task": "Propose the DDL to enforce (1) and (2), and write the analytics query for (3) using a CTE and a window function. Explain any design choices (e.g., referential action) that keep both OLTP and analytics sane.",
+          "expected_answer": "Constraints and FK:\n```sql\nALTER TABLE order_items\n  ADD CONSTRAINT chk_qty_positive CHECK (qty > 0),\n  ADD CONSTRAINT chk_price_nonneg CHECK (unit_price >= 0);\n\nALTER TABLE order_items\n  ADD CONSTRAINT fk_oi_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE;\n\nALTER TABLE order_items\n  ADD CONSTRAINT fk_oi_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT;\n```\nJustification: negative amounts are blocked at write-time; deleting an order should remove its items (CASCADE) but products with history must not be dropped (RESTRICT) to preserve analytics.\n\nAnalytics query:\n```sql\nWITH line_values AS (\n  SELECT oi.id, oi.order_id,\n         (oi.qty * oi.unit_price) AS line_total\n  FROM order_items oi\n), order_sums AS (\n  SELECT order_id, SUM(line_total) AS order_total\n  FROM line_values GROUP BY order_id\n)\nSELECT lv.order_id, lv.id AS order_item_id,\n       lv.line_total,\n       CASE WHEN os.order_total = 0 THEN 0\n            ELSE lv.line_total / os.order_total END AS pct_of_order\nFROM line_values lv\nJOIN order_sums os USING (order_id)\nORDER BY lv.order_id, lv.id;\n```\nOptionally, the percentage can also be computed via a window sum:\n```sql\nSELECT oi.order_id, oi.id,\n       (oi.qty * oi.unit_price) AS line_total,\n       (oi.qty * oi.unit_price)\n       / NULLIF(SUM(oi.qty * oi.unit_price) OVER (PARTITION BY oi.order_id), 0) AS pct_of_order\nFROM order_items oi;\n```\nThis uses a partitioned window to get stable denominators per order and avoids sensitivity to input row ordering.",
+          "rubric": [
+            {
+              "criterion": "Correct CHECK constraints for quantity and price boundary conditions",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate FK constraints with justified ON DELETE actions",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct CTE/window-based query computing per-line percent of order total",
+              "marks": 3
+            },
+            {
+              "criterion": "Reasoning connecting constraints to analytics stability (no negative totals, preserved history)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "CTEs (SQL)",
+            "Window functions (SQL)",
+            "Aggregation (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design and implement a controlled sales schema with constraints",
+          "brief": "Deliver a DDL script that creates a small but strict sales schema and demonstrates that constraints enforce data quality without application logic. Your schema must support customers placing orders for products with multiple line items.",
+          "deliverable": "A single SQL file named schema.sql that creates all tables, keys, constraints and indexes, plus a brief verification section of INSERT/DELETE statements that prove the constraints behave as specified.",
+          "acceptance_criteria": [
+            "Tables: customers, products, orders, order_items created with primary keys.",
+            "Foreign keys: orders.customer_id -> customers.id (ON DELETE RESTRICT), order_items.order_id -> orders.id (ON DELETE CASCADE), order_items.product_id -> products.id (ON DELETE RESTRICT).",
+            "Column constraints: order_items.qty > 0; order_items.unit_price >= 0; products.sku UNIQUE and NOT NULL; orders.created_at NOT NULL.",
+            "Adding a NOT NULL column with DEFAULT demonstrated at least once (e.g., orders.status with DEFAULT 'new'), with evidence that existing rows receive the default and new inserts inherit it.",
+            "Verification statements included that intentionally: (a) fail on negative qty, (b) fail when deleting a product referenced by order_items, and (c) cascade-delete order_items when deleting an order, and (d) succeed inserting valid rows without specifying the defaulted NOT NULL column.",
+            "All DDL is executable top-to-bottom on a mainstream RDBMS without vendor-specific features beyond standard SQL features used in the course."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct table and key definitions (PKs, FKs target correct columns)",
+              "marks": 6
+            },
+            {
+              "criterion": "Appropriate referential actions (RESTRICT vs CASCADE) and justification via verification cases",
+              "marks": 5
+            },
+            {
+              "criterion": "Column-level constraints enforce business rules (qty > 0, nonnegative price, unique SKU)",
+              "marks": 4
+            },
+            {
+              "criterion": "NOT NULL + DEFAULT migration demonstrated and behaves correctly for existing and new rows",
+              "marks": 3
+            },
+            {
+              "criterion": "Clarity and executability of schema.sql (order of statements, no errors)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "SQL"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Analytics query pack with CTEs, windows, and date logic",
+          "brief": "Using the schema from Task 1 (or an equivalent), produce a set of analytics queries that answer typical business questions while demonstrating correct use of CTEs, window functions, and robust date filtering.",
+          "deliverable": "A single SQL file named analytics.sql containing at least four standalone queries, each labeled with a comment header. Include a small sample dataset (INSERTs) sufficient to show nontrivial results and, for each query, a commented example of the expected output columns and a few sample rows (as a text or CSV block in comments).",
+          "acceptance_criteria": [
+            "Query A: 12-month monthly revenue report relative to CURRENT_DATE, includes months with zero revenue via a calendar CTE, and computes a 3-month trailing average using a window function.",
+            "Query B: Top 3 products by revenue per calendar month using DENSE_RANK() OVER (PARTITION BY month ORDER BY revenue DESC) with a deterministic tie-breaker.",
+            "Query C: Customer lifetime value table using a CTE to aggregate per customer and a window function to compute each customer's percentile rank by LTV within all customers.",
+            "Query D: Order-level breakdown showing each line's percent of order total using a window sum, with division by zero safely handled via NULLIF or CASE.",
+            "All date filters use half-open intervals (>= start, < next boundary) appropriate to the grain (month/day).",
+            "At least two queries use non-recursive or recursive CTEs; at least two queries use window functions from the course (ROW_NUMBER/DENSE_RANK/SUM OVER/AVG OVER).",
+            "Sample data ensures: at least one month has zero revenue; ties exist for product revenue in a month; and at least one order has multiple lines."
+          ],
+          "rubric": [
+            {
+              "criterion": "Monthly calendar CTE with zero-month inclusion and correct trailing average",
+              "marks": 6
+            },
+            {
+              "criterion": "Top-N per group with correct dense ranking and deterministic ordering",
+              "marks": 4
+            },
+            {
+              "criterion": "Use of CTEs and window functions across the pack meets specification",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct half-open date boundaries and safe division handling",
+              "marks": 3
+            },
+            {
+              "criterion": "Sample data and documented sample outputs demonstrate edge cases",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "CTEs (SQL)",
+            "Window functions (SQL)",
+            "Aggregation (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-023-S04",
+      "skills_assessed": [
+        "SQL",
+        "Database Design",
+        "Data Modeling",
+        "Transactions (SQL)",
+        "Database Indexing",
+        "Query Optimization",
+        "User Management"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Two concurrent sessions run the following on the same row. The application uses a read-then-write pattern that overwrites with an absolute value instead of an in-place increment/decrement.\n\nSession T1:\n```sql\nBEGIN;\nSELECT qty FROM inventory WHERE sku = 'X';  -- returns 10\nUPDATE inventory SET qty = 10 - 7 WHERE sku = 'X';\n-- T1 does not commit yet\n```\n\nSession T2 (starts after T1's SELECT but before T1 commits):\n```sql\nBEGIN;\nSELECT qty FROM inventory WHERE sku = 'X';  -- returns 10\nUPDATE inventory SET qty = 10 - 6 WHERE sku = 'X';\nCOMMIT;\n```\n\nThen T1 executes:\n```sql\nCOMMIT;\n```\nAssume default locking semantics and isolation level \"READ COMMITTED\". What is the final `qty` and why?",
+          "options": [
+            "Final qty is 3, because both updates are serialized by row locks; the second UPDATE subtracts from the result of the first.",
+            "Final qty is 4, because both sessions overwrite with their own absolute values, with T1's later commit winning.",
+            "Final qty is 3, because the database detects a lost update and automatically retries one transaction.",
+            "Final qty is 4, because T2's UPDATE waits, then applies 10-6 to the latest committed value."
+          ],
+          "correct_option": "B",
+          "explanation": "At READ COMMITTED with this anti-pattern (read-then-write absolute value), T2's UPDATE runs while T1 still holds the row lock. However, many engines acquire the lock at UPDATE time. T2's UPDATE will block until T1 commits, then proceed using its precomputed value (10-6=4), overwriting T1's earlier write that set qty to 3. The final qty is 4. Prevent this with in-place arithmetic (UPDATE ... SET qty = qty - 6), SELECT ... FOR UPDATE, version checks, or SERIALIZABLE isolation.",
+          "distractor_rationale": "B: Sounds plausible if both updates were in-place arithmetic. But the application overwrites with absolute values, so the second writer's stale computation can clobber the first.\nC: Reverses the timing. T2 blocks until T1 commits, but it does not recompute against the new value; it uses its already computed 10-6.\nD: Some systems can detect lost updates under SERIALIZABLE or with special settings, but READ COMMITTED does not auto-retry or auto-detect this pattern.",
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider an updatable-view attempt:\n```sql\nCREATE VIEW order_totals AS\nSELECT o.id AS order_id,\n       c.name AS customer_name,\n       SUM(oi.qty * oi.price) AS total\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN customers c ON c.id = o.customer_id\nGROUP BY o.id, c.name;\n\nINSERT INTO order_totals(order_id, customer_name, total)\nVALUES (123, 'Acme', 199.99);\n```\nWhat happens and why?",
+          "options": [
+            "The INSERT is allowed but only if a trigger exists; without it, it fails at runtime when resolving target columns.",
+            "The INSERT fails because the view is not updatable due to both joins and aggregation.",
+            "The INSERT succeeds, but the grouped total is recomputed to match the inserted row during commit.",
+            "The INSERT succeeds by inserting into base tables via inferred defaults for missing columns."
+          ],
+          "correct_option": "B",
+          "explanation": "A view that includes aggregation (GROUP BY/SUM) and joins is not inherently updatable. Without INSTEAD OF triggers or explicit rules that map the write to base tables, the DB rejects DML on such a view.",
+          "distractor_rationale": "B: Updatable views can sometimes write through simple projections, but not through aggregates; the database cannot infer how to split values across base tables.\nC: Mentions triggers, which could make it work, but the option claims the INSERT is allowed first, which is false—the statement is rejected without a trigger defined on the view.\nD: A grouped view is read-only by default; it cannot accept artificial rows that would then be reconciled by recomputation.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You run on a system where views execute with the view owner's privileges (common default). You execute:\n```sql\nREVOKE SELECT ON customers FROM analyst;\nCREATE VIEW v_customers AS SELECT id, name FROM customers;  -- owned by dba\nGRANT SELECT ON v_customers TO analyst;\n```\nWhat can `analyst` see?",
+          "options": [
+            "`analyst` can SELECT from `v_customers` even without privileges on `customers`, because the view runs with the owner's rights.",
+            "`analyst` cannot SELECT from `v_customers` because base table privileges are still required at execution time.",
+            "`analyst` can SELECT only once a materialized copy of the view is created and refreshed.",
+            "`analyst` can SELECT only if also granted SELECT on the specific columns of `customers` used by the view."
+          ],
+          "correct_option": "A",
+          "explanation": "On platforms where views run with the owner's privileges, granting SELECT on the view is sufficient; base-table privileges aren't needed for the invoker. This is a common pattern for permission hardening via views.",
+          "distractor_rationale": "B: True on systems where views run with invoker rights, but the stem fixes the assumption to owner rights.\nC: Column-level privileges do not apply when the privilege check is against the view owner; the invoker needs only the view privilege.\nD: Materialization is irrelevant for permission checks; a normal view suffices.",
+          "skills_covered": [
+            "User Management",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given a large `orders` table with this frequent query:\n```sql\nSELECT id, customer_id, created_at\nFROM orders\nWHERE status = 'PAID'\n  AND created_at >= NOW() - INTERVAL '30 days'\nORDER BY created_at DESC\nLIMIT 50;\n```\nWhich single index is most likely to avoid both a filter scan and a sort?",
+          "options": [
+            "```sql\nCREATE INDEX ON orders (status, created_at DESC);\n```",
+            "```sql\nCREATE INDEX ON orders (created_at DESC, status);\n```",
+            "```sql\nCREATE INDEX ON orders (status);\n```",
+            "```sql\nCREATE INDEX ON orders (created_at DESC);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "An index on (status, created_at DESC) matches the equality predicate on `status`, supports range filtering on `created_at`, and can provide the desired order to satisfy ORDER BY and LIMIT without a sort. Putting `created_at` first would not let the planner use the `status` equality efficiently to prune the index, and (status) alone would still need a sort and timestamp filtering.",
+          "distractor_rationale": "B: Helps with ORDER BY and timestamp, but ignores `status` filtering, leading to scanning many recent rows of all statuses.\nC: With `created_at` first, the equality on `status` cannot effectively prune the index before the date range; also ordering by created_at while filtering by status may require extra work.\nD: Filters status but still requires scanning 30 days of data across that status and a separate sort step.",
+          "skills_covered": [
+            "Database Indexing",
+            "Query Optimization",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You create a partial index:\n```sql\nCREATE INDEX orders_status_active_idx\n  ON orders (status)\n  WHERE canceled_at IS NULL;\n```\nWhich query can fully use this index for its predicate?",
+          "options": [
+            "```sql\nSELECT * FROM orders\nWHERE status IN ('PENDING','PAID') AND canceled_at IS NOT NULL;\n```",
+            "```sql\nSELECT * FROM orders\nWHERE status = 'PENDING';\n```",
+            "```sql\nSELECT * FROM orders\nWHERE canceled_at IS NULL;\n```",
+            "```sql\nSELECT * FROM orders\nWHERE status = 'PENDING' AND canceled_at IS NULL;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The partial index only contains rows where `canceled_at IS NULL`. A query that includes that condition can use the index both to check `status` and to avoid scanning canceled rows. Without the `canceled_at IS NULL` predicate, the planner cannot rely on the partial index to be complete for the query.",
+          "distractor_rationale": "B: Omits the predicate that matches the partial index's WHERE clause; the index is incomplete for this query.\nC: Filters only by `canceled_at`; the index is on `status`, so it cannot satisfy the condition efficiently by itself.\nD: Contradicts the partial index predicate; no rows in the index meet `canceled_at IS NOT NULL`.",
+          "skills_covered": [
+            "Database Indexing",
+            "Query Optimization",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You have deferrable constraints:\n```sql\nALTER TABLE child\n  ADD CONSTRAINT child_parent_fk\n  FOREIGN KEY (parent_id)\n  REFERENCES parent(id)\n  DEFERRABLE INITIALLY DEFERRED;\n```\nA transaction runs:\n```sql\nBEGIN;\nINSERT INTO child (id, parent_id) VALUES (1, 999);\n-- parent 999 does not yet exist\nINSERT INTO parent (id) VALUES (999);\nCOMMIT;\n```\nOutcome?",
+          "options": [
+            "Commit blocks until another session inserts parent 999.",
+            "Commit succeeds because the FK is checked at commit time and is satisfied then.",
+            "Commit fails because the FK is deferred but still evaluates against the state at first INSERT.",
+            "First INSERT fails immediately because FK is always checked at statement end."
+          ],
+          "correct_option": "B",
+          "explanation": "DEFERRABLE INITIALLY DEFERRED means the FK is not enforced until commit. By commit, parent 999 exists, so the transaction is consistent and commits.",
+          "distractor_rationale": "B: True for non-deferrable constraints; here it is deferrable and initially deferred.\nC: Misunderstands deferral: the check is against the final transactional state, not the state at first insert.\nD: No cross-session dependency exists; the same transaction adds the parent before commit.",
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Two transactions deadlock regularly on these statements:\n\nT1:\n```sql\nBEGIN;\nUPDATE orders SET status='PAID' WHERE id=1;  -- locks row 1 in orders\nUPDATE payments SET cleared=true WHERE order_id=1; -- locks matching row in payments\nCOMMIT;\n```\n\nT2:\n```sql\nBEGIN;\nUPDATE payments SET cleared=true WHERE order_id=1; -- locks matching row in payments\nUPDATE orders SET status='PAID' WHERE id=1;        -- tries to lock orders row\nCOMMIT;\n```\nWhat change most directly prevents this deadlock without reducing isolation?",
+          "options": [
+            "Increase lock timeout so one waits longer for the other.",
+            "Set isolation to READ UNCOMMITTED so locks are avoided.",
+            "Always update tables in the same order across transactions (e.g., `orders` then `payments`).",
+            "Add an index on `payments(order_id)` so the second update is faster."
+          ],
+          "correct_option": "C",
+          "explanation": "The deadlock is due to cyclic lock ordering across tables. Enforcing a consistent lock acquisition order (e.g., always `orders` then `payments`) prevents the cycle and thus the deadlock, preserving isolation.",
+          "distractor_rationale": "B: Longer timeouts do not break cycles; they only delay detection.\nC: READ UNCOMMITTED does not apply to write locks and would not be acceptable for correctness.\nD: An index can speed lookups but does not resolve the fundamental cycle when both rows are locked in opposite order.",
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A reporting session runs at REPEATABLE READ. During the transaction it executes:\n```sql\nSELECT * FROM v_recent_orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days';\n-- v_recent_orders is a simple SELECT view over base tables.\n-- Another session inserts new qualifying rows and commits.\nSELECT COUNT(*) FROM v_recent_orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days';\n```\nWhat does the second SELECT see and why?",
+          "options": [
+            "The same snapshot as the first SELECT; the new rows are invisible within the transaction.",
+            "The newest committed rows; each SELECT at REPEATABLE READ sees fresh data.",
+            "It depends on whether the second SELECT references the base tables or the view.",
+            "It depends on whether there is an index supporting the view's predicate."
+          ],
+          "correct_option": "A",
+          "explanation": "At REPEATABLE READ, all statements within the transaction see a consistent snapshot from the time of the first read. A view is just a stored query; it does not change visibility semantics. New commits by others are invisible until the transaction ends.",
+          "distractor_rationale": "B: Describes READ COMMITTED, not REPEATABLE READ.\nC: View vs base table does not alter snapshot isolation semantics.\nD: Indexes affect performance, not visibility of rows under an isolation level.",
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "For this query:\n```sql\nSELECT id, created_at\nFROM orders\nWHERE category = 'A' AND created_at BETWEEN $1 AND $2\nORDER BY created_at ASC;\n```\nWhich index best supports both filtering and the ORDER BY to avoid an extra sort?",
+          "options": [
+            "```sql\nCREATE INDEX ON orders (category);\n```",
+            "```sql\nCREATE INDEX ON orders (created_at ASC);\n```",
+            "```sql\nCREATE INDEX ON orders (category, created_at ASC);\n```",
+            "```sql\nCREATE INDEX ON orders (created_at ASC, category);\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Equality on `category` followed by range on `created_at` matches a composite index (category, created_at). That order allows index order to satisfy ORDER BY after using the equality filter.",
+          "distractor_rationale": "B: Puts the range column first; the planner cannot use the equality on `category` to prune index ranges as effectively, and the ORDER BY may still be satisfied but with less selective access.\nC: Misses the date range and sort, likely causing a sort and extra filtering.\nD: Misses the selective category equality, scanning a larger date range and possibly many categories.",
+          "skills_covered": [
+            "Database Indexing",
+            "Query Optimization",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Consider a transaction with savepoints:\n```sql\nBEGIN;\nINSERT INTO invoices(id, amount) VALUES (1, 100);\nSAVEPOINT s1;\nINSERT INTO invoices(id, amount) VALUES (1, 200); -- violates PK\nROLLBACK TO SAVEPOINT s1;\nINSERT INTO invoices(id, amount) VALUES (2, 200);\nCOMMIT;\n```\nAssuming no other constraints, what is the final state?",
+          "options": [
+            "Transaction is aborted on the PK violation even with savepoint.",
+            "Only (2,200) is committed because the first insert is rolled back by the savepoint.",
+            "Only (1,100) is committed because the second insert after savepoint fails the whole txn.",
+            "Rows with (1,100) and (2,200) are committed."
+          ],
+          "correct_option": "D",
+          "explanation": "After inserting (1,100), a savepoint is set. The PK violation occurs on inserting (1,200), but rolling back to the savepoint undoes just that failing statement and any after the savepoint, not the prior work. The transaction then inserts (2,200) and commits both (1,100) and (2,200).",
+          "distractor_rationale": "B: Misunderstands savepoints; ROLLBACK TO SAVEPOINT does not undo prior work before the savepoint.\nC: Savepoints can contain errors and be recovered without aborting the whole transaction; only statements after the savepoint are undone.\nD: Some systems auto-abort on errors without savepoints, but here the savepoint explicitly contains the error and allows recovery.",
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A data platform hosts `customers`, `orders`, and `payments`. Analysts should be able to build dashboards but must not see PII columns (`email`, `phone`) or any orders marked `is_test = true`. Engineers want a minimal-permissions posture so analysts cannot accidentally gain base-table access later. The warehouse refresh runs many concurrent reads. You must design a permission scheme and objects to satisfy: analysts can query only the allowed fields and rows, and performance should not degrade under concurrency.",
+          "task": "Propose a concrete design using roles, GRANTs, and one or more views. Include the exact SQL DDL/DCL to: (1) create a role hierarchy, (2) revoke direct access to base tables, (3) expose only the approved subset via views, (4) enforce row filtering for `is_test = false`, and (5) ensure analysts can still query efficiently. Justify design choices, including view ownership and index needs.",
+          "expected_answer": "A strong answer defines a role like `analyst_r` with no base-table rights, and a higher-privilege owner role (e.g., `reporting_owner`). It revokes public access from base tables, creates projection-and-filter views owned by `reporting_owner` that select only non-PII columns and include `WHERE is_test = false` plus `WITH CHECK OPTION` if updatability is relevant (not required here). It grants SELECT on views only to `analyst_r`. It justifies owner-privilege execution semantics so base table privileges are not needed by analysts. It calls out necessary indexes (e.g., `orders(is_test, created_at)` or partial indexes for `is_test=false`) to keep filtered views fast. It may include security hardening like default privileges, search_path guarding for definer-owned objects, and explicit schema placement. It includes concrete SQL statements for creating roles, revocations, views, and grants.",
+          "rubric": [
+            {
+              "criterion": "Defines clear role model with least privilege (separate owner/analyst roles) and revokes base-table access",
+              "marks": 2
+            },
+            {
+              "criterion": "Creates views that project only non-PII columns and filter out test rows with correct SQL",
+              "marks": 2
+            },
+            {
+              "criterion": "Grants only view access to analysts and explains owner-based execution or equivalent to prevent base-table access leakage",
+              "marks": 2
+            },
+            {
+              "criterion": "Performance justification: appropriate index choices and concurrency considerations articulated",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "User Management",
+            "SQL",
+            "Database Indexing",
+            "Query Optimization"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 2,
+          "scenario": "Production logs show frequent deadlocks between two microservices. One updates `orders` then `inventory`; the other updates `inventory` then `orders`. Both touch the same `order_id` during checkout spikes. You cannot change isolation level or accept weaker constraints. Schema has appropriate PK/FK indexes. Business requires both updates to remain in one atomic unit per order.",
+          "task": "Recommend the minimal code/database change to eliminate the deadlock and explain precisely why it works. Provide SQL or pseudo-SQL showing the new locking order and any additional statements (e.g., selective `SELECT ... FOR UPDATE`), and discuss any trade-offs.",
+          "expected_answer": "The minimal, robust fix is to enforce a consistent lock acquisition order across both services, e.g., always lock/update `orders` before `inventory` for a given `order_id`. Show a snippet where both services begin a transaction, first lock the `orders` row using `SELECT ... FOR UPDATE` (or issue the UPDATE on `orders`) for that `order_id`, then lock/update `inventory`. Explain that this removes cycles in the waits-for graph. Optionally, grabbing `SELECT ... FOR UPDATE` on both rows upfront narrows the critical section. Discuss that retries may still be needed on timeouts but deadlocks go away; mention potential increase in contention but improved predictability.",
+          "rubric": [
+            {
+              "criterion": "Proposes consistent lock ordering as the core fix and explains deadlock graph removal",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete transaction flow with SQL (`UPDATE` or `SELECT ... FOR UPDATE`) showing order",
+              "marks": 2
+            },
+            {
+              "criterion": "Considers trade-offs (contention, latency) and why isolation is preserved",
+              "marks": 1
+            },
+            {
+              "criterion": "Notes optional enhancements (narrow locks, retry policy) without changing correctness",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A dashboard query is slow:\n```sql\nSELECT o.customer_id,\n       COUNT(*) AS n_orders,\n       SUM(CASE WHEN o.status='PAID' THEN 1 ELSE 0 END) AS n_paid,\n       MIN(o.created_at) AS first_order,\n       MAX(o.created_at) AS last_order\nFROM orders o\nWHERE o.created_at >= NOW() - INTERVAL '90 days'\nGROUP BY o.customer_id\nORDER BY last_order DESC\nLIMIT 100;\n```\n`orders` has 200M rows, `status` has low cardinality, most orders are older than 90 days. Current indexes: `(id PK)`, `(customer_id)`, `(created_at)`.",
+          "task": "Design an indexing and query plan that brings this under 200 ms on warm cache. Specify exact index DDL(s) and any query rewrite. Justify why your plan improves IO and avoids sorts, and discuss maintenance costs. No materialized aggregates allowed.",
+          "expected_answer": "Create a composite, possibly covering, index to match filter, group, and order. For example:\n```sql\nCREATE INDEX orders_recent_cust_created_idx\n  ON orders (created_at DESC, customer_id)\n  WHERE created_at >= NOW() - INTERVAL '180 days'; -- partial to recent window\n```\nOr, if 90-day window is stable, use a partial index with a safe boundary. Alternatively:\n```sql\nCREATE INDEX orders_cust_created_desc_idx\n  ON orders (customer_id, created_at DESC);\n```\nThen rewrite to let the planner use index order for last_order:\n```sql\nSELECT o.customer_id,\n       COUNT(*) AS n_orders,\n       SUM((o.status='PAID')::int) AS n_paid,\n       MIN(o.created_at) AS first_order,\n       MAX(o.created_at) AS last_order\nFROM orders o\nWHERE o.created_at >= NOW() - INTERVAL '90 days'\nGROUP BY o.customer_id\nORDER BY MAX(o.created_at) DESC\nLIMIT 100;\n```\nWith (customer_id, created_at DESC), the scan over recent rows groups by adjacent customer_id segments and can derive MAX without extra sort; with a partial index, the index scan is limited to recent data, reducing IO. Discuss trade-offs: partial index needs periodic refresh window adjustment; composite index increases write cost; but it avoids a wide sort over many rows and prunes old data early.",
+          "rubric": [
+            {
+              "criterion": "Proposes a concrete composite index aligned to filter and order; explains partial vs full coverage",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a plausible query rewrite that leverages index order and avoids global sort",
+              "marks": 2
+            },
+            {
+              "criterion": "Performance justification tied to IO reduction and plan shape (index scan/group)",
+              "marks": 2
+            },
+            {
+              "criterion": "Acknowledges maintenance/trade-offs (write overhead, partial window drift)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Database Indexing",
+            "Query Optimization",
+            "SQL"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "An end-of-day process posts accounting entries and adjusts inventory in one unit of work across several tables with FKs (some deferrable). Under heavy load, it sometimes blocks on FK checks and occasionally fails with serialization errors from concurrent reporting jobs at REPEATABLE READ.",
+          "task": "Design a transaction strategy that ensures atomicity and integrity while reducing blocking. Specify isolation level, use of `DEFERRABLE` constraints or `SET CONSTRAINTS`, and any savepoints. Provide concrete SQL ordering for locking, and justify how this mitigates contention and serialization failures.",
+          "expected_answer": "Use a single transaction per EOD batch with explicit lock ordering (e.g., lock affected `orders` rows, then `inventory`, then `ledger` entries). Keep isolation at REPEATABLE READ or SERIALIZABLE only if needed; otherwise READ COMMITTED suffices if correctness is tied to FK integrity and application-level invariants. Make FKs `DEFERRABLE INITIALLY DEFERRED` on write-heavy paths and issue `SET CONSTRAINTS ALL DEFERRED;` at the start so FK checks occur at commit, reducing mid-transaction blocking. Use savepoints around batches to recover from per-row issues without aborting the whole run. Example:\n```sql\nBEGIN;\nSET CONSTRAINTS ALL DEFERRED;\n-- process in deterministic order by order_id to avoid deadlocks\n-- optionally: SELECT ... FOR UPDATE SKIP LOCKED to fetch work items\n-- post inventory and ledger in fixed order\nSAVEPOINT batch1;\n-- ... DML ...\n-- on error: ROLLBACK TO batch1;\nCOMMIT;\n```\nExplain that deferring FKs reduces conflicting reads, consistent lock ordering reduces deadlocks, and savepoints localize failures. To reduce serialization conflicts with reporting, keep transactions short, avoid long-running snapshots, and consider breaking the job into smaller atomic chunks processed sequentially.",
+          "rubric": [
+            {
+              "criterion": "Chooses appropriate isolation and justifies it against requirements (and/or keeps REPEATABLE READ with mitigations)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct use of deferrable FKs and/or SET CONSTRAINTS to shift checks to commit",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines deterministic lock/order of operations and mentions SKIP LOCKED or equivalent to fetch work safely",
+              "marks": 2
+            },
+            {
+              "criterion": "Incorporates savepoints and articulates how they localize errors without aborting whole job",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL",
+            "Query Optimization"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Reliable Database Lab",
+          "brief": "Build a reliability-focused lab that demonstrates robust transactions, views, permissions, and indexes on a small business schema. Include: (1) an anti-pattern lost-update reproduction and its fix, (2) a deadlock reproduction and the fix via lock ordering, (3) use of savepoints to recover from partial failures, (4) a deferrable FK demo, (5) secure analyst views that hide PII and filter out test data, and (6) at least two targeted indexes that measurably improve a realistic query. Provide runnable SQL and a short script to execute scenarios end-to-end.",
+          "deliverable": "A repository folder containing: (a) schema.sql, (b) lab.sql with scenarios and comments, (c) permissions.sql creating roles/views/grants, (d) indexes.sql with EXPLAIN before/after output captured to text, and (e) a README.md with exact run instructions and expected outputs. Optional: a bash script run_lab.sh to orchestrate execution.",
+          "acceptance_criteria": [
+            "Schema includes at least customers, orders, order_items, payments (PKs, FKs present; one FK DEFERRABLE).",
+            "lab.sql contains a lost-update demo using read-then-write and a corrected version using SELECT ... FOR UPDATE or in-place arithmetic; final qty matches expected.",
+            "lab.sql reproduces a deadlock then shows a corrected version with consistent lock ordering; deadlock error and successful rerun outputs are captured.",
+            "Savepoint usage shown: a PK violation is handled by ROLLBACK TO SAVEPOINT and the transaction continues to commit prior work.",
+            "permissions.sql creates a view that excludes PII and filters is_test=false; base-table SELECT is revoked from the analyst role; analyst can SELECT the view successfully.",
+            "indexes.sql defines at least two indexes aligned to real queries; captured EXPLAIN/EXPLAIN ANALYZE shows reduced cost or runtime; README states the observed improvement."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct schema with necessary keys and at least one DEFERRABLE FK",
+              "marks": 4
+            },
+            {
+              "criterion": "Lost-update reproduction and correct mitigation with clear, verifiable outcomes",
+              "marks": 4
+            },
+            {
+              "criterion": "Deadlock reproduction and resolution via lock ordering with proof (error text and success)",
+              "marks": 4
+            },
+            {
+              "criterion": "Savepoint scenario correctly implemented and explained",
+              "marks": 3
+            },
+            {
+              "criterion": "Permissions hardening via views/roles works as specified (revokes + successful view query)",
+              "marks": 3
+            },
+            {
+              "criterion": "Indexes created and performance evidence presented (plans and/or timings)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Transactions (SQL)",
+            "SQL",
+            "User Management",
+            "Database Indexing",
+            "Query Optimization",
+            "Data Modeling",
+            "Database Design"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "SQL Portfolio",
+          "brief": "Produce a small business schema and a portfolio of optimized queries with rationale. Showcase design choices, indexing, and query rewrites that deliver measurable speedups on realistic analytics and operational workloads.",
+          "deliverable": "A single portfolio folder containing: (1) portfolio_schema.sql (DDL with comments), (2) portfolio_queries.sql (at least 8 queries: 4 analytical, 4 operational), (3) portfolio_indexes.sql (index DDL mapped to queries), (4) before_after_plans/ with EXPLAIN or EXPLAIN ANALYZE outputs pre/post optimization, and (5) portfolio_notes.md explaining design, trade-offs, and remaining risks.",
+          "acceptance_criteria": [
+            "Schema models at least four entities with relationships; rationale for key choices captured in comments or notes.",
+            "At least 8 queries included: window or grouping analytics, filtered lookups with ORDER/LIMIT, and at least one view-based access pattern; each query mapped to a specific business question.",
+            "Each operational query has an associated index strategy; each analytical query has either an index strategy or a documented rewrite that reduces work.",
+            "Plans directory includes before/after plans or timings showing improved scan method or reduced cost for at least 5 queries.",
+            "One permissioned view demonstrates exposing non-PII subset to a role; GRANTs and REVOKEs included.",
+            "Notes discuss maintenance overhead (write amplification, index bloat), and when to use partial/composite indexes vs general ones."
+          ],
+          "rubric": [
+            {
+              "criterion": "Data model quality and clarity of business schema (entities, keys, relationships)",
+              "marks": 5
+            },
+            {
+              "criterion": "Breadth and relevance of queries to business use-cases (8+ with diversity)",
+              "marks": 4
+            },
+            {
+              "criterion": "Indexing/rewrite strategies correctly mapped and justified per query",
+              "marks": 5
+            },
+            {
+              "criterion": "Empirical evidence of improvement (plans/timings) for 5+ queries",
+              "marks": 4
+            },
+            {
+              "criterion": "Permissioned view and GRANT/REVOKE implemented correctly",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "Data Modeling",
+            "SQL",
+            "Database Indexing",
+            "Query Optimization",
+            "User Management"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}
