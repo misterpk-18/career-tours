@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, GraduationCap, Target, ArrowRight, LogIn } from 'lucide-react';
+import { User, Mail, Phone, GraduationCap, Target, ArrowRight, LogIn, MailCheck } from 'lucide-react';
 import AuthShell from '../components/ui/AuthShell';
 import Alert from '../components/ui/Alert';
 import Button from '../components/ui/Button';
 import TextField from '../components/ui/TextField';
 import PasswordField from '../components/ui/PasswordField';
 import { useSubmit } from '../hooks/useSubmit';
+import { authAPI } from '../services/api';
 
 const INITIAL_FORM = {
   full_name: '',
@@ -22,6 +23,9 @@ const INITIAL_FORM = {
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState(INITIAL_FORM);
+  // Set once the account is created; registration no longer logs the student in,
+  // it asks them to verify their email first.
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -40,9 +44,45 @@ export const RegisterPage = () => {
       if (formData.password.length < 8) return 'Password must be at least 8 characters.';
       return null;
     },
-    onSuccess: () => navigate('/'),
+    onSuccess: () => setRegisteredEmail(formData.email.trim()),
     fallbackError: 'Failed to create student account.',
   });
+
+  if (registeredEmail) {
+    return (
+      <AuthShell
+        title="Check your email"
+        description="One more step before you can sign in."
+        footer={
+          <>
+            <p className="text-sm text-fg-muted mb-3">Already verified?</p>
+            <Button as={Link} to="/login" variant="secondary" size="md" icon={LogIn}>
+              Go to sign in
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-5 text-center">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-subtle">
+            <MailCheck className="h-7 w-7 text-brand-subtle-fg" aria-hidden="true" />
+          </div>
+          <p className="text-sm text-fg-secondary">
+            We sent a verification link to{' '}
+            <span className="font-semibold text-fg">{registeredEmail}</span>. Click it to activate
+            your account, then sign in.
+          </p>
+          <Button
+            variant="secondary"
+            size="sm"
+            fullWidth
+            onClick={() => authAPI.resendVerification(registeredEmail).catch(() => {})}
+          >
+            Resend the link
+          </Button>
+        </div>
+      </AuthShell>
+    );
+  }
 
   return (
     <AuthShell

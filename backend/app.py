@@ -77,6 +77,10 @@ from api.achievements.routes import achievements_bp  # noqa: E402
 
 _mark("api.catalogue")
 
+from api.course_sittings.routes import course_sittings_bp  # noqa: E402
+
+_mark("api.course_sittings")
+
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
@@ -117,6 +121,10 @@ app.register_blueprint(achievements_bp, url_prefix="/api/achievements")
 # No prefix of its own: the blueprint owns two unrelated top-level collections
 # (/api/courses and /api/careers), so the routes carry their own paths.
 app.register_blueprint(catalogue_bp, url_prefix="/api")
+# The project-independent course assessment track. Its routes carry their own
+# top-level paths (/api/course-assessments, /api/course-sittings,
+# /api/course-achievements), so no prefix of its own.
+app.register_blueprint(course_sittings_bp, url_prefix="/api")
 
 
 # Database pressure is a 503, not a 500.

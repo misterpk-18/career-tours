@@ -87,7 +87,11 @@ def serialize_sitting(sitting: dict, seconds_remaining: int) -> dict:
     """
     return {
         "sitting_id": str(sitting["sitting_id"]),
-        "project_id": str(sitting["project_id"]),
+        # A sitting is owned by a project (the project track) or by a student
+        # directly (the course track). Report whichever is present rather than
+        # assuming project_id, so one serializer serves both.
+        "project_id": str(sitting["project_id"]) if sitting.get("project_id") else None,
+        "student_id": str(sitting["student_id"]) if sitting.get("student_id") else None,
         "section_code": sitting["section_code"],
         "mode": sitting["mode"],
         "status": sitting["status"],

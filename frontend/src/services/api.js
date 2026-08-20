@@ -27,8 +27,36 @@ export const authAPI = {
     const response = await api.post('/auth/login', credentials);
     return response.data;
   },
+  // Register no longer logs in: it returns {message, requires_verification} and
+  // the student must click the emailed link before password login works.
   register: async (studentData) => {
     const response = await api.post('/auth/register', studentData);
+    return response.data;
+  },
+  verifyEmail: async (token) => {
+    const response = await api.post('/auth/verify-email', { token });
+    return response.data;
+  },
+  resendVerification: async (email) => {
+    const response = await api.post('/auth/resend-verification', { email });
+    return response.data;
+  },
+  // Passwordless login: request mails a 6-digit code; verify returns
+  // {token, student} exactly like password login.
+  requestOtp: async (email) => {
+    const response = await api.post('/auth/otp/request', { email });
+    return response.data;
+  },
+  verifyOtp: async (email, code) => {
+    const response = await api.post('/auth/otp/verify', { email, code });
+    return response.data;
+  },
+  forgotPassword: async (email) => {
+    const response = await api.post('/auth/password/forgot', { email });
+    return response.data;
+  },
+  resetPassword: async (token, password) => {
+    const response = await api.post('/auth/password/reset', { token, password });
     return response.data;
   },
 };
@@ -262,6 +290,74 @@ export const sittingsAPI = {
   // row as "not started" and not as "scored nothing".
   progress: async (projectId) => {
     const response = await api.get(`/projects/${projectId}/progress`);
+    return response.data;
+  },
+};
+
+// The COURSE track: the same sitting flow as sittingsAPI, but a sitting is
+// owned by the student directly rather than by a project, and lives in its own
+// tables. The two tracks share nothing — a section can be sat in both and the
+// scores never touch. Only start() and progress() carry a course; every other
+// call is keyed on the sitting id, whose owner the server takes from the token.
+export const courseSittingsAPI = {
+  start: async (courseId, sectionCode, { mode = 'graded', restart = false } = {}) => {
+    const response = await api.post(
+      `/course-assessments/${courseId}/sections/${sectionCode}/sittings`,
+      { mode, restart }
+    );
+    return response.data;
+  },
+  get: async (sittingId) => {
+    const response = await api.get(`/course-sittings/${sittingId}`);
+    return response.data;
+  },
+  // Same retry contract as the project track's saveAnswers: a saturated pool
+  // answers 503, and this is the one request where giving up costs a graded
+  // answer on a running clock. The save is an upsert, so a retry cannot
+  // double-record.
+  saveAnswers: async (sittingId, answers) => {
+    const path = `/course-sittings/${sittingId}/answers`;
+    const waits = [400, 1200];
+
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        const response = await api.post(path, { answers });
+        return response.data;
+      } catch (error) {
+        const status = error?.response?.status;
+        const worthRetrying = status === 503 || status === 429 || !error?.response;
+        if (!worthRetrying || attempt >= waits.length) throw error;
+        await new Promise((resolve) => setTimeout(resolve, waits[attempt]));
+      }
+    }
+  },
+  pause: async (sittingId) => {
+    const response = await api.post(`/course-sittings/${sittingId}/pause`);
+    return response.data;
+  },
+  resume: async (sittingId) => {
+    const response = await api.post(`/course-sittings/${sittingId}/resume`);
+    return response.data;
+  },
+  submit: async (sittingId) => {
+    const response = await api.post(`/course-sittings/${sittingId}/submit`);
+    return response.data;
+  },
+  // Per-section state for one course, this student. course_code is the section
+  // prefix the server filters on; the client already knows it from the course.
+  progress: async (courseId, courseCode) => {
+    const response = await api.get(`/course-assessments/${courseId}/progress`, {
+      params: { course_code: courseCode },
+    });
+    return response.data;
+  },
+};
+
+// The COURSE track's own XP/level/streak/badges — a separate pool from
+// achievementsAPI, derived only from course-track sittings.
+export const courseAchievementsAPI = {
+  mine: async () => {
+    const response = await api.get('/course-achievements');
     return response.data;
   },
 };

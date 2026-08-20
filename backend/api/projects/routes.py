@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from flask import Blueprint, g, jsonify, request
+from sqlalchemy.exc import IntegrityError
 
 from api.auth.utils import require_auth
 from api.guards import owned_project
@@ -52,13 +53,24 @@ def create_project():
     if not data.get("project_name"):
         return jsonify({"error": "project_name is required"}), 400
 
+    # One project name per student, among active projects. Checked here for a
+    # clean message; the partial unique index is the race-safe backstop below.
+    if ProjectRepository.active_name_exists(g.student_id, data["project_name"]):
+        return jsonify({"error": "You already have a project with this name."}), 409
+
     # The owner comes from the token, never the body. Trusting a body-supplied
     # student_id would let any caller file a project under someone else's account.
     project_data = {**data, "student_id": g.student_id}
 
     try:
         project = ProjectRepository.create(project_data)
+    except IntegrityError:
+        # Two concurrent creates with the same name both pass the check above;
+        # one loses at the unique index. Report it the same way.
+        db.session.rollback()
+        return jsonify({"error": "You already have a project with this name."}), 409
     except Exception:
+        db.session.rollback()
         return jsonify({"error": "failed to create project"}), 500
 
     return jsonify(_serialize_project(project)), 201
@@ -155,7 +167,18 @@ def update_project(project_id: str):
     # project, and project_id in the body must not redirect the update.
     payload = {key: value for key, value in data.items() if key not in ("student_id", "project_id")}
 
-    updated = ProjectRepository.update(project.project_id, payload)
+    # A rename must respect the same one-name-per-student rule as create, but
+    # renaming a project to its own current name is fine (skip it via exclude).
+    if payload.get("project_name") and ProjectRepository.active_name_exists(
+        g.student_id, payload["project_name"], exclude_project_id=project.project_id
+    ):
+        return jsonify({"error": "You already have a project with this name."}), 409
+
+    try:
+        updated = ProjectRepository.update(project.project_id, payload)
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "You already have a project with this name."}), 409
 
     if updated is None:
         return jsonify({"error": "project not found"}), 404
@@ -166,11 +189,16 @@ def update_project(project_id: str):
 @projects_bp.route("/<project_id>", methods=["DELETE"])
 @require_auth
 def delete_project(project_id: str):
+    """Soft-delete: the project vanishes from the student's view, but the row
+    and everything that cascades off it (sittings, scores, recommendations)
+    stay in the database. owned_project already refuses a deleted project, so a
+    second delete of the same project returns 404 here.
+    """
     project, error = owned_project(project_id)
     if error:
         return error
 
-    deleted = ProjectRepository.delete(project.project_id)
+    deleted = ProjectRepository.soft_delete(project.project_id)
 
     if not deleted:
         return jsonify({"error": "project not found"}), 404

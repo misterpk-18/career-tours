@@ -79,4 +79,5 @@ def serialize_student(student) -> dict:
         "work_mode_preference": student.work_mode_preference,
         "created_at": student.created_at.isoformat(),
         "updated_at": student.updated_at.isoformat(),
+        "email_verified": bool(getattr(student, "email_verified", True)),
     }

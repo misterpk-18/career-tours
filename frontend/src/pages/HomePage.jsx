@@ -9,12 +9,14 @@ import {
   CheckCircle2,
   Clock,
   Layers,
+  Trash2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { projectsAPI } from '../services/api';
 import CreateProjectModal from '../components/CreateProjectModal';
 import ResumeUploadModal from '../components/ResumeUploadModal';
 import ResumeViewerModal from '../components/ResumeViewerModal';
+import Modal from '../components/ui/Modal';
 import PageShell from '../components/ui/PageShell';
 import PageSpinner from '../components/ui/PageSpinner';
 import HeroBanner from '../components/ui/HeroBanner';
@@ -40,6 +42,10 @@ export const HomePage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [uploadModalProject, setUploadModalProject] = useState(null);
   const [viewResumeId, setViewResumeId] = useState(null);
+  // The project pending a delete confirmation, and whether the request is in
+  // flight.
+  const [deletingProject, setDeletingProject] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   // Keyed on the id rather than the object: `student` is a new object identity
   // on every auth refresh, which refetched on each one.
@@ -72,6 +78,25 @@ export const HomePage = () => {
 
   const handleResumeUploaded = async () => {
     fetchProjects();
+  };
+
+  const handleDeleteProject = async () => {
+    if (!deletingProject) return;
+    setDeleteBusy(true);
+    setError('');
+    try {
+      await projectsAPI.delete(deletingProject.project_id);
+      // The server soft-deletes, so the row survives; the UI just drops it from
+      // the list. Removing it locally is instant and matches what a refetch
+      // would return anyway.
+      setProjects((prev) => prev.filter((p) => p.project_id !== deletingProject.project_id));
+      setDeletingProject(null);
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+      setError(apiErrorMessage(err, 'Unable to delete this project. Please try again.'));
+    } finally {
+      setDeleteBusy(false);
+    }
   };
 
   const resumeCount = projects.filter((p) => p.resume_id).length;
@@ -212,14 +237,26 @@ export const HomePage = () => {
                   </Button>
                 )}
 
-                <Button
-                  size="sm"
-                  fullWidth
-                  iconRight={ArrowRight}
-                  onClick={() => navigate(`/projects/${project.project_id}`)}
-                >
-                  Open project
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    iconRight={ArrowRight}
+                    onClick={() => navigate(`/projects/${project.project_id}`)}
+                  >
+                    Open project
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    icon={Trash2}
+                    aria-label={`Delete ${project.project_name}`}
+                    className="!text-fg-muted hover:!text-danger-fg"
+                    onClick={() => setDeletingProject(project)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}
@@ -248,6 +285,38 @@ export const HomePage = () => {
         onClose={() => setViewResumeId(null)}
         resumeId={viewResumeId}
       />
+
+      <Modal
+        open={Boolean(deletingProject)}
+        onClose={() => (deleteBusy ? null : setDeletingProject(null))}
+        title="Delete this project?"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-fg-secondary">
+            <span className="font-semibold text-fg">{deletingProject?.project_name}</span> will be
+            removed from your dashboard. You can’t undo this from here.
+          </p>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={deleteBusy}
+              onClick={() => setDeletingProject(null)}
+            >
+              Keep it
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              icon={Trash2}
+              loading={deleteBusy}
+              onClick={handleDeleteProject}
+            >
+              Delete project
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </PageShell>
   );
 };

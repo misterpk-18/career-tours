@@ -13,7 +13,7 @@ import {
   Play,
   X,
 } from 'lucide-react';
-import { sittingsAPI } from '../services/api';
+import { sittingsAPI, courseSittingsAPI, catalogueAPI } from '../services/api';
 import PageSpinner from '../components/ui/PageSpinner';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -57,9 +57,40 @@ const formatClock = (seconds) => {
   return `${String(minutes).padStart(2, '0')}:${String(safe % 60).padStart(2, '0')}`;
 };
 
-export const SittingPage = () => {
-  const { projectId, sittingId } = useParams();
+export const SittingPage = ({ scope = 'project' }) => {
+  const { projectId, courseId, sittingId } = useParams();
   const navigate = useNavigate();
+
+  const isCourse = scope === 'course';
+
+  // One adapter over the two tracks. The project track's calls carry a
+  // project id; the course track's are keyed on the sitting alone, its owner
+  // taken from the token. Every call site below goes through this, so the page
+  // itself is scope-agnostic.
+  const api = useMemo(
+    () =>
+      isCourse
+        ? {
+            get: () => courseSittingsAPI.get(sittingId),
+            save: (answers) => courseSittingsAPI.saveAnswers(sittingId, answers),
+            pause: () => courseSittingsAPI.pause(sittingId),
+            resume: () => courseSittingsAPI.resume(sittingId),
+            submit: () => courseSittingsAPI.submit(sittingId),
+          }
+        : {
+            get: () => sittingsAPI.get(projectId, sittingId),
+            save: (answers) => sittingsAPI.saveAnswers(projectId, sittingId, answers),
+            pause: () => sittingsAPI.pause(projectId, sittingId),
+            resume: () => sittingsAPI.resume(projectId, sittingId),
+            submit: () => sittingsAPI.submit(projectId, sittingId),
+          },
+    [isCourse, projectId, sittingId]
+  );
+
+  // Where the result screen and the toolbar Exit point. "Exit" leaves the
+  // course entirely (the catalogue list, or the project's recommended courses);
+  // "back to the course" and "continue" return to this course's page.
+  const exitUrl = isCourse ? '/courses' : `/projects/${projectId}/courses`;
 
   const [sitting, setSitting] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -101,7 +132,7 @@ export const SittingPage = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await sittingsAPI.get(projectId, sittingId);
+        const data = await api.get();
         if (!cancelled) apply(data);
       } catch (err) {
         console.error('Failed to load the sitting:', err);
@@ -115,11 +146,61 @@ export const SittingPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [apply, projectId, sittingId]);
+  }, [apply, api]);
 
   const isRunning = sitting?.status === 'in_progress';
   const isSubmitted = sitting?.status === 'submitted';
   const isPractice = sitting?.mode === 'practice';
+
+  // Where "Continue" and "Back to the course" point after a submit. The sitting
+  // only knows its own section_code (e.g. NT-C-023-S01); the course id and the
+  // ordered section list live in the catalogue, so resolve them once the result
+  // screen is showing. Section codes embed the course code, so the lookup is
+  // code -> course_id -> syllabus, then the section AFTER this one, if any.
+  //
+  // Resolved only when submitted — an in-progress test needs neither, and this
+  // keeps two cross-region calls off the answering path. A failure is
+  // non-fatal: the result still renders and the buttons fall back to the list.
+  const [courseNav, setCourseNav] = useState(null);
+  useEffect(() => {
+    if (!isSubmitted || !sitting?.section_code || courseNav) return undefined;
+    let cancelled = false;
+    (async () => {
+      try {
+        const code = sitting.section_code;
+        const courseCode = code.replace(/-S\d+$/, '');
+        const courses = await catalogueAPI.listCourses();
+        const match = courses.find((c) => c.course_code === courseCode);
+        if (!match) {
+          if (!cancelled) setCourseNav({ courseId: null, nextSectionCode: null });
+          return;
+        }
+        const detail = await catalogueAPI.getCourse(match.course_id);
+        const syllabus = detail?.syllabus ?? [];
+        const i = syllabus.findIndex((s) => s.section_code === code);
+        const next = i >= 0 ? syllabus[i + 1]?.section_code : undefined;
+        if (!cancelled) {
+          setCourseNav({ courseId: match.course_id, nextSectionCode: next || null });
+        }
+      } catch (err) {
+        console.error('Could not resolve the next section:', err);
+        if (!cancelled) setCourseNav({ courseId: null, nextSectionCode: null });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubmitted, sitting, courseNav]);
+
+  // This course's page. In the course track the id is already in the URL; in
+  // the project track it is whatever the resolver above found. Falls back to
+  // the exit target if the course could not be resolved.
+  const resolvedCourseId = isCourse ? courseId : courseNav?.courseId;
+  const coursePageUrl = resolvedCourseId
+    ? (isCourse
+        ? `/courses/${resolvedCourseId}`
+        : `/projects/${projectId}/courses/${resolvedCourseId}`)
+    : exitUrl;
 
   // Display-only countdown. The server holds the real clock; this just stops
   // the number looking frozen between requests.
@@ -133,11 +214,11 @@ export const SittingPage = () => {
   // auto-submits an expired sitting on any read, so one request settles it.
   useEffect(() => {
     if (!isRunning || remaining > 0) return;
-    sittingsAPI
-      .get(projectId, sittingId)
+    api
+      .get()
       .then(apply)
       .catch(() => {});
-  }, [apply, isRunning, projectId, remaining, sittingId]);
+  }, [apply, api, isRunning, remaining]);
 
   // Leaving costs time, so say so. Best-effort by design: the browser only
   // allows a generic prompt, and a crash or a killed tab never fires it at all
@@ -205,7 +286,7 @@ export const SittingPage = () => {
       setError('');
 
       try {
-        const result = await sittingsAPI.saveAnswers(projectId, sittingId, [
+        const result = await api.save([
           { question_id: question.question_id, selected_option: letter },
         ]);
         setSitting(result.sitting);
@@ -242,28 +323,27 @@ export const SittingPage = () => {
         setSaving(null);
       }
     },
-    [chosen, isRunning, projectId, sittingId]
+    [api, chosen, isRunning]
   );
 
   const togglePause = useCallback(async () => {
     setError('');
     try {
-      const call = isRunning ? sittingsAPI.pause : sittingsAPI.resume;
-      const result = await call(projectId, sittingId);
+      const result = await (isRunning ? api.pause() : api.resume());
       setSitting(result.sitting);
       setRemaining(result.sitting.seconds_remaining);
     } catch (err) {
       console.error('Failed to pause or resume:', err);
       setError('Could not change the timer. Reload to see the current state.');
     }
-  }, [isRunning, projectId, sittingId]);
+  }, [api, isRunning]);
 
   const submit = useCallback(async () => {
     setSubmitting(true);
     setError('');
     try {
-      await sittingsAPI.submit(projectId, sittingId);
-      const fresh = await sittingsAPI.get(projectId, sittingId);
+      await api.submit();
+      const fresh = await api.get();
       apply(fresh);
       setConfirming(false);
       setReviewing(false);
@@ -273,7 +353,7 @@ export const SittingPage = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [apply, projectId, sittingId]);
+  }, [apply, api]);
 
   if (loading) return <PageSpinner label="Loading test" />;
 
@@ -319,7 +399,7 @@ export const SittingPage = () => {
                     'Leave this test? The timer keeps running while you are away. Pause it first if you need a break.'
                   )
                 ) {
-                  navigate(`/projects/${projectId}/courses`);
+                  navigate(exitUrl);
                 }
               }}
             >
@@ -412,7 +492,14 @@ export const SittingPage = () => {
               questions={questions}
               chosen={chosen}
               sitting={sitting}
-              onLeave={() => navigate(`/projects/${projectId}/courses`)}
+              nextSectionCode={courseNav?.nextSectionCode}
+              onContinue={() =>
+                navigate(coursePageUrl, {
+                  state: { focusSection: courseNav?.nextSectionCode },
+                })
+              }
+              onBackToCourse={() => navigate(coursePageUrl)}
+              onExit={() => navigate(exitUrl)}
             />
           ) : reviewing ? (
             <div className="space-y-5">
@@ -705,7 +792,15 @@ export const SittingPage = () => {
 };
 
 /** The results of a submitted sitting: every question, with the explanation. */
-const ReviewList = ({ questions, chosen, sitting, onLeave }) => {
+const ReviewList = ({
+  questions,
+  chosen,
+  sitting,
+  nextSectionCode,
+  onContinue,
+  onBackToCourse,
+  onExit,
+}) => {
   const correct = questions.filter((q) => q.is_correct).length;
   const share = sitting.marks_available ? sitting.marks_awarded / sitting.marks_available : 0;
 
@@ -773,10 +868,25 @@ const ReviewList = ({ questions, chosen, sitting, onLeave }) => {
           </div>
         </div>
 
-        <div className="relative pt-4">
-          <Button size="sm" variant="secondary" icon={ChevronLeft} onClick={onLeave}>
-            Back to the course
-          </Button>
+        {/* Where to next. When another section follows this one in the course,
+            offer the two the student asked for — carry on, or step out — rather
+            than a single dead-end "back". On the last section there is nothing
+            to continue to, so it collapses to one button back into the course. */}
+        <div className="relative flex flex-wrap gap-2 pt-4">
+          {nextSectionCode ? (
+            <>
+              <Button size="sm" iconRight={ChevronRight} onClick={onContinue}>
+                Continue to next section
+              </Button>
+              <Button size="sm" variant="ghost" icon={LogOut} onClick={onExit}>
+                Exit
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" variant="secondary" icon={ChevronLeft} onClick={onBackToCourse}>
+              Back to the course
+            </Button>
+          )}
         </div>
       </Card>
 

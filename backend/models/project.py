@@ -14,3 +14,5 @@ class Project:
     created_at: datetime
     updated_at: datetime
     resume_id: Optional[UUID] = None
+    # NULL means active; a timestamp means soft-deleted (hidden, not destroyed).
+    deleted_at: Optional[datetime] = None

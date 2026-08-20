@@ -24,3 +24,6 @@ class Student:
     created_at: datetime
     updated_at: datetime
     password_hash: Optional[str] = None
+    # False until the student confirms their address (or proves it via an OTP
+    # login). Existing accounts were grandfathered to True by migration 018.
+    email_verified: bool = False

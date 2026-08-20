@@ -6,6 +6,9 @@ import ErrorBoundary from './components/ui/ErrorBoundary';
 import FullPageLoader from './components/ui/FullPageLoader';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import HomePage from './pages/HomePage';
 import CoursesPage from './pages/CoursesPage';
 import CourseJourneyPage from './pages/CourseJourneyPage';
@@ -119,6 +122,14 @@ export const App = () => {
                     }
                   />
 
+                  {/* Email-flow landings. Unguarded on purpose: a verify or
+                      reset link must work whether or not the visitor happens to
+                      be logged in already, so PublicRoute's redirect-if-authed
+                      would break them. */}
+                  <Route path="/verify-email" element={<VerifyEmailPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
+
                   {/* Protected Student Routes */}
                   <Route
                     path="/"
@@ -218,7 +229,18 @@ export const App = () => {
                     path="/projects/:projectId/sittings/:sittingId"
                     element={
                       <ExamRoute>
-                        <SittingPage />
+                        <SittingPage scope="project" />
+                      </ExamRoute>
+                    }
+                  />
+
+                  {/* The project-independent course track's sitting, same exam
+                      chrome. Owned by the student, not a project. */}
+                  <Route
+                    path="/courses/:courseId/sittings/:sittingId"
+                    element={
+                      <ExamRoute>
+                        <SittingPage scope="course" />
                       </ExamRoute>
                     }
                   />
