@@ -164,6 +164,11 @@ and hold a Neon connection open while frozen.
 Everything is supplied as Lambda environment variables. There is no `.env` file in the image,
 so a missing variable is a runtime failure, not a fallback.
 
+The table below is the summary. **[environment.md](environment.md) is the source of truth** for
+configuration: every variable with its consumer and default, what each credential is actually
+permitted to do, the drift between the local `.env` and the Lambda env map, and the checklists for
+migrating the AWS account or the database.
+
 | Variable | Notes |
 |---|---|
 | `DB_USER`, `DB_PASSWORD` | default to `""` |
@@ -240,9 +245,42 @@ or SSM Parameter Store requires an execution-role policy change.
 
 ---
 
+## Email (SES)
+
+Transactional email — signup verification links, passwordless-login OTP codes, and
+password-reset links — is sent through **Amazon SES** from
+`Nipuna Careers <no-reply@nipunacareers.com>` (`backend/services/email/mailer.py`, `sesv2`
+client in `AWS_REGION`). On Lambda the call is authorised by the execution role's inline
+`career-tours-ses-send` policy; locally boto3 falls through to the static keys in `.env`.
+
+Two facts that bit during rollout, kept here so they don't again:
+
+1. **The IAM resource must be `*`, not the sending identity.** Scoped to
+   `identity/nipunacareers.com`, `SendEmail` failed with `AccessDenied` naming the **recipient**
+   identity — SES evaluates the action against recipients too. `Resource: "*"` is the standard,
+   safe send policy; SES still enforces that the From is a verified identity, so `*` does not let
+   the function send as anyone else.
+2. **The account is still in the SES sandbox.** It delivers only to **verified recipient
+   identities**; any other recipient is rejected at send with `MessageRejected: Email address is
+   not verified`. The auth routes treat a send failure as non-fatal and log it (the
+   enumeration-safe endpoints must not reveal it), so the API still returns its normal response —
+   the mail simply never arrives. To test, verify a single inbox
+   (`aws sesv2 create-email-identity --email-identity <addr>`); to ship to all students, request
+   **production access** (SES console → Account dashboard). No code changes when it's granted.
+
+The domain `nipunacareers.com` is verified with DKIM (`SUCCESS`) and a custom MAIL FROM
+(`mail.nipunacareers.com`). Every emailed secret is stored only as a SHA-256 hash, is single-use,
+and expires — see [database_relationship_documentation.md](database_relationship_documentation.md)
+(`auth_email_challenges`).
+
+---
+
 ## IAM: what the deploy user can do
 
-Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`.
+Deploys run as `arn:aws:iam::307857432997:user/career-tours-deployer`, which holds
+**`AdministratorAccess`** (verified 2026-08-20, alongside two redundant policies). So the answer to
+"can the deployer do X" is currently "yes". What it *should* be allowed to do, and the same question
+for the execution role and the S3 key, is in [environment.md](environment.md#what-each-credential-is-allowed-to-do).
 
 An earlier revision of this document listed `apigateway:GET`, `iam:*`, `s3:ListAllMyBuckets`,
 `s3:ListBucket`, `s3:GetBucketLocation` and `cloudfront:ListDistributions` as **denied** to this

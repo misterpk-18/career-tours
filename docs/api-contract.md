@@ -18,7 +18,7 @@ For the runtime that serves these endpoints, see [architecture.md](architecture.
 
 ## Authentication
 
-**Every endpoint below requires a bearer token except `GET /`, `GET /db-test`, `POST /api/auth/register` and `POST /api/auth/login`.**
+**Every endpoint below requires a bearer token except the health checks (`GET /`, `GET /db-test`) and the unauthenticated auth endpoints: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/verify-email`, `POST /api/auth/resend-verification`, `POST /api/auth/otp/request`, `POST /api/auth/otp/verify`, `POST /api/auth/password/forgot`, and `POST /api/auth/password/reset`.**
 
 ```http
 Authorization: Bearer <token>
@@ -52,6 +52,7 @@ Authentication alone is not the whole check. Every id in this API is a UUID in a
 5. [Resume Parsing & Skill Extraction API (`/api/resumes`)](#5-resume-parsing--skill-extraction-api-apiresumes)
 6. [Recommendation Engine API (`/api/recommendations`)](#6-recommendation-engine-api-apirecommendations)
 7. [Assessment API — sittings (`/api/projects/.../sittings`)](#7-assessment-api--sittings)
+7b. [Course Assessment API — the project-independent track](#7b-course-assessment-api--the-project-independent-track)
 8. [Achievements API (`/api/achievements`)](#8-achievements-api-apiachievements)
 
 ---
@@ -88,76 +89,66 @@ Tests active connectivity to the PostgreSQL database.
 
 ## 2. Authentication API (`/api/auth`)
 
-JWT-based authentication for students. On success, both endpoints return a signed **JWT** (HS256) alongside the student profile. The token encodes the `student_id` in its `sub` claim and expires after `JWT_EXPIRY_HOURS` (default 24). Registered users are stored in the same `students` table; `email` and `phone` are both **unique**, and passwords are stored only as salted hashes (`werkzeug`), never returned in responses.
+JWT-based authentication for students. A successful login returns a signed **JWT** (HS256) alongside the student profile. The token encodes the `student_id` in its `sub` claim and expires after `JWT_EXPIRY_HOURS` (default 24). Registered users are stored in the same `students` table; `email` and `phone` are both **unique**, and passwords are stored only as salted hashes (`werkzeug`), never returned in responses. The serialized student now carries an **`email_verified`** boolean.
+
+There are two ways to sign in — password and passwordless email OTP — plus email verification and password reset. Every email is sent from `Nipuna Careers <no-reply@nipunacareers.com>` via Amazon SES; the emailed secrets (verify/reset links, OTP codes) are stored only as hashes, are single-use, and expire. See [architecture.md](architecture.md#email-ses) for the SES/sandbox caveat.
+
+**No account enumeration.** `resend-verification`, `otp/request` and `password/forgot` always return `200` with the same generic message whether or not the address is registered (and whether or not the mail actually sent). Do not branch on their response to infer membership.
 
 ### **POST /api/auth/register**
-Registers a new student and returns an access token. Optional profile fields (`phone`, `college_name`, `degree_name`, `target_role`, …) may be included; only `full_name`, `email`, and `password` are required. Blank strings are stored as NULL.
-- **Request Body**:
+Creates a new student and emails a verification link. **It does not log the student in** — a new account must confirm its email before it can sign in with a password. Only `full_name`, `email`, and `password` are required (min 8 chars); optional profile fields (`phone`, `college_name`, …) may be included; blank strings are stored as NULL. Accounts that existed before email verification shipped were grandfathered to verified.
+- **Request Body**: `{ "full_name": "...", "email": "...", "password": "...", "phone": "..." }`
+- **Response (201 Created)** — no token; the client should show a "check your email" state:
   ```json
   {
-    "full_name": "Manoj Tungala",
+    "message": "Account created. Check your email for a link to verify your address.",
     "email": "manoj@example.com",
-    "password": "s3cret-passphrase",
-    "phone": "+1234567890"
+    "requires_verification": true
   }
   ```
-- **Response (201 Created)**:
-  ```json
-  {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "student": {
-      "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
-      "full_name": "Manoj Tungala",
-      "email": "manoj@example.com",
-      "phone": "+1234567890",
-      "created_at": "2026-07-12T14:32:10.123456",
-      "updated_at": "2026-07-12T14:32:10.123456"
-    }
-  }
-  ```
-- **Response (400 Bad Request)** — a required field is missing:
-  ```json
-  {
-    "error": "password is required"
-  }
-  ```
-- **Response (409 Conflict)** — the email or phone is already registered:
-  ```json
-  {
-    "error": "email already registered"
-  }
-  ```
+- **Response (400)** — a required field is missing. **Response (409)** — `{"error": "email already registered"}`.
+
+### **POST /api/auth/verify-email**
+Consumes a verification link's token and marks the address verified.
+- **Request Body**: `{ "token": "<from the emailed link>" }`
+- **Response (200)**: `{ "message": "Email verified. You can now sign in." }`
+- **Response (400)** — invalid/expired/used token.
+
+### **POST /api/auth/resend-verification**
+Re-sends the verification link (subject to a 30s per-account cooldown).
+- **Request Body**: `{ "email": "..." }` → **200** generic message (enumeration-safe).
 
 ### **POST /api/auth/login**
-Authenticates a student by email and password and returns an access token.
-- **Request Body**:
+Authenticates by email and password and returns an access token.
+- **Request Body**: `{ "email": "...", "password": "..." }`
+- **Response (200 OK)**: `{ "token": "...", "student": { …, "email_verified": true } }`
+- **Response (400)** — `email` or `password` missing.
+- **Response (401)** — `{"error": "invalid email or password"}`.
+- **Response (403)** — correct credentials but the address is unverified:
   ```json
-  {
-    "email": "manoj@example.com",
-    "password": "s3cret-passphrase"
-  }
+  { "error": "Please verify your email before signing in.", "code": "email_unverified" }
   ```
-- **Response (200 OK)**:
-  ```json
-  {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "student": {
-      "student_id": "8fa134d1-c290-482a-89a1-6380cde5d2fe",
-      "full_name": "Manoj Tungala",
-      "email": "manoj@example.com",
-      "phone": "+1234567890",
-      "created_at": "2026-07-12T14:32:10.123456",
-      "updated_at": "2026-07-12T14:32:10.123456"
-    }
-  }
-  ```
-- **Response (400 Bad Request)** — `email` or `password` missing.
-- **Response (401 Unauthorized)** — invalid credentials:
-  ```json
-  {
-    "error": "invalid email or password"
-  }
-  ```
+  Clients branch on `code: "email_unverified"` to offer "resend verification".
+
+### **POST /api/auth/otp/request**
+Starts a passwordless login: mails a 6-digit code (10-minute expiry, 30s cooldown).
+- **Request Body**: `{ "email": "..." }` → **200** generic message (enumeration-safe).
+
+### **POST /api/auth/otp/verify**
+Finishes a passwordless login. A correct code both signs in and marks the address verified (a delivered code proves inbox control). The code is attempt-capped (5) and single-use.
+- **Request Body**: `{ "email": "...", "code": "123456" }`
+- **Response (200 OK)**: `{ "token": "...", "student": { … } }` — identical shape to password login.
+- **Response (401)** — `{"error": "That code is incorrect or has expired."}`.
+
+### **POST /api/auth/password/forgot**
+Mails a one-time reset link (1-hour expiry).
+- **Request Body**: `{ "email": "..." }` → **200** generic message (enumeration-safe).
+
+### **POST /api/auth/password/reset**
+Sets a new password from a reset link's token; also clears any verification gate.
+- **Request Body**: `{ "token": "<from the emailed link>", "password": "<min 8 chars>" }`
+- **Response (200)**: `{ "message": "Password updated. You can now sign in." }`
+- **Response (400)** — invalid/expired token, or password shorter than 8.
 
 ---
 
@@ -241,11 +232,10 @@ Creates a new project track for a student. The project starts with `resume_id: n
     "updated_at": "2026-06-24T14:35:00.111222"
   }
   ```
-- **Response (400 Bad Request)**:
+- **Response (400 Bad Request)**: `{ "error": "project_name is required" }`
+- **Response (409 Conflict)** — the student already has an active project with this exact name (case-sensitive; a soft-deleted name is free to reuse):
   ```json
-  {
-    "error": "project_name is required"
-  }
+  { "error": "You already have a project with this name." }
   ```
 
 ### **GET /api/projects/<project_id>**
@@ -286,7 +276,7 @@ Retrieves all projects associated with a specific student.
   ```
 
 ### **PUT /api/projects/<project_id>**
-Updates attributes of an existing project (e.g., changing status, name, description).
+Updates attributes of an existing project (e.g., changing status, name, description). Renaming to a name the student already uses on another active project returns **409** with the same "already have a project with this name" error as create.
 - **Path Parameters**:
   - `project_id` (string, required): The UUID of the project to update.
 - **Request Body**:
@@ -311,15 +301,11 @@ Updates attributes of an existing project (e.g., changing status, name, descript
   ```
 
 ### **DELETE /api/projects/<project_id>**
-Deletes a project record from the database.
+**Soft delete.** The project vanishes from every read (it 404s afterward and drops out of the student's list), but the row and everything that cascades off it — sittings, scores, recommendations, the resume row — stay in the database. A `deleted_at` timestamp is stamped rather than the row removed.
 - **Path Parameters**:
   - `project_id` (string, required): The UUID of the project to delete.
-- **Response (200 OK)**:
-  ```json
-  {
-    "message": "project deleted successfully"
-  }
-  ```
+- **Response (200 OK)**: `{ "message": "project deleted successfully" }`
+- **Response (404 Not Found)** — the project doesn't exist, isn't the caller's, or was already deleted (a second delete returns 404).
 
 ---
 
@@ -741,6 +727,25 @@ Per-section state — what the syllabus button should say.
   ]
   ```
 - **Sections the student has not touched are absent**, not returned with zeros. The syllabus already knows every section, and inventing rows would make "not started" indistinguishable from "scored nothing". Absent → **Start**, `in_progress`/`paused` → **Continue or start new**, `submitted` → **Practice**.
+
+---
+
+## 7b. Course Assessment API — the project-independent track
+
+The same sitting flow as section 7, but a sitting is owned by the **student** rather than a project, and lives in its own tables (`course_section_sittings` / `course_question_attempts`). The two tracks are completely independent: a section can be sat in both, and neither score affects the other. Reachable from the catalogue course page, with no project in scope. Ownership is taken from the token on every route.
+
+Sitting behaviour (start/get/answer/pause/resume/submit, the clock, the shuffle, grading out of the MCQ total of 30, practice-after-submit) is identical to section 7 — only the URLs and the owner differ.
+
+| Method & path | Purpose |
+|---|---|
+| `POST /api/course-assessments/<course_id>/sections/<section_code>/sittings` | Start (or resume) a course-track sitting. Body `{"mode":"graded"\|"practice", "restart":bool}`. `course_id` is for symmetry/navigation; the sitting is keyed on student + section. → `201`/`200` with `{ "sitting": {…, "student_id", "project_id": null}, "resumed": bool }` |
+| `GET /api/course-sittings/<sitting_id>` | The paper in this sitting's shuffled layout plus answers so far. Withholds the key for a graded sitting in progress. |
+| `POST /api/course-sittings/<sitting_id>/answers` | Save a batch of answers. Practice returns per-question `results`. |
+| `POST /api/course-sittings/<sitting_id>/pause` · `/resume` · `/submit` | Clock control and the once-only graded submit. |
+| `GET /api/course-assessments/<course_id>/progress?course_code=NT-C-023` | Per-section state for that course, this student. `course_code` (the section prefix) is required. |
+| `GET /api/course-achievements` | XP / level / streak / badges for the **course track** — a separate pool from `/api/achievements`, derived only from course-track sittings. |
+
+Every sitting id is scoped to the caller; a stray id from another account returns `404`.
 
 ---
 

@@ -55,13 +55,15 @@ In parallel, a **persistent skill profile** is maintained per student (`student_
 **Referenced By:** `projects`, `resumes`, `questionnaire_responses`, `student_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`
 **Relationships:** Root entity of the entire schema — one student fans out into every other domain (1 → many everywhere).
 **Notable constraints:** `email` UNIQUE; CHECK on `internship_preference` ∈ {free, paid, both}; CHECK on `work_mode_preference` ∈ {office, remote, hybrid}.
+**`email_verified`** (bool, default false; migration 018): a new account must confirm its email before password login. Accounts that predated the column were grandfathered to `true`. Also referenced by `auth_email_challenges` and `course_section_sittings` (both ON DELETE CASCADE).
 
 ## projects
 **Purpose:** A discrete career-exploration "session" owned by a student (e.g., one resume-driven matching run). Has a `status` lifecycle (default `active`).
 **Primary Key:** `project_id` (uuid)
 **Foreign Keys:** `student_id` → `students.student_id` (ON DELETE CASCADE)
-**Referenced By:** `resumes`, `project_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`
+**Referenced By:** `resumes`, `project_skills`, `student_career_matches`, `career_skill_gaps`, `course_recommendations`, `llm_summaries`, `project_section_sittings`
 **Relationships:** One student → many projects (1:N). One project → many resumes/skills/matches/gaps/recommendations/summaries (1:N each).
+**`deleted_at`** (timestamp, nullable; migration 018): **soft delete.** NULL = active; a timestamp = hidden. `get_by_id`/`get_by_student_id` filter `deleted_at IS NULL`, so a deleted project 404s everywhere while its rows (and cascaded sittings/scores/recommendations) survive. A partial unique index `(student_id, project_name) WHERE deleted_at IS NULL` enforces **one active project name per student** (exact match; a deleted name is reusable).
 
 ## resumes
 **Purpose:** Stores an uploaded resume file (URL, raw extracted text, parse timestamp) for a student, optionally tied to a specific project.
@@ -739,3 +741,52 @@ shuffle to read a result.
   `project_section_sittings` on request. Streaks come from a gaps-and-islands query
   over `DATE(submitted_at)`. Nothing to backfill, and a score submitted a second
   ago already counts.
+
+---
+
+# Course assessment tables — the project-independent track (migration 016)
+
+A second sitting track, keyed by **student** rather than project, so a section
+can be sat both inside a project and standalone from the catalogue with neither
+score touching the other. Same schema and constraints as the project track,
+`student_id` in place of `project_id`.
+
+## course_section_sittings
+Mirror of `project_section_sittings`, owned by `student_id` → `students` (CASCADE)
+and `section_code` → `course_sections` (CASCADE). Same clock model (stored
+`seconds_remaining`, not a deadline), same CHECK constraints, and the same
+"first graded submit locks the score" partial unique index — here on
+`(student_id, section_code) WHERE mode = 'graded'`, plus one open practice per
+`(student_id, section_code)`.
+
+## course_question_attempts
+Mirror of `project_question_attempts`, owned by `student_id`, FK `sitting_id` →
+`course_section_sittings` (CASCADE), question `ON DELETE RESTRICT`. Natural key
+`(sitting_id, question_id)`.
+
+Course-track **XP/level/streak/badges** are a separate pool, derived only from
+`course_section_sittings` (`CourseAchievementRepository`), so the two tracks'
+gamification never move each other.
+
+---
+
+# Auth email table (migration 018)
+
+## auth_email_challenges
+One table for every emailed secret: the **verify-email** link, the
+**reset-password** link, and the **login OTP** code.
+
+| Column | Notes |
+|---|---|
+| `challenge_id` | uuid PK |
+| `student_id` | FK → `students` ON DELETE CASCADE |
+| `purpose` | CHECK ∈ {`verify_email`, `reset_password`, `login_otp`} |
+| `secret_hash` | SHA-256 of the raw token/code — the raw value is emailed, never stored |
+| `expires_at` | verify 24h · reset 1h · OTP 10m |
+| `consumed_at` | single-use: set on redemption (or when an OTP's attempts run out) |
+| `attempts` | OTP only — caps guesses at the 6-digit code (5) |
+
+Issuing a new challenge of a purpose consumes any earlier unconsumed one of the
+same purpose, so only the latest link/code works — which is what makes "resend"
+safe. Link flows are looked up by `secret_hash` (the link carries no id); the OTP
+flow is looked up by `(student_id, purpose)`.

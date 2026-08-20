@@ -117,18 +117,36 @@ All routes live in [`src/App.jsx`](../frontend/src/App.jsx).
 
 | Path | Access | Component |
 |---|---|---|
-| `/login` | public | `pages/LoginPage.jsx` |
-| `/register` | public | `pages/RegisterPage.jsx` |
-| `/` | protected | `pages/HomePage.jsx` |
+| `/login` | public | `pages/LoginPage.jsx` (password **or** email-OTP) |
+| `/register` | public | `pages/RegisterPage.jsx` (ends on a "check your email" state) |
+| `/verify-email` | open | `pages/VerifyEmailPage.jsx` (consumes `?token`) |
+| `/forgot-password` | open | `pages/ForgotPasswordPage.jsx` |
+| `/reset-password` | open | `pages/ResetPasswordPage.jsx` (consumes `?token`) |
+| `/` | protected | `pages/HomePage.jsx` (create / open / **delete** projects) |
 | `/projects/:projectId` | protected | `pages/ProjectDetailsPage.jsx` |
 | `/projects/:projectId/careers` | protected | `pages/CareerRecommendationsPage.jsx` |
 | `/projects/:projectId/courses` | protected | `pages/CourseRecommendationsPage.jsx` |
+| `/projects/:projectId/courses/:courseId` | protected | `pages/ProjectCoursePage.jsx` (sections + Start test) |
+| `/projects/:projectId/sittings/:sittingId` | exam | `pages/SittingPage.jsx` `scope="project"` |
+| `/courses/:courseId` | protected | `pages/CourseJourneyPage.jsx` (journey + project-independent assessment) |
+| `/courses/:courseId/sittings/:sittingId` | exam | `pages/SittingPage.jsx` `scope="course"` |
 | `*` | — | redirect to `/` |
 
-Two wrappers, both defined in `App.jsx`:
+Three wrappers, all defined in `App.jsx`:
 
 - **`ProtectedRoute`** — renders a loading screen while the auth context rehydrates, redirects to `/login` when unauthenticated, otherwise renders `<Navbar />` plus the page inside `<main>`. Note the Navbar is rendered per route rather than as a layout route.
-- **`PublicRoute`** — redirects an already-authenticated visitor to `/`.
+- **`PublicRoute`** — redirects an already-authenticated visitor to `/` (login/register).
+- **`ExamRoute`** — authenticated, but no app shell (full-bleed sitting screen).
+
+The verify/reset landings use **neither** `ProtectedRoute` nor `PublicRoute`: an emailed
+link must work whether or not the visitor is already logged in, so `PublicRoute`'s
+redirect-if-authenticated would break them.
+
+`SittingPage` is shared by both assessment tracks via a `scope` prop (`"project"` |
+`"course"`), which selects the API set (`sittingsAPI` vs `courseSittingsAPI`) and the
+back-navigation targets. The section list, Start-test buttons and "start new" modal are the
+shared `components/SectionAssessment.jsx`, used by both `ProjectCoursePage` and
+`CourseJourneyPage`.
 
 ### The exam route has no shell
 
@@ -219,8 +237,9 @@ Every request carries the token: the axios instance in `src/services/api.js` att
 `Authorization: Bearer <token>` from `lib/storage.js` in a request interceptor, and
 nothing in `src/` calls `fetch` or bare `axios`, so there is no path that bypasses it.
 
-**The API enforces this.** Every route except `POST /api/auth/register` and
-`POST /api/auth/login` requires `@require_auth` *and* checks that the row belongs to
+**The API enforces this.** Every route except the unauthenticated `/api/auth/*` endpoints
+(register, login, verify-email, resend-verification, otp/request, otp/verify,
+password/forgot, password/reset) requires `@require_auth` *and* checks that the row belongs to
 the caller — see `backend/api/guards.py`. A row owned by another student returns
 **404, not 403**, because a 403 confirms the id exists. Two consequences for frontend
 work:

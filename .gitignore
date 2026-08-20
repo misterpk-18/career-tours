@@ -7,3 +7,7 @@ __pycache__/
 .venv/
 # Playwright MCP session output
 .playwright-mcp/
+
+# Local session artifacts (Playwright screenshots, ad-hoc API dumps)
+/*.png
+/response.json
