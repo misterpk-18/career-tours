@@ -1,0 +1,1826 @@
+{
+  "course_code": "NT-C-030",
+  "course_name": "Hardware & Networking",
+  "sections": [
+    {
+      "section_code": "NT-C-030-S01",
+      "skills_assessed": [
+        "Computer Assembly",
+        "ESD safety",
+        "upgrade firmware",
+        "Troubleshooting"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive a new motherboard whose manual shows these CPU power connectors:\n```text\nPower Connectors\n- ATX_24PIN (required)\n- ATX_12V_8PIN (required)\n- ATX_12V_4PIN (optional, for extreme overclocking)\n```\nYour PSU cables are:\n```text\n- 1x 24-pin ATX\n- 1x 4+4-pin EPS12V (CPU)\n- 2x 6+2-pin PCIe (GPU)\n```\nThe GPU requires two 8‑pin PCIe. Choose the routing that powers the CPU safely without misusing connectors.",
+          "options": [
+            "Use one 6+2‑pin PCIe into the ATX_12V_8PIN and the 4+4 EPS into the optional 4‑pin.",
+            "Use the 4+4‑pin EPS joined as 8‑pin into ATX_12V_8PIN, leave the optional 4‑pin empty, and use both 6+2 for the GPU.",
+            "Split the 4+4 EPS: put one 4‑pin into ATX_12V_4PIN and the other 4‑pin into one of the GPU sockets.",
+            "Use a dual‑6+2 to 8‑pin adapter to feed the CPU 8‑pin; reserve the 4+4 EPS for the GPU."
+          ],
+          "correct_option": "B",
+          "explanation": "CPU 8‑pin must be fed by an EPS12V cable. The single 4+4 EPS forms the required 8‑pin for ATX_12V_8PIN. The optional 4‑pin can be left empty. The two 6+2 PCIe are reserved for the GPU.",
+          "distractor_rationale": "A: PCIe 6+2 is not EPS; pinout and keying differ and can damage hardware. C: Splitting the EPS leaves neither device properly powered; GPUs do not accept EPS halves. D: Adapters from PCIe to EPS are improper; CPU power should come from native EPS12V.",
+          "skills_covered": [
+            "Computer Assembly"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "ESD audit of a bench shows:\n```text\nWrist strap tester (loop): 0.9 MΩ PASS\nMat surface resistance (Rs): 7.0 x 10^7 Ω (PASS)\nMat resistance-to-ground (Rtg): OPEN (FAIL)\nRelative humidity: 22%\nMat ground cord continuity to CPC: FAIL\n```\nPer ANSI/ESD S20.20, which single change FIRST brings the workstation back into compliance?",
+          "options": [
+            "Increase humidity to 45–55% to reduce resistance.",
+            "Attach the mat’s ground cord to a verified common point ground (CPC) and retest Rtg.",
+            "Replace the wrist strap because the tester reading is close to 1 MΩ.",
+            "Turn off nearby bench power supplies to reduce leakage currents."
+          ],
+          "correct_option": "B",
+          "explanation": "The failing parameter is Rtg (mat not bonded to ground). Restoring the ground connection to a verified CPC immediately brings the workstation within spec given the passing surface resistance and strap.",
+          "distractor_rationale": "A: Humidity may help surface resistance, but Rs already passes; Rtg remains OPEN without a ground bond. C: The strap already passes; replacing it does not correct the mat ground failure. D: Bench PSUs don’t fix a missing ground connection.",
+          "skills_covered": [
+            "ESD safety"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "After installing a 240 mm AIO, the system thermal throttles within 60 seconds. BIOS Hardware Monitor shows:\n```text\nCPU Temp: 98°C (rising)\nCPU_FAN: 1900 RPM (radiator fan splitter)\nAIO_PUMP: 0 RPM\nCHA_FAN1: 2600 RPM\n```\nPump cable is currently on CHA_FAN1, radiator fan splitter on CPU_FAN. Which change yields stable cooling and a clean POST (no fan errors)?",
+          "options": [
+            "Leave wiring as is; set CPU_FAN to Full Speed and CHA_FAN1 to Silent.",
+            "Disable CPU Fan Monitoring in BIOS to avoid the error; cooling will normalize under load.",
+            "Move pump to AIO_PUMP header and set its control to 100% (DC/PWM), keep radiator fans on CPU_FAN with curve.",
+            "Move radiator fans to AIO_PUMP and pump to CPU_FAN so BIOS tracks pump speed."
+          ],
+          "correct_option": "C",
+          "explanation": "The pump must run at constant full speed from AIO_PUMP, and radiator fans should be on CPU_FAN with an appropriate curve. That restores flow and proper monitoring.",
+          "distractor_rationale": "A: Full speed CPU_FAN does not power the pump; pump on CHA_FAN1 may still be voltage/curve limited. C: Putting fans on AIO_PUMP removes useful CPU‑based control; pump on CPU_FAN may not run full‑time. D: Hiding the error doesn’t fix zero pump RPM; overheating persists.",
+          "skills_covered": [
+            "Computer Assembly",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "On first boot, an ASUS board shows Q‑LEDs cycling CPU→DRAM, then VGA LED stays solid. Monitor is black. Build notes:\n```text\nCPU: Ryzen 5 3600 (no iGPU)\nGPU: RTX 3070, two 8‑pin sockets\nGPU Power: none connected yet\nMonitor cable: HDMI to motherboard rear I/O\n```\nWhat action will resolve the no‑display condition?",
+          "options": [
+            "Remove one RAM stick to reduce training time.",
+            "Connect the case front‑panel HD Audio header.",
+            "Enable CSM in BIOS to support the GPU.",
+            "Move the HDMI cable to the GPU and connect both GPU 8‑pin PCIe power leads."
+          ],
+          "correct_option": "D",
+          "explanation": "The CPU lacks integrated graphics, so video must come from the discrete GPU, which also needs its PCIe power. Plug the monitor into the GPU and power the card.",
+          "distractor_rationale": "B: CSM choice doesn’t matter if the GPU is unpowered and the monitor is on the motherboard. C: RAM count doesn’t fix missing GPU power or wrong display output. D: HD Audio is unrelated to video initialization.",
+          "skills_covered": [
+            "Computer Assembly",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You install 4×16 GB DDR4‑3600 (dual‑rank) on a board whose manual states:\n```text\nMemory Support (Ryzen 3000 IMC)\n- 2 DIMMs: up to 3600 MT/s (OC)\n- 4 DIMMs (dual‑rank): 2666–2933 MT/s typical, CR=2T recommended\n```\nPOST fails with DRAM LED lit when XMP 3600 is enabled. Which BIOS memory setup is most likely to POST and run stably?",
+          "options": [
+            "Set JEDEC 2133 CL15 at 1.20 V, CR=1T.",
+            "Increase DRAM voltage to 1.50 V and keep 3600 MT/s.",
+            "Manually set 2933 MT/s, DRAM 1.35 V, SOC +0.02 V, CR=2T.",
+            "Enable XMP 3600, leave all else Auto."
+          ],
+          "correct_option": "C",
+          "explanation": "With four dual‑rank DIMMs, the IMC typically tops out around 2666–2933. Using 2933 with modest voltage and 2T command rate aligns with the manual’s guidance and usually POSTs.",
+          "distractor_rationale": "A: XMP 3600 often fails with 4× dual‑rank. B: 2133 will POST but leaves significant, unnecessary performance on the table; the question asks what is most likely stable at reasonable speed. D: 1.50 V is excessive for standard DDR4 and risks damage; frequency is still too high for 4× dual‑rank.",
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You need the HDD activity LED working. The front‑panel header from the manual:\n```text\nFront Panel Header (F_PANEL)\nPins (odd top row L→R): 1 3 5 7 9\nPins (even bottom row L→R): 2 4 6 8 10\n1: HDD_LED_P   3: HDD_LED_N   5: RESET_SW_P   7: RESET_SW_N   9: +5V (key)\n2: PWR_LED_P   4: PWR_LED_N   6: PWR_SW_P     8: PWR_SW_N     10: NC\nCase leads: HDD LED (+/-), PWR LED (+/-), PWR SW, RESET SW\n```\nWhich placement and polarity makes the HDD LED function?",
+          "options": [
+            "Place HDD LED leads on pins 1(+),3(−).",
+            "Place HDD LED leads on pins 2(+),4(−).",
+            "Place HDD LED leads on pins 3(+),1(−).",
+            "Place HDD LED leads on pins 6(+),8(−)."
+          ],
+          "correct_option": "A",
+          "explanation": "Per the pinout, HDD LED uses pins 1 (positive) and 3 (negative). Placing the leads there with correct polarity illuminates on disk activity.",
+          "distractor_rationale": "A: Pins 2/4 are the Power LED. C: Pins 6/8 are the Power Switch. D: Reversed polarity on pins 1/3 prevents a diode LED from lighting.",
+          "skills_covered": [
+            "Computer Assembly"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "BIOS shows the NVMe drive under NVMe Information, but Boot Option Priorities lists only SATA devices. Current settings:\n```text\nBoot -> CSM: Enabled (Legacy & UEFI)\nSecure Boot: Disabled\nSATA Mode: AHCI\nNVMe Info: Samsung 980 PRO 1TB (Detected)\n```\nWithout installing any OS, which firmware change makes the NVMe drive eligible as a boot target?",
+          "options": [
+            "Switch SATA Mode to RAID.",
+            "Initialize the NVMe drive with an MBR partition table.",
+            "Force PCIe slots to Gen3 instead of Auto.",
+            "Disable CSM (UEFI only) and set OS Type to Windows UEFI Mode."
+          ],
+          "correct_option": "D",
+          "explanation": "Many boards only expose NVMe boot options in pure UEFI mode. Disabling CSM enables NVMe boot path enumeration.",
+          "distractor_rationale": "A: SATA mode doesn’t affect NVMe boot enumeration. B: Link speed rarely controls whether NVMe appears as bootable. D: MBR vs GPT matters to bootloaders, not to the firmware’s decision to list an NVMe device before any OS is installed.",
+          "skills_covered": [
+            "upgrade firmware",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Power budgeting before first boot:\n```text\nCPU: 125 W (peaks 160 W)\nGPU: 320 W (transients up to 2x for milliseconds)\nMotherboard, drives, fans: 60 W\nTotal steady: ~505 W\n```\nWhich PSU choice best avoids OCP trips during GPU transients while providing headroom?",
+          "options": [
+            "650 W PSU, single 12 V rail @ 54 A",
+            "650 W PSU, dual 12 V rails @ 18 A each for PCIe outputs",
+            "450 W PSU, single 12 V rail @ 34 A",
+            "550 W PSU, single 12 V rail @ 40 A"
+          ],
+          "correct_option": "A",
+          "explanation": "A quality 650 W unit with a strong single 12 V rail (~54 A) provides sufficient steady power and transient headroom without tripping per‑rail OCP during GPU spikes.",
+          "distractor_rationale": "A/B: Insufficient 12 V current headroom for 500+ W steady and spikes. D: Two 18 A rails (216 W each) on PCIe may trip during GPU transients.",
+          "skills_covered": [
+            "Computer Assembly"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You must install a Ryzen 5 5600 on a B450 board with stickered BIOS v1201. CPU support list says v2409 required. The board has a USB port labeled \"BIOS Flashback\". The system won’t POST with the 5600 installed. How can you update the firmware?",
+          "options": [
+            "Install Windows on another drive and run the vendor’s update utility.",
+            "Use the board’s BIOS Flashback feature with a formatted USB stick and the renamed BIOS file.",
+            "You cannot update; return the CPU or board.",
+            "Enter EZ‑Flash from BIOS Setup and update from USB."
+          ],
+          "correct_option": "B",
+          "explanation": "BIOS Flashback updates firmware without a supported CPU or DRAM by using a dedicated microcontroller and USB port.",
+          "distractor_rationale": "B/C: Both require a working POST/OS, which you don’t have. D: Flashback is designed for exactly this situation.",
+          "skills_covered": [
+            "upgrade firmware",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "After enabling XMP, the system won’t POST. Manual excerpt:\n```text\nCLRTC (CMOS) Header: Short pins 1-2 for 10 seconds with system powered off to clear RTC RAM.\nAlso available: Rear-panel CLR_CMOS button.\n```\nWhat is the least‑risk immediate recovery step?",
+          "options": [
+            "Short the CLRTC header with power removed to clear CMOS, then retry with defaults.",
+            "Remove the CPU to reset memory training data.",
+            "Increase DRAM voltage blindly to force POST.",
+            "Reflash BIOS to the latest version using EZ‑Flash."
+          ],
+          "correct_option": "A",
+          "explanation": "Clearing CMOS is the standard, low‑risk recovery for failed overclock/XMP settings. It restores safe defaults without modifying firmware.",
+          "distractor_rationale": "A: Reflashing is unnecessary and riskier than clearing CMOS. C: Removing the CPU is unrelated and adds risk. D: Blind voltage increases can damage components and don’t solve a failed POST caused by overly aggressive timings.",
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A client selected parts for a compact build:\n```text\nCase: mATX tower, GPU max length 300 mm, CPU cooler max height 158 mm\nMotherboard: mATX B550, BIOS shipped v1004, Flashback supported\nCPU: Ryzen 7 5800X (requires BIOS v2402+)\nGPU: RTX 4070 Ti, length 320 mm, 2.5-slot\nCooler: Air tower 165 mm height\nPSU: 650 W, 1x 4+4 EPS, 2x 6+2 PCIe\nDrives: 1x NVMe, 2x SATA HDD (hot-swap bays in case front)\n```\nThe client wants a same-day build that boots to BIOS and passes memory diagnostics (no OS install).",
+          "task": "Identify all blocking incompatibilities or risks that prevent a same-day successful BIOS boot and diagnostic run, and propose specific remedies for each. Prioritize actions and justify them against the artefacts provided.",
+          "expected_answer": "Blocking issues: (1) GPU length 320 mm exceeds case 300 mm clearance. Remedy: choose a larger case or a shorter GPU; same-day path is to swap the case to one with ≥330 mm GPU clearance. (2) CPU cooler height 165 mm exceeds case 158 mm. Remedy: choose a cooler ≤158 mm or a 240 mm AIO that fits the case. (3) BIOS version v1004 cannot POST a 5800X; even if the board powers, it won’t train memory. Remedy: perform BIOS Flashback to v2402+ before CPU/RAM install or with only ATX/EPS power connected and a USB stick. Risks to check: (4) Ensure PSU has two 6+2 PCIe for GPU (it does) and one 8‑pin EPS (4+4) for CPU (meets required ATX_12V_8PIN; optional 4‑pin not required). (5) Front hot‑swap bays require SATA power and enabling Hot Plug per-port in BIOS later; not blocking for BIOS boot. Prioritization: swap case or GPU and cooler selection first (physical fit), then BIOS Flashback, then full assembly and diagnostics (MemTest86 one pass). Justifications reference the case clearance specs and vendor CPU support list.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies GPU length vs case clearance as a hard conflict",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly identifies cooler height vs case limit as a hard conflict",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly identifies BIOS version dependency and prescribes Flashback before POST",
+              "marks": 2
+            },
+            {
+              "criterion": "Prioritizes fixes logically (fitment first, firmware second) with justification tied to artefacts",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Computer Assembly",
+            "upgrade firmware",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your training lab’s ESD workstation logs show:\n```text\nMat Rs: 8.2 x 10^7 Ω (PASS)\nMat Rtg: OPEN (FAIL) via banana lead to CPC\nWrist strap test: PASS at 0.95 MΩ (operator + strap + cord)\nRH: 23% (winter HVAC)\nIonizer: Available but OFF\nVisual: Ground cord ring terminal corroded; snap fastener loose\n```\nTwo more benches in the room test fine.",
+          "task": "Design a concrete, ordered remediation plan to bring this station into compliance today, with verification steps and acceptance thresholds for each fix. Explain why each step is necessary given the readings.",
+          "expected_answer": "Plan: (1) Replace the mat ground cord (corroded) and reterminate to a verified common point ground shared with the passing benches. Verify Rtg ≤ 1.0 x 10^9 Ω with a megohmmeter using 5 lb electrode at 10 V (if spec’ed), document reading. (2) Replace or repair the loose snap fastener to ensure a reliable bond; recheck Rs (should remain 10^6–10^9 Ω) and Rtg. (3) Label and test the wrist strap path through the new common point ground using a continuous monitor or loop tester; document PASS with 0.75–1.25 MΩ. (4) Optional environmental control: If Rtg still marginal at low RH, turn on ionizer and set RH target to ~40% using local humidifier; verify ions balance (±50 V decay test if available). Acceptance: Rtg PASS and stable over 5 minutes; strap PASS; mat Rs unchanged in range; all grounds tagged and logged with date. Justification: The failure was bonding (OPEN), not surface resistivity; replacing/bonding fixes the only out-of-spec parameter. Environmental steps are secondary risk controls if readings drift due to dry air.",
+          "rubric": [
+            {
+              "criterion": "Orders actions to address the bonding fault first (ground cord/snap/CPC) with correct verification method",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies quantitative acceptance thresholds (Rtg, Rs, strap loop) and how to measure them",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why humidity/ionization is secondary given the data",
+              "marks": 1
+            },
+            {
+              "criterion": "Documents final compliance checks and labeling/logging",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ESD safety"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "First power-on of a new build:\n```text\nBoard: B450 (no POST with Ryzen 5000 on old BIOS)\nStickered BIOS: v1103\nCPU: Ryzen 5 5600X\nRAM: 2x16 GB DDR4‑3600\nGPU: GTX 1060 (known-good)\nSymptoms: Fans spin, DRAM Q‑LED solid; tried single stick in A2, CMOS clear, and reseat. Same.\n```\nTools: USB drive, access to vendor BIOS files, board supports BIOS Flashback.",
+          "task": "Propose the next three diagnostic actions in order that have the highest chance to achieve a clean POST to BIOS today. For each, justify why it’s next, how to execute, and what success/failure implies for the subsequent step.",
+          "expected_answer": "1) BIOS Flashback to the latest version that adds Ryzen 5000 support (e.g., v2409): Rationale—B450 requires updated AGESA for 5600X memory training; DRAM LED may reflect IMC microcode mismatch. Execute with only ATX/EPS power, no CPU/RAM/GPU if supported; FAT32 USB with correct filename per vendor. Success: Board will then train memory; proceed to step 2. Failure: Rule out media/procedure; if persistently failing, suspect board.\n2) After successful flash, install one DIMM in A2 at JEDEC 2133; disable XMP. Rationale—minimize training complexity. Success: POST to BIOS; then add second DIMM. Failure: Proceed to step 3.\n3) Swap DIMM and slot to rule bad stick/slot; inspect CPU socket/pins (for AM4, bent pins on CPU) and standoffs causing shorts. Rationale—if firmware is current, remaining causes are hardware faults or shorts. Outcome directs RMA or board replacement.",
+          "rubric": [
+            {
+              "criterion": "Selects BIOS Flashback first with correct reasoning and execution details",
+              "marks": 3
+            },
+            {
+              "criterion": "Reduces memory config post‑flash to JEDEC single‑DIMM and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines contingency checks (DIMM/slot swap, socket/standoff inspection) and next actions based on outcomes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "upgrade firmware",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You’re configuring firmware for a system with:\n```text\nDrives: NVMe M.2 (OS), SATA0/1 HDDs in hot‑swap bays\nCurrent BIOS: CSM Enabled, SATA Mode RAID, Hot Plug Disabled, Secure Boot Disabled\nBoot menu shows: UEFI USB, SATA0 HDD; NVMe present under NVMe Info\nGoal: UEFI‑only boot from NVMe, SATA drives visible for data with hot‑plug working in OS later.\n```\nNo OS install is performed today; you must still be able to boot to BIOS and validate detection.",
+          "task": "Specify the exact firmware changes to achieve the goal and the verification you will perform in BIOS to confirm success. Justify each setting change based on the hardware and desired behavior.",
+          "expected_answer": "Changes: (1) Disable CSM (set UEFI Only). Justification—exposes NVMe boot paths; required for UEFI boot. (2) Set SATA Mode to AHCI (not RAID) since no array is planned; AHCI supports NCQ/hot‑plug better. (3) Enable Hot Plug on SATA0 and SATA1 ports only (matching the bay wiring). (4) Optionally enable Secure Boot after OS install; leave Disabled for now if using generic tools. Verification: After save/reboot, Boot Option Priorities should list the NVMe drive (or its UEFI entry) and not list Legacy options; NVMe Info should still show the device; SATA Configuration should show both HDDs with Hot Plug = Enabled; Hot Plug state visible in BIOS or via port info. Justification ties each setting to UEFI NVMe boot enumeration and correct SATA behavior for hot‑swap.",
+          "rubric": [
+            {
+              "criterion": "Disables CSM and justifies it for NVMe UEFI boot enumeration",
+              "marks": 2
+            },
+            {
+              "criterion": "Switches SATA controller to AHCI with correct reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Enables Hot Plug on correct SATA ports and explains verification",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines BIOS‑level verification steps mapping to the goals",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Computer Assembly",
+            "Troubleshooting",
+            "upgrade firmware"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Component identification and compatibility dossier",
+          "brief": "Identify and justify compatibility of core PC components before assembly. Work from real hardware on your bench. For each item, capture a clear photo and document the exact identifier, connector/form‑factor, and how it mates with the target motherboard/case/PSU. Cross‑reference with vendor manuals.",
+          "deliverable": "One zipped folder containing: (a) a PDF or spreadsheet named components.csv or components.pdf with at least 20 rows (see required columns below); (b) a subfolder photos/ with one annotated photo per item, filename matching the Item_ID; (c) citation snippets (PDF pages or screenshots) from manuals/datasheets supporting each mapping.\nRequired columns: Item_ID, Component_Name, Exact_Model, Form_Factor/Slot (e.g., ATX24, EPS12V 8‑pin, M.2 2280, PCIe x16), Keying/Notch, Power_Req (if any), Target_Interface (board header/slot/port), Compatibility_Reason (1–2 sentences) with manual/datasheet page reference.",
+          "acceptance_criteria": [
+            "At least 20 distinct components identified, including: motherboard power headers (ATX_24, EPS_8), CPU cooler mount, 1x PCIe GPU, 2x memory DIMMs, 1x storage (NVMe or SATA), front‑panel headers (PWR_SW, PLED, HDD_LED), at least 2 fan headers, and one case I/O connector.",
+            "Every row has a matching, legible annotated photo highlighting the connector/feature.",
+            "Every row cites a specific manual/datasheet page or figure that confirms form factor and pinout; citations included as images/PDF snippets.",
+            "Zero mismatches between documented interface and the photographed hardware (pin count/keying must match).",
+            "Submission opens cleanly; filenames consistent with Item_ID; no broken links."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accuracy of identification (connector names, form factors, keying) across 20+ items",
+              "marks": 6
+            },
+            {
+              "criterion": "Compatibility justifications referencing the correct manual/datasheet sections",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality and clarity of annotated photos linked to each row",
+              "marks": 4
+            },
+            {
+              "criterion": "Organization and completeness (all required columns present; filenames consistent)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Computer Assembly",
+            "ESD safety"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Assemble, configure firmware, and run pre‑OS diagnostics",
+          "brief": "Assemble a PC that reliably POSTs to BIOS/UEFI and completes memory/storage diagnostics without an OS. Configure cooling and firmware appropriately.",
+          "deliverable": "One zipped folder containing: (a) 6–10 build‑stage photos (CPU install, cooler mount, 24‑pin/EPS connected, GPU powered, front‑panel headers close‑up, cable management); (b) BIOS screenshots: Main (CPU/RAM detected), Hardware Monitor (temps/fan RPMs), Boot options (NVMe/SATA listed), BIOS version page; (c) MemTest86 or vendor UEFI memory test report showing at least 1 full pass with 0 errors; (d) Storage detection screenshot (BIOS NVMe Information or SATA Port list with drives); (e) a short text log (build_log.txt) listing any issues encountered and how you resolved them.",
+          "acceptance_criteria": [
+            "System powers on and enters BIOS/UEFI without errors; screenshots show correct CPU model and total memory capacity in dual‑channel mode (if applicable).",
+            "Cooling configuration validated: BIOS Hardware Monitor shows CPU temperature ≤ 85°C sustained during a 5‑minute fan test; at least one CPU‑cooling device reports non‑zero RPM.",
+            "Boot configuration: CSM disabled or UEFI‑only noted if NVMe boot is desired; Boot menu shows the NVMe device (if installed).",
+            "Memory diagnostics: MemTest86 (or board UEFI test) completes 1+ full pass with 0 errors; attach the HTML/text report or photo evidence of PASS.",
+            "Storage: BIOS shows all connected drives; for SATA, ports are correctly enumerated; for NVMe, device details visible.",
+            "Firmware: BIOS version screenshot present; if CPU required a minimum version, note how you updated (e.g., Flashback) in build_log.txt.",
+            "ESD practice noted briefly in build_log.txt (strap/mat usage)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Functional assembly evidenced by BIOS detection (CPU, RAM in dual‑channel, drives) and photos",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct and safe firmware configuration (UEFI/CSM, fan control) with justification in log",
+              "marks": 4
+            },
+            {
+              "criterion": "Successful diagnostic artifacts (MemTest result; storage visibility)",
+              "marks": 6
+            },
+            {
+              "criterion": "Build quality and risk controls (proper power cabling, cooler seating, ESD practices) shown in photos/log",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Computer Assembly",
+            "upgrade firmware",
+            "Troubleshooting",
+            "ESD safety"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-030-S02",
+      "skills_assessed": [
+        "install operating system",
+        "Troubleshooting",
+        "Backup and Recovery"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You boot Windows Setup on a desktop whose firmware is currently set to Legacy (CSM). The target SSD already contains data you must preserve. Windows Setup shows:\n\n```text\nWindows cannot be installed to this disk. The selected disk is of the GPT partition style.\n```\n\nFrom Shift+F10 you run `diskpart`:\n\n```text\ndiskpart\nlist disk\n\n  Disk ###  Status         Size     Free     Dyn  Gpt\n  --------  -------------  -------  -------  ---  ---\n  Disk 0    Online          476 GB      0 B         *\n```\n\nWithout deleting or re-partitioning the disk, which change allows you to proceed with installation?",
+          "options": [
+            "Disable Secure Boot, keep Legacy mode, and let Setup continue on the GPT disk.",
+            "Create a 16 MB MSR partition in the free space to satisfy GPT requirements and retry setup.",
+            "Switch the firmware to UEFI mode, then reboot the installer so it installs to the existing GPT disk.",
+            "Run `diskpart` and `convert mbr` to change the disk to MBR without touching data."
+          ],
+          "correct_option": "C",
+          "explanation": "Legacy (BIOS/CSM) cannot boot from a GPT disk. Changing the firmware to UEFI matches the existing GPT layout and lets Setup proceed without wiping partitions.",
+          "distractor_rationale": "B: `convert mbr` destroys partitions; the question forbids data loss. C: The disk has no free space, and adding an MSR does not make BIOS boot GPT. D: Secure Boot is unrelated; BIOS cannot boot GPT regardless of Secure Boot state.",
+          "skills_covered": [
+            "install operating system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A UEFI Windows 10 system fails to boot. From WinRE you find the EFI System Partition (ESP) exists but has no drive letter. `bcdedit` cannot open the store. `bootrec /rebuildbcd` finds 0 installations. Volumes are:\n\n```text\ndiskpart\nlist vol\n\n  Volume ###  Ltr  Label        Fs     Type        Size     Status     Info\n  ----------  ---  -----------  -----  ----------  -------  ---------  --------\n  Volume 0     C                NTFS   Partition    222 GB  Healthy    \n  Volume 1                      FAT32  Partition    100 MB  Healthy    Hidden  (EFI)\n```\n\nWhat is the most direct next step to make the system bootable again?",
+          "options": [
+            "Assign a letter to the ESP and run `bcdboot C:\\Windows /s S: /f UEFI` to repopulate the EFI files.",
+            "Mark Volume 0 as Active and reboot so firmware finds the loader.",
+            "Run `bootrec /fixmbr` and `bootrec /fixboot` to repair the boot sector on Disk 0.",
+            "Run Startup Repair repeatedly until it discovers Windows and rebuilds the BCD automatically."
+          ],
+          "correct_option": "A",
+          "explanation": "On UEFI/GPT systems you must place the boot files on the ESP. Mounting the ESP and using `bcdboot` repopulates the EFI files and BCD for the detected Windows installation.",
+          "distractor_rationale": "A: `fixmbr`/`fixboot` apply to BIOS/MBR; UEFI uses the ESP, not the MBR boot code. B: GPT disks do not use an Active flag for UEFI boot. D: Startup Repair can loop and does not mount/write the ESP if it cannot locate Windows; `bcdboot` is the deterministic fix here.",
+          "skills_covered": [
+            "Troubleshooting",
+            "install operating system"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Feature updates fail with 0x800f081f. From an elevated prompt you run:\n\n```powershell\nDISM /Online /Cleanup-Image /RestoreHealth\n\nError: 0x800f081f\nThe source files could not be found.\n```\n\nYou have a Windows 10 ISO mounted as D: that matches the installed edition. Which command is most likely to succeed next?",
+          "options": [
+            "```powershell\nDISM /Online /Cleanup-Image /RestoreHealth /Source:WIM:D:\\sources\\install.wim:6 /LimitAccess\n```",
+            "```powershell\nDISM /Image:D:\\ /Cleanup-Image /RestoreHealth\n```",
+            "```powershell\nDISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase\n```",
+            "```powershell\nsfc /scannow\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "When DISM cannot find source files online, pointing it at a matching image WIM index and using `/LimitAccess` lets it get components locally. The other commands do not provide the missing source or target the correct image.",
+          "distractor_rationale": "B: SFC checks file integrity but does not repair the component store without sources. C: Targets the ISO volume, not the offline Windows directory. D: Component cleanup may reduce size but will not repair missing components without a source.",
+          "skills_covered": [
+            "install operating system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "After installing a new graphics driver, the system BSODs at boot. In Safe Mode, Device Manager shows the device with the new driver. The Roll Back button is greyed out. You list third‑party drivers:\n\n```powershell\npnputil /enum-drivers | findstr /i \"oem.*display\"\n\noem42.inf\n    Driver package provider:  ContosoGPU\n    Class:                    Display adapters\n    Driver date and version:  03/20/2026  31.0.15.1234\n    Signer name:              Microsoft Windows Hardware Compatibility Publisher\n```\n\nWhat is the most surgical way to recover boot without restoring the whole system?",
+          "options": [
+            "Use System Restore to roll the OS back to a previous checkpoint.",
+            "```powershell\npnputil /delete-driver oem42.inf /uninstall /force\n```",
+            "```powershell\nsfc /scannow\n```",
+            "Disable the GPU in BIOS to force the iGPU to take over."
+          ],
+          "correct_option": "B",
+          "explanation": "Removing the specific problematic driver package with `pnputil` in Safe Mode rolls the device back to the previous working driver without affecting unrelated components.",
+          "distractor_rationale": "B: SFC does not manage third‑party driver package rollback. C: Works only if a suitable restore point exists and reverts unrelated changes. D: Many systems cannot disable the dGPU, and it avoids the root cause rather than fixing the driver state.",
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Reset this PC fails because Windows RE is disabled. On the affected machine:\n\n```powershell\nreagentc /info\n\nWindows RE status: Disabled\nWindows RE location: \n```\n\nA previous upgrade left behind:\n\n```text\nC:\\Windows.old\\Windows\\System32\\Recovery\\Winre.wim\n```\n\nWhat sequence correctly restores WinRE?",
+          "options": [
+            "```powershell\nreagentc /setreimage /path C:\\Windows.old\\Windows\\System32\\Recovery\nreagentc /enable\n```",
+            "```powershell\ncopy C:\\Windows.old\\Windows\\System32\\Recovery\\Winre.wim C:\\Windows\\WinSxS\\\nreagentc /enable\n```",
+            "```powershell\nbcdboot C:\\Windows /s C:\n```",
+            "```powershell\nDISM /Online /Cleanup-Image /StartComponentCleanup\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Point `reagentc` at a valid `Winre.wim` path and enable it. Using the existing image in Windows.old is acceptable, after which WinRE becomes available for Reset/Recovery.",
+          "distractor_rationale": "B: Copying into WinSxS does not register WinRE. C: `bcdboot` rebuilds boot files, not WinRE configuration. D: Component cleanup doesn’t enable or register WinRE.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "install operating system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A workstation intermittently freezes. Event Viewer shows during freezes:\n\n```text\nLog: System\nSource: iaStorAC\nEvent ID: 129\nMessage: Reset to device, \\Device\\RaidPort0, was issued.\n```\n\nThe system has a single NVMe SSD, no RAID configured, and uses Intel RST driver for storage. What action is most likely to eliminate the freezes with minimal disruption?",
+          "options": [
+            "Run `chkdsk /r` on the system volume to repair bad sectors.",
+            "Replace the Intel RST storage driver with the Microsoft Standard NVM Express Controller driver.",
+            "Disable write caching on the SSD to reduce queue depth.",
+            "Switch SATA mode in firmware to AHCI without any OS prep."
+          ],
+          "correct_option": "B",
+          "explanation": "On non‑RAID NVMe systems, using the generic Microsoft NVMe driver instead of Intel RST often resolves Event 129 timeouts. It is a targeted, low‑risk change.",
+          "distractor_rationale": "B: Disabling write caching hurts performance and does not address controller timeouts. C: Event 129s are typically driver/controller timeouts, not filesystem corruption; a surface scan won’t fix it. D: Changing storage mode blindly can make Windows unbootable without registry prep.",
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A desktop is very slow and the user reports occasional clicking sounds. You capture SMART and disk status:\n\n```powershell\nwmic diskdrive get Model,Status\n\nModel                     Status\nWDC WD10EZEX-00BN5A0      Pred Fail\n```\n\nWhat should you do first to minimize risk of data loss?",
+          "options": [
+            "Disable Windows Search indexing to reduce I/O pressure and monitor.",
+            "Defragment the disk to improve performance, then back up.",
+            "Run `chkdsk /r` to repair sectors before attempting backup.",
+            "Back up or image the disk immediately and schedule a replacement drive."
+          ],
+          "correct_option": "D",
+          "explanation": "A SMART \"Pred Fail\" indicates impending hardware failure. Prioritize getting a full backup or image and replace the drive; further stress can accelerate failure.",
+          "distractor_rationale": "B: `chkdsk /r` increases stress and may worsen failure before data is secured. C: Defragmenting adds heavy I/O to a failing disk. D: Indexing changes won’t change imminent failure risk; backup takes priority.",
+          "skills_covered": [
+            "Troubleshooting",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A USB printer intermittently disconnects when plugged into an unpowered hub. Device Manager shows:\n\n```text\nUnknown USB Device (Device Descriptor Request Failed)  Code 43\n```\n\nWhich next step is the best low‑effort diagnostic that also often resolves the fault?",
+          "options": [
+            "Disable USB selective suspend globally via Power Options.",
+            "Connect the printer directly to a motherboard USB 2.0 port with the OEM cable and external power, then install the vendor driver.",
+            "Reset the PC and perform an in‑place upgrade repair of Windows.",
+            "Uninstall all USB Root Hub devices from Device Manager and reboot to re‑enumerate."
+          ],
+          "correct_option": "B",
+          "explanation": "Unpowered hubs can starve devices; moving to a direct, known‑good USB 2.0 port with proper power removes power and hub variables and is a standard diagnostic. Install the vendor driver afterwards.",
+          "distractor_rationale": "B: Selective suspend can cause issues but is less likely than power insufficiency here. C: Blanket removal is disruptive and rarely necessary. D: Reinstalling Windows is excessive for a likely power/driver issue.",
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You maintain a Windows image offline and need Realtek NIC support on deployment. The mounted image is at `C:\\mount`. The signed driver `Netrtx64.inf` is in `D:\\Drivers\\Realtek\\`. Which command correctly injects the driver into the offline image?",
+          "options": [
+            "```powershell\npnputil /add-driver D:\\Drivers\\Realtek\\Netrtx64.inf /install\n```",
+            "```powershell\nDISM /Image:C:\\ /Add-Driver /Driver:D:\\Drivers\\Realtek\\ /Recurse\n```",
+            "```powershell\nDISM /Online /Add-Driver /Driver:D:\\Drivers\\Realtek /Recurse\n```",
+            "```powershell\nDISM /Image:C:\\mount /Add-Driver /Driver:D:\\Drivers\\Realtek\\Netrtx64.inf\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "To service an offline image, target the mount point with `/Image:` and point DISM at the specific signed `.inf` (or use `/Recurse` on the folder).",
+          "distractor_rationale": "B: Targets the running OS (`/Online`), not the offline image. C: `pnputil` manages drivers on the running OS, not an offline WIM. D: Targets the host drive root, not the mounted image path.",
+          "skills_covered": [
+            "install operating system"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A PC hangs for 30 seconds at boot whenever a non‑bootable USB flash drive is left plugged in. Current boot order (UEFI):\n\n```text\n1. USB Storage Device\n2. SATA0: WDC WD5000...\n3. Windows Boot Manager\n4. Network Boot (PXE)\n```\n\nYou want the machine to boot normally with USB devices attached. What change achieves this with least side effects?",
+          "options": [
+            "Enable Legacy (CSM) mode so BIOS skips non‑bootable USB devices.",
+            "Set the internal disk as Active so firmware ignores USB devices.",
+            "Move Windows Boot Manager to the top of the boot order or disable USB Storage boot.",
+            "Format the USB drive as NTFS so the firmware can read it faster."
+          ],
+          "correct_option": "C",
+          "explanation": "Ensure the firmware tries the internal OS loader first or simply disables USB storage boot. Then attached non‑bootable USB devices will not delay startup.",
+          "distractor_rationale": "B: Enabling CSM changes boot mode and can break UEFI installs. C: The Active flag is irrelevant for UEFI and does not control device priority. D: Filesystem on the USB doesn’t fix boot priority delays.",
+          "skills_covered": [
+            "Troubleshooting",
+            "install operating system"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A small office desktop with Windows 10 Pro and a single NVMe SSD started looping into “Automatic Repair couldn’t repair your PC” right after a vendor “Intel Rapid Storage Technology” update. The system has no RAID and uses UEFI/GPT. From WinRE Command Prompt:\n\n```text\nbcdedit -> The boot configuration data store could not be opened.\ndiskpart -> ESP present as 100 MB FAT32, no letter\nSrtTrail.txt -> Boot critical driver: C:\\Windows\\System32\\drivers\\iaStorAC.sys is corrupt\n```\n",
+          "task": "Propose a recovery plan that restores boot with minimal disruption. Specify the exact sequence of actions and tools/commands you would use, and why each is chosen. Include how you will verify success and prevent recurrence.",
+          "expected_answer": "A strong answer proposes: 1) Offline driver rollback for the storage stack, 2) ensure boot files are healthy, 3) verification and prevention.\n\nSequence example: Mount ESP and repopulate boot files to eliminate bootloader issues: `diskpart` assign letter S: to the ESP; `bcdboot C:\\Windows /s S: /f UEFI`. Then remove the faulty RST driver offline from Safe Mode or WinRE: `pnputil /delete-driver oemXX.inf /uninstall /force` targeting `iaStorAC` package, or use `dism /image:C:\\ /get-drivers` to identify and `/remove-driver` to remove. Alternatively, switch the storage controller to the Microsoft Standard NVM Express Controller by disabling/renaming `iaStorAC.sys` (as last resort). Reboot. Verify by clean boot to desktop, Event Viewer free of new 129/iaStorAC errors, and Device Manager showing the Microsoft NVMe driver. Prevent recurrence by: pinning a known‑good storage driver, blocking that specific update via policy (wushowhide or GPO for device installation restrictions), and documenting the OEM‑recommended driver for non‑RAID systems.",
+          "rubric": [
+            {
+              "criterion": "Identifies storage driver as root cause and chooses rollback/replacement over OS reinstall",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses correct UEFI repair step with bcdboot and ESP mounting rather than BIOS/MBR fixes",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete offline servicing commands (pnputil or DISM) and safe booting path",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification (Event Viewer, Device Manager driver state) and a realistic prevention plan",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Troubleshooting",
+            "install operating system"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must install Windows 11 on a UEFI‑only laptop. The first USB you created with default Rufus settings will not boot; the firmware lists it but skips straight to the existing OS. The USB was prepared as MBR/NTFS. Secure Boot is enabled. You have the Windows 11 ISO and can recreate media.",
+          "task": "Decide how to recreate the installation media and what firmware settings (if any) to change. Justify your choices so the stick boots reliably without compromising security.",
+          "expected_answer": "Explain that the laptop expects UEFI‑bootable, FAT32 media. Recreate the USB as GPT partitioned with a single FAT32 partition and copy the ISO contents, or use a tool that creates UEFI‑compatible media (Rufus: Partition scheme GPT, Target system UEFI (no CSM), File system FAT32). If `install.wim` exceeds 4 GB, use a tool that splits it automatically or split manually; do not switch to NTFS because many UEFI implementations cannot boot NTFS with Secure Boot on. Keep Secure Boot enabled; no need to enable CSM/Legacy. Optionally disable Fast Boot temporarily if firmware hides USB prompts. Outcome: USB now boots in UEFI with Secure Boot intact.",
+          "rubric": [
+            {
+              "criterion": "Selects GPT + FAT32 media format compatible with UEFI and Secure Boot",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why NTFS/MBR media failed in UEFI‑only + Secure Boot context",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses >4 GB WIM handling without disabling Secure Boot",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies avoiding CSM/Legacy and unnecessary security downgrades",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "install operating system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "After a standard user rename, the user can no longer sign in. Message: “The User Profile Service failed the sign‑in.” The filesystem still has `C:\\Users\\oldname` with data. In `HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList`, one SID’s `ProfileImagePath` points to `C:\\Users\\oldname`, and a duplicate SID with `.bak` exists.",
+          "task": "Describe how you will safely restore a working profile without data loss. Include exact registry and filesystem changes, and how you will validate the fix.",
+          "expected_answer": "Create a full backup or restore point first. Sign in as an admin. In `ProfileList`, identify the SID with `.bak`. If the non‑`.bak` subkey is broken (e.g., wrong path), swap keys per Microsoft guidance: rename the non‑`.bak` key to `.bad`, remove `.bak` from the other to make it active, and set its `State` to 0 and `RefCount` to 0. Ensure `ProfileImagePath` points to the correct folder (either keep `C:\\Users\\oldname` or rename the folder and update the path consistently). Fix NTFS permissions on the profile folder to the SID. Reboot and test login. Validate by successful sign‑in, correct profile path in `whoami /user` SID mapping, and intact user data. Avoid creating a new profile unless mapping is impossible; that can orphan data.",
+          "rubric": [
+            {
+              "criterion": "Backs up and operates under an admin context with rollback plan",
+              "marks": 1
+            },
+            {
+              "criterion": "Correctly handles `.bak` vs non‑`.bak` SID keys and sets State/RefCount",
+              "marks": 3
+            },
+            {
+              "criterion": "Ensures `ProfileImagePath` and filesystem folder/permissions align",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation steps after reboot (successful login, data intact)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Troubleshooting",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "During large file copies to an external USB 3.0 HDD, a laptop freezes for seconds and the copy fails. On USB 2.0, it works. Logs show Kernel‑PnP Event 219 (Driver failed to load) for the USB 3.0 controller and multiple `usbstor` resets. The drive works on another PC with the same cable.",
+          "task": "Diagnose the most likely root cause chain and propose a test plan plus fixes in order of least to most invasive. Justify each step.",
+          "expected_answer": "Likely causes: power delivery or controller/driver instability on this laptop’s USB 3.0 host. Start with least invasive: try a different USB 3.0 port on the laptop (separate root hub), then a powered USB 3.0 hub or the drive’s Y‑cable/external power to rule out power sag. Update the laptop’s chipset/USB 3.0 host controller driver from OEM and system firmware (UEFI). Check Power Options: disable “USB selective suspend” for testing only. If events persist, check Device Manager for power management on the hub/controller (uncheck allow the computer to turn off). Validate with sustained transfer test and Event Viewer free of 219/`usbstor` resets. If still failing, suspect the laptop’s USB 3.0 hardware; use USB 2.0 or a known‑good USB‑C dock with external power as a workaround; plan board repair if under warranty.",
+          "rubric": [
+            {
+              "criterion": "Identifies host controller/power delivery as primary suspects given symptoms",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a clear, low‑to‑high invasiveness test sequence (ports, powered hub, drivers/firmware)",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes specific OS settings to test (selective suspend, power management) with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines validation metrics (sustained copy, absence of errors in logs)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Provision a clean, recoverable workstation",
+          "brief": "Install Windows on a bare‑metal or virtual PC, load required drivers, create users, apply updates, and configure recovery so the machine is supportable. Capture verifiable artefacts on the workstation to prove configuration without assessor guesswork.",
+          "deliverable": "Configured workstation",
+          "acceptance_criteria": [
+            "The workstation boots UEFI to Windows 10/11. Evidence on the workstation at C:\\NTC030-S02\\ contains: `systeminfo.txt` (shows BIOS mode UEFI), `diskpart-list.txt` (shows EFI, MSR, OS partitions), and a `winver.png` screenshot.",
+            "All devices have drivers installed (no yellow bangs). Evidence: `devmgmt.png` and `pnputil-list.txt` (`pnputil /enum-drivers`) saved to C:\\NTC030-S02\\.",
+            "Local accounts: one standard user and one administrator as per naming in your submission notes. Evidence: `net-localgroup.txt` outputs for `administrators` and `users`.",
+            "Windows Update fully applied at submission time. Evidence: `wmic qfe list brief /format:table` saved as `updates.txt` and `USOClient startscan` timestamp in `update-log.txt`.",
+            "Recovery is working: `reagentc /info` shows Windows RE Enabled; at least one Restore Point exists named NTC030-S02. Evidence: `reagentc-info.txt` and a `vssadmin list shadows` or `PowerShell Get-ComputerRestorePoint` output.",
+            "A tested, scriptable backup exists: either a full system image to a secondary disk/VM virtual disk using `wbAdmin start backup -backupTarget:<path> -include:C: -allCritical -quiet` (or vendor imaging tool). Evidence: the command output saved to `backup-log.txt` and the backup file listing `dir` of the target path."
+          ],
+          "rubric": [
+            {
+              "criterion": "UEFI/GPT installation and OS version validated by captured artefacts",
+              "marks": 5
+            },
+            {
+              "criterion": "Driver state clean and evidenced (Device Manager and pnputil outputs)",
+              "marks": 4
+            },
+            {
+              "criterion": "Users created with correct roles and evidence of group memberships",
+              "marks": 3
+            },
+            {
+              "criterion": "Updates applied with verifiable hotfix/QFE listing",
+              "marks": 3
+            },
+            {
+              "criterion": "Recovery configured (WinRE enabled, restore point present) with proof",
+              "marks": 3
+            },
+            {
+              "criterion": "Backup/image created and evidenced by logs and file listings",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "install operating system",
+            "Backup and Recovery",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce a fault‑resolution log for two system issues",
+          "brief": "Investigate and resolve two faults on a Windows workstation: one affecting boot/startup and one affecting performance, storage, or a peripheral. Capture a technician‑grade log that demonstrates disciplined troubleshooting, commands used, and hard evidence of resolution.",
+          "deliverable": "Fault-resolution log",
+          "acceptance_criteria": [
+            "One boot/startup fault documented end‑to‑end (e.g., BCD/EFI issue, startup driver failure).",
+            "One non‑boot fault documented end‑to‑end (performance spike, storage SMART warning, or peripheral malfunction).",
+            "Each case includes: symptoms, environment, initial hypotheses, tests performed, commands and outputs (e.g., `bcdboot`, `DISM`, `sfc`, `eventvwr` exports, `wmic` SMART, `resmon` screenshots), and final resolution with root cause.",
+            "Each case includes prevention/next steps and verification evidence (before/after logs or screenshots).",
+            "The log is provided as a single PDF or markdown file placed at C:\\NTC030-S02\\fault-log.(pdf|md), with all referenced artefacts present under C:\\NTC030-S02\\evidence\\ and clearly cross‑referenced."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clear problem statements and environment context for both cases",
+              "marks": 4
+            },
+            {
+              "criterion": "Systematic hypotheses and test plan demonstrating troubleshooting thinking",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate use of appropriate tools/commands with captured evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "Sound root cause analysis and justified resolution steps",
+              "marks": 4
+            },
+            {
+              "criterion": "Verification and preventive recommendations for each case",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Troubleshooting",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-030-S03",
+      "skills_assessed": [
+        "Subnetting",
+        "TCP/IP",
+        "cabling",
+        "Wi-Fi",
+        "Switching",
+        "Routing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are handed these outputs after a failed ping from PC1 to its default gateway.\n\n```text\nPC1 ipconfig\n-------------------------\nIPv4 Address . . . . . . . . . . : 192.168.10.50\nSubnet Mask  . . . . . . . . . . : 255.255.255.128\nDefault Gateway . . . . . . . .  : 192.168.10.129\n\nRouter R1 (LAN interface)\n-------------------------\nGigabitEthernet0/0 IP address: 192.168.10.1 255.255.255.128\n\nPC1> ping 192.168.10.1\nRequest timed out.\n```\nWhat explains the failure?",
+          "options": [
+            "PC1’s default gateway is not in PC1’s local subnet; ARP for 192.168.10.129 never succeeds so PC1 has no route off-net.",
+            "PC1 should use a /24 mask so it can ARP for 192.168.10.1; with /25 ARP is blocked.",
+            "PC1’s IP and gateway are in the same /25, but the router is blocking ICMP. The network is otherwise fine.",
+            "The router’s mask is too small; it should be 255.255.255.0 to reach 192.168.10.50 directly."
+          ],
+          "correct_option": "A",
+          "explanation": "With a /25 mask, 192.168.10.0–127 is one subnet and 128–255 is another. PC1 (192.168.10.50/25) is in 192.168.10.0/25, but its configured gateway 192.168.10.129 is in 192.168.10.128/25, so PC1 cannot ARP for the gateway. The ping to 192.168.10.1 also fails because PC1 believes 192.168.10.1 is local but the router interface actually has that IP; however the immediate failure here is the unusable gateway. Fix the gateway to 192.168.10.1 for this /25.",
+          "distractor_rationale": "B: A /24 would place all in one subnet, but the router’s /25 is consistent with PC1’s mask; the core issue is the gateway address, not mask size. C: ARP is not “blocked” by a /25; 192.168.10.1 is within PC1’s /25 and could be ARPed; the incorrect gateway is the blocker for off-net traffic. D: If IP/gateway were in the same /25 and ICMP blocked, other off-net traffic would still work; here the default gateway is unreachable by design.",
+          "skills_covered": [
+            "TCP/IP",
+            "Subnetting",
+            "Routing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A frame arrives on an unmanaged switch with the following MAC address table. The incoming frame arrives on port Fa0/4 with source MAC DD-DD-DD-DD-DD-DD and destination MAC BB-BB-BB-BB-BB-BB.\n\n```text\nSwitch MAC Table\n---------------------------\nMAC                   Port\nAA-AA-AA-AA-AA-AA     Fa0/1\nBB-BB-BB-BB-BB-BB     Fa0/2\nCC-CC-CC-CC-CC-CC     Fa0/3\n<no entry>            Fa0/4\n```\nWhat happens next?",
+          "options": [
+            "Drops the frame because destination is unicast and unknown on Fa0/4.",
+            "Learns DD on Fa0/4; floods to all ports except Fa0/4 because destination is broadcast-unknown.",
+            "Floods the frame out Fa0/1, Fa0/2, and Fa0/3 because DD is unknown.",
+            "Learns DD on Fa0/4; forwards the frame only out Fa0/2."
+          ],
+          "correct_option": "D",
+          "explanation": "Switches learn the source MAC on ingress. DD is learned on Fa0/4. Because the destination BB is a known unicast on Fa0/2, the frame is forwarded only out Fa0/2.",
+          "distractor_rationale": "B: Unknown destination unicast would be flooded, but the destination BB is known. C: Broadcast frames are flooded, but this destination is a known unicast. D: Switches do not drop unknown unicasts by default; they flood them. Here it’s not unknown anyway.",
+          "skills_covered": [
+            "Switching"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A 1 Gbps uplink between two switches is unstable. Your cable tester shows:\n\n```text\nCable Certifier Report (Link A1)\n--------------------------------\nMedia: UTP Cat6\nPair Lengths (m): 1-2: 118, 3-6: 119, 4-5: 118, 7-8: 119\nWiremap: PASS (TIA-568B)\nNEXT: Marginal\nResult: 1000BASE-T FAIL, 100BASE-TX PASS\n```\nWhat most directly explains the 1 Gbps instability?",
+          "options": [
+            "Duplex mismatch; 1000BASE-T requires full duplex and the switches are set to half duplex.",
+            "Wrong pinout at one end (568A/568B mismatch) creating a crossover that 1 Gbps cannot negotiate over.",
+            "Horizontal copper run exceeds the 100 m channel limit; attenuation and NEXT prevent 1000BASE-T but 100BASE-TX can limp by.",
+            "EMI from fluorescent lighting; 1000BASE-T is more EMI-prone than 100BASE-TX."
+          ],
+          "correct_option": "C",
+          "explanation": "1000BASE-T requires the full channel to be within spec up to 100 m. The ~118–119 m run exceeds the maximum channel length, leading to attenuation/NEXT issues that break 1 G but sometimes allow 100 Mb to pass.",
+          "distractor_rationale": "B: EMI can hurt links, but the report pinpoints marginal NEXT and overlength; EMI isn’t evidenced. C: A vs B determines crossover, which modern PHYs (especially 1G with auto MDI-X) handle; the wiremap shows PASS with consistent 568B. D: Duplex isn’t the cause of physical layer rate downshift/failure reported by the certifier.",
+          "skills_covered": [
+            "cabling",
+            "Switching"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You scan 2.4 GHz in an office before placing one AP.\n\n```text\n2.4 GHz Scan (center-channel RSSI)\n----------------------------------\nCh 1: SSID NET-1  RSSI -40 dBm\nCh 6: SSID NET-2  RSSI -65 dBm\nCh11: SSID NET-3  RSSI -70 dBm\nYour AP location RSSI to clients: ~ -55 dBm (estimated)\n```\nTo minimize contention for your clients at this location, which channel should you set?",
+          "options": [
+            "Channel 1",
+            "Auto channel selection with 40 MHz width on channels 6+10",
+            "Channel 6",
+            "Channel 11"
+          ],
+          "correct_option": "D",
+          "explanation": "With a very strong neighbor on channel 1 (-40), channel 11 is the cleanest of the three non-overlapping options. Channel 6 is acceptable but has a stronger neighbor than 11.",
+          "distractor_rationale": "B: Viable, but 11 has slightly weaker observed neighbor interference than 6, making 11 better here. C: Channel 1 has a very strong interferer at -40 dBm, likely causing contention and CCA backoffs. D: 40 MHz on 2.4 GHz overlaps multiple channels and worsens interference; auto may still land badly in this congested band.",
+          "skills_covered": [
+            "Wi-Fi"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must carve 172.16.8.0/24 into two LANs: one for up to 90 hosts and one for up to 28 hosts, using a router with two LAN interfaces. Which plan both fits and avoids overlap?",
+          "options": [
+            "172.16.8.0/27 for 28-host LAN; 172.16.8.64/25 for 90-host LAN",
+            "172.16.8.0/25 for 90-host LAN; 172.16.8.128/27 for 28-host LAN",
+            "172.16.8.0/26 for 90-host LAN; 172.16.8.64/27 for 28-host LAN",
+            "172.16.8.0/25 for 90-host LAN; 172.16.8.64/26 for 28-host LAN"
+          ],
+          "correct_option": "B",
+          "explanation": "/25 gives 126 hosts (fits 90). A /27 gives 30 hosts (fits 28). 172.16.8.0/25 uses .0–.127 and 172.16.8.128/27 uses .128–.159; they do not overlap.",
+          "distractor_rationale": "B: /26 holds only 62 hosts, not enough for 90. C: /64/25 (172.16.8.64–.191) overlaps 172.16.8.0/27 unless carefully ordered; as written, they conflict. D: The /26 for 28 hosts is over-allocated and overlaps the preceding /25 (.64–.127).",
+          "skills_covered": [
+            "Subnetting",
+            "Routing",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Users report poor throughput on a single wired host. You check link stats:\n\n```text\nSwitch Gi0/1: 100 Mb/s, Half Duplex, CRC errors rising, Late collisions present\nHost NIC:     100 Mb/s, Full Duplex (manually configured)\n```\nWhat change most directly resolves this?",
+          "options": [
+            "Force the switch to 100 Mb/s full duplex; leave the NIC as is.",
+            "Set both sides to auto-negotiate speed/duplex, or manually match them to 100 Mb/s full duplex.",
+            "Increase switch port speed to 1 Gb/s; duplex then won’t matter.",
+            "Disable flow control; collisions stop because NIC buffers frames."
+          ],
+          "correct_option": "B",
+          "explanation": "This is a duplex mismatch (switch half, NIC full), causing CRC errors and late collisions. Duplex must match. Best practice is to set both to auto or both to the same fixed setting.",
+          "distractor_rationale": "B: Forcing only the switch might fix it, but the correct action is to ensure both ends are aligned; recommending single-sided change is brittle. C: Speed/duplex still must match at 1 Gb; and 1G requires full duplex but both ends must negotiate. D: Flow control doesn’t resolve duplex mismatches or physical collisions on half-duplex links.",
+          "skills_covered": [
+            "Switching",
+            "cabling"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A cable passes a basic continuity test but a certifier reports a split pair on 3–6. The host links up to the switch but file copies crawl and errors increment.\n\n```text\nWiremap: PASS\nPairing: FAIL (Split Pair 3-6)\n100BASE-TX: MARGINAL   1000BASE-T: FAIL\nSwitch Port: CRC errors increasing under load\n```\nWhat symptom is most consistent with this cabling fault?",
+          "options": [
+            "Link fails to come up at any speed because continuity must fail if pairs are split.",
+            "Only broadcasts are affected; unicasts pass because they use fewer pairs.",
+            "Link negotiates at 100 Mb/s with frequent CRC errors and retransmissions under load.",
+            "Link comes up at 1 Gb/s but pings are dropped only at night due to temperature."
+          ],
+          "correct_option": "C",
+          "explanation": "Split pairs can pass simple continuity but fail NEXT, leading to high error rates. 1G will fail entirely; 100 Mb may come up but perform poorly with CRC errors and retransmissions.",
+          "distractor_rationale": "B: Split pairs can pass continuity; that’s the trap. C: Temperature sensitivity is not the primary failure mode here; the cert shows a deterministic NEXT issue. D: Ethernet doesn’t treat broadcasts differently at the physical layer; errors would affect all traffic.",
+          "skills_covered": [
+            "cabling",
+            "Switching"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Observe a ping before and after an ARP cache clear.\n\n```text\nC:\\> arp -d *\nC:\\> ping 10.0.1.1\nReply from 10.0.1.1: bytes=32 time=124ms TTL=63\nReply from 10.0.1.1: bytes=32 time=1ms TTL=63\nReply from 10.0.1.1: bytes=32 time=1ms TTL=63\nReply from 10.0.1.1: bytes=32 time=1ms TTL=63\n\nC:\\> arp -a\nInterface: 10.0.1.50 --- 0x7\n  Internet Address      Physical Address      Type\n  10.0.1.1              00-11-22-33-44-55     dynamic\n```\nWhat explains the first high-latency reply?",
+          "options": [
+            "The first echo waited for ARP resolution before the ICMP echo left; subsequent pings used the cached MAC.",
+            "ICMP is rate-limited on Windows for the first packet only; later ones are prioritized.",
+            "TTL on the first reply was decremented multiple times; later ones were not.",
+            "The switch flooded the first ping as an unknown broadcast; later ones were unicasts."
+          ],
+          "correct_option": "A",
+          "explanation": "Clearing the ARP cache forces the host to ARP for the gateway or target. The first ICMP echo is delayed until the ARP completes; subsequent pings use the cached mapping and are fast.",
+          "distractor_rationale": "B: Windows does not rate-limit just the first ICMP. C: TTL does not affect latency like this; it decrements on each hop regardless. D: Unknown unicast flooding occurs on switches but does not cause consistent first-packet latency tied to ARP state.",
+          "skills_covered": [
+            "TCP/IP",
+            "Switching"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two /26 subnets exist on the same access switch, terminated by a router with two LAN interfaces:\n\n```text\nLAN A: 192.168.1.0/26    Router LAN A IP: 192.168.1.1\nLAN B: 192.168.1.64/26   Router LAN B IP: 192.168.1.65\nHost H (on LAN B): IP 192.168.1.70  Mask 255.255.255.192  GW 192.168.1.1\n\nH> ping 8.8.8.8  -> Request timed out\nH> ping 192.168.1.65 -> Success\n```\nWhy does H fail to reach the internet?",
+          "options": [
+            "H’s default gateway is on the wrong subnet; it must be 192.168.1.65 for LAN B.",
+            "LAN B mask should be /24 so the router can route to the internet.",
+            "H’s IP must be changed to 192.168.1.10 to match the gateway subnet.",
+            "Switch cannot carry two subnets without VLANs, so routing is impossible."
+          ],
+          "correct_option": "A",
+          "explanation": "Host H lives in 192.168.1.64/26 and must use the router IP in that subnet (192.168.1.65) as its default gateway. Using 192.168.1.1 strands its off-net traffic.",
+          "distractor_rationale": "B: The /26 is fine; routing off-net depends on the correct gateway, not a /24. C: The host IP need not change; the gateway must. D: Two subnets can exist on the same physical switch if the router has two interfaces into that switch (or separate access ports). VLANs are not strictly required here.",
+          "skills_covered": [
+            "Routing",
+            "TCP/IP",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A single AP serves a meeting room with mixed 2.4/5 GHz clients. Current config is 2.4 GHz only, 20 MHz width, channel 6, TX power high. Throughput is inconsistent and neighboring scans show multiple -50 to -60 dBm APs on channels 1, 6, and 11. What change most likely stabilizes client throughput?",
+          "options": [
+            "Bond 40 MHz on 2.4 GHz to double throughput.",
+            "Enable 5 GHz on a low-usage channel (e.g., 36) at moderate power; leave 2.4 GHz at 20 MHz.",
+            "Disable 2.4 GHz entirely; 5 GHz only will guarantee compatibility and stability.",
+            "Raise 2.4 GHz transmit power further to overcome neighbors."
+          ],
+          "correct_option": "B",
+          "explanation": "Moving capable clients to 5 GHz reduces co-channel contention; moderate power limits cell size and CCI. Keeping 2.4 GHz at 20 MHz preserves legacy support without causing excessive overlap.",
+          "distractor_rationale": "B: 40 MHz on 2.4 causes heavy overlap and more contention, worsening stability. C: Raising power increases cell size and co-channel interference, likely making contention worse. D: Disabling 2.4 breaks legacy clients that cannot use 5 GHz; stability should not come at the expense of required compatibility.",
+          "skills_covered": [
+            "Wi-Fi"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are given this partial small-office network plan. One router (R1) connects two access switches (SW-A for Staff, SW-B for IoT). Cabling between R1 and each switch is separate copper links. The address block available is 10.20.30.0/24.\n\n```text\nRequirements\n-----------\nStaff LAN: 80 wired hosts today, growth to 110\nIoT LAN:   18 devices (printers, cameras), static IPs preferred\nR1 has two FastEthernet LAN interfaces: FE0/0 -> SW-A, FE0/1 -> SW-B\n\nProposed config (by a junior)\n-----------------------------\nStaff LAN: 10.20.30.0/26, GW 10.20.30.1 on R1 FE0/0\nIoT LAN:   10.20.30.64/27, GW 10.20.30.65 on R1 FE0/1\n```\nAfter cutover, some staff can’t get addresses within the planned range and a few cannot reach the internet intermittently. IoT works fine. DHCP for Staff is on a server in the Staff LAN, default gateway points to R1. No VLANs are in use.",
+          "task": "Identify the exact planning fault(s) in the junior’s proposal and produce a corrected subnet plan and gateway assignment that meets the requirements with minimal renumbering. Justify the mask choices and show usable host ranges for each LAN.",
+          "expected_answer": "The Staff /26 (10.20.30.0–.63) supports only 62 usable hosts, insufficient for 80–110. The IoT /27 (10.20.30.64–.95) is fine for 18 static devices (30 usable). Correct approach: allocate a /25 to Staff and a /27 (or /26) to IoT. For minimal renumbering within 10.20.30.0/24:\n- Staff LAN: 10.20.30.0/25 (usable .1–.126), GW 10.20.30.1 on R1 FE0/0. Supports up to 126 hosts.\n- IoT LAN: 10.20.30.128/27 (usable .129–.158), GW 10.20.30.129 on R1 FE0/1. If more headroom desired, use 10.20.30.128/26 (usable .129–.190).\nJustification: /25 satisfies 110 target; /27 covers 18 IoT devices with room. Avoid overlap by placing IoT block in the upper half. Intermittent internet was due to Staff clients being assigned beyond .63 when DHCP scope was mis-sized relative to /26, causing some to be off-subnet or conflicting; with /25 the DHCP scope can be .50–.120 (example) within usable range.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that /26 for Staff is undersized and quantifies host capacity vs requirement",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a corrected mask for Staff that supports growth (e.g., /25) and assigns a correct gateway within that subnet",
+              "marks": 2
+            },
+            {
+              "criterion": "Allocates a non-overlapping subnet for IoT (e.g., /27 or /26 in upper range) with correct usable range and gateway",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a clear justification (why the chosen masks, avoiding overlap) and ties it to the observed intermittent failures (scope overrun/off-subnet)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "Routing",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A rectangular single-floor office (40 m x 15 m) needs two APs to cover open-plan seating. A walkthrough scan shows heavy 2.4 GHz occupancy on channels 1 and 6 around -55 dBm from neighbors and a weaker -72 dBm on channel 11. The 5 GHz band shows light use on channels 36 and 44. The APs will be ceiling-mounted ~20 m apart along the long axis. Most client devices support 5 GHz, but a few handheld scanners are 2.4 GHz-only.",
+          "task": "Propose a channel and power plan for both APs that minimizes co-channel interference while keeping legacy devices working. State the exact 2.4 and 5 GHz channels and whether to use 20/40 MHz. Include TX power considerations and explain your trade-offs.",
+          "expected_answer": "Use both bands. For 2.4 GHz, assign AP1 channel 11 and AP2 channel 1, both at 20 MHz, with reduced transmit power (e.g., medium/low so cells don’t overlap at strong RSSI). Avoid channel 6 due to strong neighbors. For 5 GHz, assign AP1 channel 36 and AP2 channel 44 (non-overlapping), at 20 MHz (or 40 MHz if survey confirms low occupancy), with moderate power so 5 GHz carries most load. This balances legacy 2.4-only scanners (served by small 2.4 cells) and encourages dual-band clients onto 5 GHz with minimal CCI.",
+          "rubric": [
+            {
+              "criterion": "Chooses appropriate non-overlapping 2.4 GHz channels and justifies avoiding congested channels",
+              "marks": 2
+            },
+            {
+              "criterion": "Selects suitable 5 GHz channels with bandwidth choice and explains when 20 vs 40 MHz is acceptable",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses transmit power settings to manage cell size and reduce co-channel contention",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains the trade-off to keep legacy 2.4 GHz clients working while offloading capable clients to 5 GHz",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Wi-Fi"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must link an MDF to an IDF 140 m away through an industrial area with motors and fluorescent lighting. The IDF will host a small access switch and two PoE APs. The MDF has the core switch and router. Budget is modest but downtime is costly.",
+          "task": "Recommend the physical media and connectivity approach end-to-end, including how to power the APs, and justify against distance, EMI, and PoE requirements. Specify connector types and any needed conversion equipment.",
+          "expected_answer": "Use multimode fiber (OM3/OM4) between MDF and IDF for the 140 m uplink to avoid copper’s 100 m limit and EMI issues. Terminate with LC connectors and use SFP transceivers in both switches. In the IDF, deploy a PoE access switch powered locally (or non-PoE switch plus midspan PoE injector(s)) to feed the two APs over short copper runs. Rationale: Fiber immune to EMI and supports >1 Gbps over 140 m; copper would exceed spec and be noise-prone. PoE cannot traverse fiber, so PoE must originate in the IDF via a PoE switch or injectors.",
+          "rubric": [
+            {
+              "criterion": "Selects fiber for the 140 m interconnect and explains distance/EMI justification",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies appropriate fiber type (e.g., OM3/OM4) and LC/SFP details at both ends",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains PoE delivery at the IDF (PoE switch or injectors) since PoE cannot run over fiber",
+              "marks": 1
+            },
+            {
+              "criterion": "Provides a coherent end-to-end plan (MDF to IDF to APs) that is practically actionable",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "cabling",
+            "Switching",
+            "Routing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A contractor submits this addressing for a training lab with two routed VLAN-less segments on separate router interfaces (router has FE0/0 and FE0/1 to the same access switch on different access ports). You are asked to validate the plan for 60 student PCs (wired) and 15 lab devices (printers/APs), with the given /24.\n\n```text\nGiven block: 192.168.50.0/24\nProposed:\n  Student LAN: 192.168.50.64/27, GW 192.168.50.65\n  Devices LAN: 192.168.50.0/26,  GW 192.168.50.1\n```\nSpot any issues and provide a corrected plan that meets host counts and uses the /24 efficiently. Include gateway placements and usable ranges.",
+          "task": "Evaluate the proposal, point out any capacity/overlap issues, then produce a corrected subnetting plan with justifications and ranges for each LAN.",
+          "expected_answer": "The Student LAN needs 60 hosts; /27 allows only 30. Devices need 15 hosts; /26 allows 62 and is oversized but workable. Correct plan: assign Students a /26 and Devices a /27 without overlap. For example: Devices LAN 192.168.50.0/27 (usable .1–.30, GW .1) and Students LAN 192.168.50.64/26 (usable .65–.126, GW .65). Both fit and are contiguous within the /24 with no overlap.",
+          "rubric": [
+            {
+              "criterion": "Identifies the student /27 capacity shortfall accurately",
+              "marks": 2
+            },
+            {
+              "criterion": "Produces two non-overlapping subnets that satisfy 60 and 15 hosts respectively",
+              "marks": 3
+            },
+            {
+              "criterion": "Places gateways correctly within each subnet and provides correct usable ranges",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides brief justification for efficiency and non-overlap within the /24",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "Routing",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design a small-office network diagram with addressing and media plan",
+          "brief": "Create a logical network diagram for a 25–40 user office using a single router, one core switch, one access switch, and one AP. Show subnets, IP addressing, default gateways, cable media choices, and Wi-Fi channel plan. Assume you have 192.168.20.0/24 available and want two subnets: users and devices. Include cable types (Cat6 vs fiber), port labels, and link speeds. Keep within Layer 2 basics (no VLANs).",
+          "deliverable": "One diagram export (PNG or PDF) plus an addressing table (CSV or text) showing network IDs, masks, gateway IPs, and host ranges used.",
+          "acceptance_criteria": [
+            "Diagram shows at least: 1 router with two LAN interfaces, 2 switches, 1 AP, and representative hosts.",
+            "Each LAN has a clearly labeled network ID and mask; default gateway IPs shown on the router interfaces and within correct ranges.",
+            "Cable/media annotations for each link (e.g., Cat6 1G copper, or fiber if run >100 m), with any >100 m runs correctly set to fiber.",
+            "Wi-Fi annotation includes band(s) used and channel number(s) chosen consistent with a clean plan (e.g., 2.4 ch 1/6/11 or 5 GHz ch 36/44) and 20 MHz width on 2.4.",
+            "Addressing table matches the diagram exactly: networks, masks, gateway IPs, and at least five example host IPs per subnet without overlap."
+          ],
+          "rubric": [
+            {
+              "criterion": "Logical correctness of topology (router with two LANs to two distinct L2 domains; devices sensibly placed)",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate subnetting and addressing (correct masks, gateways inside ranges, no overlaps)",
+              "marks": 6
+            },
+            {
+              "criterion": "Media choices justified on the diagram (fiber where needed, copper within 100 m, link speeds labeled)",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear Wi-Fi channel/band plan noted and reasonable given a simple two-AP or one-AP setup",
+              "marks": 3
+            },
+            {
+              "criterion": "Clarity and consistency between diagram and addressing table (labels, IPs, ranges)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "TCP/IP",
+            "cabling",
+            "Wi-Fi",
+            "Switching",
+            "Routing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a connected two-subnet lab and prove end-to-end connectivity",
+          "brief": "Using a simulator (e.g., Cisco Packet Tracer, GNS3) or equivalent lab gear, build two separate IPv4 subnets linked by a router. Place at least two PCs in each subnet via access switches. Optionally add an AP bridged to one subnet and connect one wireless client. Statically configure IPv4 addresses and default gateways. Choose and place the correct cable types between devices. Verify intra-subnet and inter-subnet connectivity with pings and capture ARP tables showing learned MACs.",
+          "deliverable": "Lab project file (e.g., .pkt) or photos plus screenshots of: (1) each host’s IP configuration, (2) successful pings within and across subnets, and (3) switch MAC tables or ARP tables demonstrating correct L2/L3 behavior.",
+          "acceptance_criteria": [
+            "Two distinct subnets are configured (e.g., 192.168.10.0/26 and 192.168.10.64/26) with non-overlapping ranges.",
+            "Router has one interface in each subnet with the correct mask, and all hosts use the correct default gateway for their subnet.",
+            "Evidence of successful ping within a subnet and across subnets (host in subnet A to host in subnet B).",
+            "Switch MAC address tables or host ARP tables show the expected learned MACs and IP-MAC mappings after traffic.",
+            "Cabling types are correct for each link in the simulator (e.g., straight-through for host-to-switch, appropriate uplink cabling, no overlength copper runs)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct IPv4 configuration on all interfaces and hosts (addresses, masks, gateways)",
+              "marks": 7
+            },
+            {
+              "criterion": "End-to-end connectivity proof (intra- and inter-subnet pings succeed)",
+              "marks": 5
+            },
+            {
+              "criterion": "Layer 2 evidence (MAC/ARP tables align with topology after traffic)",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate cabling selections and link states up/green throughout",
+              "marks": 2
+            },
+            {
+              "criterion": "Optional AP and wireless client bridged correctly (if included) without breaking wired connectivity",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "TCP/IP",
+            "Switching",
+            "Routing",
+            "cabling",
+            "Wi-Fi"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-030-S04",
+      "skills_assessed": [
+        "DHCP",
+        "DNS",
+        "TCP/IP",
+        "Switching",
+        "Routing",
+        "Backup and Recovery",
+        "use ICT ticketing system",
+        "Troubleshooting"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A Layer-3 switch routes between VLAN 10 and VLAN 20. PCs in VLAN 10 cannot obtain DHCP leases from a DHCP server in VLAN 20.\n\nConfigs:\n\n```text\ninterface Vlan10\n ip address 10.10.10.1 255.255.255.0\n!\ninterface Vlan20\n ip address 10.20.20.1 255.255.255.0\n!\ninterface Fa0/10\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast\n!\n! DHCP server: 10.20.20.10 (in VLAN 20)\n```\n\nA packet capture on the Vlan10 SVI shows DHCPDISCOVER frames, but no DHCPOFFER arrives. Without moving any cables, which single configuration change on the switch will allow the PC in VLAN 10 to get a lease from the server in VLAN 20?",
+          "options": [
+            "```text\ninterface Fa0/10\n ip dhcp snooping trust\n```",
+            "```text\ninterface Fa0/10\n switchport mode trunk\n switchport trunk allowed vlan 10,20\n```",
+            "Add a `default-router 10.10.10.1` option to the DHCP scope on the server.",
+            "```text\ninterface Vlan10\n ip helper-address 10.20.20.10\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "DHCP is broadcast on the client VLAN and will not cross VLAN boundaries unless relayed. Adding an IP helper on Vlan10 relays the broadcast to the unicast DHCP server in VLAN 20.",
+          "distractor_rationale": "B is tempting because trunks carry multiple VLANs, but the PC is an access host and making it a trunk is incorrect and insecure. C is about DHCP snooping trust, which governs who may send server responses, not relay between VLANs. D sets the default gateway handed to clients but does not address the lack of broadcast relay between VLANs.",
+          "skills_covered": [
+            "DHCP",
+            "Switching",
+            "Routing",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A DNS zone file contains the following records:\n\n```text\n$ORIGIN corp.local.\n@     IN SOA ns1.corp.local. admin.corp.local. (\n          2026010101 3600 600 1209600 300 )\n      IN NS  ns1.corp.local.\nns1   IN A   10.10.10.10\napp   IN A   10.10.10.50\ncdn   IN CNAME assets.external.com   ; note the missing trailing dot\n```\n\nA resolver queries `cdn.corp.local.`. Which FQDN will the CNAME actually point to because of the missing trailing dot?",
+          "options": [
+            "ns1.corp.local.",
+            "assets.external.com.",
+            "assets.external.com.corp.local.",
+            "A CNAME loop will occur and the query will time out."
+          ],
+          "correct_option": "C",
+          "explanation": "Without a trailing dot, the CNAME target is treated as relative to the current origin, becoming `assets.external.com.corp.local.`.",
+          "distractor_rationale": "B is what many expect, but the missing dot prevents it from being absolute. C is unrelated to the CNAME target. D suggests a generic failure; there is no loop defined here, just a wrong FQDN.",
+          "skills_covered": [
+            "DNS"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Inter-VLAN routing via router-on-a-stick is configured as follows. Hosts in VLAN 30 cannot reach VLAN 40; pings from 10.30.0.10 to 10.40.0.10 fail.\n\n```text\ninterface g0/0\n no ip address\n!\ninterface g0/0.30\n encapsulation dot1Q 30\n ip address 10.30.0.1 255.255.255.0\n!\ninterface g0/0.40\n encapsulation dot1Q 30\n ip address 10.40.0.1 255.255.255.0\n```\n\nWhich single change fixes inter-VLAN connectivity?",
+          "options": [
+            "```text\ninterface g0/0.40\n encapsulation dot1Q 40\n```",
+            "Add a static route on the router for 10.40.0.0/24 via 10.30.0.1.",
+            "```text\ninterface g0/0\n ip address 10.30.0.1 255.255.255.0\n```",
+            "```text\ninterface g0/0.40\n encapsulation dot1Q 40 native\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The subinterface for VLAN 40 is using the wrong VLAN tag (30). Correcting it to `encapsulation dot1Q 40` will allow frames from VLAN 40 to be processed on the right subinterface.",
+          "distractor_rationale": "B would destroy the router-on-a-stick design by assigning an IP to the physical interface. C would make VLAN 40 native, mismatching the switch trunk unless coordinated and still not the intended design. D is unnecessary; the router already directly connects to both subnets once the encapsulation is correct.",
+          "skills_covered": [
+            "Routing",
+            "Switching",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You want to block guest clients from using any internal DNS servers while still allowing them to use `8.8.8.8`. The ACL is applied inbound on the guest SVI.\n\n```text\nip access-list extended GUEST-DNS\n deny   udp 192.168.50.0 0.0.0.255 any eq 53\n permit udp 192.168.50.0 0.0.0.255 host 8.8.8.8 eq 53\n permit ip any any\n!\ninterface Vlan50\n ip access-group GUEST-DNS in\n```\n\nWhat will actually happen to guest DNS traffic?",
+          "options": [
+            "All guest DNS queries will be dropped, including those to 8.8.8.8.",
+            "Guests will be able to query only 8.8.8.8, as intended.",
+            "The ACL will be bypassed for DNS because UDP is stateless.",
+            "Guests can query internal DNS (e.g., 192.168.1.10) but not 8.8.8.8."
+          ],
+          "correct_option": "A",
+          "explanation": "ACLs are processed top-down, first match wins. The first deny matches all guest UDP/53 traffic to any destination, so the permit for 8.8.8.8 is never reached.",
+          "distractor_rationale": "B assumes ACLs evaluate all lines; they do not. C reverses the impact of the deny. D misunderstands ACL behavior; statelessness of UDP doesn’t bypass ACL processing.",
+          "skills_covered": [
+            "Switching",
+            "TCP/IP",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A DHCP server on a router shows persistent conflicts, and users report intermittent address assignment failures.\n\n```text\nR1# show ip dhcp conflict\nIP address        Detection method   Detection time       VRF\n10.10.10.100      ARP                Aug 19 2026 10:11 AM --\n\nR1# show arp | include 10.10.10.100\nInternet  10.10.10.100  0   001c.73aa.bcee  ARPA  Vlan10  ; Printer (static IP)\n```\n\nWhich change addresses the root cause and prevents recurrence?",
+          "options": [
+            "Trust the access port with `ip dhcp snooping trust` so the offer isn’t blocked.",
+            "Exclude the printer’s IP (or static range) from the DHCP pool and then clear the conflicts.",
+            "Increase DHCP conflict detection attempts from 2 to 5 to be more certain.",
+            "Clear the DHCP conflicts so the address can be reissued immediately."
+          ],
+          "correct_option": "B",
+          "explanation": "A static device is using an IP inside the pool. Excluding that address (or defining a non-overlapping pool) removes the conflict source; then clear the conflicts to recover.",
+          "distractor_rationale": "B treats the symptom; the conflict will come back. C wastes time; higher detection does not fix overlapping assignments. D is unrelated; snooping trust addresses rogue servers, not overlapping pools.",
+          "skills_covered": [
+            "DHCP",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Users report that some external domains with DNSSEC fail to resolve unless the resolver falls back to TCP. Firewall logs show many dropped ICMP Type 3 Code 4 packets. MTU testing shows:\n\n```bash\n# Linux test from client to Internet\nping -M do -s 1472 8.8.8.8   # OK\nping -M do -s 1473 8.8.8.8   # Frag needed and DF set (dropped by FW)\n```\n\nWhat change most directly fixes these DNS timeouts without disabling DNSSEC?",
+          "options": [
+            "Lower the WAN interface MTU to 1200 bytes on all edge routers.",
+            "Disable EDNS0 on the resolver to force smaller DNS messages globally.",
+            "Block UDP/53 and force all DNS over TCP.",
+            "Permit ICMP 'Fragmentation Needed' (Type 3 Code 4) through the firewall so PMTUD can work."
+          ],
+          "correct_option": "D",
+          "explanation": "Large DNSSEC/EDNS0 responses may exceed the path MTU. Allowing ICMP 'Fragmentation Needed' enables PMTUD so the sender adjusts, avoiding silent black holes.",
+          "distractor_rationale": "B may mask symptoms but breaks standards and causes other issues. C is a blunt change with side effects and is unnecessary if PMTUD functions. D degrades performance and is unnecessary when path MTU issues are addressed.",
+          "skills_covered": [
+            "TCP/IP",
+            "DNS",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "After enabling DHCP snooping and IP Source Guard, a printer with a static IP on VLAN 10 lost connectivity. You must keep source guard but allow this device.\n\n```text\nip dhcp snooping\nip dhcp snooping vlan 10\n!\ninterface Fa0/12\n switchport mode access\n switchport access vlan 10\n ip verify source\n spanning-tree portfast\n!\nPrinter MAC: 0011.2233.4455, IP: 10.10.10.50/24\n```\n\nWhich command allows this static host while maintaining source guard protections?",
+          "options": [
+            "```text\ninterface Fa0/12\n ip dhcp snooping trust\n```",
+            "```text\nip arp timeout 60\n```",
+            "```text\nip source binding 0011.2233.4455 vlan 10 10.10.10.50 interface Fa0/12\n```",
+            "```text\ninterface Fa0/12\n no ip verify source\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Static bindings let Source Guard validate traffic from known static hosts without disabling the protection for other ports.",
+          "distractor_rationale": "B disables protection entirely on that port. C trusts DHCP messages on the port and weakens snooping; it does not create a binding for Source Guard. D changes ARP cache timing, not Source Guard validation.",
+          "skills_covered": [
+            "DHCP",
+            "Switching",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your nightly config-backup script uses TFTP to pull running-configs to 10.1.1.50. Backups fail only for R1. Logs show `TFTP: error timeout`. R1 has the following ACL applied inbound on its management SVI:\n\n```text\nip access-list extended MGMT-IN\n deny   udp any host 10.1.1.50 eq 69\n permit ip any any\n!\ninterface Vlan99\n ip address 10.1.1.10 255.255.255.0\n ip access-group MGMT-IN in\n```\n\nWhat is the minimal change to restore backups for R1 without overexposing the host?",
+          "options": [
+            "Insert a permit for UDP/69 to 10.1.1.50 before the deny.",
+            "Change the TFTP source-interface to Loopback0 on R1.",
+            "Permit TCP/69 to 10.1.1.50 since TFTP uses TCP.",
+            "Enable the router archive feature with `archive path tftp://10.1.1.50/$h-$t`. "
+          ],
+          "correct_option": "A",
+          "explanation": "TFTP uses UDP/69 on the server. The first-match ACL denies that traffic. Inserting a permit for UDP/69 to the backup server ahead of the deny allows the backup without weakening other controls.",
+          "distractor_rationale": "B is wrong protocol; TFTP is UDP. C does not bypass an inbound ACL on the SVI. D configures archiving but still hits the same ACL block.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "TCP/IP",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your service desk uses the following priority matrix:\n\n```text\nImpact vs Urgency Matrix\n- P1: Impact High (multiple services or sites) at any urgency\n- P2: Impact Medium AND Urgency High\n- P3: All other combinations\n```\n\nTicket extract:\n\n```text\nTicket: INC-4321\nTitle: Core switch CPU spikes every 5 minutes\nImpact: High (multiple VLANs suffering jitter)\nUrgency: Medium (degradation, not total outage)\nCurrent Priority: P3\n```\n\nWhat should the priority be set to under this policy?",
+          "options": [
+            "P2",
+            "P1",
+            "Defer to on-call engineer’s judgment instead of the matrix.",
+            "P3"
+          ],
+          "correct_option": "B",
+          "explanation": "High impact maps to P1 regardless of urgency by the given policy. The current P3 is incorrect.",
+          "distractor_rationale": "B ignores that urgency is medium and the rule for P2 requires high urgency with medium impact. C contradicts the matrix. D circumvents the documented process.",
+          "skills_covered": [
+            "use ICT ticketing system"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A NAS used for nightly config archives reports the following SMART and log entries:\n\n```text\nSMART: Disk 2 pre-fail, Reallocated_Sector_Ct = 210 (threshold 140), \nPending_Sector = 12, Last test: FAILED (read)\nBackup log: Last successful full backup: 22:00 yesterday. RPO: 24h, RTO: 4h.\nMaintenance policy: Replace predicted-fail disks within 48h; verify last good backup; document change; schedule during low-usage window unless risk of imminent data loss.\n```\n\nWhat is the best immediate next action to record in the ticket?",
+          "options": [
+            "Silence the alert for 7 days and observe; SMART can be noisy.",
+            "Verify the latest backup integrity and schedule Disk 2 replacement in the next low-usage window within 48 hours.",
+            "Replace the entire NAS immediately without verifying backup, to minimize time at risk.",
+            "Run a filesystem check to clear pending sectors and defer replacement."
+          ],
+          "correct_option": "B",
+          "explanation": "Policy mandates timely replacement and verification of the last good backup. Scheduling within the window respects availability targets while addressing imminent failure risk.",
+          "distractor_rationale": "B ignores clear pre-fail indicators and violates policy. C risks data integrity and delays necessary replacement. D is risky without confirming a recoverable backup and may exceed RTO/RPO planning.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "use ICT ticketing system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A small office needs a segmented network for Staff (VLAN 10) and Guest (VLAN 50). One Layer-2 switch uplinks to a router-on-a-stick gateway. A Windows DHCP/DNS server lives on the Staff VLAN (10.10.10.20). Guests must not reach the internal DNS but should reach the internet using public resolvers. There is a history of rogue DHCP servers appearing on Guest ports during events. The ISP CPE hands off a single 802.1Q trunk to your router.\n\nYou have the following constraints:\n- You cannot add new hardware.\n- You must preserve broadcast containment between VLANs.\n- Guests should get internet via NAT, but no access to Staff hosts.\n- The helpdesk must be able to understand where to place new devices and how to verify DHCP/DNS quickly.",
+          "task": "Propose a concrete configuration and control plan. Specify: (1) trunk/access port roles on the switch; (2) router subinterfaces and IP helper settings; (3) DHCP snooping and trust/binding placements; (4) ACLs to enforce Guest DNS policy and block inter-VLAN access while allowing necessary gateway services; (5) at least three verification commands or tests the helpdesk can run. Justify each choice briefly.",
+          "expected_answer": "- Switch: Access ports for Staff assigned to VLAN 10; access ports for Guest assigned to VLAN 50; uplink to router as 802.1Q trunk allowing VLANs 10,50; enable portfast on access ports.\n- Router: g0/0.10 encaps dot1Q 10, IP 10.10.10.1/24; g0/0.50 encaps dot1Q 50, IP 10.50.50.1/24; configure `ip helper-address 10.10.10.20` on subinterface for VLAN 50 only so Guest DHCP relays to the Windows server; no helper on VLAN 10 since the server is local; NAT overload on WAN.\n- DHCP snooping: Enable globally and on VLANs 10 and 50; trust the trunk uplink to the router and the server-facing Staff switchport; all Guest access ports untrusted; enable `ip source guard` on Guest ports; optionally add static bindings for known static hosts.\n- ACLs: Inbound on Vlan50 SVI deny udp 192.168.50.0/24 to any eq 53; then explicitly permit udp to 8.8.8.8 and 1.1.1.1 eq 53; then permit ip to gateway IPs (e.g., allow to 10.50.50.1 for ARP/ICMP as needed); finally deny ip 10.50.50.0/24 to 10.10.10.0/24; allow ip any any for rest to reach NAT. Alternatively apply an outbound ACL on Vlan50 to enforce the same order with the specific permits above the denies.\n- Verification: `show vlan brief` and `show interfaces trunk` on the switch; `show ip dhcp snooping`, `show ip dhcp snooping binding`; test `ipconfig /renew` on Guest; packet capture or `debug ip dhcp server packet` to verify relayed DHCP; `nslookup` on Guest to confirm public resolvers; ping Staff host from Guest should fail; ping gateway and internet from Guest should succeed.\n- Justifications: Helper on Guest only avoids leaking Staff broadcasts; snooping prevents rogue DHCP on Guest; ACL order avoids shadowing specific DNS permits; trunk design preserves VLAN separation while enabling routing at the router.",
+          "rubric": [
+            {
+              "criterion": "Correct port-role plan (access VLANs for Staff/Guest, trunk to router) and preservation of broadcast domains",
+              "marks": 2
+            },
+            {
+              "criterion": "Router subinterfaces and correct placement of IP helper (on Guest only) with correct gateway IPs",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate DHCP snooping deployment (trusted/untrusted delineation, mention of Source Guard or bindings)",
+              "marks": 2
+            },
+            {
+              "criterion": "ACL design that enforces Guest DNS to public servers and blocks Guest-to-Staff while allowing necessary traffic; correct ordering rationale",
+              "marks": 1
+            },
+            {
+              "criterion": "At least three concrete verification commands/tests tied to the design",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Switching",
+            "Routing",
+            "DHCP",
+            "DNS",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "After a change, Staff hosts can resolve internal names like `files.corp.local` but some external SaaS domains intermittently fail to resolve or resolve to internal addresses. The Windows DNS server is configured for split-brain DNS with a corp.local authoritative zone and conditional forwarders. Recent change log: \"Added conditional forwarder for external.com to 10.10.10.20 (internal proxy/DNS)\". Users report `www.external.com` sometimes resolves to 10.10.10.30 (an internal reverse proxy) rather than the public IP. Internet browsing from Guest VLAN is unaffected.",
+          "task": "Identify the most likely misconfiguration and propose a corrective plan with justification. Include: (1) what is wrong; (2) the specific DNS configuration changes; (3) how to verify the fix and avoid regression (monitoring/logging).",
+          "expected_answer": "(1) The conditional forwarder for external.com points to an internal resolver that rewrites or resolves internal hostnames for that domain (e.g., proxy split-horizon), causing internal addresses to leak into general Staff resolution. Forwarding for an external public domain to an internal rewriting resolver is misapplied.\n(2) Remove or correct the conditional forwarder: point external.com to public resolvers or the ISP recursive resolvers; or remove it entirely to use normal recursion. Ensure the authoritative corp.local zone remains intact and that no wildcard or stub zones shadow external.com. If internal access to `external.com` via reverse proxy is required, create specific internal host overrides (e.g., `proxy.external.com`) rather than blanket forwarding that returns internal IPs.\n(3) Verification: Clear server and client caches; `nslookup/dig external.com` and `www.external.com` from multiple VLANs should return public IPs; query `nslookup -type=ns external.com` to confirm delegation to public NS; enable Windows DNS query logging and set up alerts for answers in RFC1918 ranges for non-internal zones; document the change in the runbook and change log.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the conditional forwarder to an internal rewriting resolver as the root cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes precise DNS changes (remove/retarget forwarder; avoid zone shadowing; specific overrides if needed)",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification steps including cache clear and specific queries that prove public resolution; monitoring/logging plan to prevent regression",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A distribution switch lost its running-config after a power event and rebooted with factory defaults. The site was down until someone consoled in and reapplied a weeks-old config from a USB stick. There is currently an ad-hoc TFTP backup script on a laptop that may or may not run nightly.",
+          "task": "Design a resilient configuration-backup and recovery workflow for network devices that fits a small environment with no extra paid tools. Include: (1) trigger and schedule; (2) transport/protocols; (3) secure storage layout and retention; (4) verification of backups and periodic restore testing; (5) tie-ins to ticketing and documentation.",
+          "expected_answer": "(1) Schedule nightly backups via device `archive` feature or EEM applets at staggered times, triggered by config changes (archive write-memory) and a nightly cron on a central Linux host to pull via SCP.\n(2) Use SCP or SFTP over SSH for transport (avoid TFTP on shared networks). Lock device management ACLs to the backup server. Optionally use RANCID/Oxidized (free) for versioning via Git.\n(3) Store per-device directories with timestamped filenames; encrypt at rest (filesystem encryption) and restrict permissions; keep 30 daily, 12 monthly; mirror to NAS with SMART monitoring.\n(4) After each run, parse logs and verify file sizes and config headers; weekly sample test: load a backup into a lab device or diff against running-config; maintain a golden baseline and alert on drift.\n(5) Create a recurring maintenance ticket for backup success checks; auto-attach logs; document recovery steps (console access, copy tftp/scp start, verify VLANs, SVIs, ACLs); update network diagram and inventory with management IPs and backup statuses.",
+          "rubric": [
+            {
+              "criterion": "Clear schedule/triggers covering both nightly cadence and on-change archiving",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate secure transport and access controls (SSH/SCP, management ACLs), avoiding insecure defaults",
+              "marks": 2
+            },
+            {
+              "criterion": "Storage organization, permissions, retention, and redundancy details",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification and periodic restore-testing approach that would actually detect bad backups",
+              "marks": 1
+            },
+            {
+              "criterion": "Integration with ticketing/documentation (evidence, runbooks, change logs)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "use ICT ticketing system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your org wants a preventive maintenance program that reduces outages from avoidable causes (dusty racks, aging UPS batteries, hot switch closets, stale firmware on routers). The team uses a basic ITSM tool with custom fields and SLA timers. You cannot exceed 4 engineer-hours per month on routine checks across two sites.",
+          "task": "Propose a quarterly preventive maintenance checklist and a ticketing workflow that fits the time budget and produces auditable evidence. Include concrete checks (what to measure/collect), pass/fail thresholds, escalation rules, and how to attach evidence. Explain how this reduces incidents without creating busywork.",
+          "expected_answer": "Checklist (quarterly, with monthly quick checks limited to key sensors):\n- Environmentals: record closet temp/humidity; thresholds 18–27°C, <60% RH; attach photos of thermostat and sensor exports; escalate P1 if >30°C sustained.\n- Power: UPS status and battery age; run a self-test off-hours; threshold: any battery >36 months or self-test fail -> create change for replacement; attach screenshots/log exports.\n- Hardware health: fan/PSU LEDs, error counters (`show env`, `show power`, SMART on NAS); threshold: any warning -> incident ticket plus vendor RMA if needed; attach CLI outputs.\n- Backups: verify last 7 nightly successes and size variance <10%; threshold: 2 consecutive failures -> incident; attach logs and diff summary.\n- Firmware: check against approved baseline; if outdated and security-relevant, raise change ticket with vendor release notes attached.\n- Housekeeping: rack cleanliness, cable strain relief; attach dated photos; threshold: any obstructed airflow -> work order.\nWorkflow:\n- Create a recurring “PM-Quarterly” ticket with subtasks per check; timebox per site to 2 hours; auto-templates for evidence fields and required attachments.\n- SLA: PM ticket due within 10 business days of quarter start; subtasks failing thresholds auto-spawn incidents/changes with correct priority.\n- Evidence: upload photos, CLI outputs, exported logs; add sign-off checklist; store links to config-backup repo snapshot.\nImpact: Early detection (thermal, power, failing disks) reduces surprise outages; attaching objective evidence avoids subjectivity and supports audits while keeping within the 4-hour cap.",
+          "rubric": [
+            {
+              "criterion": "Concrete checklist with measurable items and realistic thresholds tied to network hardware/support scope",
+              "marks": 3
+            },
+            {
+              "criterion": "Time-bounded workflow using ticketing with subtasks and evidence requirements",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear escalation rules mapping threshold breaches to incident/change tickets",
+              "marks": 1
+            },
+            {
+              "criterion": "Explanation of how plan reduces incidents without busywork",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "use ICT ticketing system",
+            "Backup and Recovery",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build and validate a two-VLAN small network with routed gateway, DHCP relay, DNS policy, and basic switch security",
+          "brief": "Assemble a lab (Packet Tracer/GNS3 or physical) with one router (or L3 switch), one access switch, a DHCP/DNS server, and two PCs. Implement VLAN 10 (Staff) and VLAN 50 (Guest). Provide inter-VLAN routing at the router, DHCP for both VLANs (server on VLAN 10, helper for VLAN 50), block Guest access to Staff, and allow Guest DNS only to public resolvers. Add basic Layer-2 security: enable DHCP snooping on both VLANs (trust only uplinks/server port) and IP Source Guard on Guest access ports. Validate with commands and end-to-end tests.",
+          "deliverable": "A zipped folder containing: (1) topology diagram (PNG/PDF) and IP plan (text/CSV); (2) device configuration files (router and switch running-configs); (3) DHCP server scope configuration or screenshots; (4) validation outputs: `show vlan`, `show interfaces trunk`, `show ip dhcp snooping`, `show ip dhcp snooping binding`, ACL hits/counters, and PC-side `ipconfig`/`nslookup`/`ping` transcripts demonstrating policy; (5) a one-page runbook describing where to plug new devices and how to verify DHCP/DNS.",
+          "acceptance_criteria": [
+            "Diagram shows router-on-a-stick (or L3 SVI) with VLANs 10 and 50, labeled ports, and correct addressing.",
+            "Router has working subinterfaces/SVIs with correct IPs; VLAN 50 uses `ip helper-address` pointing to the server in VLAN 10; DHCP leases obtained on both VLANs.",
+            "Switch access ports assigned to correct VLANs; trunk between switch and router carries VLANs 10 and 50; portfast enabled on access ports.",
+            "Guest-to-Staff isolation enforced (ping from Guest to Staff host fails; ping/HTTP to internet simulated succeeds).",
+            "DNS policy enforced for Guest: queries to internal DNS blocked; queries to allowed public resolver succeed; ACL counters reflect matches.",
+            "DHCP snooping enabled on both VLANs; only uplink/server-facing port trusted; Source Guard enabled on Guest access ports; bindings table shows dynamic Guest entries.",
+            "Submission includes all requested configs and validation outputs; commands are reproducible and clearly labeled."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct L2/L3 design and configs (VLANs, trunk, SVIs/subinterfaces, helper) that produce working routing and DHCP",
+              "marks": 6
+            },
+            {
+              "criterion": "Guest-to-Staff isolation and DNS policy implemented with correctly ordered ACLs and evidence of effect",
+              "marks": 5
+            },
+            {
+              "criterion": "DHCP snooping and Source Guard correctly deployed with appropriate trust/binding and evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality of documentation: clear diagram, IP plan, and concise runbook for helpdesk use",
+              "marks": 3
+            },
+            {
+              "criterion": "Complete, labeled validation evidence demonstrating each acceptance criterion",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Switching",
+            "Routing",
+            "DHCP",
+            "DNS",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Complete support lab: documentation, automated config backups, ticket workflow, and preventive maintenance evidence",
+          "brief": "Create a lightweight, auditable support lab demonstrating core support operations. Use two network devices (simulated or real), a Linux VM as backup server, and your existing lab from Task 1. Implement automated nightly configuration backups over SCP, with retention and integrity checks. Produce operator-facing documentation for the environment. Demonstrate ticket handling for an incident and for a preventive maintenance cycle, including evidence attachments and SLA fields.",
+          "deliverable": "A zipped folder containing: (1) a network documentation pack: updated topology, IP plan, device inventory with management addresses, and a change/runbook (PDF/markdown); (2) backup configuration: device archive/SCP settings, Linux cron job and script files, and last run logs; (3) a sample restore test transcript showing a config pulled from backup and compared/applied on a device (lab-safe); (4) ticket exports (PDF/CSV/screenshots) for one incident (e.g., DHCP failure) and one PM ticket with subtasks, timestamps, and attached evidence (photos/CLI/logs); (5) a preventive maintenance checklist with filled results for the lab.",
+          "acceptance_criteria": [
+            "Documentation pack includes topology, IP plan, inventory, and runbook; all fields populated and consistent with configs.",
+            "Automated backups run via SCP from devices or pull from server; cron entries and scripts included; credentials handled securely (no plaintext in docs; use SSH keys or redaction).",
+            "Backup logs show at least two device configs captured with timestamps; retention policy documented; files organized per-device; permissions or notes on secure storage included.",
+            "Restore test shows retrieval of a saved config and a comparison to running-config (diff or show commands) and a safe application plan.",
+            "Tickets show correct categorization, priorities per a stated matrix, status progression, and attached evidence (logs/CLI outputs/screenshots).",
+            "Preventive maintenance checklist includes concrete checks, thresholds, results, and spawned follow-up tickets where thresholds exceeded."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and quality of documentation set (diagram, IP plan, inventory, runbook) and consistency with the lab",
+              "marks": 4
+            },
+            {
+              "criterion": "Working automated backup pipeline over secure transport with clear scheduling, retention, and secure handling",
+              "marks": 6
+            },
+            {
+              "criterion": "Convincing restore verification procedure and evidence (diff or test apply)",
+              "marks": 4
+            },
+            {
+              "criterion": "Ticket workflow quality: correct use of fields, priority matrix adherence, evidence attachments, lifecycle",
+              "marks": 4
+            },
+            {
+              "criterion": "Preventive maintenance checklist with results and appropriate follow-up tickets",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "use ICT ticketing system",
+            "Troubleshooting"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ from services.llm.schemas.career_profile import CareerProfile
 from services.llm.schemas.career_summary import CareerSummary
 from services.llm.schemas.course_profile import CourseProfile
 from services.llm.schemas.course_summary import CourseSummary
+from services.llm.schemas.section_assessment import SectionAssessment
 from services.llm.schemas.student_profile import StudentProfile
 
 load_dotenv()
@@ -19,6 +20,130 @@ load_dotenv()
 # so they use the cheaper sibling.
 SUMMARY_MODEL = "gpt-5-mini"
 
+
+
+def section_assessment_prompt(course: Dict, section: Dict, modules: List[Dict]) -> str:
+    """The instructions for writing one section's question set.
+
+    Module scope, not a method, because the corpus is being trialled against
+    more than one generator and both have to be handed the SAME text. A
+    paraphrase would make the comparison a measure of the paraphrase.
+    """
+
+    module_block = "\n\n".join(
+        f"""Module {m['module_number']} - {m['title']}
+Objective: {m['objective']}
+Topics: {', '.join(m['topics'])}
+Observable evidence: {m['observable_evidence']}"""
+        for m in modules
+    )
+
+    skill_lines = "\n".join(
+        f"- {s['skill_name']} (course-level coverage {int(s['coverage_weight'])}/100, {s['category']})"
+        for s in course["skills"]
+    )
+
+    module_numbers = sorted(m["module_number"] for m in modules)
+
+    return f"""
+You are writing the end-of-section assessment for section {section['section_code']}
+of the Nipuna CareerTours course "{course['course_name']}" ({course['course_code']}).
+
+The learner has just finished the two modules below and nothing after them.
+
+{module_block}
+
+Section competency: {section['competency']}
+Completion evidence the learner must produce: {section['completion_evidence']}
+This section is worth {section['weight_pct']}% of the course.
+
+Here are ALL the skills the course teaches, across all eight modules:
+
+{skill_lines}
+
+First decide which of those skills these two modules genuinely cover, and return
+them in skills_assessed using the skill names EXACTLY as written above. Do not
+include a skill the learner has not been taught yet — a question about a skill
+from a later module is a broken question, not a hard one. Do not coin new names.
+
+Then write the assessment. It must contain exactly:
+
+- 10 concept MCQs, 3 marks each (30 total)
+- 4 scenario questions, 7 or 8 marks each, summing to exactly 30
+- 2 practical tasks, 20 marks each (40 total)
+
+Draw each question's skills_covered from skills_assessed only, and set
+modules_covered to the module numbers ({" and/or ".join(str(n) for n in module_numbers)})
+the question draws on. Prefer questions that need BOTH modules over questions
+that sit inside one.
+
+You do NOT have to reach every skill in skills_assessed. Sixteen questions cannot
+go deep on nine skills at once, and a set that covers everything shallowly is
+worse than one that goes properly hard on the skills at the centre of these two
+modules. Spend the questions where the difficulty is, and let the peripheral
+skills go unasked.
+
+Make these HARD. This is the standard:
+
+- A question a learner can answer by recalling a definition is too easy. Ask what
+  happens, why it happens, which of two correct-looking approaches is right here,
+  or what breaks under a stated condition.
+- These MCQ forms are BANNED outright, however well written. Do not produce them:
+  "What is X?", "Which of the following best describes X?", "What is the purpose
+  of X?", "What is the primary difference between X and Y?", "Which of these is a
+  benefit of X?". Every one is answerable from a glossary, which makes it worth
+  nothing here. Replace each with a specific situation that has an outcome: show
+  the state, the call, or the command, and ask what results and why. If a stem
+  could be answered by someone who had read about the topic but never used it,
+  it is the wrong question.
+- Prefer stems built on a concrete artefact — a snippet, a query, a schema, a
+  command with its output, a report extract — over stems that are pure prose.
+  At least seven of the ten MCQs must contain such an artefact.
+- Give each scenario and practical task at least 4 rubric criteria. Two or three
+  coarse lines cannot be marked consistently by different assessors.
+- MCQ distractors must be beliefs a half-learned student actually holds — the
+  near-miss, the right idea applied in the wrong place, the answer that is true
+  in general but false in this case. Never pad with an obviously absurd option.
+  Say in distractor_rationale why each wrong option is tempting.
+- Scenarios must give concrete context and ask for a judgement plus its
+  justification. "Explain X" is not a scenario. Where this course teaches
+  programming, that context is real code, a real schema or a real API contract.
+  Where it does not, it is the equivalent artefact in ITS OWN domain and you
+  must not reach for code to manufacture difficulty: a trial balance that will
+  not tie, a period that will not close, a campaign whose cost per acquisition
+  moved the wrong way, a layout whose logo fails at 16px, a subnet plan that
+  collides. Difficulty comes from the judgement the situation demands, not from
+  the notation it is written in.
+- Practical tasks must produce the section's stated completion evidence, be
+  finishable in 2-4 hours, and have acceptance criteria an assessor can check by
+  looking at the submission rather than by forming an opinion.
+- Each rubric's criterion marks must sum to that question's marks.
+
+Return section_code exactly as "{section['section_code']}". Write options as four
+plain strings in A, B, C, D order — no "A)" prefixes. Ground everything in the two
+modules' topics.
+
+FORMATTING. The interface renders these fields as restricted markdown, so:
+
+- Put every piece of code, query, schema, markup, config, terminal output or
+  report extract in a fenced block with a language tag, like ```python ... ```
+  or ```sql ... ```. Use the tag that matches what is inside: python, sql,
+  javascript, jsx, typescript, tsx, html, css, scss, java, csharp, cpp, c, go,
+  rust, ruby, php, kotlin, swift, r, abap, bash, powershell, dockerfile, nginx,
+  apache, terraform, makefile, http, json, yaml, toml, ini, xml, csv, graphql,
+  markdown, diff, dax, mdx, powerquery, vba. Use ```text for anything with no language — ledger extracts,
+  trial balances, report output, directory trees, plain tabular data.
+- Keep real newlines and indentation inside the fence. Do not collapse a
+  multi-line program onto one line.
+- Close every fence you open.
+- Use `single backticks` for an identifier mentioned mid-sentence — a column
+  name, a function name, a menu path, a flag.
+- Use NO other markdown. No headings, no bold, no italics, no bullet or numbered
+  lists, no tables. Prose is plain sentences.
+
+This applies to every text field, including the four MCQ options: an option that
+is a query or a snippet gets its own fenced block, exactly like the stem.
+"""
 
 class OpenAIService:
     def __init__(self):
@@ -150,6 +275,55 @@ Return structured data.
         parsed = response.output_parsed
         if parsed is None:
             raise RuntimeError(f"Failed to parse course profile for {course_code} from LLM response")
+
+        return parsed
+
+    def generate_section_assessment(
+        self,
+        course: Dict,
+        section: Dict,
+        modules: List[Dict],
+    ) -> SectionAssessment:
+        """Write the end-of-section question set for one pair of modules.
+
+        The prompt lives in ``section_assessment_prompt`` at module scope rather
+        than inline, because it is not only used here — the same text has to be
+        handed verbatim to any other generator the corpus is trialled against,
+        and a second copy would quietly drift.
+
+        One call per section, 160 in the corpus. Sections are the unit rather
+        than modules or topics because the corpus already treats them as one:
+        each owns exactly two consecutive modules, declares its own
+        ``assessment`` split, and carries the ``completion_evidence`` the
+        practical tasks have to produce. A per-module set would have to invent
+        all three.
+
+        The whole course's skills go into the prompt but only some come back.
+        The corpus carries skills at course level only — there is no skill to
+        module mapping anywhere — so the model is asked to pick the ones these
+        two modules actually teach, and ``skills_assessed`` is what builds that
+        map. Passing only the section's own topics instead would be cheaper and
+        useless: the topics are syllabus phrasing ("data types", "functions")
+        that no ``course_skills`` row is named after, so nothing downstream
+        could join to the result.
+
+        Withholding later modules' skills is the load-bearing instruction. Given
+        the full list with no scoping rule, the model writes a Django question
+        for module 1 — hard, correct, and unanswerable by a learner who has
+        reached the end of module 2.
+        """
+
+        prompt = section_assessment_prompt(course, section, modules)
+
+        response = self.client.responses.parse(
+            model="gpt-5",
+            input=prompt,
+            text_format=SectionAssessment,
+        )
+
+        parsed = response.output_parsed
+        if parsed is None:
+            raise RuntimeError(f"Failed to parse assessment for {section['section_code']} from LLM response")
 
         return parsed
 

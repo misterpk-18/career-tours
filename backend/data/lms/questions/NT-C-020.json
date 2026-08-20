@@ -1,0 +1,1843 @@
+{
+  "course_code": "NT-C-020",
+  "course_name": "Business Analytics",
+  "sections": [
+    {
+      "section_code": "NT-C-020-S01",
+      "skills_assessed": [
+        "Business Analysis",
+        "Stakeholder Management",
+        "track key performance indicators",
+        "Microsoft Excel"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You must report May-2025 on-time delivery rate exactly as the ops head framed it: shipments promised in May-2025 that were delivered on or before the promised date, divided by all shipments promised in May-2025. From the small extract below, the correct rate is 2/3.\n\n```text\nTable1\nOrder | Promised_Date | Delivered_Date\n1     | 2025-05-30    | 2025-05-29\n2     | 2025-05-31    | 2025-06-01\n3     | 2025-05-15    | 2025-05-15\n4     | 2025-06-02    | 2025-06-02\n```\nWhich Excel formula returns 0.667 from this data using the definition above?",
+          "options": [
+            "```text\n=SUMPRODUCT((Table1[Promised_Date]>=DATE(2025,5,1))*(Table1[Promised_Date]<=DATE(2025,5,31))*(Table1[Delivered_Date]<=Table1[Promised_Date]))\n/\nSUMPRODUCT((MONTH(Table1[Delivered_Date])=5)*(YEAR(Table1[Delivered_Date])=2025))\n```",
+            "```text\n=SUMPRODUCT((MONTH(Table1[Delivered_Date])=5)*(YEAR(Table1[Delivered_Date])=2025)*(Table1[Delivered_Date]<=Table1[Promised_Date]))\n/\nSUMPRODUCT((MONTH(Table1[Delivered_Date])=5)*(YEAR(Table1[Delivered_Date])=2025))\n```",
+            "```text\n=COUNTIFS(Table1[Promised_Date,\">=\"&DATE(2025,5,1)],Table1[Promised_Date,\"<=\"&DATE(2025,5,31)],Table1[Delivered_Date],\"<=\"&Table1[Promised_Date])\n/\nCOUNTIFS(Table1[Promised_Date],\">=\"&DATE(2025,5,1),Table1[Promised_Date],\"<=\"&DATE(2025,5,31))\n```",
+            "```text\n=SUMPRODUCT((Table1[Promised_Date]>=DATE(2025,5,1))*(Table1[Promised_Date]<=DATE(2025,5,31))*(Table1[Delivered_Date]<>\"\")*(Table1[Delivered_Date]<=Table1[Promised_Date]))\n/\nSUMPRODUCT((Table1[Promised_Date]>=DATE(2025,5,1))*(Table1[Promised_Date]<=DATE(2025,5,31)))\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "SUMPRODUCT can compare corresponding row pairs (Delivered <= Promised). The numerator filters rows promised in May-2025 that are delivered on or before the promise date; the denominator is all rows promised in May-2025.",
+          "distractor_rationale": "B uses COUNTIFS with a per-row comparison Delivered_Date <= Promised_Date, which COUNTIFS cannot do because each criterion compares to a fixed scalar, not a per-row pair. C flips the time window to delivered-in-May rather than promised-in-May, violating the stakeholder definition. D mixes a promised-in-May numerator with a delivered-in-May denominator, which breaks the rate.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your profit model uses Price in $B$2 and Ad Spend in $B$3 as inputs, and outputs Profit in $B$10. You build a two-way Data Table with candidate Prices in the row headers and candidate Ad Spends in the column headers. In the Data Table dialog, you mistakenly set both Row input cell and Column input cell to $B$2 (Price). What pattern will the table show?",
+          "options": [
+            "Every row will be identical; values will vary only by the column headers (the column input overwrites the row input each calculation).",
+            "The table will fail to compute and show #N/A in all cells because the same input is specified twice.",
+            "The table will compute but swap axes: row headers will act as Ad Spend and column headers as Price.",
+            "Every column will be identical; values will vary only by the row headers."
+          ],
+          "correct_option": "A",
+          "explanation": "In a two-way Data Table, Excel writes the row input first, then writes the column input. If both point to the same cell, the column write overwrites the row write, so results vary only across columns and repeat down rows.",
+          "distractor_rationale": "B reverses the overwrite order. C confuses a logical error with a hard error; Excel still computes, just not what you intended. D suggests an axis swap, which does not occur — the last write dominates.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have a pivot on line-level campaign data with fields `Campaign`, `Clicks`, and `Leads`. You added a Calculated Field `CR = Leads/Clicks` and placed it in Values. Subtotals and the Grand Total show an inflated conversion rate compared to computing `SUM(Leads)/SUM(Clicks)` outside the pivot. Which change produces the correct conversion rate at every subtotal level without using the Data Model or Power Pivot?",
+          "options": [
+            "Add a Slicer on `Campaign` so only one campaign is selected when reading the Grand Total.",
+            "Change Summarize Values By for the calculated field to Average so the Grand Total averages campaign CRs.",
+            "Remove the calculated field. Add `Leads` and `Clicks` as Values in the pivot and compute CR outside the pivot as `=GETPIVOTDATA(\"Leads\",...)/GETPIVOTDATA(\"Clicks\",...)`.",
+            "Apply Show Values As \"% of Column Total\" to `Leads` to normalize by `Clicks`."
+          ],
+          "correct_option": "C",
+          "explanation": "Pivot Calculated Fields are computed row-by-row then aggregated, so their totals are sums/averages of ratios. Computing ratio-of-sums outside the pivot gives the mathematically correct rate at all levels.",
+          "distractor_rationale": "B still aggregates ratios incorrectly. C divides `Leads` by total `Leads`, not by `Clicks`. D avoids the symptom by collapsing to one row but does not solve the underlying aggregation error.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You must return the Category for a given SKU in D2. The table is laid out as below, with Category to the left of SKU.\n\n```text\nA            B\n1  Category   SKU\n2  Audio      A100\n3  Video      V200\n4  Audio      A110\n```\nWhich formula correctly returns the Category for the SKU in D2?",
+          "options": [
+            "```text\n=INDEX(A:A, MATCH(D2, B:B, 0))\n```",
+            "```text\n=HLOOKUP(D2, B:A, 2, FALSE)\n```",
+            "```text\n=MATCH(D2, A:A, 0)\n```",
+            "```text\n=VLOOKUP(D2, A:B, 2, FALSE)\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "INDEX/MATCH performs a left lookup: MATCH finds the row of the SKU in column B, and INDEX returns the Category from column A on that row.",
+          "distractor_rationale": "B searches for D2 in column A and fails because the lookup column must be leftmost in the table array. C is for horizontal lookups. D returns a row number from column A, not the Category text.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You have this pivot and want each region’s channel share (e.g., North Online share = 100/150 = 66.7%).\n\n```text\nValues: Sum of Sales\nRows:   Region\nCols:   Channel\n\n           Online   Retail   Total\nNorth        100       50      150\nSouth         80       40      120\nTotal        180       90      270\n```\nWhich Show Values As configuration yields the correct numbers directly in the pivot?",
+          "options": [
+            "% of Grand Total",
+            "% of Row Total",
+            "% of Column Total",
+            "Running Total In (Rows)"
+          ],
+          "correct_option": "B",
+          "explanation": "Channel share within a region is each channel’s value divided by the row total, so % of Row Total is appropriate.",
+          "distractor_rationale": "B divides by column totals (channel mix across regions). C divides by the overall grand total. D computes cumulative sums down rows, unrelated to shares.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "While setting up Scenario Manager, you try to add C5 as a changing cell, but C5 currently contains `=B2*E2`. What happens when you click OK?",
+          "options": [
+            "It works only if Iterative Calculation is enabled in Options.",
+            "Excel allows it and will recalculate the formula per scenario without overwriting it.",
+            "Scenario Manager allows it and will overwrite the formula with constants when switching scenarios.",
+            "Excel blocks it: changing cells must be input cells (constants), not formulas."
+          ],
+          "correct_option": "D",
+          "explanation": "Scenario Manager requires changing cells to be writable inputs. Cells containing formulas cannot be added as changing cells.",
+          "distractor_rationale": "B confuses Scenario Manager’s behavior (it writes to inputs) with the rule about changing cells. C is impossible because Scenario Manager cannot vary a formula cell. D is unrelated to Scenario Manager’s constraints.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You need the monthly click-through rate (CTR) from daily data.\n\n```text\nDate       Impressions  Clicks\n2025-05-01 1000         50\n2025-05-02 2000         60\n2025-05-03  500         20\n```\nWhich approach yields the correct monthly CTR?",
+          "options": [
+            "```text\nPut CTR as a Calculated Field in a pivot (Clicks/Impressions) and read the Grand Total\n```",
+            "```text\n=SUM(FILTER(Table[Clicks],MONTH(Table[Date])=5))/SUM(FILTER(Table[Impressions],MONTH(Table[Date])=5))\n```",
+            "```text\nAdd a CTR column =Clicks/Impressions by row, then use =AVERAGEIFS(Table[CTR],MONTH(Table[Date]),5)\n```",
+            "```text\n=SUMPRODUCT(Table[CTR])/COUNTIFS(MONTH(Table[Date]),5)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "CTR is a weighted rate and must be computed as total clicks divided by total impressions for the month, not an average of daily rates.",
+          "distractor_rationale": "B and C average ratios across rows, which biases the result when daily volumes differ. D also averages ratios implicitly and adds counting errors.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your pivot groups transaction dates by Months only. Because data spans 2024 and 2025, January combines both years. You must avoid mixing years without filtering year-by-year manually. What should you change?",
+          "options": [
+            "Group the Date field by Years and Months simultaneously.",
+            "Change Show Values As to \"% of Parent Row Total\".",
+            "Refresh the pivot after grouping by Months.",
+            "Add a Year Slicer and leave both years selected."
+          ],
+          "correct_option": "A",
+          "explanation": "Grouping by Years and Months produces a hierarchy so each January appears under its own year, avoiding cross-year aggregation.",
+          "distractor_rationale": "B still mixes years if both are selected. C and D do not affect how dates are bucketed.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Extract from a draft brief:\n\n```text\nObjective: Reduce cart abandonment this quarter with fixed promotions budget.\nCurrent funnel (last week): Sessions 10,000; Carts 2,000; Checkouts 1,200; Orders 600.\nKPI option A (CMO): Checkout start rate = Checkouts / Sessions.\nKPI option B (CFO): Cart abandonment rate = 1 - Orders / Carts.\n```\nWhich KPI better aligns with the objective while minimizing denominator distortion from top-of-funnel traffic swings?",
+          "options": [
+            "Either — they move together so choice doesn’t matter",
+            "KPI A — Checkout start rate = Checkouts / Sessions",
+            "KPI B — Cart abandonment rate = 1 - Orders / Carts",
+            "Neither — use Orders / Sessions (conversion rate)"
+          ],
+          "correct_option": "C",
+          "explanation": "The objective targets abandonment from cart to order. Using 1 - Orders/Carts isolates that stage and is less sensitive to session-volume volatility than a sessions-based rate.",
+          "distractor_rationale": "A is diluted by session mix and does not isolate abandonment. C measures end-to-end conversion, not specifically abandonment. D assumes correlation where funnel dynamics can diverge.",
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Given the table below, what does `=VLOOKUP(123, Table1, 2, FALSE)` return?\n\n```text\nCustomerID | Tier\n123        | Silver\n456        | Gold\n123        | Gold\n```\nAssume Table1 covers both columns and `FALSE` requests an exact match.",
+          "options": [
+            "Gold",
+            "Silver",
+            "A spilled array {\"Silver\",\"Gold\"}",
+            "#N/A"
+          ],
+          "correct_option": "B",
+          "explanation": "With exact match, VLOOKUP returns the first matching row, scanning from the top. It does not return multiple matches.",
+          "distractor_rationale": "B assumes VLOOKUP returns the last or most recent record. C ignores that 123 exists. D confuses VLOOKUP with dynamic array behavior it does not have.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A last-mile delivery firm wants to “improve on-time delivery.” Ops defines on-time as delivered on/before the promised date. Sales argues late deliveries to VIPs should be weighted more. Invoices are order-level; events are package-level. You have order_id, promised_date, delivered_date, customer_tier, and package_count. Current monthly report shows May on-time at 92%, but VIP complaints rose.",
+          "task": "Decide how you will frame the objective and KPI for the executive brief, justify the denominator and any weighting, and outline how you would compute and present it in Excel so both Ops and Sales get what they need in one view. State one falsifiable hypothesis you would test next.",
+          "expected_answer": "A strong answer reframes the single objective into: primary KPI = on-time delivery rate defined at the promised-month grain; denominator = all packages promised in the month; numerator = packages delivered on/before promise. Provide a parallel, stakeholder-specific secondary KPI: VIP-weighted on-time rate using a weight per package (e.g., VIP weight 2, standard 1) to address Sales without distorting the primary KPI. Explain avoiding delivered-month denominators to prevent spillover. Computation plan in Excel: add a helper column for promised_month (YYYY-MM), compute an on_time flag (Delivered <= Promised), and, if weighting is wanted, a weight column (e.g., =IF(Tier=\"VIP\",2,1)). Use a pivot with Rows = promised_month, Columns = {Tier or Weighted?}, Values = Sum of on_time*weight and Sum of weight, then compute outside the pivot the ratio-of-sums for both total and VIP-weighted. Present both in one sheet, with the unweighted rate as the top-line KPI and a clearly labeled VIP-weighted variant beneath. Hypothesis example: “VIP on-time rate declined specifically on routes handled by Carrier X after cutoff time moved from 5pm to 4pm,” testable by filtering pivot by carrier and comparing pre/post cutoff change.",
+          "rubric": [
+            {
+              "criterion": "Defines a primary KPI consistent with the ops definition (promised-month denominator; on/before promised date numerator)",
+              "marks": 3
+            },
+            {
+              "criterion": "Handles stakeholder tension by proposing a secondary VIP-weighted view without corrupting the primary KPI",
+              "marks": 2
+            },
+            {
+              "criterion": "Excel computation plan that yields ratio-of-sums correctly (helper columns or algebra outside pivot)",
+              "marks": 2
+            },
+            {
+              "criterion": "States a clear, testable hypothesis tied to an operational lever",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your ecommerce AOV dashboard suddenly shows a 25% spike week-on-week. Raw order counts and revenue look stable. Data is line-item level with columns: order_id, unit_price, quantity, return_flag (Y/N). The pivot driving the AOV card has Rows = week, Values = Average of (unit_price*quantity). Returns are posted as negative quantities the week after purchase.",
+          "task": "Diagnose the most likely cause of the spike and specify, in concrete Excel steps, how to produce a correct AOV at the week grain going forward. Explain why your fix works and what will still break it.",
+          "expected_answer": "Likely cause: averaging line-level extended amounts biases AOV because orders with more lines get more weight; posting negative return lines in later weeks further distorts the average. Correct approach: compute order-level revenue per order per week, then divide by distinct orders in that week. Steps: add a helper column Extended = unit_price*quantity; build a pivot with Rows = week, Rows second level = order_id, Values = Sum of Extended; then outside the pivot, compute AOV_week = SUM(Extended at week)/COUNTUNIQUE(order_id at week). Since native pivots lack distinct count unless added to Data Model, either: (a) produce an order-level staging table via formulas/Power Query to collapse to unique order_id per week with Revenue, then pivot and use Sum(Revenue)/COUNT(order_id); or (b) inside the pivot, place order_id in Rows and read Subtotal Sums, then compute AOV via GETPIVOTDATA dividing weekly revenue subtotals by the count of order_id items under each week. Explain that returns booked in later weeks must be aligned to original order week for AOV of purchase week; otherwise, also provide a second KPI “net AOV including returns posted” with clear labeling.",
+          "rubric": [
+            {
+              "criterion": "Identifies why averaging line amounts biases AOV and mentions return timing distortion",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies a viable Excel method to aggregate to order-level before averaging (staging table, pivot by order, or Data Model distinct count not assumed)",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows correct ratio-of-sums logic at week grain and how to read it reliably (e.g., GETPIVOTDATA)",
+              "marks": 1
+            },
+            {
+              "criterion": "Notes remaining edge cases/assumptions (returns timing, partial returns) and labeling",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "track key performance indicators",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Marketing wants a sensitivity grid of Profit vs. two drivers: Price and Daily Ad Spend. Your model has inputs Price in B2, Ad Spend in B3, and outputs Profit in B10. The baseline model references B2 and B3 in downstream formulas.",
+          "task": "Design a two-way Data Table to generate the grid. Specify exactly which cell contains the output formula, where you place the row and column input values, which cells you assign as Row input and Column input in the dialog, and two safeguards to avoid misleading results when others edit the workbook.",
+          "expected_answer": "Place an output link (e.g., in D4) to the model result: =B10. Put a row of candidate Ad Spend values to the right of D4 (E4:J4) and a column of candidate Prices below D4 (D5:D14). Select D4:J14 and create a Data Table with Row input cell = $B$3 (Ad Spend) and Column input cell = $B$2 (Price). Safeguards: (1) Lock the input cells with sheet protection and clearly label them; (2) Use named ranges (Price, AdSpend) and absolute references inside the model so all downstream formulas depend only on those named inputs; (3) Set Calculation Options to Automatic Except Data Tables and include a visible recalculation note/button; (4) Add a check cell showing the active Price and Ad Spend and verify that changing them updates B10, proving the dependency path is intact.",
+          "rubric": [
+            {
+              "criterion": "Correct placement of output link and row/column input value layout",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct assignment of Row input = Ad Spend (B3) and Column input = Price (B2)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains absolute/named references to ensure dependency on the intended inputs",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes at least two concrete safeguards (protection, calc setting, checks)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "Draft analytics brief for a retail app:\n\n```text\nGoal: Improve revenue.\nWho cares: Everyone.\nMetric: DAU.\nPlan: Do promos and emails.\nHypothesis: Users like deals.\nTimeline: ASAP.\n```\nThe product director complains that nothing here helps them decide where to put a limited budget next month.",
+          "task": "Identify at least three concrete flaws in this brief related to objectives, stakeholders, KPIs, or hypotheses. Rewrite the objective and KPIs so they are decision-ready for next month’s budget, and propose one testable hypothesis aligned to that objective.",
+          "expected_answer": "Flaws: objective is vague and not time-bound; stakeholders are unspecified; DAU is a poor KPI for budget allocation if revenue is the aim; no KPI definitions (numerator/denominator, grain); plan is a tactic, not a hypothesis; no timeframe. Rewrite: Objective: “Increase next month’s gross margin from in-app purchases by 8% without reducing 30-day repeat purchase rate below 25%.” Stakeholders: Product, Marketing, Finance. KPIs: Primary = Gross margin from IAP next month (sum of (price - cost) over next month); Guardrail = 30-day repeat purchase rate (unique repeat purchasers / unique purchasers from prior 30 days); Operational = Promo lift % (incremental margin vs control). Hypothesis: “Targeted 15% off push to lapsing users (no purchase in last 30 days) increases next-month margin by ≥6% with no more than 1pp drop in 30-day repeat rate.”",
+          "rubric": [
+            {
+              "criterion": "Diagnoses at least three substantive flaws tied to framing, stakeholders, KPIs, or hypotheses",
+              "marks": 2
+            },
+            {
+              "criterion": "Rewritten objective is specific, time-bound, and decision-oriented",
+              "marks": 2
+            },
+            {
+              "criterion": "KPIs are aligned, defined with clear math and grain, and include a guardrail",
+              "marks": 2
+            },
+            {
+              "criterion": "Hypothesis is falsifiable and aligned to the objective",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Write the analytics brief for a churn-reduction decision",
+          "brief": "Context: A subscription meal-kit service saw monthly churn rise from 5.5% to 7.8% over the last two months. The COO must decide where to invest a fixed $100k next month (operations vs. retention incentives). Produce an Analytics brief that frames the decision and makes the metrics unambiguous.",
+          "deliverable": "Analytics brief",
+          "acceptance_criteria": [
+            "Includes sections: Objective, Stakeholders, Decisions to be made, Primary KPI with exact formula and grain, Guardrail KPI(s) with formulas, Scope and Assumptions, Data required, Hypotheses to test, Timeline, and Risks.",
+            "Primary KPI is defined at subscriber-month grain and includes a precise denominator (e.g., beginning-of-month active subscribers) and numerator (e.g., cancellations within month), with inclusion/exclusion rules (free trials, reactivations).",
+            "At least two stakeholder perspectives are reflected (e.g., Operations vs. Marketing), noting where their incentives may conflict and how reporting will avoid metric gaming.",
+            "States 2–3 falsifiable hypotheses linked to actionable levers (e.g., delivery failures, first-box experience, incentive targeting).",
+            "Brief is self-contained and unambiguous: a different analyst could compute the KPIs from the definitions without guesswork."
+          ],
+          "rubric": [
+            {
+              "criterion": "Objective and decision framing (clear, time-bound, tied to the $100k choice)",
+              "marks": 6
+            },
+            {
+              "criterion": "KPI definitions (math, grain, inclusion/exclusion, guardrails)",
+              "marks": 6
+            },
+            {
+              "criterion": "Stakeholder analysis and alignment plan (incentives, conflict handling)",
+              "marks": 4
+            },
+            {
+              "criterion": "Hypotheses quality (testable, actionable, tied to levers)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build the Excel analysis workbook for KPIs and what-if",
+          "brief": "Create an Excel Analysis workbook that computes core KPIs correctly and supports what-if analysis for next month’s plan, using only functions, pivots, and scenario analysis (no add-ins). Assume a transactional sheet `Transactions` with columns: `date`, `order_id`, `customer_id`, `region`, `channel`, `units`, `revenue` (positive sales; returns as negative revenue), and a weekly calendar. Include a simple profit model with named inputs.",
+          "deliverable": "Analysis workbook",
+          "acceptance_criteria": [
+            "Workbook contains sheets: README, Model, Pivots, Scenarios.",
+            "Model sheet: defines named inputs `Price` and `AdSpend`, and an output `Profit` depending on them. Includes a two-way Data Table showing Profit by Price (columns) and AdSpend (rows); Row input = AdSpend cell, Column input = Price cell. Table recalculates correctly (no #N/A).",
+            "Pivots sheet: at least one pivot showing Sales by Region and Channel with Values shown as % of Row Total; another pivot exposes `Leads` and `Clicks` (or analogous) such that overall rate is computed outside the pivot as ratio-of-sums (no pivot Calculated Field for rates). If you lack leads/clicks, simulate with two numeric columns and document the mapping on README.",
+            "KPIs computed as ratio-of-sums using functions (e.g., SUM, SUMIFS, FILTER, GETPIVOTDATA) with date-grain filtering that avoids averaging ratios. Calculations are transparent and traceable from source data.",
+            "Scenarios sheet: at least two Scenario Manager scenarios (Baseline, Stretch) that change only true input cells (constants) and leave formulas intact. A comparison table shows Profit under each scenario.",
+            "Named ranges are used for key inputs and referenced (absolute) in dependent formulas to ensure the Data Table and scenarios work reliably."
+          ],
+          "rubric": [
+            {
+              "criterion": "Two-way Data Table correctness (layout, assigned inputs, recalculation)",
+              "marks": 6
+            },
+            {
+              "criterion": "Pivot configuration for segment shares (% of Row Total) and clear labeling",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct KPI math (ratio-of-sums) implemented with Excel functions and documented",
+              "marks": 6
+            },
+            {
+              "criterion": "Scenario Manager setup (input cells only, scenarios compare cleanly)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-020-S02",
+      "skills_assessed": [
+        "Business Analysis",
+        "track key performance indicators",
+        "SQL",
+        "Statistics",
+        "communicate analytical insights"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need 2025 revenue for category 'Shoes' only. Current tables:\n\n```text\norders(id, customer_id, order_date, order_total)\norder_items(order_id, product_id, qty, unit_price)\nproducts(id, category, brand)\n```\n\nAn analyst wrote this and got an inflated total on mixed-category orders:\n\n```sql\nSELECT SUM(o.order_total) AS shoes_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01';\n```\n\nWhich rewrite returns the correct revenue for Shoes only (no double counting, excludes non-Shoes amounts on mixed orders)?",
+          "options": [
+            "```sql\nSELECT SUM(oi.qty * oi.unit_price) AS shoes_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01';\n```",
+            "```sql\nSELECT COUNT(DISTINCT o.id) * AVG(oi.qty * oi.unit_price) AS shoes_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01';\n```",
+            "```sql\nSELECT SUM(DISTINCT o.order_total) AS shoes_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01';\n```",
+            "```sql\nSELECT SUM(o.order_total) AS shoes_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01';\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Summing `o.order_total` after joining to line items repeats the same order total per line and counts non-Shoes value on mixed orders. Summing line-level revenue filtered to `p.category='Shoes'` returns the true Shoes-only revenue without duplication.",
+          "distractor_rationale": "A looks plausible but double-counts orders with multiple lines and includes non-Shoes amounts for mixed orders. B avoids duplication but still counts the whole order total if an order contains any Shoes line, thus overstates Shoes revenue. D mixes counts and averages; even if math balanced, it computes average line price times order count, not actual Shoes revenue, and is sensitive to line splits.",
+          "skills_covered": [
+            "SQL",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Return customer IDs who purchased from at least 3 distinct categories in calendar 2025.\n\nTables:\n\n```text\norders(id, customer_id, order_date)\norder_items(order_id, product_id)\nproducts(id, category)\n```\n\nWhich query correctly implements this?",
+          "options": [
+            "```sql\nSELECT o.customer_id\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nGROUP BY o.customer_id\nHAVING COUNT(DISTINCT p.id) >= 3\n   AND MIN(o.order_date) >= '2025-01-01'\n   AND MAX(o.order_date) < '2026-01-01';\n```",
+            "```sql\nWITH cats AS (\n  SELECT o.customer_id, p.category\n  FROM orders o\n  JOIN order_items oi ON oi.order_id = o.id\n  JOIN products p ON p.id = oi.product_id\n  WHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\n)\nSELECT customer_id\nFROM cats\nGROUP BY customer_id\nHAVING COUNT(p.category) >= 3;\n```",
+            "```sql\nSELECT o.customer_id\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY o.customer_id\nHAVING COUNT(p.category) >= 3;\n```",
+            "```sql\nSELECT o.customer_id\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY o.customer_id\nHAVING COUNT(DISTINCT p.category) >= 3;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "You must count distinct categories per customer within the 2025 date window. A does exactly that.",
+          "distractor_rationale": "B counts lines, not distinct categories, so multiple purchases in the same category inflate the count. C counts distinct products, not categories; a customer could buy 3 products all from 1 category and be (wrongly) included. D splits the query but still fails to use DISTINCT in the final HAVING, so repeated category rows are over-counted.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You are asked to list every customer with the count of their 2025 orders in category 'Shoes' (zero if none).\n\nTables:\n\n```text\ncustomers(id)\norders(id, customer_id, order_date)\norder_items(order_id, product_id)\nproducts(id, category)\n```\n\nWhich query preserves customers with zero Shoes orders in 2025 and correctly counts orders?",
+          "options": [
+            "```sql\nSELECT c.id,\n       COALESCE(COUNT(DISTINCT CASE\n         WHEN p.category = 'Shoes'\n          AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\n         THEN o.id END), 0) AS shoes_orders_2025\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id\nLEFT JOIN order_items oi\n  ON oi.order_id = o.id\nLEFT JOIN products p\n  ON p.id = oi.product_id\nGROUP BY c.id;\n```",
+            "```sql\nSELECT c.id, COUNT(DISTINCT o.id) AS shoes_orders_2025\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nLEFT JOIN order_items oi ON oi.order_id = o.id\nLEFT JOIN products p ON p.id = oi.product_id\nWHERE p.category = 'Shoes'\n  AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY c.id;\n```",
+            "```sql\nSELECT c.id, COUNT(DISTINCT o.id) AS shoes_orders_2025\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY c.id;\n```",
+            "```sql\nSELECT c.id, COUNT(*) FILTER (WHERE p.category='Shoes') AS shoes_orders_2025\nFROM customers c\nINNER JOIN orders o ON o.customer_id = c.id\nLEFT JOIN order_items oi ON oi.order_id = o.id\nLEFT JOIN products p ON p.id = oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY c.id;\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Putting the category and date predicates inside a conditional DISTINCT count on the left-joined rows preserves customers with no qualifying orders and avoids converting the LEFT JOIN to an INNER JOIN. Counting DISTINCT `o.id` prevents duplicate orders caused by multiple items.",
+          "distractor_rationale": "A's WHERE on `p.category` and `o.order_date` turns the LEFT JOIN effectively into INNER JOIN, dropping zero-order customers. C uses INNER JOIN to `orders`, so customers with no orders in 2025 vanish; it also counts rows, not orders. D excludes category filtering entirely, so it counts all 2025 orders, not only Shoes.",
+          "skills_covered": [
+            "SQL",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Return customers with no orders in 2025. Which query is correct and safe against the LEFT JOIN null-elimination trap? Tables: `customers(id)`, `orders(customer_id, order_date)`.",
+          "options": [
+            "```sql\nSELECT c.id\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id\n AND o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nWHERE o.id IS NULL;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\n  AND o.id IS NULL;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nWHERE c.id NOT IN (\n  SELECT o.customer_id FROM orders o\n  WHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\n);\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.id\n);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Move the 2025 date predicate into the JOIN condition and then filter `WHERE o.id IS NULL`. This retains customers whose 2025-matching order rows are absent while not eliminating them in the WHERE clause.",
+          "distractor_rationale": "A places the date predicate in WHERE, which removes NULL-joined rows and collapses the LEFT JOIN to INNER JOIN. C checks for no orders ever, not specifically in 2025. D can work only if the subquery returns no NULLs and the engine handles it as intended; `NOT IN` is fragile when NULLs appear and is usually avoided for anti-joins.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You sampled a metric with values 4, 7, 9, 10 (n=4) and want the unbiased estimator of variance to feed a forecast. In SQL, which aggregate gives the correct estimator for a sample? Assume a platform that supports standard aggregates.\n\n```text\nvalues: 4, 7, 9, 10\n```",
+          "options": [
+            "```sql\nSELECT SUM( (val - AVG(val))^2 ) / (COUNT(*) - 1) FROM t;\n```",
+            "```sql\nSELECT VAR_POP(val) FROM t;\n```",
+            "```sql\nSELECT VAR_SAMP(val) FROM t;\n```",
+            "```sql\nSELECT AVG( (val - AVG(val))^2 ) FROM t;\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`VAR_SAMP` computes sample variance using n-1 in the denominator, the unbiased estimator needed when treating the data as a sample for forecasting. `VAR_POP` divides by n and underestimates variability on samples.",
+          "distractor_rationale": "A uses population variance, biased low for samples. C uses the population formula and is not valid as written because it nests aggregates in a single level. D tries to do n-1 manually but also illegally nests aggregates; without a subquery it will error or miscompute.",
+          "skills_covered": [
+            "Statistics"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given daily sales:\n\n```text\ndt         revenue\n2025-01-01 10\n2025-01-02 20\n2025-01-03 0\n2025-01-04 30\n2025-01-05 40\n```\n\nWhat is the 3-day moving average on 2025-01-03 from this query?\n\n```sql\nSELECT dt,\n       AVG(revenue) OVER (\n         ORDER BY dt\n         ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\n       ) AS ma3\nFROM daily_sales\nORDER BY dt;\n```",
+          "options": [
+            "15",
+            "10",
+            "0",
+            "20"
+          ],
+          "correct_option": "B",
+          "explanation": "On 2025-01-03, the frame covers 01-01, 01-02, 01-03: (10 + 20 + 0) / 3 = 10.",
+          "distractor_rationale": "0 ignores the prior two days. 15 averages 20, 0, 30 (off-by-one window). 20 averages only the two previous days (missing the current row).",
+          "skills_covered": [
+            "SQL",
+            "Statistics"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Consider the effect of an outlier on Pearson correlation. You observe pairs:\n\n```text\nx  y\n1  2\n2  4\n3  6\n4  8\n100 0\n```\n\nWhat is the likely sign of the Pearson correlation r on this dataset?",
+          "options": [
+            "About +1.0 (strong positive)",
+            "Around 0 (no linear relationship)",
+            "Around +0.2 (weak positive)",
+            "Negative (< 0)"
+          ],
+          "correct_option": "D",
+          "explanation": "The first four points lie on a strong positive line, but the extreme outlier at x=100 with y=0 exerts high leverage in the opposite quadrant, pulling the best-fit line down enough to drive r below zero.",
+          "distractor_rationale": "A ignores the leverage of the extreme point. B and C underestimate how much a far-out x with low y can pivot the fit; with such an extreme leverage point, r often flips sign negative.",
+          "skills_covered": [
+            "Statistics",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need per-customer average order value (AOV) in 2025. Avoid line-item weighting from joins.\n\nTables:\n\n```text\norders(id, customer_id, order_date, total_amount)\norder_items(order_id, product_id, qty, unit_price)\n```\n\nWhich query gives correct AOV per customer without bias from order line counts?",
+          "options": [
+            "```sql\nSELECT o.customer_id,\n       SUM(oi.qty * oi.unit_price) / COUNT(oi.order_id) AS aov\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY o.customer_id;\n```",
+            "```sql\nSELECT customer_id, AVG(total_amount) AS aov\nFROM orders\nWHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'\nGROUP BY customer_id;\n```",
+            "```sql\nSELECT o.customer_id, AVG(o.total_amount) AS aov\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY o.customer_id;\n```",
+            "```sql\nSELECT o.customer_id, AVG(DISTINCT o.total_amount) AS aov\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY o.customer_id;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "AOV is average of order totals per customer. Computing directly from `orders` avoids duplicating orders when joined to items. Joins weight orders with more lines, biasing the average.",
+          "distractor_rationale": "A duplicates orders with many lines, weighting them more in the AVG. B deduplicates by amount, which collapses coincidentally equal totals from different orders, biasing downward. D computes average line revenue, not per-order AOV.",
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Find brand-category pairs where the brand accounts for more than 50% of revenue within its category in 2025.\n\nTables:\n\n```text\norders(id, order_date)\norder_items(order_id, product_id, qty, unit_price)\nproducts(id, category, brand)\n```\n\nWhich query correctly filters by within-category share?",
+          "options": [
+            "```sql\nSELECT p.category, p.brand,\n       SUM(oi.qty*oi.unit_price) AS brand_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id=o.id\nJOIN products p ON p.id=oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY p.category, p.brand\nHAVING SUM(oi.qty*oi.unit_price) > 0.5 * SUM(oi.qty*oi.unit_price);\n```",
+            "```sql\nSELECT p.category, p.brand,\n       SUM(oi.qty*oi.unit_price) AS brand_rev,\n       SUM(oi.qty*oi.unit_price) / SUM(SUM(oi.qty*oi.unit_price)) OVER (PARTITION BY p.category) AS share\nFROM orders o\nJOIN order_items oi ON oi.order_id=o.id\nJOIN products p ON p.id=oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY p.category, p.brand\nHAVING share > 0.5;\n```",
+            "```sql\nSELECT p.category, p.brand,\n       SUM(oi.qty*oi.unit_price) AS brand_rev\nFROM orders o\nJOIN order_items oi ON oi.order_id=o.id\nJOIN products p ON p.id=oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY p.category, p.brand\nHAVING SUM(oi.qty*oi.unit_price) > 0.5 * (\n  SELECT SUM(oi2.qty*oi2.unit_price)\n  FROM orders o2\n  JOIN order_items oi2 ON oi2.order_id=o2.id\n  JOIN products p2 ON p2.id=oi2.product_id\n  WHERE o2.order_date >= '2025-01-01' AND o2.order_date < '2026-01-01'\n    AND p2.category = p.category\n);\n```",
+            "```sql\nSELECT p.category, p.brand\nFROM orders o\nJOIN order_items oi ON oi.order_id=o.id\nJOIN products p ON p.id=oi.product_id\nWHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01'\nGROUP BY p.category, p.brand\nHAVING COUNT(*) > 0.5 * COUNT(*) OVER (PARTITION BY p.category);\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "B compares each brand's revenue to the total revenue of its category in the same period using a correlated subquery on category, which yields the correct within-category share filter.",
+          "distractor_rationale": "A compares the brand to itself (always false or tautological depending on engine). C tries to reference a windowed aggregate `share` in HAVING after grouping; many engines disallow direct reuse, and the windowed denominator is undefined until after aggregation. D uses counts of lines rather than revenue and misuses a window aggregate in HAVING; even if allowed, counts are not the requested metric.",
+          "skills_covered": [
+            "SQL",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You computed correlation between daily ad spend and orders.\n\n```text\nRaw daily Pearson r = 0.82\nAfter de-seasonalizing (removing day-of-week effect) r = 0.28\n```\n\nWhich single-sentence insight is most appropriate for the exec summary?",
+          "options": [
+            "\"A strong causal effect exists because r was high before adjustment, so seasonality is not a concern.\"",
+            "\"There is a positive association, but much of the raw correlation was seasonal; further controlled testing is needed to estimate causal lift.\"",
+            "\"Ad spend drives orders; we should double spend immediately to maximize growth.\"",
+            "\"Correlation dropped, so ads likely hurt orders and we should cut spend.\""
+          ],
+          "correct_option": "B",
+          "explanation": "The adjusted correlation is still positive but much smaller, implying that shared seasonality drove much of the raw signal. A measured statement calls for controlled testing (e.g., experiments or better controls) before causal claims.",
+          "distractor_rationale": "A overstates causality and ignores the adjustment. B asserts causality and dismisses confounding. D infers a negative effect from a smaller positive r, which is not supported.",
+          "skills_covered": [
+            "communicate analytical insights",
+            "Statistics",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Revenue has dropped since April. You have:\n\n```text\norders(id, customer_id, order_date, currency, order_total)\norder_items(order_id, product_id, qty, unit_price)\nreturns(order_id, return_date, amount)\nproducts(id, category, brand)\n```\n\nThe CFO asks: \"Which products drove the decline in net monthly revenue since April? Are we sure it’s not just normal variation?\"",
+          "task": "Describe the SQL approach to compute net revenue by month and attribute the decline to categories/brands without double counting. Address returns timing, partial returns, mixed-category orders, and currency. Then explain how you would judge if the April→May drop is beyond normal variation using historical data.",
+          "expected_answer": "A solid answer explains: 1) compute net revenue as line-level gross less returns aligned to the same order and month; prefer line-level aggregation to avoid double counting when filtering by product attributes. 2) Handle timing by assigning returns to the original order month if business defines net as order-month net, or clearly state if net should reflect return-month. 3) Mixed orders: sum `oi.qty*oi.unit_price` and join on products to roll up by category/brand; do not sum `orders.order_total` after joining. 4) Currency: convert to a reporting currency at order_date FX rates before aggregation. 5) Month bucketing via `DATE_TRUNC('month', order_date at time zone ...)` to match business calendar. 6) To judge variation: compute historical month-over-month changes for the last 12–24 months, summarize with mean and `VAR_SAMP`/standard deviation; compare April→May delta to this distribution (e.g., z-score) or construct a control chart band. Also stratify by category/brand to see which exceeds typical volatility, and mention confounders (pricing changes, out-of-stocks, tracking changes). Provide example SQL outlines with conditional aggregation and a returns join keyed by `order_id`.",
+          "rubric": [
+            {
+              "criterion": "Net revenue definition and correct aggregation strategy (line-level revenue, avoid double counting mixed orders)",
+              "marks": 2
+            },
+            {
+              "criterion": "Treatment of returns timing and partial returns, with justification of mapping (order-month vs return-month)",
+              "marks": 2
+            },
+            {
+              "criterion": "Month bucketing, currency normalization, and join logic clarity (including timezone)",
+              "marks": 2
+            },
+            {
+              "criterion": "Variation assessment method (historical baseline, stdev or control band) and interpretation for April→May",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Business Analysis",
+            "Statistics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Marketing claims: \"The new Email campaign increased AOV in May.\" Data:\n\n```text\norders(id, customer_id, order_date, total_amount, channel)\ncustomers(id, segment)\n```\n\nA quick query was used:\n\n```sql\nSELECT channel, AVG(total_amount) AS aov\nFROM orders\nWHERE order_date >= '2025-05-01' AND order_date < '2025-06-01'\nGROUP BY channel;\n```\n\nEmail shows higher AOV than other channels.",
+          "task": "Critique this approach and propose a more defensible analysis. Specify the SQL you would run to reduce bias (e.g., first-order vs repeat, segment mix, cohorting, time windows). Explain how you would decide if the Email lift is real versus selection effects, and what statistical check you would apply.",
+          "expected_answer": "Point out biases: segment mix differences (e.g., high-value VIPs more likely to receive Email), repeat orders vs first orders, and timing (promos around holidays). Suggest: compare pre/post AOV for the same customers (difference-in-differences) or include a holdout/control group; restrict to first order in May to avoid repeat-order inflation, or stratify by `segment`. Example SQL: compute per-customer May AOV and compare to their April baseline; or compare Email vs other channels within the same segment and order type using `AVG(total_amount)` on a derived table with one row per order, and `FILTER`/`CASE` to split groups. Statistical check: compute confidence intervals or a t-test on per-customer AOV differences; examine variance with `VAR_SAMP` to judge if the observed gap exceeds noise. Conclude with guidance: if still higher after controls and significant, the claim holds; otherwise recommend an A/B test.",
+          "rubric": [
+            {
+              "criterion": "Identification of key biases (segment mix, repeat vs first, timing/promotions) in the naive query",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed SQL design that controls for at least two biases (e.g., per-customer diffs or stratified comparisons)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear decision rule using variability (CI or t-test) and justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound conclusion framing (causality caution; recommend experiment or stronger controls)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "SQL",
+            "Statistics",
+            "communicate analytical insights"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You have 24 months of monthly sign-ups with seasonality (peaks every December) and a mild upward trend. The GM asks for a quick 3-month baseline forecast for Q1 next year and a way to evaluate forecast error after the fact.",
+          "task": "Choose and justify a simple baseline method appropriate here. Describe how you would implement it in SQL, and how you will evaluate it once actuals arrive. Call out pros/cons versus a naive last-value forecast.",
+          "expected_answer": "Seasonal naive or seasonal moving average is appropriate: use last year's same-month values (or an average of the last k same months) to preserve seasonal pattern, with an adjustment for mild trend if justified (e.g., slope from the last 12 months). Implementation sketch: compute `DATE_TRUNC('month')` buckets, build a CTE with monthly totals, join each forecast month to same-month lags via `LAG(total, 12) OVER (ORDER BY month)` or average `total` over months where `EXTRACT(MONTH)=target_month`. Evaluation: once actuals arrive, compute MAPE or sMAPE and compare against a naive (last-month) benchmark; also compute error variance to check stability. Pros: fast, seasonality-aware; cons: ignores changing trend/level shifts.",
+          "rubric": [
+            {
+              "criterion": "Choice of a seasonal baseline justified by data characteristics",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear SQL outline using date bucketing and lag/same-month logic",
+              "marks": 2
+            },
+            {
+              "criterion": "Defined error metrics (MAPE/sMAPE or similar) and evaluation plan against a benchmark",
+              "marks": 2
+            },
+            {
+              "criterion": "Discussion of pros/cons vs naive last-value",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "SQL",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "KPI definition: \"Active products with sales in the last 30 days.\" Data has variants that roll up to a parent SKU and some orphan rows in the hierarchy.\n\n```text\nproducts(id, parent_sku, is_active)\norder_items(order_id, product_id, qty)\norders(id, order_date)\n```\n\nSome variants share the same `parent_sku`. Business wants the KPI at parent level.",
+          "task": "Specify the join and deduplication strategy to count active parent SKUs with at least one sale in the last 30 days. Address orphans (no parent), products flagged inactive, and how to avoid double counting when multiple variants of the same parent sold. Provide an outline SQL and note any edge cases.",
+          "expected_answer": "Approach: filter `orders` to last 30 days in the JOIN to avoid null-elimination. Join `order_items`→`products` to get `parent_sku`, treat NULL `parent_sku` as its own key (coalesce to product id if needed). Restrict to `products.is_active=true` at parent level; derive parent activity via EXISTS or grouping on `parent_sku` with `COUNT(DISTINCT parent_sku)` to avoid variant double counts. Example: build a CTE of active parents, map each variant to its parent, then SELECT DISTINCT parent_sku from sales in-window intersect active parents. Edge cases: variants inactive but parent active (decide policy), orphan variants (count by variant id as parent), and orders exactly on boundary (use half-open interval).",
+          "rubric": [
+            {
+              "criterion": "Correct use of date window in JOIN/EXISTS and handling of null-elimination",
+              "marks": 2
+            },
+            {
+              "criterion": "Parent-level deduplication strategy that avoids double counting across variants",
+              "marks": 2
+            },
+            {
+              "criterion": "Treatment of inactive products and orphans clearly stated",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear SQL outline and boundary-condition note (e.g., half-open interval)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "SQL case: Revenue, mix, and spend-to-orders relationship",
+          "brief": "Using the transactional schema below, produce a set of SQL queries that answer the business questions. Avoid double counting from joins and handle date windows precisely.\n\nSchema:\n\n```text\norders(id, customer_id, order_date, currency, total_amount)\norder_items(order_id, product_id, qty, unit_price)\nproducts(id, category, brand)\nreturns(order_id, return_date, amount)\nad_spend_daily(dt, channel, spend)\n```\n\nQuestions to answer (as separate, labeled queries):\n1) Net monthly revenue in 2025 by category and brand (orders minus returns), in a single reporting currency.\n2) Top 10 customers by QoQ growth in net spend from Q1→Q2 2025, with growth % and absolute delta.\n3) Customer penetration in Q2 2025 by category: percentage of active customers who bought each category.\n4) AOV trend by month in 2025.\n5) Weekly correlation between ad spend and orders: compute Pearson r by channel after aggregating both to ISO weeks.",
+          "deliverable": "SQL case",
+          "acceptance_criteria": [
+            "A single .sql file (or notebook) with five clearly labeled sections Q1–Q5.",
+            "Each query runs without editing identifiers and produces columns named exactly as specified: Q1(category, brand, month, net_revenue); Q2(customer_id, q1_net, q2_net, abs_delta, pct_growth); Q3(category, active_customers, buyers, penetration_pct); Q4(month, aov); Q5(channel, week, spend, orders, r).",
+            "No double counting: line-item revenue is used when filtering by product; any use of `orders.total_amount` after joining to `order_items` must be pre-aggregated to order level first.",
+            "Date windows are half-open [start, end) and implemented in JOIN/WHERE clauses, not post-filtered from aggregated results.",
+            "Returns are joined by `order_id` and aligned per an explicitly stated policy (order-month or return-month) applied consistently in Q1 and Q2.",
+            "Q5 aggregates both spend and orders to the same weekly grain before computing correlation; the submission computes r from aggregated values, not raw transactions.",
+            "Script includes a brief comment header stating currency conversion approach or assumption (e.g., all amounts already in USD)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness of aggregations and avoidance of double counting across all questions",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate date-windowing and clear, consistent returns handling",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct KPI definitions (penetration denominator, AOV, QoQ growth) and column naming",
+              "marks": 4
+            },
+            {
+              "criterion": "Weekly aggregation and correlation logic implemented as specified",
+              "marks": 4
+            },
+            {
+              "criterion": "Code organization and clarity (labels Q1–Q5, comments on assumptions)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Business Analysis",
+            "Statistics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Insight note: Variation, correlation, and short-term forecast for 2025 performance",
+          "brief": "Using outputs you can produce with SQL from the transactional data (or provided extracts), write a concise insight note that explains observed variation, explores correlation between marketing spend and orders, and provides a simple 3-month baseline forecast. Keep it decision-focused and statistically sound.",
+          "deliverable": "Insight note",
+          "acceptance_criteria": [
+            "1–2 pages (400–700 words) with an executive summary (120–180 words) that states the key findings and decision implications.",
+            "One figure or table that shows variation over time (e.g., monthly net revenue with a 3-month moving average band), with axes/units labeled.",
+            "A correlation section that reports Pearson r between weekly spend and orders (by at least one channel), states the data grain used, and notes any de-seasonalization applied.",
+            "A forecast section that presents a seasonal naive or moving-average forecast for the next 3 months, lists assumptions, and quantifies uncertainty (e.g., +/- one historical std dev of same-month errors).",
+            "All numbers cited in-text are traceable to a table/figure in the note; include the exact SQL or a snippet in an appendix or footnote sufficient to reproduce the numbers.",
+            "Limitations and risks section that calls out at least two caveats (e.g., outliers, attribution limits, sampling bias).",
+            "File submitted as PDF or Markdown; figures embedded and legible without external links."
+          ],
+          "rubric": [
+            {
+              "criterion": "Executive summary clarity and decision relevance with correct quantitative claims",
+              "marks": 5
+            },
+            {
+              "criterion": "Variation visualization/table quality and accurate interpretation (trend vs noise)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correlation analysis correctness (grain alignment, r reported, confounding noted)",
+              "marks": 4
+            },
+            {
+              "criterion": "Forecast method appropriateness, assumptions, and uncertainty quantification",
+              "marks": 5
+            },
+            {
+              "criterion": "Reproducibility (SQL/snippet provided; numbers traceable) and articulation of limitations",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "communicate analytical insights",
+            "Statistics",
+            "Business Analysis",
+            "track key performance indicators",
+            "SQL"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-020-S03",
+      "skills_assessed": [
+        "Data Cleaning",
+        "Data Quality",
+        "Power BI",
+        "DAX",
+        "Data Modeling",
+        "Dashboard Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive monthly CSVs from different regions. Sample rows:\n```csv\nDate,Product,Amount\n2025-03-01,A,1200.50\n2025-03-02,B,N/A\n2025-03-03,C,\"1.200,50\"\n```\nYou must produce a numeric `Amount` column that turns any parse errors into 0 and behaves the same on machines with different decimal separators. Which Power Query step sequence achieves this?\n",
+          "options": [
+            "```powerquery\nlet\n  Source = Csv.Document(File.Contents(ParameterDataFile),[Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),\n  Promote = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  ReplaceErr = Table.ReplaceErrorValues(Promote, {{\"Amount\", 0}}),\n  ChangeType = Table.TransformColumnTypes(ReplaceErr, {{\"Date\", type date}, {\"Amount\", type number}})\nin\n  ChangeType\n```",
+            "```powerquery\nlet\n  Source = Csv.Document(File.Contents(ParameterDataFile),[Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),\n  Promote = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  ChangeType = Value.ReplaceType(Promote, type table [Date=date, Product=text, Amount=number])\nin\n  ChangeType\n```",
+            "```powerquery\nlet\n  Source = Csv.Document(File.Contents(ParameterDataFile),[Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),\n  Promote = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  Clean = Table.TransformColumns(Promote, {{\"Amount\", each Number.FromText(_), type number}})\nin\n  Clean\n```",
+            "```powerquery\nlet\n  Source = Csv.Document(File.Contents(ParameterDataFile),[Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),\n  Promote = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  ChangeType = Table.TransformColumnTypes(Promote, {{\"Date\", type date}, {\"Amount\", type number}}, \"en-US\"),\n  ReplaceErr = Table.ReplaceErrorValues(ChangeType, {{\"Amount\", 0}})\nin\n  ReplaceErr\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Applying a culture-explicit type conversion with TransformColumnTypes using a fixed locale (e.g., \"en-US\") yields consistent parsing across machines. Placing ReplaceErrorValues after the type change then converts any conversion errors (like \"N/A\" or incompatible formats) to 0, meeting both the error-handling and reproducibility requirements.",
+          "distractor_rationale": "B: Replaces errors before the type conversion creates them, so conversion still fails and leaves errors. C: Number.FromText without specifying culture will parse differently across machines with different locales. D: Value.ReplaceType only changes the type metadata; it does not perform a conversion and won't coerce text to numbers or handle errors.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider the following table and two DAX measures:\n```csv\nSales\nCustomer,Qty,Price\nA,2,10\nA,3,10\nB,1,12\n```\n```dax\nRevenueWrong := SUM(Sales[Qty]) * SUM(Sales[Price])\nRevenueCorrect := SUMX(Sales, Sales[Qty] * Sales[Price])\n```\nPlaced in a table visual by `Customer`, what value does `RevenueWrong` show for Customer A?\n",
+          "options": [
+            "100",
+            "Blank",
+            "60",
+            "50"
+          ],
+          "correct_option": "A",
+          "explanation": "For Customer A, SUM(Qty)=5 and SUM(Price)=20; `RevenueWrong` multiplies aggregates, producing 5*20=100. The correct row-level revenue is 20+30=50, which `RevenueCorrect` would return.",
+          "distractor_rationale": "A: This is the correct row-level result using SUMX, not the aggregate-product. C: 60 is a plausible miscalc if someone averaged price (10) and then multiplied by total qty (6 overall), but doesn't match the filter by A. D: DAX won't return blank here; both sums are non-blank.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your model has an active relationship `Sales[OrderDate] -> 'Date'[Date]` and an inactive relationship `Sales[ShipDate] -> 'Date'[Date]`. You need a shipped quantity by month using `ShipDate` without changing the active relationship. Which measure works correctly in a matrix by `'Date'[Month]`?\n",
+          "options": [
+            "```dax\nShippedQty := CALCULATE(SUM(Sales[Quantity]), CROSSFILTER(Sales[ShipDate], 'Date'[Date], Both))\n```",
+            "```dax\nShippedQty :=\nSUMX(\n  VALUES('Date'[Date]),\n  CALCULATE(SUM(Sales[Quantity]), USERELATIONSHIP(Sales[ShipDate], 'Date'[Date]))\n)\n```",
+            "```dax\nShippedQty := SUM(Sales[Quantity])\n```",
+            "```dax\nShippedQty := SUMX('Date', RELATED(Sales[Quantity]))\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Wrapping the SUM inside CALCULATE with USERELATIONSHIP activates the ShipDate->Date relationship for the evaluation context. Option A returns the shipped quantity by the date on the visual.",
+          "distractor_rationale": "B: Uses the active OrderDate relationship, not ShipDate. C: CROSSFILTER changes direction but does not activate an inactive relationship; also requires a relationship to be active. D: RELATED cannot be used from a dimension to pull multiple fact rows' quantities and is not appropriate in a measure at this grain.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You must keep the earliest invoice per customer, regardless of file row order across refreshes. Sample input:\n```csv\nCustomer,Invoice,InvoiceDate,Amount\nC001,INV-10,2025-01-15,100\nC001,INV-05,2025-01-10,120\nC002,INV-02,2025-02-01,80\n```\nWhich Power Query approach guarantees deterministic results across refreshes?\n",
+          "options": [
+            "```powerquery\n// Remove duplicates by Customer keeping minimum Invoice (lexicographic)\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Sales\"]}[Content],\n  Dedup = Table.Sort(Source, {{\"Invoice\", Order.Ascending}}),\n  Keep = Table.Distinct(Dedup, {\"Customer\"})\nin Keep\n```",
+            "```powerquery\n// Keep first row per customer by buffering then distinct\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Sales\"]}[Content],\n  Buffered = Table.Buffer(Source),\n  Dedup = Table.Distinct(Buffered, {\"Customer\"})\nin Dedup\n```",
+            "```powerquery\n// Group and take earliest date, then join back to get the matching row\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Sales\"]}[Content],\n  Grouped = Table.Group(Source, {\"Customer\"}, {{\"MinDate\", each List.Min([InvoiceDate]), type date}}),\n  Join = Table.NestedJoin(Grouped, {\"Customer\",\"MinDate\"}, Source, {\"Customer\",\"InvoiceDate\"}, \"Match\", JoinKind.Inner),\n  Expanded = Table.ExpandTableColumn(Join, \"Match\", {\"Invoice\",\"Amount\"})\nin Expanded\n```",
+            "```powerquery\n// Remove duplicates after sorting now\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Sales\"]}[Content],\n  Sorted = Table.Sort(Source, {{\"Customer\", Order.Ascending}, {\"InvoiceDate\", Order.Ascending}}),\n  Dedup = Table.Distinct(Sorted, {\"Customer\"})\nin Dedup\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Grouping to compute the earliest date per customer, then joining back to the original to fetch the corresponding row, does not depend on input order and yields stable, reproducible results.",
+          "distractor_rationale": "A: While it sorts first, `Table.Distinct` keeps the first occurrence per customer, which can still break if upstream changes alter stable sort keys (e.g., duplicates on same date). C: Buffering does not create determinism; it may hurt folding and still keeps an arbitrary first row. D: Lexicographic minimum invoice is not the business rule and may not match earliest date.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You need a correct total for discount percentage across categories. Given columns `Sales[SalesAmount]` and `Sales[DiscountAmount]`, which measure produces the correct total in both category rows and grand total?\n",
+          "options": [
+            "```dax\nAvgDiscPct := AVERAGEX(VALUES(Sales[Category]), [Total Discount Amount] / [Total Sales])\n```",
+            "```dax\nAvgDiscPct := AVERAGE(Sales[DiscountAmount] / Sales[SalesAmount])\n```",
+            "```dax\nAvgDiscPct := SUM(Sales[DiscountAmount]) / SUMX(Sales, Sales[SalesAmount])\n```",
+            "```dax\nAvgDiscPct := DIVIDE([Total Discount Amount], [Total Sales])\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The weighted approach divides the total discount by total sales, which aggregates correctly at any level. The other options average row- or category-level percentages, which are not additive and yield wrong totals.",
+          "distractor_rationale": "A: Row-level average of percentages leads to an unweighted mean. C: Category average of ratios is still unweighted across categories. D: Mixing SUM and SUMX inconsistently is unnecessary and error-prone; SUMX over the fact is equivalent to SUM for a base column and doesn’t change the need for weighted division.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your fact table `Sales` has `CustomerID` values that sometimes don't exist in the `Customers` table. Before loading to the model, you want a list of orphaned facts to fix upstream. Which Power Query step isolates these rows?\n",
+          "options": [
+            "```powerquery\n// Left anti-join to keep facts with no matching dimension\nTable.SelectRows(\n  Table.NestedJoin(Sales, {\"CustomerID\"}, Customers, {\"CustomerID\"}, \"Dim\", JoinKind.LeftOuter),\n  each [Dim] = null or Table.RowCount([Dim]) = 0\n)\n```",
+            "```powerquery\n// Inner join to Customers and expand\nTable.ExpandTableColumn(\n  Table.NestedJoin(Sales, {\"CustomerID\"}, Customers, {\"CustomerID\"}, \"Dim\", JoinKind.Inner),\n  \"Dim\", {\"CustomerName\"}\n)\n```",
+            "```powerquery\n// Remove blank CustomerID rows\nTable.SelectRows(Sales, each [CustomerID] <> null)\n```",
+            "```powerquery\n// Make relationship many-to-many\nSales\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A left outer join followed by selecting rows where the join result is empty yields the set of fact rows without a matching dimension key. This is the standard pattern to detect referential integrity issues before load.",
+          "distractor_rationale": "B: Inner join keeps only matched rows; you lose the problematic facts. C: Removing null keys does not catch non-null but unknown keys. D: Changing the model cardinality hides the data quality problem and does not surface the offending rows in Power Query.",
+          "skills_covered": [
+            "Data Quality",
+            "Data Cleaning",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Users pick a Region on page 1 and expect the same Region to filter page 2 automatically. Currently, selections do not carry over. Without duplicating visuals, what should you configure?\n",
+          "options": [
+            "Use a field parameter for Region and add it to all visuals",
+            "Turn on Sync slicers for the Region slicer and set it to be synced and visible across both pages",
+            "Enable Cross-filter direction = Both for every relationship touching Region",
+            "Set all relationships to bidirectional so filters propagate to every table"
+          ],
+          "correct_option": "B",
+          "explanation": "Sync Slicers ensures the same selection is applied across selected pages. It addresses cross-page consistency without forcing model-wide bidirectionality or redesigning visuals.",
+          "distractor_rationale": "B and D: Widening filter directions introduces ambiguity and performance issues, and still won’t sync a slicer selection across pages. C: Field parameters affect which fields are shown, not user selections; they don’t sync state across pages.",
+          "skills_covered": [
+            "Dashboard Design",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You have a disconnected `Segmentation` table with selected `CustomerID`s for a campaign, and you want a measure that respects this selection without creating bidirectional relationships. Which DAX pattern correctly applies the selection to `Customers[CustomerID]`?\n",
+          "options": [
+            "```dax\nCampaign Sales :=\nCALCULATE([Total Sales], VALUES(Customers[CustomerID]))\n```",
+            "```dax\nCampaign Sales :=\nCALCULATE([Total Sales],\n  TREATAS(VALUES(Segmentation[CustomerID]), Customers[CustomerID])\n)\n```",
+            "```dax\nCampaign Sales :=\nCALCULATE([Total Sales], CROSSFILTER(Customers[CustomerID], Segmentation[CustomerID], Both))\n```",
+            "```dax\nCampaign Sales :=\nCALCULATE([Total Sales], USERELATIONSHIP(Customers[CustomerID], Segmentation[CustomerID]))\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "TREATAS transfers the filter values from a disconnected table to a target column, creating a virtual relationship in the measure. This avoids the need for physical bidirectional relationships.",
+          "distractor_rationale": "B: CROSSFILTER changes existing relationship directions but there is no relationship between Segmentation and Customers. C: USERELATIONSHIP activates an inactive relationship; there is none here. D: VALUES on Customers ignores the Segmentation selection; it doesn't apply the intended filter.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You pull from SQL with folding. A teammate adds `Table.Buffer` early:\n```powerquery\nlet\n  Source = Sql.Database(\"Server01\", \"SalesDW\"),\n  Fact = Source{[Schema=\"dbo\",Item=\"FactSales\"]}[Data],\n  Buffered = Table.Buffer(Fact),\n  Filtered = Table.SelectRows(Buffered, each [OrderDate] >= #date(2025,1,1)),\n  Grouped = Table.Group(Filtered, {\"ProductID\"}, {{\"Amt\", each List.Sum([SalesAmount]), type number}})\nin\n  Grouped\n```\nWhat is the likely impact on refresh performance and why?\n",
+          "options": [
+            "Slightly faster, but only on first refresh",
+            "No change, because buffering is ignored when the source is a database",
+            "Slower, because buffering breaks query folding so filtering and grouping happen locally in memory",
+            "Faster, because buffering caches data and speeds up downstream operations"
+          ],
+          "correct_option": "C",
+          "explanation": "`Table.Buffer` often prevents folding, forcing the engine to materialize the entire source locally before applying filters and aggregations. This increases memory pressure and slows refresh compared to pushing operations to SQL.",
+          "distractor_rationale": "B: Caching can help in some niche cases, but here it blocks folding and hurts performance. C: Buffering is not ignored; it changes evaluation. D: There’s no one-time speed-up; the main effect is to disable folding and slow every refresh.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You wrote time intelligence with Auto date/time disabled:\n```dax\nSales YTD := TOTALYTD([Total Sales], 'Date'[Date], \"03/31\")\n```\nThe measure returns blanks. The model has a single-direction relationship `Sales[OrderDate] -> 'Date'[Date]`. What change is needed?\n",
+          "options": [
+            "Mark the 'Date' table as a date table and ensure 'Date'[Date] is contiguous",
+            "Switch relationship direction to Both",
+            "Use DATEADD instead of TOTALYTD",
+            "Enable Auto date/time so DAX can find dates"
+          ],
+          "correct_option": "A",
+          "explanation": "Time-intelligence functions require a proper, contiguous date column from a marked date table related to the fact. Marking the date table and using the correct date column enables TOTALYTD to work without Auto date/time.",
+          "distractor_rationale": "B: Direction isn’t the problem; the function needs a marked date table. C: Auto date/time is unnecessary and often undesirable; with it disabled, you must provide a proper date table. D: DATEADD still depends on the same date-table requirements and won’t fix the blank result on its own.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your model has tables: `Sales` (OrderID, OrderDate, CustomerID, ProductID, SalesAmount, CostAmount), `Customers`, `Products`, and a `Date` table. To make a Product slicer filter a Region bar chart (Region comes from `Customers`), a colleague changed the `Products`->`Sales` relationship to bidirectional. After this, the Margin% card on the summary page started changing when cross-highlighting bars, and it no longer matches finance’s monthly margin.",
+          "task": "Diagnose why Margin% changed and propose a fix that preserves the intended UX (Product slicer can affect Region charts) without breaking Margin%. Be explicit about model and DAX changes, and justify them.",
+          "expected_answer": "- Diagnosis: Bidirectional filter on `Products`->`Sales` allows filters from `Sales` to flow back to `Products` and then into unrelated paths (e.g., `Products` -> `Sales` -> `Customers` -> visuals), which can create ambiguous filter paths and context transition when visuals cross-filter each other. Margin% (DIVIDE([Margin],[Revenue])) is non-additive and sensitive to context; with bidirectionality, cross-highlighting introduces combined filter contexts that skew totals.\n- Fix (model): Return all relationships to single-direction (dimension -> fact). If a Product slicer must influence a Customer/Region visual, add a proper star schema: `Customers` and `Products` both filter `Sales`; keep their directions single to `Sales`. Do not enable both directions. If a Region bar must respond to a Product slicer, that will happen naturally through `Sales` without back-propagation.\n- If there is a separate Region mapping (e.g., Product-region mapping), create a bridge table and relate it to the appropriate dimension(s) with single-direction filters.\n- Fix (DAX): For measures like Margin%, base them on SUM of row-level amounts and use DIVIDE. Avoid measures that multiply aggregated Price*Qty. For visuals that need alternate propagation, use virtual relationships in the measure, e.g., apply segmentation via `TREATAS` instead of enabling bidirectional relationships globally.\n- Visual interactions: Use “Edit interactions” to control whether the Region bar chart cross-filters the Margin% card. Where needed, set highlight to none on KPI cards.\n- Result: Product slicers affect Region charts via the fact; Margin% recomputes in a well-defined filter context, matching finance when filters are consistent.",
+          "rubric": [
+            {
+              "criterion": "Identifies bidirectional relationship as root cause leading to ambiguous filter paths and context issues",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes restoring single-direction, star-schema relationships and justifies why that preserves intended slicer behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies a targeted alternative (Edit interactions or TREATAS/bridge) to achieve the UX without global bidirectionality",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why Margin% is non-additive and how correct DAX (DIVIDE over sums) behaves with consistent filter context",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "DAX",
+            "Dashboard Design",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You ingest monthly CSV drops with occasional schema drift: columns re-ordered, an extra `Notes` column appears some months, and dates appear as both `2025-03-01` and `01/03/2025`. The business key is (`OrderID` unique per month). You must output a clean, typed `Sales_Clean` table and a data quality summary `DQ_Log` for each refresh.",
+          "task": "Design a robust Power Query approach that will keep working as new months arrive. Specify the exact transforms you will use to (a) lock schema, (b) parse dates reproducibly, (c) deduplicate on the business key (keep latest record by `ModifiedAt`), and (d) emit a DQ log with row counts, error counts, and orphan `CustomerID`s against a provided `Customers` table.",
+          "expected_answer": "- Ingestion: Use Folder.Files on a parameterized folder path `pDataFolder`; filter to expected file pattern (e.g., Sales_YYYYMM.csv). Expand and use Csv.Document with fixed delimiter and encoding.\n- Schema locking: After Promote Headers, use `Table.SelectColumns` with `MissingField.UseNull` to keep only the expected set: OrderID, OrderDate, CustomerID, ProductID, Qty, UnitPrice, ModifiedAt. This ignores extra columns like `Notes`. Then apply `Table.TransformColumnTypes` with explicit types using `Using Locale` for dates (e.g., en-GB or en-US depending on contract) to ensure reproducible parsing. For numeric types with possible thousand separators, use `Number.FromText(_, \"en-US\")` wrapped in try/otherwise 0.\n- Error handling: Apply type changes first, then `Table.ReplaceErrorValues` to convert parse errors to null/0 as per policy. Add a step to count error rows before replacement for the DQ log.\n- Deduplication: Sort by `ModifiedAt` descending, then `Table.Group` by `OrderID` with `Table.FirstN` to keep the latest record. Or group with `All Rows` and `List.Max(ModifiedAt)` then join back. Avoid `Table.Distinct` that depends on row order.\n- DQ orphan check: Left join `Sales_Clean` to `Customers` on `CustomerID`, then use Left Anti to capture orphaned rows; output as `DQ_Orphans` table.\n- DQ_Log: Create a small table with columns: RefreshDateTime, SourceFileCount, InputRowCount, ParseErrorCount (before replacement), OutputRowCount, OrphanCount. Use `Table.RowCount` and `List.Count(Table.ColumnNames(...))` as needed. Emit `DQ_Log` as a separate query.",
+          "rubric": [
+            {
+              "criterion": "Specifies schema-locking via Table.SelectColumns with MissingField.UseNull and explicit type coercion",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains locale-stable date/number parsing and error handling order (convert then replace)",
+              "marks": 2
+            },
+            {
+              "criterion": "Designs deterministic deduplication keyed by OrderID using Group+Max(ModifiedAt) (or equivalent join-back)",
+              "marks": 2
+            },
+            {
+              "criterion": "Produces an orphan-detection step (left anti-join) and outlines a checkable DQ_Log structure",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A KPI page shows Total Sales, Sales LY, and YoY%. Users report that YoY% sometimes shows blank for certain months and that tooltips show mismatched fiscal months. The dataset uses a `Date` table created by `CALENDAR(MIN(Sales[OrderDate]), MAX(Sales[OrderDate]))` with only Date and Month columns. Auto date/time is off. Fiscal year ends on March 31.",
+          "task": "Explain the cause of blanks and mismatches and propose the minimal model and DAX changes to get correct YTD/YoY by fiscal month, including totals. Justify your choices.",
+          "expected_answer": "- Cause: The current Date table lacks fiscal attributes and may not be marked as a Date table. Time intelligence (TOTALYTD, SAMEPERIODLASTYEAR) needs a marked, contiguous date column. Without fiscal columns or marking, YoY measures can return blanks or align to calendar months. Tooltips showing mismatches come from using calendar Month while business expects fiscal months.\n- Fix (model): Build a proper, contiguous Date table that spans entire years including gaps, add columns: Year, Month, MonthNumber, FiscalMonth, FiscalQuarter, FiscalYear, and a `FiscalMonthIndex` (continuous 1..12 per year aligned to Apr–Mar). Mark it as a date table on the Date column. Relate `Sales[OrderDate]` to `Date[Date]` (single direction). Ensure no gaps in the Date dimension for the periods required.\n- Fix (DAX): Define `[Total Sales] := SUM(Sales[SalesAmount])`. Define `[Sales YTD] := CALCULATE([Total Sales], DATESYTD('Date'[Date], \"03/31\"))`. Define `[Sales LY] := CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))`. Define `[YoY %] := DIVIDE([Total Sales]-[Sales LY],[Sales LY])`. Use Fiscal Month and Fiscal Year columns on visuals to align labels and sorting via `FiscalMonthIndex`.\n- Result: YoY and YTD compute over the correct fiscal boundaries, no blanks from missing/incorrect date-table marking, and visuals/tooltip labels match fiscal periods.",
+          "rubric": [
+            {
+              "criterion": "Identifies missing/incorrectly marked date table as root cause for time-intelligence blanks/mismatches",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies fiscal calendar attributes and marking the date table",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes correct DAX using DATESYTD/SAMEPERIODLASTYEAR with fiscal year-end",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains visual alignment (fiscal month fields and sort by index) to fix label mismatches",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Dashboard Design",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A summary dashboard is slow and occasionally shows inconsistent totals when multiple slicers are used (Product, Segment, and a disconnected Campaign list). The model is a clean star schema. Several measures use `CALCULATE([Total Sales], ALL('Date'))` and others use `FILTER(ALL(Sales), ...)`. There is also a `TREATAS`-based measure for the campaign.",
+          "task": "Recommend DAX and interaction changes to improve performance and maintain consistent totals under heavy slicing. Be specific about filter-modifier usage, virtual relationships, and visual interactions.",
+          "expected_answer": "- Performance: Avoid expensive row-context filters like `FILTER(ALL(Sales), ...)` wherever possible; push predicates into CALCULATE filters on columns/tables that fold better, e.g., `CALCULATE([Total Sales], Sales[Status] = \"Won\")`. Use `KEEPFILTERS` instead of wrapping with `FILTER` when you want to refine existing selections. Limit use of `ALL` to the minimal scope (e.g., `ALL('Date')` only where needed) to prevent recomputing large filter contexts.\n- Consistency: Use explicit patterns for base and comparison measures. For example, `[Base Sales] := [Total Sales]`, `[Sales (All Dates)] := CALCULATE([Total Sales], ALL('Date'))`, and derive ratios with DIVIDE on those. Ensure every measure follows the same filter pattern so totals aggregate predictably.\n- Disconnected Campaign: Keep using `TREATAS(VALUES(Campaign[CustomerID]), Customers[CustomerID])` rather than enabling bidirectional relationships. Ensure the TREATAS scope is local to the specific campaign measures so unrelated KPIs aren’t accidentally constrained.\n- Interactions: Use Edit Interactions to control cross-highlighting when multiple slicers can overconstrain visuals. Prefer slicers over using visuals as filters for high-cardinality fields. Where complexity is high, move secondary slicers to a filter pane or synchronize them across pages using Sync Slicers to avoid conflicting states.\n- Result: Faster measures by reducing row-iterator filters, stable totals by consistent ALL/KEEPFILTERS usage, and predictable behavior of the campaign effect without global bidirectionality.",
+          "rubric": [
+            {
+              "criterion": "Identifies costly patterns (FILTER over ALL(Fact)) and proposes equivalent, cheaper CALCULATE/column filters",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies consistent measure patterns (base, comparison with ALL, DIVIDE) to stabilize totals",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies use of TREATAS for disconnected selections and keeping its scope local to relevant measures",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses visual interaction configuration to prevent over-filtering/ambiguity under multiple slicers",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Dashboard Design",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a reproducible clean dataset (Power Query)",
+          "brief": "Build a robust Power Query pipeline that ingests multiple monthly flat files and outputs a single, clean `Sales_Clean` table plus a `DQ_Log` summary. The pipeline must be reproducible across machines and refreshable in Power BI Desktop without manual fixes.",
+          "deliverable": "A ZIP containing: (1) a Power BI Template (.pbit) with queries `Sales_Clean` and `DQ_Log`; (2) a `data` folder with at least two sample monthly CSVs used; (3) a short README.txt with parameter values and any assumptions.",
+          "acceptance_criteria": [
+            "Opening the .pbit prompts for a single parameter `pDataFolder` and refresh succeeds when pointed at the included `data` folder",
+            "`Sales_Clean` contains exactly these columns and types: OrderID (text), OrderDate (date), CustomerID (text), ProductID (text), Qty (whole number), UnitPrice (decimal number), ModifiedAt (datetime), SalesAmount (decimal number) where `SalesAmount = Qty * UnitPrice` computed in Power Query",
+            "Dates and numbers are parsed via locale-stable transforms (Using Locale or Number.FromText with culture) and type-conversion errors in `Qty`, `UnitPrice`, and `OrderDate` are converted to 0/nulls after counting them",
+            "Duplicate `OrderID`s are resolved by keeping the row with the latest `ModifiedAt` deterministically (group+max or equivalent); no other duplicates remain on `OrderID`",
+            "A left anti-join against a `Customers` table (you may include a small sample Customers CSV in the data folder) produces an orphan list; `DQ_Log` includes: RefreshDateTime, SourceFileCount, InputRowCount, ParseErrorCount (pre-replacement), OutputRowCount, OrphanCount",
+            "All query steps are documented with meaningful names; no hard-coded local paths inside queries other than the parameter; no `Table.Buffer` placed before foldable filters"
+          ],
+          "rubric": [
+            {
+              "criterion": "Parameterized ingestion and successful refresh against included sample data",
+              "marks": 4
+            },
+            {
+              "criterion": "Schema locking and correct, locale-stable type coercion with error handling applied in the correct order",
+              "marks": 5
+            },
+            {
+              "criterion": "Deterministic deduplication on OrderID using latest ModifiedAt and correct computation of SalesAmount",
+              "marks": 4
+            },
+            {
+              "criterion": "Orphan detection via anti-join and a well-formed DQ_Log with required metrics",
+              "marks": 4
+            },
+            {
+              "criterion": "Reproducibility and maintainability (no hard-coded paths, sensible step names, avoids premature buffering)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Design and publish-ready interactive dashboard (Power BI)",
+          "brief": "Using the clean dataset from Task 1, model a star schema, write core DAX measures, and build an interactive dashboard that supports time analysis and segment filtering without breaking totals. Focus on correctness, model quality, and UX.",
+          "deliverable": "A Power BI Desktop file (.pbix) that contains: (1) a modeled dataset (dimensions, facts, Date table), (2) DAX measures, and (3) a report with at least two pages: Overview and Drill page.",
+          "acceptance_criteria": [
+            "Model: Fact `Sales_Clean` related to dimensions (at minimum `Date`, `Customers`, `Products`) with single-direction relationships; a marked `Date` table with contiguous dates and fiscal attributes (FY end 03/31)",
+            "Measures: at least [Total Sales], [Sales YTD], [Sales LY], [YoY %], and [Margin %] (if Cost is available; otherwise document omission). Measures must use DIVIDE and correct time-intel patterns",
+            "Interactions: A Region slicer is synced across pages; Product slicer filters Region visuals via the fact (no bidirectional relationships). Edit Interactions used to prevent unintended cross-highlighting on KPI cards",
+            "Visuals: Overview page shows KPIs (cards), a time-series by month, and a breakdown (e.g., by Product or Region). Drill page provides drill-through from a category to a detailed table with row-level context",
+            "Quality: No implicit measures; numeric fields have appropriate formats; tooltips and sort orders are correct (e.g., month sorted by index). No performance antipatterns like FILTER over ALL(Fact) where a column filter suffices"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct star schema with marked Date table and appropriate relationship directions",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate DAX measures (time intelligence and ratios) following best practices (DIVIDE, base/comparison patterns)",
+              "marks": 6
+            },
+            {
+              "criterion": "Well-configured interactions and slicer sync achieving intended UX without bidirectional relationships",
+              "marks": 4
+            },
+            {
+              "criterion": "Report design quality: clear KPI layout, correct sorting/formatting, effective drill-through",
+              "marks": 3
+            },
+            {
+              "criterion": "Performance-conscious DAX (avoids row-iterators where unnecessary; scoped ALL/KEEPFILTERS)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Power BI",
+            "DAX",
+            "Data Modeling",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-020-S04",
+      "skills_assessed": [
+        "Business Analysis",
+        "Stakeholder Management",
+        "track key performance indicators",
+        "Microsoft Excel",
+        "Statistics",
+        "Power BI",
+        "DAX",
+        "Data Modeling",
+        "Dashboard Design",
+        "communicate analytical insights"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need a dynamic customer tier label in a Power BI report filtered by a page slicer on `Date` (e.g., Last 90 days). Tiers are based on spend in the last 365 days relative to the max visible date, regardless of any current `Date` filter. Thresholds: Gold >= 50,000; Silver >= 20,000; else Bronze. Which DAX measure returns the correct label under any `Date` filter?",
+          "options": [
+            "```dax\nCustomer Tier :=\nVAR Sales365 =\n    CALCULATE(\n        [Sales],\n        DATESINPERIOD('Date'[Date], MAX('Date'[Date]), -365, DAY),\n        ALL('Date')\n    )\nRETURN\nSWITCH(TRUE(),\n    Sales365 >= 50000, \"Gold\",\n    Sales365 >= 20000, \"Silver\",\n    \"Bronze\"\n)\n```",
+            "```dax\nCustomer Tier :=\nVAR Sales365 = TOTALYTD([Sales], 'Date'[Date])\nRETURN IF(Sales365 >= 50000, \"Gold\", IF(Sales365 >= 20000, \"Silver\", \"Bronze\"))\n```",
+            "```dax\nCustomer Tier :=\nVAR Sales365 =\n    CALCULATE(\n        [Sales],\n        DATESINPERIOD('Date'[Date], MAX('Date'[Date]), -365, DAY)\n    )\nRETURN IF(Sales365 >= 50000, \"Gold\", IF(Sales365 >= 20000, \"Silver\", \"Bronze\"))\n```",
+            "```dax\nCustomer Tier :=\nVAR Sales365 = CALCULATE([Sales], LASTDATE('Date'[Date]))\nRETURN\nSWITCH(TRUE(),\n    Sales365 > 20000 && Sales365 < 50000, \"Silver\",\n    Sales365 >= 50000, \"Gold\",\n    \"Bronze\"\n)\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The measure must compute 365-day sales relative to the current max visible date but ignore the `Date` filter coming from slicers. Option A uses DATESINPERIOD with ALL('Date') to remove the external date filter while still respecting customer context, then thresholds via SWITCH(TRUE()).",
+          "distractor_rationale": "B: Looks right but fails when a page `Date` filter (e.g., Last 90 days) is applied; it restricts the window to 90 days. C: TOTALYTD depends on calendar year, not a rolling 365-day window. D: LASTDATE returns a single date; this sums only that date, not a 365-day window, and also mis-orders threshold logic.",
+          "skills_covered": [
+            "DAX",
+            "Power BI",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your report shows a YTD card using this measure:\n```dax\nRev YTD := CALCULATE([Revenue], DATESYTD('Date'[Date]))\n```\nYou want a prior YTD comparison on the same cutoff date (e.g., up to Jun-10 this year vs up to Jun-10 last year), independent of the page's `Year` filter. Which DAX for prior YTD is correct?",
+          "options": [
+            "```dax\nRev PYTD := CALCULATE([Revenue], PARALLELPERIOD('Date'[Date], -12, MONTH), DATESYTD('Date'[Date]))\n```",
+            "```dax\nRev PYTD := CALCULATE([Revenue], SAMEPERIODLASTYEAR(DATESYTD('Date'[Date])))\n```",
+            "```dax\nRev PYTD := CALCULATE([Revenue], DATEADD('Date'[Date], -1, YEAR))\n```",
+            "```dax\nRev PYTD := CALCULATE([Revenue], SAMEPERIODLASTYEAR('Date'[Date]))\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "To align YTD windows, shift the YTD date set itself. SAMEPERIODLASTYEAR(DATESYTD('Date'[Date])) returns the prior year's matching cumulative span up to the same day-of-year cutoff.",
+          "distractor_rationale": "A and B: Shift last year but ignore the YTD cutoff, often returning full prior year under a `Year` filter. D: Mixes PARALLELPERIOD with DATESYTD, creating conflicting filters and not guaranteed to align to the same day-of-year cutoff.",
+          "skills_covered": [
+            "DAX",
+            "Power BI",
+            "Statistics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You summarized product performance in Excel with a PivotTable built on the Data Model. A Calculated Field `Margin% = Profit/Revenue` shows correct row values but an incorrect Grand Total (unweighted average). Which fix yields a correct weighted margin at all levels?",
+          "options": [
+            "```dax\nMargin % := DIVIDE(SUM(FactSales[Profit]), SUM(FactSales[Revenue]))\n```",
+            "```text\nKeep Calculated Field Margin% but set \"Summarize Values By\" = Sum for both fields\n```",
+            "```text\nUse \"Show Values As\" -> % of Column Total on Profit\n```",
+            "```text\nChange Profit aggregation to Average and keep Calculated Field Margin%\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A measure computed from SUM(Profit)/SUM(Revenue) evaluates in each filter context and yields a weighted margin for rows, subtotals, and grand totals. Pivot Calculated Fields aggregate row-level ratios incorrectly.",
+          "distractor_rationale": "B: % of Column Total normalizes the wrong quantity and does not produce margin. C: Averaging Profit does not fix weighted ratio bias. D: Pivot Calculated Fields still aggregate row-level ratios; changing summarization does not correct the bias.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Power BI",
+            "DAX",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You’re evaluating a 5% price cut using elasticity. Assume:\n```text\nCurrent price = $100\nVariable cost per unit = $60\nCurrent volume = 10,000 units\nPrice elasticity of demand = -1.5\nProposal: cut price by 5%\n```\nUsing the midpoint approximation, what happens to profit in the short run?",
+          "options": [
+            "Profit unchanged",
+            "Profit decreases",
+            "Ambiguous without knowing fixed costs",
+            "Profit increases"
+          ],
+          "correct_option": "B",
+          "explanation": "ΔQ/Q ≈ elasticity × ΔP/P = (-1.5)×(-0.05)= +7.5%. New price=95, volume≈10,750. Revenue≈95×10,750=$1,021,250; variable cost≈$60×10,750=$645,000; profit≈$376,250 vs baseline $400,000, so profit decreases.",
+          "distractor_rationale": "A: Revenue rises slightly, tempting an increase belief, but lower unit margin dominates. C: Only occurs at special elasticities/costs. D: Fixed costs do not affect the direction given we compare contribution margin.",
+          "skills_covered": [
+            "Statistics",
+            "Business Analysis",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You created a Power BI \"What if\" parameter table `Discount Pct` (0%–30%, step 1%) which auto-generated a measure `[Discount Pct Value]`. You need Adjusted Margin% that responds to the parameter slicer and existing `Customer Segment` slicer.\nWhich measure correctly applies the selected discount without creating relationships or circular dependencies?",
+          "options": [
+            "```dax\nAdjusted Margin % :=\nVAR d = [Discount Pct Value]\nVAR NetRev = SUMX(FactSales, FactSales[Revenue] * (1 - d))\nRETURN DIVIDE(NetRev - SUM(FactSales[VariableCost]), NetRev)\n```",
+            "```dax\nAdjusted Margin % :=\nDIVIDE(SUM(FactSales[Profit]), SUM(FactSales[Revenue])) * (1 - [Discount Pct Value])\n```",
+            "```dax\nAdjusted Margin % :=\nCALCULATE([Margin %], USERELATIONSHIP('Discount Pct'[Discount Pct], FactSales[Discount]))\n```",
+            "```dax\nAdjusted Margin % :=\nVAR d = SELECTEDVALUE('Discount Pct'[Discount Pct], 0)\nRETURN AVERAGEX(FactSales, (FactSales[Revenue] * (1 - d) - FactSales[VariableCost]) / (FactSales[Revenue] * (1 - d)))\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Using the auto-generated measure `[Discount Pct Value]` as a scalar in an iterator applies the slicer selection cleanly without relationships. Computing NetRev inside SUMX preserves correct weighting; dividing totals gives a consistent margin.",
+          "distractor_rationale": "B: AVERAGEX of per-row margins biases totals and can misweight segments. C: For what-if parameters, creating relationships is unnecessary and risks ambiguity. D: Multiplying existing margin by (1 - d) is incorrect because margins are not linearly scalable with revenue discounts.",
+          "skills_covered": [
+            "Power BI",
+            "DAX",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your retention dashboard shows this summary:\n```text\nCohort   M1 Ret   M2 Ret   M3 Ret\nJan      90%      80%      72%\nFeb      90%      81%      72%\nMar      90%      82%      n/a\nApr      90%      n/a      n/a\nOverall average retention (simple mean of visible cells) appears to improve from 80% to 85%.\n```\nWhy is the overall average trending up even though within-cohort retention hasn’t improved?",
+          "options": [
+            "Sampling error; need more data.",
+            "Later cohorts have fewer observed months, so the simple mean over-weights early-month retention (survivorship/availability bias).",
+            "Onboarding changes increased retention for newer cohorts.",
+            "Seasonality improves in spring, lifting later cohorts genuinely."
+          ],
+          "correct_option": "B",
+          "explanation": "A naive average of available cells over-weights cohorts with only early-month data (which is higher), creating an apparent improvement. Proper cohort analysis fixes the observation window or weights by cohort size/time.",
+          "distractor_rationale": "B and C: Plausible narratives but not evidenced; within-cohort figures are flat. D: While sampling error exists, the structural bias from unequal windows is the dominant effect shown.",
+          "skills_covered": [
+            "Statistics",
+            "Dashboard Design",
+            "communicate analytical insights"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Review the dependency extract for your capstone rollout:\n```text\nTask            Dur  Depends On\nA: Integrate    5d   -\nB: Segment      4d   A\nC: Dashboard    5d   A\nD: Exec dry run 1d   B, C\nE: Rollout      2d   D\n```\nWhich single task, if delayed by 1 day, will necessarily delay Rollout?",
+          "options": [
+            "B: Segment",
+            "E: Rollout",
+            "C: Dashboard",
+            "A: Integrate"
+          ],
+          "correct_option": "C",
+          "explanation": "Critical paths: A→C→D→E = 5+5+1+2=13 days; A→B→D→E = 5+4+1+2=12 days. The A→C→D→E path is critical. Delaying C extends the critical path and delays Rollout.",
+          "distractor_rationale": "A: Delaying A delays both paths equally, but the question asks for a single task; while true, it's trivial and often buffered at project start. B: On the noncritical path (by 1 day of slack). E: Rollout has no successors; delaying it is circular to the question intent.",
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You must redesign this executive dashboard wireframe for a 60-second read:\n```text\nCurrent layout (top→bottom):\n- Three slicers (Region, Segment, Month)\n- Clustered column chart: Revenue by Region\n- Table: Top 20 Customers with 12 columns\n- Card: Gross Margin %\n- Line: 24-month trend\n```\nWhich single change most reduces cognitive load while improving decision focus for execs?",
+          "options": [
+            "Use a stacked area chart instead of the 24-month line to show composition.",
+            "Keep layout but color-code regions aggressively.",
+            "Replace the table with a matrix including all 12 columns but smaller fonts.",
+            "Move a KPI summary (Revenue, Margin %, YoY) to the top as three cards with sparklines; push slicers to left pane."
+          ],
+          "correct_option": "D",
+          "explanation": "Execs benefit from a top-aligned KPI summary with compact trend cues; moving slicers aside reduces visual competition at entry. This supports a fast scan path and prioritizes outcomes before detail.",
+          "distractor_rationale": "B: Shrinks but preserves noise; still too many columns. C: Stacked areas obscure trend and totals, adding complexity. D: More color increases load without improving structure.",
+          "skills_covered": [
+            "Dashboard Design",
+            "communicate analytical insights",
+            "Power BI"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your page has a `Date` filter set to \"Last 60 days\". Tier rules are:\n- Gold: spend in last 365 days >= 50,000 AND last purchase within 90 days\n- Silver: spend in last 365 days >= 20,000\n- Else Bronze\nCustomer X: spend last 365 days = 52,000; last purchase = 75 days ago. A naive measure that does not remove the page `Date` filter sums only visible days. What label will the naive measure show for Customer X right now?",
+          "options": [
+            "Gold",
+            "Error due to filter conflict",
+            "Silver",
+            "Bronze"
+          ],
+          "correct_option": "D",
+          "explanation": "With the page restricted to Last 60 days, Customer X has zero visible spend (last purchase at 75 days). The naive measure evaluates spend as 0 and fails the recency test. It therefore returns Bronze, even though correct logic (ignoring date filter for the 365-day test) would label Gold.",
+          "distractor_rationale": "A: Correct only with a date-ignoring 365-day window and proper recency check. B: Also requires 365-day spend to be computed correctly; but naive measure has 0 visible spend. D: DAX won’t error; it evaluates under the filtered context.",
+          "skills_covered": [
+            "DAX",
+            "Power BI",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You must set an alert to catch conversion drops after rollout. Historical weekly conversion is approximately normal with mean 5.0% and SD 0.6% over 52 weeks. Which rule achieves about a 5% false-alarm rate while remaining responsive?",
+          "options": [
+            "Trigger if a week is below mean − 1×SD.",
+            "Trigger if conversion < 4.0% any week.",
+            "Trigger if a week is below mean − 2×SD for two consecutive weeks.",
+            "Use 3×SD bands on a 12-week rolling mean and alert on first breach."
+          ],
+          "correct_option": "C",
+          "explanation": "A one-sided 2σ threshold is ~2.5% false-alarm probability per week; requiring two consecutive breaches reduces noise further while still catching sustained drops quickly, aligning to an overall ~5% tolerance across a short horizon.",
+          "distractor_rationale": "B: 1σ triggers about 16% one-sided false alarms—too noisy. C: A fixed 4% ignores variance and base rate; may miss material drops or overfire depending on drift. D: 3σ is ultra-conservative (~0.13% one-sided), likely too slow to detect meaningful declines.",
+          "skills_covered": [
+            "track key performance indicators",
+            "Statistics",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are advising a subscription app on a planned price change. Current state and segment differences:\n```text\nBaseline (last 6 months):\n- ARPU: $12.00; Conv% (trial→paid): 6.0%; Churn (M1): 8.0%\n- Variable COGS per active sub: $3.00\nSegments:\n- SMB (70% of trials): Conv% 5.2%, Price sensitivity high; Churn 9.5%\n- Enterprise (30% of trials): Conv% 7.6%, Price sensitivity low; Churn 5.0%\nProposal: +10% list price. Marketing claims Enterprise will hold, SMB may drop conversion.\nWhat-if model inputs:\n- Elasticity (SMB): -1.1; Elasticity (Enterprise): -0.2 (w.r.t. conversion rate)\n- No change to churn in first 30 days if price change <15%\n```\nLeadership asks for a go/no-go and guardrails for rollout.",
+          "task": "Decide whether to roll out the 10% price increase to both segments, one segment, or neither. Justify using segmented what-if analysis, quantify expected impact on contribution margin, and specify two leading KPIs and two stop-loss triggers for the first 4 weeks post-launch.",
+          "expected_answer": "A strong answer recommends a segmented rollout: proceed for Enterprise, gate SMB behind an in-market A/B test. Quantify using elasticity: Enterprise Conv% drops ~2% relative (≈7.6%→7.45%), minimal impact; price +10% boosts ARPU to $13.20, net contribution rises given COGS fixed per sub. SMB Conv% drops ~11% relative (≈5.2%→4.63%), which can offset ARPU gains; compute expected contribution change and show sensitivity band. Guardrails: leading KPIs (trial→pay conversion by segment; qualified-pipeline-to-start ratio for Enterprise or checkout funnel drop-off for SMB). Stop-loss triggers: halt if SMB conversion z-score < -2 for 2 consecutive weeks or if net contribution per acquired SMB customer falls below baseline by >5%. Roll out Enterprise first, SMB as holdout/test with clear sample size and monitoring cadence. Communicate to execs with a segmented chart and a 2x2 risk/impact table.",
+          "rubric": [
+            {
+              "criterion": "Correct segmented decision (Enterprise go, SMB test/hold) with rationale tied to elasticity and margin math",
+              "marks": 3
+            },
+            {
+              "criterion": "Quantitative estimate of impact on contribution margin by segment with at least one sensitivity bound",
+              "marks": 2
+            },
+            {
+              "criterion": "Two appropriate leading KPIs tied to funnel behavior, not lagging revenue",
+              "marks": 1
+            },
+            {
+              "criterion": "Two actionable stop-loss triggers with numeric thresholds and time windows",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Statistics",
+            "track key performance indicators",
+            "communicate analytical insights"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherit a cluttered exec slide on segmentation performance. The single slide squeezes a heatmap, a 12-column customer table, and a combo chart on one canvas. The CEO has 4 minutes on the agenda.",
+          "task": "Outline a 6-slide executive narrative that lands a decision on where to focus next quarter. Specify for each slide: title, one key insight, and the visualization you would use. Include at least one slide that frames a concrete recommendation and its expected KPI effect.",
+          "expected_answer": "A strong outline: (1) Title/Context: \"Q2 Growth: Where We Win/Lose\" with one KPI strip (Revenue, Margin%, Net Adds YoY). (2) Segment Landscape: revenue vs margin by segment scatter, callout top-right winners. (3) Trend vs Target: 6-month trend lines for top 3 segments with target bands. (4) Driver Deep-Dive: funnel conversion by segment (bar + variance labels). (5) What-if/Impact: sensitivity tornado for top lever (e.g., +2pp SMB trial→pay) with expected impact on Net Adds and Margin%. (6) Decision/Plan: \"Prioritize Enterprise expansion + SMB onboarding fix\" with quantified KPI shifts and next steps. Each slide has one message, minimal text, and consistent color encoding.",
+          "rubric": [
+            {
+              "criterion": "Coherent 6-slide arc that fits exec time and builds to a decision",
+              "marks": 2
+            },
+            {
+              "criterion": "Each slide includes a clear title, single key insight, and an appropriate visualization",
+              "marks": 3
+            },
+            {
+              "criterion": "Includes at least one quantified recommendation with expected KPI effect",
+              "marks": 2
+            },
+            {
+              "criterion": "Visual/communication choices reflect executive audience (simplicity, consistency)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "communicate analytical insights",
+            "Dashboard Design",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your implementation plan must fit within these constraints:\n```text\nTeams: Data (2 FTE), BI (1 FTE), PM (0.5 FTE)\nHard date: Board demo in 5 weeks\nDeliverables: segment logic in model, trend dashboard, and go-live runbook\nDependencies: data contracts from two source systems are unstable for 2 weeks\n```\nRisk register flags data-contract slippage and exec availability for demos.",
+          "task": "Propose a phased plan with milestones and a RACI snippet that can survive the 2-week data-contract risk while still landing a credible board demo. Identify the critical path and two mitigations. Include how you will track progress with 2 leading and 1 lagging KPI.",
+          "expected_answer": "Plan in three phases: (1) Week 1–2: Build synthetic data fixtures and contract tests; finalize segment spec; prototype dashboard on fixtures; schedule exec pre-reads. (2) Week 3–4: Swap to live once contracts stabilize; validate segment outputs; instrument trend KPIs; dry run. (3) Week 5: Board demo and finalize runbook. Critical path: fixtures→model segmentation→dashboard→demo. Mitigations: contract tests with fail-fast CI; executive pre-brief time-blocked. RACI: Data (R for fixtures, A for contracts), BI (R for dashboard), PM (A on schedule). KPIs: leading—burn-down of blocked items; % tests passing on data contracts; lagging—demo readiness score or successful demo checklist.",
+          "rubric": [
+            {
+              "criterion": "Feasible phased plan aligned to constraints and risks",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct identification of critical path and two concrete mitigations",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear RACI snippet mapping roles to key tasks",
+              "marks": 1
+            },
+            {
+              "criterion": "Meaningful KPIs (2 leading, 1 lagging) to track progress",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Sales appear to spike in November, but your 24-month series mixes seasonality and a mid-year pricing change. You also launched a loyalty program for the \"Frequent\" segment in August.",
+          "task": "Explain how you would separate trend from seasonality and isolate the impact of the loyalty program on the Frequent segment’s sales. Recommend whether to scale the program in Q4 and justify with at least one what-if bound.",
+          "expected_answer": "Approach: build a 12-month centered moving average or STL decomposition to extract trend; compute seasonally adjusted series. For causal inference, use difference-in-differences between Frequent (treated) and a matched segment (e.g., Occasional) with pre-period Jan–Jul vs post Aug–Oct; control for pricing change using normalized ARPU or include price index as covariate. Estimate treatment effect and provide a sensitivity bound (e.g., ±10% on matching quality). Recommendation: scale if adjusted uplift is positive and stable (e.g., +6–8% with CI excluding 0); otherwise extend test. Communicate with a simple before/after indexed chart and a what-if showing ROI threshold.",
+          "rubric": [
+            {
+              "criterion": "Sound method to separate trend and seasonality (moving average/STL) and produce adjusted series",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct design to isolate program impact (DiD/matched control) with price change controlled",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear recommendation to scale or hold, supported by a quantified effect and sensitivity bound",
+              "marks": 2
+            },
+            {
+              "criterion": "Executive-ready communication plan (how to show it simply)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Business Analysis",
+            "communicate analytical insights"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Recommendation memo: segmentation, trends, and what-if",
+          "brief": "Using a dataset of your choice (or provided by the instructor), produce a recommendation memo that identifies the most valuable customer segment to prioritize next quarter, shows the trend context, and quantifies the impact of one lever via what-if analysis (e.g., price, discount, or onboarding improvement). Keep it executive-ready and decision-oriented.",
+          "deliverable": "A 1–2 page PDF/DOC memo with embedded exhibits (max 3) and an accompanying Excel or Power BI file containing the calculations and what-if model.",
+          "acceptance_criteria": [
+            "Includes at least one segmentation view with defined rules (e.g., thresholds or logic) and a reproducible calculation in the attached file",
+            "Includes a trend analysis (rolling average or YoY) with the method stated and shown in an exhibit",
+            "Includes one what-if analysis with clear assumption(s), an input control (Excel data table or Power BI parameter), and resulting impact on at least one KPI",
+            "States two concrete recommendations with quantified expected KPI shifts (e.g., +X pp conversion) and risks/assumptions",
+            "All figures in memo match those in the attached model; dates and filters are labeled"
+          ],
+          "rubric": [
+            {
+              "criterion": "Segmentation logic correctness and clarity, traceable to the model",
+              "marks": 5
+            },
+            {
+              "criterion": "Trend analysis method selection and correctness (e.g., rolling/YTD/YoY alignment)",
+              "marks": 5
+            },
+            {
+              "criterion": "What-if analysis construction and validity (inputs, linkage, and impact on KPIs)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality of recommendations (specific, quantified, risk-aware)",
+              "marks": 3
+            },
+            {
+              "criterion": "Executive communication quality (focus, labeling, consistency)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Microsoft Excel",
+            "Power BI",
+            "Statistics",
+            "communicate analytical insights"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone business analytics case: exec presentation and implementation plan",
+          "brief": "Create an executive presentation that argues for a specific initiative (e.g., segment-focused pricing, loyalty expansion, or onboarding fix), and attach an implementation plan that can be executed in the next 6–8 weeks.",
+          "deliverable": "Two files: (1) a 8–12 slide deck (PDF/PPT) and (2) a 2–3 page implementation plan (PDF/DOC) with RACI, milestones, risks, and KPI monitoring plan.",
+          "acceptance_criteria": [
+            "Deck contains: problem framing, baseline KPIs, key insight by segment, trend context, what-if impact, and a decision slide with ask and expected KPI effect",
+            "Implementation plan includes: scope, milestones with dates, owners (RACI), dependencies, risks with mitigations, and rollout criteria/guardrails",
+            "KPI monitoring plan specifies 2 leading and 2 lagging KPIs with thresholds and alert rules",
+            "Visual design: consistent colors/number formats; each slide has a single message title and source notes",
+            "Appendix or notes reveal calculation definitions for any metrics shown"
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and persuasiveness of the executive narrative (structure, single-message slides)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and correctness of analytics (segmentation, trends, what-if) supporting the recommendation",
+              "marks": 5
+            },
+            {
+              "criterion": "Implementation plan viability (milestones, RACI, dependencies, risks/mitigations)",
+              "marks": 5
+            },
+            {
+              "criterion": "KPI monitoring design (leading/lagging selection, thresholds, alert logic)",
+              "marks": 3
+            },
+            {
+              "criterion": "Design craftsmanship (readability, consistency, sourcing)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "communicate analytical insights",
+            "Stakeholder Management",
+            "Dashboard Design",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

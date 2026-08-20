@@ -1,0 +1,1801 @@
+{
+  "course_code": "NT-C-014",
+  "course_name": "Core Python",
+  "sections": [
+    {
+      "section_code": "NT-C-014-S01",
+      "skills_assessed": [
+        "Python",
+        "Data Structures"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider:\n```python\nx = True + True * 3 ** 0 == 1\nprint(x, type(x))\n```\nWhat is printed and why?",
+          "options": [
+            "```text\n2 <class 'int'>\n```",
+            "```text\nTrue <class 'bool'>\n```",
+            "```text\nFalse <class 'int'>\n```",
+            "```text\nFalse <class 'bool'>\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Operator precedence: ** then * then + then ==. 3 ** 0 == 1, True (1) * 1 == 1, True (1) + 1 == 2, and 2 == 1 is False. Equality produces a bool, so type is bool.",
+          "distractor_rationale": "B: Assumes comparison happens before arithmetic or that True == 1 at the end; incorrect due to precedence. C: Treats the whole expression as arithmetic without ==, or thinks True + True == 2 and stops; but there is a comparison. D: Thinks equality returns an int; in Python it returns bool.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What is the exact output of the program?\n```python\ndef f():\n    print('f')\n    return 0\n\ndef g():\n    print('g')\n    return 5\n\nx = f() and g()\ny = f() or g()\nprint(x, y)\n```",
+          "options": [
+            "```text\nf\ng\nf\ng\n5 5\n```",
+            "```text\nf\nf\ng\n0 5\n```",
+            "```text\nf\n0 5\n```",
+            "```text\nf\ng\nf\n0 5\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "f() prints 'f' and returns 0 (falsy), so 'and' short-circuits and x becomes 0; g() is not called. Next, f() prints 'f' and returns 0 (falsy), so 'or' evaluates g(); g() prints 'g' and returns 5, so y becomes 5.",
+          "distractor_rationale": "B: Assumes no short-circuit and both f and g always run; wrong. C: Misses that f() is called twice and that g() prints in the second expression. D: Misorders calls; 'and' path would not call g(), and the final print line is missing.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "In Python 3, what does this print?\n```python\ni = 10\nlst = [i for i in range(3)]\nprint(i, lst)\n```",
+          "options": [
+            "```text\n2 [0, 1, 2]\n```",
+            "```text\n2 [1, 2, 3]\n```",
+            "```text\n10 [0, 1, 2]\n```",
+            "```text\n10 [1, 2, 3]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "In Python 3, the comprehension has its own scope for the loop variable, so the outer i remains 10. The list comp builds [0, 1, 2].",
+          "distractor_rationale": "B: Python 2 behavior where the loop variable leaked into outer scope. C/D: Off-by-one error for range(3) and also potentially assuming the leak.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given duplicate keys, what are the resulting dict and its length?\n```python\npairs = [(1, 'a'), (2, 'b'), (1, 'c')]\nd = {k: v for k, v in pairs}\nprint(d, len(d))\n```",
+          "options": [
+            "```text\n{1: 'a', 2: 'b'} 2\n```",
+            "```text\n{1: 'c', 2: 'b'} 2\n```",
+            "```text\n{1: 'a', 1: 'c', 2: 'b'} 3\n```",
+            "```text\n{1: ['a', 'c'], 2: 'b'} 2\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Later assignments to the same key overwrite earlier ones; the last value for key 1 is 'c'. There are two distinct keys: 1 and 2.",
+          "distractor_rationale": "B: Dicts cannot have duplicate keys; the later value replaces the earlier, not adds another entry. C: Would be true only if you explicitly accumulated into lists. D: Assumes the first value wins; in Python the last assignment wins.",
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What does this print and why?\n```python\nfor n in [3, 5, 7]:\n    if n % 2 == 0:\n        print('even')\n        break\nelse:\n    print('none')\n```",
+          "options": [
+            "```text\nnone\n```",
+            "```text\nnothing (no output)\n```",
+            "```text\neven\nnone\n```",
+            "```text\neven\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The loop iterates only odd numbers; the if never triggers and no break occurs. The for-else else block runs only if the loop completes without break, so it prints 'none'.",
+          "distractor_rationale": "B: Assumes the if will run at least once, but there are no even numbers. C: Ignores the for-else 'else' semantics. D: Believes else always runs; it does not run if break executes.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "After this loop, what is nums?\n```python\nnums = [1, 2, 3, 4]\nfor i, v in enumerate(nums):\n    if v % 2 == 0:\n        nums.remove(v)\n# What is nums now?\n```",
+          "options": [
+            "```text\n[1, 2, 3, 4]\n```",
+            "```text\n[1, 4]\n```",
+            "```text\n[1, 3]\n```",
+            "```text\n[1, 3, 4]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Removing while iterating skips elements. On v=2, remove it -> [1,3,4]. Next i=2 picks 4, which is removed. Final list is [1,3].",
+          "distractor_rationale": "B: Stops after removing the first even number, overlooking that 4 is still visited by index 2. C: Assumes removing during iteration is ignored; it is not. D: Thinks 3 was also removed; only evens are removed.",
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "What prints?\n```python\nval = 0\nif val is False:\n    print('no')\nelif val == False:\n    print('maybe')\nelse:\n    print('else')\n```",
+          "options": [
+            "```text\nmaybe\n```",
+            "```text\nelse\n```",
+            "```text\nTypeError\n```",
+            "```text\nno\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "0 == False evaluates to True because bool is a subclass of int and False == 0. Identity with is is False because 0 is not False. Therefore the elif prints 'maybe'.",
+          "distractor_rationale": "B: Confuses equality with identity. C: Assumes 0 is truthy or neither condition matches; but 0 == False is True. D: There is no type error in these comparisons.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Predict the output:\n```python\na = [] or [0]\nb = a and a[0]\nprint(a, b)\n```",
+          "options": [
+            "```text\n[0] 0\n```",
+            "```text\n[] 0\n```",
+            "```text\n[0] [0]\n```",
+            "```text\nIndexError\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "[] is falsy, so [] or [0] returns [0]. Non-empty list is truthy, so a and a[0] returns the second operand 0. Printing shows the list and the integer 0.",
+          "distractor_rationale": "B: Assumes or returns the left operand regardless of truthiness. C: Assumes 'and' returns the left operand; here it returns the second because the first is truthy. D: Assumes a is [] so indexing fails; but a is [0].",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "What does this print (no newline at the end)?\n```python\ns = 'abcdef'\nfor i in range(len(s)-1, -1, -2):\n    print(s[i], end='')\n```",
+          "options": [
+            "```text\nbdf\n```",
+            "```text\nfdb\n```",
+            "```text\nfedcba\n```",
+            "```text\nace\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Indices are 5, 3, 1 which are 'f', 'd', 'b'. Concatenated gives 'fdb'.",
+          "distractor_rationale": "B: Full reverse ignores the step -2. C/D: Mix up which indices are visited and the step direction.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "What is printed and why is it safe?\n```python\ndata = [0, 1, 2, 3]\nres = [1/x for x in data if x]\nprint(res)\n```",
+          "options": [
+            "```text\nZeroDivisionError\n```",
+            "```text\n[1, 0.5, 0.3333333333333333]\n```",
+            "```text\n[1, 0, 0]\n```",
+            "```text\n[1.0, 0.5, 0.3333333333333333]\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The if x filter removes 0 before evaluating 1/x, so there is no division by zero. In Python 3, / produces floats: 1/1=1.0, 1/2=0.5, 1/3≈0.3333.",
+          "distractor_rationale": "B: Treats division as integer division (//) and assumes inclusion of 0. C: Thinks the filter runs after the division; in comprehensions the filter applies to each x before the expression is evaluated. D: Off by one value, missing the float for 1/1 which is 1.0.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A teammate wrote a tiny menu using integers from input, but sometimes the \"1\" option is ignored on your machine.\n```python\nchoice = int(input(\"Choice? 1=add, 2=sub: \").strip())\nif choice is 1:\n    print(\"adding\")\nelif choice is 2:\n    print(\"subtracting\")\nelse:\n    print(\"unknown\")\n```\nOn their laptop, typing 1 prints \"adding\". On yours, typing 1 prints \"unknown\".",
+          "task": "Diagnose the root cause precisely and rewrite the conditional logic to be correct and idiomatic. State exactly why the bug is intermittent across environments and how your change fixes it.",
+          "expected_answer": "The code uses identity (is) to compare integers. Identity tests whether two references point to the same object, not whether values are equal. In CPython small integers like -5..256 are interned and may be singletons, so choice is 1 may appear to work. This is an implementation detail and not guaranteed, so on another build or situation choice may not be the same object as the literal 1. The correct fix is to use equality (==) to compare numeric values. Also, mapping choices to actions clarifies intent.\nCorrected example:\n```python\nchoice = int(input(\"Choice? 1=add, 2=sub: \").strip())\nif choice == 1:\n    print(\"adding\")\nelif choice == 2:\n    print(\"subtracting\")\nelse:\n    print(\"unknown\")\n```\nAlternatively, a dict dispatch:\n```python\nactions = {1: \"adding\", 2: \"subtracting\"}\nprint(actions.get(choice, \"unknown\"))\n```",
+          "rubric": [
+            {
+              "criterion": "Identifies misuse of 'is' (identity) vs '==' (equality) as the cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains interning/singleton behavior and why results can differ across environments",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct, runnable fix using '==' for value comparison",
+              "marks": 3
+            },
+            {
+              "criterion": "Optionally proposes a clean alternative structure (e.g., dict dispatch) with justification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You receive loosely-typed input that mixes strings, integers, blanks and None. The goal is: from a sequence, keep only even, positive integers (e.g. '6', 8, ' 10 ') and return the sum of their squares. Non-integers like 3.5, 'x', '', None, 0, -4 must be ignored.\nExample input:\n```python\ndata = [\"6\", 8, \" 10 \", 3.5, None, \"x\", \"\", 0, -4, 2]\n```",
+          "task": "Write a concise Python solution (one pass if possible) using control flow and/or a comprehension that produces the correct sum for the example input. Explain how your condition prevents bad values from being included and why 0 and negatives are excluded.",
+          "expected_answer": "A safe approach is to normalize strings that represent integers and then filter by type/conditions before squaring.\n```python\ndef to_int_or_none(x):\n    if isinstance(x, int):\n        return x\n    if isinstance(x, str) and x.strip().lstrip(\"+-\").isdigit():\n        try:\n            return int(x)\n        except ValueError:\n            return None\n    return None\n\nresult = sum(n*n for n in (to_int_or_none(x) for x in data) if n is not None and n > 0 and n % 2 == 0)\n# For the example: 6^2 + 8^2 + 10^2 + 2^2 = 36 + 64 + 100 + 4 = 204\n```\nThe guard ensures only integers are considered; zeros and negatives fail n > 0; odd integers fail n % 2 == 0.",
+          "rubric": [
+            {
+              "criterion": "Produces a correct solution for the given example (204) and uses Python control flow/comprehension",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurately justifies each filter condition (type normalization, n>0, evenness), including exclusion of 0 and negatives",
+              "marks": 2
+            },
+            {
+              "criterion": "Handles messy strings safely without raising (e.g., ' 10 ', 'x', '')",
+              "marks": 1
+            },
+            {
+              "criterion": "Keeps the solution single-pass or clearly efficient (generator + sum), avoiding unnecessary intermediates",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A bug report: removing odd numbers 'in place' yields the wrong result because some elements get skipped.\n```python\nnums = [1, 2, 3, 4, 5, 6]\nfor i, v in enumerate(nums):\n    if v % 2 == 1:\n        nums.remove(v)\n# Expected: [2, 4, 6]; Got: [2, 4, 6] sometimes, but often [2, 4, 6] after luck or [2, 4, 6] with misses on different inputs\n```\nAssume inputs may be larger and include repeating values.",
+          "task": "Explain precisely why elements are skipped. Provide two safe alternatives: (a) an in-place approach, and (b) a new-list approach using a comprehension. State the complexity trade-offs.",
+          "expected_answer": "Removing while iterating changes the list length and shifts elements left, but the for-loop's next index advances, causing the element that shifted into the current index to be skipped.\nTwo safe alternatives:\n(a) In-place using reverse iteration over indices:\n```python\nfor i in range(len(nums)-1, -1, -1):\n    if nums[i] % 2 == 1:\n        del nums[i]\n```\nReverse order avoids shifting unvisited elements.\n(b) New list via comprehension:\n```python\nnums = [v for v in nums if v % 2 == 0]\n```\nTrade-offs: (a) Mutates in place in O(n) time and O(1) extra space but is more error-prone; (b) is clear and functional, O(n) time and O(n) extra space for the new list.",
+          "rubric": [
+            {
+              "criterion": "Explains the skip mechanism (index advances while elements shift left)",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct reverse-index in-place deletion pattern",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct comprehension that builds a filtered list",
+              "marks": 1
+            },
+            {
+              "criterion": "States time/space trade-offs between the two methods",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need the first word longer than 8 characters from a list; if none, return 'NONE'. A colleague tried for-else but always gets 'NONE'.\n```python\nwords = [\"toy\", \"elephant\", \"hippopotamus\", \"yak\"]\nfor w in words:\n    if len(w) > 8:\n        found = w\n        continue\nelse:\n    found = \"NONE\"\nprint(found)\n```",
+          "task": "Explain why this code sets 'found' incorrectly and rewrite it with the correct for-else pattern so that it sets 'hippopotamus' for the given list and 'NONE' when appropriate.",
+          "expected_answer": "The code never breaks; it uses continue, so the for-else 'else' always runs after the loop completes and overwrites found. The correct pattern is to break when the condition is met; the else runs only if no break occurred.\n```python\nfound = \"NONE\"\nfor w in words:\n    if len(w) > 8:\n        found = w\n        break\nelse:\n    # No break happened; found remains 'NONE'\n    pass\nprint(found)\n```\nThis prints 'hippopotamus' for the input, and 'NONE' if no word exceeds 8 letters.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that 'continue' prevents the else from being suppressed and causes overwriting",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct for-else rewrite using 'break' to suppress the else",
+              "marks": 3
+            },
+            {
+              "criterion": "Demonstrates the behavior for both cases (match found vs none found)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Basic programs: Mini calculator and sequence filter",
+          "brief": "Write a single Python script that performs two small programs in sequence using only the standard library.\nProgram A (calculator):\n- Prompt the user for two integers a and b.\n- Print on separate lines: a+b, a-b, a*b, a//b (floor division), a%b, a**b.\n- Then print a line 'a>b' if a>b else 'a<=b'.\nProgram B (sequence filter):\n- Prompt the user for one line of space-separated integers (e.g., \"1 2 3 4 5\").\n- Build and print a Python list literal (e.g., [4, 16]) containing the squares of the even numbers only, preserving original order. Use a comprehension.\nFollow this exact I/O format for reproducibility.",
+          "deliverable": "A single Python file named basic_program.py that runs both Program A and Program B sequentially when executed.",
+          "acceptance_criteria": [
+            "Running `python basic_program.py` prompts exactly twice: once for 'a b' on separate prompts or a single prompt each as specified, and once for the sequence line.",
+            "Given inputs a=7 and b=3, the first six lines are: 10, 4, 21, 2, 1, 343 (each on its own line), followed by a line 'a>b'.",
+            "Given the sequence input '1 2 3 4 5 6', the script prints `[4, 16, 36]` (list literal with commas and spaces).",
+            "Uses integer arithmetic operators correctly (//, %, **), and uses a list comprehension for the even-squares list.",
+            "Script executes without exceptions for valid integer inputs and handles b=0 by printing 'Division by zero' instead of a//b and a%b, while still printing other results."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct arithmetic outputs and comparison line for sample a=7, b=3 (order and formatting correct)",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct handling of division by zero edge case without crashing; prints 'Division by zero' in place of // and % results",
+              "marks": 4
+            },
+            {
+              "criterion": "Even-squares list derived via a comprehension and preserves input order; exact literal formatting",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear prompts and no extraneous output; script runs to completion without exceptions for valid inputs",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Logic exercises: Functions using conditions, loops, and comprehensions",
+          "brief": "Create a module that implements the following functions using only core Python, conditions, loops, and comprehensions where natural. Include simple doctests as examples in each docstring.\n1) is_prime(n) -> bool: Return True for primes (n>=2), else False. Use a loop and early break.\n2) evens_up_to(n) -> list[int]: Return a list of even numbers from 0..n inclusive in ascending order using a comprehension.\n3) squares_of_unique_pos(nums) -> list[int]: From an iterable of integers, return a sorted list of squares of unique positive values (ignore duplicates and non-positive values). You may use a set for uniqueness.\n4) first_repeat(seq) -> object|None: Return the first value that appears at least twice when scanning left-to-right, else None. Use a loop and early exit.\n5) reverse_by_step(s, k) -> str: Return a new string consisting of every k-th character from s in reverse order (e.g., s='abcdef', k=2 -> 'fdb').",
+          "deliverable": "A single Python file named logic_exercises.py containing the five functions with docstrings and example calls that demonstrate correctness.",
+          "acceptance_criteria": [
+            "is_prime passes: is_prime(2)=True, is_prime(3)=True, is_prime(4)=False, is_prime(1)=False, is_prime(0)=False.",
+            "evens_up_to passes: evens_up_to(7) == [0, 2, 4, 6] and evens_up_to(0) == [0].",
+            "squares_of_unique_pos passes: squares_of_unique_pos([1, -1, 2, 2, 3, 0]) == [1, 4, 9].",
+            "first_repeat passes: first_repeat([3,1,4,1,5]) == 1 and first_repeat([]) is None.",
+            "reverse_by_step passes: reverse_by_step('abcdef', 2) == 'fdb' and reverse_by_step('abc', 1) == 'cba'.",
+            "File imports without executing any code at import time beyond definitions (no top-level prints)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness of is_prime with efficient loop and early break or for-else for composite detection",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct comprehension for evens_up_to with inclusive range and order",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct handling of uniqueness and positivity in squares_of_unique_pos; returns sorted list",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct first_repeat logic with proper early exit and None handling for no repeats",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct reverse_by_step behavior including stepping and reverse order; handles k>=1",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-014-S02",
+      "skills_assessed": [
+        "Python",
+        "Data Structures"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "What does this print, and why?\n\n```python\nl = [[]] * 3\nl[0].append(1)\nl[1] = [9]\nprint(l)\n```",
+          "options": [
+            "```text\n[[1], [1], [1]]\n```",
+            "```text\n[[1], [9], [1]]\n```",
+            "```text\n[[1, 1], [9], [1, 1]]\n```",
+            "```text\n[[1], [9], [1, 1]]\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "[[]] * 3 creates three references to the same inner list. After l[0].append(1), all three inner lists show [1]. Rebinding l[1] = [9] replaces only the second reference with a new list [9]. Final value is [[1], [9], [1]].",
+          "distractor_rationale": "A: Tempting if you forget the later rebinding of l[1]. C and D: Mix up between mutation of the shared inner list and concatenation; no operation ever creates [1, 1] inside any element here.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider hashability when using compound keys:\n\n```python\nd = {(1, [2]): \"x\"}\nprint(len(d))\n```\nWhat happens?",
+          "options": [
+            "```text\nTypeError: unhashable type: 'list'\n```",
+            "```text\n0\n```",
+            "```text\n1\n```",
+            "```text\nKeyError\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Tuple is hashable only if all its elements are hashable. The inner list is unhashable, so building the dict literal raises TypeError before print runs.",
+          "distractor_rationale": "A/B: Assume the dict is built; they miss that the error occurs at literal creation time. D: Confuses lookup-time KeyError with construction-time hash failure.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Default-argument state across calls:\n\n```python\ndef add(item, bag=set()):\n    bag.add(item)\n    return bag\n\na = add('x')\nb = add('y')\nprint(a is b, sorted(b))\n```\nWhat prints?",
+          "options": [
+            "```text\nFalse ['x', 'y']\n```",
+            "```text\nFalse ['y']\n```",
+            "```text\nTrue ['x', 'y']\n```",
+            "```text\nTrue ['y']\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "The default set is created once at function definition time and reused. Both calls mutate the same set, so a is b is True and it contains both 'x' and 'y'.",
+          "distractor_rationale": "B/C/D: Assume a fresh default per call or that identity differs even if contents same. The pitfall is the persistent mutable default.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Late binding in closures:\n\n```python\nfuncs = []\nfor i in range(3):\n    def f():\n        return i\n    funcs.append(f)\n\nprint([fn() for fn in funcs])\n```\nWhat is printed?",
+          "options": [
+            "```text\n[3, 3, 3]\n```",
+            "```text\n[None, None, None]\n```",
+            "```text\n[2, 2, 2]\n```",
+            "```text\n[0, 1, 2]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "The functions capture the name i, not its value at each iteration. By the time they are called, i is 2, so all return 2.",
+          "distractor_rationale": "A: Common misconception that each iteration captures a snapshot. C: Off-by-one confusion about the final value of i. D: Assumes i becomes undefined after the loop, which is false.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Import binding and rebinding across modules. Given two files:\n\n```python\n# m.py\nx = []\n\ndef push(v):\n    x.append(v)\n```\n\n```python\n# main.py\nimport m\nfrom m import x\nx = ['local']\nm.push('M')\nprint(x, m.x)\n```\nWhen you run main.py, what prints?",
+          "options": [
+            "```text\n['M'] ['local']\n```",
+            "```text\n['M'] ['M']\n```",
+            "```text\n['local', 'M'] ['local', 'M']\n```",
+            "```text\n['local'] ['M']\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "from m import x binds name x to the list object initially in m. Rebinding x = ['local'] in main replaces the local name, not m.x. push appends to m.x, so outputs are ['local'] and ['M'].",
+          "distractor_rationale": "A/C: Assume the names remain aliased after rebinding or that mutation affected both. D: Reverses which side was mutated by push.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Dict view dynamics:\n\n```python\nd = {'a': 1}\nitems = d.items()\nfirst = list(items)\nd['b'] = 2\nsecond = list(items)\nprint(first, second)\n```\nWhat prints?",
+          "options": [
+            "```text\n[('a', 1)] [('b', 2), ('a', 1)]\n```",
+            "```text\n[('a', 1), ('b', 2)] [('a', 1), ('b', 2)]\n```",
+            "```text\n[('a', 1)] [('a', 1)]\n```",
+            "```text\n[('a', 1)] [('a', 1), ('b', 2)]\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "items is a dynamic view. first materializes the state at that moment. After adding 'b', a new list(items) includes both pairs, preserving insertion order.",
+          "distractor_rationale": "B: Assumes first was also dynamic; but first is a list copy. C: Suggests order change; dicts preserve insertion order. D: Assumes the view is static.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Unpacking and parameter kinds:\n\n```python\ndef f(a, b, *c, d=10, **k):\n    return a, b, c, d, sorted(k.items())\n\nargs = [1, 2, 3, 4]\nprint(f(*args, d=5, x=7))\n```\nWhat is printed?",
+          "options": [
+            "```text\n(1, 2, (3, 4), 5, [('x', 7)])\n```",
+            "```text\n(1, 2, (3, 4), 10, [('x', 7)])\n```",
+            "```text\n(1, 2, (4,), 5, [('x', 7)])\n```",
+            "```text\n(1, 2, (), 5, [('x', 7)])\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "*args provides 1→a, 2→b, remaining (3,4) go to c. d is set explicitly to 5. k contains x=7.",
+          "distractor_rationale": "B: Forgets that extra positional arguments fill *c. C: Ignores explicit d=5. D: Misallocates arguments between *c and d.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Set deduplication and ordering:\n\n```python\nnums = [1, 2, 2, 3, 1]\nprint(list(set(nums)) == [1, 2, 3])\n```\nWhat does this print?",
+          "options": [
+            "```text\nFalse\n```",
+            "```text\nRaises TypeError\n```",
+            "```text\nTrue\n```",
+            "```text\nSometimes True, sometimes False depending on Python version\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Converting to a set removes duplicates but does not preserve order. Comparing to a specific ordered list usually yields False because list equality is order-sensitive.",
+          "distractor_rationale": "A: Assumes set preserves order. C: Blames version differences; modern Python still doesn't define set order equality to match that list. D: All elements are hashable; no TypeError.",
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "List-comprehension scope in Python 3:\n\n```python\nx = 99\ny = [x for x in range(3)]\nprint(x, y[-1])\n```\nWhat prints?",
+          "options": [
+            "```text\n99 99\n```",
+            "```text\n99 2\n```",
+            "```text\n2 99\n```",
+            "```text\n2 2\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "In Python 3, the comprehension's x is local to the comprehension and does not leak. Outer x remains 99; y[-1] is 2.",
+          "distractor_rationale": "A/C/D: Assume leakage from comprehension into the enclosing scope as in Python 2 or mix up positions.",
+          "skills_covered": [
+            "Python"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Mutating a dict while iterating its keys:\n\n```python\nd = {'a': 1, 'b': 2, 'c': 3}\nfor k in d:\n    if d[k] % 2 == 1:\n        del d[k]\nprint(d)\n```\nWhat happens?",
+          "options": [
+            "```text\n{'b': 2, 'c': 3}\n```",
+            "```text\nRuntimeError: dictionary changed size during iteration\n```",
+            "```text\n{'b': 2}\n```",
+            "```text\nKeyError: 'a'\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Altering a dict while iterating over it raises RuntimeError in Python 3. The safe pattern is to iterate over list(d) or build a new dict.",
+          "distractor_rationale": "A/B: These pretend the mutation worked; tempting if you've only tried lists. D: Wrong exception type; iteration protocol detects size change before a missing key is accessed.",
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A library module accumulates IDs seen across calls:\n\n```python\n# tracker.py\n_seen = set()\n\ndef record(id_, bucket=_seen):\n    bucket.add(id_)\n    return len(bucket)\n```\n\nIt is imported by a web app worker process, and each request calls record for several IDs. After some hours, new requests behave as if they \"remember\" earlier ones, and the count never goes back down in a fresh request context.",
+          "task": "Diagnose precisely why the state persists across requests, and propose a minimal change that preserves record's signature but fixes the leak. Explain the interaction of function defaults, module import semantics, and mutability. Show a corrected code snippet and justify why it works.",
+          "expected_answer": "The default argument bucket is evaluated once at function definition time, when tracker.py is imported. That default references the module-level set _seen. Because modules are singletons in sys.modules, the imported function object and its default persist for the lifetime of the process. Each call mutates the same set, so state accumulates across unrelated requests. Fix by using a sentinel default and allocating a new set per call unless an explicit bucket is provided, or by not exposing _seen as the default.\n\nExample fix:\n\n```python\n# tracker.py\n_seen = set()\n\n_sentinel = object()\n\ndef record(id_, bucket=_sentinel):\n    if bucket is _sentinel:\n        bucket = set()  # fresh per-call unless caller passes one\n    bucket.add(id_)\n    return len(bucket)\n```\n\nIf the intended behavior is to allow an optional, shared global accumulator, then accept None to mean \"use the module-level set\" but avoid binding it as a default value:\n\n```python\ndef record(id_, bucket=None):\n    if bucket is None:\n        bucket = _seen\n    bucket.add(id_)\n    return len(bucket)\n```\n\nThis preserves the call signature while removing the persistent default binding; defaults are now immutable (None/sentinel), and sharing only happens when explicitly selected.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that default arguments are evaluated at definition/import time and that bucket is bound to a single persistent set",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains module singleton/import caching and how it contributes to persistence across requests",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, correct code fix that preserves the signature and removes the persistent mutable default",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies why the fix works (immutability of default, fresh allocation or explicit opt-in sharing)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A small package has a circular import:\n\n```text\nmypkg/\n  __init__.py\n  a.py\n  b.py\n  main.py\n```\n\n```python\n# a.py\nfrom .b import compute\nSALT = {1, 2, 3}\n\ndef run(x):\n    return compute(x) + len(SALT)\n```\n\n```python\n# b.py\nfrom .a import SALT\n\ndef compute(x):\n    return x * len(SALT)\n```\n\n```python\n# main.py\nfrom .a import run\nprint(run(2))\n```\nRunning main.py raises ImportError/AttributeError due to partially initialized modules.",
+          "task": "Propose a refactor that breaks the cycle without changing the observable results. Explain the trade-offs. Provide a concrete code change (diff or snippets) and justify why it eliminates the on-import cycle.",
+          "expected_answer": "The cycle arises because a.py imports compute from b.py at import time, while b.py imports SALT from a.py at import time. During import of a.py, Python tries to import b.py, which immediately accesses a.SALT before a.py has finished executing. Break the on-import dependency by (a) moving the import inside run so the dependency is only needed at call time, or (b) extracting shared data/constants into a third module and having both import it.\n\nOption A (lazy import):\n\n```python\n# a.py\nSALT = {1, 2, 3}\n\ndef run(x):\n    from .b import compute  # local import breaks the cycle\n    return compute(x) + len(SALT)\n```\n\nOption B (common module):\n\n```python\n# common.py\nSALT = {1, 2, 3}\n```\n\n```python\n# a.py\nfrom . import common\nfrom .b import compute\n\ndef run(x):\n    return compute(x) + len(common.SALT)\n```\n\n```python\n# b.py\nfrom . import common\n\ndef compute(x):\n    return x * len(common.SALT)\n```\n\nBoth approaches ensure there is no mutual top-level import. Option A keeps fewer files but makes compute resolution dynamic; Option B is cleaner for shared state and keeps imports at top level.",
+          "rubric": [
+            {
+              "criterion": "Accurately explains the circular import timing problem and partially-initialized module state",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents at least one correct refactor (lazy import or factoring constants) with code",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why the change eliminates the on-import cycle",
+              "marks": 1
+            },
+            {
+              "criterion": "Discusses trade-offs (readability, performance, single-responsibility)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You receive event records shaped as list-of-dicts:\n\n```python\nevents = [\n    {\"id\": \"a1\", \"user\": \"u1\", \"tags\": [\"x\", \"y\"]},\n    {\"id\": \"a2\", \"user\": \"u1\", \"tags\": [\"x\"]},\n    {\"id\": \"a1\", \"user\": \"u2\", \"tags\": [\"y\"]},  # duplicate id, conflicting user\n]\n```\nA teammate tried to deduplicate by doing `set(events)` and then tried `set(tuple(sorted(e.items())) for e in events)`, which still misbehaves when values are lists or when the same id appears with changed fields.",
+          "task": "Design a robust deduplication that keeps the first occurrence of each id and discards later ones. Show code and justify your data-structure choices. Explain why your approach is stable and avoids hashability issues.",
+          "expected_answer": "Use a dict keyed by the immutable id, assigning the first-seen record and ignoring later ones. Dict preserves insertion order, so the first binding wins if you guard against overwrites.\n\n```python\nseen = {}\nfor e in events:\n    if e[\"id\"] not in seen:\n        seen[e[\"id\"]] = e  # keep first occurrence\n\nunique_events = list(seen.values())\n```\n\nThis avoids hashing unhashable nested structures because only the id (a hashable string) is used as a key. It is stable (first occurrence kept) due to dict insertion order. It also makes conflict policy explicit; you could choose last-write-wins by unconditionally assigning instead.",
+          "rubric": [
+            {
+              "criterion": "Chooses an appropriate structure (dict keyed by id) and explains why",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides correct code that keeps first occurrence and yields a list in original order",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains hashability concerns and why this avoids them",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions and justifies the conflict policy (first vs last write)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A reporting module builds a list of predicate functions inside a loop:\n\n```python\nfilters = []\nthresholds = [10, 20, 30]\n\nfor t in thresholds:\n    def over(items):\n        return [x for x in items if x > t]\n    filters.append(over)\n\nprint([f([5, 12, 25, 40]) for f in filters])\n# expected: [[12,25,40], [25,40], [40]]\n# actual:   [[40], [40], [40]]\n```\nThe team also needs each filter to report which threshold it used when called, without relying on globals.",
+          "task": "Explain the wrong result and fix it using function-scope techniques only (no classes). Provide corrected code that both filters properly and reports the bound threshold when called, and justify how your change interacts with Python's scoping rules.",
+          "expected_answer": "All closures capture the same name t, which is 30 by the time the functions are called, so each filter uses 30. Capture the value at definition time by binding t as a default argument or by creating a factory function.\n\n```python\ndef make_over(t):\n    def over(items, _t=t):\n        kept = [x for x in items if x > _t]\n        return _t, kept  # report bound threshold and results\n    return over\n\nfilters = [make_over(t) for t in [10, 20, 30]]\nprint([f([5, 12, 25, 40]) for f in filters])\n# [(10, [12, 25, 40]), (20, [25, 40]), (30, [40])]\n```\n\nDefault arguments are evaluated at function definition time, so _t captures the then-current t. Using a factory introduces a new scope per threshold, satisfying the requirement without globals.",
+          "rubric": [
+            {
+              "criterion": "Diagnoses late binding of loop variable causing identical behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct closure-based fix (default argument or factory)",
+              "marks": 3
+            },
+            {
+              "criterion": "Returns both the threshold and the filtered results as required",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the fix works in terms of evaluation time and LEGB scoping",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Event log summarizer using core data structures",
+          "brief": "Build a small, reusable module that processes in-memory event records (list of dicts) and produces summaries. Focus on lists, tuples, dicts, and sets; no external libraries and no file I/O. Provide a simple runner that demonstrates the functions on included sample data.",
+          "deliverable": "A folder containing: (1) data_tasks.py with pure functions; (2) sample_data.py defining EVENTS (list of dicts); (3) run_demo.py that imports the functions and prints a JSON summary for EVENTS.",
+          "acceptance_criteria": [
+            "data_tasks.py defines the functions exactly: dedupe_events(events), summarise_events(events, top_n=3), group_by_user(events).",
+            "dedupe_events uses a set or dict keyed by event['id'] to drop later duplicates; keeps first occurrence; runs in O(n).",
+            "summarise_events returns a dict with keys: 'total', 'unique_users', 'top_actions' (list of (action,count) tuples, sorted by count desc then action asc), where action is events[i]['action'].",
+            "group_by_user returns a dict mapping user->list of event ids in original order (list), not a set.",
+            "All functions are pure (no mutation of input arguments; copy as needed) and do not rely on or modify globals.",
+            "run_demo.py prints exactly one JSON object to stdout whose keys are sorted lexicographically and whose values match the result of summarise_events on sample_data.EVENTS with top_n=3.",
+            "Implementation uses only Python built-ins and the core data structures; no pandas/numpy/3rd-party libs."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct deduplication by id (first occurrence kept) using appropriate structure (set/dict) and linear-time behavior",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate summary computation: total, unique user count via set, and correctly ordered top_actions",
+              "marks": 6
+            },
+            {
+              "criterion": "Purity/no unintended mutation (inputs remain unchanged; functions return new objects) and stable ordering where required",
+              "marks": 4
+            },
+            {
+              "criterion": "Runnable demo producing the exact specified JSON shape and content; clean, readable code with docstrings/type hints optional",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Data Structures",
+            "Python"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Modular inventory program (package with reusable functions)",
+          "brief": "Create a small package that models a simple inventory using only core data structures and functions. Separate responsibilities into modules and reuse functions across them. No classes, no external libs, no file I/O.",
+          "deliverable": "A package directory catalog/ with __init__.py, items.py, inventory.py, pricing.py, report.py, and main.py. main.py should be runnable as a module: python -m catalog.main.",
+          "acceptance_criteria": [
+            "items.py defines make_item(sku, name, category, price) returning a tuple (sku, name, category, price).",
+            "inventory.py exposes create_inventory() -> dict and add(inv, item, qty=1) and remove(inv, sku, qty=1), where inv is a dict mapping sku->{'item': item_tuple, 'qty': int}. Removing below zero is disallowed (raise ValueError).",
+            "pricing.py exposes inventory_value(inv) -> float and value_by_category(inv) -> dict mapping category->float. Use only dicts/lists/tuples/sets and functions; no classes.",
+            "report.py exposes render_summary(inv) -> str returning a multi-line string summary with total items (sum of quantities), unique SKUs, total value (two decimals), and top categories by value (desc).",
+            "main.py builds a sample inventory using the above functions and prints render_summary(inv). It must protect entry with if __name__ == '__main__': and also allow python -m catalog.main to work.",
+            "Modules import in an acyclic fashion. No circular imports. Shared constants (like currency symbol) live in one module and are imported where used.",
+            "Running python -m catalog.main prints exactly the summary for the built sample inventory; totals must be correct and formatting stable (e.g., fixed two decimal places)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Package structure correctness and acyclic modularization; proper use of if __name__ == '__main__' and -m execution",
+              "marks": 5
+            },
+            {
+              "criterion": "Inventory data modeling with core structures; correct behavior of create/add/remove (including error on negative stock)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate pricing aggregation (total value and by-category) using dicts/sets/lists; deterministic ordering for report",
+              "marks": 5
+            },
+            {
+              "criterion": "Report formatting and correctness of printed summary; code clarity and reuse across modules",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-014-S03",
+      "skills_assessed": [
+        "Python",
+        "Object-Oriented Programming",
+        "file-based workflow",
+        "Logging",
+        "JSON",
+        "Debugging"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "What does this program print?\n```python\nclass Bucket:\n    items = []\n    def add(self, x):\n        self.items.append(x)\n\na = Bucket()\nb = Bucket()\na.add(1)\nb.add(2)\nprint(a.items, b.items, Bucket.items)\n```",
+          "options": [
+            "AttributeError at a.add(1) because 'items' is a class attribute",
+            "[1] [2] [1, 2]",
+            "[1, 2] [1, 2] [1, 2]",
+            "[1] [2] []"
+          ],
+          "correct_option": "C",
+          "explanation": "Class attribute 'items' is a single list shared by all instances. Both a.add and b.add append to the same list. All three references point to the same list: [1, 2].",
+          "distractor_rationale": "A: Tempting if you assume 'items' becomes per-instance on first use; it does not. B: Assumes instances see separate copies while class sees combined; in reality all three see the same object. D: Using a class attribute is allowed; no AttributeError is raised.",
+          "skills_covered": [
+            "Python",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given:\n```python\nclass Base:\n    label = \"base\"\n    def name(self):\n        return self.label\n\nclass Child(Base):\n    label = \"child\"\n    def name(self):\n        return super().name() + \"-\" + self.label\n\nprint(Child().name())\n```\nWhat is printed and why?",
+          "options": [
+            "base-child, because Base.name returns Base.label",
+            "child-child, because Base.name reads self.label from the Child instance",
+            "AttributeError, because super().name() cannot read Child.label",
+            "base-base, because super() freezes Base's view of attributes"
+          ],
+          "correct_option": "B",
+          "explanation": "Base.name uses self.label, and self is a Child instance. Attribute lookup on the instance finds Child.label ('child'). Child.name then appends '-child', yielding 'child-child'.",
+          "distractor_rationale": "A: Assumes Base.name binds to Base.label rather than looking up via self. C: super() dispatches the method, but attribute lookup still happens on the instance at runtime. D: super().name() works fine; it’s a bound method and can access attributes via self.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider try/except/else/finally with a missing file:\n```python\ndef read_first_line(path):\n    try:\n        f = open(path)\n    except FileNotFoundError:\n        print(\"no file\")\n    else:\n        with f:\n            print(f.readline().strip())\n    finally:\n        print(\"done\")\n\nread_first_line(\"missing.txt\")\n```\nWhat is printed?",
+          "options": [
+            "no file then done",
+            "no file then an attempt to read, then done",
+            "done only",
+            "no file then an exception in finally"
+          ],
+          "correct_option": "A",
+          "explanation": "The open raises FileNotFoundError, so the except branch prints 'no file'. else is skipped. finally always runs and prints 'done'.",
+          "distractor_rationale": "A: finally does run, but except also runs when the file is missing. C: finally doesn’t raise here. D: else never executes after an exception, so no read is attempted.",
+          "skills_covered": [
+            "Python",
+            "Debugging",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What happens when you run this JSON write code?\n```python\nimport json\n\ndata = {\"x\": 1}\nwith open(\"out.json\", \"w\") as f:\n    f.write(json.dump(data, f))\n```\n",
+          "options": [
+            "TypeError because json.dump returns None and f.write expects str",
+            "It writes Python repr of a dict, not valid JSON",
+            "ValueError because dump requires ensure_ascii=True",
+            "It writes '{\"x\": 1}' to out.json with no issues"
+          ],
+          "correct_option": "A",
+          "explanation": "json.dump(data, f) writes to the file and returns None. Passing that None to f.write raises TypeError since write expects a string.",
+          "distractor_rationale": "A: Confuses dump (to file) with dumps (to string). B: Also confuses repr vs JSON; here dump would write valid JSON but you then misuse its return. D: ensure_ascii is optional and not required here.",
+          "skills_covered": [
+            "JSON",
+            "file-based workflow",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given this logging setup:\n```python\nimport logging\nlogging.basicConfig(level=logging.INFO, format=\"%(levelname)s:%(message)s\")\nlogger = logging.getLogger(\"app\")\nlogger.setLevel(logging.DEBUG)\nlogger.debug(\"dbg\")\nlogger.info(\"ok\")\n```\nWhat appears on stdout?",
+          "options": [
+            "Nothing, because no handler is attached to 'app'",
+            "Both 'dbg' and 'ok', because logger level is DEBUG",
+            "Both messages, but without level prefixes",
+            "Only 'INFO:ok', because the root handler is filtering at INFO"
+          ],
+          "correct_option": "D",
+          "explanation": "basicConfig attaches a handler at level INFO to the root. The 'app' logger’s debug() call is filtered out by the handler level even though the logger level is DEBUG. The info() passes and prints with the given format.",
+          "distractor_rationale": "A: Ignores that handlers also filter by level. C: basicConfig attaches a handler to the root, which 'app' uses via propagation. D: The format includes level names, so prefixes appear.",
+          "skills_covered": [
+            "Logging",
+            "Debugging"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "What does this print?\n```python\nwith open(\"tmp.txt\", \"w+\") as f:\n    f.write(\"hi\")\n    print(f.read())\n```\nAssume the file opens and writes successfully.",
+          "options": [
+            "Raises UnsupportedOperation on read",
+            "'' (an empty string)",
+            "It depends on OS newlines",
+            "'hi'"
+          ],
+          "correct_option": "B",
+          "explanation": "After writing, the file pointer is at end-of-file. A read() from there returns an empty string unless you seek back to the start.",
+          "distractor_rationale": "A: You must seek(0) before reading what you just wrote. C: 'w+' allows reading and writing. D: Newlines don’t affect this cursor-position behavior.",
+          "skills_covered": [
+            "file-based workflow",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "In cooperative multiple inheritance, what does this print?\n```python\nclass A:\n    def __init__(self):\n        print(\"A\")\n        super().__init__()\nclass B:\n    def __init__(self):\n        print(\"B\")\n        super().__init__()\nclass C(A, B):\n    def __init__(self):\n        print(\"C\")\n        super().__init__()\n\nC()\n```\n",
+          "options": [
+            "C then A then B",
+            "A then B then C",
+            "C then B then A",
+            "A then C then B"
+          ],
+          "correct_option": "A",
+          "explanation": "The MRO for C(A, B) is C → A → B → object. Each __init__ calls super().__init__(), so the prints follow that order: C, then A, then B.",
+          "distractor_rationale": "A/D: Ignore that C.__init__ runs first and super follows MRO rather than calling parents in a fixed/static order. C: Reverses A and B relative to the MRO.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "What happens here?\n```python\nclass CM:\n    def __enter__(self):\n        print(\"enter\")\n        return self\n    def __exit__(self, exc_type, exc, tb):\n        print(\"exit\", exc_type is not None)\n        return True\n\nwith CM():\n    1/0\nprint(\"after\")\n```\n",
+          "options": [
+            "It prints 'enter', then raises ZeroDivisionError before 'exit'",
+            "It prints only 'after' because the exception is swallowed early",
+            "It prints 'enter', 'exit True', then stops before printing 'after'",
+            "It prints 'enter', 'exit True', then 'after'"
+          ],
+          "correct_option": "D",
+          "explanation": "An exception inside the with-body is passed to __exit__. Returning True tells the context manager to suppress it. The code continues and 'after' is printed.",
+          "distractor_rationale": "A: __exit__ always runs, even on exceptions. B: The exception is suppressed, so execution continues. D: You still see the 'enter'/'exit' prints; suppression doesn’t skip them.",
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Consider exception precedence with finally:\n```python\ndef f():\n    try:\n        raise ValueError(\"v\")\n    finally:\n        raise RuntimeError(\"r\")\n\ntry:\n    f()\nexcept Exception as e:\n    print(type(e).__name__, str(e))\n```\nWhat is printed?",
+          "options": [
+            "Both exceptions are printed",
+            "RuntimeError r",
+            "SyntaxError due to double raise",
+            "ValueError v"
+          ],
+          "correct_option": "B",
+          "explanation": "An exception raised in finally replaces the exception from the try for the purposes of what propagates. The handler sees RuntimeError r.",
+          "distractor_rationale": "A: Assumes the first exception wins; finally-raised exceptions supersede the try’s. C: Only the final exception is caught/printed by this handler. D: Raising in finally is legal Python.",
+          "skills_covered": [
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "What is logged here?\n```python\nimport logging\ntry:\n    1/0\nexcept ZeroDivisionError as e:\n    logging.basicConfig(level=logging.ERROR, format=\"%(levelname)s:%(message)s\")\n    logging.error(\"Failed: %s\", e)\n```\n",
+          "options": [
+            "Nothing, because the exception was handled",
+            "A full traceback plus 'Failed: division by zero'",
+            "Only 'ERROR:Failed: division by zero' with no traceback",
+            "'Failed:' with an empty message because %s can't format exceptions"
+          ],
+          "correct_option": "C",
+          "explanation": "Passing the exception as %s logs its string form without a traceback. To include a traceback, pass exc_info=True.",
+          "distractor_rationale": "A: You only get tracebacks with exc_info=True. C: The error is logged even if the exception is handled. D: %s formats the exception’s string just fine.",
+          "skills_covered": [
+            "Logging",
+            "Debugging"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A teammate implements a formatter selection using explicit type checks:\n```python\nclass Formatter:\n    def format(self, data):\n        raise NotImplementedError\n\nclass JsonFormatter(Formatter):\n    def format(self, data):\n        # returns a JSON string\n        ...\n\nclass CsvFormatter(Formatter):\n    def format(self, data):\n        # returns a CSV string\n        ...\n\ndef render(data, fmt):\n    if isinstance(fmt, JsonFormatter):\n        return fmt.format(data)\n    elif isinstance(fmt, CsvFormatter):\n        return fmt.format(data)\n    else:\n        raise ValueError(\"unsupported\")\n```\nThey now need to add XmlFormatter, and more are coming. The module already has tests using render(data, formatter_instance).",
+          "task": "Propose a design change that removes the need to edit 'render' for every new formatter, and justify it. Be precise about how method dispatch happens at runtime and any constraints you would enforce on subclasses.",
+          "expected_answer": "Use polymorphism and duck typing: change render to call the interface method unconditionally and trust the object to implement it.\n\nExample:\n```python\ndef render(data, fmt: Formatter):\n    return fmt.format(data)\n```\nRationale: Relying on virtual dispatch and the Liskov Substitution Principle lets any Formatter subclass (JsonFormatter, CsvFormatter, XmlFormatter) supply its own format implementation. No isinstance checks or conditionals are needed, so adding a new formatter is open for extension and closed for modification. Enforce the contract by either keeping an abstract base class with an abstract format (abc.ABC, @abstractmethod) or by documenting the expected .format(data)->str signature. Optionally add a template method or a registration mechanism if discovery is needed, but render itself should not branch on concrete types. If validation is needed, guard against objects without .format by raising a clear TypeError early.",
+          "rubric": [
+            {
+              "criterion": "Identifies polymorphism/virtual dispatch as the mechanism to remove the isinstance chain",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a concrete change to render that eliminates branching (direct fmt.format call)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains contract enforcement (ABC/@abstractmethod or duck-typed signature) and why this prevents future edits",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses extensibility/maintainability implications (OCP/LSP) or subclass constraints (return type)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 2,
+          "scenario": "A web service library prints duplicate log lines in production:\n```text\nINFO:request 123 started\nINFO:request 123 started\nINFO:request 123 finished in 32ms\nINFO:request 123 finished in 32ms\n```\nYou inspect the code:\n```python\n# lib/http.py\nimport logging\nlogger = logging.getLogger(\"lib.http\")\n\ndef configure_logger():\n    logging.basicConfig(level=logging.INFO,\n                        format=\"%(levelname)s:%(message)s\")\n    h = logging.StreamHandler()\n    h.setLevel(logging.INFO)\n    logger.addHandler(h)\n\ndef handle(req):\n    configure_logger()\n    logger.info(\"request %s started\", req.id)\n    # ...\n    logger.info(\"request %s finished in %dms\", req.id, 32)\n```\nThe service calls handle once per request.",
+          "task": "Diagnose the root cause and propose a minimal, correct fix. Justify why it works and why naive alternatives (like calling basicConfig more) do not. Include any changes to propagation/handlers you deem necessary for library code.",
+          "expected_answer": "Root cause: configure_logger runs on every request. Each call adds another handler to the same logger and also calls basicConfig repeatedly. Messages are emitted once per handler, causing duplicates.\n\nFix: Configure logging once at process startup (application side), or guard against duplicate handlers in the library and avoid basicConfig there.\n\nExample minimal library-safe change:\n```python\n# lib/http.py\nimport logging\nlogger = logging.getLogger(\"lib.http\")\nlogger.propagate = True  # let app configure root\n\n_configured = False\n\ndef configure_logger():\n    global _configured\n    if _configured:\n        return\n    # Library should not call basicConfig; rely on app’s root config.\n    if not logger.handlers:  # avoid duplicate handlers if app attaches one\n        h = logging.StreamHandler()\n        h.setLevel(logging.INFO)\n        logger.addHandler(h)\n    _configured = True\n```\nAnd in the application entry point call logging.basicConfig(...) exactly once. This stops handler multiplication and respects propagation. Calling basicConfig repeatedly does nothing after the first call and won’t fix duplicates; the duplicates come from extra handlers on the same logger.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies handler multiplication from per-call configuration as the duplication cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a specific fix that prevents duplicate handlers (configure once/guard with flag or handlers check)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains role of basicConfig and why repeating it won’t help; addresses propagation/library vs app boundary",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are importing a 3GB newline-delimited JSON (JSONL) file of user events. Some lines are malformed or missing fields, and you cannot afford to abort the whole import. The operations team needs an audit trail of what failed and why, with line numbers, and a summary at the end. Memory is tight.",
+          "task": "Design the control flow and error-handling strategy. Show a short code sketch that demonstrates per-line processing, selective continue on errors, and logging with enough context. Explain how your design avoids data loss, excessive memory use, and noisy logs.",
+          "expected_answer": "Stream the file line by line to keep memory bounded. For each line, try to json.loads and validate required keys; on failure, log an ERROR with line number, snippet, and the exception, then continue to the next line. Keep counters for processed/ok/bad. At the end, log or print a one-line summary. Use a logger with INFO for progress and ERROR for rejects, optionally with a rotating/file handler.\n\nSketch:\n```python\nimport json, logging\nfrom pathlib import Path\n\nlog = logging.getLogger(\"importer\")\n\nok = bad = 0\nwith open(Path(\"events.jsonl\"), \"rt\", encoding=\"utf-8\") as f:\n    for lineno, raw in enumerate(f, 1):\n        raw = raw.rstrip(\"\\n\")\n        try:\n            ev = json.loads(raw)\n            if not {\"id\", \"ts\"} <= ev.keys():\n                raise KeyError(\"missing required keys\")\n            # process(ev)\n            ok += 1\n        except Exception as e:\n            bad += 1\n            log.error(\"reject line=%d err=%s raw=%s\", lineno, e, raw[:200], exc_info=False)\n            continue\nlog.info(\"summary processed=%d ok=%d bad=%d\", ok+bad, ok, bad)\n```\nThis uses O(1) memory, never aborts on a bad line, and produces one ERROR per reject, avoiding stack traces unless needed. Summary gives operators the totals.",
+          "rubric": [
+            {
+              "criterion": "Proposes streaming (line-by-line) approach that controls memory use",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows per-record try/except with continue and required-fields validation",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies informative logging (level, line number, error, snippet) and a final summary",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses why the approach avoids data loss and noisy logs (no traceback spam, bounded logs)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JSON",
+            "file-based workflow",
+            "Logging",
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need a class that lazily opens a large file, exposes an iterator over parsed records, and guarantees the file is closed even if iteration fails. It must also log open/close and any parsing errors without crashing the process.",
+          "task": "Choose between relying on __del__ to close the file, a close() method the caller must remember, or a context manager. Justify your choice and show a concise class skeleton that meets the requirements, including logging and safe exception handling during iteration.",
+          "expected_answer": "Use a context manager. __del__ is unreliable (GC timing, cycles) and a manual close() is easy to forget. A context manager guarantees deterministic cleanup and communicates lifetime clearly.\n\nSkeleton:\n```python\nimport logging, json\n\nlog = logging.getLogger(\"records\")\n\nclass RecordReader:\n    def __init__(self, path):\n        self._path = path\n        self._fh = None\n\n    def __enter__(self):\n        log.info(\"open %s\", self._path)\n        self._fh = open(self._path, \"rt\", encoding=\"utf-8\")\n        return self\n\n    def __exit__(self, exc_type, exc, tb):\n        if self._fh:\n            self._fh.close()\n            log.info(\"closed %s\", self._path)\n        # don’t suppress exceptions from outside iteration\n        return False\n\n    def __iter.me__(self):\n        return self\n\n    def __iter__(self):\n        for lineno, raw in enumerate(self._fh, 1):\n            try:\n                yield json.loads(raw)\n            except Exception as e:\n                log.error(\"parse error line=%d: %s\", lineno, e)\n                continue\n```\nJustification: with RecordReader(...) as r: ensures open/close brackets the work. Exceptions during iteration are logged and skipped; the file always closes in __exit__.",
+          "rubric": [
+            {
+              "criterion": "Chooses context manager over __del__/manual close with correct rationale (deterministic cleanup, reliability)",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a class skeleton that opens lazily in __enter__ and closes in __exit__",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes logging of open/close and per-record parsing errors",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures iteration continues on parse errors without crashing and does not suppress unrelated exceptions",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "file-based workflow",
+            "Logging",
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Pluggable exporters OOP mini-application",
+          "brief": "Build a small OOP library that exports a list of Python dict records to multiple formats via a common interface. Provide a base class Exporter and at least two concrete subclasses (e.g., JsonExporter and CsvExporter). Demonstrate correct inheritance, method overriding, and cooperative use of super() where appropriate. Include a short demo script that runs the exporters against the same input and prints the first 200 characters of each export. Include minimal logging in the demo (at INFO) when each exporter runs.",
+          "deliverable": "A repository folder containing: src/ with exporter classes, a demo.py script that exercises them, and a README with run instructions. No external dependencies beyond the standard library.",
+          "acceptance_criteria": [
+            "Exporter is an abstract/interface class that defines an export(records: list[dict]) -> str contract (ABC/@abstractmethod or documented and enforced).",
+            "At least two concrete exporters subclass Exporter and override export; they produce different, valid serializations for the same input.",
+            "Demonstration script runs without modification via 'python demo.py' and prints labeled outputs for each exporter.",
+            "Use of inheritance is visible in code: shared behavior factored in a base or mixin; super() used correctly if overridden hooks exist.",
+            "Demo logs lines like 'INFO:running JsonExporter (N records)'. Logging configured exactly once."
+          ],
+          "rubric": [
+            {
+              "criterion": "Sound class design: clear base interface, correct subclassing, and method overriding",
+              "marks": 6
+            },
+            {
+              "criterion": "Working demo that runs and shows distinct outputs from at least two exporters",
+              "marks": 5
+            },
+            {
+              "criterion": "Appropriate use of Python OOP features (super, class/instance attributes, __repr__/__str__ or similar)",
+              "marks": 4
+            },
+            {
+              "criterion": "Minimal, correct logging in the demo with single configuration point",
+              "marks": 3
+            },
+            {
+              "criterion": "Code clarity (README, structure in src/, names)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Object-Oriented Programming",
+            "Python",
+            "Logging"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Robust JSONL file filter utility",
+          "brief": "Implement a command-line utility that reads one or more newline-delimited JSON (.jsonl) files, validates that each object has required keys (at least 'id' and 'name'), and writes only the valid lines to an output .jsonl file. Invalid lines must be written verbatim to a '.errors' sidecar file and logged at ERROR with line numbers. The tool must never abort on a malformed line and should emit a one-line summary to stdout at the end. Use only the standard library.",
+          "deliverable": "A repository folder containing: a 'jsonl_filter.py' CLI script (or a package with __main__.py), a README with usage, and a sample log file produced by a test run.",
+          "acceptance_criteria": [
+            "CLI usage: 'python jsonl_filter.py in1.jsonl [in2.jsonl ...] -o out.jsonl -l app.log' processes inputs in order.",
+            "Processing is streaming: memory use does not grow with file size (no full-file loads); the code reads line by line.",
+            "Each invalid JSON line or missing-key record is appended to 'out.jsonl.errors' (same directory as output) exactly once, verbatim.",
+            "Logging file 'app.log' exists and contains one ERROR per invalid line including the input filename and line number; valid lines are not logged at ERROR.",
+            "The program prints a single summary line to stdout: 'processed=N ok=M bad=K' and exits with code 0 if M>0, else exits with code 2.",
+            "The tool creates/overwrites the output file safely (using 'with open' and text mode, UTF-8)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct streaming I/O and safe file handling (with open, no full-file reads)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate validation and routing of good/bad lines (writes valid to output, invalid to .errors)",
+              "marks": 5
+            },
+            {
+              "criterion": "Informative logging at ERROR for rejects (includes filename and line number) and clean summary output",
+              "marks": 4
+            },
+            {
+              "criterion": "CLI behavior and exit codes match the acceptance criteria",
+              "marks": 3
+            },
+            {
+              "criterion": "Code organization and readability (README, argument parsing, functions/classes where appropriate)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "JSON",
+            "Logging",
+            "Debugging",
+            "Python"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-014-S04",
+      "skills_assessed": [
+        "Python",
+        "SQL",
+        "JSON",
+        "REST API",
+        "Unit Testing",
+        "Git",
+        "PyTest",
+        "Technical Writing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need all orders created in Aug 2026 that have no recorded payment. Schema:\n\n```sql\nCREATE TABLE orders(\n  id INTEGER PRIMARY KEY,\n  user_id INTEGER,\n  created_at DATE\n);\n\nCREATE TABLE payments(\n  id INTEGER PRIMARY KEY,\n  order_id INTEGER,\n  amount NUMERIC,\n  paid_at DATE\n);\n```\n\nWhich query correctly returns those order ids? Assume a literal month start date for simplicity.\n",
+          "options": [
+            "```sql\nSELECT o.id\nFROM orders o\nINNER JOIN payments p ON p.order_id = o.id\nWHERE o.created_at >= '2026-08-01'\nGROUP BY o.id\nHAVING COUNT(p.id) = 0;\n```",
+            "```sql\nSELECT o.id\nFROM orders o\nWHERE o.created_at >= '2026-08-01'\nAND o.id NOT IN (\n  SELECT order_id FROM payments\n);\n```",
+            "```sql\nSELECT o.id\nFROM orders o\nLEFT JOIN payments p ON p.order_id = o.id\nWHERE o.created_at >= '2026-08-01' AND p.paid_at IS NULL;\n```",
+            "```sql\nSELECT o.id\nFROM orders o\nLEFT JOIN payments p ON p.order_id = o.id\nWHERE o.created_at >= '2026-08-01' AND p.id IS NULL;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "LEFT JOIN then filtering on p.id IS NULL preserves rows with no payment. Filtering on order creation date is independent. Options B/D are logically wrong; C can fail with NULL semantics if the subquery returns NULLs.",
+          "distractor_rationale": "B: p.paid_at IS NULL only filters joined rows, but orders with no payment have NULLs only because of the JOIN; however if any payment exists with a non-NULL date, the row is included and the order disappears incorrectly.\nC: NOT IN breaks if the subquery yields any NULL, causing no rows to match. Proper pattern would be NOT EXISTS.\nD: HAVING COUNT(p.id)=0 with an INNER JOIN is impossible; the INNER JOIN removes rows without payments before HAVING is evaluated.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given data:\n\n```sql\n-- users\nid | email\n---+-----------------\n1  | a@example.com\n2  | b@test.local\n\n-- logins\nid | user_id | at\n---+---------+------------\n1  | 1       | 2026-08-01\n2  | 1       | 2026-08-03\n3  | 2       | 2026-08-05\n```\n\nYou run:\n\n```sql\nSELECT u.id, COUNT(l.id) AS c\nFROM users u\nLEFT JOIN logins l ON l.user_id = u.id AND l.at >= '2026-08-01' AND l.at < '2026-09-01'\nGROUP BY u.id\nORDER BY u.id;\n```\n\nWhat result does the query return?",
+          "options": [
+            "```text\nid | c\n---+---\n1  | 2\n2  | 1\n```",
+            "```text\nid | c\n---+---\n1  | 3\n2  | 1\n```",
+            "```text\nid | c\n---+---\n1  | 2\n2  | 0\n```",
+            "```text\nid | c\n---+---\n1  | 2\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "LEFT JOIN with the date predicate in the ON keeps user 2 and counts only matching August rows. User 1 has two matches, user 2 has one. Both users appear; COUNT(l.id) ignores NULLs.",
+          "distractor_rationale": "B: Tempting if you think user 2 should be excluded or that LEFT JOIN with conditions becomes INNER automatically. The date filter is in ON, preserving user 2.\nC: Adds all three logins, ignoring the date range on the JOIN, which is incorrect.\nD: Drops user 2 as if an INNER JOIN or WHERE l.at..., which is not what this query does.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your client handles API rate limiting:\n\n```python\nimport time, requests\n\ndef fetch(url):\n    r = requests.get(url)\n    if r.status_code == 429:\n        time.sleep(r.headers[\"Retry-After\"])  # header value is \"2\"\n        return requests.get(url)\n    return r\n```\n\nThe server returns 429 and header `Retry-After: 2` (string). What happens on CPython?",
+          "options": [
+            "It sleeps ~2 seconds, then retries once.",
+            "It raises KeyError for missing header.",
+            "It raises TypeError before sleeping.",
+            "It retries immediately without sleeping."
+          ],
+          "correct_option": "C",
+          "explanation": "time.sleep expects int/float, not a string. Passing \"2\" raises TypeError. Convert with int() or float().",
+          "distractor_rationale": "A: Tempting because \"2\" looks numeric, but sleep requires numeric type.\nC: Only if code ignored the header and used 0, which it doesn't.\nD: Header is present in the scenario.",
+          "skills_covered": [
+            "REST API",
+            "Python"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider:\n\n```python\nimport json\npayload = '{\"a\": \"10\", \"b\": 5}'\nobj = json.loads(payload)\nprint(sum(obj.values()))\n```\n\nWhat happens?",
+          "options": [
+            "Raises ValueError",
+            "Raises TypeError",
+            "Prints 15",
+            "Prints 105"
+          ],
+          "correct_option": "B",
+          "explanation": "obj.values() are [\"10\", 5]. sum cannot add str and int, so a TypeError is raised.",
+          "distractor_rationale": "A: Would be true if \"10\" were converted to int automatically, which json does not do for strings.\nB: String concatenation \"10\" + \"5\" isn't how sum works; sum starts from 0 and uses + on mixed types, causing a TypeError first.\nD: ValueError would occur if you explicitly cast int(\"10x\").",
+          "skills_covered": [
+            "JSON",
+            "Python"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Pytest session-scoped fixture does setup via the network:\n\n```python\nimport requests, pytest\n\n@pytest.fixture(scope=\"session\", autouse=False)\ndef seed():\n    # hit real network\n    requests.get(\"https://api.example.com/seed\")\n\ndef test_a(monkeypatch, seed):\n    monkeypatch.setattr(requests, \"get\", lambda url: object())\n    assert True\n\ndef test_b(monkeypatch, seed):\n    monkeypatch.setattr(requests, \"get\", lambda url: object())\n    assert True\n```\n\nRunning `pytest -q` with no other fixtures or plugins, which statement is correct?",
+          "options": [
+            "No real network call happens because monkeypatch replaces requests.get before the fixture runs.",
+            "Exactly one real network call happens before any test runs.",
+            "Both tests fail because session fixtures cannot be used with monkeypatch.",
+            "One real network call happens in each test."
+          ],
+          "correct_option": "B",
+          "explanation": "Session-scoped fixture `seed` executes once when first needed. The monkeypatch in tests applies after the fixture has already executed, so a single real call occurs.",
+          "distractor_rationale": "A: Tempting but fixture executes before test bodies and their monkeypatching.\nC: Session scope prevents per-test execution of the fixture.\nD: Pytest supports monkeypatch with any fixture scope; the issue is timing, not incompatibility.",
+          "skills_covered": [
+            "PyTest",
+            "Unit Testing",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You want `write_report` to write into a caller-specified directory so tests don't depend on CWD.\n\n```python\ndef write_report():\n    with open(\"report.txt\", \"w\") as f:\n        f.write(\"ok\")\n\n# current test\ndef test_write(tmp_path):\n    write_report()\n    assert (tmp_path / \"report.txt\").exists()\n```\n\nWhich change makes the test reliable without changing global CWD?",
+          "options": [
+            "```python\ndef write_report():\n    with open(\"./report.txt\", \"w\") as f:\n        f.write(\"ok\")\n\ndef test_write(tmp_path):\n    write_report()\n    assert (tmp_path / \"report.txt\").exists()\n```",
+            "```python\nfrom pathlib import Path\n\ndef write_report():\n    with open(Path.cwd() / \"report.txt\", \"w\") as f:\n        f.write(\"ok\")\n\ndef test_write(tmp_path, monkeypatch):\n    monkeypatch.chdir(tmp_path)\n    write_report()\n    assert (tmp_path / \"report.txt\").exists()\n```",
+            "```python\ndef write_report(target_dir):\n    with open(target_dir / \"report.txt\", \"w\") as f:\n        f.write(\"ok\")\n\ndef test_write(tmp_path):\n    write_report(tmp_path)\n    assert (tmp_path / \"report.txt\").exists()\n```",
+            "```python\ndef write_report(target_dir=Path.cwd()):\n    with open(target_dir / \"report.txt\", \"w\") as f:\n        f.write(\"ok\")\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Accepting a path argument is the most reliable and testable design. It removes hidden dependency on CWD and allows the test to control output location.",
+          "distractor_rationale": "B: Works but relies on changing global state (CWD), which can make tests interdependent and flaky.\nC: Using \"./\" still relies on CWD; test remains unreliable.\nD: Defaulting to Path.cwd() captures import-time CWD and is surprising; also, the test still cannot assert location deterministically without passing the arg.",
+          "skills_covered": [
+            "Unit Testing",
+            "Python",
+            "PyTest"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You amended the last commit message locally using `git commit --amend` and now `git push` is rejected:\n\n```text\n! [rejected]        main -> main (non-fast-forward)\nerror: failed to push some refs to 'origin'\n```\n\nTeam members may have pushed new commits. What single command should you use to update the remote while protecting their work?",
+          "options": [
+            "```bash\ngit push --force\n```",
+            "```bash\ngit push --force-with-lease\n```",
+            "```bash\ngit revert HEAD~1 && git push\n```",
+            "```bash\ngit pull --rebase && git push\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`--force-with-lease` refuses to overwrite others' work if the remote advanced unexpectedly, making it the safe way to update after rewriting your own commit.",
+          "distractor_rationale": "A: Force push overwrites remote history even if others pushed; risky.\nC: This may succeed but produces a duplicate commit history instead of replacing the message; it doesn't solve the amended-commit push refusal cleanly.\nD: Revert creates a new commit that inverts changes, not appropriate for an amended message.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A test assumes `fetch` raises `requests.HTTPError` on 404, but the implementation doesn't call `raise_for_status`:\n\n```python\nimport requests\n\ndef fetch(url):\n    r = requests.get(url)\n    if r.status_code == 404:\n        raise ValueError(\"missing\")\n    return r.json()\n\n# test\nimport pytest\n\ndef test_raises_for_404(monkeypatch):\n    class R:\n        status_code = 404\n        def json(self):\n            return {}\n    monkeypatch.setattr(requests, \"get\", lambda url: R())\n    with pytest.raises(requests.HTTPError):\n        fetch(\"http://x\")\n```\n\nWhat happens when running the test?",
+          "options": [
+            "The test fails with AssertionError because ValueError is raised instead.",
+            "The test errors with TypeError due to the dummy response.",
+            "The test passes because requests raises HTTPError automatically on 404.",
+            "The test hangs because monkeypatch is incomplete."
+          ],
+          "correct_option": "A",
+          "explanation": "`fetch` raises ValueError explicitly on 404. The test expects HTTPError, so pytest reports an AssertionError for the unmet expectation.",
+          "distractor_rationale": "A: `requests` does not raise automatically; you must call `raise_for_status()`.\nC: The dummy type is sufficient for this path; no TypeError occurs.\nD: Monkeypatching is adequate; nothing hangs.",
+          "skills_covered": [
+            "Unit Testing",
+            "PyTest",
+            "REST API",
+            "Python"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "What is printed?\n\n```python\nimport json\nprint(json.dumps({\"greeting\": \"ñ\"}))\n```",
+          "options": [
+            "```text\n{'greeting': '\\u00f1'}\n```",
+            "```text\n{\"greeting\": \"\\\\u00f1\"}\n```",
+            "```text\n{\"greeting\": \"ñ\"}\n```",
+            "```text\n{\"greeting\": \"\\u00f1\"}\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "json.dumps defaults to ensure_ascii=True, escaping non-ASCII as \\uXXXX sequences. The output uses double quotes and proper JSON, not Python repr.",
+          "distractor_rationale": "B: Would require ensure_ascii=False.\nC: Single quotes are not valid JSON output; that's Python repr style.\nD: Double-escaped backslash would appear only if the string contained the literal sequence \"\\\\u\".",
+          "skills_covered": [
+            "JSON",
+            "Python"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "SQLite via Python DB-API, unparameterized string with an apostrophe in data:\n\n```python\nname = \"O'Reilly\"\nsql = f\"SELECT * FROM users WHERE name = '{name}'\"\ncur.execute(sql)\n```\n\nWhat is the immediate outcome?",
+          "options": [
+            "SQL syntax error due to the unmatched quote in the f-string-expanded SQL.",
+            "It raises a DB-API ProgrammingError before sending SQL to the engine.",
+            "It works because the driver escapes quotes automatically in f-strings.",
+            "It is vulnerable to SQL injection but happens to work here."
+          ],
+          "correct_option": "A",
+          "explanation": "The expanded SQL becomes `... WHERE name = 'O'Reilly'`, which is invalid SQL. Use parameterized queries to both escape and prevent injection.",
+          "distractor_rationale": "B: Drivers do not auto-escape f-strings. Parameterization is required.\nC: Some drivers may only surface this as an OperationalError after execution, but the core issue is a SQL syntax error.\nD: It does not work here; the apostrophe breaks the literal.",
+          "skills_covered": [
+            "SQL",
+            "Python"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are building a data pull from a public HTTP API that is rate-limited and paginated. The API responds with JSON bodies containing `results` and a `next` URL, or uses an RFC 5988 `Link` header for pagination. It occasionally returns 500 and sometimes 429 with `Retry-After` seconds. You must fetch all pages for a given day and return a list of normalized Python dicts. Current naive code:\n\n```python\nimport requests\n\ndef fetch_all(url):\n    out = []\n    while url:\n        r = requests.get(url)\n        data = r.json()\n        out.extend(data[\"results\"])  # KeyError sometimes when body format differs on errors\n        url = data.get(\"next\")  # sometimes empty string; sometimes only in Link header\n    return out\n```\n\nTests are flaky and occasionally hit the real network.",
+          "task": "Propose a concrete redesign and test plan that makes the function robust and the tests hermetic. Specify: 1) how to parse pagination (both `next` field and `Link` header), 2) how to handle 429 and 500 with bounded retries and correct sleeping, 3) how to prevent real sleeps in tests, 4) what to assert in unit tests to prove correctness without network access, and 5) how to document edge-case behavior for users.",
+          "expected_answer": "Redesign: Create a `requests.Session` with retry/backoff. Always call `raise_for_status()` to turn 4xx/5xx into exceptions under control. Wrap pagination in a loop that prefers explicit `next` JSON, otherwise parses `Link: <url>; rel=\"next\"` using a robust parser. Treat `\"\"` and missing keys as no-next. Normalize records via a transformer function to a stable schema. For 429, inspect `Retry-After` header, convert to int/float, clamp to a max (e.g., 5s), and sleep between attempts; for 500-class, retry with exponential backoff up to N attempts, then surface a custom exception with context.\n\nTesting: Use pytest and monkeypatch to replace `requests.Session.get` with a fake returning controlled objects. Provide a fake clock by monkeypatching `time.sleep` to a no-op that records requested sleeps. Use parametrized tests to cover: no pagination, JSON `next`, Link header `next`, empty-string next, 429 with Retry-After leading to a recorded sleep then success, 500 then success after retries, and max-retries exceeded raising a custom error. Assert that: no real network is called (e.g., the fake captures URLs), all pages concatenated in order, transformer applied, `time.sleep` called with expected values, and no busy-loop on empty-string next. Document behavior in the function docstring and README: pagination rules, retry policy, max wait, and that users can override the session or backoff via parameters.",
+          "rubric": [
+            {
+              "criterion": "Explains pagination parsing for both JSON `next` and RFC 5988 `Link` header, including empty-string/missing cases",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes robust error handling with `raise_for_status`, bounded retries for 500s, and correct `Retry-After` parsing and clamping for 429s",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how to avoid real sleeps and network in tests (monkeypatch/mocks, fake clock)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies concrete, checkable test assertions covering success, pagination variants, and failure paths",
+              "marks": 1
+            },
+            {
+              "criterion": "Documents edge-case behavior and configuration surfaces for users",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "JSON",
+            "Unit Testing",
+            "PyTest",
+            "Python",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Product asks for a monthly active users (MAU) SQL report excluding internal/test accounts. Schema:\n\n```sql\nCREATE TABLE users(\n  id INTEGER PRIMARY KEY,\n  email TEXT NOT NULL,\n  created_at DATE NOT NULL\n);\nCREATE TABLE events(\n  id INTEGER PRIMARY KEY,\n  user_id INTEGER NOT NULL,\n  at TIMESTAMP NOT NULL,\n  type TEXT NOT NULL\n);\nCREATE INDEX events_month_idx ON events (at);\n```\n\nDefinition: MAU is distinct users with at least one `type='login'` event in August 2026. Test accounts are emails ending with `@test.local` or starting with `test+` on any domain. Avoid double-counting and ensure performance on 50M events.",
+          "task": "Write the SQL (or outline if dialect-specific), and justify your choices regarding: 1) date boundaries and timezone, 2) excluding test users without blocking index use, 3) avoiding NULL/LEFT JOIN pitfalls, and 4) whether to use EXISTS vs JOIN+GROUP BY for scalability.",
+          "expected_answer": "An efficient pattern uses a semi-join via EXISTS over a date-ranged, type-filtered scan, with clear month boundaries:\n\n```sql\nSELECT COUNT(*) AS mau\nFROM users u\nWHERE NOT (\n  u.email LIKE 'test+%' OR u.email LIKE '%@test.local'\n)\nAND EXISTS (\n  SELECT 1\n  FROM events e\n  WHERE e.user_id = u.id\n    AND e.type = 'login'\n    AND e.at >= TIMESTAMP '2026-08-01 00:00:00'\n    AND e.at <  TIMESTAMP '2026-09-01 00:00:00'\n);\n```\n\nRationale: Use half-open interval to avoid boundary ambiguity and to leverage `events_month_idx`. Place email filters on `users` to prune early. EXISTS avoids generating and grouping a massive intermediate join result; it short-circuits per user. Avoid LEFT JOIN + WHERE e.id IS NULL/NOT NULL patterns that can miscount under additional predicates. If timezone applies, either store UTC and compare in UTC, or convert at query time with a stable timezone setting. Optionally precompute month buckets with a materialized view for performance.",
+          "rubric": [
+            {
+              "criterion": "Correct, non-duplicating logic for MAU in August with half-open boundaries",
+              "marks": 3
+            },
+            {
+              "criterion": "Sound exclusion of test accounts and explanation of predicate placement effects on indices",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies EXISTS over JOIN+GROUP BY for scale and avoids NULL pitfalls",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses timezone considerations explicitly",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A flaky test sometimes fails around midnight UTC. Code:\n\n```python\nfrom datetime import datetime, timezone\n\n# production\ndef is_fresh(ts):  # ts is an aware datetime in UTC\n    return (datetime.now(timezone.utc) - ts).total_seconds() < 60\n```\n\nTest:\n\n```python\nfrom datetime import datetime, timezone, timedelta\n\ndef test_is_fresh_true():\n    ts = datetime.now(timezone.utc) - timedelta(seconds=30)\n    assert is_fresh(ts)\n```\n\nIn CI, time skews and scheduling variances cause rare >60s deltas.",
+          "task": "Propose a fix to the implementation and tests to remove time-of-test dependency. Include concrete code changes and explain why the new design is stable.",
+          "expected_answer": "Inject the time source. Change implementation to accept `now` or a clock callable defaulting to `datetime.now(timezone.utc)`.\n\n```python\ndef is_fresh(ts, *, now=None):\n    if now is None:\n        now = datetime.now(timezone.utc)\n    return (now - ts).total_seconds() < 60\n```\n\nTest by freezing time or passing a fixed `now`:\n\n```python\nfrom datetime import datetime, timezone, timedelta\n\ndef test_is_fresh_true():\n    fixed_now = datetime(2026, 8, 1, 12, 0, 0, tzinfo=timezone.utc)\n    ts = fixed_now - timedelta(seconds=30)\n    assert is_fresh(ts, now=fixed_now)\n```\n\nAlternatively, monkeypatch the module's datetime or use freezegun. This removes race conditions and makes the test deterministic.",
+          "rubric": [
+            {
+              "criterion": "Refactors production code to accept an injected time source (argument or callable)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides deterministic tests that don't depend on wall clock",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the change eliminates flakiness (race and scheduling)",
+              "marks": 2
+            },
+            {
+              "criterion": "Maintains timezone awareness and correct comparison semantics",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "PyTest",
+            "Python"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You rebased and force-pushed `main`, accidentally overwriting a teammate's commit. The remote history before your push:\n\n```text\nA -- B -- C   (origin/main)\n```\n\nYour local after rebase (rewrote C -> C'):\n\n```text\nA -- B -- C'  (main)\n```\n\nTeammate had pushed D based on C, which you didn't fetch:\n\n```text\nA -- B -- C -- D   (actually on origin/main)\n```\n\nYou ran `git push --force` and now origin/main points to C'. Teammate's work appears lost.",
+          "task": "Describe the precise recovery steps to restore D, reconcile with your C', and prevent recurrence. Include exact Git commands and a brief explanation for each.",
+          "expected_answer": "1) Find the lost commit via reflog on the remote clone or teammate's local: `git reflog origin/main` (or `git fsck --lost-found`) to identify D's hash. If you have a local that fetched D earlier, `git reflog` there will show it.\n2) Create a new branch at D: `git checkout -b rescue-D <D-hash>`.\n3) Recreate a correct main by rebasing or merging D onto C': `git checkout main` then either `git rebase --rebase-merges --onto C' D rescue-D` or simpler: `git merge --no-ff rescue-D` to bring back D atop C'. Resolve conflicts.\n4) Push safely: `git push --force-with-lease origin main` to avoid clobbering if anything moved while you fixed it.\n5) Add server-side protection and team practice: require `--force-with-lease` (or protect main), use PRs, and fetch/rebase regularly to include others' work before rewriting.\n\nDocument the incident in the repo (CONTRIBUTING.md) with the safer workflow.",
+          "rubric": [
+            {
+              "criterion": "Locates the lost commit D using reflog/alternate discovery methods",
+              "marks": 2
+            },
+            {
+              "criterion": "Restores D onto C' with a correct merge/rebase sequence and notes conflict resolution",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses `--force-with-lease` (or protected branch) to push safely",
+              "marks": 1
+            },
+            {
+              "criterion": "Prevention measures (branch protection, PRs, fetch/rebase practice) and brief documentation note",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "API/data exercise: ingest and query a public HTTP JSON API into SQLite",
+          "brief": "Build a small CLI tool that fetches records from a public JSON API (e.g., JSONPlaceholder posts or Open-Meteo hourly weather), normalizes them, and stores them into a local SQLite database. The tool must support an argument that limits the time/window (e.g., date=YYYY-MM-DD or a range) and must be idempotent on re-run (no duplicate rows). Provide at least one SQL query that answers a non-trivial question over the ingested data (e.g., top N users by post count on a day; hourly max temperature).",
+          "deliverable": "A repository folder containing: Python source for the CLI, requirements.txt, a SQLite DB file with sample data (or a reproducible seed command), a SQL schema/migrations file, a SQL query file answering your chosen question, and a README describing endpoints used, schema, how to run, and sample outputs.",
+          "acceptance_criteria": [
+            "CLI runs from command line: `python -m yourpkg ingest --date 2026-08-01` (or similar) and exits 0",
+            "Uses HTTP GET to fetch JSON and parses it correctly",
+            "Persists data into SQLite with a defined schema; rerunning with same inputs does not create duplicates",
+            "Provides at least one SQL query file that runs against the produced DB and returns a correct, non-trivial result",
+            "README includes clear setup, run instructions, endpoint(s) documented, and a brief schema description",
+            "Code handles transient HTTP errors (>=500) with at least one retry and surfaces clear errors on persistent failure"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct API fetch and JSON parsing for the specified window/parameters",
+              "marks": 5
+            },
+            {
+              "criterion": "SQLite schema design and idempotent inserts/upserts (e.g., primary keys/unique constraints)",
+              "marks": 5
+            },
+            {
+              "criterion": "Non-trivial SQL query correctness and inclusion as a runnable artifact",
+              "marks": 4
+            },
+            {
+              "criterion": "Basic robustness: minimal retry on 5xx and clear error handling/logging",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation quality: README with endpoints, schema, and run instructions",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "JSON",
+            "SQL",
+            "Python",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Tested Python project: an HTTP client library with pytest suite",
+          "brief": "Create a small Python package `apiclient` that wraps one endpoint of a public JSON API with: parameter validation, pagination support if applicable, error handling for 4xx/5xx (including 429 Retry-After), and result normalization into Python dicts. Include a comprehensive pytest suite with fakes/mocks so tests run offline. Provide documentation in README and module docstrings. Use Git with at least 3 meaningful commits showing incremental development.",
+          "deliverable": "A repository folder with package code (installable via `pip -e .` or similar), pytest tests, a test requirements file, and a README documenting usage and behavior. Include a coverage report artifact or badge showing >=80% line coverage.",
+          "acceptance_criteria": [
+            "`pip -e .` (or `python -m pip install .`) installs the package",
+            "`pytest -q` passes offline; no real network calls",
+            "Tests cover: success path, pagination (if applicable), 404 raising a specific exception, 429 handling `Retry-After` correctly without real sleeping, and a 5xx retry policy",
+            "Code uses parameterized requests (no string-concatenated SQL or unsafe patterns) and calls `raise_for_status()` appropriately",
+            "README shows example usage and documents error behaviors and limits",
+            "Coverage report shows >=80% coverage"
+          ],
+          "rubric": [
+            {
+              "criterion": "Library correctness: parameter validation, pagination handling, and normalized return types",
+              "marks": 6
+            },
+            {
+              "criterion": "Error handling: 404/429/5xx behaviors, `Retry-After` parsing, and bounded retries",
+              "marks": 5
+            },
+            {
+              "criterion": "Test quality: offline, deterministic, and cover specified scenarios (including monkeypatch/fakes)",
+              "marks": 5
+            },
+            {
+              "criterion": "Documentation quality and clarity (README and docstrings)",
+              "marks": 2
+            },
+            {
+              "criterion": "Git hygiene: meaningful commit history that aligns with development steps",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "PyTest",
+            "REST API",
+            "JSON",
+            "Python",
+            "Git",
+            "Technical Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1867 @@
+{
+  "course_code": "NT-C-032",
+  "course_name": "Cyber Security",
+  "sections": [
+    {
+      "section_code": "NT-C-032-S01",
+      "skills_assessed": [
+        "Firewall",
+        "TCP/IP",
+        "Authentication",
+        "define security policies",
+        "ethics"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You apply this ACL on the outbound interface `e0/1` of the branch router:\n```text\nip access-list extended OUTBOUND\n deny   tcp 10.10.20.0 0.0.0.255 any eq 22\n permit tcp 10.10.20.0 0.0.0.255 172.16.50.10 0.0.0.0 eq 443\n deny   ip any any log\n!\ninterface e0/1\n ip access-group OUTBOUND out\n```\nHost 10.10.20.45 opens https to 172.16.50.10. The same host also performs DNS lookups to 172.16.50.53. What actually happens, and why?",
+          "options": [
+            "HTTPS succeeds but DNS fails because UDP/53 is not permitted and is hit by the final deny.",
+            "HTTPS fails because the final deny ip any any overrides the earlier permit, but DNS succeeds via implicit permit for UDP.",
+            "Both HTTPS and DNS fail because the deny on tcp/22 blocks the client’s ephemeral port 22 during the HTTPS return path.",
+            "Both succeed because the router is stateful and will automatically allow related return traffic even without rules."
+          ],
+          "correct_option": "A",
+          "explanation": "The HTTPS flow from 10.10.20.45 to 172.16.50.10:443 matches the explicit permit and passes. DNS from the host to 172.16.50.53 uses UDP/53 by default, which is not matched by any permit and is therefore dropped by the explicit final deny.",
+          "distractor_rationale": "B: Tempting if you think ACLs examine ephemeral source ports on return traffic in the same direction, but this is an outbound ACL on client-originated traffic; TCP/22 deny affects only traffic with destination port 22.\nC: Implies ACLs ignore ordering; they don’t. First match wins, so the permit stands.\nD: Classic confusion between stateless ACLs and stateful firewalls. IOS ACLs are stateless; no implicit state tracking is added.",
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your risk register shows the following items:\n```csv\nAsset,Threat,Vulnerability,Likelihood,Impact,Current Control\nFinance Admin Portal (internal URL),Credential stuffing,Password reuse from breaches,Medium,High,IP allowlist from corp LAN only\nIoT Cameras (lobby),Pivot to finance subnet,Flat VLAN; default permit,High,High,None (single flat network)\n```\nYou can implement exactly one of the following network controls this sprint. Which choice yields the largest overall risk reduction across these two items?",
+          "options": [
+            "Add MFA to the Finance Admin Portal login, keeping the IP allowlist as-is.",
+            "Place IoT devices into their own VLAN with an egress-only ACL to vendor cloud; deny all lateral access to finance subnets.",
+            "Deploy a generic outbound web proxy with TLS inspection for all users.",
+            "Add DNS sinkholing for known-bad domains."
+          ],
+          "correct_option": "B",
+          "explanation": "The IoT environment presents a High/High risk with no control; strong segmentation and deny-by-default ACLs collapse both likelihood and blast radius. MFA is excellent for the portal but addresses only one Medium/High item, producing less total reduction across the two listed risks.",
+          "distractor_rationale": "B: Strong control but scoped to one item; the larger unmitigated High/High lateral-movement risk remains.\nC: Helps visibility but doesn’t stop Layer-2/3 lateral movement from IoT to finance.\nD: Useful defense-in-depth but does little against internal pivot or credential stuffing versus an internal portal.",
+          "skills_covered": [
+            "define security policies",
+            "Firewall",
+            "Authentication"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A Linux web server sits behind this host firewall. Users report timeouts when connecting to TCP/443.\n```bash\n# iptables -S | sed -n '1,12p'\n-P INPUT DROP\n-P FORWARD DROP\n-P OUTPUT DROP\n-A INPUT  -p tcp --dport 443 -j ACCEPT\n-A INPUT  -i lo -j ACCEPT\n# no other rules\n```\n`tcpdump` on the server during an incoming connection shows SYN arriving and SYN/ACK leaving, but the client never receives it. What minimal rule fix restores connectivity without opening all ports?",
+          "options": [
+            "```bash\n-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n```",
+            "```bash\n-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n```",
+            "```bash\n-A OUTPUT -p tcp --sport 443 -j ACCEPT\n```",
+            "```bash\n-P OUTPUT ACCEPT\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The SYN/ACK (outbound) is being dropped by the OUTPUT chain’s default DROP. Allowing ESTABLISHED,RELATED on OUTPUT permits return traffic without broad openings. Allowing only --sport 443 is brittle and misses non-443 return traffic for other services or related control packets.",
+          "distractor_rationale": "B: Looks precise but fails for non-443 flows and is not as safe as using connection state; also misses ICMP errors needed for PMTU.\nC: Works but violates least privilege by allowing all outbound traffic.\nD: Helpful for inbound return traffic in other designs, but here the outbound path is where the SYN/ACK is being dropped.",
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your NAC policy assigns access by group:\n```yaml\npolicy:\n  - group: Guests\n    vlan: 40\n    acls:\n      - allow: [tcp, udp]\n        to: internet\n  - group: Staff\n    vlan: 10\n    acls:\n      - allow: [tcp]\n        to: any\n  - group: Contractors\n    vlan: 30\n    acls:\n      - allow: [tcp]\n        to: 10.2.1.20   # app-server\n      # missing line?\n```\nContractors can unexpectedly open TCP/5432 to DB `10.2.2.20` directly from VLAN 30. Which addition best enforces the intended “via app only” access?",
+          "options": [
+            "```yaml\n      - allow: [tcp]\n        to: 10.2.2.20:5432\n```",
+            "```yaml\n      - allow: [tcp]\n        to: 10.2.2.0/24\n```",
+            "```yaml\n      - deny: [tcp]\n        to: 10.2.2.20\n```",
+            "```yaml\n      - deny: [ip]\n        to: any\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "A specific deny to the DB ensures contractors cannot initiate direct DB sessions and must traverse the app-server path. The existing allow to the app-server remains. Broad denies or blanket allows violate least privilege.",
+          "distractor_rationale": "B: Explicitly permits exactly what should be blocked.\nC: Overly broad; it would also block the needed access to the app-server unless careful rule ordering is guaranteed.\nD: Expands access to the entire DB subnet, worsening exposure.",
+          "skills_covered": [
+            "Authentication",
+            "Firewall",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "During a password reset request, a user accidentally emails you a CSV that includes their saved browser passwords. Excerpt:\n```text\nsite,username,password\nhttps://intranet.local,jdoe,P@ssw0rd!\nhttps://mail.example.com,jdoe@example.com,Winter2025!\n```\nWhat is the most ethical and policy-aligned immediate action?",
+          "options": [
+            "Quietly keep the file as future evidence for potential investigations.",
+            "Forward the file to the entire IT team so they are aware of the risk and can watch for misuse.",
+            "Attempt to log into the accounts to verify which passwords still work before raising any ticket.",
+            "Delete the email, inform the user what was exposed, and open a confidential incident record to coordinate credential resets."
+          ],
+          "correct_option": "D",
+          "explanation": "You minimize exposure, notify the affected user, and create an incident record to ensure controlled, auditable handling and remediation. Accessing the credentials or widely sharing the file would be unethical and likely policy violations.",
+          "distractor_rationale": "B: Retaining sensitive data without a need-to-know increases harm and violates data-minimization principles.\nC: Over-sharing sensitive data breaches confidentiality and least privilege.\nD: Attempting logins is unauthorized access, even with good intentions, and violates ethics and likely policy/law.",
+          "skills_covered": [
+            "ethics",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Egress firewall rules are:\n```text\nallow tcp any -> 8.8.8.8:53\ndeny  udp any -> any   (default)\n```\nClients report `nslookup www.example.com` timing out, but `nslookup -vc www.example.com` works. What change fixes resolution at scale without breaking least privilege?",
+          "options": [
+            "Disable TCP for DNS to avoid confusion and standardize on UDP only.",
+            "Add an allow rule for UDP/53 to the resolver IPs used by clients.",
+            "Increase MTU on the client VLAN to reduce fragmentation.",
+            "Open all UDP to any destination because DNS is UDP-heavy."
+          ],
+          "correct_option": "B",
+          "explanation": "System resolvers primarily use UDP/53; allowing UDP/53 only to approved resolvers restores normal operation while keeping tight egress control. TCP remains a fallback for large responses and should stay permitted.",
+          "distractor_rationale": "B: Overly permissive and unrelated to least privilege.\nC: DNS requires both UDP and TCP in practice; disabling one harms reliability.\nD: MTU has no bearing on whether DNS queries reach permitted ports/protocols.",
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your egress policy currently contains:\n```text\npermit tcp any -> any eq 443\ndeny   ip  any -> any (default)\n```\nSecurity wants to reduce the chance of sensitive data exfiltration over HTTPS without breaking legitimate SaaS use. Which statement is most accurate for this configuration?",
+          "options": [
+            "Blocking UDP eliminates DNS exfiltration, so HTTPS exfiltration is no longer a realistic concern.",
+            "Adding a deny for 0.0.0.0/0 on 443 below the permit will stop exfiltration while keeping SaaS functional.",
+            "Exfiltration is fully prevented because only port 443 is open; no further controls are needed.",
+            "Exfiltration over HTTPS remains feasible; add an explicit proxy with domain allowlists and token-based access to reduce risk."
+          ],
+          "correct_option": "D",
+          "explanation": "Port-based egress allows any HTTPS destination, enabling data exfiltration to attacker-controlled sites. A proxy with allowlists, identity, and logging adds control while preserving needed SaaS access.",
+          "distractor_rationale": "B: Confuses port restriction with content control; HTTPS can still carry sensitive payloads anywhere.\nC: DNS over HTTPS uses TCP/443 and bypasses simple UDP DNS assumptions.\nD: A deny for 0.0.0.0/0 would also block legitimate SaaS; rule conflicts would either nullify the permit or break business traffic.",
+          "skills_covered": [
+            "Firewall",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Planned segmentation and ACLs:\n```text\nVLAN10 HR:        10.10.10.0/24\nVLAN20 ENG:       10.10.20.0/24\nVLAN30 DB:        10.10.30.0/24\n\nACL on core (routed ACL, outbound from user VLANs):\n  permit tcp 10.10.10.0/24 -> 10.10.30.10 eq 5432   # HR to DB\n  deny   ip  10.10.20.0/24 -> 10.10.30.0/24         # ENG to DB blocked\n  deny   ip  any -> any                              # default\n```\nAfter deployment, the DB at 10.10.30.10 stops sending email alerts to the ENG mail relay 10.10.20.5:25. What explains the outage?",
+          "options": [
+            "Return traffic from ENG to DB is blocked, causing the DB to retry until timeout.",
+            "SMTP requires TCP/587, and the ACL only considers TCP/25.",
+            "The ACL is applied outbound from user VLANs, so DB-initiated traffic to ENG hits the default deny and is dropped.",
+            "The deny of ENG to DB also blocks reverse traffic from DB to ENG due to stateful inspection."
+          ],
+          "correct_option": "C",
+          "explanation": "Because the ACL is placed outbound from user VLANs, traffic originating in DB VLAN30 to ENG VLAN20 still traverses the user-VLAN ACL when leaving VLAN20’s SVI toward VLAN20, hitting the default deny. There’s no explicit permit for DB to ENG SMTP.",
+          "distractor_rationale": "B: The ACL shown is stateless; the deny is directional and does not imply stateful behavior.\nC: Many relays still use TCP/25; the issue is not the port but missing allow from DB to ENG.\nD: Focuses on return traffic, but the initial DB-initiated traffic is denied before any session is built.",
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your external-facing login service uses this policy:\n```json\n{\n  \"password\": {\n    \"minLength\": 12,\n    \"history\": 10,\n    \"complexity\": [\"upper\",\"lower\",\"digit\",\"symbol\"],\n    \"lockout\": {\"threshold\": 5, \"windowMinutes\": 15}\n  },\n  \"network\": {\"allowCIDR\": [\"203.0.113.0/24\",\"198.51.100.0/24\"]},\n  \"mfa\": {\"enabled\": false}\n}\n```\nWhich attack remains realistically effective against this portal, and why?",
+          "options": [
+            "Pass-the-hash on the internal Windows domain, because the portal uses IP allowlists.",
+            "Credential stuffing using breached username/password pairs, because MFA is disabled even though passwords are strong.",
+            "Offline password cracking of the database, because long passwords are easier to brute-force than short ones.",
+            "SQL injection on the login form, because lockout will not stop it."
+          ],
+          "correct_option": "B",
+          "explanation": "Without MFA, credential stuffing remains a high-probability threat even with strong password policy and IP allowlists. Attackers can route via allowed networks or compromised hosts.",
+          "distractor_rationale": "B: With proper hashing and salting (implied), longer passwords are harder, not easier, to crack.\nC: Pass-the-hash is unrelated to this web portal configuration.\nD: SQL injection is a separate class of control; nothing here implies susceptibility, and lockout is orthogonal.",
+          "skills_covered": [
+            "Authentication",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "After blocking all ICMP at the edge, users report large file downloads from an external site stall. `ping -M do -s 1472 198.51.100.10` fails, and `tracepath` shows MTU issues. Edge ACL excerpt:\n```text\ndeny icmp any any\npermit tcp any any eq 443\ndeny ip any any (default)\n```\nWhat minimal change restores availability without broadly opening ICMP?",
+          "options": [
+            "Permit inbound ICMP Type 3 Code 4 (Fragmentation Needed) from Internet to internal clients and the corresponding outbound replies.",
+            "Increase MSS on the external server to 1200 bytes.",
+            "Permit all ICMP between any hosts to avoid PMTU black holing.",
+            "Open UDP/443 to allow QUIC to handle larger payloads without fragmentation."
+          ],
+          "correct_option": "A",
+          "explanation": "PMTU discovery relies on ICMP Type 3 Code 4. Allowing just these control messages enables proper path MTU without broadly exposing ICMP.",
+          "distractor_rationale": "B: Overly permissive; we only need specific control messages.\nC: QUIC still benefits from PMTU, and the issue is control-plane signaling, not protocol choice.\nD: You don’t control the external server; also, MSS clamping is better applied on your egress, not by hoping the server changes.",
+          "skills_covered": [
+            "TCP/IP",
+            "Firewall",
+            "define security policies"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A startup runs a flat /22 network mixing HR laptops, engineering workstations, build servers, and a PostgreSQL finance DB. Recent phishing led to an ENG workstation beaconing to an external C2. There is a single edge firewall with permissive egress (80/443 any), and no internal ACLs. Management wants rapid risk reduction without buying new hardware.",
+          "task": "Propose a concrete segmentation and firewall policy that can be implemented on existing routing/switching gear in two weeks. Specify VLANs/subnets, key inter-VLAN ACLs (at least HR->DB for payroll processing), and egress controls that preserve SaaS while reducing exfiltration. Justify how your design improves CIA and which residual risks remain.",
+          "expected_answer": "A strong answer defines 3–4 VLANs (e.g., VLAN10 HR 10.10.10.0/24, VLAN20 ENG 10.10.20.0/24, VLAN30 DB 10.10.30.0/24, optional VLAN40 Shared Services), applies routed ACLs with default deny between user VLANs, explicit permit of HR->DB tcp/5432 only, deny ENG->DB, and allows DB->mail relay as needed. Egress is forced through a proxy or at least domain/IP allowlists for business SaaS on tcp/443, with DNS restricted to approved resolvers (UDP/TCP 53). Justification ties to confidentiality (limit lateral movement to DB), integrity (restrict who can reach DB), availability (permit required flows and PMTU/ICMP control messages), and discusses residual risks such as application-layer abuse over allowed HTTPS and phishing leading to credential theft absent MFA. The answer includes rule ordering and state tracking considerations (ESTABLISHED,RELATED) and mentions logging for attempted violations.",
+          "rubric": [
+            {
+              "criterion": "Sound VLAN/subnet plan separating HR, ENG, DB (names and CIDRs clear)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct inter-VLAN ACLs implementing least privilege (explicit HR->DB permit, ENG->DB deny, default deny, needed service exceptions)",
+              "marks": 3
+            },
+            {
+              "criterion": "Egress policy that reduces exfiltration risk while preserving SaaS (e.g., proxy/allowlists, DNS to resolvers)",
+              "marks": 2
+            },
+            {
+              "criterion": "CIA and risk justification with residual risks and trade-offs (incl. statefulness/PMTU considerations)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies",
+            "Authentication"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A third-party payroll vendor needs 9–5 access to query a staging database in your network for two weeks. Two candidate designs are proposed:\nOption A: Permit vendor IP range directly to `db-stage` on tcp/5432, restricted by time windows.\nOption B: Require vendor to SSH into a hardened jump host with MFA from their IPs, then allow jump->db-stage tcp/5432; vendor IPs cannot reach db-stage directly.",
+          "task": "Pick one option and defend your choice. Specify exact controls (ACLs, authentication), how you’ll monitor and revoke access, and why the alternative is weaker for this case.",
+          "expected_answer": "Option B is preferred. Enforce ACL: vendorCIDRs -> jump:22 (time-bound), jump -> db-stage:5432, deny vendorCIDRs -> db-stage. Require MFA on SSH and short-lived access accounts, with session recording on the jump. Monitoring via jump host logs and DB logs; revocation by disabling vendor accounts and ACL removal. Option A increases attack surface (exposes DB directly, limited identity assurance) and weakens auditing. The answer should note the small added latency/overhead is acceptable for staging and limited duration.",
+          "rubric": [
+            {
+              "criterion": "Clear selection with concrete ACLs and authentication details (MFA, accounts)",
+              "marks": 2
+            },
+            {
+              "criterion": "Monitoring and revocation plan (logs, session capture, teardown steps)",
+              "marks": 2
+            },
+            {
+              "criterion": "Risk-based justification comparing both options (identity assurance, surface area, auditability)",
+              "marks": 2
+            },
+            {
+              "criterion": "Consideration of time-bounding and least privilege (scope, hours, endpoints)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Firewall",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your public web server triggers AV on an ENG workstation after a phishing incident. SOC sees lateral scan attempts from the ENG host toward DB subnets. Current controls: flat LAN, edge firewall only, permissive ICMP block that caused prior PMTU issues.",
+          "task": "Outline immediate containment steps using only existing gear: segmentation/ACL changes, egress tightening, and any ethical considerations when inspecting potentially sensitive logs owned by HR. Explain how each step reduces risk and how you avoid causing an availability incident (e.g., PMTU).",
+          "expected_answer": "Contain by rapidly introducing VLANs and routed ACLs to isolate ENG from DB, allowing only HR->DB necessary ports. Add default-deny between user VLANs and allow ESTABLISHED,RELATED and ICMP Type 3/4 to avoid PMTU issues. Tighten egress to a proxy/allowlists to reduce C2. For ethics, access HR logs only under an incident ticket with least privilege and need-to-know, minimizing exposure and documenting access. Each step maps to reducing lateral movement (C, I) and maintains availability by permitting required traffic and PMTU control messages.",
+          "rubric": [
+            {
+              "criterion": "Concrete containment controls (segmentation + ACLs) with correct permitted/denied flows",
+              "marks": 3
+            },
+            {
+              "criterion": "Egress control improvements aligned with least privilege",
+              "marks": 1
+            },
+            {
+              "criterion": "Handling ICMP/PMTU and state to avoid self-inflicted outages",
+              "marks": 1
+            },
+            {
+              "criterion": "Ethical handling of sensitive HR data during investigation (need-to-know, documentation)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "ethics",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A new SaaS requires outbound HTTPS to multiple domains and live OCSP/CRL checks. Users report that after SSL inspection was enabled, some logins hang. Capture shows repeated TLS ClientHello, followed by no ServerHello, and ICMP Fragmentation Needed is blocked at the edge.",
+          "task": "Diagnose the most likely root cause and propose precise rule/policy changes that both restore functionality and align with least privilege. Include which ICMP types to allow, how to scope egress for SaaS, and any authentication controls that reduce risk.",
+          "expected_answer": "Root cause: SSL inspection middlebox or edge firewall blocks required OCSP/CRL endpoints and PMTU control messages, causing handshake failures and hangs. Fix by allowing ICMP Type 3 Code 4 for PMTU, explicitly allowing the SaaS FQDNs/addresses and OCSP/CRL endpoints to bypass or be permitted through inspection as required, and maintaining deny-by-default for other 443 destinations via a proxy/allowlist. Add MFA enforcement for SaaS access to reduce credential-theft risk. Ensure stateful rules (ESTABLISHED,RELATED) are present and logging monitors exceptions.",
+          "rubric": [
+            {
+              "criterion": "Accurate diagnosis linking SSL inspection/PMTU to handshake hangs",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct ICMP allowances (Type 3 Code 4) and stateful considerations",
+              "marks": 2
+            },
+            {
+              "criterion": "Scoped egress policy for SaaS/OCSP/CRL (allowlists/bypass) with least privilege",
+              "marks": 3
+            },
+            {
+              "criterion": "Identity control tie-in (e.g., MFA) to address residual risk",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "TCP/IP",
+            "Firewall",
+            "Authentication",
+            "define security policies"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Risk worksheet",
+          "brief": "Complete a risk worksheet for your current network focusing on assets affected by segmentation and access controls. Include at least five assets (e.g., HR laptops, ENG workstations, Finance DB, DNS resolver, Jump host), two realistic threat scenarios per asset, current controls, proposed controls (segmentation, firewall rules, authentication), likelihood/impact scoring before and after, and residual risk notes. Use a quantitative scale (e.g., 1–5) and show how proposed network controls change the score.",
+          "deliverable": "A completed Risk worksheet (CSV or spreadsheet) containing assets, threats, current/proposed controls, before/after risk scores, and residual risk justification.",
+          "acceptance_criteria": [
+            "At least 5 distinct assets and 10 total threat rows present.",
+            "Columns include: Asset, Threat, Vulnerability, Likelihood (before), Impact (before), Current Control, Proposed Control (named to firewall/segmentation/authentication), Likelihood (after), Impact (after), Residual Risk.",
+            "Scoring method (1–5 or equivalent) is defined in a legend and applied consistently.",
+            "At least three proposed controls are network-specific (e.g., VLAN isolation, ACL with ports/protocols, DNS egress restriction) and at least one addresses authentication (e.g., MFA for admin portal).",
+            "Before/after scores change plausibly given the controls; no asset is left with blank residual risk notes.",
+            "File is machine-readable (CSV or XLSX) with no merged cells; values are not embedded in images."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of assets/threats (≥5 assets; ≥10 threats)",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality and specificity of proposed controls (network-focused plus one authentication) mapped to threats",
+              "marks": 6
+            },
+            {
+              "criterion": "Consistent, justified before/after scoring and residual risk rationale",
+              "marks": 6
+            },
+            {
+              "criterion": "Clarity and structure (required columns present; machine-readable; legend for scoring)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "define security policies",
+            "Firewall",
+            "Authentication"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Network-control lab",
+          "brief": "Implement a small lab that enforces least-privilege access between three subnets and validates behavior.\nTopology (virtual or simulator is fine):\n- VLAN10 HR 10.10.10.0/24\n- VLAN20 ENG 10.10.20.0/24\n- VLAN30 DB 10.10.30.0/24\nControls to implement on router/firewall:\n- Default deny between user VLANs; explicit permit HR -> DB tcp/5432 only.\n- Deny ENG -> DB any.\n- Allow DB -> ENG mail relay 10.10.20.5 tcp/25.\n- Egress: Only DNS to approved resolvers (UDP/TCP 53) and HTTPS to an allowlist of two SaaS FQDNs/IPs. Block other 443.\n- Allow ICMP Type 3 Code 4 to support PMTU; stateful return traffic allowed.\nProvide test evidence showing allowed flows succeed and denied flows fail.",
+          "deliverable": "Network-control lab: configuration files (e.g., iptables/pf/Cisco ACLs), an allowlist file for SaaS egress, and a test log (text) with commands and results demonstrating pass/fail for each required flow.",
+          "acceptance_criteria": [
+            "Config shows default deny between VLANs, explicit HR->DB tcp/5432 permit, ENG->DB deny, and DB->ENG tcp/25 permit.",
+            "Egress rules restrict DNS to specified resolvers (both UDP and TCP 53) and HTTPS to exactly two allowlisted destinations; other 443 is denied.",
+            "ICMP Type 3 Code 4 is permitted; stateful return traffic rule present (e.g., ESTABLISHED,RELATED).",
+            "Test log includes at minimum: HR->DB psql or nc 5432 success; ENG->DB nc 5432 failure; DB->ENG nc 25 success; client DNS query to approved resolver success and to random IP on 53 failure; curl to allowed SaaS success and to disallowed 443 host failure; PMTU check (tracepath or ping DF) demonstrating no black-holing.",
+            "Configs are syntactically valid for the chosen platform and persist across reload (e.g., saved ruleset file)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct segmentation and inter-VLAN rule implementation (HR->DB permit; ENG->DB deny; default deny)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate egress controls (DNS UDP/TCP 53 to resolvers; 443 allowlist only)",
+              "marks": 6
+            },
+            {
+              "criterion": "ICMP/State tracking configured properly (PMTU and ESTABLISHED/RELATED)",
+              "marks": 3
+            },
+            {
+              "criterion": "Comprehensive, reproducible test evidence demonstrating required pass/fail cases",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Firewall",
+            "TCP/IP",
+            "define security policies",
+            "Authentication"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-032-S02",
+      "skills_assessed": [
+        "Linux Security",
+        "Authentication",
+        "User Management",
+        "Vulnerability Assessment"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A Linux host is being hardened to require MFA for interactive SSH. The configs are:\n\n```ini\n# /etc/ssh/sshd_config\nUsePAM yes\nPasswordAuthentication no\nChallengeResponseAuthentication yes\n\n# no AuthenticationMethods line set\n```\n\n```text\n# /etc/pam.d/sshd\nauth    required        pam_google_authenticator.so nullok\nauth    include         system-auth\naccount include         system-auth\npassword include        system-auth\nsession include         system-auth\n```\n\nWhat happens when a user who has NOT enrolled an OTP secret tries to SSH using only their correct Unix password?",
+          "options": [
+            "Only public key logins work; any password-based path is fully blocked by `PasswordAuthentication no`.",
+            "They can log in with just the password because `pam_google_authenticator.so nullok` makes OTP optional when no secret exists.",
+            "All users are forced to use OTP because `pam_google_authenticator.so` is marked `required`. ",
+            "SSH rejects all logins because `PasswordAuthentication no` disables PAM-based password prompts entirely."
+          ],
+          "correct_option": "B",
+          "explanation": "With UsePAM yes and ChallengeResponseAuthentication yes, OpenSSH uses keyboard-interactive to pass control to PAM. The `nullok` option on pam_google_authenticator makes OTP optional if no secret exists. Since PAM will then fall through to `system-auth` and `PasswordAuthentication no` only disables the native SSH password method (not keyboard-interactive via PAM), the user authenticates with password only, which is an MFA bypass.",
+          "distractor_rationale": "B is tempting because many assume disabling PasswordAuthentication disables all password use; it does not for PAM keyboard-interactive. C over-applies the same misconception and ignores PAM. D sounds plausible because the module is `required`, but `required` means the module must succeed if it is applicable; with `nullok`, it treats missing OTP as not applicable.",
+          "skills_covered": [
+            "Linux Security",
+            "Authentication"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A Windows member server has hardened NTLM settings:\n\n```text\nWindows Registry Editor Version 5.00\n\n[HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0]\n\"RestrictReceivingNTLMTraffic\"=dword:00000002  ; Deny all\n```\n\nSecurity hardening also left the following policy empty:\n\n```text\nNetwork security: Restrict NTLM: Add server exceptions in this domain = (empty)\n```\n\nA legacy scanner that only uses NTLM fails to connect to this one server. You must restore just this scanner's access with minimal exposure while keeping the deny policy for everything else. What should you change?",
+          "options": [
+            "Disable SMB signing on the server to allow older clients to connect.",
+            "Enable \"Send NTLMv2 response only. Refuse LM & NTLM\" on the client.",
+            "Add this server's NetBIOS/DNS name to \"Network security: Restrict NTLM: Add server exceptions in this domain\" so only it can receive NTLM.",
+            "Change \"Restrict NTLM: Incoming NTLM traffic\" from Deny all to Deny all domain accounts."
+          ],
+          "correct_option": "C",
+          "explanation": "The targeted and supported way to exempt a specific server while keeping a domain-wide NTLM deny is to use the exceptions list for that policy. This scopes the allowance to that server only. The other options either reduce security broadly or do not address the block at the receiving end.",
+          "distractor_rationale": "B is a common but unrelated tweak; SMB signing has nothing to do with NTLM being denied. C broadens exposure and still blocks local accounts and services while weakening the stance for all servers. D configures the client but cannot override the server’s explicit deny of incoming NTLM.",
+          "skills_covered": [
+            "Authentication"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider the following on a hardened Linux server:\n\n```bash\n$ id userA\nuid=1001(userA) gid=1001(userA) groups=1001(userA),1002(dev)\n```\n\n```text\n# /etc/sudoers (validated with visudo)\n%admin ALL=(ALL:ALL) ALL\nuserA  ALL=(root) NOPASSWD: /usr/bin/systemctl restart nginx\n```\n\nWhat commands can `userA` run with elevated privileges?",
+          "options": [
+            "Full sudo access as root but a password is required since `userA` is not in `%admin`. ",
+            "No sudo access at all because `userA` is not in `%admin`.",
+            "Any `systemctl` command as root without a password because `systemctl` is the parent binary.",
+            "Only `systemctl restart nginx` as root without a password; all other commands require normal privileges."
+          ],
+          "correct_option": "D",
+          "explanation": "The explicit command alias grants `userA` passwordless sudo for exactly `/usr/bin/systemctl restart nginx`. The `%admin` rule doesn't apply to `userA` because they are not in that group. Sudo is command-scoped here.",
+          "distractor_rationale": "B is a common misconception; sudoers matches the full command path and arguments, not just the binary name. C ignores the explicit per-user rule. D misreads the rule and the need for `%admin` membership.",
+          "skills_covered": [
+            "Linux Security",
+            "User Management"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your Windows baseline states \"September 2021 CU KB5005565 must be installed\". On a server you find:\n\n```powershell\nPS C:\\> Get-HotFix | Where-Object {$_.HotFixID -match 'KB5005|KB5006'} | Select HotFixID, InstalledOn\n\nHotFixID    InstalledOn\n--------    -----------\nKB5006670   10/12/2021\n```\n\nHow should you assess this host’s vulnerability status with respect to the baseline KB?",
+          "options": [
+            "Noncompliant: Cumulative updates do not contain security fixes from prior months.",
+            "Noncompliant: The exact KB5005565 is missing, so the host must be patched to that specific KB.",
+            "Unknown until the host is rebooted; supersedence cannot be assumed without a reboot.",
+            "Compliant: KB5006670 is the October Cumulative Update that supersedes KB5005565, so the fixes are present."
+          ],
+          "correct_option": "D",
+          "explanation": "Monthly Cumulative Updates supersede previous CUs. KB5006670 (October) includes the September fixes. A superseding CU satisfies a baseline that names an earlier CU, assuming the install is completed (which `Get-HotFix` indicates).",
+          "distractor_rationale": "B is a literal reading that ignores supersedence. C confuses installation state with supersedence; the update is installed. D is false; CUs are cumulative precisely to carry forward prior fixes.",
+          "skills_covered": [
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A hardened SSH service shows these negotiation options from an external scan:\n\n```text\nkex_algorithms: diffie-hellman-group14-sha1, curve25519-sha256\nciphers: aes128-cbc, aes256-cbc, aes128-ctr, chacha20-poly1305@openssh.com, aes128-gcm@openssh.com\nmac_algorithms: hmac-sha1, hmac-sha2-256\n```\n\nYour SFTP automation client supports `chacha20-poly1305@openssh.com` and `aes128-gcm@openssh.com`. You want to remove legacy CBC ciphers and SHA-1 MAC usage with a single sshd_config change that will not break the client. What is the best change?",
+          "options": [
+            "Set `Protocol 2` in sshd_config",
+            "Add `Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com`",
+            "Add `MACs hmac-sha2-256`",
+            "Add `KexAlgorithms curve25519-sha256`"
+          ],
+          "correct_option": "B",
+          "explanation": "By constraining SSH to AEAD ciphers (chacha20-poly1305 and AES-GCM), SSH no longer uses separate MACs at all, removing the possibility of SHA-1 MACs and blocking CBC entirely, while remaining compatible with the stated client. Changing MACs or KEX alone would not remove CBC. `Protocol 2` is already the default and irrelevant here.",
+          "distractor_rationale": "B improves MACs but leaves CBC ciphers available. C improves KEX but leaves weak ciphers and MACs. D is unrelated on modern OpenSSH and does not affect the presented weaknesses.",
+          "skills_covered": [
+            "Linux Security"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You change password aging defaults on a Linux host:\n\n```ini\n# /etc/login.defs (before)\nPASS_MAX_DAYS   90\nPASS_MIN_DAYS   1\n\n# /etc/login.defs (after)\nPASS_MAX_DAYS   45\nPASS_MIN_DAYS   1\n```\n\nBut an existing user still shows:\n\n```bash\n$ chage -l sam\nLast password change                                    : May 05, 2026\nPassword expires                                        : Aug 03, 2026\nMinimum number of days between password change          : 1\nMaximum number of days between password change          : 90\n```\n\nWhat will happen for `sam` without further action?",
+          "options": [
+            "Only new users created after the change will get 45 days; existing accounts are permanently at 90 days unless deleted and recreated.",
+            "Nothing changes until you update the user’s aging explicitly (for example, `chage -M 45 sam`) or the user changes their password.",
+            "The next login will enforce the new 45-day maximum automatically for existing accounts.",
+            "The system will lock `sam` immediately because the account violates the new policy."
+          ],
+          "correct_option": "B",
+          "explanation": "Edits to `/etc/login.defs` affect defaults applied at account creation or when password aging is explicitly updated. Existing accounts retain their current values until changed with `chage` or a password reset that reapplies defaults.",
+          "distractor_rationale": "B is a common assumption; however, login.defs does not retroactively change existing `shadow` fields. C overstates the effect; policy changes don't lock accounts retroactively. D is too strong; you can change existing accounts with `chage` without recreating them.",
+          "skills_covered": [
+            "Linux Security",
+            "User Management"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A local admin account on a Windows Server (workgroup, not domain-joined) cannot access `\\\\server\\C$` remotely despite being in the Administrators group. On the server, `whoami /groups` when connected over the network shows:\n\n```text\nBUILTIN\\Administrators ... Enabled\nEveryone ... Enabled\nMandatory Label\\High Mandatory Level\nUser Account Control: Admin Approval Mode = Enabled\nToken is filtered = Yes\n```\n\nWhat change restores remote administrative access for local accounts without disabling UAC entirely?",
+          "options": [
+            "Enable NTLMv2 responses on the client.",
+            "Add the user to the Remote Desktop Users group.",
+            "Set `HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\LocalAccountTokenFilterPolicy` to `1`.",
+            "Disable UAC in Local Security Policy."
+          ],
+          "correct_option": "C",
+          "explanation": "With UAC, remote network logons by local administrators receive a filtered token that removes admin privileges. Setting `LocalAccountTokenFilterPolicy=1` allows remote administrative operations for local accounts while keeping UAC otherwise enabled.",
+          "distractor_rationale": "B affects RDP authorization, not remote admin shares or token filtering. C would work but is overbroad and not acceptable in a hardened baseline. D doesn’t change UAC token filtering and is unrelated.",
+          "skills_covered": [
+            "Authentication",
+            "User Management"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given this SSH configuration to combine MFA for humans and key-only for automation:\n\n```ini\n# /etc/ssh/sshd_config\nUsePAM yes\nAuthenticationMethods publickey,keyboard-interactive\n\nMatch Group ci\n  AuthenticationMethods publickey\n```\n\n`alice` is in group `developers` only. `bob` is in group `ci`. What is true about their login requirements?",
+          "options": [
+            "`alice` must present both a valid key and pass MFA; `bob` may log in with key only.",
+            "`bob` must present OTP only; `alice` must present key only.",
+            "`alice` can log in with password only due to PAM; `bob` requires key only.",
+            "Both `alice` and `bob` must present key plus MFA because `Match` applies after global methods."
+          ],
+          "correct_option": "A",
+          "explanation": "The global `AuthenticationMethods publickey,keyboard-interactive` requires both factors. The `Match Group ci` block overrides for members of `ci`, requiring only public key. Therefore `alice` (not in `ci`) needs both; `bob` needs key only.",
+          "distractor_rationale": "B misstates how `Match` works; it overrides or augments settings for matched principals. C ignores the configured authentication methods. D is inconsistent with any configured method set.",
+          "skills_covered": [
+            "Authentication",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A team reports that enabling PAM-based TOTP did not actually enforce OTP. The PAM stack is:\n\n```text\n# /etc/pam.d/sshd\nauth  sufficient  pam_unix.so try_first_pass nullok\nauth  required    pam_google_authenticator.so\naccount include   system-auth\nsession include   system-auth\n```\n\nWhat is the effective outcome when a user supplies the correct Unix password?",
+          "options": [
+            "Login succeeds without OTP because `pam_unix.so` is marked `sufficient`, short-circuiting the stack on success.",
+            "OTP is prompted after password, but only on the first login per day due to `try_first_pass`.",
+            "Login fails unless the user has an OTP secret because `pam_google_authenticator.so` is `required`.",
+            "Login is denied because `nullok` is incompatible with `required` in the next line."
+          ],
+          "correct_option": "A",
+          "explanation": "The `sufficient` control flag means that on success, PAM returns success immediately and skips subsequent `auth` modules. With a correct password, OTP is never consulted, creating an MFA bypass.",
+          "distractor_rationale": "B ignores the short-circuit semantics of `sufficient`. C invents behavior not implied by `try_first_pass`. D misinterprets `nullok`; it relates to allowing null passwords, not to compatibility with the next line.",
+          "skills_covered": [
+            "Authentication",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your domain enforces a Fine-Grained Password Policy (FGPP):\n\n```text\nFGPP 'Corp-Admins'\n  MinPasswordLength = 14\n  AppliesTo = Domain Admins, Schema Admins\n```\n\nOn a domain-joined workstation, Local Security Policy shows:\n\n```text\nMinimum password length = 8\nPassword must meet complexity = Enabled\n```\n\nA user in `Domain Admins` changes their domain password on this workstation. Which minimum length is enforced for that user’s domain password?",
+          "options": [
+            "14 characters due to the FGPP applying directly to the user via group membership.",
+            "8 characters because Local Security Policy on the workstation takes precedence for local prompts.",
+            "10 characters because complexity implies longer effective length than configured.",
+            "It depends on the DC they connect to; workstation policy is authoritative when prompted locally."
+          ],
+          "correct_option": "A",
+          "explanation": "For domain accounts, the effective password policy is enforced by the domain controller based on the user’s effective FGPP. Local Security Policy on the member workstation governs only local accounts on that machine.",
+          "distractor_rationale": "B is a common misunderstanding; local policy does not override domain policy for domain accounts. C is made up; complexity is independent of minimum length. D incorrectly elevates the client’s local policy over DC-enforced domain policy.",
+          "skills_covered": [
+            "Authentication",
+            "User Management"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are hardening a Linux jump host used by both humans and automation. Current configs:\n\n```ini\n# /etc/ssh/sshd_config (current)\nUsePAM yes\nPasswordAuthentication no\nChallengeResponseAuthentication yes\n# No AuthenticationMethods set\nPermitRootLogin prohibit-password\n```\n\n```text\n# /etc/pam.d/sshd (current)\nauth required pam_google_authenticator.so nullok\nauth include  system-auth\n```\n\nGroups:\n```bash\n$ getent group ci\ni:ci:x:1201:deployer1,deployer2\n$ getent group admins\ni:admins:x:1202:alice,bob\n```\n\nRequirements from security and ops:\n- Human admins (group `admins`) must use key + TOTP MFA.\n- Automation users (group `ci`) must remain key-only and non-interactive.\n- Password-only SSH must be impossible for everyone.\n- Changes must be reversible and tested without dropping existing sessions.",
+          "task": "Propose specific, minimally disruptive configuration changes (exact lines/blocks) to enforce the requirements, and explain why they satisfy them without breaking `ci` non-interactive flows. Include how you would test safely and how you would roll back if a mistake is made.",
+          "expected_answer": "Add an `AuthenticationMethods` default requiring both factors and a `Match` block for `ci`, and fix PAM to avoid `nullok` bypasses. Example:\n\n```ini\n# /etc/ssh/sshd_config (proposed)\nUsePAM yes\nPasswordAuthentication no\nChallengeResponseAuthentication yes\nAuthenticationMethods publickey,keyboard-interactive\n\nMatch Group ci\n  AuthenticationMethods publickey\n```\n\nIn PAM, remove `nullok` and ensure OTP precedes and is not bypassed by a `sufficient` module:\n\n```text\n# /etc/pam.d/sshd (proposed)\nauth required pam_google_authenticator.so\nauth include  system-auth\n```\n\nRationale: Global `AuthenticationMethods publickey,keyboard-interactive` requires a successful public key plus a PAM-driven prompt (TOTP) for everyone. The `Match Group ci` override reduces `ci` members to key-only, preserving non-interactive jobs. Removing `nullok` ensures enrolled users cannot skip OTP.\n\nTesting: Add a new temporary `Match User youruser` block allowing key-only from your source IP, reload sshd (`systemctl reload sshd`), verify `sshd -t` first, then test both an `admins` account (prompted for OTP) and a `ci` account (no OTP prompt). Keep the current session open for rollback. Verify non-interactive `sftp`/`scp` jobs still connect.\n\nRollback: Pre-stage a `Rollback` file with the prior configs; if locked out, use the still-open root session to restore and `systemctl reload sshd`. Keep console/KVM access as a break-glass contingency.",
+          "rubric": [
+            {
+              "criterion": "Correct sshd_config change: sets global `AuthenticationMethods publickey,keyboard-interactive` and a `Match Group ci` overriding to `publickey` only.",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct PAM change: removes `nullok` and avoids `sufficient`-based bypass (ordering rationale provided).",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound testing plan (sshd -t, reload not restart, temp Match/User safety net, keep existing session).",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear rollback strategy with concrete steps and access path (restore files, reload, out-of-band access).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "Authentication",
+            "User Management"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A legacy on-prem app server (APP01) must accept NTLM from a single scanner and one legacy file server, but your baseline enforces NTLM hardening across the domain. Current settings are:\n\n```text\nDomain GPO: \"Network security: Restrict NTLM: Incoming NTLM traffic\" = Deny all\n\"Restrict NTLM: Add server exceptions in this domain\" = (empty)\n\"Audit NTLM authentication in this domain\" = Enable all\n```\n\nBusiness says breaking the app is unacceptable, but security insists on minimal blast radius, auditable exceptions, and a rollback date.",
+          "task": "Design a change that restores the app with least privilege. Specify which GPO(s) to edit, the exact policy items and values, how to scope the exception (security filtering/OU/linking), what audit you will check to validate, and how you will plan the rollback without re-breaking production.",
+          "expected_answer": "Create a dedicated GPO (e.g., \"NTLM Exceptions - APP01\") that configures only:\n\n- \"Network security: Restrict NTLM: Add server exceptions in this domain\" = APP01 (FQDN and NetBIOS).\n\nDo not change the domain-wide \"Deny all\". Link the exception GPO at the domain and use Security Filtering to apply only to the APP01 computer object (or, alternatively, link to the OU containing APP01).\n\nValidation: Use Security log and NTLM operational logs on APP01 and DCs to confirm NTLM events only from the intended scanner and file server (Event IDs 4002/4003 or 4624 LogonType=3 with NTLM). Confirm that other servers still log blocked NTLM (Audit setting remains). Document a scheduled end date and pre-created change to remove APP01 from the exceptions.\n\nRollback plan: Pre-stage a change to remove APP01 from the exceptions GPO and/or unlink the GPO, with a backout window announced. Monitor NTLM usage volumes before and after to ensure no hidden dependencies remain.",
+          "rubric": [
+            {
+              "criterion": "Proposes the exceptions policy using the correct setting and values (server exceptions list) while keeping domain-wide deny.",
+              "marks": 3
+            },
+            {
+              "criterion": "Scoping via Security Filtering/OU so only APP01 is affected.",
+              "marks": 2
+            },
+            {
+              "criterion": "Auditing/validation plan referencing relevant logs/events and confirming minimal exposure.",
+              "marks": 2
+            },
+            {
+              "criterion": "Rollback plan with concrete steps and timing.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A vulnerability scan flags your bastion’s OpenSSH as allowing `aes128-cbc` and `hmac-sha1`. Your automation client confirms it supports `chacha20-poly1305@openssh.com` and `aes128-gcm@openssh.com`. Current sshd_config:\n\n```ini\nUsePAM yes\nPasswordAuthentication no\nChallengeResponseAuthentication yes\n# No Ciphers/MACs explicitly set\n```\n\nOps fears breaking old clients; security wants weak algorithms gone quickly. You are allowed to change one line only this maintenance window.",
+          "task": "Recommend the exact sshd_config line to add, and justify why it removes the flagged weaknesses without breaking the declared automation client. Explain how you would verify post-change and what fallback you would prepare.",
+          "expected_answer": "Add one line selecting only AEAD ciphers:\n\n```ini\nCiphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com\n```\n\nJustification: AEAD ciphers eliminate separate MAC negotiation (removing the possibility of `hmac-sha1`) and exclude CBC entirely, while the client already supports chacha20-poly1305 and AES-GCM. Post-change verification: run `sshd -T | grep -i ciphers`, retest SFTP/SSH from the automation client, and re-scan with `nmap --script ssh2-enum-algos`. Fallback: pre-stage the previous config, keep root session open, and `systemctl reload sshd` back if required.",
+          "rubric": [
+            {
+              "criterion": "Proposes the correct single-line change to Ciphers selecting only AEAD ciphers.",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate justification covering both removal of CBC and SHA-1 MACs via AEAD and client compatibility.",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification steps (sshd -T, client test, rescan).",
+              "marks": 1
+            },
+            {
+              "criterion": "Safe fallback/rollback preparation.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are conducting an IAM review on a small mixed estate. Evidence provided:\n\n```text\nLinux (/etc/group excerpt):\nadmins:x:1202:alice,bob\nci:x:1201:deployer1,deployer2\nfinance:x:1310:sara\n\nLinux (/etc/sudoers.d/10-admins):\n%admins ALL=(ALL) ALL\n%ci     ALL=(root) NOPASSWD: /usr/bin/rsync, /usr/bin/systemctl start app@\n\nWindows (local Administrators group on FS01):\nAdministrator\nDomain Admins\nBackup Operators\nAlice\n\nWindows (NTFS ACL on \\\\FS01\\Finance):\nFinance (M), Domain Admins (F), Everyone (RX)\n```\n\nThe finance share contains PII. You must identify least-privilege issues and propose concrete remediations that maintain operability for backups and CI/deployments.",
+          "task": "Identify at least three over-privileged or mis-scoped permissions/memberships in the above, explain the risk of each, and propose specific fixes (group or ACL changes, command/GPO where applicable). Where you remove direct user membership, show the least-privilege alternative.",
+          "expected_answer": "Findings and fixes (examples):\n1) `Everyone (RX)` on \\\\FS01\\Finance exposes PII broadly. Fix: Replace with `Authenticated Users (RX)` if truly needed for read, or remove entirely; ensure `Finance` retains Modify and `Domain Admins` Full Control only for break-glass. Document and test access for finance users only.\n2) Direct user `Alice` in local Administrators on FS01. Risk: Privilege creep and unclear ownership. Fix: Remove `Alice`; rely on appropriate admin group (e.g., delegated file server admins group) or grant `Alice` temporary JIT elevation via PAM solution; audit with `whoami /groups` after change.\n3) `%ci` has `NOPASSWD` for `systemctl start app@` (wildcard instance). Risk: Can start arbitrary units if template allows escalating behavior. Fix: Constrain to explicit unit names or use `systemd` `AllowIsolate=no` and restrict commands: `/usr/bin/systemctl start app@deploy,app@worker`; remove `rsync` if it enables arbitrary copy; or wrap in a controlled script with `NOEXEC`.\n4) `Backup Operators` on FS01 can read Finance by bypassing file permissions, which may be acceptable. Ensure membership is limited to service accounts; remove human users and enforce MFA for operator consoles. Compensating controls: audit backup restores and access logs.\n\nAll changes maintain CI ability to deploy (still allowed to start specific units) and preserve backups via service accounts, while removing global exposure of PII and direct user admin membership.",
+          "rubric": [
+            {
+              "criterion": "Identifies at least three concrete least-privilege issues correctly from the evidence.",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes specific, technically correct remediations (group/ACL edits, sudoers scope) that maintain required operations.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains the risk/impact of each issue (e.g., PII exposure, privilege creep, command scope).",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses compensating controls or safeguards for necessary elevated roles (e.g., Backup Operators, break-glass).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "User Management",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Harden a host to a baseline with MFA for admins",
+          "brief": "Harden one lab host you control (Linux or Windows). On Linux, enforce key+TOTP for human admins and key-only for automation; on Windows, enforce local security baseline settings for credential hardening. Provide before/after evidence and a reproducible procedure.",
+          "deliverable": "A single archive or repo containing: 1) the hardening script(s) or step-by-step commands, 2) before/after config excerpts and command outputs as text files, 3) a brief changelog and rollback steps. For Linux include sshd_config, PAM snippets, sudoers, firewall, services, patch status. For Windows include Local/Domain GPO result set (gpresult), LSA/NTLM settings, local admins membership, firewall, services, patch status.",
+          "acceptance_criteria": [
+            "Includes a runnable script or clearly numbered commands to apply the hardening and separate steps to roll back.",
+            "For Linux: `sshd_config` shows `AuthenticationMethods publickey,keyboard-interactive` plus a `Match` block making automation group key-only; root SSH disabled; `PasswordAuthentication no`. For Windows: NTLM hardening is enabled with any exceptions documented.",
+            "PAM config on Linux enforces OTP without `nullok`/`sufficient` bypass; evidence of OTP prompt for an admin and no OTP for a `ci` user via transcript or screenshots.",
+            "Password policy meets baseline: for Linux, show `login.defs` and `chage -l` for at least two existing accounts updated; for Windows, show effective domain/local policy for password length/lockout via `net accounts` or gpresult.",
+            "Host fully patched: Linux shows `uname -r`, package manager update status and no pending security updates; Windows shows recent Cumulative Update via `Get-HotFix` and Windows Update history.",
+            "Unnecessary services are disabled; provide `systemctl --type=service --state=enabled` (Linux) or `Get-Service | ? {$_.StartType -eq 'Automatic'}` (Windows) with justifications for what remains.",
+            "Least-privilege sudo/administrators: no direct user in local Administrators (Windows) or broad `NOPASSWD` on Linux beyond narrowly scoped commands; provide `sudo -l -U <admin>` and `Get-LocalGroupMember Administrators`.",
+            "Host firewall defaults to deny inbound except required management ports (e.g., 22/3389/5986); include rule listing and justification.",
+            "All configs validate: `sshd -t` passes, visudo syntax OK, gpresult shows applied GPOs without errors.",
+            "Documentation includes a short test plan verifying admin MFA success, automation success, and a break-glass path."
+          ],
+          "rubric": [
+            {
+              "criterion": "Reproducible hardening procedure with clear rollback (scripts/commands and changelog).",
+              "marks": 4
+            },
+            {
+              "criterion": "SSH/PAM or Windows credential-hardening correctly implemented and evidenced (no MFA bypass; correct exceptions).",
+              "marks": 5
+            },
+            {
+              "criterion": "Patch status and baseline password policy correctly applied and evidenced for existing accounts.",
+              "marks": 3
+            },
+            {
+              "criterion": "Service minimization and firewall rules justified and evidenced.",
+              "marks": 3
+            },
+            {
+              "criterion": "Privilege configuration least-privilege (sudo/admins) with proof (`sudo -l`, group membership).",
+              "marks": 3
+            },
+            {
+              "criterion": "Configuration validation and test plan completeness.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Linux Security",
+            "Authentication",
+            "User Management",
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "IAM review with least-privilege recommendations",
+          "brief": "Perform an IAM review on a small target environment you control (can be a lab VM pair: one Linux, one Windows, or a domain member and a Linux server). Inventory privileged accounts and groups, map effective access to at least five sensitive assets, identify over-privileged accounts, evaluate MFA coverage, and propose concrete remediations with evidence.",
+          "deliverable": "An IAM review report (PDF or Markdown) plus an evidence bundle containing raw command outputs/exports: Linux `/etc/passwd`, `/etc/group`, relevant `sudoers` snippets, `getent` outputs, `sudo -l -U <user>` for at least two users; Windows `Get-LocalGroupMember Administrators`, `whoami /groups` for at least two users, and if domain-joined, `Get-ADGroupMember` exports. Include an MFA coverage matrix (who has MFA and where) and a remediation plan with exact group/ACL/sudoers changes or AD cmdlets.",
+          "acceptance_criteria": [
+            "Privileged inventory: Lists all local admins (Windows) and sudo-eligible groups/users (Linux), showing source (local vs domain) with evidence outputs attached.",
+            "Effective access matrix: For at least five sensitive assets (e.g., Admin share, Finance folder, sudo command scope), shows each principal’s effective rights and how they are granted (group nesting/ACL/sudoers).",
+            "Findings: At least three concrete over-privilege or misconfiguration findings with screenshots or command output proving the issue.",
+            "MFA review: Identifies which privileged users lack MFA on critical entry points (e.g., SSH, RDP/VPN) and ties evidence to configuration (e.g., PAM config, Azure/IdP export, or `sshd_config` policy).",
+            "Remediation plan: Specific, least-privilege changes (group membership edits, sudoers scoping, ACL changes, GPO links) with commands or GPO paths; includes a risk note and a simple rollback for each.",
+            "Orphaned/stale/service accounts: Flags any accounts without owners or with stale passwords/keys and proposes fixes (disable, rotate, or remove) with supporting evidence.",
+            "Quality: Report is logically structured, references each evidence item, and avoids unverifiable claims."
+          ],
+          "rubric": [
+            {
+              "criterion": "Comprehensive privileged inventory with solid evidence (Linux and/or Windows).",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct effective access analysis for at least five assets, showing path of privilege (groups/ACL/sudo).",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear, evidenced over-privilege findings (≥3) with accurate risk statements.",
+              "marks": 4
+            },
+            {
+              "criterion": "MFA coverage analysis that correctly identifies gaps at critical paths (SSH/RDP/VPN) and references configs.",
+              "marks": 3
+            },
+            {
+              "criterion": "Actionable, least-privilege remediation plan with commands/paths and rollback notes.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "User Management",
+            "Linux Security"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-032-S03",
+      "skills_assessed": [
+        "Vulnerability Assessment",
+        "Logging",
+        "SIEM Basics",
+        "perform escalation procedure",
+        "Report Writing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You review a host entry from last night’s external scan:\n```text\nHost: 10.10.5.23\nOS guess: Windows Server 2016\nPort 445/tcp: open\nCredentialed checks: No (SMB logon failed: STATUS_LOGON_FAILURE)\nFinding: MS17-010 (CVE-2017-0144) — Critical — Exploit Available\nEvidence: SMB dialect: 3.0, build banner: 10.0.14393\n```\nGiven this artefact and knowing the environment backports patches without changing service banners, which action most reduces false positives for this host on the next scan cycle?",
+          "options": [
+            "Increase SYN probe retries for port 445 so the scanner is more certain the service is up before flagging the CVE.",
+            "Rescan the host with valid Windows credentials so patch state is verified via registry/WMI instead of banner inference.",
+            "Switch to UDP-based SMB enumeration on port 137/138 to fetch NetBIOS data that is more reliable than SMB dialects.",
+            "Add an allowlist exception for 10.10.5.23 because it likely is a backport case and treat the finding as accepted risk."
+          ],
+          "correct_option": "B",
+          "explanation": "Without credentials, vulnerability plugins often infer missing patches from service banners and protocol features, which backporting breaks. Enabling credentialed checks lets the scanner read registry, WMI, or file versions to directly verify MS17-010 remediation and removes banner-based false positives.",
+          "distractor_rationale": "B is tempting because more reliable port state sounds helpful, but it does nothing about banner-based inference errors. C is tempting if you assume backporting, but it skips verification and institutionalizes risk. D confuses enumeration method with patch verification; NetBIOS data does not prove patch state and is less reliable than authenticated checks.",
+          "skills_covered": [
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your SIEM rule for password spraying currently uses this KQL-like query and creates a flood of low-value alerts:\n```sql\nSecurityEvent\n| where EventID == 4625\n| summarize Failures=count() by Account, bin(TimeGenerated, 5m)\n| where Failures > 10\n```\nAn attacker is failing once per account across hundreds of users from a single IP within 5 minutes. Which revised query best detects the spray with one alert per source while avoiding per-user noise?",
+          "options": [
+            "```sql\nSecurityEvent\n| where EventID == 4625\n| extend IsHuman=Account !endswith \"$\"\n| where IsHuman\n| summarize Attempts=count() by SrcIp, bin(TimeGenerated, 5m)\n| where Attempts > 10\n```",
+            "```sql\nSecurityEvent\n| where EventID == 4625\n| summarize Attempts=count() by SrcIp, Account, bin(TimeGenerated, 5m)\n| where Attempts > 100\n```",
+            "```sql\nSecurityEvent\n| where EventID == 4625\n| summarize Users=count_distinct(Account) by SrcIp, bin(TimeGenerated, 5m)\n| where Users > 50\n```",
+            "```sql\nSecurityEvent\n| where EventID == 4625\n| summarize Attempts=count() by Account, bin(TimeGenerated, 1h)\n| where Attempts > 1\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Password sprays touch many accounts once each from a single source. Counting distinct targeted users per source IP within a short window captures the attack pattern and produces one alert per spraying source.",
+          "distractor_rationale": "B still keys on per user and source, so it continues to spawn many alerts. C widens the window and lowers the threshold, worsening noise. D removes machine accounts but still counts total attempts, which does not distinguish a single account being hammered from many accounts probed once.",
+          "skills_covered": [
+            "Logging",
+            "SIEM Basics",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have to pick a patching order based on this report extract and near-real-time detections:\n```text\nAsset     Exposure         CVSS  ExploitAvail  SIEM Hits (last 24h)\nweb-01    Internet        7.5    Yes           12 WAF blocks matching exploit PoC\ndb-03     Internal        9.8    No            0\njump-02   VPN-only       8.1    Yes           0\nlab-07    Isolated Lab   9.8    Yes           0\n```\nWhich single asset should be remediated first, given the evidence?",
+          "options": [
+            "jump-02",
+            "db-03",
+            "web-01",
+            "lab-07"
+          ],
+          "correct_option": "C",
+          "explanation": "web-01 is Internet-exposed with live exploit attempts observed. Although db-03 has a higher CVSS, there’s no exploitation and it’s internal. The active threat plus exposure trumps raw CVSS.",
+          "distractor_rationale": "B is tempting due to 9.8, but risk is moderated by internal exposure and no activity. C has exploit availability but no activity and is VPN-gated. D looks scary (9.8, exploitable) but is isolated lab with no activity and likely lower business impact.",
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Logging"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Web and Sysmon logs from `web-02` show:\n```text\nApache access.log:\n192.0.2.9 - - [17/Aug/2026:03:12:11 +0000] \"GET /cgi-bin/status HTTP/1.1\" 200 - \"-\" \"curl/7.29.0\"\n198.51.100.44 - - [17/Aug/2026:03:12:13 +0000] \"GET /cgi-bin/test-cgi() { :;}; /bin/bash -c 'id' HTTP/1.1\" 500 - \"-\" \"BadBot/1.0\"\n\nSysmon Event 1 (Process Create):\nUtcTime: 2026-08-17 03:12:13Z\nParentImage: C:\\\\Apache24\\\\bin\\\\httpd.exe\nImage: C:\\\\Windows\\\\System32\\\\bash.exe\nCommandLine: bash -c id\n```\nWhat is the most appropriate immediate triage action?",
+          "options": [
+            "Search process trees on all web servers for `httpd.exe` spawning shell, quarantine hosts with hits, and escalate as confirmed compromise.",
+            "Reset all user passwords on the server because `id` reveals user info.",
+            "Mark as false positive because Apache returned 500 and no output was sent to the client.",
+            "Tune the WAF to drop requests containing `() { :;};` and close the alert as mitigated."
+          ],
+          "correct_option": "A",
+          "explanation": "The process creation shows bash spawned by httpd at the exact time of a Shellshock-style request, indicating code execution. You should hunt for similar parent-child relationships, quarantine affected hosts, and escalate.",
+          "distractor_rationale": "B assumes HTTP 500 implies failure, but the Sysmon event confirms execution. C mitigation is fine for prevention, but the incident already occurred and requires response. D is overbroad and misaligned; password resets don't address host compromise evidence.",
+          "skills_covered": [
+            "Logging",
+            "perform escalation procedure",
+            "SIEM Basics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You correlate vulnerability and Windows authentication telemetry:\n```text\nVuln scan (10.0.0.0/24): 41 hosts with \"SMB signing disabled\"\nSecurityEvent sample (multiple hosts):\n03:00:11 4625 Failure (LogonType=3) SrcIp=203.0.113.5 Account=j.doe\n03:00:12 4625 Failure (LogonType=3) SrcIp=203.0.113.5 Account=a.lee\n...\n03:05:08 4624 Success (LogonType=3) SrcIp=203.0.113.5 Account=svc-build\n03:05:10 4672 Special privileges assigned to new logon Account=s-1-5-21-...-500\n```\nGiven this pattern across many hosts, which technique best explains the success event sequence?",
+          "options": [
+            "NTLM relay enabled by SMB signing being disabled on multiple targets.",
+            "Interactive console login by a local admin.",
+            "Pass-the-ticket via Kerberos constrained delegation.",
+            "Legitimate VPN login followed by standard domain admin activity."
+          ],
+          "correct_option": "A",
+          "explanation": "SMB signing disabled allows NTLM relay. The spray of 4625s followed by a 4624 network logon and immediate 4672 suggests theft/relay of credentials and privileged access over SMB across hosts.",
+          "distractor_rationale": "B ignores the volume/pattern across many hosts and the SMB signing vulnerability. C would feature Kerberos artifacts (TGS/TGT events) rather than SMB-focused patterns. D would be LogonType 2 (interactive), not 3 (network).",
+          "skills_covered": [
+            "Logging",
+            "Vulnerability Assessment",
+            "SIEM Basics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A nightly Windows credentialed scan overlaps with backup jobs. Scanner logs show:\n```text\n03:01:17 Host 10.10.20.41: ICMP ok, TCP/445 open\n03:01:22 SMB Auth to 10.10.20.41 failed: timeout\n03:01:52 WMI RPC error: 0x800706BA (RPC server unavailable)\n03:02:05 Host seems down, skipping credentialed checks\n```\nThe scan reports most hosts as \"unreachable\" with many missing-patch findings suppressed. What single change is most likely to reduce false negatives immediately?",
+          "options": [
+            "Switch from credentialed scanning to banner-based checks that don’t require RPC.",
+            "Move the scan window outside the backup period to reduce host resource contention and RPC timeouts.",
+            "Disable host-based firewalls during the scan window so WMI is reachable.",
+            "Increase ICMP echo retries from 1 to 5 so hosts are always discovered before credentialed checks."
+          ],
+          "correct_option": "B",
+          "explanation": "Backups commonly saturate I/O and CPU and cause RPC/WMI timeouts. Rescheduling avoids contention and restores reliable credentialed checks, which are needed for accurate patch verification.",
+          "distractor_rationale": "B improves ping discovery but doesn’t fix WMI/RPC timeouts post-discovery. C is risky and often infeasible. D would increase false positives/negatives by abandoning credentialed checks.",
+          "skills_covered": [
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your asset inventory enrichment uses this JSON for host tags:\n```json\n{\n  \"hostname\": \"pay-01\",\n  \"criticality\": \"high\",\n  \"env\": \"prod\"\n}\n```\nBut your SIEM detection relies on this YAML:\n```yaml\nname: High-value host interactive admin logon\nquery: |\n  SecurityEvent\n  | where EventID == 4624 and LogonType == 2\n  | where tags.critical == true\nseverity: High\n```\nThe rule never fires on high-criticality hosts. What is the most effective fix?",
+          "options": [
+            "Rename the JSON field from `criticality` to `critical` in the CMDB.",
+            "Lower the severity to Medium so the SIEM doesn’t suppress alerts during peak hours.",
+            "Append an additional filter `or criticality == \"high\"` at the end of the query.",
+            "Map the asset field `criticality: \"high\"` to a boolean `tags.critical: true` during enrichment before the rule runs."
+          ],
+          "correct_option": "D",
+          "explanation": "The rule expects a boolean `tags.critical`. You must normalize/enrich the asset context to that field before detection runs so the filter matches.",
+          "distractor_rationale": "B changes alert priority, not matching logic. C grafts a mismatched field into the query but references `criticality` in a namespace the rule doesn’t join to (and still mixes types). D renaming in the CMDB is heavy-handed and may break other integrations; enrichment is the correct place to map fields.",
+          "skills_covered": [
+            "SIEM Basics",
+            "Logging"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your incident policy states:\n```text\nEscalate as P1 if a single source IP fails login against >50 distinct user accounts within 15 minutes on domain controllers.\n```\nAn alert payload shows:\n```json\n{\n  \"rule\": \"Password Spray - Distinct Users per Source\",\n  \"src_ip\": \"203.0.113.77\",\n  \"distinct_users\": 73,\n  \"targets\": [\"dc-01\",\"dc-02\"],\n  \"window_minutes\": 10\n}\n```\nWhat severity and action should you assign?",
+          "options": [
+            "P1, block source IP at edge and notify IAM for targeted password resets and monitoring.",
+            "P1, immediately expire all domain passwords.",
+            "P3, close as expected noise from vulnerability scanners.",
+            "P2, tune rule threshold to 100 and continue monitoring."
+          ],
+          "correct_option": "A",
+          "explanation": "The event exceeds policy thresholds on domain controllers within the defined window. Treat as P1, block the source, and coordinate with IAM for focused response. A global password reset is not indicated.",
+          "distractor_rationale": "B contradicts the explicit policy and weakens detection. C confuses scanner behavior with spray patterns against many users. D is overkill and could cause outage without clear compromise evidence.",
+          "skills_covered": [
+            "perform escalation procedure",
+            "SIEM Basics",
+            "Logging"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A scan policy file was committed with:\n```ini\n[general]\nsafe_checks = no\nmax_checks_per_host = 8\n```\nSubsequently, two fragile legacy devices rebooted during the scan window. What is the most appropriate corrective action for future scans?",
+          "options": [
+            "Disable scanning of legacy devices entirely and rely on agent-based checks.",
+            "Enable `safe_checks = yes` and create a separate discovery-only policy for legacy/fragile devices.",
+            "Lower `max_checks_per_host` to 1 so probes run one at a time and will never cause outages.",
+            "Keep `safe_checks = no` but run scans during lower-traffic windows to reduce risk."
+          ],
+          "correct_option": "B",
+          "explanation": "`safe_checks = yes` avoids intrusive exploits. Pairing that with a dedicated, less aggressive discovery policy for fragile assets reduces risk while retaining visibility.",
+          "distractor_rationale": "B reduces concurrency but not probe intrusiveness. C changes timing, not safety. D may be impossible if agents are unsupported; it also removes network visibility for those devices.",
+          "skills_covered": [
+            "Vulnerability Assessment"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You are correlating web proxy and EDR logs. You notice apparent \"future\" EDR process events. Extracts:\n```text\nProxy log (UTC):     2026-08-17 03:10:12   GET http://bad.example/payload\nEDR event (Local):   2026-08-17 04:10:20   ProcCreate cmd.exe /c curl ...\nEDR metadata:        timezone = Europe/Berlin (UTC+2 in summer)\nSIEM timeline shows EDR before proxy due to missing tz normalization.\n```\nWhich ingestion fix will most reliably restore correct correlation windows across sources?",
+          "options": [
+            "Lower the correlation window to 1 minute so mis-ordered events are less likely to overlap.",
+            "Apply a fixed -1 hour offset to all EDR events because they appear one hour ahead.",
+            "Sort events by arrival time instead of event time to preserve order.",
+            "Normalize all timestamps to UTC at ingest and store original timezone in a separate field."
+          ],
+          "correct_option": "D",
+          "explanation": "Normalizing to UTC at ingestion is the standard way to correlate events across sources and timezones, while preserving the original in metadata for display/audit.",
+          "distractor_rationale": "B fails during DST changes and for hosts in different zones. C arrival time is variable and breaks analysis. D reduces detection fidelity and does not fix ordering.",
+          "skills_covered": [
+            "Logging",
+            "SIEM Basics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are the on-call analyst. A new external scan shows 18 Internet-facing servers with a mix of Critical (CVSS 9.8) and High (7.5–8.8) findings. The SIEM has produced 23 WAF alerts in the last 12 hours matching known exploit traffic for one of the High (7.5) issues on `web-01` and `web-03`. Change windows are limited: web tier can patch nightly 01:00–03:00 UTC; database tier only weekends. A critical product launch is in 48 hours. Business criticality: customer portal (web-01/web-03) = highest; marketing site (web-07) = low. An emergency virtual patch (WAF rule) is available for the 7.5 issue; vendor OS patches require reboots.",
+          "task": "Propose a prioritised remediation and monitoring plan for the next 48 hours that balances exposure, exploit activity, and maintenance constraints. Justify your ordering and include verification steps using both rescans and SIEM data.",
+          "expected_answer": "Prioritise Internet-exposed assets with observed exploitation against business-critical services first. Immediately deploy the virtual patch (WAF rule) to `web-01`/`web-03`, confirm reduced exploit hits in SIEM, and schedule OS/application patches for these two during the next web-tier window (01:00–03:00 UTC), with coordinated failover if available. Validate by pre-change baseline of WAF hits and post-change drop, plus quick targeted rescan on the specific CVE to confirm mitigation. Next, address any Critical (9.8) findings on other Internet-facing servers that are externally exploitable, focusing on those with public exploits; for databases constrained to weekends, implement compensating controls (network ACLs, reduced exposure, query throttling) and enhanced monitoring (queries/alerts for signatures of exploitation) until maintenance window. For low-criticality sites like `web-07`, defer if no SIEM hits and apply standard patching within SLA. Maintain increased SIEM detection for related TTPs (e.g., process spawns from web server, outbound callbacks), and run a post-patch authenticated rescan to verify closure. Document risk acceptance for deferred internal-only criticals with owner sign-off. Include rollback plans and communication to stakeholders ahead of the launch.",
+          "rubric": [
+            {
+              "criterion": "Prioritises assets using exposure and live exploit evidence over raw CVSS (web-01/web-03 first)",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses virtual patching immediately and schedules hard patch within available windows; addresses database window constraint with compensating controls",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines concrete verification steps: SIEM signal drop, targeted rescan, and post-patch authenticated scan",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains monitoring enhancements (e.g., process-child of web server, outbound C2) and documents risk acceptance/communication",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Logging",
+            "SIEM Basics",
+            "Report Writing",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "At 09:00 your SIEM floods with \"Excessive authentication failures\" from domain controllers. Investigation shows the scanner service account password expired overnight, and the vulnerability scanner attempted credentialed checks across the domain from its two engines. Lockouts occurred for some admin users due to correlation rules firing. Leadership wants immediate containment and a plan to prevent recurrence without blinding you to real brute-force attacks.",
+          "task": "Diagnose the root cause using the evidence, then propose concrete changes to both scanner configuration and SIEM correlation so this specific event won’t create a false-positive storm in the future. Include how you will test the fixes.",
+          "expected_answer": "Root cause: expired scanner service account led to widespread 4625 events from scanner engine IPs across many hosts, which matched spray/bruteforce rules. Immediate containment: reset scanner service account with a non-expiring or properly rotated secret (managed identity/vault), unlock affected accounts, and pause scans until fixed. Scanner config: enforce credential health checks before job start, staggered credentialed scans, and engine source IP tagging; add a dedicated AD service account with least privilege and alert on nearing password expiry. SIEM correlation: add a suppression/exception for known scanner engine IPs when failures spike without corresponding success/auth events, require a minimum distinct-source threshold for brute-force, and key a separate rule that alerts on scanner credential failures (from scanner logs) at lower severity. Implement device/entity tags so rules distinguish `Actor=Scanner` from `Actor=Unknown`. Testing: stage a lab where the scanner uses a bad credential and verify that (a) brute-force rules do not fire due to source/IP exception and (b) a specific \"scanner credential failure\" alert fires; then run a benign password spray simulation from a non-scanner IP to ensure detection still works.",
+          "rubric": [
+            {
+              "criterion": "Identifies the expired scanner credential as root cause and links it to the flood of 4625s from scanner IPs",
+              "marks": 2
+            },
+            {
+              "criterion": "Scanner-side mitigations (credential rotation/health check, least-privileged account, staggering, IP tagging) are concrete",
+              "marks": 2
+            },
+            {
+              "criterion": "SIEM-side mitigations (source exceptions with guardrails, additional context requirements, dedicated failure rule) without eliminating true detections",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines a realistic test plan that validates both suppression and continued true-positive detection",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "SIEM Basics",
+            "perform escalation procedure",
+            "Vulnerability Assessment",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your inventory shows 120 Windows endpoints missing a recent patch for a remote code execution CVE. EDR telemetry for a subset shows suspicious PowerShell encodings and outbound connections to a suspicious domain shortly after HTTP requests to an on-prem wiki server known to be unpatched with a separate vulnerability. Time is limited and leadership wants to know if this is opportunistic malware or lateral movement from the wiki.",
+          "task": "Outline a triage and scoping approach to determine whether the endpoints’ PowerShell activity is linked to exploitation of the wiki server and to contain further spread. Specify the log sources, correlations, and immediate containment you would perform.",
+          "expected_answer": "Pivot from the wiki server: pull web access logs to identify client IPs requesting the vulnerable endpoints (e.g., specific exploit URL). Correlate those client IPs/timestamps with EDR process lineage showing browsers spawning PowerShell (Event ID 1/ScriptBlock logs), and with DNS/proxy logs for the suspicious domain. Validate whether the first-seen PowerShell on endpoints follows immediately after the wiki exploit request to indicate delivery from the wiki. Use SIEM to link sessions across hostnames, process parents (browser -> powershell), and network IOCs. Scope all endpoints with matching sequence and hashes of downloaded payloads. Contain by isolating affected endpoints in EDR, blocking the malicious domain at proxy, and applying an emergency mitigation to the wiki (take offline or virtual patch) followed by patching. Preserve forensic artefacts (script blocks, binaries) and initiate password hygiene only if credential theft is evidenced. Report out with the chain: wiki exploit -> drive-by -> PowerShell -> outbound C2.",
+          "rubric": [
+            {
+              "criterion": "Identifies and uses the wiki server as the pivot and correlates client IPs/timestamps from web logs",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies endpoint/EDR and PowerShell logging required and ties it in sequence to the web events",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes scoping via IOC/process lineage across endpoints and appropriate immediate containment actions",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how to differentiate opportunistic malware from lateral movement and outlines communication/reporting",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Logging",
+            "SIEM Basics",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Two findings conflict: (1) Critical CVE on `db-05` (CVSS 9.8) that is only exploitable from the app subnet; network segmentation prevents Internet access to `db-05`. (2) High CVE (7.8) on `api-01` which is Internet-exposed. The business requests deferring `api-01` patching due to partner SLA commitments, arguing the CVSS is lower. SIEM shows occasional suspicious 404 probes to `/v1/upload` on `api-01`, but no hits for `db-05`.",
+          "task": "Decide whether to accept risk on `db-05` or `api-01` for one week, justify the choice using exposure and monitoring data, and outline interim compensating controls and validation steps.",
+          "expected_answer": "Defer (accept for one week) the internally reachable `db-05` finding given its lack of external exposure and no observed activity, provided segmentation is validated. Prioritise patching `api-01` because it is Internet-exposed with probing activity. For the deferment, implement compensating controls: verify and document ACLs/segmentation preventing access to `db-05` from untrusted zones; tighten app subnet access (microsegmentation), enhance detections for the CVE’s exploitation patterns on `db-05`, and perform a targeted authenticated scan to confirm no alternate exposure. For `api-01`, deploy a virtual patch (WAF rule) for `/v1/upload`, raise SIEM monitoring thresholds and anomaly detections, and schedule an emergency patch window if possible. Validate by running a scan-from-app-subnet for `db-05` to confirm limited exposure and by showing a drop in malicious probes or blocked attempts for `api-01`. Document risk acceptance with owner sign-off and review in 7 days.",
+          "rubric": [
+            {
+              "criterion": "Chooses to defer the internal-only `db-05` and prioritises `api-01`, justified by exposure and SIEM activity",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies concrete compensating controls for `db-05` (segmentation validation, microsegmentation, focused detections)",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines validation steps (targeted scans from relevant segments, SIEM signal checks) and documentation/sign-off",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Logging",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a Vulnerability Report with Prioritised Remediation Plan",
+          "brief": "Using a small target set from your lab or provided corporate subnet (5–15 hosts), perform an authenticated vulnerability assessment. Build an asset inventory, run scans, prioritise findings using exposure and any available detection evidence, and propose remediation with timelines. Include verification by rescanning. The report must be self-contained so an assessor can review it without access to your tools.",
+          "deliverable": "A single report document (PDF/Docx/Markdown) titled \"Vulnerability Report - <YourName>\" containing: (1) Scope and methodology; (2) Asset inventory table; (3) Scan configuration details and evidence (screenshots/log excerpts); (4) Prioritised findings with context (CVSS, exposure, business criticality, exploit activity if any); (5) Remediation plan with owners and timelines; (6) Validation results from a rescan; (7) Exceptions/risk acceptances with justification; (8) Appendix with raw artefact excerpts.",
+          "acceptance_criteria": [
+            "Report includes an asset inventory table with at least hostname, IP, OS, and criticality for 5–15 hosts.",
+            "Evidence of authenticated scanning is shown (e.g., credentialed check indicators) and scan configuration is described (targets, windows, safe checks).",
+            "Findings are prioritised using more than CVSS (e.g., exposure, exploit availability, detections) and mapped to remediation actions and timelines.",
+            "A verification rescan is performed with before/after evidence for at least two remediated findings.",
+            "Exceptions or deferrals, if any, have business justification and documented owner sign-off (template acceptable)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of methodology and scope, including scan configuration and evidence of authenticated checks",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and accuracy of asset inventory (fields present, consistent, and traceable to evidence)",
+              "marks": 4
+            },
+            {
+              "criterion": "Prioritisation quality (uses exposure/business context/detections, not just CVSS) and clarity of remediation plan",
+              "marks": 6
+            },
+            {
+              "criterion": "Verification quality (rescan evidence, before/after comparison, closure validation)",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation of exceptions/deferrals with clear justification and ownership",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Vulnerability Assessment",
+            "Report Writing",
+            "Logging"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a Detection Lab: Queries, Alerts, and Triage Playbooks",
+          "brief": "Implement a small detection lab focusing on three use cases: (1) password spraying against AD, (2) exploitation attempts against a web app endpoint, and (3) suspicious PowerShell execution. Create queries/rules, demonstrate them on test data, and produce a triage/escalation playbook for each. Where possible, enrich with asset inventory tags (e.g., critical hosts). Submission should include the queries, screenshots or logs of test alerts, and concise runbooks an L1 analyst could follow.",
+          "deliverable": "A lab pack (single zip or folder) containing: (a) detection queries/rules (SPL/KQL/SQL) as .txt or .md files; (b) sample alert artefacts (JSON exports, screenshots, or saved logs) showing each rule firing on test data; (c) a triage playbook per use case with steps, decision points, and escalation criteria; (d) optional enrichment mapping file showing how asset criticality is applied.",
+          "acceptance_criteria": [
+            "Contains three distinct detection queries/rules matching the specified use cases, each runnable in your chosen SIEM/log platform syntax.",
+            "Each detection has at least one sample alert artefact demonstrating a fired alert with populated key fields (timestamps, entities).",
+            "Playbooks include verification steps (additional queries/logs to pull), containment/escalation criteria, and suppression guidance for common false positives.",
+            "At least one rule uses asset enrichment (e.g., critical hosts) and the submission shows how the enrichment is applied (mapping or join)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness and effectiveness of the three detection queries/rules (logic matches use cases, handles common edge cases)",
+              "marks": 7
+            },
+            {
+              "criterion": "Quality of evidence: clear artefacts/screenshots/logs showing alerts firing with relevant fields",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and operational usefulness of triage playbooks, including escalation paths and FP suppression guidance",
+              "marks": 6
+            },
+            {
+              "criterion": "Implementation of asset enrichment in at least one rule and demonstration of its effect",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "SIEM Basics",
+            "Logging",
+            "perform escalation procedure",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-032-S04",
+      "skills_assessed": [
+        "Logging",
+        "SIEM Basics",
+        "perform escalation procedure",
+        "Backup and Recovery",
+        "define security policies",
+        "cloud technologies",
+        "ethics",
+        "Report Writing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your SOC uses Splunk to hunt suspicious PowerShell launches. During an active incident, IR reports the adversary alternates between `powershell.exe -ENC ...` and `pwsh.exe -EncodedCommand ...`, with mixed casing. Current SPL:\n\n```text\nindex=winsec sourcetype=XmlWinEventLog:Security EventCode=4688\n| search New_Process_Name=\"*\\\\powershell.exe\" CommandLine=\"*encodedcommand*\"\n| stats count by host, user\n```\nWhich revision best captures both variants while preserving the original command line for evidence?",
+          "options": [
+            "```text\nindex=winsec sourcetype=XmlWinEventLog:Security EventCode=4688\n| tstats count where (New_Process_Name=powershell.exe OR New_Process_Name=pwsh.exe)\n  by host,user\n```",
+            "```text\nindex=winsec sourcetype=XmlWinEventLog:Security EventCode=4688\n| eval New_Process_Name=lower(New_Process_Name), CommandLine=lower(CommandLine)\n| search New_Process_Name=\"*powershell.exe\" CommandLine=\"*encodedcommand*\"\n| stats count by host, user\n```",
+            "```text\nindex=winsec sourcetype=XmlWinEventLog:Security EventCode=4688\n| search New_Process_Name=\"*\\\\powershell.exe\" CommandLine=\"*encodedcommand*\"\n| dedup host user\n```",
+            "```text\nindex=winsec sourcetype=XmlWinEventLog:Security EventCode=4688\n| regex New_Process_Name=\"(?i)\\\\(powershell|pwsh)\\.exe$\"\n| regex CommandLine=\"(?i)\\b(enc|encodedcommand)\\b\"\n| stats values(CommandLine) as cmd by host, user, New_Process_Name\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Case-insensitive regex on both process and command line catches pwsh/powershell and ENC/EncodedCommand variants and retains the original `CommandLine` for evidentiary review via `values(CommandLine)`.",
+          "distractor_rationale": "B: Lowercasing simplifies matching but loses the original `CommandLine` casing/content in the output and still misses `pwsh.exe` in the search pattern. C: `tstats` on these fields is inappropriate without data model acceleration and drops the `CommandLine` evidence entirely. D: Original query remains too narrow and misses casing/`pwsh` variations; `dedup` does nothing to fix coverage or preserve commands.",
+          "skills_covered": [
+            "SIEM Basics",
+            "Logging"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your escalation matrix excerpt is below.\n\n```text\nSeverity: HIGH\nTriggers (any):\n - Confirmed or strongly suspected PII exposure\n - Data exfiltration > 10 GB\nNotifications required within 60 minutes (any time of day):\n - CIRT Lead (on-call)\n - Legal Counsel (on-call)\n - Data Protection Officer (DPO)\n - CloudOps On-call\nNote: CIO is notified within 60 minutes only for CRITICAL (widespread outage or safety impact).\n```\nAt 02:05 UTC the SIEM correlates 15 GB of S3 object downloads tied to a vendor key; customer PII is likely involved. Who must be notified in the first hour, per policy?",
+          "options": [
+            "CIRT Lead and CloudOps On-call only",
+            "Wait for business hours to confirm, then notify only CIRT Lead",
+            "CIRT Lead, Legal Counsel, DPO, and CloudOps On-call",
+            "CIO only (after-hours critical)"
+          ],
+          "correct_option": "C",
+          "explanation": "The trigger matches HIGH (suspected PII and >10 GB). The matrix requires CIRT Lead, Legal, DPO, and CloudOps within 60 minutes. CIO is reserved for CRITICAL.",
+          "distractor_rationale": "A: Minimizes legal/privacy stakeholders, but policy explicitly requires Legal and DPO when PII is suspected. C: Misreads severity; policy gates CIO to CRITICAL only. D: Defers notification against the 60-minute HIGH requirement.",
+          "skills_covered": [
+            "perform escalation procedure",
+            "define security policies",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Ransomware began encrypting a fileserver at 12:40. IR confirmed at 13:15. RPO is 30 minutes; RTO is 2 hours. Backups:\n\n```text\n01:00 Full (valid)\n12:00 Full (valid)\n12:30 Incremental (valid)\n13:00 Incremental (unknown integrity)\n13:30 Incremental (post-infection)\n```\nWhich restore sequence best meets RPO/RTO while avoiding reinfection?",
+          "options": [
+            "Restore 13:00 Incremental only to save time; scan later.",
+            "Restore 12:00 Full + 12:30 Incremental; validate and bring online.",
+            "Restore 01:00 Full + all incrementals to 13:00; safest by going far back.",
+            "Restore 12:00 Full + 13:00 Incremental; faster and within RPO."
+          ],
+          "correct_option": "B",
+          "explanation": "Infection started at 12:40. The last known-good within 30 minutes is 12:30 incremental. Restoring 12:00 full + 12:30 incremental meets the 30-minute RPO while minimizing risk of reintroducing encrypted data.",
+          "distractor_rationale": "B: 13:00 may include pre-encryption artifacts; restoring it alone risks reinfection and violates backup practice. C: Includes 13:00 whose integrity is unknown and likely tainted. D: 01:00 increases data loss beyond the 30-minute RPO without additional safety benefit over 12:00 + 12:30.",
+          "skills_covered": [
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A public S3 bucket is leaking objects. Current bucket policy excerpt:\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::acme-data/*\"\n    }\n  ]\n}\n```\nYou must contain exfiltration quickly with minimal disruption and preserve forensics. What is the best immediate action?",
+          "options": [
+            "Replace the policy with an explicit Deny to everyone except the IR forensics role, blocking all other principals.",
+            "Enable S3 Block Public Access for the bucket (all four settings), snapshot current policy and pull CloudTrail/S3 access logs.",
+            "Deploy a WAF rule to block all HTTP traffic to S3 endpoints in the region.",
+            "Rotate all IAM access keys account-wide and redeploy apps, then review access."
+          ],
+          "correct_option": "B",
+          "explanation": "Enabling S3 Block Public Access immediately stops public policy/ACL effects without breaking authenticated IAM-based access, thus minimal disruption. Capturing policy and logs preserves evidence.",
+          "distractor_rationale": "A: Overly broad Deny will likely break legitimate authenticated access. C: Slow and disruptive; not targeted containment. D: WAF does not sit in front of S3; ineffective for S3 public object access.",
+          "skills_covered": [
+            "cloud technologies",
+            "define security policies",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You receive this header excerpt from a reported email:\n\n```text\nReceived: from mail.vendor.com (203.0.113.25)\nAuthentication-Results: spf=pass smtp.mailfrom=vendor.com; dkim=pass header.d=vendor.com\nFrom: CFO <cfo@vendor.com>\nTo: AP <ap@yourco.com>\nSubject: URGENT: updated bank details\nX-Attachment: invoice-update.xlsm\n```\nThe vendor confirms their account may be compromised. What is the correct first-hour action that balances containment and evidence handling?",
+          "options": [
+            "Quarantine and export at least one original .eml with full headers, open an IR case, block the sender/domain and attachment type at the SEG, and notify the vendor SOC.",
+            "Purge all copies from user mailboxes and quarantine, then delete quarantine to prevent re-delivery. Notify vendor afterward.",
+            "Do nothing because SPF and DKIM passed; it is not spoofing.",
+            "Auto-forward samples to your abuse mailbox; let helpdesk delete messages case-by-case to avoid alarming users."
+          ],
+          "correct_option": "A",
+          "explanation": "Preserve the original message as evidence, open a case, and implement targeted blocks while coordinating with the vendor. This contains spread without destroying evidence.",
+          "distractor_rationale": "A: Destroys evidence that may be needed for attribution and legal. C: Lacks formal case handling and consistent containment. D: Passing SPF/DKIM does not imply legitimacy if the sender account is compromised.",
+          "skills_covered": [
+            "perform escalation procedure",
+            "Report Writing",
+            "define security policies"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A critical app VM is beaconing to a known C2. EDR isolate fails due to a kernel driver crash. Hypervisor supports memory snapshots. What immediate step best preserves evidence while containing risk?",
+          "options": [
+            "Run anti-malware cleanup inside the VM to avoid downtime, then image memory if time permits.",
+            "Power off the VM immediately to stop the beacon; collect disk later.",
+            "Take a hypervisor snapshot with memory, label and export it, then isolate the VM’s virtual NIC/port group.",
+            "Migrate the VM to a quieter host to stabilize it, then schedule for forensics tomorrow."
+          ],
+          "correct_option": "C",
+          "explanation": "Capturing a memory-inclusive snapshot preserves volatile artifacts (keys, injected modules) and then network isolation contains further C2 traffic without altering memory first.",
+          "distractor_rationale": "A: Loses volatile evidence on power-off. C: Changes the system state and overwrites evidence before capture. D: Delays both containment and evidence collection, increasing risk.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your change/policy exception workflow:\n\n```yaml\nstates:\n  proposed: submitter\n  risk_assessed: security\n  approved: legal\n  executed: ops\nemergency_bypass:\n  allowed: true\n  require: incident_id, rationale, retro_approval_within_hours: 24\nlogging: immutable_audit_log: true\n```\nDuring an incident, Ops applied a deny-all firewall rule using `emergency_bypass` but skipped logging the incident ID. Audit flagged a control breach. What is the most appropriate corrective action now?",
+          "options": [
+            "Escalate blame to the firewall vendor; classify as tool defect and accept the risk.",
+            "Delete the firewall change logs to remove evidence of the bypass and re-apply with proper process.",
+            "Mark the change as \"normal\" to avoid audit scope and close the case without further action.",
+            "Retroactively document the emergency change with incident ID and rationale, obtain security/legal approvals within the 24-hour window, and link artifacts to the IR case."
+          ],
+          "correct_option": "D",
+          "explanation": "The policy explicitly allows emergency bypass with strict retroactive documentation and approvals. Completing those steps restores compliance traceability.",
+          "distractor_rationale": "B: Destruction of evidence violates audit and ethics. C: Misclassification undermines governance and will likely fail audit. D: Vendor blame does not address the process breach or documentation duty.",
+          "skills_covered": [
+            "define security policies",
+            "ethics",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A brute-force detection rule floods the queue after an SSO cutover. Current rule:\n\n```text\nindex=auth sourcetype=okta:auth\n| stats count as fails by user, src_ip span=5m\n| where fails>20\n```\nSLA requires MTTD < 10 minutes for brute force. Which tuning best preserves control effectiveness while reducing false positives from known service accounts?",
+          "options": [
+            "Exclude known service accounts via a maintained lookup/tag and keep the 5-minute/20-fail threshold.",
+            "Increase the threshold to >100 in 10 minutes to silence noise permanently.",
+            "Disable the rule during the migration and rely on weekly audit logs.",
+            "Extend the window to 60 minutes to smooth spikes from the cutover."
+          ],
+          "correct_option": "A",
+          "explanation": "Targeted suppression for tagged service accounts keeps the original timeliness and sensitivity for real brute force against user accounts.",
+          "distractor_rationale": "B: Bluntly raises threshold, degrading detection. C: Longer window harms MTTD. D: Disabling removes the control entirely against the SLA.",
+          "skills_covered": [
+            "SIEM Basics",
+            "define security policies"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Regulatory excerpt in your policy pack:\n\n```text\nNotify the Supervisory Authority of a personal data breach without undue delay and, where feasible, not later than 72 hours after becoming aware, unless unlikely to result in risk to rights and freedoms. Initial notification may be preliminary.\nRequired in initial notification: nature of breach; categories/approximate number of data subjects and records; DPO contact; likely consequences; measures taken/proposed.\n```\nTimeline:\n- 09:00 Fri: IDS alert (untriaged)\n- 18:00 Fri: IR confirms PII exposure risk\n- 20:00 Fri: Legal assesses reportable\nWhat is the correct notification timing and content approach?",
+          "options": [
+            "Notify by 09:00 Mon with full root cause and exact affected counts.",
+            "Notify by 18:00 Mon with preliminary details (nature, approximate counts, DPO contact, measures) and note updates will follow.",
+            "Notify by 18:00 Tue; 72 business hours start Monday.",
+            "Wait until forensics concludes to avoid retractions in the report."
+          ],
+          "correct_option": "B",
+          "explanation": "The 72-hour clock starts at awareness (18:00 Fri confirmation). Deadline is 18:00 Mon. Initial notification can be preliminary with required fields and updates to follow.",
+          "distractor_rationale": "A: Demands full RCA and wrong start time (09:00 alert wasn’t awareness). C: 72 hours are calendar, not business. D: Waiting past 72 hours violates the requirement.",
+          "skills_covered": [
+            "define security policies",
+            "ethics",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Phishing simulation metrics last quarter:\n\n```csv\nDepartment,Delivered,Clicked,Submitted Creds,Reported to SOC\nFinance,200,22,3,6\nSales,300,18,0,4\nEngineering,250,10,0,5\nHR,150,21,2,2\n```\nExecutives want a one-line takeaway and next action. What should you highlight and propose?",
+          "options": [
+            "Highlight low reporting rates, especially in HR and Finance, and propose targeted awareness refresh plus an easier in-client report button rollout.",
+            "Declare success: zero mass compromise; reduce simulation frequency to quarterly.",
+            "Stop simulations and focus on perimeter controls since clicks persist.",
+            "Increase difficulty immediately and publish a wall-of-shame leaderboard to drive urgency."
+          ],
+          "correct_option": "A",
+          "explanation": "Reporting is a key behavioral control; HR and Finance show higher click/low report. The right action is targeted training and friction reduction (report button).",
+          "distractor_rationale": "A: Ignores weak reporting and pockets of credential submission. C: Punitive approaches harm culture and may breach ethics. D: Abandoning simulations removes feedback and awareness improvements.",
+          "skills_covered": [
+            "Report Writing",
+            "define security policies"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "At 13:15, IR confirms ransomware activity on the `FS-APP01` fileserver; encryption started at 12:40. Users are locked out of shared drives. EDR isolate fails intermittently. Backups: 12:00 full, 12:30 incremental (valid). Legal notes potential exposure of export logs containing limited PII (names, emails). Leadership asks whether to pull the plug or keep the server online for forensics.",
+          "task": "Propose and justify a first-4-hours plan that sequences containment, evidence preservation, eradication, and recovery. Address volatile memory capture vs. immediate isolation, how you will meet RPO 30 minutes/RTO 2 hours, communications/escalation steps, and whether regulatory notification work should begin now.",
+          "expected_answer": "A strong answer sequences: 1) Preserve volatile evidence by acquiring memory (if feasible) via hypervisor snapshot with memory; 2) Isolate network (disable vNIC or quarantine VLAN) rather than power-off; 3) Snapshot/log preservation: copy EDR telemetry, Windows event logs, server timeline; calculate infection start (12:40); 4) Parallel streams: evidence custody and backup restore prep (restore 12:00 full + 12:30 incremental to clean staging), scanning restored data offline; 5) Eradication on original host post-capture (reimage or verified clean); 6) Recovery cutover to clean restore meeting RPO/RTO; 7) Escalations per matrix (CIRT, Legal, DPO if PII risk), exec comms cadence; 8) Regulatory notification assessment begins with Legal (preliminary prep within 72 hours if reportable); 9) Document decisions, chain of custody, and users communication template.",
+          "rubric": [
+            {
+              "criterion": "Sequences evidence-first actions (memory acquisition, log preservation) before containment that would destroy volatility; justifies approach",
+              "marks": 2
+            },
+            {
+              "criterion": "Chooses containment that limits spread while enabling capture (e.g., vNIC isolate/quarantine VLAN vs hard power-off)",
+              "marks": 2
+            },
+            {
+              "criterion": "Recovery plan meets RPO/RTO using appropriate restore points and an offline validation before cutover",
+              "marks": 2
+            },
+            {
+              "criterion": "Governance: correct escalations, regulatory assessment initiation, and communication plan are identified and justified",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "perform escalation procedure",
+            "Report Writing",
+            "Logging",
+            "define security policies"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your data classification review flags an S3 bucket used by Marketing with possible public access. CloudTrail shows anonymous GETs in the last 2 hours. The bucket hosts mixed-content: brochures (public) and a CSV export with 50k customer emails (internal).",
+          "task": "Decide and justify immediate containment that minimizes business disruption, describe evidence preservation, and outline how you will separate public vs. internal content going forward. Include who you notify and what to record in the case.",
+          "expected_answer": "Enable S3 Block Public Access at bucket level to stop public ACLs/policies. Preserve evidence: snapshot current bucket policy/ACLs, export CloudTrail/S3 access logs, inventory objects to identify exposed keys/hashes. Short-term: move public brochures to a separate static-website bucket with explicit public policy; keep internal data private with least-privilege IAM and deny public ACLs. Notify CIRT, CloudOps, Legal, DPO due to potential PII exposure. Record timeline, affected object list, access patterns, containment actions, and plan for long-term segregation and preventative controls (SCP, config rules).",
+          "rubric": [
+            {
+              "criterion": "Selects immediate containment with minimal disruption (Block Public Access) and justifies against alternatives",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies concrete evidence to preserve (policy/ACL snapshots, logs, object inventory) with chain-of-custody",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes durable segregation and least-privilege model for public vs. internal content",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies correct notifications/stakeholders and documents what to record in the case",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "cloud technologies",
+            "define security policies",
+            "perform escalation procedure",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "After an endpoint rollout, failed-login alerts triple. The IR queue breaches SLA twice, but no confirmed brute-force incidents occurred. Service accounts authenticate in bursts during nightly jobs and trigger alerts. Compliance requires MTTD under 10 minutes for interactive account brute force.",
+          "task": "Design a tuning plan that reduces false positives while maintaining the control objective. Specify exact filters or data enrichments, validation steps, changes to the escalation runbook, and how you will document/report the change.",
+          "expected_answer": "Introduce a maintained lookup or tag for service/non-interactive accounts; update detection to exclude those or require `client_app=interactive`. Add device risk or geo-velocity conditions to elevate true positives. Validate by replaying last 7 days of auth logs to show reduced noise and unchanged TP coverage on known test cases. Update escalation to route de-noised alerts to Tier-1 with a 10-minute triage target; create a separate dashboard for service-account anomalies. Document the rule version, before/after metrics, approval in the change log, and note in the control catalog with evidence for audit.",
+          "rubric": [
+            {
+              "criterion": "Concrete, targeted tuning (e.g., service account lookup, interactive filter) that preserves MTTD",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation approach with historical replay/test cases and success criteria",
+              "marks": 2
+            },
+            {
+              "criterion": "Runbook/escalation updates reflecting new logic and roles",
+              "marks": 2
+            },
+            {
+              "criterion": "Documentation/reporting: rule versioning, metrics, approvals for audit",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SIEM Basics",
+            "define security policies",
+            "Report Writing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Post-incident, the CIO requests an executive summary within 24 hours for a suspected vendor account compromise leading to targeted phishing. Evidence includes original .eml files, SEG block changes, IR timeline, and preliminary impact (12 recipients, 2 credential submissions, no lateral movement).",
+          "task": "Draft the structure and key content of the executive summary. Specify what to include and what to exclude at this stage, and how you will express uncertainty and next steps for both technical remediation and awareness.",
+          "expected_answer": "Include: brief incident overview; timeline of key events; scope/impact to date (12 recipients; 2 credentials; containment implemented); risk assessment; actions taken (evidence preservation, SEG blocks, password resets); next steps with owners/dates (forensics, vendor coordination); user comms/awareness plan; regulatory position (prelim); and DPO/IR POCs. Exclude: speculative attribution and unverified numbers. Express uncertainty with clear ranges and commitments to update. Appendices for technical details; main body uses concise, business-readable language.",
+          "rubric": [
+            {
+              "criterion": "Includes essential executive elements (overview, timeline, current impact, actions, next steps, owners)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear boundaries on what to exclude or defer; communicates uncertainty appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Incorporates governance aspects (regulatory position, DPO/legal contacts) and awareness plan",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses business-readable structure with pointers to technical appendices",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Report Writing",
+            "define security policies",
+            "ethics"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a BEC Incident Playbook (Cloud Email)",
+          "brief": "Create an end-to-end playbook for Business Email Compromise in a cloud email platform (e.g., Microsoft 365 or Google Workspace). It must operationalize preparation, containment, evidence handling, and recovery, with clear decision points and role assignments.",
+          "deliverable": "One playbook document (PDF/Markdown) including workflows, checklists, queries, templates, and RACI; plus any referenced detection queries as separate .txt/.md snippets.",
+          "acceptance_criteria": [
+            "Includes a preparation section: prerequisites, access, tools, and a RACI mapping for CIRT, Legal, DPO, IT Ops, HR/Comms.",
+            "Provides a detection section with at least one concrete SIEM/Platform query or audit search (e.g., Splunk SPL, KQL) to identify suspicious inbox rules, OAuth consents, or impossible travel.",
+            "Defines containment steps for cloud email (disable sign-in, revoke refresh tokens, remove malicious rules, conditional access block) with order-of-operations that preserves evidence first.",
+            "Details evidence preservation: export original messages (.eml/.msg) with full headers, capture audit trails, and document chain-of-custody.",
+            "Specifies eradication and recovery: password reset/step-up auth, mailbox clean, verification, user re-onboarding, and monitoring window.",
+            "Includes governance: escalation matrix, regulatory assessment checklist (72-hour clock), communications templates (user notice, exec update), and report outline for the post-incident summary.",
+            "Lists objective metrics and gates: MTTD/MTTR targets, containment SLOs, decision gates (e.g., engage Legal/DPO), and a tabletop test walkthrough (who does what, expected outputs)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Preparation and RACI clarity; prerequisites/tools are actionable",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete, working detection content (queries/searches) relevant to BEC",
+              "marks": 4
+            },
+            {
+              "criterion": "Containment sequence preserves evidence and fits cloud email specifics",
+              "marks": 3
+            },
+            {
+              "criterion": "Evidence handling is explicit (artifacts, formats, chain-of-custody)",
+              "marks": 3
+            },
+            {
+              "criterion": "Recovery/eradication steps are complete and ordered",
+              "marks": 3
+            },
+            {
+              "criterion": "Governance elements (escalation, regulatory checklist, comms templates, report outline) are present and correct",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "perform escalation procedure",
+            "SIEM Basics",
+            "Logging",
+            "define security policies",
+            "Report Writing",
+            "Backup and Recovery",
+            "cloud technologies"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Security Operations Case: Public vs. Internal Cloud Content",
+          "brief": "Produce a governance case pack for a mixed-use cloud storage bucket where brochures (public) and customer data (internal) were commingled and briefly exposed. The pack must define policy decisions, controls, awareness, and reporting to prevent recurrence and demonstrate compliance.",
+          "deliverable": "A single report (PDF/Markdown) with appendices: (A) policy excerpt/update for public content hosting and data segregation, (B) cloud control design (Block Public Access, IAM patterns, SCP/config rules), (C) risk register entry, (D) user awareness one-pager, (E) incident reporting form/template, (F) metrics/dashboard mock for execs.",
+          "acceptance_criteria": [
+            "Policy excerpt/update clearly distinguishes public vs. internal content and references classification levels and ownership.",
+            "Cloud controls design shows specific AWS/Azure/GCP settings (e.g., S3 Block Public Access items, sample bucket/IAM policies, config rule examples) with least-privilege patterns.",
+            "Risk register entry includes risk statement, likelihood/impact, owner, treatment plan, and review cadence.",
+            "Awareness one-pager explains do/don’t for publishing data to cloud storage with examples and a clear call-to-action (request path).",
+            "Incident reporting form captures minimum fields for timely triage (what/when/where/data involved/severity guess/contact).",
+            "Dashboard mock includes at least four KPIs (e.g., number of public buckets, exceptions aging, scan coverage, untagged assets) with thresholds and owners.",
+            "All artifacts are internally consistent (roles, names, severity scale) and reference where evidence/logs would be obtained during incidents."
+          ],
+          "rubric": [
+            {
+              "criterion": "Policy update correctness and clarity for data segregation responsibilities",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical control design specificity and suitability for cloud platforms",
+              "marks": 5
+            },
+            {
+              "criterion": "Risk register entry completeness and practicality",
+              "marks": 3
+            },
+            {
+              "criterion": "Awareness one-pager effectiveness and actionability",
+              "marks": 3
+            },
+            {
+              "criterion": "Incident reporting form completeness for IR intake",
+              "marks": 2
+            },
+            {
+              "criterion": "Metrics/dashboard mock relevance and decision usefulness",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "define security policies",
+            "cloud technologies",
+            "ethics",
+            "Report Writing",
+            "perform escalation procedure"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1834 @@
+{
+  "course_code": "NT-C-013",
+  "course_name": "MEAN Stack",
+  "sections": [
+    {
+      "section_code": "NT-C-013-S01",
+      "skills_assessed": [
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Responsive Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the execution of the following script in a modern browser:\n\n```javascript\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nqueueMicrotask(() => console.log('D'));\nconsole.log('E');\n```\n\nWhat is the exact console output order?",
+          "options": [
+            "A B C D E",
+            "A C D E B",
+            "A E D C B",
+            "A E C D B"
+          ],
+          "correct_option": "D",
+          "explanation": "Synchronous logs run first: A, then E. Microtasks (Promise.then and queueMicrotask) flush before any timers, FIFO by enqueue order: C then D. Finally, the macrotask setTimeout runs: B. Hence A E C D B.",
+          "distractor_rationale": "- A C D E B: Tempting if you think microtasks interleave with synchronous execution, but they run after the current stack completes, so E must precede C and D.\n- A E D C B: Assumes queueMicrotask runs before Promise.then; in reality both are microtasks and run FIFO, and Promise.then was queued first.\n- A B C D E: Assumes setTimeout(0) fires \"immediately\"; timers only run after the microtask queue drains and the current task finishes.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does this code log?\n\n```javascript\nasync function f() {\n  try {\n    return await Promise.resolve('x');\n  } finally {\n    return 'y';\n  }\n}\n\nf().then(console.log).catch(console.error);\n```\n",
+          "options": [
+            "x",
+            "The promise rejects because returning in finally is illegal",
+            "y",
+            "It logs x then y"
+          ],
+          "correct_option": "C",
+          "explanation": "A return in finally overrides any prior return or throw in the try. In an async function this becomes a resolved promise with value 'y'.",
+          "distractor_rationale": "- x: True if finally did not return; but a return in finally replaces the earlier return.\n- The promise rejects because returning in finally is illegal: Returning in finally is legal; it just overrides.\n- It logs x then y: There's only a single resolved value from the async function; you don't see both.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "TypeScript structural typing and excess property checks.\n\n```typescript\ntype Shape = { kind: 'circle'; r: number } | { kind: 'rect'; w: number; h: number };\n\nfunction area(s: Shape) {\n  if ('r' in s) return Math.PI * s.r * s.r;\n  return s.w * s.h;\n}\n\nconst c = { kind: 'circle', r: 2 } as const;\nconst a1 = area(c);\n\nconst weird = { kind: 'circle', r: 2, extra: true };\nconst a2 = area(weird);\n```\n\nWhat happens at compile-time and runtime regarding `a2`?",
+          "options": [
+            "`c` needs a cast because `as const` is too narrow for `Shape`",
+            "Compiles, but uses the rect branch at runtime and throws because `w`/`h` are missing",
+            "Error: excess property check fails at the call site for `weird`",
+            "Compiles and computes using the circle branch; extra properties are allowed when passing a variable"
+          ],
+          "correct_option": "D",
+          "explanation": "Excess property checks only apply to fresh object literals directly assigned to a target type. Passing a variable with extra properties is allowed if it is structurally compatible. At runtime the `'r' in s` branch executes and computes the circle area.",
+          "distractor_rationale": "- Error: excess property check...: That would happen if you passed the object literal inline to `area({ ... })`. Here it's assigned to a variable first, so no excess property check.\n- Compiles, but uses the rect branch...: The guard checks `'r' in s`, so the circle path is taken.\n- `c` needs a cast because `as const` is too narrow...: `as const` narrows `kind` to 'circle' and is compatible with the union; no cast needed beyond that.",
+          "skills_covered": [
+            "TypeScript",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Strict-mode `this` with arrow vs function.\n\n```javascript\n'use strict';\nconst btn = document.createElement('button');\nbtn.textContent = 'Go';\n\ndocument.body.appendChild(btn);\n\nbtn.addEventListener('click', () => {\n  console.log(this === btn);\n});\n\nbtn.click();\n```\n\nWhat is logged?",
+          "options": [
+            "false",
+            "It depends on the browser; some log true, some false",
+            "It throws because `this` is undefined and cannot be compared",
+            "true"
+          ],
+          "correct_option": "A",
+          "explanation": "Arrow functions capture `this` lexically. In strict mode at top level, `this` is `undefined`, not the button, so `this === btn` is false. The comparison itself is fine and does not throw.",
+          "distractor_rationale": "- true: Would be true if a normal function was used (where DOM sets `this` to the target in many cases), not with an arrow.\n- It throws...: Comparing `undefined` to an object is valid; only property access on `this` would throw.\n- It depends on the browser: In modern browsers and strict mode, this behavior is consistent.",
+          "skills_covered": [
+            "JavaScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A flex layout overflows horizontally on small screens. Given:\n\n```html\n<div class=\"row\">\n  <div class=\"col a\">\n    <pre>VeryVeryVeryLongUnbreakableToken...</pre>\n  </div>\n  <div class=\"col b\">Sidebar</div>\n</div>\n```\n\n```css\n.row { display: flex; }\n.col { flex: 1; border: 1px solid; }\n.a pre { white-space: pre; }\n```\n\nWhich minimal change reliably prevents the overflow while preserving flex behavior?",
+          "options": [
+            "Add `.a { overflow: hidden; }`",
+            "Add `.row { flex-wrap: wrap; }`",
+            "Add `.col { min-width: 0; }`",
+            "Add `.col { flex: 1 1 auto; }`"
+          ],
+          "correct_option": "C",
+          "explanation": "Flex items have `min-width: auto` by default, which prevents them from shrinking below their min-content size. Setting `min-width: 0` allows shrinking and avoids overflow even with long unbreakable content.",
+          "distractor_rationale": "- `.col { flex: 1 1 auto; }`: Still keeps `min-width: auto`; overflow persists.\n- `.a { overflow: hidden; }`: Masks overflow but can clip content and still may cause layout issues elsewhere; not the core fix.\n- `flex-wrap: wrap;`: Allows wrapping to a new line but can break the intended one-row layout; doesn't address the min-width constraint.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design",
+            "HTML"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Which image candidate is fetched?\n\n```html\n<img\n  src=\"small.jpg\"\n  srcset=\"small.jpg 400w, medium.jpg 800w, large.jpg 1200w\"\n  sizes=\"(max-width: 600px) 100vw, 50vw\"\n  width=\"600\" height=\"400\"\n  alt=\"Hero\"\n/>\n```\n\nOn a device with DPR=2 and viewport width=500px, which file is selected?",
+          "options": [
+            "small.jpg",
+            "large.jpg",
+            "It depends on network speed; the browser may pick any",
+            "medium.jpg"
+          ],
+          "correct_option": "B",
+          "explanation": "At 500px viewport, `(max-width: 600px)` matches, so the slot size is 100vw = 500 CSS px. With DPR=2 the ideal resource is ~1000 device pixels wide. Among 400w/800w/1200w, the closest not smaller than 1000 is 1200w, i.e., large.jpg.",
+          "distractor_rationale": "- medium.jpg: 800w is smaller than the ~1000px need at DPR=2.\n- small.jpg: Far too small at DPR=2.\n- It depends on network speed: Resource choice is based on sizes, DPR, and candidates; not on network heuristics for width descriptors.",
+          "skills_covered": [
+            "HTML",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A tooltip is hidden behind a fixed header. Relevant CSS:\n\n```css\n.header { position: fixed; top: 0; left: 0; right: 0; transform: translateZ(0); }\n.tooltip { position: absolute; z-index: 9999; }\n```\n\nThe tooltip is in the page content, not inside `.header`. Despite the large `z-index`, it sits under the header on all screen sizes. Which single change reliably brings the tooltip above the header?",
+          "options": [
+            "Increase `.tooltip` z-index to 999999",
+            "Remove `transform: translateZ(0)` from `.header`",
+            "Add `position: relative` to `.tooltip`",
+            "Add `isolation: isolate` to `.tooltip`"
+          ],
+          "correct_option": "B",
+          "explanation": "`transform` creates a new stacking context on `.header`. Elements in other stacking contexts cannot out-stack it, regardless of their `z-index`. Removing the transform (or moving the tooltip into the same stacking context) resolves the issue.",
+          "distractor_rationale": "- Increase z-index: Cannot cross a higher-level stacking context boundary.\n- Add position: relative: `.tooltip` is already positioned; stacking context is the issue, not positioning.\n- `isolation: isolate` on the tooltip creates a new stacking context for the tooltip and its children, not above `.header`'s context.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Exhaustiveness checks with discriminated unions in TypeScript.\n\n```typescript\ntype A = { t: 'a'; v: number };\ntype B = { t: 'b'; v: string };\n// Later, someone adds:\n// type C = { t: 'c'; v: boolean };\n// and updates the union to: type U = A | B | C\n\ntype U = A | B; // imagine this becomes A | B | C later\n\nfunction fmt(x: U) {\n  switch (x.t) {\n    case 'a': return x.v.toFixed(2);\n    case 'b': return x.v.toUpperCase();\n    default: {\n      const _exhaustive: never = x;\n      return _exhaustive;\n    }\n  }\n}\n```\n\nAfter adding `C` to `U` but forgetting to add a `case 'c'`, what happens?",
+          "options": [
+            "TypeScript reports a compile error at `_exhaustive: never = x`",
+            "The `case 'b'` stops narrowing, so both branches error",
+            "TypeScript widens `x` to `any` in default so there is no error",
+            "Code compiles, but at runtime falls into default and returns `undefined`"
+          ],
+          "correct_option": "A",
+          "explanation": "With `U` including `C`, the `default` block's assignment `never = x` fails because `x` could be `C`, which is not `never`. This enforces exhaustiveness at compile-time.",
+          "distractor_rationale": "- Compiles but returns undefined: The default returns `_exhaustive`, not undefined, and TS prevents reaching it when cases are exhaustive.\n- Widens to any: Control-flow analysis keeps precise types; TS does not widen to any here.\n- `case 'b'` stops narrowing: Each case narrows correctly; the issue is the missing `case 'c'`.",
+          "skills_covered": [
+            "TypeScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A page has no viewport meta and this CSS:\n\n```html\n<!-- no <meta name=\"viewport\"> -->\n<style>\n  body { background: red; }\n  @media (max-width: 600px) { body { background: blue; } }\n</style>\n```\n\nOn an iPhone with a device width around 375 CSS px, which background color appears on initial load?",
+          "options": [
+            "Red, because the layout viewport defaults near 980px so the media query doesn't match",
+            "Blue, because the device is under 600px wide",
+            "Blue initially then red after page load",
+            "It alternates depending on DPR"
+          ],
+          "correct_option": "A",
+          "explanation": "Without the viewport meta tag, mobile browsers use a wide layout viewport (~980px). The `(max-width: 600px)` query does not match, so the background remains red.",
+          "distractor_rationale": "- Blue... under 600px: The relevant width is the layout viewport, not the device screen width, without the meta tag.\n- Blue then red: There is no change after load tied to the meta tag, since it's absent.\n- Depends on DPR: DPR affects pixel density, not the CSS layout viewport used for media queries.",
+          "skills_covered": [
+            "HTML",
+            "Responsive Design",
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Order of results from `Promise.allSettled`.\n\n```javascript\nconst slow = new Promise(res => setTimeout(() => res('slow'), 50));\nconst fast = Promise.resolve('fast');\n\nPromise.allSettled([slow, fast]).then(r => {\n  console.log(r.map(x => x.status + ':' + ('value' in x ? x.value : '')));\n});\n```\n\nWhat gets logged?",
+          "options": [
+            "[\"fulfilled:slow\",\"fulfilled:fast\"]",
+            "[\"fulfilled:fast\",\"fulfilled:slow\"]",
+            "First fast then slow in devtools, but reversed in Node.js",
+            "It depends on timing; the faster one comes first"
+          ],
+          "correct_option": "B",
+          "explanation": "`Promise.allSettled` preserves input order in its results array regardless of completion order. `fast` settles first, but appears in the second position because it was the second input.",
+          "distractor_rationale": "- [\"fulfilled:slow\",\"fulfilled:fast\"]: Assumes order by completion; incorrect.\n- Environment-dependent: Both browsers and Node follow the spec for order preservation.\n- It depends on timing: The spec mandates preserving input order.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A product page shows a spinner while computing a price. Users report that the spinner often never appears, but the logs show the code runs. You have this handler:\n\n```typescript\nasync function onRecalculate() {\n  spinner.classList.add('visible'); // CSS shows spinner when .visible is set\n  await Promise.resolve(); // price is fast when cached (simulated here)\n  spinner.classList.remove('visible');\n}\n\nbutton.addEventListener('click', onRecalculate);\n```\n\nRelevant CSS:\n\n```css\n.spinner { opacity: 0; transition: opacity 150ms; }\n.spinner.visible { opacity: 1; }\n```\n\nOn fast paths the spinner doesn't appear at all. On slow paths (network), it does. You must decide how to guarantee at least one paint of the spinner without stalling the app.",
+          "task": "Explain precisely why the spinner sometimes never becomes visible, referencing the event loop and rendering pipeline. Propose and justify one concrete change to the code that ensures the spinner paints at least once even on the fast path, without adding an arbitrary fixed delay to the total time. Provide the exact updated code and explain any trade-offs.",
+          "expected_answer": "The class is added and removed within the same task/microtask barrier. Browsers batch style recalculation and painting; microtasks (like the awaited already-resolved promise) run before yielding to rendering, so the DOM changes happen back-to-back without a frame in between. No paint occurs with the spinner visible, so users never see it.\n\nA fix is to yield to the rendering pipeline after adding the class, scheduling the work for a future frame or task. For example, wait for the next animation frame or a macrotask tick before starting the async work or removing the class:\n\n```typescript\nasync function onRecalculate() {\n  spinner.classList.add('visible');\n  await new Promise(requestAnimationFrame); // yield to next frame so paint occurs\n  const price = await computePrice(); // actual work\n  spinner.classList.remove('visible');\n}\n```\n\nAlternatively, split the fast-path await out of the first turn of the event loop with `await Promise.resolve()` before adding the class, or use `setTimeout(0)` to defer removal:\n\n```typescript\nasync function onRecalculate() {\n  spinner.classList.add('visible');\n  await new Promise(res => setTimeout(res, 0)); // macrotask boundary; allows paint\n  const price = await computePrice();\n  spinner.classList.remove('visible');\n}\n```\n\nTrade-offs: `requestAnimationFrame` aligns with rendering and avoids unnecessary extra delay; `setTimeout(0)` yields to the task queue but may introduce ~4ms clamping on background tabs. Both ensure at least one paint without arbitrarily delaying beyond one frame.",
+          "rubric": [
+            {
+              "criterion": "Diagnoses that microtasks run before rendering and both class changes happen in the same paint cycle (no visible frame)",
+              "marks": 2
+            },
+            {
+              "criterion": "References the event loop distinction (microtask vs macrotask) and render timing correctly",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete code change that introduces a render boundary (e.g., requestAnimationFrame or macrotask)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains trade-offs of the chosen approach (rAF vs setTimeout vs other) without adding arbitrary fixed delays",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript",
+            "CSS",
+            "Responsive Design",
+            "HTML"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are designing a small TypeScript utility to fetch JSON and parse it into a typed value. Current code:\n\n```typescript\nasync function getJson(url: string, parse: (j: any) => any) {\n  const res = await fetch(url);\n  const json = await res.json();\n  return parse(json);\n}\n\n// Usage:\nconst user = await getJson('/api/user', j => ({ id: j.id, name: j.name }));\n```\n\nProblems observed: Callers can accidentally return a wrong shape undetected; and errors in `parse` throw as `any`, losing type information.",
+          "task": "Redesign the function signature and minimal implementation so that:\n- The function is generic in the return type T and preserves it from the `parse` function.\n- The `parse` function is typed to accept unknown, not any.\n- Callers can optionally pass a narrowing predicate that returns `j is T` instead of a mapper, and the function returns `Promise<T>` or throws a typed error when validation fails.\nProvide the updated TypeScript signatures and a short implementation that demonstrates both parse styles. Justify your typing choices regarding `unknown`, generics, and error typing.",
+          "expected_answer": "Define a generic over T and type the parse parameter as either a mapper `(j: unknown) => T` or a predicate `(j: unknown) => j is T`. Use overloads to give callers a precise return type. Avoid `any` and surface a typed error for validation.\n\n```typescript\ntype ParseError = { kind: 'ParseError'; message: string };\n\nexport function getJson<T>(url: string, parse: (j: unknown) => j is T): Promise<T>;\nexport function getJson<T>(url: string, parse: (j: unknown) => T): Promise<T>;\nexport async function getJson<T>(url: string, parse: ((j: unknown) => T) | ((j: unknown) => j is T)) {\n  const res = await fetch(url);\n  const json: unknown = await res.json();\n  if (isPredicate(parse)) {\n    if (parse(json)) return json as T;\n    throw { kind: 'ParseError', message: 'Validation failed' } as ParseError;\n  } else {\n    return (parse as (j: unknown) => T)(json);\n  }\n}\n\nfunction isPredicate<T>(fn: any): fn is (j: unknown) => j is T {\n  return fn.length === 1 && /=>\\s*j\\s+is/.test(String(fn)) === false; // simplified; in practice, choose a different strategy\n}\n\n// Usage 1: mapper\nconst user = await getJson('/api/user', (j: unknown) => {\n  const o = j as { id: number; name: string };\n  if (typeof o.id !== 'number' || typeof o.name !== 'string') throw { kind: 'ParseError', message: 'Bad user' } as ParseError;\n  return { id: o.id, name: o.name };\n});\n\n// Usage 2: predicate\nfunction isUser(j: unknown): j is { id: number; name: string } {\n  return !!j && typeof (j as any).id === 'number' && typeof (j as any).name === 'string';\n}\nconst user2 = await getJson('/api/user', isUser);\n```\n\nJustification: `unknown` forces callers to prove shapes via parsing or predicates, preventing accidental `any` leaks. Generics ensure the returned `Promise<T>` reflects the parser. Predicate overload preserves T when returning the original JSON on success. A dedicated `ParseError` type can be caught and distinguished from network errors.",
+          "rubric": [
+            {
+              "criterion": "Defines a generic API that returns Promise<T> based on the parser and avoids `any`",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses `unknown` for incoming JSON and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Supports both mapper and predicate styles (via overloads or discriminated parameter) with correct typing",
+              "marks": 2
+            },
+            {
+              "criterion": "Surfaces or justifies typed error handling for validation failures",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "TypeScript",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A responsive layout has a main content area and a sidebar. On phones, users report horizontal scrolling. Relevant code:\n\n```html\n<div class=\"layout\">\n  <main class=\"main\">...long code samples...</main>\n  <aside class=\"side\">Related</aside>\n</div>\n```\n\n```css\n.layout { display: flex; }\n.main, .side { flex: 1; }\n.main code { white-space: pre; }\n```\n\nDesign constraints: Keep a single row on tablet/desktop, no content wrapping into multiple rows; avoid clipping content if possible. On narrow screens, allow the main content to claim more space than the sidebar but without horizontal overflow.",
+          "task": "Identify the root cause of the overflow and propose targeted CSS changes that honor the constraints. Provide before/after CSS and explain why your changes work. Include how you would verify the fix across common breakpoints (e.g., 320px, 768px, 1024px).",
+          "expected_answer": "Root cause: Flex items have `min-width:auto`, which equals the min-content size, so the `.main` cannot shrink below its longest unbreakable line (code), forcing overflow.\n\nFix: Allow flex items to shrink by resetting min-width and bias width via flex factors at narrow widths.\n\n```css\n.layout { display: flex; }\n.main, .side { flex: 1 1 0; min-width: 0; }\n@media (max-width: 600px) {\n  .main { flex: 2 1 0; } /* main gets more space */\n  .side { flex: 1 1 0; }\n}\n/* Optional to preserve content without clipping: allow scrolling within main if still needed */\n.main { overflow-wrap: anywhere; }\n```\n\n`min-width: 0` lets items shrink below their min-content size, preventing page-level overflow. `flex-basis: 0` with adjusted flex-grow biases space toward `.main` on small screens while keeping a single row when there's room. Verification: Resize to 320px (no horizontal scrollbar; main dominates width), 768px (both readable, still one row), 1024px+ (even distribution unless styles adjust). Use DevTools to check no overflow on body and that `.main`'s content wraps or scrolls locally if truly unbreakable.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies min-width:auto/min-content as the overflow cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes CSS that prevents overflow (e.g., min-width:0 and appropriate flex settings)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains how the proposal meets layout constraints without unwanted wrapping/clipping",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes a concrete verification plan across breakpoints",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Responsive Design",
+            "HTML"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your hero image is blurry on high-DPR phones. Current markup:\n\n```html\n<img\n  class=\"hero\"\n  src=\"/img/hero-600.jpg\"\n  srcset=\"/img/hero-600.jpg 600w, /img/hero-1200.jpg 1200w, /img/hero-1800.jpg 1800w\"\n  sizes=\"(max-width: 480px) 480px, (max-width: 1024px) 768px, 1200px\"\n  alt=\"Summer Sale\"\n>\n```\n\nDesign intent: The hero spans full viewport width on mobile, 75% width on tablets, and 1200px max on desktop. On a phone with DPR=3 and viewport width 390px, the image looks soft.",
+          "task": "Explain why the browser might be choosing a lower-resolution candidate with the current `sizes`. Compute the effective slot size for the phone scenario and pick the appropriate candidate. Then rewrite the `sizes` to better match intent using `vw` and clamp if necessary. Justify your choices.",
+          "expected_answer": "At 390px viewport width with DPR=3, the slot size should be the CSS width the image will occupy. The current sizes use fixed px values that may underspecify on certain viewports. If `(max-width: 480px) 480px` matches, slot=480 CSS px; effective required pixels ≈ 480*3=1440. The browser may choose 1200w (closest lower) leading to softness.\n\nA better expression is to tie to viewport width using vw and the 75% rule on tablets:\n\n```html\n<img\n  src=\"/img/hero-600.jpg\"\n  srcset=\"/img/hero-600.jpg 600w, /img/hero-1200.jpg 1200w, /img/hero-1800.jpg 1800w\"\n  sizes=\"(max-width: 600px) 100vw, (max-width: 1024px) 75vw, 1200px\"\n  alt=\"Summer Sale\"\n>\n```\n\nNow for 390px wide, slot≈390 CSS px; DPR=3 => ~1170 device px, browser will pick 1200w. On tablets at 800px viewport, slot≈0.75*800=600 CSS px; DPR=2 => ~1200px => pick 1200w; on desktop, slot=1200px, DPR=1 => 1200w or DPR=2 => 1800w. Optionally add `style=\"max-width: 100%; width: min(1200px, 100vw);\"` to enforce the intended sizing in CSS. This keeps images crisp without overshooting.",
+          "rubric": [
+            {
+              "criterion": "Computes the slot size and relates DPR to required intrinsic width",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the current sizes can cause undershooting and blurriness",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides corrected sizes expression reflecting layout intent (100vw/75vw/1200px)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies how the new mapping selects appropriate candidates across devices",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "Responsive Design",
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "TypeScript typed async utilities (typed exercises)",
+          "brief": "Implement a small TypeScript library of async utilities demonstrating strict typing and async control. Include a minimal demo script that runs these utilities and prints deterministic output.",
+          "deliverable": "A zipped project folder or repository link containing: tsconfig.json (strict mode), src/*.ts for utilities, a demo script (e.g., src/demo.ts) that prints sample outputs, and a README with build/run instructions. Include one file with negative compile-time tests using `// @ts-expect-error`.",
+          "acceptance_criteria": [
+            "tsconfig.json present with \"strict\": true and the project compiles with `tsc` without errors",
+            "No `any` in user-authored code except in negative tests marked with `// @ts-expect-error`",
+            "Provide a generic `EventEmitter<E>` where `E` is a map of event names to payload types; emitting with the wrong payload fails to compile; demo shows correct usage logging outputs",
+            "Provide `mapAsyncLimit<T, R>(items: T[], limit: number, fn: (t: T) => Promise<R>): Promise<R[]>` that preserves input order; demo prints the results in order and a line `max concurrency: N` where N never exceeds `limit`",
+            "Provide `retry<T>(op: () => Promise<T>, opts: { retries: number; backoffMs: (attempt: number) => number }): Promise<T>`; demo shows it retrying then succeeding; backoff implemented with `setTimeout` or `await new Promise(r=>setTimeout(r,ms))`",
+            "README includes commands to build/run (e.g., `npm run build`, `node dist/demo.js`) and expected console output snippet"
+          ],
+          "rubric": [
+            {
+              "criterion": "Strict TypeScript configuration and successful compilation",
+              "marks": 4
+            },
+            {
+              "criterion": "Type-safe generic EventEmitter with correct compile-time enforcement and working demo",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct `mapAsyncLimit` with concurrency bound, ordered results, and demonstrable `max concurrency`",
+              "marks": 6
+            },
+            {
+              "criterion": "Functional `retry` with backoff and demonstrable behavior in demo",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "TypeScript",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a responsive, accessible landing page (responsive pages)",
+          "brief": "Create a single-page responsive marketing layout with a header/nav, hero section with responsive image, a 2–4 card grid, and a footer. Implement mobile-first CSS using Flexbox and Grid, avoid horizontal scrolling on small screens, and ensure basic accessibility.",
+          "deliverable": "An `index.html`, `styles.css`, and an `img/` folder with at least three responsive hero image sizes. Include a short `README.md` describing breakpoints and how to verify behavior.",
+          "acceptance_criteria": [
+            "Valid HTML5 structure with semantic landmarks: <header>, <nav>, <main>, <section>/<article>, <footer>",
+            "Presence of `<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">`",
+            "Hero image uses `srcset` and `sizes` to select among at least 3 widths; CSS constrains hero width using vw or clamp to match sizes",
+            "Layout uses mobile-first CSS; at <=600px single-column stack; at >=900px header/nav inline and card grid shows at least 3 columns",
+            "No horizontal scrollbar between 320px and 1440px viewport widths; `.container` and flex/grid items avoid overflow via `min-width: 0` or equivalent where needed",
+            "Tap targets (nav links/buttons) have a minimum hit area of 44px in both dimensions and visible :focus styles",
+            "Text scales with fluid typography (e.g., `clamp`) without causing overflow",
+            "CSS avoids z-index stacking bugs with transformed headers; tooltips/menus, if any, appear above headers without removing accessibility",
+            "README explains breakpoints and lists which CSS rules ensure no overflow and how responsive images are chosen"
+          ],
+          "rubric": [
+            {
+              "criterion": "Semantic, valid HTML structure and viewport configuration",
+              "marks": 4
+            },
+            {
+              "criterion": "Responsive image implementation with coherent `srcset`/`sizes` and matching CSS sizing",
+              "marks": 4
+            },
+            {
+              "criterion": "Robust responsive layout (mobile-first, correct breakpoints, no horizontal overflow)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accessibility basics (tap target size, focus styles, readable scaling)",
+              "marks": 3
+            },
+            {
+              "criterion": "Code quality and documentation (readable CSS, clear README with verification notes)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-013-S02",
+      "skills_assessed": [
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Angular",
+        "REST API"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have a parent component that mutates an array and a child marked OnPush.\n\n```typescript\n// parent.component.ts\nexport class ParentComponent {\n  items = ['A', 'B'];\n  title = 'before';\n  add() {\n    this.items.push('C'); // mutate, no new reference\n    this.title = 'after';\n  }\n}\n```\n\n```html\n<!-- parent.component.html -->\n<app-list [items]=\"items\"></app-list>\n<button (click)=\"add()\">Add</button>\n<h1>{{ title }}</h1>\n```\n\n```typescript\n// list.component.ts\n@Component({\n  selector: 'app-list',\n  template: `<li *ngFor=\"let i of items\">{{ i }}</li>`,\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class ListComponent {\n  @Input() items: string[] = [];\n}\n```\n\nImmediately after clicking Add once, what is rendered inside <app-list> and why?",
+          "options": [
+            "Nothing; Angular throws ExpressionChangedAfterItHasBeenCheckedError due to the late push.",
+            "Only A and B, because the OnPush child is not marked dirty when the input reference hasn’t changed.",
+            "A, B, and C, because any event in an ancestor triggers change detection for the whole subtree, including OnPush children.",
+            "A, B, and C, but only after the next macrotask tick because Angular batches array mutations."
+          ],
+          "correct_option": "B",
+          "explanation": "OnPush components are checked when an input reference changes, an event happens in their own view, an async pipe emits in their view, or they are marked for check. Mutating the array doesn’t change its reference, and the click occurs in the parent’s view, so the OnPush child is skipped. It still displays A and B.",
+          "distractor_rationale": "B is tempting because many believe any ancestor event forces all children to refresh, but OnPush gates checks by dirtiness. C reflects the misconception that Angular defers mutations; there’s no automatic next-tick reconciliation for OnPush inputs. D confuses a common dev-mode error with this scenario; nothing violates change detection timing here.",
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A list reorders users while tracking by index. Each row component initializes a FormControl from its input only in ngOnInit.\n\n```html\n<!-- parent.component.html -->\n<app-row\n  *ngFor=\"let u of users; trackBy: trackByIndex\"\n  [user]=\"u\">\n</app-row>\n```\n\n```typescript\n// parent.component.ts\nusers = [\n  { id: 1, name: 'Alice' },\n  { id: 2, name: 'Bob' }\n];\ntrackByIndex = (i: number) => i;\n\nreorder() {\n  // swap positions, keep same object references\n  this.users = [this.users[1], this.users[0]];\n}\n```\n\n```typescript\n// row.component.ts\n@Component({selector: 'app-row', template: `<input [formControl]=\"name\">`})\nexport class RowComponent implements OnInit {\n  @Input() user!: { id: number; name: string };\n  name = new FormControl('');\n  ngOnInit() {\n    this.name.setValue(this.user.name);\n  }\n}\n```\n\nThe user clicks a button that calls reorder(). Immediately afterward, what is displayed in the two input boxes?",
+          "options": [
+            "They still show Alice in the first input and Bob in the second, because component instances are reused by index and ngOnInit is not re-run.",
+            "Both inputs clear, because the FormControl loses its connection to the template on reorder.",
+            "An error is thrown because using trackBy with index is invalid when objects are swapped.",
+            "They now show Bob in the first input and Alice in the second, because inputs update the FormControl automatically."
+          ],
+          "correct_option": "A",
+          "explanation": "trackBy using the index preserves component instances at their positions. Since the RowComponent only seeded its FormControl in ngOnInit, the existing instances keep their old control values after reorder. Without handling input changes in ngOnChanges, the inputs display the original text in their original positions.",
+          "distractor_rationale": "B assumes @Input changes automatically re-seed internal state, but there’s no code in ngOnChanges to sync the control. C imagines Angular tears down and recreates instances; it doesn’t when trackBy says identity is the index. D claims a framework error that doesn’t occur; trackBy index is allowed, it just has pitfalls.",
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider a ViewChild inside an *ngIf.\n\n```html\n<button (click)=\"show = !show\">Toggle</button>\n<div *ngIf=\"show\">\n  <child-comp #child></child-comp>\n</div>\n```\n\n```typescript\nexport class HostComponent implements AfterViewInit {\n  show = false;\n  @ViewChild('child', { static: true }) child?: ChildComp;\n  ngAfterViewInit() {\n    console.log(!!this.child);\n  }\n}\n```\n\nOn the very first render (before the user clicks Toggle), what gets logged and why?",
+          "options": [
+            "true, because static: true resolves the query during ngOnInit regardless of *ngIf.",
+            "An exception is thrown since ViewChild cannot reference a node under *ngIf.",
+            "true, because AfterViewInit always runs after the child exists, even if hidden by *ngIf.",
+            "false, because the query is inside a structural directive and resolves before the view creates the element."
+          ],
+          "correct_option": "D",
+          "explanation": "A static: true query resolves before change detection creates nodes under structural directives. With show = false, the element doesn’t exist yet, so the query remains undefined. AfterViewInit logs false.",
+          "distractor_rationale": "B overgeneralizes static: true; it can’t conjure elements that *ngIf didn’t create. C is incorrect because AfterViewInit can run when projected/view children don’t exist. D is wrong; querying inside *ngIf is supported, it just resolves to undefined when absent.",
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You combine template-driven and reactive APIs on the same control.\n\n```html\n<form [formGroup]=\"form\" (ngSubmit)=\"submit()\">\n  <input formControlName=\"email\" [(ngModel)]=\"model.email\" />\n</form>\n```\n\n```typescript\nform = new FormGroup({ email: new FormControl('') });\nmodel = { email: '' };\n```\n\nWhat happens at runtime in modern Angular versions?",
+          "options": [
+            "It works, but creates a feedback loop where the value oscillates between model and control.",
+            "The input renders but stays disabled until one of the bindings is removed.",
+            "Only the template-driven binding takes effect; the reactive control is ignored.",
+            "Angular throws an NG01203 error because mixing ngModel and formControlName on the same element is unsupported."
+          ],
+          "correct_option": "D",
+          "explanation": "Angular’s reactive forms do not support using ngModel on the same element as formControlName. In recent versions this is a runtime error (NG01203).",
+          "distractor_rationale": "B is a common fear when double-binding, but Angular prevents it by throwing. C and D suggest degraded behavior instead of a hard failure; Angular fails fast here.",
+          "skills_covered": [
+            "Angular",
+            "HTML",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A route is guarded and has a resolver.\n\n```typescript\nconst routes: Routes = [\n  { path: 'admin', component: AdminComponent,\n    canActivate: [AuthGuard],\n    resolve: { settings: SettingsResolver }\n  }\n];\n```\n\n`AuthGuard` returns false. What happens during navigation to /admin?",
+          "options": [
+            "The router redirects to /login automatically when a guard returns false.",
+            "Navigation is canceled before resolve runs; the resolver does not execute any HTTP call.",
+            "The resolver runs first, then navigation is canceled so data is discarded.",
+            "The AdminComponent is created but not inserted into the DOM."
+          ],
+          "correct_option": "B",
+          "explanation": "Guards are evaluated before resolvers. If canActivate returns false, the navigation is canceled and resolvers do not execute.",
+          "distractor_rationale": "B reverses the order. C assumes an implicit redirect not configured. D claims component instantiation on a failed navigation; Angular doesn’t create the component when activation fails.",
+          "skills_covered": [
+            "Angular"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You bind the same HttpClient observable twice via async pipe.\n\n```typescript\nusers$ = this.http.get<User[]>('/api/users');\n```\n\n```html\n<div *ngIf=\"users$ | async as users\">Total: {{ users.length }}</div>\n<ul>\n  <li *ngFor=\"let u of (users$ | async)\">{{ u.name }}</li>\n</ul>\n```\n\nAssuming no caching interceptor, how many HTTP requests are sent and why?",
+          "options": [
+            "Two, because HttpClient observables are cold and each async pipe subscribes independently.",
+            "One, because the first async pipe shares its subscription with the second automatically.",
+            "One, because Angular deduplicates identical GETs within a change detection tick.",
+            "Zero, because *ngIf with async consumes and completes the stream before *ngFor runs."
+          ],
+          "correct_option": "A",
+          "explanation": "HttpClient returns cold observables. Each async pipe creates its own subscription, causing two separate GET requests unless you multicast (e.g., shareReplay).",
+          "distractor_rationale": "B and C reflect a common assumption that Angular or async pipe deduplicates/shares; they don’t. D misunderstands how templates are evaluated; both bindings subscribe in the same CD cycle but still create independent subscriptions.",
+          "skills_covered": [
+            "Angular",
+            "REST API",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A typeahead uses mergeMap, leading to a race.\n\n```typescript\nthis.results$ = fromEvent(input, 'input').pipe(\n  map((e: any) => e.target.value as string),\n  debounceTime(200),\n  distinctUntilChanged(),\n  mergeMap(term => this.http.get<SearchResult[]>(`/api/search?q=${term}`))\n);\n```\n\nThe user types rapidly: \"ab\" → \"abc\" → \"abcd\". Responses return in this order with these lags from the request time: for \"abc\" after 60ms, for \"ab\" after 100ms, for \"abcd\" after 120ms. What is rendered last?",
+          "options": [
+            "Results for \"ab\", because later responses don’t cancel earlier ones under mergeMap and the slowest wins.",
+            "An empty list, because overlapping responses cause an error and the stream completes.",
+            "Results for \"abcd\", because the last input always wins in a typeahead.",
+            "Results for \"abc\", because it responded first and later emissions are ignored."
+          ],
+          "correct_option": "A",
+          "explanation": "mergeMap lets all inner requests run concurrently and emits as each completes. Given the completion order, the last emission is from the slowest request (\"ab\"), so stale results render last.",
+          "distractor_rationale": "B describes switchMap-like behavior; mergeMap does not cancel. C is the intended UX but requires switchMap or similar. D invents an error; overlapping HTTP calls don’t complete the stream by themselves.",
+          "skills_covered": [
+            "Angular",
+            "REST API",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A control uses updateOn: 'blur' with an async validator.\n\n```typescript\nemail = new FormControl('', {\n  updateOn: 'blur',\n  asyncValidators: [uniqueEmailValidator(this.http)]\n});\nform = new FormGroup({ email: this.email });\n```\n\nThe user types a new email and immediately clicks Submit (ngSubmit) without blurring the field. No custom code calls updateValueAndValidity(). What happens?",
+          "options": [
+            "Angular throws because updateOn: 'blur' forbids submission without a blur event.",
+            "The async validator does not run, so submission logic sees the last committed value and the control remains in a pristine state regarding uniqueness.",
+            "The async validator runs, but only after navigation, via a microtask started by ngSubmit.",
+            "The async validator runs because submission forces validation even without blur."
+          ],
+          "correct_option": "B",
+          "explanation": "With updateOn: 'blur', neither value updates nor validators run until the control blurs (unless you manually trigger validation). Submitting immediately won’t fire the async check, so you see the last committed value.",
+          "distractor_rationale": "B assumes ngSubmit forces all async validators; it doesn’t. C imagines deferred validation after submit, which Angular doesn’t schedule. D invents a restriction that doesn’t exist.",
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "REST API",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Consider ngTemplateOutlet context and microsyntax.\n\n```html\n<ng-template #tpl let-user=\"user\" let-i=\"index\">\n  {{ i }} - {{ user.name }}\n</ng-template>\n\n<ng-container *ngTemplateOutlet=\"tpl; context: { $implicit: users[1], index: 1 }\"></ng-container>\n```\n\nWhat happens at runtime?",
+          "options": [
+            "It prints \"1 - [object Object]\" because $implicit is mapped to 'user' automatically.",
+            "It prints \"1 - \" because user is undefined and Angular renders empty strings for missing properties.",
+            "A TypeError occurs because the template expects a 'user' property in the context, but only $implicit is provided.",
+            "It prints \"1 - {{name}}\" because the template interpolates literally when a value is missing."
+          ],
+          "correct_option": "C",
+          "explanation": "The template binds let-user=\"user\", so it expects a 'user' property on the context. Only $implicit and index are supplied, so user is undefined and accessing user.name throws.",
+          "distractor_rationale": "B underestimates that accessing a property of undefined throws. C assumes automatic mapping from $implicit to a named variable; Angular doesn’t alias it that way. D is nonsensical; Angular doesn’t print the raw mustache.",
+          "skills_covered": [
+            "Angular",
+            "HTML",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A component uses Emulated encapsulation. Global styles contain an !important rule.\n\n```css\n/* styles.css (global) */\nbutton { color: blue !important; }\n```\n\n```typescript\n@Component({\n  encapsulation: ViewEncapsulation.Emulated,\n  styles: [\n    `:host button { color: red; }`,\n    `button.special { color: green; }`\n  ],\n  template: `<button class=\"special\">Go</button>`\n})\nexport class FancyButton {}\n```\n\nWhat is the computed text color of the button?",
+          "options": [
+            "Green, because the class selector is more specific than :host and overrides global styles.",
+            "It depends on DOM order; sometimes red, sometimes green.",
+            "Blue, because !important in a global style overrides component styles even under Emulated encapsulation.",
+            "Red, because :host has higher specificity inside the component."
+          ],
+          "correct_option": "C",
+          "explanation": "Emulated adds scoped attributes but doesn’t change CSS precedence. The global !important rule overrides component styles without !important, so the color is blue.",
+          "distractor_rationale": "B and C ignore the effect of !important, which trumps normal specificity. D is incorrect; with !important in the global rule, the outcome is deterministic.",
+          "skills_covered": [
+            "CSS",
+            "Angular",
+            "HTML"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A feature list renders rows with a ChildComponent marked OnPush. The parent mutates an input array in place and also reorders it. Rows hold internal FormControls seeded from @Input only in ngOnInit. Intermittently, after filtering and reordering, some rows display stale values that no longer match the underlying item, and edits affect the wrong record. trackBy currently returns the index.",
+          "task": "Propose a minimal set of changes to eliminate the stale and misaligned rows without sacrificing OnPush performance. Justify each change in terms of Angular change detection and view reuse. Include any code changes you deem necessary.",
+          "expected_answer": "- Stop mutating arrays in place. Replace pushes/splices with immutable updates to change references so OnPush inputs are marked dirty. Example: `this.items = [...this.items, newItem];` and when editing: `this.items = this.items.map(i => i.id === updated.id ? updated : i);`.\n- Change trackBy to return a stable identity (e.g., item.id) so Angular reuses components for the same logical item and moves DOM nodes when order changes:\n\n```typescript\ntrackById = (_: number, item: Item) => item.id;\n```\n\n- In the child, sync internal FormControl on @Input changes rather than only in ngOnInit. Implement ngOnChanges (or set the control value in a setter) with an equality guard to avoid cursor jumps:\n\n```typescript\n@Input() item!: Item;\nngOnChanges(c: SimpleChanges) {\n  if (c['item'] && c['item'].currentValue && c['item'].currentValue !== c['item'].previousValue) {\n    this.ctrl.setValue(this.item.name, { emitEvent: false });\n  }\n}\n```\n\n- If some updates originate from async streams, call ChangeDetectorRef.markForCheck() inside the child after side-effectful async handlers so OnPush views get checked in the next cycle when inputs did not change by reference.\n\nThese changes ensure correct identity, correct input dirtiness, and resynchronization of internal state while preserving OnPush’s performance benefits.",
+          "rubric": [
+            {
+              "criterion": "Explains why in-place mutation fails with OnPush and proposes immutable updates to change input references",
+              "marks": 2
+            },
+            {
+              "criterion": "Replaces trackBy index with a stable identity (e.g., id) and justifies DOM reuse semantics",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how to resync internal FormControls on input changes (ngOnChanges/setter) with sensible guards",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses change detection edge cases (e.g., markForCheck when updates come from async outside the template) and performance impact",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are implementing a debounced search box that calls `/api/search?q=`. The UX requirement is: cancel in-flight requests when the user types a new term, coalesce duplicate terms, and avoid duplicate HTTP calls when multiple components subscribe to the same results stream. Additionally, when the term is cleared, the stream should emit an empty array immediately without hitting the network.",
+          "task": "Describe the RxJS pipeline and HttpClient usage that meets these constraints. Provide a concise code sketch and justify the operator choices, including how you handle sharing and teardown. Mention any pitfalls you avoid.",
+          "expected_answer": "Use an input stream with debounce and distinct, then switchMap to cancel prior requests. Gate empty terms to emit [] synchronously. Multicast with shareReplay(1) and a refCounted policy to avoid duplicate HTTP calls and clean up.\n\n```typescript\nconst term$ = fromEvent(input, 'input').pipe(\n  map((e: any) => (e.target.value as string).trim()),\n  debounceTime(250),\n  distinctUntilChanged()\n);\n\nconst results$ = term$.pipe(\n  switchMap(term => {\n    if (!term) return of([] as Result[]); // no network on empty\n    return this.http.get<Result[]>(`/api/search`, { params: { q: term } }).pipe(\n      catchError(() => of([]))\n    );\n  }),\n  shareReplay({ bufferSize: 1, refCount: true })\n);\n```\n\n- switchMap ensures only the latest term’s request can emit; prior ones are canceled.\n- distinctUntilChanged prevents duplicate terms from re-requesting.\n- shareReplay(1) shares a single HTTP subscription across multiple async pipes/subscribers and replays the latest value to late subscribers, while refCount allows teardown when nobody listens.\n- Mapping empty terms to `of([])` meets the immediate-clear requirement and avoids spurious network calls.\n- catchError localizes failures to an empty result, preventing stream completion on HTTP error.\nPitfalls avoided: using mergeMap (races), forgetting shareReplay (duplicate calls), and using a plain share that drops late subscribers.",
+          "rubric": [
+            {
+              "criterion": "Correctly justifies cancelation behavior with switchMap over mergeMap and applies debounce/distinct",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows immediate empty emission for empty terms without network calls",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains and applies sharing (shareReplay with refCount) to prevent duplicate HTTP requests",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses error handling/teardown concerns (catchError, refCount) and explains pitfalls avoided",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "REST API",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A product SPA needs routing with these rules: list at /products, detail at /products/:id with data pre-fetched; editing at /products/:id/edit should block navigation away if the form is dirty; a 404 page for unknown product ids; and the rest of the app continues to lazy-load feature modules. You may not introduce global route guards that affect unrelated features.",
+          "task": "Propose a route configuration and component/resolver/guard responsibilities to meet the rules. Explain ordering, where resolvers run relative to guards, and how to surface 404 without breaking back/forward navigation. Provide code fragments as needed.",
+          "expected_answer": "- Keep products as a lazy feature to preserve app-level lazy loading.\n\n```typescript\nconst routes: Routes = [\n  { path: '', component: ProductListComponent },\n  { path: ':id', component: ProductDetailComponent,\n    resolve: { product: ProductResolver }\n  },\n  { path: ':id/edit', component: ProductEditComponent,\n    resolve: { product: ProductResolver },\n    canDeactivate: [DirtyFormGuard]\n  }\n];\n```\n\n- ProductResolver fetches by id and, on a 404, returns an EMPTY observable while redirecting to a NotFound component via the router, or throws a specific error that the route-level error handler maps to a not-found route:\n\n```typescript\n@Injectable()\nexport class ProductResolver implements Resolve<Product> {\n  constructor(private http: HttpClient, private router: Router) {}\n  resolve(route: ActivatedRouteSnapshot): Observable<Product> {\n    const id = route.paramMap.get('id')!;\n    return this.http.get<Product>(`/api/products/${id}`).pipe(\n      catchError(err => {\n        if (err.status === 404) {\n          this.router.navigate(['/not-found'], { skipLocationChange: false });\n          return EMPTY; // cancel activation\n        }\n        return throwError(() => err);\n      })\n    );\n  }\n}\n```\n\n- DirtyFormGuard implements canDeactivate on the edit component, prompting when the FormGroup is dirty.\n- Ordering: guards run before resolvers on activation, but canDeactivate runs when leaving /:id/edit. Resolver ensures data exists before component instantiation. Returning EMPTY or navigating in resolver prevents activating a missing product.\n- Define a top-level route `{ path: 'not-found', component: NotFoundComponent }` plus a wildcard at the app root for unmatched URLs; the resolver-driven redirect preserves proper back/forward history.",
+          "rubric": [
+            {
+              "criterion": "Defines a coherent routes array with list, detail, and edit, including resolver and canDeactivate where appropriate",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains resolver behavior on 404 and shows a mechanism to cancel activation and navigate to not-found",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly describes guard/resolver ordering and navigation effects",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses lazy-loading and history/back-forward behavior considerations",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "REST API",
+            "TypeScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must build a reactive Order form with a customer section and a dynamic list of line items. Constraints: total must not exceed the customer’s credit limit; each SKU field requires an async validator to verify existence via `/api/skus/:code`; validation should only run on blur for line items but the Submit button must trigger validation across the form even if fields never blurred.",
+          "task": "Describe the FormGroup/FormArray model, where validators live (sync and async), and how you trigger validation on submit. Include code that shows updateOn configuration and how you aggregate line totals for the credit check without subscribing imperatively to each control.",
+          "expected_answer": "Define a root form with a FormArray for items. Use updateOn at the group level for items to defer validation until blur. Use a group-level custom validator to compute totals, and wire async validators at the control level for SKU.\n\n```typescript\ninterface Line { sku: string; qty: number; price: number; }\n\nconst itemGroup = () => new FormGroup({\n  sku: new FormControl('', {\n    updateOn: 'blur',\n    asyncValidators: [skuExistsValidator(this.http)]\n  }),\n  qty: new FormControl(1, { updateOn: 'blur', validators: [Validators.min(1)] }),\n  price: new FormControl(0, { updateOn: 'blur', validators: [Validators.min(0)] })\n}, { updateOn: 'blur' });\n\nthis.form = new FormGroup({\n  customer: new FormGroup({ id: new FormControl('', Validators.required), creditLimit: new FormControl(0) }),\n  items: new FormArray<FormGroup>([])\n}, { validators: [this.totalWithinCredit()] });\n\nprivate totalWithinCredit(): ValidatorFn {\n  return (group: AbstractControl) => {\n    const fg = group as FormGroup;\n    const limit = fg.get('customer.creditLimit')!.value ?? 0;\n    const items = (fg.get('items') as FormArray).controls as FormGroup[];\n    const total = items.reduce((sum, g) => sum + (g.get('qty')!.value || 0) * (g.get('price')!.value || 0), 0);\n    return total <= limit ? null : { creditExceeded: { total, limit } };\n  };\n}\n\nonSubmit() {\n  // Force validation even if some controls didn’t blur\n  this.form.markAllAsTouched();\n  this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });\n  if (this.form.pending) return; // wait or disable submit until async completes\n  if (this.form.valid) { /* proceed */ }\n}\n```\n\nThis avoids per-control subscriptions; the synchronous group validator computes totals on demand. updateOn: 'blur' defers field-level checks until blur, while submit explicitly triggers validation for the entire form. Async SKU validators run on blur or when submit triggers updateValueAndValidity.",
+          "rubric": [
+            {
+              "criterion": "Correct reactive model with FormGroup/FormArray structure and placement of validators",
+              "marks": 3
+            },
+            {
+              "criterion": "Proper use of updateOn: 'blur' at line-item level and async validator placement for SKU",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate total computation in a group-level validator without imperative per-control subscriptions",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear submission flow to trigger validation (markAllAsTouched/updateValueAndValidity) and handle pending async",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "REST API",
+            "HTML"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Angular Core: Component/Template/Directive mini-app",
+          "brief": "Build a small Angular application that showcases component composition, template binding, and directives with efficient change detection. Implement a master-detail catalog (e.g., categories → items) with:\n- At least three presentational child components using ChangeDetectionStrategy.OnPush.\n- One custom attribute directive that conditionally toggles a CSS class based on an @Input expression.\n- Proper use of input/output bindings, structural directives (*ngIf, *ngFor with a correct trackBy), and one reusable child that accepts data via @Input and emits a selection event via @Output.\n- Demonstrate avoiding in-place mutations for inputs passed to OnPush children.\nNo routing is required for this task.",
+          "deliverable": "A runnable Angular workspace (zip or repo URL) with a README explaining how to serve the app and where to find: (1) the OnPush components, (2) the custom directive, and (3) the demonstration of immutable updates.",
+          "acceptance_criteria": [
+            "Project builds and serves with `npm install` and `npm start` (or `ng serve`).",
+            "At least three child components use ChangeDetectionStrategy.OnPush and render data from parent via @Input.",
+            "Parents update arrays/objects immutably (e.g., spread or map) before passing to OnPush children; no use of push/splice on bound arrays.",
+            "Custom attribute directive present and applied in at least two places; toggles a class based on an input expression and updates when the input value changes.",
+            "Lists use *ngFor with a stable trackBy function that returns a unique id; reordering preserves component instances for identical items.",
+            "An @Output selection event from a child bubbles to the parent and updates a bound property, visible in the UI."
+          ],
+          "rubric": [
+            {
+              "criterion": "OnPush components implemented correctly and used to render data via @Input",
+              "marks": 5
+            },
+            {
+              "criterion": "Immutable update patterns demonstrated (no in-place mutations on bound collections)",
+              "marks": 5
+            },
+            {
+              "criterion": "Custom directive correctness (responsive to @Input changes, class toggling works)",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate use of structural directives and trackBy for lists",
+              "marks": 3
+            },
+            {
+              "criterion": "Event flow via @Output and overall app runs per README",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "TypeScript",
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Multi-view SPA: Routing, Reactive Forms, RxJS, and API calls",
+          "brief": "Extend or create an Angular SPA with routing and data entry backed by a real HTTP API. Build a two-view feature (e.g., \"Users\"):\n- Route A: `/users` renders a paged list fetched from an API (e.g., https://jsonplaceholder.typicode.com/users or a local mock server). Include a debounced search box that cancels in-flight requests on new input and emits empty results on clear.\n- Route B: `/users/:id` shows user details pre-fetched via a route resolver. Provide a button to navigate back to `/users` preserving the last search term via query params.\n- Route C: `/users/new` presents a reactive form with validators (required, email pattern, and an async uniqueness check that calls an API endpoint or a mocked endpoint). Configure updateOn: 'blur' for the email field.\n- Ensure duplicate async consumers (e.g., count and list) do not trigger duplicate HTTP calls by sharing the stream.\n- Global error handler for HTTP calls via an HttpInterceptor that maps 500s to a user-visible message without breaking the stream.",
+          "deliverable": "A runnable Angular workspace (zip or repo URL) with a README detailing routes, how to start the mock/real API, and test steps for search cancellation, resolver behavior, shared streams, and form validation.",
+          "acceptance_criteria": [
+            "`npm start` (or `ng serve`) runs the app; README explains any mock server setup if used.",
+            "Routes exist: `/users`, `/users/:id`, `/users/new`; deep-linking refresh loads the correct view.",
+            "Resolver pre-fetches user data for `/users/:id`; detail component reads from `route.data` without triggering an extra HTTP call.",
+            "Search input on `/users` debounces (≥200ms), cancels in-flight requests on new terms (switchMap), and emits [] when cleared; Network tab shows no overlapping stale renders.",
+            "The list view uses a shared observable (e.g., shareReplay) so rendering a count and the list does not cause duplicate GETs.",
+            "Reactive form on `/users/new` has required and email validators; email control uses updateOn: 'blur' and an async validator; submitting without blurring does not fire the async check.",
+            "Back navigation from detail preserves the last search term via query params.",
+            "An HttpInterceptor surfaces server errors as a non-blocking UI message; streams do not complete on a 500."
+          ],
+          "rubric": [
+            {
+              "criterion": "Routing correctness (routes defined, resolver used for detail, query param preservation)",
+              "marks": 5
+            },
+            {
+              "criterion": "Search stream correctness (debounce, cancel with switchMap, empty-on-clear) and demonstrated via behavior/network evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "Shared HTTP stream to avoid duplicate requests (e.g., shareReplay) across multiple consumers",
+              "marks": 4
+            },
+            {
+              "criterion": "Reactive form validators including async uniqueness with updateOn: 'blur' and correct submit behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "HTTP error handling via interceptor without breaking streams",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Angular",
+            "REST API",
+            "TypeScript",
+            "HTML"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-013-S03",
+      "skills_assessed": [
+        "JavaScript",
+        "REST API",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Data Modeling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this Express app:\n\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n  res.set('X-Trace', 'on');\n  next();\n});\n\napp.get('/a', (req, res, next) => {\n  next(new Error('boom'));\n});\n\napp.use((err, req, res, next) => {\n  res.status(500).json({ error: err.message });\n});\n\napp.use((req, res) => {\n  res.status(404).send('no');\n});\n```\n\nA GET /a request is made. What happens?",
+          "options": [
+            "The response is 404 with header X-Trace: on and body `no`",
+            "The connection hangs because Express cannot route errors raised via `next(err)`",
+            "The response is 500 with header X-Trace: on and body `{\"error\":\"boom\"}`",
+            "The response is 500 but header X-Trace is missing because error middleware clears headers"
+          ],
+          "correct_option": "C",
+          "explanation": "Regular middleware ran before the route and set X-Trace. The route calls `next(err)`, which transfers control to the error-handling middleware. That middleware sends a 500 JSON response. The 404 middleware is skipped because an error handler already produced a response.",
+          "distractor_rationale": "B: Tempting if you think the 404 always runs, but error-handling short-circuits to the error middleware. C: Error middleware does not clear previously set headers. D: `next(err)` is exactly how Express signals errors; the error handler handles it and the request does not hang.",
+          "skills_covered": [
+            "Express.js",
+            "Node.js",
+            "REST API"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Route/middleware ordering:\n\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.use('/users/:id', (req, res) => {\n  res.send('mw ' + req.params.id);\n});\n\napp.get('/users/:id', (req, res) => {\n  res.send('route');\n});\n\napp.use((req, res) => res.status(404).end());\n```\n\nA GET /users/42 is made. What is the response body?",
+          "options": [
+            "```text\n\n```",
+            "```text\n404 Not Found\n```",
+            "```text\nroute\n```",
+            "```text\nmw 42\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Express matches middleware/handlers in registration order. The `app.use('/users/:id', ...)` runs first, handles the request, and sends a response. The later `app.get` is never reached.",
+          "distractor_rationale": "B: Seems plausible if you assume method-specific routes override `use`, but order wins. C: An empty body would happen only if no handler sent data. D: 404 only occurs if nothing matched or responded; here the first middleware matched and responded.",
+          "skills_covered": [
+            "Express.js",
+            "Node.js"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Body parsing corner case:\n\n```javascript\nconst express = require('express');\nconst app = express();\napp.use(express.json());\n\napp.post('/echo', (req, res) => {\n  res.json({ body: req.body, type: typeof req.body });\n});\n```\n\nA client sends:\n\n```http\nPOST /echo HTTP/1.1\nHost: localhost:3000\nContent-Type: text/plain\n\n{\"a\":1}\n```\n\nWhat JSON does the server return?",
+          "options": [
+            "```json\n{\"body\":null,\"type\":\"undefined\"}\n```",
+            "```json\n{\"body\":{},\"type\":\"object\"}\n```",
+            "```json\n{\"body\":null,\"type\":\"object\"}\n```",
+            "```json\n{\"body\":{\"a\":1},\"type\":\"object\"}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`express.json()` only parses requests with Content-Type `application/json` (or `+json`). With `text/plain`, the JSON parser does not run and `req.body` remains `undefined`. Serializing that yields `{\"body\":null,\"type\":\"undefined\"}`.",
+          "distractor_rationale": "A/B: These assume a parser still ran and produced an object (empty or null). C: Would be true if Content-Type were `application/json`.",
+          "skills_covered": [
+            "Express.js",
+            "REST API",
+            "Node.js"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Mongoose document vs lean object:\n\n```javascript\nconst user = await User.findById(id).lean();\nuser.name = 'Ada';\nawait user.save();\n```\n\nWhat happens at runtime?",
+          "options": [
+            "It throws `TypeError: user.save is not a function`",
+            "The update succeeds and persists to MongoDB",
+            "No error is thrown, but no changes persist",
+            "It upserts a new document with only the modified fields"
+          ],
+          "correct_option": "A",
+          "explanation": "`.lean()` returns a plain JavaScript object, not a Mongoose document instance. Plain objects do not have Mongoose document methods like `.save()`, so attempting to call it throws a TypeError.",
+          "distractor_rationale": "B: Only a real document instance can `.save()`. C: Mongoose will throw, not silently ignore. D: Upserts require update operations on the model, not calling `.save()` on a plain object.",
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given a document and update:\n\n```javascript\n// Before\n{\n  _id: 1,\n  items: [ { sku: 'A', qty: 1 }, { sku: 'B', qty: 2 } ]\n}\n\n// Update\ndb.orders.updateOne(\n  { _id: 1, 'items.sku': 'B' },\n  { $inc: { 'items.$.qty': 3 } }\n);\n```\n\nWhat does the document look like after?",
+          "options": [
+            "```json\n{\n  \"_id\": 1,\n  \"items\": [ { \"sku\": \"A\", \"qty\": 1 }, { \"sku\": \"B\", \"qty\": 3 } ]\n}\n```",
+            "```json\n{\n  \"_id\": 1,\n  \"items\": [ { \"sku\": \"A\", \"qty\": 1 }, { \"sku\": \"B\", \"qty\": 5 } ]\n}\n```",
+            "```json\n{\n  \"_id\": 1,\n  \"items\": [ { \"sku\": \"A\", \"qty\": 1 }, { \"sku\": \"B\", \"qty\": 2 }, { \"sku\": \"B\", \"qty\": 3 } ]\n}\n```",
+            "```json\n{\n  \"_id\": 1,\n  \"items\": [ { \"sku\": \"A\", \"qty\": 4 }, { \"sku\": \"B\", \"qty\": 2 } ]\n}\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "The positional operator `$` targets the first matched array element (`items.sku == 'B'`) and increments its `qty` by 3, from 2 to 5.",
+          "distractor_rationale": "A: Applies `$set` semantics rather than `$inc`. C: Increments the wrong element. D: `$inc` never appends new elements; it modifies in place.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You need daily counts of shipped orders since a date. Index:\n\n```javascript\n// orders: index on { status: 1, createdAt: 1 }\n```\n\nWhich aggregation best uses the index and minimizes scanned documents?",
+          "options": [
+            "```javascript\n[\n  { $match: { createdAt: { $gte: ISODate('2026-01-01') } } },\n  { $group: { _id: { d: { $dateTrunc: { date: '$createdAt', unit: 'day' } } }, count: { $sum: 1 } } },\n  { $match: { status: 'shipped' } }\n]\n```",
+            "```javascript\n[\n  { $match: { status: 'shipped', createdAt: { $gte: ISODate('2026-01-01') } } },\n  { $group: { _id: { d: { $dateTrunc: { date: '$createdAt', unit: 'day' } } }, count: { $sum: 1 } } },\n  { $sort: { '_id.d': 1 } }\n]\n```",
+            "```javascript\n[\n  { $match: { status: { $in: ['shipped'] } } },\n  { $group: { _id: '$status', count: { $sum: 1 } } },\n  { $match: { createdAt: { $gte: ISODate('2026-01-01') } } }\n]\n```",
+            "```javascript\n[\n  { $group: { _id: { d: { $dateTrunc: { date: '$createdAt', unit: 'day' } }, s: '$status' }, count: { $sum: 1 } } },\n  { $match: { '_id.s': 'shipped', '_id.d': { $gte: ISODate('2026-01-01') } } },\n  { $sort: { '_id.d': 1 } }\n]\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Placing a selective `$match` on both `status` and `createdAt` first lets MongoDB use the compound index `{status, createdAt}` to restrict the scan, then group only the necessary documents.",
+          "distractor_rationale": "B: `$group` first forces a collection scan and heavy in-memory aggregation. C/D: Split or misplaced filters prevent optimal index use; D also loses the date dimension in the group entirely.",
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Partial unique index behavior. Assume this index exists:\n\n```javascript\ndb.users.createIndex(\n  { email: 1 },\n  { unique: true, partialFilterExpression: { deleted: { $eq: false } } }\n);\n\n// Existing docs:\n// { email: 'a@x', deleted: true }\n// { email: 'a@x' } // 'deleted' missing\n// { email: 'b@x', deleted: false }\n```\n\nWhat is the outcome of inserting `{ email: 'a@x', deleted: false }`?",
+          "options": [
+            "Insert fails unless you set `sparse: true` on the index",
+            "Insert succeeds; uniqueness is enforced only among docs where `deleted === false`",
+            "Insert fails with E11000 duplicate key error due to existing duplicates regardless of `deleted`",
+            "Insert succeeds but future inserts for any `a@x` will always fail, even with `deleted: true`"
+          ],
+          "correct_option": "B",
+          "explanation": "Partial unique indexes enforce uniqueness only for documents matching the filter. Existing `a@x` docs do not match `deleted === false`, so the first `deleted: false` insert is unique within the indexed subset and succeeds. A second `deleted: false` `a@x` would violate uniqueness.",
+          "distractor_rationale": "B: Confuses global uniqueness with filtered uniqueness. C: `sparse` is unrelated here; partial filter already controls membership. D: Documents with `deleted: true` remain outside the unique set and can still be inserted later.",
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Casting and validators in `findOneAndUpdate`:\n\n```javascript\n// Schema: { name: String, age: Number }\nconst u = await User.findOneAndUpdate(\n  { name: 'Ana' },\n  { $set: { age: '42' } },\n  { new: true, runValidators: true }\n);\nconsole.log(typeof u.age, u.age);\n```\n\nWhat gets logged?",
+          "options": [
+            "```text\nstring 42\n```",
+            "```text\nundefined undefined\n```",
+            "```text\nnumber 42\n```",
+            "A CastError is thrown because `runValidators: true` rejects string-to-number"
+          ],
+          "correct_option": "C",
+          "explanation": "Mongoose casts assigned values to the schema type before validation. `'42'` casts to `42` as a Number and passes numeric validators. Returning the new document logs `number 42`.",
+          "distractor_rationale": "B: Ignores Mongoose casting. C: CastError would occur only if casting failed (e.g., `'NaN'` with strict casting). D: A document is returned with the updated value; projection was not used.",
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Param vs query precedence in your handler:\n\n```javascript\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id || req.query.id;\n  res.send(id);\n});\n```\n\nRequest:\n\n```http\nGET /users/123?id=999 HTTP/1.1\n```\n\nWhat does the server respond with?",
+          "options": [
+            "```text\n123\n```",
+            "400 Bad Request due to conflicting IDs",
+            "```text\n[\"123\",\"999\"]\n```",
+            "```text\n999\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The code explicitly prefers `req.params.id` over `req.query.id` using the `||` operator. The path parameter `'123'` is truthy and chosen.",
+          "distractor_rationale": "B: Would be true if the code preferred the query param. C: The handler returns a string, not an array. D: There is no validation to detect conflicts; the code picks one.",
+          "skills_covered": [
+            "Express.js",
+            "REST API"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Covered query with a compound index. Index:\n\n```javascript\n// items: { status: 1, score: -1, _id: 1 }\n```\n\nWhich find uses only the index (covered query) without fetching full documents?",
+          "options": [
+            "```javascript\ndb.items.find(\n  { status: 'open' },\n  { _id: 0, score: 1, title: 1 }\n).sort({ status: 1, score: -1 });\n```",
+            "```javascript\ndb.items.find(\n  { status: { $in: ['open','closed'] } },\n  { _id: 0, score: 1 }\n).sort({ score: -1 });\n```",
+            "```javascript\ndb.items.find(\n  { status: 'open' },\n  { score: 1 }\n).sort({ status: -1, score: -1 });\n```",
+            "```javascript\ndb.items.find(\n  { status: 'open' },\n  { _id: 0, score: 1 }\n).sort({ status: 1, score: -1 });\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A returns only `score` (and omits `_id`), filters on equality for `status`, and sorts exactly by the index order. All referenced fields are in the index, enabling a covered query. Adding any non-indexed field to the projection breaks coverage.",
+          "distractor_rationale": "B: Projects `title`, which is not in the index, forcing document fetch. C: Sort order does not start with the leading index field `status`, harming index use and coverage. D: Sort direction on `status` mismatches the index and projects `_id` implicitly (unless excluded), likely breaking coverage.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your PUT /accounts/:id endpoint currently reads the account, checks if `balance - debit >= 0`, then writes the new balance.\n\n```javascript\n// current (problematic)\nconst acc = await Account.findById(id);\nif (!acc) return res.status(404).end();\nif (acc.balance - amount < 0) return res.status(422).json({ error: 'insufficient' });\nacc.balance -= amount;\nawait acc.save();\n```\n\nUnder concurrent traffic, some accounts end up with negative balances. The collection has many updates per second.",
+          "task": "Design a concurrency-safe change using MongoDB and Express so the invariant `balance >= 0` always holds without serializing all requests globally. Specify the exact database operation, query predicate/guards, index considerations, and how the route should respond on contention vs true insufficiency.",
+          "expected_answer": "Use a single atomic write with a guard in the query. Replace the read-modify-write with `findOneAndUpdate` that both checks and decrements in one step:\n\n```javascript\nconst updated = await Account.findOneAndUpdate(\n  { _id: id, balance: { $gte: amount } },\n  { $inc: { balance: -amount } },\n  { new: true }\n);\nif (!updated) return res.status(409).json({ error: 'balance_changed_or_insufficient' });\nreturn res.status(200).json(updated);\n```\n\nThis is atomic at the single-document level, so no negative balance can occur. Index on `{ _id: 1, balance: 1 }` or the default `_id` is enough for point lookups; if `id` is not `_id`, create a compound index with the leading equality field then `balance` to support the range guard. Distinguishing contention vs insufficiency can be done by re-reading the document to see current balance if needed, or by returning 409 with a standard error code for client retry. Do not use application-level locks; rely on MongoDB's single-doc atomicity. Optionally add retry for transient write conflicts if using transactions across multiple related docs.",
+          "rubric": [
+            {
+              "criterion": "Uses a single atomic update (`findOneAndUpdate`/`updateOne`) with `$inc` and a guard on `balance`",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why this prevents negative balances under concurrency (single-document atomicity)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies appropriate index/key pattern for the guarded query",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines clear HTTP semantics on failure (e.g., 409 with retryable code vs 422)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Express.js",
+            "REST API",
+            "Node.js"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "GET /orders/stats?status=shipped&since=2026-01-01 returns per-day counts. Current aggregation is slow on a 10M-row collection and often shows COLLSCAN in explain:\n\n```javascript\n[\n  { $group: { _id: { d: { $dateTrunc: { date: '$createdAt', unit: 'day' } }, s: '$status' }, c: { $sum: 1 } } },\n  { $match: { '_id.s': 'shipped', '_id.d': { $gte: ISODate('2026-01-01') } } },\n  { $sort: { '_id.d': 1 } }\n]\n```\n\nExisting index: `{ createdAt: 1 }`.",
+          "task": "Propose a concrete fix that achieves an indexed scan. Include the exact pipeline order, the index you would add or change, and how you would verify the improvement. Mention any trade-offs.",
+          "expected_answer": "Reorder the pipeline to filter first and add a compound index aligned with the filter and sort:\n\n- Create index: `{ status: 1, createdAt: 1 }` (status equality + createdAt range). If daily queries always sort ascending, this supports indexable sort too.\n- New pipeline:\n\n```javascript\n[\n  { $match: { status: 'shipped', createdAt: { $gte: ISODate('2026-01-01') } } },\n  { $group: { _id: { d: { $dateTrunc: { date: '$createdAt', unit: 'day' } } }, c: { $sum: 1 } } },\n  { $sort: { '_id.d': 1 } }\n]\n```\n\nVerification: `db.orders.explain('executionStats').aggregate(pipeline)` should show `IXSCAN` on the new compound index with a small `totalDocsExamined` relative to result size and `COLLSCAN: 0`. Trade-offs: the new index costs write amplification and storage; if many statuses are queried, consider `{ status: 1, createdAt: 1 }` or, if sort is by day descending, confirm sort compatibility. If queries also project only aggregated fields, the index may be covering for pre-group stages.",
+          "rubric": [
+            {
+              "criterion": "Proposes `$match`-first pipeline that filters by both status and date",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies an appropriate compound index and justifies its order",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains how to verify with `explain` and relevant metrics",
+              "marks": 2
+            },
+            {
+              "criterion": "Acknowledges trade-offs (write overhead/storage)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling",
+            "REST API"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You’re modeling tasks and comments. Requirements: a task can have thousands of comments; the API often returns the latest 20 comments for a task; comments are moderated individually and may be deleted/restored; tasks must display a `commentCount` quickly without scanning all comments.",
+          "task": "Choose between embedding comments in the task document vs referencing a separate `comments` collection. Justify your choice, describe the write/read paths for creating and listing comments (including indexes), and how to maintain an accurate `commentCount` under concurrent writes.",
+          "expected_answer": "Use referencing. Embedding thousands of comments would bloat the task document, hit the 16MB doc limit, and make moderation updates rewrite large docs. Model:\n\n- `tasks` collection with fields including `commentCount` and timestamps.\n- `comments` collection with `{ taskId, createdAt, authorId, body, status }` and an index `{ taskId: 1, createdAt: -1 }` for listing newest-first.\n\nCreate comment flow:\n- Insert into `comments` with `taskId` and `createdAt`.\n- Atomically increment the task's `commentCount` with `updateOne({ _id: taskId }, { $inc: { commentCount: 1 } })` in the same request. If using multi-doc transactions (e.g., in sharded clusters or when atomicity across docs is required), wrap both in a transaction; otherwise accept eventual consistency and add a compensating job.\n\nList flow:\n- Query `comments` by `{ taskId }`, sort `{ createdAt: -1 }`, limit 20; the index supports both filter and sort.\n\nModeration:\n- Update a single comment doc's `status` by `_id` without rewriting the task.\n- Adjust `commentCount` on hide/show either via `$inc` guarded by status change or recompute asynchronously if strict accuracy is not required in real time.\n\nThis design meets the access patterns and concurrency characteristics better than embedding.",
+          "rubric": [
+            {
+              "criterion": "Chooses referencing and justifies against embedding with concrete limits/perf reasons",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies read path and supporting index for latest-20 listing",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes write path and maintaining `commentCount` atomically or with transactions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "MongoDB",
+            "REST API"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your GET /events endpoint paginates by `skip/limit` on `createdAt` and sorts descending. Users see duplicates/omissions when new events arrive between pages. Collection is indexed on `{ createdAt: -1 }`.",
+          "task": "Propose a keyset (cursor) pagination design that provides stable pages under inserts. Specify the API contract (query params, response shape), the exact MongoDB query and index used, and how to handle the first page and the next-page token safely.",
+          "expected_answer": "Use keyset pagination with a cursor on `createdAt` (and a tie-breaker `_id`).\n\nAPI:\n- First page: `GET /events?limit=50` returns items plus `nextCursor`.\n- Next pages: `GET /events?limit=50&cursor=2026-08-01T12:34:56.789Z_64c9...` where the cursor encodes the last item’s `(createdAt, _id)`.\n\nQuery (desc):\n```javascript\nconst [ts, id] = decode(cursor) // or undefined for first page\nconst filter = ts ? { $or: [\n  { createdAt: { $lt: ts } },\n  { createdAt: ts, _id: { $lt: id } }\n] } : {};\nconst docs = await db.events\n  .find(filter)\n  .sort({ createdAt: -1, _id: -1 })\n  .limit(limit + 1)\n  .toArray();\n```\n\nIndex: compound `{ createdAt: -1, _id: -1 }` to support the sort and range efficiently.\n\nFirst page: omit filter and sort by the compound index. Next-page token: last returned doc’s `(createdAt, _id)` base64-encoded and signed to prevent tampering. Return `hasMore` and `nextCursor` only if `docs.length > limit`. This avoids duplicates/omissions because each page is strictly \"after\" the last seen key in a total order.",
+          "rubric": [
+            {
+              "criterion": "Replaces skip/limit with keyset pagination using createdAt and _id as a composite cursor",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies correct sort, filter (strictly less-than with tie-breaker), and supporting compound index",
+              "marks": 3
+            },
+            {
+              "criterion": "Defines a safe API contract and cursor encoding/validation",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "REST API",
+            "Express.js"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Express REST backend with robust middleware and error handling",
+          "brief": "Build a small Express-based REST service for a `tasks` resource. The focus is production-grade middleware, routing, and HTTP semantics. Implement create/read/update/delete plus a filtered list and conditional GETs using ETag. Centralize validation and error handling so bad input or DB errors map to correct status codes.",
+          "deliverable": "A Git repository (or zipped folder) containing the Express service code, a README with run instructions, and a Postman collection (or curl script) demonstrating the endpoints. The service should start with `npm start` and expose `/tasks` endpoints on localhost.",
+          "acceptance_criteria": [
+            "Routes exist: POST /tasks, GET /tasks, GET /tasks/:id, PUT /tasks/:id, PATCH /tasks/:id/status, DELETE /tasks/:id",
+            "Validation middleware rejects invalid payloads with 400 and a JSON error body (e.g., missing title, invalid status enum)",
+            "Central error handler maps: not found -> 404, validation -> 400, duplicate key (`E11000`) -> 409, unhandled -> 500 (JSON body)",
+            "ETag or Last-Modified is set on GET /tasks/:id and GET /tasks, and If-None-Match or If-Modified-Since yields 304 appropriately",
+            "Logging middleware adds a request ID (header `X-Request-Id`) and logs method, path, status, and duration",
+            "404 handler for unknown routes returns JSON",
+            "README documents environment variables (e.g., `PORT`, `MONGO_URL`) and how to run and test endpoints",
+            "Postman collection or curl script hits each endpoint and shows a successful 304 conditional GET"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct routing and HTTP semantics for all specified endpoints",
+              "marks": 6
+            },
+            {
+              "criterion": "Validation middleware and consistent 400 responses with useful error bodies",
+              "marks": 4
+            },
+            {
+              "criterion": "Centralized error handling with correct 404/409/500 mapping (including duplicate key)",
+              "marks": 4
+            },
+            {
+              "criterion": "Conditional GET implemented correctly (ETag/Last-Modified leading to 304)",
+              "marks": 4
+            },
+            {
+              "criterion": "Operational middleware (request ID, logging) and clear README/tests",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Express.js",
+            "REST API",
+            "Node.js",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "MongoDB persistent data layer with models, indexes, and an aggregation",
+          "brief": "Implement the persistent data layer for the `tasks` service using Mongoose. Define schemas, indexes (including a partial unique index for soft-deleted titles), and a reporting aggregation. Provide a minimal repository layer the Express app can call.",
+          "deliverable": "Code for Mongoose models and a repository module (`/data`), a seed script, and a script or test that runs the aggregation. Include `db.collection.getIndexes()` output and at least one `explain('executionStats')` JSON saved in the repo to demonstrate index use.",
+          "acceptance_criteria": [
+            "Task schema: `{ title: String (required), status: enum ['todo','doing','done'], dueDate: Date, tags: [String], deleted: Boolean (default false), createdAt/updatedAt }` with `timestamps: true`",
+            "Partial unique index enforces unique `title` only when `deleted === false`",
+            "Compound index `{ status: 1, dueDate: 1 }` supports filtered, sorted listings",
+            "Repository exposes: create, getById, updateById (PUT semantics), patchStatus, softDelete (sets `deleted: true`), list(filter: status/tags, sort by dueDate, limit, cursor optional)",
+            "Aggregation function `countByStatus({ since?: Date })` using `$match` then `$group` returns counts per status; includes code and saved sample output",
+            "Seed script inserts sample docs to exercise indexes and aggregation",
+            "Saved `explain('executionStats')` JSON shows `IXSCAN` (not `COLLSCAN`) for a query filtering by `status` and sorting by `dueDate`",
+            "README notes how to run Mongo locally (or with MongoMemoryServer) and how to run the aggregation script"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct schema and field constraints with timestamps",
+              "marks": 4
+            },
+            {
+              "criterion": "Indexes implemented correctly (partial unique on title with deleted=false; compound on status+dueDate)",
+              "marks": 6
+            },
+            {
+              "criterion": "Repository functions implement required behaviors and query patterns",
+              "marks": 5
+            },
+            {
+              "criterion": "Aggregation implemented with match-before-group and produces correct output",
+              "marks": 3
+            },
+            {
+              "criterion": "Evidence of index usage via saved explain and clear run instructions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Data Modeling",
+            "Node.js",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-013-S04",
+      "skills_assessed": [
+        "Angular",
+        "REST API",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Authentication",
+        "Unit Testing",
+        "Git",
+        "Application Deployment"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You intend `GET /posts` to be public but `POST /posts` to require JWT auth. The server is:\n```javascript\n// auth.js\nmodule.exports = function auth(req, res, next) {\n  const auth = req.headers.authorization;\n  if (!auth) return res.status(401).json({ error: 'missing token' });\n  // ...verify JWT...\n  next();\n};\n```\n```javascript\n// server.js\nconst express = require('express');\nconst auth = require('./auth');\nconst app = express();\n\napp.use('/posts', auth);\n\napp.get('/posts', (req, res) => {\n  res.json([{ id: 1, title: 'public' }]);\n});\n\napp.post('/posts', (req, res) => {\n  res.status(201).json({ id: 2 });\n});\n```\nA client calls `GET /posts` without an `Authorization` header. What happens and why?",
+          "options": [
+            "403, because missing credentials map to forbidden when a path is protected.",
+            "200, because the `auth` middleware only runs for `POST` since it follows the `app.post` handler.",
+            "401, because `app.use('/posts', auth)` applies to all verbs under `/posts`, including GET.",
+            "200, because GETs are safe and Express skips `auth` for idempotent methods."
+          ],
+          "correct_option": "C",
+          "explanation": "`app.use('/posts', auth)` mounts the middleware for all HTTP methods on the `/posts` path. The GET hits `auth`, which returns 401 when the header is missing.",
+          "distractor_rationale": "B is a common misconception: HTTP method semantics (safe/idempotent) do not affect Express middleware execution. C confuses 401 (unauthenticated) with 403 (authenticated but not authorized). D imagines route-specific middleware ordering, but `app.use` is mounted before any route handlers and runs for all methods on that path.",
+          "skills_covered": [
+            "Express.js",
+            "Authentication",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Two concurrent creates target a collection with a Mongoose unique index after lowercasing emails.\n```javascript\nconst UserSchema = new mongoose.Schema({\n  email: { type: String, unique: true, lowercase: true, trim: true }\n});\nconst User = mongoose.model('User', UserSchema);\n\nawait Promise.all([\n  User.create({ email: 'a@x.com' }),\n  User.create({ email: 'A@x.com' })\n]);\n```\nWhat is the expected outcome and error surface in Node when run against a properly indexed collection?",
+          "options": [
+            "The second insert waits for the first and then overwrites it, since lowercase makes the values identical.",
+            "One insert succeeds; the other rejects with a `MongoServerError` E11000 duplicate key error thrown by MongoDB.",
+            "Both inserts reject with a `ValidationError` because `unique: true` is a validator on the schema.",
+            "Both inserts succeed; Mongoose defers duplicate detection to application logic on read."
+          ],
+          "correct_option": "B",
+          "explanation": "`unique: true` creates a unique index at the database. Because both emails normalize to the same value, MongoDB rejects one with E11000. `unique` is not a Mongoose validator and cannot surface as `ValidationError`.",
+          "distractor_rationale": "B mistakes `unique` for an application-level check. C is tempting because it appears in schema, but Mongoose docs state `unique` is not a validator. D imagines a write lock and overwrite; Mongo enforces uniqueness by rejecting conflicting writes, not overwriting.",
+          "skills_covered": [
+            "MongoDB",
+            "Node.js",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A Jest + Supertest test is written as:\n```javascript\nit('creates an item', () => {\n  request(app)\n    .post('/items')\n    .send({ name: 'x' })\n    .expect(201);\n});\n```\nThe route handler currently returns 500. What does Jest report and why?",
+          "options": [
+            "Jest fails the test immediately with a 500 assertion error because Supertest throws synchronously.",
+            "Jest times out waiting for the HTTP call because the test never ends.",
+            "The test fails with an unhandled promise rejection because Supertest throws to the outer scope.",
+            "The test passes, because no `await`/`return`/`done` is used, so Jest doesn't wait for the assertion."
+          ],
+          "correct_option": "D",
+          "explanation": "Without returning the Supertest promise (or using `await`/`done`), Jest marks the test complete synchronously. The 500 occurs after the test finishes, so the test falsely passes.",
+          "distractor_rationale": "B can happen if you `await` and forget `.expect`, but here the promise settles after the test ends. C would occur if there were open handles, not in this snippet. D misunderstands Supertest; it asserts asynchronously.",
+          "skills_covered": [
+            "Unit Testing",
+            "REST API",
+            "Node.js"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You created a fixup commit to clean history before merging feature `feat/xyz`.\n```text\n$ git log --oneline --decorate\nabc1234 (HEAD -> feat/xyz) Implement feature\n def5678 Minor refactor\n 9f0a1b2 fixup! Implement feature\n 1122334 (origin/main) Base\n```\nYou have not pushed `feat/xyz` yet. Which sequence yields a cleaned branch with the fixup applied and minimizes risk when pushing?",
+          "options": [
+            "```bash\ngit rebase -i --autosquash origin/main\n# accept the autosquashed plan\ngit push --force-with-lease --set-upstream origin feat/xyz\n```",
+            "```bash\ngit rebase -i HEAD~3\n# manually move and squash\ngit push -f\n```",
+            "```bash\ngit merge --squash origin/main\ngit push origin HEAD -f\n```",
+            "```bash\ngit reset --soft origin/main\ngit commit -m \"squashed\"\ngit push --force\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Interactive rebase with `--autosquash` recognizes `fixup!` and applies it relative to `origin/main`. Using `--force-with-lease` protects against overwriting remote updates.",
+          "distractor_rationale": "B squashes against main but loses commit metadata and is not the intended fixup flow. C works but is brittle and omits the safety of rebasing relative to `origin/main`. D rewrites history in a way that collapses all commits and risks losing work; it's not targeted to the fixup.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your Angular app reads the API base URL from `environment.ts`.\n```typescript\n// environment.ts (replaced at build time)\nexport const environment = {\n  production: false,\n  apiUrl: 'http://localhost:3000'\n};\n```\n```typescript\n// api.service.ts\nimport { environment } from '../environments/environment';\n@Injectable({ providedIn: 'root' })\nexport class ApiService {\n  private base = environment.apiUrl;\n  getUsers() { return this.http.get(`${this.base}/users`); }\n}\n```\nAfter deployment you must switch `apiUrl` without rebuilding. Which change achieves this?",
+          "options": [
+            "Load a runtime config (e.g., `/assets/env.js`) into `window.__env` via `APP_INITIALIZER` and read `apiUrl` from it instead of the build-time environment file.",
+            "Use `ng build --configuration=production` so `apiUrl` can be changed through environment variables after build.",
+            "Set `API_URL` on the Node server process; the Angular app will pick it up on refresh.",
+            "Change `<base href=\"/\">` to the API URL so requests go to the new backend."
+          ],
+          "correct_option": "A",
+          "explanation": "Angular environment files are replaced at build time and cannot change at runtime. A bootstrap-time external config (e.g., `window.__env`) enables post-deploy switches without rebuilds.",
+          "distractor_rationale": "B assumes server env vars flow into an already-built client bundle. C misunderstands build-time replacement. D confuses the router base href with API endpoints.",
+          "skills_covered": [
+            "Angular",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A browser call from `https://app.example.com` includes an `Authorization` header to your Express API. Preflight fails. Current CORS setup:\n```javascript\nconst cors = require('cors');\napp.use(cors({\n  origin: 'https://app.example.com',\n  credentials: true\n}));\n```\nNetwork shows a failed OPTIONS with missing `Access-Control-Allow-Headers`. Minimal fix?",
+          "options": [
+            "```javascript\napp.use((req,res,next)=>{res.setHeader('Access-Control-Allow-Origin','*');next();});\n```",
+            "```javascript\napp.use(cors({\n  origin: ['https://app.example.com'],\n  credentials: true,\n  allowedHeaders: ['Authorization', 'Content-Type']\n}));\n```",
+            "```javascript\napp.use(cors({ origin: '*', credentials: true }));\n```",
+            "Remove `credentials: true` so wildcard origin is allowed by browsers."
+          ],
+          "correct_option": "B",
+          "explanation": "When sending non-simple headers like Authorization, the server must allow them in CORS. Adding `allowedHeaders` for Authorization fixes preflight without weakening origin policy.",
+          "distractor_rationale": "B uses `*` with credentials, which browsers reject. C manually sets `*` but misses other required headers and still breaks credentials. D works around the credentials constraint but changes auth semantics and likely breaks cookie-based flows.",
+          "skills_covered": [
+            "Express.js",
+            "REST API",
+            "Authentication",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Production logging is configured as:\n```javascript\nconst logger = winston.createLogger({\n  level: process.env.NODE_ENV === 'production' ? 'error' : 'info',\n  transports: [new winston.transports.Console()]\n});\n\nlogger.info('Server started');\nlogger.error('DB down');\n```\nWith `NODE_ENV=production`, what appears in logs and why?",
+          "options": [
+            "Only `Server started`, because Winston always logs startup info.",
+            "Neither line, because production disables console transports by default.",
+            "Only `DB down`, because level `error` suppresses `info` messages.",
+            "Both lines, because `error` level includes `info`."
+          ],
+          "correct_option": "C",
+          "explanation": "Winston's level is a threshold. In production it's set to `error`, so `info` is filtered out and only `error` logs emit.",
+          "distractor_rationale": "B reverses the threshold. C is not a Winston default. D invents a special-case behavior that doesn't exist.",
+          "skills_covered": [
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Angular interceptor retries on 401s to refresh tokens:\n```typescript\nintercept(req: HttpRequest<any>, next: HttpHandler) {\n  return next.handle(this.attachToken(req)).pipe(\n    catchError(err => {\n      if (err.status === 401 && !this.isRefreshing) {\n        return this.refreshToken().pipe(\n          switchMap(() => next.handle(this.attachToken(req)))\n        );\n      }\n      return throwError(() => err);\n    })\n  );\n}\n```\nServer returns 401 for expired tokens and 403 for insufficient roles. What gets retried?",
+          "options": [
+            "Only requests that failed with 401 are retried after a successful refresh; 403s are not retried and bubble to the caller.",
+            "403s are retried, 401s are not, to avoid refresh loops.",
+            "Neither 401 nor 403 are retried because `return throwError` runs first.",
+            "All failed requests are retried once because `catchError` intercepts any error."
+          ],
+          "correct_option": "A",
+          "explanation": "The conditional explicitly retries only on 401. A 403 flows through unchanged.",
+          "distractor_rationale": "B ignores the conditional. C misreads control flow; the throw only happens when the 401 branch is not taken. D inverts the semantics.",
+          "skills_covered": [
+            "Angular",
+            "Authentication",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "PM2 ecosystem file:\n```javascript\nmodule.exports = {\n  apps: [{\n    name: 'api',\n    script: 'dist/server.js',\n    env: { NODE_ENV: 'development', MONGO_URI: 'mongodb://localhost/dev' },\n    env_prod: { NODE_ENV: 'production', MONGO_URI: 'mongodb://db/prod' }\n  }]\n};\n```\nYou run:\n```bash\npm2 start ecosystem.config.js --env production\n```\nApp connects to the dev DB. What is the most likely cause?",
+          "options": [
+            "`dist/server.js` ignores `NODE_ENV` and hardcodes the dev URI.",
+            "The environment block key is wrong; PM2 expects `env_production`, not `env_prod`.",
+            "PM2 ignores `--env` and always uses the default `env` block.",
+            "An OS-level `MONGO_URI` overrides PM2's value and points to dev."
+          ],
+          "correct_option": "B",
+          "explanation": "PM2 selects `env_production` when `--env production` is provided. With a misspelled key, it falls back to `env`.",
+          "distractor_rationale": "B is incorrect; PM2 does honor `--env`. C could happen but contradicts the given structure. D is possible in general but the most direct issue is the wrong key name evident in the file.",
+          "skills_covered": [
+            "Application Deployment",
+            "Node.js"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your API is defined in `openapi.yaml` with paths under `/v1`. Tests use Supertest:\n```javascript\nawait request(app).get('/api/v1/users').expect(200);\n```\nThis drifts from the spec (`/v1/users`) and passes locally because of a catch-all route. Which step best prevents such drift and fails tests when requests/responses don't match the OpenAPI contract?",
+          "options": [
+            "Export a Postman collection from the spec and run it occasionally.",
+            "Document all routes in README and enforce PR reviews to keep tests aligned.",
+            "Use TypeScript types for DTOs so compile-time checks catch path mismatches.",
+            "Integrate an OpenAPI request/response validator in tests (or middleware under test) so Supertest calls are checked against `openapi.yaml`."
+          ],
+          "correct_option": "D",
+          "explanation": "OpenAPI validators enforce both request and response conformance in tests, causing mismatches in paths, params, or schemas to fail reliably.",
+          "distractor_rationale": "B is manual and intermittent. C relies on process, not enforceable checks. D helps with shapes but not URL paths or method/response codes at runtime.",
+          "skills_covered": [
+            "REST API",
+            "Unit Testing",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You need to add a password reset flow to an existing MEAN app. Current stack: Angular client; Node/Express API; MongoDB users collection with `{ _id, email, passwordHash, roles }`; JWT-based auth. Requirements: do not leak whether an email exists, one-time reset links, expiry 15 minutes, rate-limit reset requests per IP and per user, redact secrets in logs, and comprehensive tests. Skeleton endpoints exist:\n```http\nPOST /auth/reset-request { email }\nPOST /auth/reset-confirm { token, newPassword }\n```\nThere is no mail service yet; tests should stub email sending.",
+          "task": "Propose a secure end-to-end design for the flow, including data model changes, token handling, logging and rate limiting, and a testing approach. Justify key decisions and call out failure modes you will test.",
+          "expected_answer": "Use a one-time, time-bound reset token stored as a hash. On reset-request: always return 202 Accepted with a generic message to avoid enumeration; if user exists, create a token document `{ userId, purpose:'reset', tokenHash, expiresAt, used:false, createdAt, ip }` with random 32+ byte token, store only hash (e.g., SHA-256 + salt), send email with opaque token. Apply rate limits per IP and per account (e.g., 5/hour) and log attempts with correlation ID, redacting email/token. On reset-confirm: find token by hash, check not used/expired, match user, then set new password hash with argon2/bcrypt, invalidate all auth sessions by rotating JWT secret version or clearing refresh tokens, mark token used with timestamp, and record audit log without sensitive data. Testing: unit tests for token generation/validation, constant-time compare, expiry, idempotence (double use). API tests stubbing mailer to capture links; test success path, expired/used token, wrong token, non-existent email response indistinguishable, and rate-limits returning 429. Verify logs exclude PII and contain correlation ID. Add minimal schema/migration and documentation of env vars. Justify 202 vs 200, token hashing, and session invalidation post-reset.",
+          "rubric": [
+            {
+              "criterion": "Token strategy is one-time, expires, stored as a hash (not plaintext), tied to user and purpose",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids user enumeration (generic responses), includes appropriate rate limiting (per IP and per user)",
+              "marks": 2
+            },
+            {
+              "criterion": "Reset-confirm correctly validates, updates password securely, invalidates sessions, and marks token used",
+              "marks": 2
+            },
+            {
+              "criterion": "Logging redacts secrets and uses correlation IDs; tests cover success and failure modes with stubbing mail",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "REST API",
+            "Unit Testing",
+            "Node.js",
+            "MongoDB"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Staging shows elevated latency under load. CPU is high and logs are very verbose JSON lines. Current logging:\n```javascript\nconst morgan = require('morgan');\nconst winston = require('winston');\napp.use(morgan('combined')); // sync to stdout\nconst logger = winston.createLogger({\n  level: process.env.LOG_LEVEL || 'debug',\n  format: winston.format.json(),\n  transports: [new winston.transports.Console()]\n});\n```\nContainer runs with `LOG_LEVEL=debug`. Cloud log ingestion is also near quota. You must reduce overhead and retain necessary observability without code churn risk.",
+          "task": "Recommend specific configuration and code changes to cut logging overhead in production while preserving debuggability on demand. Include how you will validate the improvement safely.",
+          "expected_answer": "Lower production log level to `info` or `error` via env and enforce in code; disable or sample morgan in production (or switch to `pino-http` with a destination stream for faster logging). Use structured JSON logs without pretty printing or colors; avoid synchronous formatting of large objects. Add request IDs (correlation) once at ingress and include in all logs. Implement sampling for high-volume debug traces or enable debug on demand via a toggle endpoint/flag. Ensure sensitive fields are redacted at logger layer. Validation plan: add a load test (e.g., autocannon) before/after, measure median/95th latency and CPU, and confirm log volume reduction in bytes/sec. Include a rollback path (env var flip) and document how to temporarily raise log level for incident debugging.",
+          "rubric": [
+            {
+              "criterion": "Production log level reduction and disabling/sampling of high-volume request logs are proposed appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Switch to efficient logger or configuration (e.g., pino or non-blocking transport) and removal of expensive formatting",
+              "marks": 2
+            },
+            {
+              "criterion": "Maintains observability (correlation IDs, redaction, on-demand debug) without leaking PII",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear validation/rollout plan using measurable metrics and safe rollback",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Node.js",
+            "Express.js"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must enforce unique user emails case-insensitively and deploy with zero downtime. Current data contains a few duplicates differing only by case. The app currently lowercases on write but no unique index exists.",
+          "task": "Propose a safe deployment and migration plan to enforce case-insensitive uniqueness without breaking the app. Include database steps, application changes, and tests.",
+          "expected_answer": "Create a background index with a normalized key. Option A: add a unique index on `{ email: 1 }` with a case-insensitive collation (e.g., `locale:'en', strength:2`) if supported cluster-wide, or Option B: ensure app writes lowercased and create a unique index on a computed field `email_lc` (materialized or via trigger-like write code). Before enabling uniqueness, run a backfill script to populate normalized field and detect duplicates; resolve conflicts by policy (e.g., merge or mark/rename cases), producing a report. Deploy order: 1) ship app version that writes normalized field and reads from either; 2) backfill and clean data; 3) create unique index in background; 4) flip reads to normalized; 5) remove legacy paths. Tests: migration unit tests on collations/normalization, API tests for conflicting creates returning 409 with stable error handling. Monitor write errors after index creation and alert on E11000 spikes.",
+          "rubric": [
+            {
+              "criterion": "Correct indexing strategy (case-insensitive via collation or normalized field) explained with trade-offs",
+              "marks": 2
+            },
+            {
+              "criterion": "Zero-downtime sequencing with dual-write/read compatibility and background index creation",
+              "marks": 2
+            },
+            {
+              "criterion": "Data backfill/duplicate resolution plan with auditable outcomes",
+              "marks": 2
+            },
+            {
+              "criterion": "Test and monitoring plan covering conflict handling and error surfacing",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Application Deployment",
+            "Node.js",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your CI pipeline intermittently runs API tests against production. Current GitHub Actions YAML:\n```yaml\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm run build\n      - run: npm test\n        env:\n          BASE_URL: ${{ secrets.BASE_URL }}\n```\n`secrets.BASE_URL` is defined in the repo as the production URL. Tests are meant to hit a local ephemeral server instead.",
+          "task": "Redesign the pipeline (and minimal app/test changes if needed) to guarantee tests never hit production, are hermetic, and run in parallel safely.",
+          "expected_answer": "Start the API under test inside the job and point tests at it. For example: add a step to run `npm run start:test` that boots the server on a random port with `NODE_ENV=test` and an isolated ephemeral DB (e.g., Testcontainers/MongoDB memory server). Export the assigned port to `BASE_URL` for tests. Remove production URL secrets from the test job. Ensure the app binds to `0.0.0.0` only within the job network and disables outbound side-effects (email/webhooks) via env flags or fakes. Seed data deterministically before tests. For parallelism, use unique DB names or container-per-job. Fail the job if any external call is attempted (e.g., via HTTP mock/deny list). Keep a separate `smoke-prod` workflow gated on manual approval if needed.",
+          "rubric": [
+            {
+              "criterion": "Runs the server under test within CI and points tests to it (no reliance on prod secrets)",
+              "marks": 2
+            },
+            {
+              "criterion": "Isolated, deterministic test environment (ephemeral DB, seeded data, no external side-effects)",
+              "marks": 2
+            },
+            {
+              "criterion": "Parallel-safe strategy (unique ports/DBs/containers) and network restrictions to prevent prod calls",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear separation from optional prod smoke tests with proper gating",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "Application Deployment",
+            "Node.js",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Secure and test the API core",
+          "brief": "Implement robust auth and request validation on a core feature of your MEAN app, with comprehensive unit and API tests and clean Git history.",
+          "deliverable": "Secured tested solution",
+          "acceptance_criteria": [
+            "JWT-based authentication with access tokens enforced on at least two protected routes; role/permission check on at least one route",
+            "Input validation on at least three endpoints (e.g., express-validator or JOI) returning 400 with consistent error format; no mass-assignment of forbidden fields",
+            "Automated test suite present and runnable with `npm test`: ≥80% line coverage on the Node service; includes API tests with Supertest and at least one test using an in-memory or isolated MongoDB",
+            "No secrets committed; configuration read from environment; `.env.example` or documented env vars provided",
+            "Git history shows meaningful commits; includes one rebased/squashed sequence (e.g., fixup autosquash) and a tagged release for this task"
+          ],
+          "rubric": [
+            {
+              "criterion": "Authentication and authorization correctly enforced on protected routes (happy and failure paths)",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust request validation and secure handling of inputs (correct status codes and error shapes)",
+              "marks": 5
+            },
+            {
+              "criterion": "Automated tests quality and coverage threshold achieved; isolation of test database",
+              "marks": 6
+            },
+            {
+              "criterion": "Operational hygiene: secrets management, env documentation, and clean Git history with tag",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Unit Testing",
+            "REST API",
+            "Node.js",
+            "Express.js",
+            "MongoDB",
+            "Git"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy the MEAN app with production-grade config and logging",
+          "brief": "Produce a production deployment of your MEAN project with correct build, environment configuration, logging, and minimal docs.",
+          "deliverable": "Deployed MEAN project",
+          "acceptance_criteria": [
+            "Live URLs provided: Angular frontend (production build) and API backend; frontend consumes backend via configurable runtime base URL",
+            "Server process manager or hosting config provided (e.g., PM2 ecosystem file or platform config) with correct `env_production` and secrets injected via environment",
+            "Basic healthcheck endpoint (`/healthz`) implemented and documented; returns 200 with build/version info",
+            "Structured logging configured with appropriate production log level; demonstrate a correlation/request ID in logs; provide a short log capture (redacted)",
+            "Deployment runbook (install/build/start steps or CI/CD workflow) and documentation of required environment variables; no secrets in repo"
+          ],
+          "rubric": [
+            {
+              "criterion": "Frontend and backend are deployed and integrated; runtime-configurable API base URL without rebuilds",
+              "marks": 5
+            },
+            {
+              "criterion": "Process/hosting configuration is correct and secure (env vars, no secrets in VCS, correct PM2 or platform settings)",
+              "marks": 5
+            },
+            {
+              "criterion": "Operational readiness: healthcheck implemented and log configuration appropriate with correlation IDs",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear, minimal documentation/runbook enabling assessor to verify deployment and reproduce locally",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Angular",
+            "Node.js",
+            "Express.js",
+            "REST API",
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1868 @@
+{
+  "course_code": "NT-C-036",
+  "course_name": "YouTube Channel Optimization",
+  "sections": [
+    {
+      "section_code": "NT-C-036-S01",
+      "skills_assessed": [
+        "YouTube Studio",
+        "Social Media Marketing",
+        "plan social media marketing campaigns",
+        "Graphic Design Principles",
+        "User Management",
+        "develop online community plan"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your brand uses a Brand Account. An external agency must upload and edit videos, adjust playlists and the homepage layout, and reply to comments, but must not see revenue, change permissions, or delete the channel. Current Studio extract:\n\n```text\nRequirement matrix\n- Upload videos: Yes\n- Edit playlists & layout: Yes\n- Reply to comments: Yes\n- See revenue: No\n- Manage permissions: No\n- Delete channel: No\n```\n\nWhich role assignment best fits the requirement?",
+          "options": [
+            "Owner",
+            "Editor",
+            "Manager",
+            "Editor (limited)"
+          ],
+          "correct_option": "D",
+          "explanation": "Editor (limited) can upload, edit, manage playlists/layout, and engage with comments, but cannot see revenue data or manage permissions. Owner and Manager exceed the needed powers; Editor can see revenue.",
+          "distractor_rationale": "Owner: Tempting if you assume only Owners can upload, but it grants deletion and permission control. Manager: Commonly given to agencies, but still over-privileged (can manage permissions, branding). Editor: Meets most needs, but exposes revenue data which the brand wants to keep private.",
+          "skills_covered": [
+            "YouTube Studio",
+            "User Management"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You set the channel homepage like this:\n\n```text\nStudio > Customization > Layout\n- Video spotlight (Unsubscribed): 2h webinar \"All features deep dive\"\n- Video spotlight (Returning): Latest upload (rotates)\n- Sections (in order):\n  1) Popular uploads\n  2) Live now\n  3) Shorts\n  4) Created playlists\nChannel promise in the brief: \"Short, actionable 3–5 min tutorials for busy PMs, twice weekly\".\n```\n\nWhich change most directly repairs the promise–layout mismatch for first-time visitors?",
+          "options": [
+            "Keep the webinar as trailer; add a Shorts section above it so visitors see something short first.",
+            "Replace the trailer with a 45–60s channel trailer that explains the value, and move a \"Start here: 3–5 min tutorials\" playlist to the top section.",
+            "Replace \"Latest upload\" for returning viewers with the 2h webinar so loyal viewers see full depth.",
+            "Leave the trailer as-is but reorder sections to \"Shorts, Popular uploads, Created playlists\"."
+          ],
+          "correct_option": "B",
+          "explanation": "An unsubscribed visitor should immediately see a concise trailer and a first playlist that matches the promise (short tutorials). Moving a \"Start here\" playlist up and having a short trailer makes the layout reflect the promise.",
+          "distractor_rationale": "A: Shorts above a long trailer still confuses first-time visitors when the trailer autoplays and contradicts \"short\". C: Reordering helps but the autoplays trailer still breaks the promise. D: Returning viewers expect recency/relevance, not a long webinar; also doesn't fix unsubscribed experience.",
+          "skills_covered": [
+            "YouTube Studio",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You review banner previews after upload:\n\n```text\nAsset: 2560x1440 banner with tagline 'Automate analytics in minutes' at x=2100..2520\nStudio preview\n- TV: Tagline fully visible\n- Desktop: Right edge of tagline cropped\n- Mobile: Tagline completely cropped; only left background visible\nOther notes: low contrast between tagline and background photo.\n```\n\nWhat redesign choice best preserves the promise across devices without making the type illegibly small?",
+          "options": [
+            "Delete the tagline from the banner and rely only on the About description to carry the promise.",
+            "Keep current banner but add the tagline as a watermark in the lower-right corner of videos.",
+            "Move the tagline into the 1546x423 safe area center and increase contrast with a solid overlay behind text.",
+            "Reduce tagline font size by 50% and keep it at the right edge so it fits on mobile."
+          ],
+          "correct_option": "C",
+          "explanation": "Keeping critical text inside the center safe area and improving contrast preserves readability on all devices. Shrinking type risks illegibility; removing the tagline or relying on watermarks doesn't solve the banner preview problem.",
+          "distractor_rationale": "A: Smaller type may still crop and will be hard to read. C: About text is hidden behind a click; the banner must communicate promise at a glance. D: Watermarks are tiny and don't address homepage first impression.",
+          "skills_covered": [
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "From the draft brief:\n\n```yaml\naudience:\n  primary: Staff engineers at B2B SaaS firms (teams 5–20)\nobjective:\n  primary: Book 30‑min product demos via site CTA\nchannel_promise: \"Daily 30‑second tips\"\ncontent_inventory:\n  - 6 topics that require 4–6 minutes to teach well\n  - No short-form backlog yet\n```\n\nWhich adjustment most directly removes the strategy contradiction before setup?",
+          "options": [
+            "Leave promise and content as-is; rely on the description to clarify that some topics run longer.",
+            "Maintain the current promise and objective; add a long webinar as the trailer to cover depth.",
+            "Change the promise to \"Weekly 5‑minute deep dives for SaaS eng leaders\" and plan a short trailer that sets this expectation.",
+            "Keep the 30‑second promise but stack multiple shorts into a playlist to reach 4–6 minutes total."
+          ],
+          "correct_option": "C",
+          "explanation": "If the objective requires depth (demo bookings) and topics need 4–6 minutes, the promise should reflect that format. Committing to 30‑second content would under-serve the audience and objective.",
+          "distractor_rationale": "A: Aggregating shorts doesn't fix expectations; the promise still misleads. C: A long trailer worsens the mismatch for first-time visitors. D: Few visitors read descriptions; mismatch remains visible and harms trust.",
+          "skills_covered": [
+            "Social Media Marketing",
+            "plan social media marketing campaigns"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your governance draft shows:\n\n```text\nUpload defaults (Studio > Settings > Upload defaults)\n- Visibility: Public\n- Comments: Allow all\nWorkflow\n- Editors prepare videos anytime\n- Owner reviews on Fridays\n- Goal: Avoid accidental public releases pre‑review\n```\n\nWhat change most directly mitigates the risk without slowing the workflow post‑review?",
+          "options": [
+            "Set default Visibility to Private; after review, Owner flips to Public.",
+            "Keep Visibility Public but ask Editors to schedule publish dates a week out.",
+            "Enable \"Hold potentially inappropriate comments\" so that risky videos are flagged.",
+            "Switch all Editors to Viewers so only Owner can upload."
+          ],
+          "correct_option": "A",
+          "explanation": "Defaulting to Private (or Unlisted) prevents accidental publication before review; after approval, a single visibility change publishes without delay.",
+          "distractor_rationale": "B: Scheduling still risks accidental immediate publish if the date isn’t changed. C: Comment moderation doesn’t control publication. D: Removing upload capability creates a bottleneck and defeats the workflow intent.",
+          "skills_covered": [
+            "YouTube Studio",
+            "develop online community plan"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Homepage links and trailer plan:\n\n```text\nBanner links (first 3 shown on desktop, first 1 on mobile):\n1) Newsletter\n2) Pricing\n3) Careers\nTrailer script CTA: \"Grab our weekly teardown in your inbox\"\nObjective in brief: Grow newsletter list to warm demo leads.\n```\n\nWhich layout/CTA adjustment best supports the stated objective?",
+          "options": [
+            "Move Pricing to the first position so buyers convert faster; keep the trailer CTA as-is.",
+            "Keep Newsletter first; add the same Newsletter CTA link in the trailer’s end screen and description top line.",
+            "Replace Newsletter with a general website link to reduce friction; keep Careers second.",
+            "Remove all banner links to reduce clutter; rely on Community posts for link distribution."
+          ],
+          "correct_option": "B",
+          "explanation": "Keeping Newsletter as the first visible link (especially on mobile) and reinforcing it via end screen and description aligns layout and CTA with the objective.",
+          "distractor_rationale": "A: Pricing targets bottom‑funnel; the objective is list growth first. C: A generic site link dilutes the CTA. D: Removing links hides the conversion path and relies on a less prominent surface.",
+          "skills_covered": [
+            "Social Media Marketing",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Naming review:\n\n```text\nConstraints (brand governance): no hyphens, avoid trademark collisions, must be pronounceable.\nCompetitor handles: @QuickByteAI, @AIQuickBites\nOptions under consideration:\n1) @QuickByteAICook\n2) @QuickBiteAI\n3) @QuickByteAIPro\n```\n\nChannel promise: \"AI‑assisted weeknight cooking for beginners.\"\nWhich handle best balances clarity, distinctiveness from competitors, and policy compliance?",
+          "options": [
+            "@QuickByteAIPro",
+            "Keep the brand name only: @QuickByte",
+            "@QuickByteAICook",
+            "@QuickBiteAI"
+          ],
+          "correct_option": "A",
+          "explanation": "@QuickByteAIPro is pronounceable, distinct from the two close competitors, and follows constraints. It leaves room for channel promise articulation in visuals and About, while reducing impersonation risk.",
+          "distractor_rationale": "A: Very close to @QuickByteAI, increases confusion. B: Spelling change (Byte→Bite) is pronounceable but too close to @AIQuickBites. D: Lacks AI qualifier, reducing distinctiveness and clarity for the niche.",
+          "skills_covered": [
+            "Social Media Marketing",
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Proposed playlist plan for a channel promising \"Zero‑to‑one data viz for PMs\" and publishing twice weekly:\n\n```text\nPlaylists drafted\n- Fundamentals (episode 1–10)\n- Tool walkthroughs (mixed levels)\n- Office hours (unstructured Q&A)\n- Case studies (advanced)\nHomepage constraint: Only first 4 sections seen without scroll on desktop; 2 on mobile.\n```\n\nWhich homepage ordering best reinforces the promise for new visitors?",
+          "options": [
+            "Office hours, Case studies, Tool walkthroughs, Fundamentals",
+            "Fundamentals, Case studies, Tool walkthroughs, Office hours",
+            "Tool walkthroughs, Fundamentals, Case studies, Office hours",
+            "Case studies, Office hours, Tool walkthroughs, Fundamentals"
+          ],
+          "correct_option": "B",
+          "explanation": "Lead with Fundamentals to match the zero‑to‑one promise, then advanced validation (Case studies), followed by mixed‑level walkthroughs and the least structured content later. This sequence sets expectations and keeps on‑ramp first.",
+          "distractor_rationale": "B: Puts mixed‑level content ahead of the on‑ramp; confuses new users. C and D: Start with unstructured or advanced content, contradicting the zero‑to‑one entry promise.",
+          "skills_covered": [
+            "Social Media Marketing",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Community settings snapshot:\n\n```text\nStudio > Settings > Community\n- Hold potentially inappropriate comments: Off\n- Increase strictness: Off\n- Block links: Off\n- Blocked words (10): \"free, subscribe, click here, watch, money, offer, cheap, giveaway, deal, promo\"\nObserved spam: \"DM me on Telegram @SupportCenter for your prize\" (no listed keywords; contains a handle and implicit link)\nGoal: Reduce scam replies without silencing legit questions.\n```\n\nWhat change is most likely to curb this spam pattern at scale?",
+          "options": [
+            "Assign all commenters to approved users manually.",
+            "Expand the blocked words list to include \"Telegram\", \"DM\", and all variations of \"support\".",
+            "Disable all comments on the channel until spam subsides, then re‑enable later.",
+            "Enable \"Hold potentially inappropriate comments\" and \"Increase strictness\", and turn on \"Block links\"."
+          ],
+          "correct_option": "D",
+          "explanation": "Using the automated filters with stricter thresholds and blocking links/handles addresses the spam pattern broadly without shutting down conversation or requiring impossible manual whitelisting.",
+          "distractor_rationale": "B: Keyword lists won’t catch variants/obfuscations at scale. C: Overly punitive and harms community growth. D: Manual approvals don’t scale and add friction for legitimate users.",
+          "skills_covered": [
+            "develop online community plan",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Governance excerpt:\n\n```text\nOwnership: 1 Primary owner (founder)\nAgency access: Manager\nInternal team: 2 Editors (limited)\nSecurity: 2FA optional\nRisk noted: Founder going on sabbatical; agency continues uploads.\n```\n\nWhich governance change most reduces key‑person risk while keeping least privilege for vendors?",
+          "options": [
+            "Add at least one more internal Owner, keep agency at Editor (or Editor limited), and enforce 2FA for all roles.",
+            "Remove 2FA requirements to avoid lockouts while the founder is away.",
+            "Promote the agency to Owner so they can cover everything during sabbatical.",
+            "Demote all Editors to Viewers; only the Owner should upload to reduce risk."
+          ],
+          "correct_option": "A",
+          "explanation": "Redundant internal ownership plus 2FA hardens access and removes single‑point failure. Vendors should remain non‑Owner roles to maintain least privilege.",
+          "distractor_rationale": "A: Violates least privilege and increases vendor risk. C: Blocks publishing workflow. D: Reduces security and increases takeover risk.",
+          "skills_covered": [
+            "User Management",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You’re handed a rough channel brief for a B2B SaaS tooling startup with these fragments:\n\n```markdown\nAudience (draft): \"People who like productivity\"\nCompetitors: \"Acme DevTips (10–min devlogs), SprintGuru PM (5–8 min how‑tos)\"\nObjective: \"Book qualified demos; secondary: newsletter signups\"\nProposed content: \"Daily 45–60s shorts; occasional 40‑min webinars\"\nWorking title: \"Ship Faster TV\"\nChannel promise (tagline): \"Tiny tips. Massive change.\"\nNotes: Most topics need explanatory context and screen walkthroughs to be credible.\n```\n",
+          "task": "Diagnose the core contradictions in the draft. Propose a corrected audience definition, a niche boundary that differentiates from the listed competitors, revised objectives that are testable, and a channel promise that matches the required content depth and cadence. Justify each change in terms of the homepage experience and first 30 seconds a new visitor sees.",
+          "expected_answer": "A strong answer identifies that the audience is too broad and should be narrowed (e.g., product managers and tech leads at B2B SaaS with 5–20‑person teams). The niche should be framed against competitors (e.g., \"zero‑to‑one PM workflow automation\" rather than generic devlogs or mid‑level PM how‑tos). Objectives should be measurable (e.g., X demo bookings/month via trailer CTA and top‑link newsletter signups). The promise should reconcile depth and cadence (e.g., \"Twice‑weekly 4–6 minute walkthroughs that automate PM workflows\"), supported by a short 45–60s trailer and a top \"Start here\" playlist. Justification connects these decisions to the homepage layout (short trailer + fundamentals playlist) and explains why shorts‑only would under‑serve credibility for demo bookings.",
+          "rubric": [
+            {
+              "criterion": "Identifies at least two concrete contradictions (audience vagueness vs objective depth; shorts‑first vs credibility needs)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a precise, defensible audience and niche boundary relative to competitors",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines measurable primary/secondary objectives aligned to demo bookings and list growth",
+              "marks": 1
+            },
+            {
+              "criterion": "Crafts a channel promise matching depth and cadence, and explains how the first‑visit layout supports it",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity and coherence of justification (ties to homepage experience within Studio constraints)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Social Media Marketing",
+            "plan social media marketing campaigns",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A mid‑size company is migrating from a personal YouTube channel to a Brand Account. The org chart:\n\n```text\nPeople\n- CMO (wants oversight, not daily ops)\n- Brand Designer (assets and QA)\n- Content Lead (publishing cadence, playlists)\n- Two Video Editors (upload, metadata polish, thumbnails)\n- Agency (community management + occasional uploads)\nRisks\n- Prior channel was owned by a departed employee\n- Revenue data is sensitive internally\n- Need resilience during holidays\n```\n",
+          "task": "Design a permission and governance plan in YouTube Studio that satisfies least‑privilege, protects revenue data, and avoids single‑owner risk. Specify exact roles for each party, 2FA policy, upload defaults, and a light‑weight review workflow that won’t block publication. Explain why your matrix meets each risk.",
+          "expected_answer": "A good matrix uses a Brand Account with at least two internal Owners (CMO plus Content Lead or IT), Manager role avoided unless necessary; Editors for Video Editors; Editor (limited) for the Agency to hide revenue; Brand Designer as Viewer (or Viewer limited) with asset QA via previews. Enforce 2FA for all roles. Upload defaults set to Private (or Unlisted) with a checklist to flip to Public after review. Review flow: Editors upload and set metadata; Brand Designer reviews thumbnails/banners; Content Lead final approval changes visibility. Rationale addresses revenue privacy (Editor limited), resilience (multiple Owners), and avoiding excessive privileges for the agency.",
+          "rubric": [
+            {
+              "criterion": "Accurate role assignments per responsibility with least‑privilege rationale",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses revenue privacy explicitly (Editor limited usage)",
+              "marks": 1
+            },
+            {
+              "criterion": "Includes 2FA policy and multiple Owners to avoid single‑point failure",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines upload defaults and a lightweight review path that supports cadence",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "User Management",
+            "YouTube Studio",
+            "develop online community plan"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Branding deliverables have arrived:\n\n```text\nLogo: intricate wordmark with thin strokes\nBanner: 2560x1440 photo background; tagline placed near right edge; low contrast\nAvatar: full wordmark on white, exported at 98x98 and 800x800\nSafe‑area test: On mobile, only the left third of banner is visible; tagline cropped\nColor: Primary blue #1E6FFF; background photo has similar luminance in areas\n```\n",
+          "task": "Recommend specific adjustments to logo/avatar, banner layout, and color/contrast so the channel promise and brand remain legible across TV, desktop, and mobile. Include at least one concrete QA step in YouTube Studio to validate your fixes.",
+          "expected_answer": "Suggestions include using a simplified mark (monogram or symbol) for the avatar that remains legible at 88x88+, exporting at 800x800 and letting YouTube scale; repositioning the banner tagline into the 1546x423 center safe area and adding a dark translucent overlay (e.g., 40–60% black) behind text to increase contrast; ensuring minimum stroke weights for the wordmark. QA: use Studio’s banner preview across devices and check mobile cropping; confirm avatar clarity at smallest render in comments/replies; verify the trailer and top playlist don’t clash visually with the banner.",
+          "rubric": [
+            {
+              "criterion": "Actionable avatar/logo adjustments addressing legibility at small sizes",
+              "marks": 2
+            },
+            {
+              "criterion": "Banner repositioning into safe area with explicit contrast solution",
+              "marks": 2
+            },
+            {
+              "criterion": "Color/contrast reasoning tied to luminance and accessibility, not just taste",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete QA step(s) using Studio previews or on‑device checks",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Inventory for launch week:\n\n```text\nVideos ready: 1 trailer (60s), 4 tutorials (4–6 min), 6 Shorts, 1 archived webinar (38 min)\nPlaylists drafted: Start Here (the 4 tutorials), Shorts, Webinars (1 video), Behind the Scenes (empty)\nPromise: \"Practical 5‑min workflows for nonprofit marketers\"\n```\n",
+          "task": "Propose the exact homepage layout for both unsubscribed and returning viewers (spotlight items and the first four sections, in order). Explain how your ordering supports the promise and avoids drawing attention to weak inventory areas.",
+          "expected_answer": "Unsubscribed spotlight: the 60s channel trailer. Returning spotlight: a featured video from the latest tutorial or the Start Here playlist. Sections order: 1) Start Here playlist (matches the promise and on‑ramp), 2) Shorts (supports frequency/variety), 3) Tutorials (created playlists, if separate), 4) Webinars (de‑emphasized but present). Exclude or place \"Behind the Scenes\" lower until populated. Avoid featuring the 38‑min webinar prominently to keep the short‑form promise front and center.",
+          "rubric": [
+            {
+              "criterion": "Clear, concrete spotlight choices for unsubscribed vs returning viewers",
+              "marks": 2
+            },
+            {
+              "criterion": "Section ordering that emphasizes on‑ramp and promise‑aligned content first",
+              "marks": 2
+            },
+            {
+              "criterion": "Treatment of weak inventory (e.g., webinar, empty playlists) to avoid promise conflict",
+              "marks": 2
+            },
+            {
+              "criterion": "Concise justification tying layout choices to visitor intent and device constraints",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce the Channel Brief (strategy)",
+          "brief": "Create a channel brief that the setup team can execute without re‑asking basics. It must define the audience, niche boundary, measurable objectives, and a clear channel promise. Include the first‑visit experience guidance that translates strategy into how the homepage should look on day one.",
+          "deliverable": "A single PDF or Google Doc titled \"Channel Brief – <Your Channel Name>\".",
+          "acceptance_criteria": [
+            "Audience definition includes at least one primary persona with firmographics/needs relevant to the niche.",
+            "Niche boundary names 2–3 competitor channels and states your differentiator in one sentence.",
+            "Objectives include 2–3 measurable targets for the first 90 days (e.g., trailer CTR to site, newsletter signups/month).",
+            "Channel promise is a single sentence matching required content depth and cadence.",
+            "Homepage guidance includes: trailer intent (30–90s), top 2 playlists to feature, and the CTA/link priority (mobile first link order).",
+            "Risks/assumptions section lists at least 3 risks (e.g., asset gaps, cadence feasibility) and mitigations."
+          ],
+          "rubric": [
+            {
+              "criterion": "Audience and niche clarity with credible competitor differentiation",
+              "marks": 5
+            },
+            {
+              "criterion": "Measurable objectives aligned to funnel intent and timeframe",
+              "marks": 4
+            },
+            {
+              "criterion": "Channel promise that coherently matches depth and cadence",
+              "marks": 4
+            },
+            {
+              "criterion": "Homepage guidance that is actionable (spotlights, top playlists, link priority)",
+              "marks": 4
+            },
+            {
+              "criterion": "Risks and mitigations grounded in the brief’s choices",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Social Media Marketing",
+            "plan social media marketing campaigns"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Configure the Channel Plan (branding, layout, permissions, governance)",
+          "brief": "Translate the brief into a concrete configuration plan the Studio admin can execute. You are not required to press the buttons in a live channel, but your plan must be specific enough to reproduce in Studio without decisions left open.",
+          "deliverable": "A single PDF or Google Doc titled \"YouTube Channel Configuration Plan – <Your Channel Name>\", plus an assets folder (zipped or drive link) containing avatar(s) and banner(s) at correct sizes.",
+          "acceptance_criteria": [
+            "Permissions matrix lists each role (Owner/Manager/Editor/Editor limited/Viewer) for all participants with rationale and 2FA policy.",
+            "Upload defaults specified (visibility, comments moderation level, category) with the intended review workflow and publish flip defined.",
+            "Homepage layout documented for unsubscribed and returning viewers: spotlight items and first 4 sections in order, with playlist names.",
+            "Branding assets provided: avatar at 800x800 (works at 88x88) and banner at 2560x1440, with text confined to 1546x423 safe area; include a mockup overlay demonstrating safe area usage.",
+            "Community governance: comment moderation settings (e.g., hold potentially inappropriate, increase strictness, block links) and blocked words philosophy (examples, not exhaustive lists).",
+            "Link plan: banner link order (mobile and desktop considerations) and CTA alignment to objectives."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accurate, least‑privilege permissions matrix with security (2FA, redundancy)",
+              "marks": 5
+            },
+            {
+              "criterion": "Upload defaults and review workflow that prevent accidental publish yet preserve cadence",
+              "marks": 4
+            },
+            {
+              "criterion": "Homepage layout that directly reflects the brief’s promise (spotlights + ordered sections)",
+              "marks": 4
+            },
+            {
+              "criterion": "Branding assets meet size/safe‑area constraints and show legibility across devices",
+              "marks": 4
+            },
+            {
+              "criterion": "Community settings and link plan align with objectives and mobile constraints",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "User Management",
+            "Graphic Design Principles",
+            "develop online community plan"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-036-S02",
+      "skills_assessed": [
+        "YouTube Studio",
+        "Social Media Marketing",
+        "plan social media marketing campaigns",
+        "SEO",
+        "Keyword Research",
+        "manage content metadata",
+        "create content title",
+        "compose description for web elements",
+        "publishing strategy"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You planned the week as below. A search spike emerges for \"how to clean earbuds\" (how-to intent). Alex (tutorial host/editor) is busy until Tue 7, can film on Wed 8–Thu 9, edit Fri 10–Sat 11. Your rule: at most one long-form Tutorial per week; Shorts can be extra.\n\n```csv\ndate, pillar, format, title, owner, status\nMon 6, Tutorials, Long, Fix Squeaky Door, Alex, Editing\nThu 9, Reviews, Long, Budget Drill Review, Mira, Script\nMon 13, Tutorials, Long, 60s Hacks: WD-40 Myths, Alex, Idea\nThu 16, Tips, Long, Garage Organizing Basics, Sam, Pre-prod\n```\nWhich schedule change best captures the spike without breaking the workflow constraints or pillar balance?\n",
+          "options": [
+            "Replace Mon 13 with \"How to Clean Earbuds\" (Tutorial, Long). Move \"60s Hacks\" to Thu 16. Push \"Garage Organizing\" to Mon 20.",
+            "Add \"How to Clean Earbuds\" as an extra upload on Sat 11 (Tutorial, Long), keep the rest unchanged.",
+            "Replace Thu 9 with \"How to Clean Earbuds\" (Tutorial, Long). Push \"Budget Drill Review\" to Thu 16 and keep others as-is.",
+            "Swap Mon 6 and Thu 9: publish \"Budget Drill Review\" on Mon 6 and shift \"Fix Squeaky Door\" to Thu 9; add \"How to Clean Earbuds\" on Mon 13 as planned."
+          ],
+          "correct_option": "A",
+          "explanation": "Earliest feasible publish for the new how-to is Mon 13 given Alex’s availability. Option A schedules it then, keeps only one long-form Tutorial per week, and preserves pillar balance by pushing the Tips long-form to the next slot. Shorts can be extra, but the long-form rule is respected.",
+          "distractor_rationale": "B: Tries to publish a long-form Tutorial on Thu 9, but Alex cannot finish by then (filming earliest Wed–Thu, edit Fri–Sat). Also creates two long-form Tutorials in the same week if Mon 6 stays.\nC: Adds a long-form on Sat 11, violating the one long-form Tutorial/week limit and ignoring that editing runs through Sat.\nD: Creates a last-minute content swap unrelated to the spike’s feasibility, adds risk to production, and still results in back-to-back Tutorials that week if not carefully spaced.",
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You check the current YouTube SERP for \"fix squeaky door\" and note top results like:\n\n```text\n1) Stop a Squeaky Door Hinge in 60 Seconds (No WD-40!)\n2) How to Fix a Squeaky Door | 3 Easy Methods\n3) Why Your Door Squeaks (And How to Silence It)\n```\nAssume dominant intent is practical how-to with a fix-in-X-minutes angle and a WD-40 misconception. Which title best aligns to intent while front-loading the primary keyword and avoiding clickbait?\n",
+          "options": [
+            "Fix a Squeaky Door Fast: 3 Proven Methods (No WD-40)",
+            "Silence a Noisy House: Home Tips for Doors and More",
+            "The Squeaky Door Saga: What I Learned After 10 Repairs",
+            "Don’t Use WD-40! Watch This Before You Fix a Squeaky Door"
+          ],
+          "correct_option": "A",
+          "explanation": "Option A mirrors the how-to + quick-fix pattern, leads with the core keyword, includes the misconception negation, and states method count without hype.",
+          "distractor_rationale": "B: Storytime framing distracts from task intent and buries the keyword.\nC: Broad, mixes topics; weak keyword focus on the exact query.\nD: Leads with a scare hook and delays the task keyword; looks clickbaity and misaligned with practical how-to ordering.",
+          "skills_covered": [
+            "create content title",
+            "SEO",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider the draft metadata below for a video targeting the long-tail query \"drill driver vs impact driver for beginners\". You want to improve discoverability without keyword stuffing and while keeping the title under 100 chars.\n\n```json\n{\n  \"title\": \"Drill Driver vs Impact Driver: Which Should You Buy (Beginner Guide)\",\n  \"description_first_2_lines\": \"We compare drill driver vs impact driver. Impact driver vs drill driver explained for beginners.\",\n  \"tags\": [\"drill driver\", \"impact driver\", \"drill driver vs impact driver\", \"impact driver vs drill driver\", \"drill driver vs impact driver for beginners\", \"drill vs driver\", \"drill driver beginners\", \"impact driver beginners\"]\n}\n```\nWhich revision best balances primary keyword focus, natural language, and unique tag coverage?\n",
+          "options": [
+            "```json\n{\n  \"title\": \"Impact Driver vs Drill Driver: Impact Driver vs Drill Driver for Beginners\",\n  \"description_first_2_lines\": \"Impact Driver vs Drill Driver vs Impact Driver vs Drill Driver explained.\",\n  \"tags\": [\"impact driver vs drill driver\", \"drill driver vs impact driver\", \"impact driver vs drill driver\", \"drill driver vs impact driver\"]\n}\n```",
+            "```json\n{\n  \"title\": \"Drill Driver vs Impact Driver for Beginners: What to Buy and Why\",\n  \"description_first_2_lines\": \"Beginner-friendly comparison: drill driver vs impact driver — use-cases, torque, bits, and price.\",\n  \"tags\": [\"drill driver vs impact driver\", \"impact driver vs drill driver\", \"drill driver\", \"impact driver\", \"beginner tools\", \"torque comparison\", \"driver bits\", \"power tools 101\"]\n}\n```",
+            "```json\n{\n  \"title\": \"Drill Driver vs Impact Driver vs Hammer Drill vs Screwdriver (Ultimate 2026 Guide)\",\n  \"description_first_2_lines\": \"We compare every tool you can imagine! Click now for secrets.\",\n  \"tags\": [\"drill driver vs impact driver\", \"power tools\", \"tools\", \"beginners\", \"how to\", \"ultimate guide\", \"subscribe\"]\n}\n```",
+            "```json\n{\n  \"title\": \"Beginner Tools: Choosing Your First Driver\",\n  \"description_first_2_lines\": \"Picking a first tool is hard — in this video we help you choose.\",\n  \"tags\": [\"beginner tools\", \"drivers\", \"DIY\", \"tools\", \"tutorial\"]\n}\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A keeps the head term, adds the long-tail modifier naturally, improves the first 2 lines with descriptive entities, and diversifies tags to unique, relevant variants without repetition or stuffing.",
+          "distractor_rationale": "B: Over-broad title dilutes intent and adds hype words. Tags are generic and not query-focused.\nC: Repetition is blatant keyword stuffing in both title and description; tags are duplicates.\nD: Too vague; loses the comparison keyword entirely and weakens discoverability for the target query.",
+          "skills_covered": [
+            "manage content metadata",
+            "SEO",
+            "create content title",
+            "compose description for web elements"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your kanban shows current workflow. You need to preserve a Tue/Fri long-form cadence while matching search intent to planned topics.\n\n```text\nBacklog:   \"Drill Press Safety 101\" (Tutorial, Script), \"Cordless Saw Review\" (Review, Idea)\nIn Script: \"Pegboard Wall Setup\" (Tips), \"Stud Finder Basics\" (Tutorial)\nIn Edit:   \"Fix Squeaky Door\" (Tutorial)\nReady:     —\nCalendar:  Tue 14 (Long), Fri 17 (Long), Tue 21 (Long)\nSERP note: \"Stud finder\" is how-to heavy right now; \"Pegboard\" mixed.\n```\nWhich move best keeps cadence and aligns a slot with clear how-to intent without overloading scripting?\n",
+          "options": [
+            "Hold Tue 14 (skip), slot \"Stud Finder Basics\" on Fri 17, then \"Fix Squeaky Door\" Tue 21.",
+            "Push \"Fix Squeaky Door\" to Fri 17, rush \"Stud Finder Basics\" for Tue 14.",
+            "Publish \"Fix Squeaky Door\" on Tue 14, slot \"Stud Finder Basics\" for Fri 17, and keep \"Pegboard\" in script for Tue 21.",
+            "Publish \"Fix Squeaky Door\" on Tue 14, slot \"Pegboard Wall Setup\" for Fri 17, and move \"Stud Finder Basics\" to Tue 21."
+          ],
+          "correct_option": "C",
+          "explanation": "B maintains the Tue/Fri cadence, uses the edited tutorial first, and targets the current how-to intent on Fri 17 with a topic already in script, avoiding a rush while keeping pipeline flow.",
+          "distractor_rationale": "A: Rushing scripting/editing risks quality and breaks pipeline stability.\nC: Misaligns with the stronger how-to intent for stud finder; pegboard is mixed and less time-sensitive.\nD: Skipping a slot harms consistency without a strong reason.",
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You defined pillars and want to avoid topic cannibalization in planning next uploads.\n\n```yaml\npillars:\n  tutorials: \"step-by-step how-to fixes and installs\"\n  reviews:   \"hands-on tool reviews, use-case positioning\"\n  tips:      \"organization, maintenance, quick wins\"\nrecent:\n  - title: \"How to Fix a Squeaky Door\" (tutorials)\n  - title: \"Budget Drill Review\" (reviews)\n  - title: \"WD-40 Myths (60s Hacks)\" (tips)\n```\nWhich next topic best preserves pillar balance and avoids overlapping the recent tutorial’s keyword focus?\n",
+          "options": [
+            "\"Install a New Door Hinge Without Removing the Door\" (tutorials)",
+            "\"Organize Drill Bits: Pegboard and Cases\" (tips)",
+            "\"Fix a Noisy Door Frame (Advanced Techniques)\" (tutorials)",
+            "\"Quiet Door Hinges: Top 5 Lubes Compared\" (reviews)"
+          ],
+          "correct_option": "B",
+          "explanation": "C advances the Tips pillar and stays away from the squeaky door fix intent that would cannibalize the recent tutorial. A review about lubes risks overlap with the same problem space; tutorials on doors would clearly collide.",
+          "distractor_rationale": "A: Review format but still in the squeaky-door problem space; likely to collide on query surfaces.\nB: Another door hinge tutorial risks cannibalizing closely related search intents.\nD: Advanced door fixes still overlap the same cluster of intents (squeak/noise).",
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Mobile truncates titles around 40–45 chars in many views. Which variant keeps the core keyword up front and disambiguates the intent before likely truncation for the query \"stud finder how to use\"?\n",
+          "options": [
+            "How to Use a Stud Finder: 3 Checks That Stop Misreads",
+            "3 Checks That Stop Misreads When Using a Stud Finder",
+            "The Right Way To Use a Stud Finder (Avoid False Positives)",
+            "Avoid False Positives: The Right Way To Use a Stud Finder"
+          ],
+          "correct_option": "A",
+          "explanation": "A front-loads \"How to Use a Stud Finder\", ensuring the core keyword and intent are visible before truncation. The useful modifier follows.",
+          "distractor_rationale": "B/D: Lead with modifiers; the query head term is delayed and risks truncation before the keyword.\nC: Starts with a modifier; the head term appears later, which may be cut on mobile.",
+          "skills_covered": [
+            "create content title",
+            "SEO"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "First two lines of the description weigh heavily for search/context. Which revision best improves scannability and entity coverage for a how-to without stuffing?\n\nDraft:\n```text\nIn this video we show you how to use a stud finder. It's really useful and can help you avoid problems.\n```\n",
+          "options": [
+            "```text\nUsing tools can be hard. Watch this and subscribe for more great content that will help you a lot.\n```",
+            "```text\nStud finders sometimes work and sometimes don't. In this video we talk about that and other things.\n```",
+            "```text\nLearn how to use a stud finder on drywall: we demo edge, center, and live-wire modes so you avoid false positives.\n```",
+            "```text\nStud finder! Stud finder! The best stud finder tutorial for beginners, stud finder how to use now!\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "A adds surfaces like drywall, modes, and false positives, which are relevant entities and user concerns, in natural language within the first lines.",
+          "distractor_rationale": "B: Overt stuffing and repetition; harms quality signals.\nC: Generic fluff with no relevant entities; weak for intent.\nD: Vague and hedging; lacks the specific entities that match queries.",
+          "skills_covered": [
+            "compose description for web elements",
+            "SEO"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You planned the next 10 days. Production requires 48 hours between long-form shoots for the same host. Identify the best adjustment.\n\n```csv\ndate, slot, pillar, format, host\nTue 14, 1, Tutorials, Long, Alex\nWed 15, 2, Tips, Short, Sam\nThu 16, 3, Reviews, Long, Mira\nFri 17, 4, Tutorials, Long, Alex\nTue 21, 5, Tutorials, Long, Alex\n```\n",
+          "options": [
+            "Keep schedule; the 48h rule only applies to filming days, not publish dates.",
+            "Swap Fri 17 (Alex) with Thu 16 (Mira) to keep 48h between Alex’s long-form shoots.",
+            "Add a second host to Fri 17 without changing the plan.",
+            "Move Fri 17 (Alex) to Sat 18 and keep others as-is."
+          ],
+          "correct_option": "B",
+          "explanation": "Swapping Fri 17 with Thu 16 separates Alex’s long-form shoots (Tue 14 and Fri 17 become Tue 14 and Thu 16 for Alex? Wait—after swap Alex is only on Tue 14 and Tue 21; Mira takes Thu 16). This respects the 48h production spacing without breaking cadence.",
+          "distractor_rationale": "B: Moving to Sat 18 still leaves only ~72h from Tue 14; but you also create a weekend publish that may not fit the cadence, and it may still compress pre/post tasks.\nC: Changing host last-minute often breaks quality and continuity; not a reliable workflow fix.\nD: The rule exists because filming/editing load clusters around publish; ignoring it risks failures.",
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You’re targeting the long-tail \"best budget cordless drill under 100\". Choose the title/description pair that keeps the long-tail intact without diluting to a broad head term and avoids spammy repetition.\n",
+          "options": [
+            "```text\nTitle: Best Cordless Drill\nDesc L1-2: The best cordless drill is here. Best best best cordless drill review.\n```",
+            "```text\nTitle: Best Budget Cordless Drill Under $100: Budget Drills Under $100 Compared\nDesc L1-2: Budget under $100 drill budget under 100 drill budget guide.\n```",
+            "```text\nTitle: 7 Cordless Drills Reviewed\nDesc L1-2: We compare 7 drills so you can buy the best.\n```",
+            "```text\nTitle: Best Budget Cordless Drill Under $100 (2026 Picks)\nDesc L1-2: We test 7 cordless drills under $100. Runtime, torque, and charger times compared.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A preserves the full long-tail, adds year for disambiguation, and uses the first lines to anchor entities without repetition.",
+          "distractor_rationale": "B: Too broad; loses the key constraint under $100 and repeats the head term.\nC: Over-repeats the long-tail; looks stuffed.\nD: Removes the price constraint and head term; weak match to the query.",
+          "skills_covered": [
+            "create content title",
+            "compose description for web elements",
+            "SEO",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two planned videos risk overlapping queries. Pick the rewrite that meaningfully separates the intents.\n\n```text\nPlanned\n1) Fix a Squeaky Door (Tutorial)\n2) Stop Door Noise Fast (Tips)\n```\n",
+          "options": [
+            "Quiet Noisy Doors  |  Quieter Doors Today",
+            "Stop Door Noise (Ultimate Guide)  |  Door Noise (Explained)",
+            "Fix a Squeaky Door  |  Fix a Squeaky Door Fast (No Tools)",
+            "Fix a Squeaky Door Hinge (Step-by-Step)  |  Quiet Door Latch Clicks (3 Quick Fixes)"
+          ],
+          "correct_option": "D",
+          "explanation": "A disambiguates: hinge squeak vs latch clicks are distinct issues and query clusters, separating intents to reduce cannibalization.",
+          "distractor_rationale": "B: Both target the same squeaky door query, differing only in speed — still overlapping.\nC/D: Vague, generic; not tied to specific user problems or searchable sub-intents.",
+          "skills_covered": [
+            "create content title",
+            "SEO",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You manage a DIY channel with three pillars (Tutorials, Reviews, Tips). Next two weeks are planned as:\n\n```csv\ndate, pillar, format, working_title, owner, status\nMon 6, Tutorials, Long, Fix Squeaky Door, Alex, Edit\nThu 9, Reviews, Long, Budget Drill Review, Mira, Script\nMon 13, Tips, Short, WD-40 Myths, Team, Idea\nThu 16, Tutorials, Long, Garage Organizing Basics, Sam, Pre-prod\n```\nOn Tue 7, comments and search suggestions reveal a spike for \"how to clean earbuds\" (how-to, hygiene angle). Alex can film Wed 8–Thu 9 and edit Fri–Sat. You have a rule of one long-form Tutorial per week; Shorts are flexible. You cannot increase total hours this fortnight.",
+          "task": "Reshuffle the calendar and finalize a title and first-two-lines description for the earbuds video to capture the spike without breaking constraints. State exactly which slot moves where and why. Justify trade-offs including pillar balance and workflow feasibility.",
+          "expected_answer": "A strong answer replaces Mon 13’s short with a long-form Tutorial: \"How to Clean Earbuds (Safely) — Remove Wax Without Damaging Drivers\" with description lines like: \"Clean earbuds safely: silicone vs foam tips, isopropyl %, wax removal, and mic grille care.\" Move the WD-40 short to Thu 16 (or a near short slot) and push \"Garage Organizing Basics\" to the next available long-form slot, preserving one long-form Tutorial per week. Keep Thu 9 review intact. Rationale: earliest feasible publish given Alex’s availability is Mon 13; keeping the review preserves pillar diversity; the new metadata front-loads the query and safety entities; Shorts can slide without overloading.",
+          "rubric": [
+            {
+              "criterion": "Calendar reshuffle preserves one long-form Tutorial per week and respects Alex’s availability timeline",
+              "marks": 2
+            },
+            {
+              "criterion": "Pillar balance maintained (Tutorial + Review cadence preserved; Tips not starved, even if moved)",
+              "marks": 2
+            },
+            {
+              "criterion": "Earbuds title aligns with dominant how-to intent and front-loads the core keyword",
+              "marks": 2
+            },
+            {
+              "criterion": "First-two-lines description includes relevant entities (tips types, alcohol %, wax/grille safety) without stuffing",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "create content title",
+            "compose description for web elements",
+            "SEO"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must pick two of four topics for the upcoming cycle while holding pillar quotas (1 Tutorial, 1 Review) and aligning to search intent.\n\n```csv\ncandidate, pillar, draft_title, serp_observation\nA, Tutorials, \"Stud Finder Tips\", SERP dominated by how-to with \"how to use a stud finder\" phrasing\nB, Reviews,   \"Cordless Saw Review\", SERP mixes reviews and comparisons; top titles include price brackets\nC, Tutorials, \"Fix Door Rattle\", SERP split between hinge squeak and latch strike issues\nD, Reviews,   \"Best Cordless Drill\", SERP dominated by \"under $100/$200\" lists\n```\n",
+          "task": "Select the two and provide final titles and first-two-lines descriptions that align with SERP intent. Briefly justify each choice and any scope narrowing you introduce.",
+          "expected_answer": "Pick A (Tutorial) and B (Review). Titles like: A) \"How to Use a Stud Finder: 3 Checks to Avoid False Positives\". Description lines mention drywall, edge/center/live-wire modes. B) \"Cordless Circular Saw Review (2026) — 3 Budget Picks Under $150\". Description lines enumerate models and test dimensions. Justify: A matches how-to phrasing, narrows to common failure modes seen in SERP; B aligns with price-bracketed review intent; avoid D’s over-broad head term by adding price bracket; C is ambiguous and risks overlapping with previous door fixes unless narrowed — which can be deferred.",
+          "rubric": [
+            {
+              "criterion": "Correct pillar selection meeting quota (1 Tutorial, 1 Review)",
+              "marks": 2
+            },
+            {
+              "criterion": "Final titles align to dominant SERP intents (phrasing and modifiers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Descriptions include concrete entities (modes, materials, models, price brackets) without stuffing",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification shows trade-off awareness (ambiguity, cannibalization, scope narrowing)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Keyword Research",
+            "SEO",
+            "create content title",
+            "compose description for web elements",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Here is an upload plan entry exported from YouTube Studio for a long-form comparison. It likely violates several metadata best practices.\n\n```json\n{\n  \"title\": \"Impact Driver vs Drill Driver vs Impact Driver (Ultimate Best Guide Best)\",\n  \"description_first_2_lines\": \"Impact driver vs drill driver impact driver vs drill driver tutorial beginners best. Subscribe!\",\n  \"tags\": [\"impact driver vs drill driver\", \"drill driver vs impact driver\", \"impact driver vs drill driver\", \"best\"],\n  \"schedule\": \"2026-09-12T15:00:00Z\"\n}\n```\n",
+          "task": "Identify at least three concrete issues in this metadata and rewrite the fields (title, first two description lines, and tags) to comply with best practices for discoverability without keyword stuffing. State one scheduling consideration that keeps the plan consistent with a Tue/Fri cadence (assume Fri 15:00 UTC). Provide the revised JSON.",
+          "expected_answer": "Issues: title repetition/meaningless superlatives; description stuffing and CTA in first lines; duplicate tags; weak entities. Revised: title \"Drill Driver vs Impact Driver for Beginners — What Each Does Better\"; description lines mention torque, fasteners, bits, clutch vs impact mechanism; tags include unique, relevant variants like [\"drill driver vs impact driver\", \"impact driver vs drill driver\", \"beginner tools\", \"torque comparison\", \"driver bits\", \"clutch vs impact\"]. Scheduling: if Tue/Fri at 15:00 UTC, move schedule to the nearest Tue/Fri slot rather than a random date (e.g., 2026-09-11T15:00:00Z if Fri).",
+          "rubric": [
+            {
+              "criterion": "Accurate identification of at least three concrete issues (repetition, stuffing, duplicate tags, weak entities)",
+              "marks": 2
+            },
+            {
+              "criterion": "Rewritten title removes hype/duplication and preserves the primary keyword naturally",
+              "marks": 2
+            },
+            {
+              "criterion": "First-two-lines description adds relevant entities and reads naturally",
+              "marks": 2
+            },
+            {
+              "criterion": "Tags are unique, relevant variants without duplication or stuffing",
+              "marks": 1
+            },
+            {
+              "criterion": "Scheduling aligns with a stated, consistent cadence (Tue/Fri 15:00 UTC)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "manage content metadata",
+            "SEO",
+            "create content title",
+            "compose description for web elements",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your production board indicates slippage.\n\n```text\nStatuses\n- \"Pegboard Wall Setup\" (Tips, Long): Shot, waiting on B-roll (ETA +2d)\n- \"Stud Finder Basics\" (Tutorial, Long): Script locked, talent free in 3d\n- \"Cordless Saw Review\" (Review, Long): In edit, thumbnail pending\nCadence target: Weekly long-form on Tue 15:00 UTC.\nCalendar: Tue 14 (missed), Tue 21 (open), Tue 28 (open)\n```\n",
+          "task": "Propose a revised timeline and publish order for the next two weeks to protect the weekly cadence. Explain how your choices affect discovery (e.g., matching how-to intent first vs letting a review land first), and how the workflow constraints inform your decision.",
+          "expected_answer": "Publish order: prioritize the Review next week if it can finish first (thumb can be parallelized), then slot the Tutorial the following week when talent is free; or, if B-roll for Tips can land within 48h and edit is light, swap it in to avoid a gap, but don’t delay the Tutorial beyond its earliest feasible slot because SERP is how-to heavy. Provide exact dates: Tue 21 — Cordless Saw Review (thumb finalized by -1d); Tue 28 — Stud Finder Basics (talent free + edit buffer). Rationale covers discoverability (how-to trending soon but not yet shootable), and cadence protection with realistic buffers.",
+          "rubric": [
+            {
+              "criterion": "Feasible timeline that fills the next two Tuesday slots without overpromising production",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, defensible publish order tied to discovery intent (how-to vs review)",
+              "marks": 2
+            },
+            {
+              "criterion": "Integration of workflow constraints (B-roll ETA, talent availability, thumbnail dependency)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specificity (dates, slot times) and risk mitigation (buffers, parallel tasks)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "Social Media Marketing",
+            "SEO"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a two-week content calendar with pillars, formats, and workflow states",
+          "brief": "Create a realistic content calendar for the next 4 weeks (covering at least 8 uploads), balancing the pillars Tutorials, Reviews, and Tips. Include for each item: publish date/time (UTC), pillar, format (Long/Short/Live), working title, owner, production status (Idea/Script/Pre-prod/Shoot/Edit/Ready), dependencies (e.g., talent availability, B-roll, thumbnail), and notes on search intent (e.g., how-to, list, review). Ensure the plan is feasible under a constraint: the same owner cannot handle two Long shoots within 48 hours. Maintain a consistent cadence (e.g., Tue/Fri long-form) and avoid keyword cannibalization across titles.",
+          "deliverable": "Content calendar as a CSV or spreadsheet file with the specified columns.",
+          "acceptance_criteria": [
+            "Minimum 8 uploads over 4 weeks; at least 2 per pillar.",
+            "Columns present: date_time_utc, pillar, format, working_title, owner, status, dependencies, search_intent, notes.",
+            "No owner is scheduled for two Long shoots within 48 hours.",
+            "Cadence evidenced (e.g., consistent Tue/Fri long-form slots) with no missed planned slots.",
+            "Titles avoid clear cannibalization (no two near-duplicates in the same topic cluster)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Pillar balance (≥2 uploads per pillar) and cadence clarity across the 4 weeks",
+              "marks": 4
+            },
+            {
+              "criterion": "Workflow feasibility (statuses, owner load, 48h Long-shoot spacing)",
+              "marks": 6
+            },
+            {
+              "criterion": "Title planning quality (intent clarity, no obvious cannibalization)",
+              "marks": 4
+            },
+            {
+              "criterion": "Dependency mapping and notes that make risks visible (talent, B-roll, thumbnails)",
+              "marks": 4
+            },
+            {
+              "criterion": "File structure/format correctness (columns complete; readable CSV/spreadsheet)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce an optimized upload plan for two upcoming videos",
+          "brief": "Using two items from your calendar, prepare an upload plan for each that is ready for YouTube Studio. For each video provide: final title (<100 chars), first 2 description lines (<= 220 chars total, natural language), 8–15 tags (unique, relevant variants), proposed publish date/time (UTC) consistent with your cadence, and one-sentence thumbnail text. Include optional chapters outline (timestamps may be placeholders but labeled). Ensure each plan targets a distinct search intent and that metadata avoids repetition/stuffing.",
+          "deliverable": "Optimised upload plan as a JSON or CSV document covering both videos, one record per video with the specified fields.",
+          "acceptance_criteria": [
+            "Each record includes: title, description_first_2_lines, tags[8–15], publish_datetime_utc, thumbnail_text, chapters_outline.",
+            "Titles front-load the primary keyword and reflect the video’s intent without clickbait; <100 chars.",
+            "Descriptions add specific entities relevant to the query in natural language; <=220 chars across first two lines.",
+            "Tags are unique (no duplicates) and specific to the topic; 8–15 entries per video.",
+            "Publish times match the cadence established in Task 1.",
+            "The two videos target clearly different intents (e.g., how-to vs review) with no cannibalization."
+          ],
+          "rubric": [
+            {
+              "criterion": "Intent alignment and keyword targeting in titles (front-loading, clarity, <100 chars)",
+              "marks": 5
+            },
+            {
+              "criterion": "Description quality (entity coverage, natural language, concision within 220 chars)",
+              "marks": 5
+            },
+            {
+              "criterion": "Tag set quality (unique, relevant variants; 8–15 items)",
+              "marks": 4
+            },
+            {
+              "criterion": "Cadence consistency (publish times align with Task 1’s plan)",
+              "marks": 3
+            },
+            {
+              "criterion": "Separation of intents between the two videos (no cannibalization)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "manage content metadata",
+            "SEO",
+            "create content title",
+            "compose description for web elements",
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-036-S03",
+      "skills_assessed": [
+        "YouTube Studio",
+        "A/B Testing",
+        "Graphic Design Principles",
+        "web analytics",
+        "manage content metadata",
+        "publishing strategy",
+        "Social Media Marketing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You ran a 48-hour thumbnail experiment in YouTube Studio. The experiment summary shows:\n```text\nVariant,Impressions,CTR,AvgViewDuration,WatchTimeFromImpressions (hours)\nA,120000,7.1%,00:05:12,739\nB,118000,8.3%,00:04:18,635\n```\nYour goal is sustainable session growth, not just clicks. What should you do and why?",
+          "options": [
+            "Select Variant A; higher watch time from impressions indicates better downstream performance despite lower CTR.",
+            "Discard the test; impressions are not equal so the result is biased by sample size.",
+            "Extend the test to 7 days; short tests are always invalid for thumbnails on YouTube.",
+            "Select Variant B; its higher CTR means more impressions will convert to views regardless of session quality."
+          ],
+          "correct_option": "A",
+          "explanation": "Watch time from impressions balances click quality and retention. Variant A produces more total watch time per impression, which is more aligned with growth and is less likely to harm session metrics than optimizing for CTR alone.",
+          "distractor_rationale": "A: CTR alone can select clickbait and reduce retention; here AVD and watch time from impressions are worse on B. C: Duration alone does not fix metric choice; the signal already clearly favors A on the right metric. D: The impression counts are comparable; YouTube Experiments randomizes exposure—this is not obviously a sample-size artifact.",
+          "skills_covered": [
+            "A/B Testing",
+            "web analytics",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Mobile preview at 120px wide shows this for your current template:\n```text\n- Headline: \"Edit Faster in Premiere Pro\" (32 pt SemiBold)\n- Host face left, logo top-right, red ribbon bottom-right\nObserved: words \"in Premiere Pro\" blur, timestamp covers bottom-right ribbon.\n```\nTo improve small-size readability without breaking brand consistency, what single change is best?",
+          "options": [
+            "Add a heavy drop shadow to the full headline while keeping the long phrase.",
+            "Shorten the headline to \"Edit Faster\" and move \"Premiere Pro\" to a small top label; keep palette and layout.",
+            "Increase headline size by 20% but keep all elements; let text encroach on the face crop.",
+            "Make the headline ALL-CAPS to increase stroke height; keep length and layout the same."
+          ],
+          "correct_option": "B",
+          "explanation": "Reducing semantic load (shorter hook) improves hierarchy at small sizes, while moving the qualifier to a secondary label preserves brand consistency and avoids timestamp collision.",
+          "distractor_rationale": "B: All-caps increases area but doesn't solve overlong copy; cramped text still fails at 120px. C: Scaling without removing content forces collisions and harms face salience. D: Shadow can aid contrast but cannot compensate for excessive word count at tiny sizes.",
+          "skills_covered": [
+            "Graphic Design Principles",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your current publishing checklist YAML includes:\n```yaml\n- upload video\n- set visibility: Public\n- add to playlists\n- upload captions: en, es\n- add end screen\n```\nFirst-hour viewers frequently report missing captions. What change prevents this without delaying publication?",
+          "options": [
+            "Move \"upload captions\" above visibility and schedule the publish time (rather than immediate Public) so captions are live at release.",
+            "Leave the order but enable auto-captions; they will backfill within minutes for first-hour viewers.",
+            "Publish as Unlisted for 24 hours, then switch to Public so captions catch up later.",
+            "Publish Public, then replace the video file with captions embedded in the video stream."
+          ],
+          "correct_option": "A",
+          "explanation": "Captions should be uploaded and processed before the video goes Public. Scheduling lets you keep a fixed release time while ensuring captions are ready.",
+          "distractor_rationale": "B: Auto-captions are not a quality check and can lag or be inaccurate. C: Unlisted-first delays momentum and notifications. D: YouTube does not support replacing the video file to swap in burned captions without creating a new video.",
+          "skills_covered": [
+            "manage content metadata",
+            "publishing strategy",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You attempt to upload this SRT file:\n```text\n1\n00:00:00,000 --> 00:00:02,500\nWelcome back!\n\n2\n00:00:02,400 --> 00:00:05,000\nToday we speed up edits.\n```\nWhat happens and why?",
+          "options": [
+            "Upload fails with a timing error; overlapping cues (2 starts before 1 ends) are invalid.",
+            "YouTube auto-fixes by snapping cue 2 to start at 00:00:02,500.",
+            "Upload succeeds but YouTube applies a +100ms shift to all cues to avoid overlap.",
+            "Mobile players ignore the overlap but desktop shows both cues just fine."
+          ],
+          "correct_option": "A",
+          "explanation": "Subtitle cues must be sequential and non-overlapping. Overlap typically causes a parsing error and the track is rejected until corrected.",
+          "distractor_rationale": "B: YouTube does not reliably auto-resolve overlaps; it expects valid files. C: Arbitrary global shifts would break other cues and are not applied. D: Player behavior is not platform-specific here; the issue is at ingestion/validation.",
+          "skills_covered": [
+            "manage content metadata",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your thumbnail template collides with UI overlays:\n```text\n- Hook word positioned bottom-right\n- Channel watermark bottom-left\n- YouTube time badge bottom-right (auto)\n```\nWhich adjustment avoids obstruction and preserves clear hierarchy?",
+          "options": [
+            "Shrink the hook so it fits under the time badge without moving it.",
+            "Keep the hook bottom-right but switch it to white for contrast under the time badge.",
+            "Move the hook to top-right directly under the logo to balance the corner elements.",
+            "Move the hook to the top-left safe area, keep face center-right, leave both bottom corners clear."
+          ],
+          "correct_option": "D",
+          "explanation": "Relocating the core text to a safe area avoids fixed overlays (time badge, watermark) and maintains a clear reading path without compromising legibility.",
+          "distractor_rationale": "B: Color cannot solve physical occlusion by the time badge. C: Top-right competes with the logo and can reduce brand clarity. D: Shrinking reduces salience and harms readability on mobile.",
+          "skills_covered": [
+            "Graphic Design Principles"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Moderation issues after last upload:\n```text\nBlocked words: [\"free\", \"giveaway\", \"promo\"]\nIncoming comments:\n1) \"Fr€e presets here: bit.ly/xyz\"\n2) \"free your timeline with these tips!\"\n3) \"Legit FREE course??\"\n```\nWhich change best reduces spam without excessive false positives?",
+          "options": [
+            "Disable comments channel-wide until the campaign ends.",
+            "Block the substring \"fr\" to catch more variants across all languages.",
+            "Enable \"Hold potentially inappropriate comments\" with increased strictness and add common homograph variants like \"fr€e\" to the blocked list.",
+            "No change; YouTube auto-detection will remove these over time."
+          ],
+          "correct_option": "C",
+          "explanation": "Raising the hold threshold plus targeted blocked variants captures spam patterns while minimizing collateral damage to legitimate comments that use normal words in context.",
+          "distractor_rationale": "B: Over-broad blocks create many false positives (e.g., words containing \"fr\"). C: Disabling comments harms engagement and community unnecessarily. D: Relying solely on auto-detection is reactive and slow under a spam wave.",
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Playlist configuration:\n```text\nPlaylist A: \"Premiere Pro Crash Course\" (Series = ON)\nPlaylist B: \"Editing Basics\" (Series = ON)\nVideo X is in both playlists.\n```\nWhat will YouTube do and which checklist step would prevent this?",
+          "options": [
+            "YouTube ignores the series flag when there's a conflict; series setting is cosmetic so no checklist change is needed.",
+            "Video X remains in both series; a checklist step to reorder both lists keeps continuity.",
+            "YouTube keeps Video X in only one series playlist, removing it from the other; a checklist step to verify only one series assignment prevents silent overrides.",
+            "Publishing fails until you remove the conflict; adding a \"conflict check\" is unnecessary if you watch the error banner."
+          ],
+          "correct_option": "C",
+          "explanation": "A video can only belong to one official series playlist. Adding it to a second series causes it to be removed from the first silently. A checklist item to confirm single-series membership avoids surprises.",
+          "distractor_rationale": "B: Series membership cannot be duplicated. C: YouTube does not block publishing for this; it auto-resolves. D: The series flag is functional, not cosmetic.",
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Timeline of your release prep:\n```text\nThu 10:00 — Start thumbnail experiment on Video Y\nFri 12:00 — Manually change the title of Video Y\nFri 18:00 — CTR rises sharply; experiment still running\n```\nTo avoid invalidating the experiment, which checklist control should have been in place before Thu 10:00?",
+          "options": [
+            "Extend experiment duration to smooth out day-of-week effects.",
+            "Freeze title/description/playlist membership for the duration of the thumbnail experiment; only thumbnails may vary.",
+            "Change both thumbnail and title simultaneously to accelerate learning.",
+            "Post a Community tab note so subscribers understand higher CTR."
+          ],
+          "correct_option": "B",
+          "explanation": "Concurrent changes confound attribution. A freeze on other metadata is a standard experiment hygiene step so observed deltas can be attributed to the thumbnail alone.",
+          "distractor_rationale": "B: Duration doesn’t solve confounding changes. C: Announcements don’t address measurement validity. D: Changing two variables eliminates the ability to attribute effects.",
+          "skills_covered": [
+            "A/B Testing",
+            "publishing strategy",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your description includes timestamps but chapters are not appearing:\n```markdown\n00:12 Tip 1 — Shortcuts\n04:05 Tip 2 — Ripple edits\n12:44 Tip 3 — Proxies\n```\nWhat change will enable chapters?",
+          "options": [
+            "Add three topic hashtags above the timestamps.",
+            "Add a starting timestamp at 00:00 (e.g., \"00:00 Introduction\").",
+            "Remove the labels after timestamps; text after timecodes disables chapters.",
+            "Add at least five timestamps; three is below the minimum."
+          ],
+          "correct_option": "B",
+          "explanation": "YouTube requires chapters to start at 00:00 with at least three timestamps. Adding the 00:00 entry satisfies the structural requirement.",
+          "distractor_rationale": "B: The minimum is three timestamps, not five. C: Labels are allowed after timestamps. D: Hashtags do not control chapters.",
+          "skills_covered": [
+            "manage content metadata",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "End screen config before publish:\n```text\nElement 1: Video — https://youtu.be/abc123 (Next episode, currently Unlisted)\nElement 2: Subscribe — channel circle\n```\nWhat will viewers see at publish, and what should you change to avoid issues?",
+          "options": [
+            "Publishing will fail due to an invalid end screen target; remove all end screen elements until the sequel is Public.",
+            "YouTube will automatically swap to your most recent Public upload, so no change needed.",
+            "The element shows but is not clickable; leave it and it will activate automatically later.",
+            "The video element will not show until the target is Public; link a series playlist or \"Best for viewer\" instead when the next episode is Unlisted."
+          ],
+          "correct_option": "D",
+          "explanation": "End screens cannot point to Unlisted videos for public viewers. Using a playlist or the \"Best for viewer\" selector avoids a dead element at release.",
+          "distractor_rationale": "B: YouTube does not auto-retarget end screen links. C: The element is typically suppressed rather than shown unclickable. D: Publishing itself does not fail; only the element is invalid.",
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your channel is launching a 10-video series aimed at intermediate editors. Mobile accounts for 72% of impressions. Current baseline metrics: CTR 6.2%, average view duration 5:05. Your existing thumbnails vary wildly in type size and palette. You also have limited production time (one designer, 3 hours per thumbnail set). The brand requires logo visibility but has no fixed type scale.",
+          "task": "Define a thumbnail system for the series that enforces hierarchy and readability at 120px while staying consistent across all 10 episodes. Specify at least four concrete, checkable rules (e.g., copy length, safe zones, color use, face crop, logo placement) and justify how each rule affects mobile readability and recognizability. Include one rule that enables A/B testing without breaking consistency.",
+          "expected_answer": "A strong answer proposes a ruleset like: 1) Headline limited to 2–3 words (max 12 characters per word), set in Brand Sans Semibold at 1280x720: 150–180 px cap height; secondary qualifier (tool/version) in a 24–28 px top label. 2) Hook text placed top-left safe area; no critical content within 120 px of bottom-right (timestamp) or 100 px of bottom-left (watermark). 3) Face crop (if used) occupies 30–40% width on right third with clean background; no overlapping text. 4) High-contrast palette with one fixed brand color background and one accent for the hook (minimum contrast ratio approximately 4.5:1 against background). 5) Logo locked top-right at 96–120 px; not adjacent to hook to prevent crowding. 6) A/B slot: swap only the background texture or hook verb (synonym pair) while all other elements are frozen. Justification links each rule to small-size legibility, recognizability across episodes, and controlled variability for testing.",
+          "rubric": [
+            {
+              "criterion": "Four or more concrete, checkable rules (measurable sizes, positions, counts)",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear justification tying each rule to hierarchy/readability at small sizes",
+              "marks": 2
+            },
+            {
+              "criterion": "Consistency provisions (logo lockup, color system) that scale across 10 episodes",
+              "marks": 2
+            },
+            {
+              "criterion": "An A/B testing rule that varies one element while freezing others",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "A/B Testing",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You schedule a video for Saturday 10:00 local time with English and Spanish audiences. Your caption vendor returns English at T–36h and Spanish at T–8h. Auto-captions are unreliable for technical terminology. Past releases showed first-hour viewers missing captions.",
+          "task": "Design a publishing workflow segment that guarantees both EN and ES captions are live at the scheduled time without missing notifications or breaking momentum. Specify ordering, timing buffers, and the Studio locations you’ll use. Include a fallback if the ES file is late again.",
+          "expected_answer": "A good plan: Upload video as Private by T–48h. At T–36h, upload EN SRT in Subtitles tab (Details > Subtitles) and set visibility to Published. Add description, chapters (starting 00:00), end screen, cards, and thumbnails by T–30h. Create a Scheduled publish for Sat 10:00. At T–10h, validate EN timing via player check. At T–8h, upload ES SRT; set to Published. Re-validate tracks. Final QC checklist at T–6h confirms both languages show as Published, no conflicts with auto-captions. Fallback: if ES is late at T–2h, temporarily disable auto-publish of auto-translate, add an on-screen lower-third or pinned comment in ES indicating captions will arrive by T+2h, and reschedule only if series consistency demands bilingual at launch. All steps reference YouTube Studio: Details, Subtitles, Editor (end screen/cards), Visibility (Schedule).",
+          "rubric": [
+            {
+              "criterion": "Ordering ensures captions are uploaded and Published before scheduled Public visibility",
+              "marks": 3
+            },
+            {
+              "criterion": "Inclusion of Studio locations (Subtitles, Visibility/Schedule, Editor)",
+              "marks": 1
+            },
+            {
+              "criterion": "Timing buffers appropriate to vendor SLAs and validation checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, minimal-impact fallback if ES is late (without losing notifications)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "manage content metadata",
+            "publishing strategy",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A giveaway video attracts a surge of spam comments using homograph tricks (fr€e, g1veaway) and link shorteners. Genuine viewers also use the word “free” in legitimate contexts. Mods are overwhelmed in the first two hours after publish.",
+          "task": "Propose specific moderation settings and checklist updates that reduce visible spam within the first hour while minimizing false positives and preserving engagement. Include changes to blocked words, hold settings, and any pre-publish steps.",
+          "expected_answer": "Proposed controls: Pre-publish, enable Comments: Hold potentially inappropriate comments for review and toggle Increase strictness. Expand Blocked words with targeted variants (\"fr€e\", \"g1veaway\", common spacing like \"f r e e\"), plus a link-shortener list (bit.ly, t.co, tinyurl, ow.ly). Keep the generic word \"free\" off the list to avoid collateral. Turn on Hold links for review. Add a first-hour mod window to the checklist with two moderators on rotation and Saved Replies for legit FAQs. Pin a top-level comment with rules and a non-clickable resource (no raw links). Post-publish, audit the Held for review queue every 10 minutes in the first hour. Outcome: spam largely held before display; legit uses of \"free\" pass unless combined with link patterns.",
+          "rubric": [
+            {
+              "criterion": "Appropriate use of YouTube Studio moderation settings (hold, increased strictness, blocked words, links)",
+              "marks": 3
+            },
+            {
+              "criterion": "Targeted patterns that minimize false positives (avoid blocking generic \"free\")",
+              "marks": 2
+            },
+            {
+              "criterion": "Pre- and first-hour operational steps (mods assigned, cadence, pinned comment)",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear checklist updates mapping steps to publish timeline",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You publish episodic content that must: 1) appear in the official series playlist, 2) also live in a topical discovery playlist, 3) point end screens to the series, and 4) avoid conflicts that silently remove the video from the series. Past launches have occasionally broken the chain, hurting next-episode traffic.",
+          "task": "Redesign the relevant slice of your publishing checklist to guarantee series continuity and discovery. Specify exact steps, ordering, and guards that prevent conflicts, including how you link end screens when the next episode isn’t public yet.",
+          "expected_answer": "Checklist slice: After uploading (Private), add to Playlists: add to Series playlist (Series=ON) and add to Topic playlist (Series=OFF). Guard: verify Topic playlist is not flagged as Series, and confirm only one Series assignment (Studio will show a warning if you try to set both). Next, in Editor, set end screen to Series playlist or \"Best for viewer\" if the next episode is Unlisted; never deep-link to Unlisted at publish. Before switching to Scheduled/Public, run a QC step: open the video page and confirm Series badge appears, then open both playlists to confirm presence/order. Final guard: in the template, prohibit adding any video to more than one Series list; require a reviewer tick-box: \"Series unique?\". Ordering ensures playlist assignment precedes end screen linking, and both precede Visibility change.",
+          "rubric": [
+            {
+              "criterion": "Clear ordering of playlist assignments with correct Series/Non-series distinction",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete guardrails against dual series membership (unique-series check)",
+              "marks": 2
+            },
+            {
+              "criterion": "End screen linking strategy that works when the next episode is Unlisted",
+              "marks": 2
+            },
+            {
+              "criterion": "Inclusion of verifiable QC steps before Public/Scheduled",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "YouTube Studio",
+            "manage content metadata"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a thumbnail set for an upcoming 4-episode mini-series (with one A/B pair)",
+          "brief": "Design a consistent thumbnail system that demonstrates hierarchy, readability, and consistency. Produce four final thumbnails (episodes 1–4) and create one additional A/B variant for episode 1 that changes only a single variable suitable for testing. Include quick proof of small-size readability.",
+          "deliverable": "Thumbnail set",
+          "acceptance_criteria": [
+            "Exactly 5 exported thumbnails: ep1-A, ep1-B, ep2, ep3, ep4.",
+            "Export specs: 1280x720, 16:9, JPG or PNG, file size <= 2 MB each.",
+            "Consistency: same logo lockup, color system, and text style across all non-test thumbnails.",
+            "Hierarchy: hook limited to max 3 words; no critical content within 120 px of bottom-right; face (if used) unobstructed by text.",
+            "A/B pair changes only one element (e.g., hook verb or background texture); all other elements identical.",
+            "Provide a 120px-wide contact sheet (a single image showing all five at 120px width) to verify small-size readability.",
+            "Include a one-page notes file (PDF or TXT) listing the rules you followed and the specific metric you intend to judge the A/B on (e.g., watch time from impressions)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Hierarchy and focus (short hook, clear focal point, uncluttered composition)",
+              "marks": 5
+            },
+            {
+              "criterion": "Mobile readability (120px contact sheet legible, safe zones respected)",
+              "marks": 5
+            },
+            {
+              "criterion": "Brand consistency across the set (logo, palette, type system)",
+              "marks": 4
+            },
+            {
+              "criterion": "A/B pair isolates a single variable and states the success metric",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical compliance (dimensions and file size)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Graphic Design Principles",
+            "A/B Testing",
+            "YouTube Studio",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Author a channel publishing checklist ready for immediate use",
+          "brief": "Create a step-by-step checklist that a producer can follow from upload to post-publish. It must ensure quality checks, captions readiness, playlist placement, end screen safety, and first-hour moderation. Make it specific to YouTube Studio (menu paths) and resilient to common pitfalls (series conflicts, chapters, experiments hygiene).",
+          "deliverable": "Publishing checklist",
+          "acceptance_criteria": [
+            "Format: a single document with checkboxes and clear sections (Pre-upload, Post-upload (Private), Schedule, Final QC, Publish-day, First hour).",
+            "Includes Studio paths for each action (e.g., Details > Subtitles > Add language).",
+            "Captions: EN and ES (or two languages of your choice) uploaded and set to Published before Scheduled/Public; note validation step.",
+            "Playlists: add to one Series playlist and one non-series Topic playlist; include a unique-series guard step.",
+            "End screen: link to Series playlist or Best for viewer if next episode isn’t Public; avoid linking to Unlisted/Private.",
+            "Chapters: at least three timestamps starting at 00:00; verification step included.",
+            "Experiments hygiene: add a step to freeze title/description/playlist during thumbnail tests.",
+            "Moderation: enable Hold potentially inappropriate (increased strictness), blocked-words list update, hold links; assign first-hour review cadence.",
+            "Post-publish verification: open watch page as signed-out user to confirm captions, chapters, end screen, and playlist presence."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness across phases with actionable, box-checkable steps",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct ordering that ensures captions, playlists, and end screens are ready before public visibility",
+              "marks": 6
+            },
+            {
+              "criterion": "Specificity to YouTube Studio (accurate menu paths and settings)",
+              "marks": 4
+            },
+            {
+              "criterion": "Edge-case safeguards (series uniqueness, chapters 00:00, experiment freeze, end screen when next is Unlisted)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "manage content metadata",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-036-S04",
+      "skills_assessed": [
+        "YouTube Studio",
+        "web analytics",
+        "A/B Testing",
+        "Social Media Marketing",
+        "plan social media marketing campaigns",
+        "publishing strategy",
+        "User Management",
+        "develop online community plan"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You open Retention for a 7:40 video and see:\n```text\nAudience retention (first 60s) for Video A\n00:00 100%\n00:10 78%\n00:20 62%\n00:30 55%\n00:45 53%\n01:00 52%\n\"Key moments\": viewers sped up at 00:03–00:07\nOpening:\n00:00–00:08 animated logo sting\n00:08–00:13 \"In this video we will...\"\n00:13 first on-screen demo step\n```\nYou can only change the first 15 seconds. Which change is most likely to lift average view duration by reducing early drop-off?",
+          "options": [
+            "Remove the 8s logo and cold open with the demo’s payoff in the first 3s, then state the promise while showing progress.",
+            "Enable the first mid-roll ad at 00:30 to monetize earlier and keep viewers engaged.",
+            "Add a card at 00:12 linking to the full playlist so viewers have an exit to more of your content.",
+            "Add subtitles and a pinned comment with timestamps to help skimmers navigate."
+          ],
+          "correct_option": "A",
+          "explanation": "The sharp early drop aligns with a long logo + generic promise before any payoff. Starting with the result/hook in the first seconds addresses hook loss directly and is the highest-leverage retention fix.",
+          "distractor_rationale": "B: Cards at 00:12 create an exit during the fragile first 15s, likely worsening retention. C: Earlier mid-rolls cannot be placed before 8 minutes for most videos and, even if possible, ads do not fix an early content hook problem. D: Subtitles and timestamps help accessibility and navigation but do not remove the dead time that causes the drop.",
+          "skills_covered": [
+            "YouTube Studio",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "From Advanced Analytics (last 28 days):\n```csv\nTraffic Source,Impressions,CTR,Avg view duration,Views\nBrowse features,1,200,000,2.0%,5:10,24,000\nSuggested videos,800,000,4.9%,4:02,39,200\nYouTube search,400,000,6.1%,3:15,24,400\n```\nYou want to grow reach from Browse without harming engagement. What is the best next action?",
+          "options": [
+            "Add more tags to include trending keywords so YouTube better understands your topic.",
+            "Shorten all videos to under 3 minutes to raise average view duration percentage.",
+            "Revise thumbnails to emphasize the payoff with less text, then run a Studio Test & Compare to validate CTR lift on Browse.",
+            "Move upload time two hours earlier so the video hits Browse sooner and accumulates momentum."
+          ],
+          "correct_option": "C",
+          "explanation": "Browse CTR is weak relative to other sources. Thumbnails dominate Browse decisioning. Systematically testing stronger payoff-led thumbnails directly targets CTR on Browse while guarding against engagement harm by measuring watch time per impression.",
+          "distractor_rationale": "B: Tags have minimal impact on Browse visibility; metadata tweaks won’t fix a thumbnail-driven CTR issue. C: Shortening indiscriminately can reduce absolute watch time and may not fix Browse CTR. D: Timing may matter at the margin, but the core issue is low CTR on home feed creative, not publish hour.",
+          "skills_covered": [
+            "YouTube Studio",
+            "A/B Testing",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You ran a YouTube Studio Test & Compare on two thumbnails for the same video. After 6 hours:\n```text\nVariant A: 8,200 impressions, CTR 4.6%, views 377, avg view dur 3:42\nVariant B: 6,900 impressions, CTR 6.7% (+2.1pp vs A), views 462, avg view dur 3:35\nAudience geography during test window:\nA: 62% US, 18% UK, 10% CA\nB: 38% US, 27% IN, 15% PH\nTest window: Tue 09:00–15:00 local\n```\nWhat’s the correct call?",
+          "options": [
+            "Repeat the test but change titles and thumbnails together to maximize the effect size.",
+            "Stop the test; the lower average view duration on B means it harms watch time despite CTR.",
+            "Extend the test to at least 48–72 hours to average out daypart and geography effects before calling it.",
+            "Declare B the winner and roll it out immediately because of a +2.1pp CTR advantage."
+          ],
+          "correct_option": "C",
+          "explanation": "The sample is short and audience mix differs between variants, which can bias CTR. Extending across dayparts and geos improves reliability. Watch time per impression should be checked over a longer window too.",
+          "distractor_rationale": "A: The CTR gap may be sampling noise or geo-driven; calling early risks a false win. C: The small AVD difference over 6 hours is inconclusive; judge on watch time per impression after a stable run. D: Changing two variables breaks attribution; you wouldn’t know which element drove results.",
+          "skills_covered": [
+            "A/B Testing",
+            "YouTube Studio",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Audience tab shows:\n```text\nWhen your viewers are on YouTube (local time)\nPeak blocks: Tue–Thu 18:00–21:00 (darkest), Fri 17:00–19:00 (dark)\nHD processing for your 4K uploads: ~20–30 minutes\nNotifications: most effective within 5 minutes of publish\n```\nYou plan a premiere on Thursday. What timing approach best uses this insight?",
+          "options": [
+            "Publish at 16:30 Thu to build momentum before peak and let the algorithm pick it up by 18:00.",
+            "Publish at 21:00 Thu to maximize competition so the algorithm judges your video against the strongest titles.",
+            "Upload at 17:59 Thu and publish immediately at 18:00 so notifications hit exactly at peak start.",
+            "Upload hours earlier and schedule the premiere to start at 18:05 Thu; post a Community teaser 45 minutes before."
+          ],
+          "correct_option": "D",
+          "explanation": "Uploading early and scheduling slightly into peak ensures processing is complete and notifications land when most viewers are active. A teaser primes awareness before the window.",
+          "distractor_rationale": "A: Processing may still be underway, risking poor initial quality and lower CTR/retention. C: Publishing well before peak leaks notifications and early session starts into a weaker period. D: Publishing at the tail of peak reduces available active viewers and is not a sensible strategy.",
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "At 19:05 you post a Community poll that links to Video X. Realtime shows a spike at 19:06 with these sources increasing:\n```text\nTraffic sources (last 60 minutes)\nChannel pages: +420 views\nNotifications: +160 views\nExternal: +8 views\nBrowse features: flat\n```\nHow should you attribute the spike?",
+          "options": [
+            "Mostly Community post clicks counted under Channel pages, plus some subscriber notifications; not External.",
+            "Mostly Browse features because home feed shows polls to non-subscribers.",
+            "Primarily External because Community posts are web links outside YouTube.",
+            "Evenly split across Suggested and Search because viewers type in the title after seeing the post."
+          ],
+          "correct_option": "A",
+          "explanation": "Community post engagement typically reflects as Channel pages traffic; subscribers pinged by the post may also appear under Notifications. External would be minimal unless linking off-platform.",
+          "distractor_rationale": "B: Community posts are an on-platform surface, not External. C: While polls can surface broadly, the immediate spike aligns with Channel pages/Notifications, not Browse. D: Some may search later, but the real-time spike is not evenly split that way.",
+          "skills_covered": [
+            "YouTube Studio",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Last 14 days Monetization tab:\n```text\nDate range split: Before vs After marking 6 videos as \"Made for kids\"\nRPM: $2.90  ->  $0.98\nViews: 210,000 -> 205,000\nWatch time (hrs): 7,100 -> 6,900\nTop ad suitability setting: \"Made for kids\" on affected videos\nComments: disabled on affected videos\n```\nWhat’s the primary driver of the RPM drop?",
+          "options": [
+            "RPM fell because comments were disabled, which directly reduces ad rates.",
+            "Personalized ads are limited on Made for Kids content, lowering RPM even with similar views.",
+            "Audience shifted to lower-CPM geographies; the mark is unrelated.",
+            "Shorter average view duration reduced mid-roll fill rate on sub-8-minute videos."
+          ],
+          "correct_option": "B",
+          "explanation": "Marking content as Made for Kids restricts personalized ads and certain formats, which typically lowers RPM independent of view volume.",
+          "distractor_rationale": "B: Geo shifts can matter, but the coincident policy change is the stronger, stated cause. C: Comments do not directly affect RPM. D: Mid-rolls are not applicable to sub‑8‑minute videos and the data does not show a duration change driving the drop.",
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "End screen element report (last 90 days):\n```csv\nVideo,End screen CTR,Elements shown,Element clicks leading to next video,Avg view duration (next video)\nA,0.3%,4,42,4:10\nB,1.1%,2,210,5:05\nC,0.6%,4,88,3:30\n```\nYou want to maximize session watch time from Video A. What’s the best change?",
+          "options": [
+            "Reduce end screen to 1–2 tightly relevant video elements and start it in the last 15 seconds.",
+            "Add links to your channel homepage and subscribe to increase overall exits.",
+            "Extend the end screen to 30 seconds so viewers have more time to choose.",
+            "Insert a card earlier at 50% watch to send viewers to any high-performing video."
+          ],
+          "correct_option": "A",
+          "explanation": "Fewer, highly relevant options started in the final moments typically lift end screen CTR and continuation to the next video, improving session watch time.",
+          "distractor_rationale": "B: Channel and subscribe elements don’t directly continue a viewing session. C: Early cards can siphon viewers mid‑watch, hurting AVD. D: Overlong end screens create dead time and can increase drop‑offs.",
+          "skills_covered": [
+            "YouTube Studio",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Audience tab summary (last 90 days):\n```text\nNew viewers: 72%\nReturning viewers: 28%\nAvg time between episodes in your main series: 3 weeks\nPlaylist starts -> Episode 2 retention at 30%: 41%\nUpload cadence: 2 uploads/month\n```\nFor the next 90 days, which action most directly improves returning viewers for the series?",
+          "options": [
+            "Run a monthly giveaway in comments to incentivize returns.",
+            "Increase to a weekly episode cadence, front-stack the playlist order by narrative, and tease next episode in the end screen.",
+            "Translate descriptions into 5 languages to widen reach.",
+            "Switch entirely to Shorts to boost frequency without changing the series plan."
+          ],
+          "correct_option": "B",
+          "explanation": "Returnership in series content responds to predictable cadence, strong sequencing, and explicit next‑episode cues that create habits.",
+          "distractor_rationale": "B: Giveaways can spike one-off comments but rarely build viewing habits. C: Shorts can grow top‑of‑funnel but won’t by themselves improve series completion/return for long‑form. D: Translation helps reach but not habit formation for your current audience.",
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You plan a subscriber milestone celebration. Draft giveaway mechanic A requires commenters to post the same hashtag daily for a week to qualify. Mechanic B uses a Community post linking to a simple form, one entry per person, with clear rules and disclosure.\nWhich approach better aligns with policy and community health while still driving engagement?",
+          "options": [
+            "Neither; giveaways are prohibited on YouTube and will result in strikes.",
+            "Mechanic B: a Community post plus external form, one entry per person, clear rules and disclosure.",
+            "Mechanic A: repeated comment hashtagging to maximize engagement signals on each video.",
+            "Mechanic A but with comments held for review so spam won’t be public."
+          ],
+          "correct_option": "B",
+          "explanation": "Mechanic B avoids incentivizing repetitive/spammy comments, provides clear rules, and uses the Community tab appropriately while protecting discussion quality.",
+          "distractor_rationale": "B: Incentivizing repetitive comments risks spam and policy issues, harming community health. C: Holding for review doesn’t fix the underlying incentive to spam. D: Giveaways are allowed if they follow policies; claiming they’re prohibited is incorrect.",
+          "skills_covered": [
+            "develop online community plan",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two candidates to feature in end screens for subscriber growth:\n```csv\nVideo,Unique viewers,Subscribers gained from this video\nHow to X (A),50,000,500\nHow to Y (B),20,000,420\n```\nWhich do you feature to maximize subscriber conversions from end screen traffic, and why?",
+          "options": [
+            "Don’t feature either; end screens should only promote playlists, not single videos, for subs.",
+            "Feature both equally; conversion rate is irrelevant for end screens.",
+            "Feature Video A; it has more uniques and therefore more headroom for subs even at a lower rate.",
+            "Feature Video B; its subscriber conversion rate is ~2.1% vs A’s ~1.0%, so it’s more efficient at turning viewers into subs."
+          ],
+          "correct_option": "D",
+          "explanation": "End screens reach a small, intentful cohort. Promoting the asset with the higher sub‑per‑viewer rate yields more subs per end screen click.",
+          "distractor_rationale": "B: Volume alone doesn’t beat efficiency when end screen exposure is scarce. C: Conversion rate is central to this choice. D: Playlists can be useful, but single high‑converting videos are valid and often better for subs.",
+          "skills_covered": [
+            "web analytics",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your last 28‑day Analytics split shows the following:\n```text\nLong‑form (6–12 min)\nImpressions 1.8M | CTR 4.1% | Views 73k | Avg view dur 5:02 | Watch time 6,130h\nNew:returning 58:42 | Subs gained 1,050 | Top source: Suggested (5.1% CTR)\n\nShorts (15–45s)\nViews 1.2M | Avg view dur 17s | % swiped away in first 3s: 52%\nSubs gained 2,400 | Top source: Shorts feed\n\nChannel‑level\nReturning viewers +8% MoM | Unique viewers 420k | End screen CTR 0.7%\n```\nYou have 90 days to grow reach and set up for monetisation readiness. Budget allows 3 uploads/week total. You can mix formats. You cannot hire editors.",
+          "task": "Decide your allocation between Shorts and long‑form for the next 90 days, and specify how you will connect Shorts to long‑form to compound watch time and subs. Justify with the data above, and state 3 success metrics with target ranges for day 30, 60, and 90.",
+          "expected_answer": "A strong answer allocates a mix that exploits Shorts for top‑of‑funnel while protecting long‑form watch time and habit formation. For example: 2 Shorts + 1 long‑form per week for 6 weeks, then evaluate; pivot to 1 Short + 2 long‑form if returning viewers lag. Rationale: Long‑form delivers 6,130h with only 73k views, so watch time per view is high; Shorts add 2,400 subs but weak session depth and high 3s swipe‑aways. Connectors: produce Shorts cut‑downs with a direct promise of value in the first 1–2s and a visual CTA to the related long‑form; add long‑form end screens referencing the series; use Community posts to bridge days between uploads. Define metrics: watch time hours (target +20% by day 60, +35% by day 90), returning viewers share (target 42% -> 48% by day 60), Shorts 3s swipe‑away rate down from 52% to <40%, end screen CTR from 0.7% to >1.2%, subs gained per long‑form view up 20%. Note constraints and risks (editing capacity), and plan a 4‑week review cadence with pre‑registered thresholds to reallocate slots.",
+          "rubric": [
+            {
+              "criterion": "Clear allocation across formats with cadence and time phasing tied to capacity",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification grounded in provided metrics (watch time per view, CTR, swipe‑away, returning viewers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete cross‑format connection tactics (Shorts to long‑form), not just generic promotion",
+              "marks": 2
+            },
+            {
+              "criterion": "Three measurable success metrics with realistic target ranges and time checkpoints",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "web analytics",
+            "publishing strategy",
+            "plan social media marketing campaigns"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are launching a 6‑episode tutorial series, one per week. The last series suffered from misleading thumbnails and uneven performance across geographies. A holiday in week 3 skews US traffic. You have access to YouTube’s Test & Compare for thumbnails and titles.",
+          "task": "Design an A/B testing plan for thumbnails and titles that avoids confounding. Specify hypothesis, primary metric, guardrail metric, randomization, minimum test duration/sample, and decision thresholds. Include how you’ll handle the holiday effect.",
+          "expected_answer": "Example plan: Hypothesis: a close‑up with the solved outcome and minimal text (“Done in 3 steps”) increases Browse CTR without reducing watch time per impression. Primary metric: CTR on Browse features. Guardrail: watch time per impression and average view duration do not decline >3%. Randomization: use Studio Test & Compare with 50/50 traffic split per video, testing thumbnails only for episodes 1–2; freeze titles. Minimum duration: at least 72 hours and 20k impressions per variant spanning two peak cycles; rerun in episode 4 for titles while fixing the winning thumbnail design from episodes 1–2. Decision threshold: call a winner if CTR uplift ≥1.5pp with guardrail within bounds and results stable across geographies (±0.5pp). Handle holiday: exclude US holiday window from decision or extend test to capture a comparable post‑holiday weekday; segment by geography before calling.",
+          "rubric": [
+            {
+              "criterion": "Specific hypothesis mapped to a single variable per test phase (thumbnail then title)",
+              "marks": 2
+            },
+            {
+              "criterion": "Primary and guardrail metrics appropriate to the objective (CTR vs watch time per impression)",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound randomization, minimum duration/sample size, and decision thresholds",
+              "marks": 2
+            },
+            {
+              "criterion": "Explicit handling of the holiday/geography confound",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "A/B Testing",
+            "YouTube Studio",
+            "web analytics",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Comment moderation over the last month:\n```text\nAvg creator reply time: 3 days\n% comments with questions unanswered after 48h: 61%\nToxicity flags: 4% (auto‑held), 1 strike warning for repeated spam replies by fans in a giveaway\nTop comment themes: requests for deeper dives; confusion in step 3; praise for pacing\n```\nYour goal is to improve engagement quality and reduce friction for prospective returners.",
+          "task": "Propose a 90‑day community operations plan covering: response SLAs, moderation workflow (roles and tools), weekly Community posts and polls cadence with topics, and how you will measure success. Include one tactic to turn high‑quality Q&A into content.",
+          "expected_answer": "Plan with a 24h response SLA for questions, 72h for general comments; assign a moderator (Viewer role) plus one Editor to pin/heart, with daily 30‑minute blocks post‑publish and a weekend sweep. Enable filters for links and common spam phrases; document escalation for toxicity. Cadence: 1 Community post/week (behind‑the‑scenes, progress updates), 1 poll/week (next topic choice, pain points). Pin a clarifying comment under tutorials addressing step 3 confusion; compile repeated Q&As into a monthly FAQ video or chaptered update. Success metrics: median reply time <24h, % answered within 48h to >85%, increase likes/comment by 20%, reduce auto‑held to <2% through guidance, lift returning viewers by +5pp over baseline.",
+          "rubric": [
+            {
+              "criterion": "Operational response SLAs and staffing/roles (incl. User Management use)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear moderation workflow with prevention and escalation steps",
+              "marks": 2
+            },
+            {
+              "criterion": "Community post/poll cadence with substantive, on‑topic ideas",
+              "marks": 2
+            },
+            {
+              "criterion": "Measurement plan with at least two engagement and one retention metric",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "develop online community plan",
+            "User Management",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Monetisation readiness audit for three videos:\n```text\nV1: 9:20 tutorial. First 5s include repeated strong profanity used for emphasis. Self‑certified \"strong profanity in opening minute\". Limited ads.\nV2: 8:05 compilation of TikTok clips with minimal voiceover reactions; no licenses; reused watermark visible.\nV3: 12:40 review with affiliate links in description; verbal disclosure at 00:30 and #ad in description.\n```\nChannel goal: maximise eligibility and avoid future limited ads/reuse rejections.",
+          "task": "Identify the two largest risks and propose concrete remediation steps to make the videos eligible without materially harming performance. Explain any trade‑offs.",
+          "expected_answer": "Largest risks: V1 ad suitability (strong profanity in opening seconds) and V2 reuse without transformation/licenses. Remedies: For V1, re‑edit to remove or bleep profanity in the opening; shift any strong language away from the opening minute and reduce frequency overall; re‑self‑certify and request review. Trade‑off: slightly altered tone but better green icon consistency. For V2, either obtain licenses for all clips and add substantial transformative commentary (on‑screen analysis, pause and explain, chapters), or replace reused segments with original examples; remove watermarks. Trade‑off: more production time and potentially lower raw click appeal, but resolves reuse risk. V3 is generally fine with clear disclosures; ensure links comply with policies and add context in description; monitor for spammy formatting.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of primary risks (opening profanity; reused content without transformation/licensing)",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete, policy‑aligned remediation steps for each risky video",
+              "marks": 3
+            },
+            {
+              "criterion": "Acknowledgement of performance trade‑offs and how to mitigate them",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "publishing strategy",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Channel performance report (last 28 and 90 days)",
+          "brief": "Compile a performance report using YouTube Studio exports/screens that diagnoses reach, engagement, retention, and audience, and recommends priority actions and experiments.",
+          "deliverable": "Performance report",
+          "acceptance_criteria": [
+            "Covers two windows: last 28 days and last 90 days (both clearly labeled).",
+            "Includes metrics: Impressions, CTR, Views, Average view duration, Average % viewed, Watch time (hours), and Top 5 traffic sources with CTR and AVD (at least top 3 filled if data sparse).",
+            "Includes at least 3 audience retention visuals (screenshots or exports) for top videos with commentary on hooks/drops and one proposed edit per video.",
+            "Includes Audience tab summaries: New vs Returning, When your viewers are on YouTube heatmap insight, and top geographies/age groups.",
+            "Lists Top 10 videos by views with: views, AVD, watch time, subscribers gained from this video, end screen CTR (table or annotated screenshot).",
+            "Provides 3–5 prioritized insights, each tied to specific data points, and 2 experiment proposals with hypothesis, primary metric, guardrail, sample size/duration estimate.",
+            "States data sources/paths (e.g., Studio > Analytics > Advanced) and date/time of export.",
+            "Delivered as a PDF or slide deck with embedded images and, if used, attached CSV extracts."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of required metrics and dual time windows",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality of retention analysis with specific, actionable hook/edit suggestions",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and correctness of insights linked to concrete data",
+              "marks": 4
+            },
+            {
+              "criterion": "Rigor of experiment proposals (hypothesis, metric, guardrail, duration)",
+              "marks": 4
+            },
+            {
+              "criterion": "Professional presentation (labels, sources, dates, readability)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "YouTube Studio",
+            "web analytics",
+            "A/B Testing",
+            "publishing strategy"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "90‑day channel growth plan",
+          "brief": "Create a 13‑week plan that sequences uploads, experiments, community actions, policy checks, and monetisation‑readiness milestones. Align it with your analytics and capacity.",
+          "deliverable": "90-day channel plan",
+          "acceptance_criteria": [
+            "Calendar view (weekly) showing upload cadence by format (Shorts/long‑form/Live), including titles/placeholders and owners.",
+            "Experiment backlog with at least 4 items (e.g., thumbnail format, title framing, hook structure, end screen configuration), each with hypothesis, primary metric, guardrail, and planned duration.",
+            "Community plan: weekly Community posts/polls topics, response SLAs, moderation roles (User Management) and tooling; escalation rules documented.",
+            "Policy/monetisation checklist before publish (self‑certification steps, reused content checks, disclosure templates) and green‑icon consistency goal.",
+            "Quantified targets for at least 5 KPIs (e.g., watch time hours, CTR on Browse, returning viewer %, end screen CTR, subs gained) with checkpoints at day 30/60/90 and risk mitigations.",
+            "Analytics review cadence (who, when, what dashboards) and decision rules for reallocating effort based on results.",
+            "Submitted as a document or spreadsheet; all items are measurable and time‑bound."
+          ],
+          "rubric": [
+            {
+              "criterion": "Structured, realistic upload and resource plan mapped to a weekly calendar",
+              "marks": 4
+            },
+            {
+              "criterion": "Well‑formed experiment backlog with hypotheses, metrics, guardrails, and durations",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust community operations (cadence, roles via User Management, moderation workflow)",
+              "marks": 4
+            },
+            {
+              "criterion": "Policy/monetisation readiness steps integrated and actionable",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear KPIs with numeric targets and review/decision cadence",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "publishing strategy",
+            "plan social media marketing campaigns",
+            "A/B Testing",
+            "develop online community plan",
+            "User Management",
+            "YouTube Studio"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

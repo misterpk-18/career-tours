@@ -1,0 +1,1882 @@
+{
+  "course_code": "NT-C-008",
+  "course_name": "Digital Marketing",
+  "sections": [
+    {
+      "section_code": "NT-C-008-S01",
+      "skills_assessed": [
+        "plan digital marketing",
+        "define measurable marketing objectives",
+        "web analytics",
+        "A/B Testing",
+        "track key performance indicators",
+        "plan marketing campaigns"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are handed yesterday's paid campaign funnel. Budget and delivery cap keep landing-page views fixed at about 210/day for the next two weeks.\n\n```text\nStep             Count   CR to next\nLP views         210     45%\nForm starts       95     80%\nForm submits      76     —\nTarget: +30% leads (form submits) without changing traffic volume.\n```\nWhich single change most likely reaches the target under the constraint above?",
+          "options": [
+            "Cut form fields to raise LP→Start from 45% to 60%, keeping Start→Submit at 80%.",
+            "Add an exit-intent modal that collects 15 extra emails but does not submit the main form.",
+            "Tweak button copy to raise Start→Submit from 80% to 90%, keeping LP→Start at 45%.",
+            "Rework ad creative to raise CTR from 2.1% to 3.0%, keeping LP views at ~210/day."
+          ],
+          "correct_option": "A",
+          "explanation": "Baseline leads = 210 × 0.45 × 0.80 = 75.6 (~76). Raising LP→Start to 60% yields 210 × 0.60 × 0.80 = 100.8 (~101), which exceeds +30% (target ≈ 99). Improving only Start→Submit to 90% yields 85 (short). CTR changes don't matter if LP views are capped at ~210/day. Capturing extra emails outside the defined \"lead\" (form submits) does not move the primary KPI.",
+          "distractor_rationale": "B is tempting because improving the final step feels high leverage, but 210 × 0.45 × 0.90 = 85 is insufficient. C sounds right generally, but the stem fixes LP views, making CTR irrelevant short term. D feels like micro-conversion capture, but the success definition is form submits; side-collection won't count.",
+          "skills_covered": [
+            "plan marketing campaigns",
+            "define measurable marketing objectives",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your tracking plan and tag mapping differ:\n\n```json\n{\n  \"events\": {\n    \"lead_submitted\": {\n      \"properties\": [\"email\",\"form_id\",\"utm_source\"]\n    }\n  }\n}\n```\n\nTag Manager trigger:\n\n```javascript\n// GTM Custom Event trigger name\nEvent name equals: \"lead_submit\"\n```\nWhat outcome should you expect in your conversions report until this is fixed?",
+          "options": [
+            "Correct conversion counts but misattributed to Direct/None.",
+            "Zero recorded conversions despite successful form submissions.",
+            "Roughly double-counted conversions on every submit.",
+            "Conversions recorded only on mobile due to event name length limits."
+          ],
+          "correct_option": "B",
+          "explanation": "The custom event name in the trigger (lead_submit) does not match the event in the tracking plan (lead_submitted). The conversion tag never fires, so conversions report 0.",
+          "distractor_rationale": "B would require the tag to fire twice, but here it fires zero times. C attribution issues don't apply when no conversion event fires at all. D device-specific limits are not implicated; the mismatch is purely a name mismatch.",
+          "skills_covered": [
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A developer implements form tracking like this:\n\n```html\n<form id=\"lead\" action=\"/thank-you\" method=\"POST\" onsubmit=\"trackThenGo(event)\">\n  <input name=\"email\" required>\n  <button type=\"submit\">Get demo</button>\n</form>\n<script>\nfunction trackThenGo(e){\n  e.preventDefault();\n  dataLayer.push({event:\"lead_submitted\"});\n  window.location.href = \"/thank-you\"; // immediate navigation\n}\n</script>\n```\nWhich change most reliably ensures the conversion event is captured before the redirect?",
+          "options": [
+            "Add `async` to the script tag so it runs faster before redirect.",
+            "Mark the submit event as non-interaction to reduce bounce rate inflation.",
+            "Fire a duplicate page_view on the thank-you page instead of the submit event.",
+            "Use a tag callback to delay navigation until the hit is sent.\n```javascript\nfunction trackThenGo(e){\n  e.preventDefault();\n  dataLayer.push({event:\"lead_submitted\", eventCallback: ()=>{\n    window.location.href=\"/thank-you\";\n  }, eventTimeout: 2000});\n}\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Using an event callback (or equivalent tag hitCallback) holds the navigation until the beacon is dispatched, preventing the redirect from aborting the request.",
+          "distractor_rationale": "B logs pageviews, not the defined conversion, and still risks missing the submit if the redirect is immediate. C is about bounce rate semantics, not delivery reliability. D `async` affects parsing but not ensuring network send before navigation.",
+          "skills_covered": [
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A landing page A/B test returns:\n\n```text\nIntended split: 50/50\nObserved over 7 days:\nVariant A: 1,200 sessions, 96 submits\nVariant B:   800 sessions, 80 submits\nPrimary KPI: submit rate\n```\nWhat is the best next step before declaring a winner?",
+          "options": [
+            "Investigate sample ratio mismatch (SRM) and traffic filters/allocation before interpreting lift.",
+            "Declare B the winner because 10% > 8% regardless of sample split.",
+            "Extend the test until both variants have exactly equal sessions, then declare a winner.",
+            "Weight B's conversion rate up by 50% to adjust for fewer sessions and decide now."
+          ],
+          "correct_option": "A",
+          "explanation": "A large, unexpected 60/40 split suggests SRM or allocation issues. Diagnose (allocation bugs, targeting differences, bot filters) before trusting the observed lift.",
+          "distractor_rationale": "B ignores potential bias from SRM. C equal counts are unnecessary and can waste time; what's needed is to fix allocation bias. D ad-hoc weighting is statistically unsound without fixing the underlying issue.",
+          "skills_covered": [
+            "A/B Testing",
+            "web analytics"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Extract from a draft campaign brief:\n\n```markdown\nBusiness goal: Grow pipeline.\nMarketing objective (Q3): Increase qualified demo bookings by 25%.\nProposed primary KPI: Landing page CTR from ads.\nSecondary KPIs: Time on page, scroll depth.\n```\nWhat should be the primary KPI to align with the stated objective?",
+          "options": [
+            "Landing page click-through rate (CTR)",
+            "Number of qualified demo bookings",
+            "Average scroll depth on the landing page",
+            "Form start rate (visits → starts)"
+          ],
+          "correct_option": "B",
+          "explanation": "The objective is to increase qualified demo bookings; the primary KPI must directly measure that outcome (count or rate of qualified demo bookings).",
+          "distractor_rationale": "B and C are upstream engagement proxies and can improve without affecting bookings. D is closer to the funnel but still a micro-step and can rise while bookings stagnate if start→submit or qualification drops.",
+          "skills_covered": [
+            "define measurable marketing objectives",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A shortened URL is used in ads:\n\n```text\nAd URL: https://sho.rt/try?utm_source=meta&utm_medium=cpc&utm_campaign=spring\nRedirects:\n1) https://sho.rt/try?...  → 301 → https://brand.com/go\n2) https://brand.com/go    → 302 → https://brand.com/landing\n```\nAnalytics is configured to attribute by UTM parameters on the landing URL. What is the most likely attribution outcome?",
+          "options": [
+            "All traffic is bucketed under Referral from sho.rt.",
+            "UTM campaign is preserved because 301s forward the query string by default.",
+            "UTMs are recovered from the ad platform API during import so reports remain accurate.",
+            "Most visits appear as Direct/None on the landing page."
+          ],
+          "correct_option": "D",
+          "explanation": "The first hop drops the UTM query string when redirecting to `/go`. Without UTMs on the final URL, analytics cannot attribute and typically classifies the visit as Direct/None.",
+          "distractor_rationale": "B 301s do not automatically append missing query strings. C referrer may be present, but the question specifies attribution configured by UTMs; without them, default often becomes Direct. D API imports don't reconstruct missing per-click UTMs unless an auto-tagging integration is in place, which is not stated.",
+          "skills_covered": [
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Snippet from your tracking plan for a page with two forms (newsletter and demo):\n\n```json\n{\n  \"events\": {\n    \"form_started\": {\"properties\": [\"form_id\",\"page_url\"]},\n    \"form_submitted\": {\"properties\": [\"form_id\",\"page_url\",\"email\"]}\n  }\n}\n```\nDuring QA, you notice only `page_url` and `email` are being sent. Which analysis will be blocked until you fix this?",
+          "options": [
+            "Comparing conversion rates between the two forms on the same page",
+            "Attributing submissions by marketing channel",
+            "Counting total submissions sitewide",
+            "Measuring device breakdown of conversions"
+          ],
+          "correct_option": "A",
+          "explanation": "Without `form_id`, events from both forms are indistinguishable on the same URL, preventing per-form funnel and conversion rate comparisons.",
+          "distractor_rationale": "B channel attribution relies on UTMs/referrer, not `form_id`. C total submissions can still be counted. D device breakdown comes from user agent, not `form_id`.",
+          "skills_covered": [
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your hero section CSS keeps the form below the fold on most laptops:\n\n```html\n<section class=\"hero\">\n  <h1>All-in-one Freight Quotes</h1>\n  <p>Instant quotes. No surprises.</p>\n  <a class=\"btn\" href=\"#form\">Get a demo</a>\n</section>\n<section id=\"form\"> ... the lead form ... </section>\n```\n```css\n.hero { height: 100vh; display:flex; align-items:center; }\n```\nLP→Start is 45% with a 70% scroll drop at 600px. Which minimal change is most likely to improve LP→Start?",
+          "options": [
+            "Change button color from blue to green for higher contrast.",
+            "Add testimonials below the fold under the form.",
+            "Reduce hero height so the form is visible above the fold on common viewports.\n```css\n@media (min-width:1024px){ .hero{ height:auto; padding:48px 0; } }\n```",
+            "Add an exit-intent popup offering a 10% discount code."
+          ],
+          "correct_option": "C",
+          "explanation": "Exposing the form without scrolling directly addresses the observed scroll drop-off and should increase form starts. The other changes do not address the above-the-fold visibility constraint.",
+          "distractor_rationale": "B can capture abandoning users but doesn't fix the main bottleneck. C social proof helps nearer to the form but not if it's unseen. D color tweaks are minor compared to moving critical UI into view.",
+          "skills_covered": [
+            "plan digital marketing",
+            "plan marketing campaigns",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your KPI plan reads:\n\n```yaml\nobjective: Acquire 500 leads in Q2 at CPL <= $40\nprimary_kpis:\n  - sessions\n  - bounce_rate\n  - avg_time_on_page\n  - lp_to_form_start_rate\nsecondary_kpis:\n  - nps\n```\nWhich KPI is missing to validate the objective as written?",
+          "options": [
+            "Click-through rate (CTR) from ads to landing page",
+            "Newsletter subscriptions captured via popup",
+            "Cost per lead (CPL) based on media spend and valid submissions",
+            "Average order value (AOV) from ecommerce"
+          ],
+          "correct_option": "C",
+          "explanation": "The objective includes a cost constraint. You must track CPL using spend and valid lead counts to validate success.",
+          "distractor_rationale": "B helps diagnose traffic but doesn't validate cost efficiency. C is a different conversion. D is unrelated to a lead-gen objective.",
+          "skills_covered": [
+            "define measurable marketing objectives",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Mid-campaign, the team switches the primary KPI from `form_submits` to `form_starts` to \"get faster signal\". A week later:\n\n```text\nBefore switch (Week 3):  95 starts, 76 submits\nAfter switch  (Week 4): 145 starts, 78 submits\nBudget unchanged; traffic sources shifted toward broader audiences.\n```\nWhat most likely happened to the funnel and risk to the objective?",
+          "options": [
+            "Both steps improved; the objective is now safer because starts rose significantly.",
+            "Optimizing to starts increased LP→Start but worsened Start→Submit, so leads barely moved and risk to the objective increased.",
+            "Start volumes grew and will mechanically convert to more submits next week without further action.",
+            "Nothing material changed; start counts are noisy and do not affect submits."
+          ],
+          "correct_option": "B",
+          "explanation": "Shifting optimization to an upstream event often brings lower-intent visitors who start more forms but finish fewer, depressing Start→Submit. With similar submits, the objective (leads) is at greater risk despite higher starts.",
+          "distractor_rationale": "B contradicts the flat submit count. C ignores a systematic optimization change. D assumes a lag that isn't evidenced; for simple lead forms, most submits occur same-session.",
+          "skills_covered": [
+            "plan marketing campaigns",
+            "track key performance indicators",
+            "plan digital marketing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive this rough campaign brief for a B2B SaaS freight platform targeting mid-market shippers:\n\n```markdown\nGoal: Grow pipeline.\nAudience: Logistics managers.\nOffer: Book a demo.\nTiming: Q3.\nBudget: $60k.\nNotes: Our brand is premium. We think Europe will work.\n```\nPerformance to date (last quarter): 12,000 LP sessions, 3.8% form start rate, 80% start→submit, 25% demo qualification rate (sales-accepted), $52 CPL, 720 total leads, 180 qualified demos.",
+          "task": "Rewrite the objective as 2–3 SMART statements aligned to funnel stage and positioning, pick a primary KPI for each, and justify audience and geo choices. Include realistic targets using the baseline metrics and budget. State what you will not optimize for this quarter and why.",
+          "expected_answer": "Three SMART objectives, for example: 1) Increase qualified demo bookings by 30% in Q3 (from 180 to 234) at CPL ≤ $45 by improving LP→Start from 3.8% to 6% through above-the-fold form placement and reducing fields from 8 to 5. Primary KPI: number of qualified demos; guardrail: CPL. 2) Improve Start→Submit from 80% to 88% by removing phone requirement and clarifying privacy copy. Primary KPI: submit rate; guardrail: lead acceptance rate. 3) Maintain EU market test to DE/FR/NL only (English + localized hero) targeting companies shipping 500–5,000 consignments/month; do not expand to Southern Europe this quarter due to limited localization and higher CAC. Audience justification references ICP fit (mid-market logistics managers) and positioning (premium, reliability). Clearly calls out deprioritized metrics (e.g., time on page) and channels not in scope. Targets numerically link baseline volumes to end outcomes under fixed budget, with a simple math check that 12,000 sessions × 6% × 88% × 25% ≈ 158 qualified demos per 12k sessions and a plan to add traffic or efficiency to reach 234 total.",
+          "rubric": [
+            {
+              "criterion": "SMART objectives stated with baselines, numeric targets, and time bounds",
+              "marks": 3
+            },
+            {
+              "criterion": "Primary KPI and guardrails chosen per objective with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Audience and geo justified using positioning and funnel logic; clear out-of-scope callouts",
+              "marks": 2
+            },
+            {
+              "criterion": "Targets are internally consistent (math linking funnel steps and budget)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "define measurable marketing objectives",
+            "plan marketing campaigns",
+            "plan digital marketing",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You control the landing page. Current week metrics by device:\n\n```text\nDevice     Sessions  LP→Start  Start→Submit\nDesktop      6,000     5.2%       85%\nMobile       9,000     2.1%       72%\n```\nForm has 8 fields including phone (required) and company size (dropdown with 12 options). Scroll heatmaps show 68% drop before the form on mobile. Sales rejects 28% of mobile leads as unresponsive within 7 days.",
+          "task": "Propose a prioritized, two-sprint CRO plan (max 5 items) that can ship in 4 weeks. For each item, state expected impact on a specific funnel step and estimate incremental qualified leads per week, showing assumptions. Include at least one holdout or A/B design to validate impact and a guardrail for lead quality.",
+          "expected_answer": "A backlog such as: 1) Reduce hero height and place form above the fold on mobile (expect mobile LP→Start from 2.1%→3.8%). 9,000 × (3.8%-2.1%) × 72% × (1-0.28 reject) ≈ +89 qualified leads/week. Validate via A/B with SRM check; guardrail: rejection rate must not rise. 2) Remove phone as required; move to optional with progressive disclosure (expect Start→Submit +6pp on both devices, quality guardrail: phone capture rate ≥40% via step-2). 15,000 sessions × 5.2% weighted start rate × +6pp submit ≈ +47 leads/week net; monitor rejection rate. 3) Simplify company size to 5 buckets (reduce friction; predict +1pp LP→Start and +2pp Start→Submit mobile). 4) Add inline error copy and real-time validation to cut abandonments at email step (+2pp Start→Submit). 5) Add trust badges near the submit button on mobile (smaller, +0.5pp Start→Submit). Each item ties to a test design and guardrails (lead acceptance ≥75%, CPL stable).",
+          "rubric": [
+            {
+              "criterion": "Prioritized actions mapped to specific funnel steps with plausible rationale",
+              "marks": 3
+            },
+            {
+              "criterion": "Back-of-envelope impact estimates shown with assumptions and math",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes an A/B or holdout design and SRM/guardrail considerations",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses lead quality explicitly (e.g., rejection rate)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "plan marketing campaigns",
+            "track key performance indicators",
+            "A/B Testing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You audit tracking before launch. Provided artefacts:\n\nTracking plan excerpt:\n```json\n{\n  \"events\": {\n    \"form_started\": {\"properties\": [\"form_id\",\"page_url\",\"consent\"]},\n    \"form_submitted\": {\"properties\": [\"form_id\",\"page_url\",\"email\",\"utm_source\"]}\n  }\n}\n```\nGTM custom HTML tag:\n```javascript\nform.addEventListener('submit', function(){\n  dataLayer.push({event:'form_submit', formId: form.id});\n});\n```\nThank-you page has a Meta refresh after 0.2s to the homepage.",
+          "task": "Identify at least three concrete defects or risks that will cause mismeasurement of the primary KPI (form submits) and propose precise fixes. Describe a QA checklist (5–7 steps) you would run to validate end-to-end data quality from UTMs to CRM.",
+          "expected_answer": "Issues and fixes: 1) Event name mismatch (`form_submitted` vs `form_submit`) causes zero conversions; align to `form_submitted` or update mapping. 2) Missing required properties in the push; include `form_id`, `page_url`, `utm_source`, `email` at submit (pass via hidden fields or read from state). 3) Redirect/Meta refresh after 0.2s can abort network beacons; delay with hitCallback or increase refresh to ≥2s and send hits on submit and TYP load. 4) Only `submit` listener; no `form_started` event captured—add focus/change listener to first input or CTA click to measure starts. 5) Risk that UTMs are dropped via internal redirect; ensure `/thank-you` preserves UTMs in session storage or rely on session-scoped acquisition. QA checklist: verify UTM persistence through redirects; test both forms with known test UTMs; confirm events in debug view with correct names and properties; validate one submit flows into analytics conversions and CRM with correct source; check deduplication (no double fires on TYP + submit); run device/browser matrix; confirm timeouts/callbacks fire before navigation.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies at least three concrete defects tied to the artefacts",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes precise, technically sound fixes for each defect",
+              "marks": 2
+            },
+            {
+              "criterion": "QA checklist covers UTMs→events→conversions→CRM with clear steps",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "web analytics",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Two-week LP headline test summary:\n\n```text\nAllocation: intended 50/50; observed 58/42 (A/B)\nTraffic mix shift mid-test: +30% mobile on B after day 5\nResults: A — 2,340 sessions, 187 submits; B — 1,690 sessions, 183 submits\nGuardrails: lead acceptance rate (A: 76%, B: 69%), CPL target ≤ $45 (A: $47, B: $44)\n```\nStakeholders want to ship B because CPL is lower and submits are similar.",
+          "task": "Decide whether to ship B now, keep testing, or revert. Justify with reference to allocation bias, device mix, primary vs guardrail KPIs, and next steps to reach a confident decision. Propose at least two test design fixes for a rerun.",
+          "expected_answer": "Recommendation: Do not ship B yet. Although CPL is $1 lower, B shows a materially lower lead acceptance rate (69% vs 76%) and suffered allocation/device mix shifts (58/42 split; +30% mobile to B) that likely depress conversion. Primary KPI (submit rate) does not clearly favor B (A: 8.0%, B: 10.8% if naive, but given mix and acceptance drop, net qualified demos are similar or worse). Next steps: investigate SRM causes (allocation bug, audience targeting filter, bot filters); stratify by device and compute qualified submit rate; enforce allocation control and device balancing in the experiment platform; rerun with equalized traffic, pre-registered analysis plan, and minimum sample size to detect a defined MDE; keep guardrails (acceptance ≥75%, CPL ≤$45). Test design fixes: block randomization by device, disable mid-test targeting changes, and use conversion event = qualified submit rather than raw submit.",
+          "rubric": [
+            {
+              "criterion": "Clear go/hold/revert decision with justification anchored in primary KPI and guardrails",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct identification of allocation/device mix biases and their impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Actionable next steps, including experiment design fixes and analysis plan",
+              "marks": 2
+            },
+            {
+              "criterion": "Consideration of qualified outcome (not just raw submits)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "A/B Testing",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a Campaign Brief for a Lead-Gen Push",
+          "brief": "Create a one-page campaign brief for a Q-next lead-generation push for a chosen product/service (real or hypothetical). The brief must define audience, funnel stage, positioning, and SMART objectives with KPIs, linking them to a high-level channel/message plan. Base targets on simple funnel math from plausible baselines.",
+          "deliverable": "Campaign brief (PDF or Markdown) no longer than 2 pages, including a simple funnel math block.",
+          "acceptance_criteria": [
+            "States audience (ICP) and buying-stage hypothesis with 2–3 behavioral/firmographic traits",
+            "Articulates positioning and key message tied to the audience pain point",
+            "Includes 2–3 SMART objectives with numeric targets and time bounds",
+            "Names primary KPI and guardrails per objective (e.g., CPL, lead acceptance rate)",
+            "Shows funnel math connecting traffic → start → submit → qualified outcome to targets",
+            "Specifies success definition (what counts as a lead/qualified demo)",
+            "Outlines a high-level channel and asset plan consistent with objectives",
+            "Explicitly lists 1–2 out-of-scope metrics or channels for this push"
+          ],
+          "rubric": [
+            {
+              "criterion": "Audience, stage, and positioning are specific and coherent",
+              "marks": 4
+            },
+            {
+              "criterion": "Objectives are SMART and aligned; KPIs and guardrails are well-chosen",
+              "marks": 6
+            },
+            {
+              "criterion": "Funnel math is present and internally consistent with targets and constraints",
+              "marks": 5
+            },
+            {
+              "criterion": "Channel/message plan aligns with objectives and audience; clear out-of-scope",
+              "marks": 3
+            },
+            {
+              "criterion": "Clarity and brevity (≤2 pages), organized for stakeholder use",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "plan digital marketing",
+            "define measurable marketing objectives",
+            "plan marketing campaigns",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a Conversion Plan for the Campaign",
+          "brief": "Design the landing experience and measurement for the brief above. Specify the landing page structure, form, states, tracking plan, and validation approach so an engineer and analyst could implement and QA it within a sprint.",
+          "deliverable": "Conversion plan (deck or doc) containing: annotated LP wireframe, form spec, tracking plan (events/properties), attribution/UTM scheme, test plan, and QA checklist.",
+          "acceptance_criteria": [
+            "Annotated wireframe showing hero, value prop, social proof, and above-the-fold form placement on mobile/desktop",
+            "Form specification: fields (required/optional), validation, error states, thank-you behavior, deduplication approach",
+            "Tracking plan: event names for start/submit, required properties (form_id, page_url, email, UTMs), timing/callbacks, and mapping to analytics goals",
+            "Attribution scheme: UTM parameters with examples, redirect handling, and parameter persistence plan",
+            "Initial A/B test idea with primary KPI, guardrails, allocation, and stopping criteria",
+            "QA checklist covering UTMs → events → conversions → CRM with device/browser matrix",
+            "Risk register noting at least two likely failure modes (e.g., SRM, dropped UTMs) and mitigations"
+          ],
+          "rubric": [
+            {
+              "criterion": "Wireframe and UX choices address known bottlenecks (e.g., above-the-fold, clarity)",
+              "marks": 4
+            },
+            {
+              "criterion": "Form spec is complete and balances friction vs quality (fields, validation, states)",
+              "marks": 5
+            },
+            {
+              "criterion": "Tracking plan is precise (events, properties, callbacks) and maps to KPIs/goals",
+              "marks": 5
+            },
+            {
+              "criterion": "Attribution/UTM scheme and redirect handling are correct and testable",
+              "marks": 3
+            },
+            {
+              "criterion": "Test plan and QA checklist are actionable with guardrails and stopping rules",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "web analytics",
+            "A/B Testing",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-008-S02",
+      "skills_assessed": [
+        "SEO",
+        "Keyword Research",
+        "Google Ads"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your sitemap lists both the clean and a parameterized version of the same product URL. The parameterized page also sets a self-referencing canonical.\n\n```xml\n<!-- sitemap.xml extract -->\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://www.example.com/red-shoes</loc></url>\n  <url><loc>https://www.example.com/red-shoes?utm=aff1</loc></url>\n</urlset>\n```\n\n```html\n<!-- https://www.example.com/red-shoes?utm=aff1 -->\n<head>\n  <link rel=\"canonical\" href=\"https://www.example.com/red-shoes?utm=aff1\" />\n  <title>Red Shoes | Example</title>\n</head>\n```\n\nAfter recrawl, which Index Coverage status is MOST likely for the parameterized URL in Search Console?",
+          "options": [
+            "Excluded by ‘noindex’",
+            "Alternate page with proper canonical tag",
+            "Indexed, not submitted in sitemap",
+            "Duplicate, Google chose different canonical than user"
+          ],
+          "correct_option": "D",
+          "explanation": "Including both URLs in the sitemap while the parameterized page self-canonicals often leads Google to pick the clean URL as canonical anyway. Search Console typically labels the parameterized URL as “Duplicate, Google chose different canonical than user.”",
+          "distractor_rationale": "A: It is submitted in the sitemap, so “Indexed, not submitted” is unlikely. C: “Alternate page with proper canonical tag” appears when the canonical points to another URL, not to itself. D: There is no noindex shown; nothing suggests a noindex directive.",
+          "skills_covered": [
+            "SEO"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A thank-you page is accidentally indexed. Your current setup is:\n\n```text\n# robots.txt\nUser-agent: *\nDisallow: /thank-you/\n```\n\n```html\n<!-- https://www.example.com/thank-you/ -->\n<head>\n  <meta name=\"robots\" content=\"noindex, follow\">\n</head>\n```\n\nThe page must remain accessible after form submission but should not appear in search. What change will most reliably remove it from the index without breaking the conversion flow?",
+          "options": [
+            "Remove the robots.txt Disallow so Google can crawl and process the noindex, then keep it accessible",
+            "Keep robots.txt Disallow and wait; Google will eventually drop it",
+            "Return HTTP 410 for /thank-you/ so Google deindexes it immediately",
+            "Add it to the XML sitemap with <priority>0.0</priority> so Google de-prioritizes it"
+          ],
+          "correct_option": "A",
+          "explanation": "If robots.txt blocks crawl, Google cannot see the noindex tag. Allow crawling so Google can fetch the page and honor the noindex while the page remains accessible to users after submission.",
+          "distractor_rationale": "A: Waiting won’t help because Google can’t fetch the noindex. B: Sitemap priority is ignored by Google for indexing decisions. D: 410 would remove it but also breaks the live thank-you page needed after form submission.",
+          "skills_covered": [
+            "SEO"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your Non-Brand Google Ads campaign shows the following search terms and spend for the ad group targeting \"digital marketing agency\":\n\n```csv\nsearch_term,clicks,conversions,cost_usd\n\"digital marketing jobs\",58,0,232.10\n\"digital marketing agency\",44,3,141.80\n\"digital marketing hiring near me\",27,0,96.70\n\"marketing internship\",31,0,71.20\n\"digital marketing services\",22,2,83.40\n```\n\nYou want to cut waste from employment-related queries without harming relevant “services/agency” traffic. What change is most effective?",
+          "options": [
+            "Add negative broad terms at campaign level: \"job\", \"jobs\", \"hiring\", \"internship\"",
+            "Add negative phrase \"digital marketing job\" at campaign level",
+            "Add negative exact [digital marketing jobs] at ad group level only",
+            "Add negative broad \"job\" at campaign level"
+          ],
+          "correct_option": "A",
+          "explanation": "Single-word negative broad terms block any query containing the term. Adding the set {job, jobs, hiring, internship} at campaign level reliably strips most employment-related queries while preserving services/agency traffic.",
+          "distractor_rationale": "A: Only “job” won’t catch plurals or synonyms; you’ll still pay for jobs, hiring, internship. C: Exact negatives block only that exact query; variants still slip through. D: Phrase negatives require the exact phrase order and miss other job-related patterns.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Account structure:\n\n```text\nCampaigns\n- Brand (applies shared list: \"Irrelevant Content\")\n  - Ad group: Brand Core (KW: [acme shoes], \"acme shoes\")\n  - Ad group: Brand Reviews (KW: \"acme shoes reviews\")\n- Non-Brand (applies shared list: \"Irrelevant Content\")\n  - Ad group: Running Shoes (KW: +running +shoes)\n\nShared negative list: \"Irrelevant Content\" = { review, reviews }\n```\n\nSearch term “acme shoes reviews” now gets zero impressions. Why?",
+          "options": [
+            "Non-Brand campaign’s negatives are overriding Brand",
+            "Brand exact keyword lost auctions due to low bids",
+            "Phrase match in Brand doesn’t capture the plural form",
+            "The shared negative \"reviews\" is blocking it across all campaigns"
+          ],
+          "correct_option": "D",
+          "explanation": "Shared negative lists apply to every campaign they’re attached to. With “reviews” in the shared list and applied to Brand, the Brand Reviews ad group is blocked before matching can occur.",
+          "distractor_rationale": "A: Bid issues don’t cause zero eligibility across all auctions. C: Cross-campaign negatives don’t override unless applied; here, the shared list is the culprit. D: Phrase match handles plurals; the block is from the negative.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "An ad group contains these keywords:\n\n```text\n[tennis shoe]\n\"tennis shoes\"\ntennis shoes\n```\n\nFor the query `tennis shoe`, which keyword will Google MOST likely match?",
+          "options": [
+            "[tennis shoe]",
+            "\"tennis shoes\"",
+            "tennis shoes",
+            "Whichever keyword has the higher Quality Score at auction time"
+          ],
+          "correct_option": "A",
+          "explanation": "Google prefers the most specific match type when available within the same ad group. The exact match [tennis shoe] is the closest match to the query `tennis shoe`.",
+          "distractor_rationale": "B: Phrase could match, but exact takes precedence when available in the same ad group. C: Broad could match, but it’s less specific. D: Ad Rank/QS can break ties, but the hierarchy favors exact within the same ad group.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You pin RSA components as follows:\n\n```text\nHeadlines (pinned)\n1: Buy Running Shoes Online (Pin H1)\n2: Official ACME Store (Pin H2)\n3: Free Shipping Over $50 (Pin H3)\n\n10 additional headlines: Unpinned (eligible only for H4+)\nDescriptions: 4 total, none pinned\n```\n\nCompared with an otherwise identical RSA with no pinning, what outcome is most likely over time?",
+          "options": [
+            "Higher ad strength and CTR due to consistent branding",
+            "Higher Quality Score because more headlines are provided",
+            "Lower ad strength and fewer combinations, risking lower CTR/ad relevance in some auctions",
+            "No impact; pinning only changes the preview, not delivery"
+          ],
+          "correct_option": "C",
+          "explanation": "Pinning constrains combinations, often reducing ad strength and limiting adaptation to different queries/contexts, which can hurt CTR and ad relevance in some auctions.",
+          "distractor_rationale": "A: Consistency can help brand safety, but ad strength typically drops with heavy pinning. C: Pinning affects which combinations can serve. D: QS won’t rise just because more assets exist; how they serve matters.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "After improving page speed for your main ads’ landing page, metrics changed as follows:\n\n```text\nCore Web Vitals (lab)    Before    After\nLCP                       4.5 s     2.2 s\nINP                       400 ms    180 ms\nCLS                       0.20      0.10\n\nGoogle Ads (component)   Before    After\nLanding page exp.        Average   (expected) Above average\nQuality Score            5/10      (expected) ?\nAvg CPC at same bids     $1.80     (expected) ?\n```\n\nAssuming creatives and bids are unchanged, what is the most likely effect on QS and CPC?",
+          "options": [
+            "CPC drops by ~50% immediately",
+            "QS improves; CPC falls slightly due to better landing page experience",
+            "QS unchanged; CPC rises due to competition",
+            "No change in QS or CPC; CWV is not used in Ads"
+          ],
+          "correct_option": "B",
+          "explanation": "Improved landing page experience feeds into Quality Score. With higher QS at the same bids, you need less CPC to maintain Ad Rank, so average CPC typically falls modestly, not by half.",
+          "distractor_rationale": "A: Better landing page experience raises QS, not keeps it flat. C: Landing page experience is a QS component. D: The effect is real but not that dramatic in most cases.",
+          "skills_covered": [
+            "Google Ads",
+            "SEO"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your sitemap includes URLs that now 301 to consolidated pages.\n\n```xml\n<url>\n  <loc>https://www.example.com/mens/sale</loc>\n  <lastmod>2026-01-10</lastmod>\n</url>\n```\n\n```http\nGET /mens/sale  HTTP/2\nHTTP/2 301\nLocation: https://www.example.com/sale\n```\n\nIn Search Console’s Pages (Indexing) report, what status is most likely for the submitted redirecting URL?",
+          "options": [
+            "Excluded by ‘noindex’",
+            "Submitted URL seems to be a redirect",
+            "Duplicate, Google chose different canonical than user",
+            "Alternate page with proper canonical tag"
+          ],
+          "correct_option": "B",
+          "explanation": "When a sitemap includes a URL that redirects, Search Console reports “Submitted URL seems to be a redirect.”",
+          "distractor_rationale": "B/C: These are canonicalization states, not redirects. D: There is no noindex directive involved.",
+          "skills_covered": [
+            "SEO"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You added this negative keyword to an ad group:\n\n```text\n[red shoes]\n```\n\nThe search term report still shows spend on `red shoes sale`. Why?",
+          "options": [
+            "Close variants override negatives if intent seems similar",
+            "Phrase negatives are required for exact-match negatives to work",
+            "Exact-match negatives only block the exact term (or very close variants), not longer queries containing it",
+            "Broad-match keywords ignore negatives at serve time"
+          ],
+          "correct_option": "C",
+          "explanation": "Negative exact only blocks the exact term or its very close variants. Adding words like “sale” makes it a different query that remains eligible unless you use a phrase/broad negative covering that pattern.",
+          "distractor_rationale": "B: Negatives don’t yield to close variants. C: Exact negatives work, but only for the exact term. D: Negatives always apply; broad keywords don’t ignore them.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You add a campaign-level negative BROAD match:\n\n```text\nred shoes\n```\n\nWhich query will still be eligible to trigger your ads, assuming no other negatives apply?",
+          "options": [
+            "cheap red shoes",
+            "red shoe",
+            "shoes red on sale",
+            "red running shoes"
+          ],
+          "correct_option": "B",
+          "explanation": "Negative broad requires all the negative terms to be present, in any order, as the same words. “red shoe” lacks the plural “shoes”, and negatives don’t match close variants, so it slips through.",
+          "distractor_rationale": "A/B/D: Each contains both “red” and “shoes” (regardless of order) and will be blocked by a broad-match negative comprising those two words.",
+          "skills_covered": [
+            "Google Ads"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A category on your ecommerce site (/running-shoes/) has flat organic clicks for two months despite ongoing link acquisition. In Search Console you see a rising count of “Duplicate, Google chose different canonical than user” for URLs like /running-shoes?color=red and /running-shoes?sort=price. The sitemap currently lists faceted URLs. Robots.txt does not block these parameters. Some faceted pages self-canonical to themselves; others point to /running-shoes/.",
+          "task": "Diagnose the core cause and propose a prioritized plan to restore healthy indexing and traffic. Specify exactly which changes you would make to canonical tags, sitemaps, parameter handling, internal links, and any Search Console actions. Justify why your ordering addresses the root cause fastest with least risk.",
+          "expected_answer": "Root cause: mixed and conflicting canonicalization plus sitemap pollution with parameterized/faceted URLs. Google is picking its own canonicals, causing index bloat and dilution. Plan: 1) Standardize canonical tags so all parameterized/faceted variants canonical to the clean category URL, never to themselves. 2) Remove all parameterized URLs from the XML sitemap; keep only canonical, indexable URLs. 3) In templates, add rel=\"prev/next\" is deprecated, so instead ensure clear pagination linking and consistent canonical to page 1 or to self by page; avoid parameter canonicals. 4) If certain facets merit indexing (e.g., /running-shoes/red/ as a static path), create static, crawlable URLs with unique content and self-referencing canonicals; otherwise keep facets non-indexable via meta robots noindex,follow while allowing crawl (do NOT robots.txt disallow if you rely on noindex). 5) Ensure internal links point to canonical URLs only (nav, filters). 6) Clean sitemap and resubmit in Search Console; use the URL Inspection tool on representative examples to confirm canonical selection. 7) Optionally configure parameter hints in Search Console (legacy parameter tool if available) with caution; prefer on-site signals. 8) Monitor Coverage for drops in duplicate states and Performance for recovery; do not expect immediate gains—allow several crawls. Justification: Removing conflicting signals and sitemap noise lets Google converge on canonical pages; allowing crawl with noindex where needed avoids zombie indexing from robots.txt blocks.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies conflicting canonicals and sitemap pollution as the core cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Gives precise canonical and sitemap corrections (parameter pages canonicalizing to clean URL; remove non-canonical URLs from sitemap)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes proper handling of facets (crawl allowed; noindex where appropriate; only create indexable static facet pages when justified)",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses internal linking to canonical URLs and pagination signals appropriately",
+              "marks": 1
+            },
+            {
+              "criterion": "Details concrete Search Console actions and a monitoring plan with rationale/prioritization",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SEO"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must build a search campaign for a mid-sized retailer launching “TrailRun” shoes. Budget is $1,000/day. The site has good brand equity and existing category pages. Historic SQR shows many irrelevant queries around jobs and DIY shoe repairs. The client wants strong coverage of brand and non-brand with room to test messaging.",
+          "task": "Propose a complete account structure (campaigns, ad groups), match type strategy in the close-variant era, RSA copy approach (pinning policy), and a negative strategy (levels and shared lists). Include how you will separate brand vs non-brand and protect each with negatives. Specify your initial bidding strategy and what you will measure in week 1 to iterate.",
+          "expected_answer": "Structure: Separate Brand and Non-Brand campaigns. Optionally split Non-Brand by intent/theme (e.g., Trail Running Shoes Generic, Men’s, Women’s). Keywords: start with exact and phrase for high-intent heads (e.g., [trail running shoes], \"men's trail running shoes\"), plus limited broad in tightly themed ad groups under smart bidding once negatives are in place. Keep SKAGs only where volume justifies; otherwise tight theming (2–5 KWs per ad group). RSAs: 2 per ad group, minimal pinning (only legal/brand lines pinned), use keyword variants in some headlines; include distinct value props and CTAs; test description angles. Negatives: Account-level shared lists for jobs/careers/DIY repairs (job, jobs, hiring, internship, repair, DIY, fix), applied to all non-brand campaigns; do NOT apply to Brand Reviews/Support if those ad groups are intentional. Campaign-level brand negatives (\"trailrun\") applied to Non-Brand to prevent bleed; add non-brand generic negatives to Brand (e.g., -cheap, -discount if unwanted). Bidding: Start with tCPA or tROAS if sufficient conversion history; otherwise Maximize Conversions with a cap, then move to tCPA once 30+ conversions collected. Week-1 measurement: impression share by segment (brand vs non-brand), search term coverage, QS components (ad relevance, landing exp), RSA asset-level performance, N-grams for new negatives, and early CPA/CVR by ad group. Iterate by adding negatives, promoting strong search terms to exact, and refining RSAs/LP alignment.",
+          "rubric": [
+            {
+              "criterion": "Clear separation of Brand vs Non-Brand with appropriate negative sculpting between them",
+              "marks": 2
+            },
+            {
+              "criterion": "Coherent ad group theming with match-type strategy suited to close variants (exact/phrase focus; cautious broad under smart bidding)",
+              "marks": 2
+            },
+            {
+              "criterion": "RSA policy with minimal pinning and purposeful asset diversity",
+              "marks": 1
+            },
+            {
+              "criterion": "Robust negative strategy (levels, shared lists) that addresses known irrelevant themes",
+              "marks": 2
+            },
+            {
+              "criterion": "Initial bidding strategy plus concrete week-1 measurements and iteration plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Google Ads",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You’re planning content for a footwear site. Here are keyword candidates with estimated monthly volume (SV) and CPC from Google tools:\n\n```csv\nkeyword,sv,cpc_usd\n\"best trail running shoes\",27000,1.80\n\"buy trail running shoes\",8100,2.90\n\"trail running shoes size guide\",1600,0.90\n\"how to choose trail running shoes\",5400,1.10\n\"trail running shoes sale\",4400,3.10\n```\n",
+          "task": "Map each keyword to intent (informational vs transactional) and decide which should be targeted primarily by SEO content vs Google Ads in the launch month, assuming limited budget and the existing category page at /trail-running-shoes/. Justify page types (guide vs category vs subcategory) and how you will interlink them to maximize both rankings and Quality Score for relevant ad groups.",
+          "expected_answer": "Intent mapping: informational = “best trail running shoes”, “how to choose trail running shoes”, “trail running shoes size guide”; transactional = “buy trail running shoes”, “trail running shoes sale”. Strategy: Use Ads primarily for “buy” and “sale” (higher CPC but high intent), keep exact/phrase in a Non-Brand campaign with strong RSAs and the /trail-running-shoes/ LP. For SEO, produce a comparison/roundup page (“Best Trail Running Shoes [Year]”) and a durable how-to guide (“How to Choose Trail Running Shoes”, incorporating a fit/terrain checklist) plus a concise Size Guide. Internal linking: from guides to the /trail-running-shoes/ category with descriptive anchors (“men’s trail running shoes”, “women’s…”) and structured data where appropriate; from the category page back to the guides via a helpful module (“Buying guides”) to improve relevance and user flow. This split concentrates budget on bottom-funnel while SEO builds defensible rankings for top/mid-funnel and also improves ad LP relevance (QS) through topical authority.",
+          "rubric": [
+            {
+              "criterion": "Accurate intent classification for all keywords",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound split between SEO pages and Ads targets given budget and funnel stage",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate page types proposed and justified",
+              "marks": 1
+            },
+            {
+              "criterion": "Interlinking plan that supports both organic rankings and ad landing page relevance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Keyword Research",
+            "SEO",
+            "Google Ads"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your Non-Brand search campaign shows many queries like “how to clean trail shoes” and “trail shoe lacing techniques” with low CVR but decent CTR. Search Console shows your site already gets impressions for similar queries but ranks on page 2–3. Budget is tight and CPA targets are being missed.",
+          "task": "Decide how to handle these informational queries across SEO and Ads. Specify exact negative keywords (match types and levels) you would add, which content pieces you would produce or improve for SEO, and how you’d use Search Console and the search terms report to track impact over the next 3 weeks. Justify your choices.",
+          "expected_answer": "Action: Treat these as top-funnel. Add campaign-level negative phrases/broads for {clean, cleaning, lace, lacing, technique(s)} combined with \"shoe/shoes\" where appropriate, or exact negatives for high-spend variants, to stop paying for them in Non-Brand transactional ad groups. SEO: Produce/optimize guides “How to Clean Trail Running Shoes” and “Trail Shoe Lacing Techniques,” each with clear CTAs to category pages and schema where relevant. Measurement: In Ads, monitor spend and impression share shifts; in the SQR verify reductions of those terms and check for collateral blocks. In Search Console, track performance of the new/updated guides (queries containing clean/lace), monitor average position moving toward page 1, CTR changes, and clicks gained. Also watch the Non-Brand campaign’s CPA improve as top-funnel queries exit paid. Justification: Negatives preserve budget for bottom-funnel while SEO captures the informational demand and nurtures users toward purchase via internal links.",
+          "rubric": [
+            {
+              "criterion": "Clear decision to exclude informational queries from transactional Ads with correct negative types/levels",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete SEO content recommendations aligned to the queries",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific measurement plan using both SQR and Search Console",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification tying budget efficiency to funnel-appropriate capture",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Google Ads",
+            "SEO",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "SEO audit and content plan for a category with facets",
+          "brief": "Select a live ecommerce category (preferably your own project or a comparable public site) with faceted navigation (e.g., /running-shoes/ with color/size filters). Perform a lightweight technical and on-page SEO audit and produce a content plan aligned to keyword intent. Focus on canonicalization, indexability, on-page relevance, internal linking, and Search Console-informed opportunities (if you have access; otherwise use publicly available signals). Timebox to 2–4 hours.",
+          "deliverable": "1) An audit spreadsheet (CSV/XLSX) with 20–50 URLs including columns: url, status_code, indexable (y/n), canonical_url, in_sitemap (y/n), robots_txt_blocked (y/n), meta_robots, title, title_length, h1, word_count (approx), internal_links_in, internal_links_out, cwv_lcp (lab), cwv_cls (lab), page_type, primary_keyword, intent (informational/transactional), recommended_action, priority (P1/P2/P3), effort (S/M/L). 2) A content plan spreadsheet for 5–8 pages with: target_keyword, intent, search_volume (source noted), page_type (guide/category/subcategory), proposed_url, title_suggestion, h1_suggestion, h2_outline (bulleted), internal_links_from, internal_links_to, success_metric (clicks/CTR/rank). 3) A 5–8 slide summary (PDF) prioritizing top 5 issues and the first 3 content pieces to produce.",
+          "acceptance_criteria": [
+            "Audit sheet lists at least 20 distinct URLs with all required columns populated",
+            "At least 10 URLs include a non-empty canonical_url; conflicts or self-referencing cases are flagged in recommended_action",
+            "Sitemap presence (in_sitemap) is checked and mismatches with canonical are identified for at least 5 URLs",
+            "At least 5 P1 issues are prioritized with clear impact and effort noted (e.g., remove parameters from sitemap; standardize canonicals)",
+            "Content plan includes 5–8 targets with intent labels, page types, concrete titles/H1s, and h2_outline bullets",
+            "Interlinking opportunities are listed (at least 5 link suggestions) connecting guides to category pages",
+            "Summary slides show before/after examples or screenshots (e.g., page source, PageSpeed Insights) to substantiate findings"
+          ],
+          "rubric": [
+            {
+              "criterion": "Audit completeness and accuracy (URLs sampled, required fields populated, evidence/screenshots where applicable)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct diagnosis of indexation/canonical/sitemap issues and actionable recommended_actions",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and prioritization (P1–P3) with effort estimates tied to impact",
+              "marks": 3
+            },
+            {
+              "criterion": "Quality of content plan (intent mapping, page types, titles/H1s, structured outline)",
+              "marks": 4
+            },
+            {
+              "criterion": "Interlinking plan connecting informational and transactional pages",
+              "marks": 2
+            },
+            {
+              "criterion": "Professional communication of findings in the summary deck",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SEO",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Search campaign build (offline blueprint) for TrailRun shoes",
+          "brief": "Create an offline build plan for a Google Ads Search campaign for “TrailRun” shoes. Assume US English, Search Network only. Budget: $1,000/day. Prepare import-ready CSVs and settings describing campaigns, ad groups, keywords (with match types), negatives (with levels), RSAs (with minimal pinning), extensions, and key settings. Include UTM parameters in final URLs. Timebox to 2–4 hours.",
+          "deliverable": "A zipped folder containing: 1) campaigns.csv (name,daily_budget,bidding_strategy,locations,languages,network), 2) ad_groups.csv (campaign,name,theme), 3) keywords.csv (campaign,ad_group,match_type,keyword,final_url), 4) negatives.csv (level[campaign|ad_group|shared_list],applied_to,match_type,term), 5) ads.csv (campaign,ad_group,headline1..15,description1..4,path1,path2,final_url,pins[optional]), 6) extensions.csv (type,text,final_url), 7) settings.yaml (ad_scheduling,tracking_template with UTM, account-level negative lists, RSA pinning policy). Include a README.md explaining your structure.",
+          "acceptance_criteria": [
+            "Two campaigns: Brand and Non-Brand, with Brand-protection negatives applied to Non-Brand",
+            "At least 3 ad groups per campaign with tight theming (2–5 keywords each)",
+            "Keywords use allowed match types only (exact, phrase, broad) and include at least 5 exact and 5 phrase across the build",
+            "At least 1 shared negative list for jobs/DIY themes; applied to Non-Brand but not to Brand Reviews/Support",
+            "Negatives demonstrate correct levels (campaign vs ad group) and match-type logic (e.g., job/jobs/hiring coverage)",
+            "Each ad group has 2 RSAs with 8+ unique headlines, 2+ descriptions; minimal pinning (if any) is documented",
+            "Final URLs resolve to relevant landing pages and include UTM parameters (utm_source=google&utm_medium=cpc&utm_campaign=…)",
+            "Extensions include at least 4 sitelinks and 2 callouts relevant to TrailRun value props",
+            "settings.yaml shows Search-only network, US targeting, schedule, and tracking template"
+          ],
+          "rubric": [
+            {
+              "criterion": "Logical campaign/ad group structure separating Brand vs Non-Brand with clear theming",
+              "marks": 5
+            },
+            {
+              "criterion": "Keyword coverage and match-type strategy suitable for intent capturing in close-variant era",
+              "marks": 4
+            },
+            {
+              "criterion": "Negative keyword strategy (lists, levels, terms) preventing known waste without harming Brand",
+              "marks": 4
+            },
+            {
+              "criterion": "RSA quality (variety, relevance, minimal pinning) and alignment to ad group themes",
+              "marks": 4
+            },
+            {
+              "criterion": "Settings, extensions, and tracking completeness (network, geo, UTM, sitelinks/callouts)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Google Ads",
+            "Keyword Research"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-008-S03",
+      "skills_assessed": [
+        "Social Media Marketing",
+        "Meta Ads",
+        "Email Marketing",
+        "Content Writing",
+        "Data Privacy and Compliance",
+        "plan marketing campaigns",
+        "track key performance indicators"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You noticed this pattern and upcoming plan:\n```text\nLast 90 days:\n- Instagram reach drops ~30% when a newsletter send occurs ±30 min from an IG post.\n- IG best post time for your audience: Tue 11:00.\n\nNext week (Week 12):\nTue 10:00 — Newsletter \"Starter Guide\"\nTue 11:00 — IG Carousel \"Step 1–3 Teaser\" (tentative)\n```\nTo minimize the IG reach loss while keeping the Tuesday theme coherent with the newsletter, which scheduling change is best?",
+          "options": [
+            "Post the IG carousel at 10:20 Tue and promote with a Story swipe-up at 10:30",
+            "Move the IG carousel to Mon 20:00 with a caption that says \"Tomorrow 10:00 email drop\"",
+            "Move the IG carousel to 11:00 Tue and post a Story teaser at 09:00",
+            "Keep the IG carousel at 09:40 Tue and add a Story at 09:00 with a countdown to the email"
+          ],
+          "correct_option": "C",
+          "explanation": "Your data shows the penalty window is ±30 minutes around the 10:00 send. Posting at 11:00 avoids the collision and also aligns with the known best time. A Story teaser at 09:00 builds anticipation without entering the penalty window.",
+          "distractor_rationale": "A: 09:40 is inside the ±30 minute window and likely triggers the reach drop. B: 10:20 is also inside the risky window and would compound cannibalization. D: Moving to Monday avoids the collision but breaks the Tuesday content theme and risks weaker performance at an unvalidated time.",
+          "skills_covered": [
+            "Social Media Marketing",
+            "Email Marketing",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You are scheduling a paid Facebook post for the same guide featured in this week's newsletter. You want clicks from the paid post attributed to social in your analytics and not be confused with newsletter traffic.\nWhich URL should you place in the paid post?\n```text\nCampaign: starter_guide_q3\n```\n",
+          "options": [
+            "```text\nhttps://example.com/guide?utm_source=newsletter&utm_medium=social&utm_campaign=starter_guide_q3\n```",
+            "```text\nhttps://example.com/guide?utm_source=newsletter&utm_medium=email&utm_campaign=starter_guide_q3\n```",
+            "```text\nhttps://example.com/guide\n```",
+            "```text\nhttps://example.com/guide?utm_source=facebook&utm_medium=paid_social&utm_campaign=starter_guide_q3&utm_content=carousel_1\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Use source and medium that reflect the paid social placement so sessions from the ad are correctly attributed to social. Do not reuse email-tagged links in social, and do not omit UTMs on paid posts where attribution matters.",
+          "distractor_rationale": "B: `utm_source=newsletter` mislabels the traffic source and will corrupt attribution. C: Email-tagged links belong only in email; reusing them in social misattributes sessions. D: A bare link forfeits reliable attribution on a paid placement.",
+          "skills_covered": [
+            "track key performance indicators",
+            "Social Media Marketing",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "From Meta Ads Manager:\n```text\nLast 7 days\nAd Set A (Objective: Leads, Budget: $50/day)\n- 6 ads live\n- 45 leads\n- CPL $3.90\n- Delivery: Learning Limited\n\nAd Set B (Objective: Leads, Budget: $50/day)\n- 2 ads live\n- 52 leads\n- CPL $3.60\n- Delivery: Active\n\nNext week you plan to add 2 new creatives. Welcome email sends T+24h after signup; ~30% of purchases happen Day 2 post-click.\n```\nWhat change today gives Ad Set A the best chance to exit learning without starving the welcome series?",
+          "options": [
+            "Switch A’s optimization to Landing Page Views to boost volume",
+            "Pause the 4 lowest-CTR ads in A, keep top 2, and raise budget to $60/day",
+            "Apply a frequency cap of 1/day to stabilize delivery",
+            "Duplicate A into two ad sets (UGC vs Product) keeping all 6 ads live"
+          ],
+          "correct_option": "B",
+          "explanation": "Consolidating to fewer ads concentrates conversions in the ad set and helps reach the ~50-conversion/week stability threshold. A modest budget increase can accelerate exits from learning without splitting signals or lowering conversion quality.",
+          "distractor_rationale": "B: Duplicating splits learning and signals, likely prolonging instability. C: Optimizing for clicks increases volume but degrades lead quality, harming downstream email performance. D: Frequency caps do not address the core issue of dispersed conversions across too many ads.",
+          "skills_covered": [
+            "Meta Ads",
+            "Social Media Marketing",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Segment selection for a WhatsApp shipping update (utility template). Consent log excerpt:\n```csv\nuser_id,email_optin,whatsapp_optin,unsubscribed,consent_source,consent_ts\n101,true,true,false,FB_LeadAd_Checkbox,2026-08-10T14:05Z\n102,true,false,false,Website_Form,2026-08-09T18:11Z\n103,false,true,false,QR_Store,2026-08-08T09:02Z\n104,true,true,true,Checkout_Tickbox,2026-08-11T07:21Z\n```\nWhich users can you message with the WhatsApp shipping update template today?",
+          "options": [
+            "Only users with both email_optin and whatsapp_optin true",
+            "Only user_id 101; QR code opt-ins are not valid for WhatsApp",
+            "user_id in (101,103)",
+            "user_id in (101,103,104)"
+          ],
+          "correct_option": "C",
+          "explanation": "WhatsApp requires explicit channel opt-in and ongoing permission; email consent is irrelevant. 101 and 103 have `whatsapp_optin=true` and are not unsubscribed. 104 is unsubscribed and must be excluded.",
+          "distractor_rationale": "B: Includes 104 who is unsubscribed. C: QR-based opt-ins are valid if they captured explicit consent; excluding 103 is unnecessary. D: Email consent is not a prerequisite for WhatsApp messaging.",
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Email Marketing",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You see this performance:\n```text\nRetargeting audience (last 7 days)\n- Paid social frequency: 2.8\n- CPA trend: +22% WoW\n\nWelcome sequence\nDay 1 (T+0h): Open 68%, Click 5.2%, Unsub 0.3%\nDay 2 (T+24h): Open 41%, Click 1.1%, Unsub 0.9%\n```\nYou planned Day 2 at T+24h and a retargeting cap of 3. What change best reduces fatigue and CPA without heavy rework?",
+          "options": [
+            "Pause Day 2 for a week and double paid social budget to offset CPA",
+            "Delay Day 2 to T+36h and lower paid social frequency cap to 2",
+            "Keep Day 2 timing and switch retargeting objective to Reach for cheaper impressions",
+            "Send Day 2 earlier at T+12h and raise cap to 4 to compress the funnel"
+          ],
+          "correct_option": "B",
+          "explanation": "Both the unsub spike and high paid frequency suggest fatigue. Spacing Day 2 to T+36h and capping frequency at 2 reduces pressure across channels with minimal workflow change.",
+          "distractor_rationale": "B: Compressing increases overlap and likely raises complaints and CPA. C: Reach objective sacrifices conversion quality; impressions alone won’t fix CPA. D: Pausing an early lifecycle touch harms revenue timing and doubling budget often worsens CPA under fatigue.",
+          "skills_covered": [
+            "track key performance indicators",
+            "Email Marketing",
+            "Social Media Marketing",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Ahead of a social contest push, you expect more marginal subscribers and higher complaint risk. Which header configuration will most reliably surface a native unsubscribe in major inboxes and reduce spam complaints?\n```text\nVariant 1:\nList-Unsubscribe: <mailto:unsubscribe@mail.example.com>, <https://example.com/u/123>\nList-Unsubscribe-Post: List-Unsubscribe=One-Click\n\nVariant 2:\nList-Unsubscribe: <mailto:unsubscribe@mail.example.com>\n\nVariant 3:\nList-Unsubscribe: <https://example.com/u/123>\n\nVariant 4:\nPrecedence: bulk\nX-Unsubscribe-Link: https://example.com/u/123\n```\n",
+          "options": [
+            "```text\nVariant 1\nList-Unsubscribe: <mailto:unsubscribe@mail.example.com>, <https://example.com/u/123>\nList-Unsubscribe-Post: List-Unsubscribe=One-Click\n```",
+            "```text\nVariant 3\nList-Unsubscribe: <https://example.com/u/123>\n```",
+            "```text\nVariant 2\nList-Unsubscribe: <mailto:unsubscribe@mail.example.com>\n```",
+            "```text\nVariant 4\nPrecedence: bulk\nX-Unsubscribe-Link: https://example.com/u/123\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Including both mailto and HTTP List-Unsubscribe plus `List-Unsubscribe-Post: List-Unsubscribe=One-Click` enables native one-click unsub in providers like Gmail, which is effective at diverting users from clicking “Report spam.”",
+          "distractor_rationale": "B and C: Only one method reduces client support; some providers prefer one-click HTTP. D: Non-standard headers like `X-Unsubscribe-Link` are not widely honored and won’t surface the native control.",
+          "skills_covered": [
+            "Email Marketing",
+            "Data Privacy and Compliance"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You must pace a $700, 7-day paid social flight feeding a welcome series that starts immediately. History shows:\n```text\n- 70% of qualified leads arrive Mon–Wed.\n- Weekend CPMs are -25%, but weekend-acquired leads have -18% Day-1 open rates.\n```\nWhich pacing plan most likely maximizes qualified leads without starving midweek entry into the series?",
+          "options": [
+            "Spend $140/day evenly Mon–Sun",
+            "Spend $180 Mon, $180 Tue, $160 Wed, $80 Thu, $50 Fri, $25 Sat, $25 Sun",
+            "Spend $80 Mon–Wed, then $160/day Thu–Sun to exploit cheaper CPMs",
+            "Spend $350 Mon, $350 Tue, $0 the rest"
+          ],
+          "correct_option": "B",
+          "explanation": "Front-loading to Mon–Wed aligns spend with higher-quality lead days while leaving some budget to maintain presence later in the week. Heavy weekend bias degrades lead quality for the welcome series.",
+          "distractor_rationale": "A: Ignores known day-of-week quality differences. C: Chases cheap CPMs at the expense of lifecycle performance. D: Zeroing Thu–Sun risks losing momentum and learning stability; also ignores Wed strength.",
+          "skills_covered": [
+            "Meta Ads",
+            "plan marketing campaigns",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need to send a proactive WhatsApp message to opted-in users whose last session is >24h ago. Which approved template complies with channel rules and good privacy practice for a promotional reminder?\n",
+          "options": [
+            "```json\n{\n  \"name\": \"promo_weekend\",\n  \"category\": \"MARKETING\",\n  \"language\": \"en\",\n  \"components\": [\n    {\"type\":\"BODY\",\"text\":\"Hi {{1}}, 20% off ends Sunday. Tap to save: {{2}}\"},\n    {\"type\":\"FOOTER\",\"text\":\"Reply STOP to opt out\"}\n  ]\n}\n```",
+            "```json\n{\n  \"name\": \"promo_weekend\",\n  \"category\": \"UTILITY\",\n  \"language\": \"en\",\n  \"components\": [\n    {\"type\":\"BODY\",\"text\":\"Flash sale now on. Get it here: {{1}}\"}\n  ]\n}\n```",
+            "```json\n{\n  \"name\": \"promo_weekend\",\n  \"category\": \"UTILITY\",\n  \"language\": \"en\",\n  \"components\": [\n    {\"type\":\"BODY\",\"text\":\"Hi {{1}}, your order ships today. Track: {{2}}\"}\n  ]\n}\n```",
+            "```json\n{\n  \"name\": \"promo_weekend\",\n  \"category\": \"MARKETING\",\n  \"language\": \"en\",\n  \"components\": [\n    {\"type\":\"BODY\",\"text\":\"Hi {{1}}, 20% off ends Sunday. Tap to save: {{2}}\"}\n  ]\n}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "For messages outside the 24h window, you must use a pre-approved template. A promotional reminder must be in the MARKETING category. Including clear opt-out instruction is strong privacy practice even if not required in every message.",
+          "distractor_rationale": "B: Incorrect category (UTILITY) for a promotion; risks template rejection/misuse. C: Lacks any opt-out guidance, weakening privacy practice for a promo push. D: Utility content is allowed but is not the promotional reminder you intend.",
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Email Marketing",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Community post:\n```text\n@ani_d: \"After 3 weeks on FitTea, down 4kg. Photos here: https://ig.me/p/abc — you can share!\"\n```\nYou want to feature this in Day 3 of your welcome email and as a paid social ad. What should you do first to stay compliant and protect deliverability/brand trust?",
+          "options": [
+            "DM @ani_d asking for explicit written permission that names email and ads; store a screenshot of consent",
+            "Use in email only (organic) but not in paid ads; organic reuse is always fair use",
+            "Blur the face and use without credit to avoid personal data concerns",
+            "Use the quote and photos with @ani_d credit; the comment already grants permission"
+          ],
+          "correct_option": "A",
+          "explanation": "Obtain explicit, documented permission that covers the intended channels (email and paid ads). Store consent evidence. This protects against disputes and aligns with privacy and platform UGC policies.",
+          "distractor_rationale": "A: A casual comment is ambiguous and insufficient as re-licensing. C: \"Fair use\" does not generally apply to marketing reuse. D: Anonymizing without permission does not cure rights/licensing issues and can damage trust.",
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Content Writing",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your ESP wraps links for tracking unless you add `data-no-track=\"true\"`. You must 1) keep UTMs consistent with the social campaign `starter_guide_q3`, 2) avoid wrapping the unsubscribe link. Which HTML is correct?",
+          "options": [
+            "```html\n<p><a href=\"https://example.com/guide\">Get the guide</a></p>\n<p><a href=\"https://example.com/blog\">Read more</a></p>\n<p><a href=\"https://example.com/u/123\">Unsubscribe</a></p>\n```",
+            "```html\n<p><a href=\"https://ex.co/sgq3-hero\">Get the guide</a></p>\n<p><a href=\"https://ex.co/sgq3-secondary\">Read more</a></p>\n<p><a href=\"https://example.com/u/123\">Unsubscribe</a></p>\n```",
+            "```html\n<p><a href=\"https://example.com/guide?utm_campaign=starter_guide_q3\">Get the guide</a></p>\n<p><a href=\"https://example.com/blog?utm_campaign=starter_guide_q3\">Read more</a></p>\n<p><a href=\"https://example.com/u/123?utm_source=newsletter&utm_medium=email\" >Unsubscribe</a></p>\n```",
+            "```html\n<p><a href=\"https://example.com/guide?utm_source=newsletter&utm_medium=email&utm_campaign=starter_guide_q3&utm_content=hero_cta\">Get the guide</a></p>\n<p><a href=\"https://example.com/blog?utm_source=newsletter&utm_medium=email&utm_campaign=starter_guide_q3&utm_content=secondary\">Read more</a></p>\n<p><a href=\"https://example.com/u/123\" data-no-track=\"true\">Unsubscribe</a></p>\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A applies consistent UTMs for the email channel and uses `data-no-track=\"true\"` on the unsubscribe link to prevent wrapper interference, which also helps mailbox providers honor native unsub features.",
+          "distractor_rationale": "B: No UTMs, losing attribution. C: Missing `utm_source`/`utm_medium` on content links and inappropriately tags the unsubscribe link. D: Shortened redirects obscure UTMs and track the unsubscribe link, risking compliance and deliverability issues.",
+          "skills_covered": [
+            "Email Marketing",
+            "track key performance indicators",
+            "Data Privacy and Compliance"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A SaaS trial launch is planned for next week. Current plan:\n```text\n- Newsletter Tue 10:00 (“Starter Guide”)\n- IG carousel Tue 10:30 (teaser of the guide)\n- Paid social (Leads objective) $700 over Mon–Sun\n- Welcome sequence: Day 0, Day 2, Day 5 (email); WhatsApp promo reminder Day 6 for opted-in users\n- Audience overlap between email list and IG followers: ~65%\n- Last 90 days: IG reach drops ~30% when a newsletter send occurs ±30 min from an IG post\n```\nCPA has crept up 18% WoW and Day-2 email complaints ticked up from 0.3% to 0.9%.",
+          "task": "Propose a concrete replanned schedule and pacing for the next 7 days across social (organic + paid) and email/WhatsApp that reduces channel collision and fatigue while keeping the theme coherent. Specify exact post/send times, any frequency caps, budget pacing by day, and any template/category constraints for WhatsApp. Justify each change with the data given and define 3–4 KPIs you will watch to validate success.",
+          "expected_answer": "A high-quality answer moves the IG carousel to 11:00 Tue (avoids ±30 min window) and keeps a Story teaser early morning. Paces paid social with a Mon–Wed front-load (e.g., $180, $180, $160, then taper) to align with quality days and caps frequency at 2. Re-spaces Day-2 email to T+36h. Uses a MARKETING-category WhatsApp template with opt-out footer for Day 6 only to WhatsApp-opted users. UTMs consistent across channels. KPIs: IG reach on Tue vs baseline, paid social CPA and frequency, Day-2 unsubscribe and spam complaint rates, and lead-to-open rate within 24h.",
+          "rubric": [
+            {
+              "criterion": "Schedule adjusts IG post outside ±30 min of the Tue email and keeps thematic coherence (specific times provided)",
+              "marks": 2
+            },
+            {
+              "criterion": "Paid pacing plan aligns with quality days and sets a reasonable frequency cap (includes exact daily budget)",
+              "marks": 2
+            },
+            {
+              "criterion": "Lifecycle spacing change (e.g., Day-2 to T+36h) justified by complaint/fatigue data",
+              "marks": 2
+            },
+            {
+              "criterion": "WhatsApp usage compliant (template category correct, opt-in respected, opt-out guidance noted) and 3–4 KPIs defined with rationale",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "plan marketing campaigns",
+            "Social Media Marketing",
+            "Email Marketing",
+            "Data Privacy and Compliance",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your WhatsApp opt-in rate is low (12%) from Facebook Lead Ads. Current form uses a single generic consent line and a required email field. Downstream, Day-0 email references WhatsApp benefits but opt-ins remain flat. You must lift WhatsApp opt-in without hurting email deliverability or violating consent rules.",
+          "task": "Design a compliant opt-in improvement plan covering: lead form configuration (questions/checkboxes/messaging), any follow-up microcopy in Day-0 email, and how you will segment and suppress sends based on consent status. Specify how you will measure success over two weeks (exact metrics and targets).",
+          "expected_answer": "Use explicit, unchecked WhatsApp checkbox with clear value exchange text and link to privacy policy. Consider Meta’s higher-intent form with a short, single-screen layout. Add an optional phone number field gated behind the checkbox to reduce noise. In Day-0 email, include a short, value-first line with a WhatsApp opt-in CTA (linking to WA opt-in flow or QR) only for email-only contacts, not those already opted in; suppress WhatsApp sends to non-consented users. Measurement: lift in `whatsapp_optin_rate` (target +5–8 pp), phone field completion rate, downstream WhatsApp message read/reply rates, and no increase in email complaint/unsub (≤ baseline +0.1 pp).",
+          "rubric": [
+            {
+              "criterion": "Lead form changes are compliant (unchecked box, explicit value exchange, privacy link) and operationally specific",
+              "marks": 2
+            },
+            {
+              "criterion": "Email microcopy plan targets non-opted contacts and avoids pressure on existing opt-ins; suppression logic is correct",
+              "marks": 2
+            },
+            {
+              "criterion": "Segmentation/suppression based on consent states is precise (no cross-channel leakage)",
+              "marks": 1
+            },
+            {
+              "criterion": "Measurement plan defines 2–3 primary metrics with numeric targets and a deliverability safety guardrail",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Social Media Marketing",
+            "Email Marketing",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Lead volume is high but quality is poor. Current setup: Meta Ads objective = Engagement (video views), retarget to lead form, instant form with few fields, no custom questions. Welcome email bounce rate is rising, and spam complaints on Day-1 nudged to 0.6%.",
+          "task": "Recommend specific changes to paid social and the early lifecycle to improve confirmed, consented leads and protect deliverability. Include ad objective, form settings, any pre-qualification questions, and email confirmation/opt-in flow adjustments. State expected trade-offs and the primary KPIs to monitor.",
+          "expected_answer": "Switch objective to Leads or Conversions with a quality signal (e.g., Conversion API + custom event for confirmed_email). Use higher-intent forms (e.g., add review screen), enable field verification, include one qualifying question and explicit WhatsApp checkbox. Expect lower volume but higher confirmed opt-ins. Add email double opt-in or magic-link confirmation to reduce bounces and complaints; suppress unconfirmed leads from Day-1 promotional send. KPIs: confirmed_opt_in_rate up, bounce rate down, complaint rate ≤0.3%, CPL may rise but CAC improves.",
+          "rubric": [
+            {
+              "criterion": "Paid objective change and rationale (optimize for quality/lead confirmation)",
+              "marks": 2
+            },
+            {
+              "criterion": "Form configuration for higher intent and consent clarity (review screen, verification, qualifying question)",
+              "marks": 2
+            },
+            {
+              "criterion": "Lifecycle adjustments (double opt-in/magic link, suppression of unconfirmed) that protect deliverability",
+              "marks": 2
+            },
+            {
+              "criterion": "Trade-offs and KPIs clearly articulated (quality vs volume, numeric expectations)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Meta Ads",
+            "Email Marketing",
+            "Data Privacy and Compliance",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your community team plans to repurpose top-performing social threads into the nurture. Last week’s IG caption carousel earned high saves but low comments; the email Day-2 variant using the same long caption underperformed clicks. The CTA is mid-paragraph, links lacked consistent UTMs, and the send was within 20 minutes of a big TikTok post.",
+          "task": "Propose a content and scheduling redesign for the Day-2 email plus supporting social posts that increases clarity and click propensity. Specify copy structure (subject, preheader, hero, CTA placement), UTM scheme, and exact timing relative to other channels. Include any community prompts you would use to seed replies, and explain how you’ll evaluate success.",
+          "expected_answer": "Shorten subject to ~45–60 chars with a clear benefit, preheader adds context not repetition. Use a scannable email with a single hero CTA above the fold and a secondary CTA at the footer. Apply a consistent UTM scheme: `utm_source=newsletter|instagram`, `utm_medium=email|owned_social`, `utm_campaign=launch_wkX`, `utm_content=hero|carouselN`. Schedule Day-2 at T+36h and avoid ±30 min windows near other big posts. Community prompt: ask a single, specific question in social (e.g., “Which step tripped you up?”) and summarize 1–2 replies in the next email. Success: +30% click-to-open, stable unsub/complaints, and attributed sessions by channel consistent with UTMs.",
+          "rubric": [
+            {
+              "criterion": "Email copy structure improves scannability and CTA placement with specific, actionable details",
+              "marks": 2
+            },
+            {
+              "criterion": "UTM plan is consistent across email and social and names all key dimensions correctly",
+              "marks": 2
+            },
+            {
+              "criterion": "Scheduling avoids inter-channel conflicts with explicit timing and rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Community prompt is concrete and success metrics (including CTOR and unsub/complaints) are defined",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Content Writing",
+            "Email Marketing",
+            "Social Media Marketing",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a 4-week social campaign calendar aligned to the lifecycle plan",
+          "brief": "Create a 4-week calendar for a hypothetical brand promoting a Starter Guide and trial signups. Include organic posts and paid social (Meta) that feed into an email/WhatsApp nurture. Align posts with lifecycle sends to avoid known collision windows and fatigue. Incorporate community prompts and moderation notes.",
+          "deliverable": "A CSV or XLSX named social_campaign_calendar.csv|.xlsx with one row per planned post/ad and an optional summary tab. You may also submit a read-only Google Sheet link.",
+          "acceptance_criteria": [
+            "Minimum 16 organic posts across platforms (at least Instagram + Facebook) and 4 paid placements over 4 weeks",
+            "Columns present and populated for every row: date (YYYY-MM-DD), time (24h, timezone specified once in a metadata row), platform, placement (feed/story/reel), post_type (organic/paid), objective, primary_audience, post_copy (<=2200 chars), primary_link, utm_source, utm_medium, utm_campaign, utm_content, asset_filename, paid_budget (0 for organic), ad_set_name (for paid), frequency_cap (for paid), community_prompt, moderation_note, dependency_send_id (link to nurture message id if coordinated)",
+            "UTM scheme consistent across rows: sources reflect channel (e.g., instagram, facebook), mediums reflect placement type (e.g., owned_social, paid_social); same `utm_campaign` used for the 4-week push",
+            "No social post scheduled within ±30 minutes of any email send defined in your nurture sequence submission",
+            "Paid budget totals to a single stated flight budget (you must include the budget total in a metadata row), with a front-loaded pacing plan for high-quality days",
+            "At least two paid ad sets show creative consolidation considerations (e.g., <=3 ads per ad set) to aid learning stability"
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and correctness of required columns and metadata (timezone, budget total)",
+              "marks": 5
+            },
+            {
+              "criterion": "Channel alignment and collision avoidance relative to the nurture (no ±30 min conflicts)",
+              "marks": 5
+            },
+            {
+              "criterion": "UTM consistency and correctness across all rows",
+              "marks": 4
+            },
+            {
+              "criterion": "Paid social fundamentals (objective selection, pacing, frequency cap, ad set consolidation) evident and justified",
+              "marks": 4
+            },
+            {
+              "criterion": "Community prompts and moderation notes are specific and actionable",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "plan marketing campaigns",
+            "Social Media Marketing",
+            "Meta Ads",
+            "track key performance indicators",
+            "Content Writing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Design a 6-message cross-channel nurture sequence with consent-aware logic",
+          "brief": "Map a lifecycle sequence that starts after a lead submits your form. Use both Email and WhatsApp where consent allows. Define triggers, timing, message outlines, consent checks, suppression logic, UTMs, and KPIs. Ensure compliance (unsubscribe handling in email; WhatsApp template categories for proactive outreach).",
+          "deliverable": "A CSV or XLSX named nurture_sequence.csv|.xlsx with one row per message and an optional simple flow diagram (PNG/PDF) showing branches. Each row must include: message_id, channel (email/whatsapp), trigger, delay (e.g., T+0h), subject_or_title, preheader_or_template_name, key_message_outline, primary_link, utm_source, utm_medium, utm_campaign, utm_content, consent_required (email_optin/whatsapp_optin), suppression_rules, fallback_path, success_metric, stop_rule.",
+          "acceptance_criteria": [
+            "Exactly 6 messages total across channels; at least 4 emails and 2 WhatsApp messages (the WhatsApp ones must reference an approved template category: MARKETING or UTILITY)",
+            "All email rows indicate unsubscribe handling plan (e.g., include List-Unsubscribe mailto+HTTP and one-click) and identify which links must not be tracked (unsubscribe)",
+            "Consent and suppression logic is explicit: WhatsApp only to `whatsapp_optin=true`; email only to `email_optin=true`; unconfirmed or unsubscribed contacts are excluded from promotional sends",
+            "Timing avoids overlapping with the social calendar from your Task 1 by at least ±30 minutes on any coordinated day",
+            "UTM scheme consistent and channel-appropriate: `utm_source=newsletter|whatsapp`, `utm_medium=email|messaging`, plus consistent `utm_campaign` and descriptive `utm_content`",
+            "KPIs defined per message (e.g., open or read receipt, click/CTR, reply rate for WhatsApp, conversion proxy) and a global stop rule (e.g., pause series if complaint rate >0.5% on any step)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Structure and completeness of the sequence (6 messages with required fields and channel mix)",
+              "marks": 5
+            },
+            {
+              "criterion": "Consent-aware logic and suppressions are correct and unambiguous across branches",
+              "marks": 5
+            },
+            {
+              "criterion": "Compliance and deliverability safeguards (email List-Unsubscribe details; WhatsApp template categories; non-tracked unsubscribe link)",
+              "marks": 4
+            },
+            {
+              "criterion": "Channel coordination and timing relative to social calendar (±30 min rule observed)",
+              "marks": 3
+            },
+            {
+              "criterion": "UTM consistency and KPI/stop-rule definition",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Email Marketing",
+            "Data Privacy and Compliance",
+            "plan marketing campaigns",
+            "track key performance indicators",
+            "Social Media Marketing"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-008-S04",
+      "skills_assessed": [
+        "Google Analytics",
+        "web analytics",
+        "A/B Testing",
+        "Data Privacy and Compliance",
+        "track key performance indicators",
+        "plan marketing campaigns",
+        "define measurable marketing objectives"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inspect your GA4 BigQuery export and see two `purchase` events with the same `transaction_id` within minutes for the same user.\n\n```json\n{\n  \"event_name\": \"purchase\",\n  \"event_timestamp\": 1713271800000,\n  \"user_pseudo_id\": \"7629.1845\",\n  \"event_params\": [\n    {\"key\": \"transaction_id\", \"value\": {\"string_value\": \"ORD-98431\"}},\n    {\"key\": \"value\", \"value\": {\"double_value\": 129.99}},\n    {\"key\": \"currency\", \"value\": {\"string_value\": \"USD\"}}\n  ]\n}\n{\n  \"event_name\": \"purchase\",\n  \"event_timestamp\": 1713271860000,\n  \"user_pseudo_id\": \"7629.1845\",\n  \"event_params\": [\n    {\"key\": \"transaction_id\", \"value\": {\"string_value\": \"ORD-98431\"}},\n    {\"key\": \"value\", \"value\": {\"double_value\": 129.99}},\n    {\"key\": \"currency\", \"value\": {\"string_value\": \"USD\"}}\n  ]\n}\n```\nThe property is linked to Google Ads and you import GA4 key events as conversions. Which outcome should you expect for that day’s reporting?",
+          "options": [
+            "All three surfaces (GA4 reports, BigQuery, and Ads import) count two purchases and double revenue/conversions.",
+            "BigQuery export automatically dedupes purchase events with the same `transaction_id`, so it shows one row; GA4 reports and Ads each count two.",
+            "GA4 dedupes only when the duplicates are in the same session ID, so these two count twice in reports but Ads import still dedupes to one.",
+            "GA4 standard reports count one purchase and one revenue total; BigQuery continues to show two raw rows; the Google Ads conversion import counts one conversion."
+          ],
+          "correct_option": "D",
+          "explanation": "GA4 reporting deduplicates ecommerce purchases by `transaction_id` while the BigQuery export remains event-level and includes duplicates. Google Ads imports from GA4 respect GA4’s deduplication, so Ads will also count one conversion for this order ID.",
+          "distractor_rationale": "B: Tempting if you think BigQuery logic mirrors reports; it does not — BigQuery is raw. C: GA4 deduplication uses `transaction_id`, not session ID. D: The export never auto-dedupes; deduplication happens in reporting layers, not in the raw export.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You upload non-Google cost data to GA4 using the Cost Data import with the file below. Your UTMs for this campaign use `utm_source=bing` and `utm_medium=paid`.\n\n```csv\ndate,campaign,source,medium,clicks,impressions,cost,currency\n2026-07-01,Brand_US_Summer,bing,cpc,2400,120000,5600,USD\n```\nThe import succeeds. In the GA4 Advertising workspace Cost analysis, what will you see for this campaign on 2026‑07‑01?",
+          "options": [
+            "Costs appear joined to sessions and conversions but attributed to Source = (not set) because campaign is the only required join key.",
+            "Nothing appears because GA4 rejects rows whose `medium` isn’t exactly `paid` for Bing.",
+            "Costs will auto-map to the Default Channel Grouping and still join because GA4 normalizes `cpc` and `paid` as the same.",
+            "Costs and clicks appear, but they won’t join to traffic: you’ll see cost and clicks with 0 sessions and 0 conversions because `medium` mismatches your UTMs."
+          ],
+          "correct_option": "D",
+          "explanation": "GA4 joins imported costs to traffic using Date + Source + Medium + Campaign. Because your UTMs use `paid` but the file says `cpc`, the rows won’t join to any sessions, yielding cost with 0 sessions/conversions.",
+          "distractor_rationale": "B: GA4 does not reject on `medium` values; it just fails to join. C: GA4 does not normalize `cpc` to `paid`. D: The join requires Source+Medium+Campaign+Date; campaign alone is not enough, so attribution to (not set) won’t happen.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You tried to force a custom session campaign label by sending the event parameter below on every page view.\n\n```javascript\ngtag('event', 'page_view', {\n  session_campaign: 'SpringSalePush'\n});\n```\nAfter publishing, the Traffic acquisition report still shows the original `session campaign` from UTMs. Why?",
+          "options": [
+            "GA4 ignores user-defined event parameters that try to overwrite reserved attribution dimensions like session campaign.",
+            "You need to register `session_campaign` as a session-scoped custom dimension before it appears in Traffic acquisition.",
+            "The parameter is only respected when sent with `first_visit` or `session_start`, not with `page_view`.",
+            "The parameter works but requires 72 hours to backfill historical values before changing the report."
+          ],
+          "correct_option": "A",
+          "explanation": "Attribution dimensions in Traffic acquisition (first user/session campaign, source, medium) are derived from GA collection logic and reserved; custom parameters cannot overwrite them.",
+          "distractor_rationale": "B: GA4 custom dimensions support event- or user-scope only; session scope is not available to override attribution. C: Delays don’t turn custom params into built-in dimensions. D: Even on `session_start`, you can’t override built-in attribution dimensions with arbitrary params.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your CMP rolls out Consent Mode with the following signals for EMEA traffic. Within 24 hours, sales volume is flat but Paid Search in GA4 drops sharply.\n\n```javascript\n// default\ngtag('consent', 'default', {\n  'ad_storage': 'denied',\n  'analytics_storage': 'granted'\n});\n// after explicit consent (~20% of users)\ngtag('consent', 'update', {\n  'ad_storage': 'granted'\n});\n```\nA same-day snapshot shows:\n\n```text\nRegion: EMEA (ad_storage mostly denied)\nOrders (server): 1,100\nGA4 Purchases (all channels): 1,060\nGA4 Purchases attributed to Paid Search: 320 -> 180 (day-over-day)\nGoogle Ads conversions (imported from GA4): near flat\n```\nWhich interpretation is most accurate for that day?",
+          "options": [
+            "Both GA4 and Ads stopped measuring conversions for denied users; the flat Ads number is a reporting cache artifact that will drop later.",
+            "Paid Search didn’t actually drop; with ad_storage denied, GA4 lost deterministic Ads identifiers so attribution shifted away from Paid Search while Google Ads modeled many conversions back to ads.",
+            "Google Ads can’t use Consent Mode modeling unless analytics_storage is denied too, so the flat Ads line proves consent settings are wrong.",
+            "GA4 instantly modeled denied users back to Paid Search, so the drop must be a true performance decline."
+          ],
+          "correct_option": "B",
+          "explanation": "With ad_storage denied, ad click identifiers aren’t stored, so GA4 attribution shifts away from Paid Search initially. Google Ads applies consent-mode modeling to recover many conversions to ads, so Ads may look flat while GA4 by-channel looks lower the same day.",
+          "distractor_rationale": "B: Both platforms can model; Ads being flat is expected, not a cache quirk. C: GA4 does model but not necessarily immediately and not identically to Ads; the same-day drop doesn’t prove true decline. D: Consent-mode modeling in Ads does not require denying analytics_storage; this mixes up consent categories.",
+          "skills_covered": [
+            "Google Analytics",
+            "Data Privacy and Compliance",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You reduce the GA4 attribution lookback window from 30 to 7 days. The last 90 days’ time-lag distributions were:\n\n```csv\nchannel,0-1d,2-7d,8-14d,15-30d\nPaid Search,70%,20%,7%,3%\nPaid Social,15%,25%,40%,20%\nEmail,30%,45%,20%,5%\n```\nWhich immediate reporting effect is most likely?",
+          "options": [
+            "Paid Social ROAS drops the most because many conversions now fall outside the 7‑day window.",
+            "All channels’ ROAS declines equally because the window change is applied uniformly.",
+            "Paid Search ROAS increases because GA4 backfills missing clicks from 8‑14 days into 2‑7 days.",
+            "Email ROAS is unaffected; attribution windows don’t apply to owned channels."
+          ],
+          "correct_option": "A",
+          "explanation": "With a 7‑day window, Paid Social loses a large 8–14 day tail, so it sees the biggest immediate ROAS drop. Other channels with shorter lags are less affected.",
+          "distractor_rationale": "B: GA4 doesn’t reclassify 8–14 days into 2–7; those conversions are excluded. C: Lookback windows apply by channel; owned vs paid doesn’t exempt Email. D: Uniform setting, non-uniform effects due to different lag profiles.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "plan marketing campaigns",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your landing URLs contain both auto-tagged `gclid` and manual UTMs:\n\n```text\nhttps://example.com/?gclid=EAIaIQobChMI...&utm_source=google&utm_medium=cpc&utm_campaign=Brand_EMEA\n```\nThe GA4 property is properly linked to Google Ads. What source/medium will GA4 attribution use for the session?",
+          "options": [
+            "google / cpc from the UTM because UTMs always override auto-tagging for transparency.",
+            "google / organic because GA4 treats gclid as an organic click ID when UTMs are also present.",
+            "google / cpc from the gclid mapping; the manual UTMs are ignored when gclid is present and valid.",
+            "(not set) / (not set) because mixed tagging causes GA4 to discard identifiers."
+          ],
+          "correct_option": "C",
+          "explanation": "With a valid gclid and a linked Ads account, GA4 uses auto-tagging for source/medium and campaign. Manual UTMs are ignored in this case.",
+          "distractor_rationale": "B: In Ads-linked properties, gclid takes precedence. C: Mixed tagging doesn’t nullify attribution. D: gclid is paid ads click ID, not organic.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You ran a 50/50 landing page A/B test. Early GA4 Exploration shows:\n\n```csv\nvariant,sessions,purchases,conversion_rate\nA,10000,420,4.20%\nB,7800,360,4.62%\n```\nYou expected equal traffic split. What’s the best immediate action regarding budget allocation?",
+          "options": [
+            "Stop the test and keep A because it has more purchases in absolute terms.",
+            "Investigate a sample ratio mismatch before reallocating spend; don’t call a winner yet.",
+            "Increase total traffic to drown out the imbalance; keep allocating 50/50 in media.",
+            "Shift budget to B immediately because its conversion rate is higher despite fewer sessions."
+          ],
+          "correct_option": "B",
+          "explanation": "A significant allocation imbalance (SRM) suggests implementation or traffic issues that can bias results. Validate delivery and instrumentation before making budget moves.",
+          "distractor_rationale": "B: Higher CVR can be an artifact of biased assignment. C: Absolute conversions ignore the unequal exposure. D: More traffic doesn’t fix a broken randomization or tracking issue.",
+          "skills_covered": [
+            "A/B Testing",
+            "track key performance indicators",
+            "Google Analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You used UTMs like below for Paid Social. Default Channel Grouping rules expect specific mediums (e.g., `paid_social`).\n\n```text\nhttps://example.com/?utm_source=facebook&utm_medium=paid-social&utm_campaign=Q3_Launch\n```\nIn standard GA4 reports without custom channel definitions, where will most of this traffic land?",
+          "options": [
+            "Referral, because facebook implies referral unless the medium is exactly `cpc`.",
+            "Unassigned, because `paid-social` doesn’t match GA4’s Paid Social rules.",
+            "Display, because any paid medium defaults to Display when rules don’t match.",
+            "Paid Social, because GA4 normalizes hyphens and underscores."
+          ],
+          "correct_option": "B",
+          "explanation": "Default Channel Grouping uses strict pattern rules. `paid-social` (with a hyphen) doesn’t match, so traffic often appears as Unassigned unless you define a custom channel rule.",
+          "distractor_rationale": "B: GA4 doesn’t auto-normalize arbitrary medium values to canonical forms. C: Source alone doesn’t force Referral when UTMs are present. D: There’s no fallback-to-Display rule for unmatched paid mediums.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You marked both `begin_checkout` and `purchase` as conversions. Your GA4 events send `value` on both:\n\n```json\n{\n  \"event_name\": \"begin_checkout\",\n  \"event_params\": [\n    {\"key\": \"value\", \"value\": {\"double_value\": 129.99}},\n    {\"key\": \"currency\", \"value\": {\"string_value\": \"USD\"}}\n  ]\n}\n{\n  \"event_name\": \"purchase\",\n  \"event_params\": [\n    {\"key\": \"value\", \"value\": {\"double_value\": 129.99}},\n    {\"key\": \"currency\", \"value\": {\"string_value\": \"USD\"}}\n  ]\n}\n```\nYour ROAS tile sums conversion value across all conversions. What change fixes revenue double-counting without losing the `begin_checkout` KPI?",
+          "options": [
+            "Exclude `begin_checkout` from the revenue aggregation and keep it as a conversion counted without value in ROI tiles.",
+            "Turn off `purchase` as a conversion so you only count it once at `begin_checkout`.",
+            "Keep both conversions with value and divide total conversion value by two in the dashboard.",
+            "Stop sending `value` on `purchase` and keep it only on `begin_checkout`."
+          ],
+          "correct_option": "A",
+          "explanation": "For ROI, only revenue-bearing conversions (purchase) should contribute value. Keep `begin_checkout` as a conversion KPI but exclude it from revenue aggregation or don’t send value on it.",
+          "distractor_rationale": "B: Removes true revenue signal. C: Arbitrary halving fails when the mix of conversion types changes. D: Disabling purchase conversion discards your core revenue metric.",
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "While debugging, you spot PII in page URLs sent to GA4:\n\n```http\nGET /thank-you?email=anna.sousa%40example.com&order=ORD-55421 HTTP/1.1\nHost: www.example.com\n...\n```\nWhat is the realistic outcome and appropriate response?",
+          "options": [
+            "GA4 rejects the entire event when PII is present, so revenue will be missing but policy is safe.",
+            "GA4 automatically redacts any email-like query parameters so no action is needed.",
+            "Events will be collected and PII may appear in GA4/BigQuery; you must strip PII at collection and file a GA4 data deletion request for affected parameters.",
+            "Mark `email` as an event-scoped custom dimension so it’s governed; keeping it avoids policy issues."
+          ],
+          "correct_option": "C",
+          "explanation": "GA4 prohibits sending PII but doesn’t guarantee automatic redaction. Such data can be stored and expose compliance risk. The fix is to prevent collection (e.g., strip parameters in GTM/server) and submit a targeted data deletion request.",
+          "distractor_rationale": "B: There’s no blanket auto-redaction guarantee. C: GA4 does not reliably reject the whole hit. D: Registering a custom dimension compounds the violation; governance doesn’t legitimize PII collection.",
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Google Analytics",
+            "web analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your ecommerce brand runs Paid Search, Paid Social, and Email. The GA4 property uses Data-driven attribution. Last month you used a 30-day lookback. This month, after a finance request to show faster payback, you switched the lookback to 7 days mid-month. Two weeks later, GA4’s Model comparison shows:\n\n- Data-driven vs Cross-channel last click: Paid Social shows a -28% change in conversions; Paid Search shows -3%; Email shows -8%.\n- Time lag exploration (last 90 days) indicates Paid Social conversions skew to 8–14 days, Paid Search to 0–1 day, Email to 2–7 days.\n- Revenue (server-side) and total GA4 purchases are flat week over week.\nFinance is pushing to cut Paid Social budget by 30% immediately based on the GA4 by-channel ROAS trend since the setting change.",
+          "task": "Decide whether to cut Paid Social now. Justify your recommendation with attribution mechanics and lag evidence, and propose a measurement plan to validate the decision within two weeks without jeopardizing total revenue.",
+          "expected_answer": "Do not cut 30% immediately. The observed drop is largely a measurement artifact from shortening the lookback window: Paid Social’s long-lag conversions (8–14 days) now fall outside attribution, depressing its reported ROAS while total purchases are flat. Recommend holding social budget steady or making a small test reduction (e.g., 10%) in a geo-split while monitoring server-side sales and GA4 total purchases. Validate with: (a) compare Data-driven 30-day vs 7-day using the Model comparison over a common historical window; (b) monitor the Time lag report for changes; (c) run a two-week geo lift test or MMM-style pre-post with holdout to estimate incremental ROAS; (d) track KPIs in a dashboard including total purchases, revenue, and blended CAC to prevent false savings. Document the lookback change and annotate reports to prevent misinterpretation.",
+          "rubric": [
+            {
+              "criterion": "States a clear recommendation on whether to cut budget now (not just analysis)",
+              "marks": 2
+            },
+            {
+              "criterion": "Cites how lookback window change interacts with long time-lag to depress Paid Social attribution without total sales decline",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a concrete validation plan (e.g., geo-split/holdout or lift test) tied to a two-week horizon",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies guardrail metrics (e.g., total purchases/revenue, blended CAC/ROAS) and reporting annotations to avoid misreads",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "plan marketing campaigns",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your Google Ads account shows 950 conversions last 7 days for the “Brand_US” campaign. GA4 shows 710 `purchase` conversions attributed to Paid Search for the same period. The property is linked to Ads, GA4 is set to Data-driven attribution, and Consent Mode is on with `ad_storage` denied for about 35% of US users. Auto-tagging is on. Model comparison shows Cross-channel last click is slightly higher for Paid Search than Data-driven. Finance wants to recalibrate ROAS targets downward to match GA4.",
+          "task": "Identify the most likely reasons for the discrepancy and list the concrete steps you would take before changing ROAS targets.",
+          "expected_answer": "Likely causes: (1) Platform scope differences: Ads shows conversions attributed to Ads (including modeled conversions via consent mode), while GA4 Paid Search shows only the portion attributed to that channel under its model; (2) Consent-mode modeling timing/coverage differences cause Ads to recover more conversions to Ads than GA4 attributes to Paid Search; (3) Lookback and attribution model differences (Ads often uses Ads-preferred attribution; GA4 uses cross-channel Data-driven); (4) Reporting identity differences (user vs device) and data thresholds; (5) Import timing and conversion window mismatches. Steps: Verify GA4-to-Ads import status and conversion windows; compare GA4 total purchases vs Paid Search-attributed purchases to isolate attribution vs tracking losses; use the Model comparison report over the same period; check consent diagnostics and the percentage of modeled conversions in Ads; confirm gclid coverage and landing page redirects; ensure currency/time-zone alignment. Only then consider an adjustment, ideally using blended or incrementality-based ROAS benchmarks instead of raw GA4 channel ROAS.",
+          "rubric": [
+            {
+              "criterion": "Explains at least two attribution/modeling-related causes specific to GA4 vs Ads (not generic ‘tracking error’)",
+              "marks": 3
+            },
+            {
+              "criterion": "Lists practical verification steps (import status, windows, model comparison, consent diagnostics, gclid coverage)",
+              "marks": 3
+            },
+            {
+              "criterion": "Advises against immediate target changes and suggests better benchmarking (blended/incremental)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "After enabling a new checkout, revenue in your GA4 dashboard suddenly inflates by ~20% while server-side orders and revenue remain stable. In GTM, both `begin_checkout` and `purchase` have `value` parameters. The BI team confirms the dashboard sums conversion value across all conversions. You also enabled a new goal to track financing applications (`apply_financing`) and set it as a conversion with a `value` equal to the estimated financed amount.",
+          "task": "Diagnose the revenue inflation and specify the changes needed in both GA4 configuration and the dashboard to restore correct ROAS, without losing visibility on `begin_checkout` and `apply_financing`.",
+          "expected_answer": "The dashboard is double-counting value by summing across conversions, including `begin_checkout` and `apply_financing` values. In GA4, only `purchase` should contribute to revenue for ROAS. Actions: (1) Stop sending `value` on `begin_checkout` (or exclude it from revenue aggregation) and keep it as a conversion KPI; (2) Keep `apply_financing` as a conversion but exclude it from revenue calculations or set its `value` to 0 for ROI views and report it separately as pipeline value; (3) Update the dashboard measure to sum revenue from `purchase` only, or use GA4’s `purchase revenue` metric; (4) Reconcile the last two weeks’ numbers to confirm correction and annotate the change.",
+          "rubric": [
+            {
+              "criterion": "Identifies the cross-conversion value summation as the cause (begin_checkout and/or apply_financing carrying value)",
+              "marks": 2
+            },
+            {
+              "criterion": "Recommends GA4-side change to event payloads or conversion settings to prevent value on non-revenue conversions",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies dashboard-side metric change to restrict revenue/ROAS to purchase value",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses how to retain visibility on non-revenue conversions without polluting ROI (separate tiles or zero-valued KPIs)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must design a two-week headline test for the top Paid Social landing page to improve ROAS. Budget is limited; you can drive ~20,000 sessions over two weeks. Baseline conversion rate is 3.8%. You will measure with GA4 and decide whether to roll out the variant globally or not. Stakeholders want high confidence and a clear stop rule.",
+          "task": "Propose a statistically sound test plan: hypothesis, success metric(s), minimum detectable effect, sample size split, guardrails, and a stopping/decision rule. Include how you will instrument and validate the GA4 measurement to avoid SRM or attribution artifacts.",
+          "expected_answer": "Hypothesis: Variant B’s headline increases purchase conversion rate on Paid Social traffic. Metrics: primary = GA4 purchase conversion rate for the campaign; guardrails = bounce rate/engagement rate, AOV, total purchases. MDE: ~15–20% relative lift (3.8% to ~4.4–4.6%) to be detectable with ~10k sessions per arm over two weeks. Split 50/50 at the ad level, enforce even delivery. Stopping rule: fixed horizon at two weeks unless SRM >2% absolute or early validity fails; use two-proportion z-test or Bayesian credible interval with 95% confidence to declare a winner; otherwise roll to another week or declare inconclusive. Instrumentation: ensure consistent UTMs, remove conflicting on-page redirects, verify gclid/fbclid doesn’t overwrite UTMs; create a GA4 Exploration with experiment_id dimension to track sessions and conversions per arm; monitor for SRM daily; annotate reports. Decision: rollout only if lift >= MDE with guardrails stable; else keep control.",
+          "rubric": [
+            {
+              "criterion": "States a clear hypothesis and primary success metric aligned to purchase ROAS",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies MDE, allocation, and sample size reasoning appropriate for the traffic constraint",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines guardrails and a concrete stopping/decision rule (confidence/credibility threshold)",
+              "marks": 2
+            },
+            {
+              "criterion": "Details GA4 instrumentation/validation steps to prevent SRM/attribution issues",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "A/B Testing",
+            "Google Analytics",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a GA4 Performance Dashboard for Optimization Decisions",
+          "brief": "Create a performance dashboard that a marketer can use to reallocate budget weekly. It must combine GA4 acquisition and conversion data with paid media costs to show ROAS and CAC by Default Channel Grouping and Campaign, and make attribution/model choices explicit.",
+          "deliverable": "Performance dashboard (shareable link + exported PDF)",
+          "acceptance_criteria": [
+            "Data source is GA4 (Data API/connector or BigQuery export).",
+            "Shows, for a selectable date range, by Default Channel Grouping and by Campaign: sessions, purchases, purchase revenue, media cost, ROAS, CAC.",
+            "Includes a clear note on the attribution model and lookback window used; allows side-by-side comparison of at least two attribution models (e.g., Data-driven vs Cross-channel last click) or a documented static choice.",
+            "Cost data integrated for at least one non-Google channel via import/mapping; mismatches (unjoined rows) are visible via a validation view.",
+            "Filters: date range, channel grouping, campaign; currency formatting consistent across tiles.",
+            "Contains a time-lag view or tile (e.g., share of conversions with 8–14 day lag) and an annotation panel for significant tracking/setting changes.",
+            "Includes a data freshness indicator and a definition tooltip for each KPI.",
+            "Exports cleanly to PDF with legible labels and a one-page executive summary."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct GA4 metrics and joins (sessions, purchases, purchase revenue) mapped to channel/campaign",
+              "marks": 5
+            },
+            {
+              "criterion": "Cost integration correctness and visibility of unjoined/mismatched rows",
+              "marks": 4
+            },
+            {
+              "criterion": "ROAS/CAC calculations and currency handling are accurate",
+              "marks": 4
+            },
+            {
+              "criterion": "Attribution/ lookback disclosure and model comparison or documented choice",
+              "marks": 3
+            },
+            {
+              "criterion": "Usability: filters, annotations, definitions, freshness, and clean PDF export",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Google Analytics",
+            "web analytics",
+            "track key performance indicators",
+            "plan marketing campaigns"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce an Integrated Campaign Optimization Plan",
+          "brief": "Create a two-week optimization plan that reallocates a fixed budget across Paid Search, Paid Social, and Email, with a testing component and compliance guardrails. Use insights from GA4 measurement to set objectives, forecast ROI, and define reporting.",
+          "deliverable": "Integrated campaign plan (document or slide deck)",
+          "acceptance_criteria": [
+            "States measurable objectives (e.g., target ROAS/CAC) mapped to GA4 KPIs.",
+            "Budget allocation table by channel and campaign with rationale tied to GA4 evidence (attribution/lag), including a contingency reserve (e.g., 10%).",
+            "Forecast table showing expected spend, conversions, revenue, ROAS, and CAC by channel for each week; assumptions clearly listed.",
+            "A/B test plan for one high-impact element (e.g., landing headline) with hypothesis, metrics, MDE, allocation, and stop rule.",
+            "Compliance section covering PII prevention, consent mode impacts, and any policy or platform limits; actions assigned.",
+            "Reporting cadence and dashboard links, with annotations for model/lookback settings; defines guardrails (total purchases/revenue) and decision rules for budget shifts.",
+            "Risk/mitigation list (e.g., SRM, cost-join failure, seasonality) with monitoring checks."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clear, measurable objectives aligned to GA4 KPIs and business outcomes",
+              "marks": 3
+            },
+            {
+              "criterion": "Budget allocation justified by GA4 evidence (attribution, lag, performance)",
+              "marks": 5
+            },
+            {
+              "criterion": "ROI forecast quality (calculations, assumptions, and week-by-week projections)",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust A/B testing plan with practical decision rules",
+              "marks": 3
+            },
+            {
+              "criterion": "Compliance and risk mitigation plan addressing PII and consent implications",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "plan marketing campaigns",
+            "define measurable marketing objectives",
+            "track key performance indicators",
+            "A/B Testing",
+            "Data Privacy and Compliance",
+            "Google Analytics"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

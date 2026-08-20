@@ -1,0 +1,1825 @@
+{
+  "course_code": "NT-C-031",
+  "course_name": "CCNA",
+  "sections": [
+    {
+      "section_code": "NT-C-031-S01",
+      "skills_assessed": [
+        "TCP/IP",
+        "Subnetting",
+        "Switching"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You capture traffic while Host A pings 10.10.11.20. The capture and local IP config on Host A show:\n\n```text\nHost A ipconfig\nIPv4 Address . . . . . : 10.10.10.10\nSubnet Mask  . . . . . : 255.255.0.0\nDefault Gateway . . .  : 10.10.10.1\n```\n\n```text\nWireshark (on the same L2 segment):\n1  ARP  Who has 10.10.11.20? Tell 10.10.10.10\n2  ARP  Who has 10.10.11.20? Tell 10.10.10.10\n```\n\nOn a flat Ethernet (no VLANs), why is Host A ARPing for 10.10.11.20 instead of sending to the gateway?",
+          "options": [
+            "Host B must also be using a /16 mask, forcing A to ARP for it.",
+            "The access switch has no default gateway configured, so frames are broadcast as ARP.",
+            "The router is blocking ICMP, forcing ARP retries on A.",
+            "Host A’s /16 mask makes it believe 10.10.11.20 is on-link, so it ARPs that IP directly."
+          ],
+          "correct_option": "D",
+          "explanation": "With a /16 mask, 10.10.10.10 and 10.10.11.20 fall in 10.10.0.0/16, so Host A treats 10.10.11.20 as local and issues an ARP for it. Correct behavior with a /24 mask would be to ARP for the default gateway instead.",
+          "distractor_rationale": "B is tempting but a switch’s default gateway only affects the switch’s own management traffic, not host ARP behavior. C sounds plausible but Host A’s ARP decision is based on its own mask, not Host B. D confuses L3 ICMP filtering with L2 neighbor resolution; ARP happens before any router policy comes into play.",
+          "skills_covered": [
+            "TCP/IP",
+            "Switching"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A switch’s MAC address table is initially empty:\n\n```text\nSwitch# show mac address-table dynamic\n-- empty --\n```\n\nA frame arrives on Fa0/2 with src MAC 00:11:11:11:11:11 and dst MAC 00:22:22:22:22:22 (unknown to the switch). What does the switch do immediately on receipt of this first frame?",
+          "options": [
+            "Buffer the frame until 00:22:22:22:22:22 is learned, then forward unicast.",
+            "Flood the frame, then learn both source and destination MACs from the flooded copies.",
+            "Drop the frame because the destination MAC is unknown and aging time is 300 seconds.",
+            "Learn 00:11:11:11:11:11 on Fa0/2 and flood the frame out all other ports in the VLAN."
+          ],
+          "correct_option": "D",
+          "explanation": "Switches always learn the source MAC on ingress and, if the destination is unknown, flood the frame out all other ports in the VLAN (except the ingress port).",
+          "distractor_rationale": "B is wrong because a switch never learns a destination MAC from a frame it transmits; learning is from ingress frames. C describes behavior switches do not implement. D confuses MAC aging with forwarding; unknown unicast is flooded, not dropped.",
+          "skills_covered": [
+            "Switching"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A copper 1000BASE-T link will not come up. You check each end:\n\n```text\nPC NIC (ethtool)\nSpeed: 1000Mb/s\nDuplex: Full\nAuto-negotiation: Off\nLink detected: No\n```\n\n```text\nAccess Switch Gi0/3 (show interface status)\nPort      Name   Status   Vlan  Duplex Speed Type\nGi0/3            notconnect 1    a-full a-1000 10/100/1000BaseTX\n```\n\nSame Cat5e patch cord works elsewhere. Which change is most likely to bring this link up without replacing hardware or cable?",
+          "options": [
+            "Replace the straight‑through cable with a crossover to fix MDI/MDI‑X.",
+            "Enable auto‑negotiation on the PC NIC so both ends can negotiate 1000BASE‑T.",
+            "Force the switch to 1000/Full (not auto) to match the PC’s setting.",
+            "Upgrade the cable to Cat6 to support 1000BASE‑T distances."
+          ],
+          "correct_option": "B",
+          "explanation": "1000BASE‑T requires auto‑negotiation. Disabling it on one end commonly prevents link establishment. Enabling it on the PC allows both ends to negotiate speed/duplex and the link will come up at 1G.",
+          "distractor_rationale": "B is tempting but 1000BASE‑T still requires auto‑negotiation; forcing both sides is not standards‑conformant and often fails. C is outdated; modern ports perform auto MDI‑X. D is unnecessary; Cat5e supports 1G for typical patch lengths.",
+          "skills_covered": [
+            "Switching"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A host at 2001:db8:1:2::5678/64 needs to discover the MAC of 2001:db8:1:2::1234 on the same link. Which IPv6 solicited‑node multicast address does the Neighbor Solicitation target?",
+          "options": [
+            "ff02::1",
+            "ff02::1:ff56:78",
+            "ff02::1:ff00:1234",
+            "ff02::2:ff56:78"
+          ],
+          "correct_option": "B",
+          "explanation": "The solicited‑node group is ff02::1:ffXX:XXXX where XX:XXXX are the last 24 bits of the target address. For ::1234, the last 24 bits are 0x001234; for ::5678 they are 0x005678. The NS for ::1234 would be ff02::1:ff12:34; the question targets ::1234’s peer computing the group for its own query. Here the correct mapping for ::5678 is ff02::1:ff56:78 when compressed.",
+          "distractor_rationale": "B is the all‑nodes multicast, not the per‑address solicited‑node group. C misplaces the last 24 bits and shows an incorrect pattern. D uses ff02::2, which is the all‑routers multicast scope, not for NS targeting.",
+          "skills_covered": [
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must carve 10.20.30.0/24 for these needs: Dept A (60 hosts), Dept B (25), Dept C (12), and one point‑to‑point link (2). Which allocation avoids overlaps and uses correct boundaries?\n",
+          "options": [
+            "Dept A: 10.20.30.0/26; Dept B: 10.20.30.64/27; Dept C: 10.20.30.96/28; P2P: 10.20.30.112/30",
+            "Dept A: 10.20.30.0/26; Dept B: 10.20.30.64/27; Dept C: 10.20.30.80/28; P2P: 10.20.30.96/30",
+            "Dept A: 10.20.30.0/25; Dept B: 10.20.30.128/27; Dept C: 10.20.30.160/28; P2P: 10.20.30.176/30",
+            "Dept A: 10.20.30.0/26; Dept B: 10.20.30.60/27; Dept C: 10.20.30.96/28; P2P: 10.20.30.112/30"
+          ],
+          "correct_option": "A",
+          "explanation": "Allocate largest to smallest on correct boundaries: /26 at .0 (0–63), /27 at .64 (64–95), /28 at .96 (96–111), /30 at .112 (112–115). No overlaps and each fits its host count.",
+          "distractor_rationale": "B uses 10.20.30.60/27, which is not a /27 boundary (must be multiples of 32). C wastes half the /24 with a /25 for 60 hosts and constrains remaining space; its later subnets also collide. D overlaps: 10.20.30.80/28 (80–95) is inside 10.20.30.64/27 (64–95).",
+          "skills_covered": [
+            "Subnetting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You send a small ICMP Echo (default size) over Ethernet and see this in Wireshark:\n\n```text\nFrame 12: 60 bytes on wire (480 bits)\nInternet Protocol Version 4, Total Length: 28\nInternet Control Message Protocol, Echo (ping)\n```\n\nWhat explains the 60‑byte Ethernet frame when the IP packet is only 28 bytes?",
+          "options": [
+            "IP pads its own packet to 64 bytes before handing it to Ethernet; switches remove the padding on egress.",
+            "Ethernet pads payloads to meet the 64‑byte minimum frame size; switches forward the padded frame without modification.",
+            "The switch adds padding when it sees small IP packets to protect against collisions on full‑duplex links.",
+            "NICs drop frames smaller than 64 bytes before transmit, so the stack retries until 60 bytes are sent."
+          ],
+          "correct_option": "B",
+          "explanation": "Ethernet has a 64‑byte minimum frame size (including headers/FCS). If upper‑layer data is too small, the MAC layer pads it. The IP Total Length remains 28; the extra bytes are L2 padding. Switches forward based on MAC and do not alter padding.",
+          "distractor_rationale": "B reverses the layering; IP doesn’t pad for Ethernet’s minimum. C is nonsense; padding isn’t added by switches. D invents a drop/retry behavior that doesn’t occur.",
+          "skills_covered": [
+            "TCP/IP",
+            "Switching"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Two hosts connect to the same access switch. In which case will they ARP each other directly (no router)?",
+          "options": [
+            "Host A: 10.0.8.7/21, Host B: 10.0.15.200/21",
+            "Host A: 192.168.5.14/28, Host B: 192.168.5.29/28",
+            "Host A: 172.16.1.1/23, Host B: 172.16.2.1/23",
+            "Host A: 192.168.1.130/26, Host B: 192.168.1.193/26"
+          ],
+          "correct_option": "A",
+          "explanation": "10.0.8.0/21 spans 10.0.8.0–10.0.15.255, so both addresses are on‑link and the hosts ARP each other. The other pairs fall in different subnets given their masks.",
+          "distractor_rationale": "A spans 192.168.5.0–15 and 16–31; the addresses are in different /28s. C uses adjacent /23s (0–1 vs 2–3 in the third octet). D uses different /26 blocks (128–191 vs 192–255).",
+          "skills_covered": [
+            "TCP/IP",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A switch receives this ARP Request on Fa0/3:\n\n```text\nEthernet II\n  Destination: ff:ff:ff:ff:ff:ff (broadcast)\n  Source:      00:aa:aa:aa:aa:aa\nARP Request: Who has 192.168.10.20? Tell 192.168.10.5\n```\n\nHow does the switch treat learning and forwarding for this frame?",
+          "options": [
+            "Learns the destination MAC from the broadcast and unicasts to the correct port.",
+            "Buffers the frame until the target replies, then forwards unicast and learns both MACs.",
+            "Learns 00:aa:aa:aa:aa:aa on Fa0/3 and floods the frame out all other ports in the VLAN.",
+            "Drops the frame because the destination is broadcast, which cannot be forwarded."
+          ],
+          "correct_option": "C",
+          "explanation": "Switches learn the source MAC on ingress and, because the destination is broadcast, flood the frame to all ports in the VLAN except the ingress. They do not learn from frames they transmit.",
+          "distractor_rationale": "B is impossible; broadcasts have no specific destination MAC to learn. C misunderstands broadcast handling. D invents buffering behavior that switches do not perform for ARP.",
+          "skills_covered": [
+            "Switching",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two IPv6 hosts are on different Ethernet segments separated by a router. From Host A you run:\n\n```bash\nping -6 fe80::2\n```\n\nand it fails. Both links are up. Why?",
+          "options": [
+            "The access switch is blocking ICMPv6 by default.",
+            "Adding an interface zone index (e.g., %eth0) to the command will make it succeed across the router.",
+            "Link‑local addresses are not routable; fe80::/10 is valid only on the local link.",
+            "A default route is missing; adding one makes fe80::2 reachable across subnets."
+          ],
+          "correct_option": "C",
+          "explanation": "fe80::/10 (link‑local) has link scope and is never forwarded by routers. You can reach a router’s link‑local address only from the same link (with a zone index on the local host if needed), not from another segment.",
+          "distractor_rationale": "B is a red herring; even if ICMPv6 were filtered, link‑local scope still prevents routing. C/D confuse next‑hop selection and scope; a default route or zone index does not make a remote link‑local address routable.",
+          "skills_covered": [
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A DHCP scope for 172.16.19.64/27 hands out this default gateway:\n\n```text\ndefault-router 172.16.19.95\n```\n\nClients accept the lease. What symptom will they show when trying to reach off‑subnet destinations?",
+          "options": [
+            "Local on‑subnet traffic works, but off‑subnet traffic fails after ARP timeouts for 172.16.19.95.",
+            "The access switch will block all client traffic due to broadcast storm control.",
+            "Clients will report duplicate IP detection on the gateway and fall back to APIPA.",
+            "Everything works; directed broadcast will forward the traffic to the router anyway."
+          ],
+          "correct_option": "A",
+          "explanation": "In 172.16.19.64/27, .95 is the directed broadcast. Clients will ARP for 172.16.19.95 when sending off‑subnet traffic; no host responds, so L3 traffic fails while local L2/L3 on‑subnet traffic still works.",
+          "distractor_rationale": "B misunderstands directed broadcast behavior; hosts do not ‘reach a router’ via directed broadcast. C confuses ARP failure with duplicate detection. D is unrelated; storm control settings are not implicated by a single ARP.",
+          "skills_covered": [
+            "TCP/IP",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your ISP gives you 10.44.12.0/23 for a small campus with four isolated LANs and one point‑to‑point link. Host counts: Engineering 180, HR 60, Meeting Rooms 30, Lab 12. One switch‑to‑router point‑to‑point interconnect is required. No VLANs yet; treat each LAN as its own broadcast domain now, routed later.",
+          "task": "Produce a subnet plan that fits in 10.44.12.0/23, wastes as few addresses as practical, and leaves contiguous free space for future growth. State each subnet in CIDR and dotted‑decimal mask, its usable host range, and a proposed default gateway IP to reserve. Justify your sizing and boundary choices.",
+          "expected_answer": "An acceptable answer allocates largest to smallest and aligns on correct boundaries. Example:\n- Engineering: 10.44.12.0/24 (mask 255.255.255.0), usable .1–.254, reserve .1 for GW. Fits 180 hosts with room and keeps remainder contiguous.\n- HR: 10.44.13.0/26 (255.255.255.192), usable .1–.62 (in this block), reserve .1 for GW. 64 addresses fit 60 hosts.\n- Meeting Rooms: 10.44.13.64/27 (255.255.255.224), usable .65–.94, reserve .65 for GW.\n- Lab: 10.44.13.96/28 (255.255.255.240), usable .97–.110, reserve .97 for GW.\n- Point‑to‑point: 10.44.13.112/30 (255.255.255.252), usable .113–.114.\nThis leaves 10.44.13.116–10.44.13.255 as contiguous free space for later. The justification should mention VLSM largest‑first to avoid fragmentation, correct network/broadcast identification per block, and reserving consistent low (.1) or high (.254) default gateway addresses for operational clarity.",
+          "rubric": [
+            {
+              "criterion": "Correctly sizes each LAN (>=180 => /24, 60 => /26, 30 => /27, 12 => /28, P2P => /30)",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses correct boundaries and lists accurate network, broadcast, and usable ranges",
+              "marks": 2
+            },
+            {
+              "criterion": "Leaves a contiguous free range inside 10.44.12.0/23 and explains largest‑first reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Clearly reserves a gateway IP per subnet and states a consistent convention",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Two PCs on the same unmanaged switch cannot ping each other reliably. Captures show PC‑A sending ARP requests for 192.168.41.20 and receiving an ARP reply from PC‑B, but the ping still fails. IP configs are:\n\n```text\nPC-A\nIPv4: 192.168.40.10\nMask: 255.255.254.0  (/23)\nGW:   192.168.40.1\n\nPC-B\nIPv4: 192.168.41.20\nMask: 255.255.255.0  (/24)\nGW:   192.168.41.1\n```\n",
+          "task": "Identify the precise reason for failure at the IP/Ethernet boundary and propose one concrete correction that will make ping succeed, without adding a router. Explain the ARP and forwarding behavior before and after your change.",
+          "expected_answer": "Root cause: mask mismatch. PC‑A’s /23 (192.168.40.0–41.255) treats PC‑B as on‑link and ARPs for 192.168.41.20, which PC‑B answers. PC‑A then sends the ICMP Echo directly to B’s MAC. PC‑B’s /24 (192.168.41.0–41.255) does not consider 192.168.40.10 on‑link; it forwards the Echo Reply to its default gateway instead of ARPing for A, creating an asymmetric path with no router to deliver it back to A. Correction: make both masks /23 (255.255.254.0) or both /24 and adjust IPs accordingly, so both hosts agree on on‑link status. After fixing to /23 on both, each host ARPs the other and exchanges ICMP directly; no router is needed.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the mask mismatch and resultant asymmetric forwarding decision",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains ARP behavior on each host pre‑fix (A ARPs B; B forwards to GW)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a precise, feasible correction (e.g., set both to /23) that does not introduce routing",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes post‑fix behavior (mutual ARP and direct ICMP exchange)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "TCP/IP",
+            "Subnetting",
+            "Switching"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You’re validating L2 behavior for unknown unicast on a lab switch. Aging time is default (300s). At t=0 the MAC table is empty. Two hosts are in the same VLAN: PC‑A on Fa0/2 (MAC A) and PC‑B on Fa0/3 (MAC B). No traffic has flowed for 10 minutes.",
+          "task": "Predict the exact L2 behavior for the first two frames when PC‑A sends a unicast frame to MAC B. Specify the flooding/unicast decisions and which MAC table entries will exist after each frame. Propose a minimally invasive method to verify this in the lab without packet capture on PC‑B.",
+          "expected_answer": "At t>600s both A and B entries have aged out. First frame from A to B: switch learns MAC A on Fa0/2 and floods the frame out all other ports in the VLAN (including Fa0/3) because MAC B is unknown. When B replies, the switch learns MAC B on Fa0/3 and forwards the reply unicast to Fa0/2 (MAC A known). After frame 1: table has A@Fa0/2. After frame 2: table has A@Fa0/2 and B@Fa0/3. To verify without host capture on B, use the switch’s counters/SPAN minimally: clear counters, send a single ping from A, then check interface counters on an uninvolved access port in the VLAN for a one‑frame increment (evidence of flood), and read show mac address‑table before/after to confirm learning sequence.",
+          "rubric": [
+            {
+              "criterion": "Correct prediction for frame 1 (learn A, flood)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct prediction for frame 2 (learn B, unicast to A)",
+              "marks": 2
+            },
+            {
+              "criterion": "States MAC table contents after each frame accurately",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes a feasible verification method using switch counters/commands (no dependency on capturing at B)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Switching"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your provider delegates 2001:db8:100:3000::/52. You need IPv6 addressing for three separate LANs now (User, Voice, IoT) and expect up to 10 total later. Each LAN should have standard /64s and clear documentation for the first‑hop address plan.",
+          "task": "Propose a /64 allocation for User, Voice, and IoT that preserves room for seven more /64s within the /52. State the exact /64 prefixes, the default gateway addresses you will reserve, and whether you will use SLAAC or static addressing for hosts (justify). Explain why you must not reuse a /64 on multiple LANs even if host counts are small.",
+          "expected_answer": "Sample plan within /52: carve a /56 (e.g., 2001:db8:100:3000::/56) for Campus‑A, leaving 15 other /56s in the /52 for future sites. From that /56, pick three /64s: User 2001:db8:100:3000::/64, Voice 2001:db8:100:3001::/64, IoT 2001:db8:100:3002::/64, reserving ::1 as the default gateway in each and keeping ::2–::ffff:ffff:ffff:ffff for hosts. Use SLAAC for User and IoT (low touch, privacy), consider static/DHCPv6 for Voice endpoints depending on vendor. Do not reuse a /64 across links: Neighbor Discovery assumes a single L2 link per /64; reusing it breaks on‑link assumptions, DAD, and multicast ND, causing address resolution failures and traffic misdelivery.",
+          "rubric": [
+            {
+              "criterion": "Correctly fits three /64s within the /52 while preserving room (clear, non‑overlapping prefixes)",
+              "marks": 3
+            },
+            {
+              "criterion": "States gateway address reservations for each /64 and keeps a consistent convention",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies SLAAC vs static/DHCPv6 choice tied to host roles",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why /64s cannot be reused across multiple links in terms of ND/on‑link semantics",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "TCP/IP",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Topology lab: Observe unknown unicast flooding and MAC learning",
+          "brief": "Build a small Ethernet topology with two access switches and three PCs in a single IPv4 subnet. Demonstrate initial unknown‑unicast flooding and subsequent unicast forwarding after MAC learning, and show ARP behavior end‑to‑end.",
+          "deliverable": "A Packet Tracer or GNS3 project file of the topology, plus a text/markdown log file containing: initial and post‑ping switch MAC tables, interface counter snapshots evidencing the first flood, ARP tables from PCs before and after, and a short note (<=150 words) explaining what changed between the first and second ping.",
+          "acceptance_criteria": [
+            "Topology contains two access switches connected by a single trunk or access uplink (no VLANs) and three PCs cabled to access ports in the same broadcast domain.",
+            "PCs are configured in the same IPv4 subnet with unique IP/MACs (e.g., 192.168.10.0/24).",
+            "Before any traffic, the submitted 'show mac address-table' outputs contain no dynamic entries for the PCs.",
+            "After the first ping PC1->PC2, the submission shows: (a) PC1 ARP table entry for PC2, (b) switch MAC table learned source MAC on PC1’s port, and (c) an interface counter snapshot on an uninvolved access port in the VLAN indicating a single RX frame (evidence of flooding).",
+            "After a second ping PC1->PC2, the MAC table includes both PCs and counters on uninvolved ports do not increment (unicast forwarding).",
+            "All command outputs/screenshots correspond to the submitted topology file and are timestamped or clearly sequenced."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct IPv4 configuration and single broadcast domain across the two switches",
+              "marks": 4
+            },
+            {
+              "criterion": "Evidence of initial unknown‑unicast flood (counter increment on uninvolved port and empty pre‑ping CAM)",
+              "marks": 6
+            },
+            {
+              "criterion": "Evidence of subsequent unicast forwarding (CAM entries for both PCs; uninvolved port counter stable)",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear ARP before/after and concise explanation of the observed change",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Switching",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Subnet workbook: IPv4/IPv6 address plan with VLSM",
+          "brief": "Create a reusable workbook that calculates a collision‑free IPv4 VLSM plan and a matching IPv6 allocation for a given campus. Use formulas where possible so changing inputs recalculates outputs.",
+          "deliverable": "A spreadsheet file (.xlsx or .ods) or a CSV+markdown pair including: Inputs sheet (requirements), IPv4 plan sheet, IPv6 plan sheet, and a validation sheet showing no overlaps. Include a one‑page readme describing how to change inputs.",
+          "acceptance_criteria": [
+            "Inputs: starting IPv4 block 172.20.40.0/22 and host counts for subnets named Admin(180), Sales(70), Cameras(30), Printers(12), Guest(200), IoT(50), Labs(28), Links(4 point‑to‑point links). IPv6 input: 2001:db8:500:9000::/56.",
+            "IPv4 sheet lists for each subnet: chosen prefix length, dotted mask, network address, first/last usable, broadcast, and a reserved gateway IP. Largest‑to‑smallest allocation with no overlaps; Links sized as /30 or /31 with justification noted.",
+            "IPv6 sheet allocates a unique /64 per subnet within the /56 (no overlaps) and reserves a gateway (::1 or ::fe) per /64.",
+            "Validation sheet contains at least one automatic check that flags overlapping IPv4 ranges and duplicate IPv6 prefixes (e.g., formula‑based).",
+            "All calculations are correct for the given inputs, and formatting is clear (column headers present; units/masks unambiguous)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct IPv4 VLSM calculations (prefix, ranges, broadcast, gateway reservations) for all named subnets",
+              "marks": 8
+            },
+            {
+              "criterion": "No overlaps and sensible largest‑first allocation with appropriate sizing for point‑to‑point links (/30 or /31 with note)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct IPv6 /64 allocations within the /56 with reserved gateway convention",
+              "marks": 4
+            },
+            {
+              "criterion": "Presence and functioning of validation checks and a brief readme explaining how to adjust inputs",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Subnetting",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-031-S02",
+      "skills_assessed": [
+        "TCP/IP",
+        "Switching",
+        "VLAN",
+        "Routing",
+        "Cisco"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You’re troubleshooting why hosts in VLAN 30 on SwitchA cannot reach their default gateway SVI on SwitchB across an 802.1Q trunk. Current outputs:\n\n```text\nSwitchA#show mac address-table dynamic vlan 30\n(no entries)\n\nSwitchA#show interfaces trunk\nPort      Mode   Encaps  Status   Native vlan\nGi0/1     on     802.1q  trunking 1\n\nPort      Vlans allowed on trunk\nGi0/1     10,20,99\n```\n\n```text\nSwitchB#show vlan brief | include 30\n30   USERS30                          active\n\nSwitchB#show interfaces trunk\nPort      Vlans allowed on trunk\nGi0/1     10,20,30,99\n```\nA host on SwitchA VLAN 30 ARPs for the SVI 10.30.30.1 residing on SwitchB. What happens to that first ARP request frame?",
+          "options": [
+            "It traverses the trunk untagged on the native VLAN and is delivered to SwitchB’s VLAN 30 SVI.",
+            "It is dropped at SwitchA’s Gi0/1 because VLAN 30 is not permitted on the trunk, so it never reaches SwitchB.",
+            "It is sent, reaches SwitchB on VLAN 1, and SwitchB forwards it to VLAN 30 via MAC learning.",
+            "It is flooded across VLANs 10 and 20 due to unknown-unicast flooding, eventually reaching the SVI."
+          ],
+          "correct_option": "B",
+          "explanation": "The ARP request is tagged for VLAN 30. SwitchA’s trunk does not allow VLAN 30, so frames for that VLAN are not forwarded over Gi0/1 and are dropped at the egress decision for that port.",
+          "distractor_rationale": "B: Native VLAN only affects untagged traffic; this ARP is VLAN 30 tagged, not moved to native. C: Unknown-unicast flooding stays within the originating VLAN; it doesn’t cross to other VLANs. D: VLAN 1 is not a fallback for other VLANs; VLANs are isolated and cannot be bridged like that.",
+          "skills_covered": [
+            "VLAN",
+            "Switching",
+            "TCP/IP",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "RSTP is running. Before a failure, you see on SwitchA:\n\n```text\nSwitchA#show spanning-tree vlan 20\n\nVLAN0020\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    24596\n             Address     001a.2b3c.4000\n             Cost        19\n             Port        1 (Gi0/1)\n  Bridge ID  Priority    28676 (priority 28672 sys-id-ext 20)\n             Address     00aa.bbcc.dd00\n  Interface        Role Sts Cost Prio.Nbr Type\n  Gi0/1            Root FWD 19  128.1    P2p\n  Gi0/2            Desg FWD 19  128.2    P2p\n  Gi0/3            Altn BLK 19  128.3    P2p\n```\nGi0/1 then fails. Which interface becomes the root port and why?",
+          "options": [
+            "Gi0/2 becomes root port because it has the lowest interface number among remaining ports.",
+            "Gi0/2 and Gi0/3 both transition to forwarding, briefly load-balancing until RSTP re-converges.",
+            "No new root port is selected; RSTP loop guard keeps all ports blocking until the root returns.",
+            "Gi0/3 becomes root port because it was receiving superior BPDUs and is the alternate path to the root."
+          ],
+          "correct_option": "D",
+          "explanation": "The alternate port is the best backup path toward the root (it receives superior BPDUs). When the current root port fails, RSTP promotes the alternate port (Gi0/3) to root port and transitions it to forwarding rapidly.",
+          "distractor_rationale": "B: Interface numbering is irrelevant to root port choice; path selection is based on the best received BPDUs. C: Loop guard protects against missing BPDUs on designated ports; it does not freeze topology after a legitimate failure. D: RSTP never forwards simultaneously on two candidate root ports; it selects a single root port.",
+          "skills_covered": [
+            "Switching",
+            "VLAN",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Two multilayer switches on VLAN 100 should form an OSPF adjacency. On SW1:\n\n```text\nSW1(config)#router ospf 1\nSW1(config-router)#network 10.10.100.0 0.0.0.255 area 0\nSW1(config-router)#passive-interface Vlan100\nSW1#show ip ospf neighbor\n<no entries>\n```\nSW2 has `Vlan100 10.10.100.2/24` in area 0 and is not passive. What will SW2 show for the neighbor state with SW1, and why?",
+          "options": [
+            "Neighbor state remains Down because SW1 never sends hellos on Vlan100 while passive.",
+            "Neighbor reaches 2-Way only; passive-interface permits hello but blocks DBDs.",
+            "Neighbor forms FULL adjacency because passive-interface affects only LSAs, not hellos.",
+            "Neighbor shows INIT because SW2 receives hellos from SW1 but its own are blocked by passive-interface."
+          ],
+          "correct_option": "A",
+          "explanation": "A passive OSPF interface does not send hellos. SW2 will not receive hellos from SW1 and will keep the neighbor state Down. No adjacency can form.",
+          "distractor_rationale": "B: Backwards; the passive side sends no hellos. C: Passive doesn’t allow hellos either; it advertises the network without forming adjacencies. D: Passive prevents adjacency entirely, not just LSA exchange.",
+          "skills_covered": [
+            "Routing",
+            "TCP/IP",
+            "Cisco"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A router has the following:\n\n```text\nR1#show run | inc ip route 172.16.20.0\nip route 172.16.20.0 255.255.255.0 192.0.2.254\n\nR1#show ip int br | inc Gig0/0\nGigabitEthernet0/0  192.0.2.1   YES manual up     up\n\nR1#show ip arp 192.0.2.254\nProtocol  Address       Age (min)  Hardware Addr   Type   Interface\nInternet  192.0.2.254   -          Incomplete      ARPA   Gig0/0\n```\nA host sends a packet to 172.16.20.10. What happens on R1 to that first packet?",
+          "options": [
+            "It is forwarded immediately via Gig0/0 because the static route specifies a next hop.",
+            "It is encapsulated with a broadcast MAC and flooded out all up interfaces to discover the next hop.",
+            "It is dropped immediately because the ARP cache lacks the destination’s MAC (172.16.20.10).",
+            "It is queued briefly while ARP is resolved for 192.0.2.254; if ARP fails, it is dropped."
+          ],
+          "correct_option": "D",
+          "explanation": "The static route points to a next-hop IP on Gig0/0. R1 must ARP for 192.0.2.254 first; until ARP succeeds, packets are queued (within limits) and then dropped if unresolved.",
+          "distractor_rationale": "B: Forwarding can’t proceed without the L2 resolution of 192.0.2.254. C: Routers do not flood L3 packets for next-hop discovery; they ARP on the outgoing interface. D: ARP must resolve the next hop, not the ultimate destination 172.16.20.10.",
+          "skills_covered": [
+            "Routing",
+            "TCP/IP",
+            "Cisco"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Two switches have a trunk between them. OSPF neighbors are on SVI VLAN 100.\n\n```text\nSwitchA#show interfaces trunk\nPort   Mode  Encaps  Status    Native vlan\nGi0/1  on    802.1q  trunking  99\nPort   Vlans allowed on trunk\nGi0/1  10,20,99,100\n```\n```text\nSwitchB#show interfaces trunk\nPort   Mode  Encaps  Status    Native vlan\nGi0/1  on    802.1q  trunking  1\nPort   Vlans allowed on trunk\nGi0/1  10,20,99,100\n```\nWhat is the most likely outcome for the OSPF adjacency on VLAN 100?",
+          "options": [
+            "Adjacency is intermittent because VLAN 100 packets alternate between tagged and untagged due to the mismatch.",
+            "Adjacency forms normally; VLAN 100 traffic is tagged and unaffected by a native VLAN mismatch.",
+            "Adjacency fails because native VLAN mismatch drops all control-plane traffic across the trunk.",
+            "Adjacency forms only if both sides use VLAN 1 as native; otherwise OSPF hellos are discarded."
+          ],
+          "correct_option": "B",
+          "explanation": "VLAN 100 frames are tagged on both sides and allowed on the trunk, so OSPF on VLAN 100 is unaffected. A native VLAN mismatch affects untagged traffic and triggers warnings, but not correctly tagged VLAN 100 traffic.",
+          "distractor_rationale": "B: A mismatch does not drop all control traffic; CDP will warn, but tagged VLANs still work. C: VLAN 100 frames remain tagged; they don’t oscillate between tagged/untagged. D: OSPF doesn’t require VLAN 1 as native; it just needs consistent VLAN tagging for its SVI.",
+          "skills_covered": [
+            "VLAN",
+            "Switching",
+            "Routing",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "On R1, two equal-length OSPF paths to 10.50.0.0/16 exist via Gi0/1 and Gi0/2:\n\n```text\nR1#show interfaces Gi0/1 | inc BW\n  MTU 1500 bytes, BW 100000 Kbit/sec\nR1#show interfaces Gi0/2 | inc BW\n  MTU 1500 bytes, BW 1000000 Kbit/sec\n\nR1(config-router)#router ospf 1\nR1(config-router)#auto-cost reference-bandwidth 100\n```\nWith default Cisco OSPF cost calculation, what route(s) are installed and why?",
+          "options": [
+            "Neither path is installed until reference-bandwidth is raised above 1000.",
+            "Only Gi0/1 is installed; OSPF prefers the interface with lower ifIndex when costs tie.",
+            "Both paths are installed as ECMP because both compute cost 1 with ref-bw 100.",
+            "Only Gi0/2 is installed; its higher bandwidth yields lower cost (0.1 rounds to 0)."
+          ],
+          "correct_option": "C",
+          "explanation": "Cost = reference-bandwidth/interface-bandwidth. With ref-bw 100 Mb/s, both 100 Mb/s and 1 Gb/s links compute cost 1 (min cost 1), resulting in equal-cost multipath.",
+          "distractor_rationale": "B: Cisco OSPF cost floors at 1; it doesn’t use fractional or zero cost. C: When costs tie, OSPF installs ECMP up to the platform limit; it doesn’t pick by ifIndex. D: A route is installed regardless of ref-bw; raising ref-bw is best practice but not required for reachability.",
+          "skills_covered": [
+            "Routing",
+            "Cisco",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "PC-A is on Switch1 access Fa0/10 (VLAN 10). PC-B is on Switch2 access Fa0/11 (VLAN 10). The switches are linked by a trunk Gi0/1 allowing VLAN 10. PC-A pings PC-B; PC-B has not sent any traffic before this ping. On Switch2 you capture:\n\n```text\nSwitch2#show mac address-table | include 0050.56aa.bbcc\n0050.56aa.bbcc   DYNAMIC     Gi0/1\n```\nMAC 0050.56aa.bbcc belongs to PC-A. Why is it learned on Gi0/1 rather than Fa0/11?",
+          "options": [
+            "Because unknown unicast flood forces Switch2 to install destination MACs on the trunk first.",
+            "Because VLAN 10 is the native VLAN, so all learning occurs on trunk ports until the ARP completes.",
+            "Because Switch2 only learns MACs from source addresses it receives; the first frames from PC-A arrive via the trunk before PC-B replies.",
+            "Because STP designated ports suppress MAC learning on access ports until a reply is seen."
+          ],
+          "correct_option": "C",
+          "explanation": "Switches learn MACs from the source addresses of incoming frames. Before PC-B talks, the only frames Switch2 sees are from PC-A arriving on the trunk, so it learns PC-A’s MAC on Gi0/1.",
+          "distractor_rationale": "B: Switches never learn from destination MAC; unknown-unicast flooding doesn’t create entries. C: Native VLAN status is irrelevant to learning tagged VLAN 10 frames. D: STP doesn’t suppress learning on access ports under normal operation.",
+          "skills_covered": [
+            "Switching",
+            "VLAN",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You enable classic 802.1D STP. A link flap occurs on VLAN 30. Logs show:\n\n```text\n%SPANTREE-6-TOPOLOGY_CHANGE: Topology Change, VLAN 30\n```\nWhat immediate effect does this have on CAM entries for VLAN 30?",
+          "options": [
+            "CAM entries are unaffected; only BPDU timers change.",
+            "Dynamic MAC entries for VLAN 30 are aged out quickly (flush), prompting re-learning.",
+            "Only entries on ports that go to Blocking are kept; others are removed.",
+            "All MAC entries on the switch are flushed across all VLANs to force a clean slate."
+          ],
+          "correct_option": "B",
+          "explanation": "Upon a topology change in 802.1D, switches shorten MAC aging or explicitly flush learned MACs for the affected VLAN so that forwarding updates quickly to the new topology.",
+          "distractor_rationale": "B: The flush is VLAN-scoped, not global across all VLANs. C: The criterion is VLAN and change notification, not the final STP state of a given port. D: Topology changes do affect the MAC table; ignoring CAM would prolong blackholing or loops.",
+          "skills_covered": [
+            "Switching",
+            "VLAN",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Consider the OSPF config on a multilayer switch:\n\n```text\nrouter ospf 1\n passive-interface default\n no passive-interface Vlan10\n network 10.0.10.0 0.0.0.255 area 0\n network 10.0.20.0 0.0.0.255 area 0\n```\nVlan10 and Vlan20 have neighbors in area 0. What adjacencies and advertisements occur?",
+          "options": [
+            "Adjacency forms only on Vlan10; Vlan20 is advertised as a stub network without forming a neighbor.",
+            "Adjacency forms on Vlan20 only because it is listed last and overrides passive.",
+            "Adjacency forms on both VLANs because both are matched by network statements.",
+            "No adjacencies form; passive-interface default blocks all LSAs from all VLANs."
+          ],
+          "correct_option": "A",
+          "explanation": "Passive by default with an explicit exception for Vlan10 means only Vlan10 can form adjacencies. Vlan20’s network is advertised as connected in LSAs, but no neighbor forms on that interface.",
+          "distractor_rationale": "B: The network command matches interfaces for advertising; passive still prevents hellos on Vlan20. C: Passive doesn’t block all LSAs; it advertises connected networks without forming neighbors. D: There is no ‘last wins’ override for passive; you must explicitly `no passive-interface` per interface.",
+          "skills_covered": [
+            "Routing",
+            "Cisco",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "R1 and R2 run OSPF area 0 over 192.168.12.0/24. R1 also has a static route:\n\n```text\nip route 10.10.30.0 255.255.255.0 192.168.12.2\n```\nLater, R2 originates 10.10.30.0/24 into OSPF. On R1, which route is installed to reach 10.10.30.0/24 and why?",
+          "options": [
+            "The static route via 192.168.12.2 remains installed because its administrative distance is lower than OSPF.",
+            "Both the static and OSPF routes install as ECMP because they have equal distance.",
+            "The OSPF route replaces the static because dynamically learned routes are preferred during tie-breaks.",
+            "Neither installs to avoid a routing loop until the static is removed."
+          ],
+          "correct_option": "A",
+          "explanation": "Static routes have AD 1 by default, lower than OSPF’s 110. The existing static to the same prefix remains installed, regardless of OSPF’s presence.",
+          "distractor_rationale": "B: AD, not source dynamism, decides preference; OSPF loses to a default static AD. C: Distances differ, so ECMP won’t occur. D: Routers don’t suppress both routes in this scenario; the best (by AD) is installed.",
+          "skills_covered": [
+            "Routing",
+            "Cisco",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Two L3 switches (SW1, SW2) connect via an 802.1Q trunk allowing VLAN 100. Each has an SVI in VLAN 100 and OSPF area 0 configured.\n\n```text\nSW1 Vlan100: 10.1.100.1/24  MTU 1500\nSW2 Vlan100: 10.1.100.2/24  MTU 9198 (jumbo enabled)\n```\nSymptoms:\n\n```text\nSW1#show ip ospf neighbor\nNeighbor ID     Pri   State        Dead Time   Address      Interface\n2.2.2.2         1     EXSTART/BDR  00:00:38    10.1.100.2   Vlan100\n\nSW1#debug ip ospf adj\n... MTU mismatch, ExStart retransmissions ...\n```\nSTP is stable and VLAN 100 is allowed on the trunk.",
+          "task": "Diagnose the precise cause preventing FULL adjacency and propose two viable fixes. Justify which fix you would choose in a production campus and why.",
+          "expected_answer": "Cause: OSPF neighbors on a broadcast network must match interface MTU (in the OSPF DBD header). SW1 has MTU 1500 and SW2 has MTU ~9000, so DBD exchange fails in EXSTART/EXCHANGE due to MTU mismatch.\n\nFix options: (1) Normalize MTUs on both SVIs (set both to 1500 or both to jumbo end-to-end, including trunks/port-channels). (2) Configure `ip ospf mtu-ignore` on one/both OSPF interfaces so the adjacency forms regardless of MTU.\n\nChoice: Prefer normalizing MTU end-to-end in production because it prevents hidden fragmentation/PMTUD issues for user traffic and aligns with deterministic OSPF operation. Use `ip ospf mtu-ignore` only as a stopgap or when constrained by hardware/interop, with documented risk and monitoring.",
+          "rubric": [
+            {
+              "criterion": "Identifies MTU mismatch as the root cause tied to OSPF DBD exchange (not just ‘adjacency issue’).",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes two valid remediation paths (MTU alignment and `ip ospf mtu-ignore`).",
+              "marks": 2
+            },
+            {
+              "criterion": "Clearly justifies the preferred fix in a production setting with operational reasoning (end-to-end consistency, PMTUD, risk).",
+              "marks": 2
+            },
+            {
+              "criterion": "References relevant artefacts (EXSTART state, debug/MTU values) to support the diagnosis.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Routing",
+            "TCP/IP",
+            "Cisco",
+            "VLAN"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A campus access switch uplinks by two trunks to a distribution switch pair. An engineer mistakenly applied PortFast on a switch-to-switch trunk:\n\n```text\ninterface Gig0/1\n switchport mode trunk\n spanning-tree portfast trunk\n!\ninterface Gig0/2\n switchport mode trunk\n!  (no BPDU guard on access ports elsewhere)\n```\nIntermittent micro-loops and bursts of broadcast traffic occur during link flaps. STP mode is RSTP. Logs show occasional topology changes on multiple VLANs.",
+          "task": "Assess the risks introduced by this configuration and propose a concrete, prioritized remediation plan. Your answer must specify exact control-plane protections and STP role placement to stabilize convergence without sacrificing user ports’ fast start.",
+          "expected_answer": "Risk assessment: Enabling PortFast on a true inter-switch trunk allows the trunk to transition to forwarding immediately without BPDU agreement on topology, letting transient loops form during flaps. Absence of BPDU Guard on edge ports increases risk of external loop injection. With RSTP, fast transitions are expected on edge ports only; mislabeling a trunk as edge undermines loop prevention.\n\nRemediation (in order):\n1) Remove `spanning-tree portfast trunk` from inter-switch trunks; ensure they are non-edge P2P ports.\n2) Establish deterministic root placement: set distribution as root primary/secondary per VLAN (`spanning-tree vlan X root primary/secondary` or explicit priorities) so port roles are predictable.\n3) Enable BPDU Guard on all access ports and keep PortFast only on true edge ports: `spanning-tree portfast` + `spanning-tree bpduguard enable` on access.\n4) Optionally enable Loop Guard on non-designated trunk ports toward access to protect against unidirectional failures.\n5) Validate trunk consistency (native VLAN, allowed list) and consider UDLD aggressive on fiber.\n\nThis keeps user edge ports fast (PortFast+BPDU Guard) while restoring STP handshake and protections on trunks and enforcing stable root placement for rapid, loop-free convergence.",
+          "rubric": [
+            {
+              "criterion": "Explains why PortFast on trunks is dangerous in RSTP (edge semantics, bypassed agreement) leading to loops.",
+              "marks": 2
+            },
+            {
+              "criterion": "States removal of PortFast on trunks and preservation of PortFast on access ports.",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies control-plane protections (BPDU Guard on access, optional Loop Guard/UDLD on trunks).",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses root bridge placement per VLAN for deterministic roles.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Switching",
+            "VLAN",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Hosts in VLAN 20 on Access-SW2 cannot reach their default gateway SVI 10.20.20.1, which resides on Core-SW1. OSPF is up between cores and routes are present end-to-end. Outputs:\n\n```text\nAccess-SW2#show vlan brief | include 20\n20   USERS20           active\n\nAccess-SW2#show interfaces trunk | include Gi0/1|Allowed\nPort      Vlans allowed on trunk\nGi0/1     10,99\n\nCore-SW1#show interfaces trunk | include Gi1/0/48|Allowed\nPort      Vlans allowed on trunk\nGi1/0/48  10,20,99\n```\nThe access switch uplinks to Core-SW1 via Gi0/1 ↔ Gi1/0/48.",
+          "task": "Decide whether this is a L2 or L3 fault, pinpoint the exact misconfiguration, and prescribe the minimum change set to restore reachability without touching routing protocols.",
+          "expected_answer": "This is a Layer 2 fault. VLAN 20 is not permitted on the Access-SW2 uplink trunk (Gi0/1), so frames for VLAN 20 are dropped at the trunk. The minimum change is to allow VLAN 20 on that trunk:\n\nOn Access-SW2:\n- `interface Gi0/1`\n- `switchport trunk allowed vlan add 20`\n\nValidate with `show interfaces trunk` and confirm SVI ARP resolution to 10.20.20.1 succeeds. No routing protocol changes are required since inter-VLAN routing and OSPF are already correct upstream.",
+          "rubric": [
+            {
+              "criterion": "Correctly classifies the issue as Layer 2, not routing.",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies the precise fault (VLAN 20 missing from allowed list on Access-SW2 trunk).",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes the minimal, correct configuration change to permit VLAN 20 on the trunk.",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions verification steps (show trunk, ARP/ping to SVI).",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "VLAN",
+            "Switching",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Design requirement: Inter-VLAN routing on a distribution L3 switch (DSW) with VLANs 10 and 20 must prefer OSPF-learned paths to a data center via Router R1 but fail over to a static backup if OSPF goes down. Current:\n\n```text\nDSW SVI10: 10.10.10.1/24  SVI20: 10.20.20.1/24\nDSW <-> R1 L3 link: 192.168.12.0/30\n\nDSW#show run | sec ospf\nrouter ospf 1\n network 10.10.10.0 0.0.0.255 area 0\n network 10.20.20.0 0.0.0.255 area 0\n network 192.168.12.0 0.0.0.3 area 0\n\nR1 advertises DC routes in area 0.\n```\nNo default exists on DSW. The backup path is an ISP router on 203.0.113.1 reachable via a separate uplink.",
+          "task": "Propose an exact configuration on DSW to meet the requirement. Ensure OSPF paths are preferred and the static only activates on OSPF loss. Explain why this works.",
+          "expected_answer": "On DSW, add a floating static default with AD > OSPF and accept OSPF routes under normal conditions:\n\nConfig:\n- `ip route 0.0.0.0 0.0.0.0 203.0.113.1 200`   (floating static)\n- Keep OSPF as-is to learn specific DC routes or a default from R1.\n\nWhy it works: OSPF-learned routes (AD 110) are preferred over the floating static (AD 200). If OSPF adjacency to R1 drops, the OSPF routes are withdrawn; the static default’s next hop remains reachable via the ISP uplink, so the RIB installs it, providing failover. When OSPF returns, the RIB prefers OSPF again, removing the static from use.",
+          "rubric": [
+            {
+              "criterion": "Supplies a correct floating static default with higher AD than OSPF.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains RIB selection by administrative distance and failover behavior.",
+              "marks": 2
+            },
+            {
+              "criterion": "Keeps the solution minimal and scoped to DSW (no unnecessary protocol changes).",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses reachability of the static next hop via the correct uplink (implicit or explicit).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Routing",
+            "Cisco",
+            "TCP/IP"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a stable switched access layer with VLANs, trunks, and STP root placement",
+          "brief": "Using two switches (S1 distribution, S2 access), create VLANs 10 (Users), 20 (VoIP optional placeholder), and 99 (Mgmt). Trunk S1<->S2 on Gi0/1 using 802.1Q. Make S1 the STP root for all three VLANs. Ensure at least one redundant L2 path exists (e.g., an additional link or a triangle with a third interface) that results in a clearly blocked port on S2 under STP. Enable PortFast and BPDU Guard on all user-facing access ports (but not on the trunk). Assign at least two access ports on S2 to VLAN 10 and one to VLAN 20. Document the configuration and verification outputs.",
+          "deliverable": "A single zip/tar containing: S1 and S2 running-configs as text; and verification outputs as text files: `show vlan brief`, `show interfaces trunk`, `show spanning-tree vlan 10`, `show spanning-tree vlan 20`, `show spanning-tree vlan 99`, and `show run | section interface` for access ports showing PortFast/BPDU Guard.",
+          "acceptance_criteria": [
+            "VLANs 10, 20, and 99 exist on both switches.",
+            "S1<->S2 trunk up with 802.1Q; allowed list includes 10,20,99 on both ends.",
+            "S1 is STP root for VLANs 10/20/99 (Root ID shows S1’s bridge ID).",
+            "At least one non-root port on S2 is in Blocking/Discarding for at least one VLAN, demonstrating loop-free redundancy.",
+            "All user-facing access ports show `spanning-tree portfast` and `spanning-tree bpduguard enable`; trunk ports do not have PortFast.",
+            "Access ports are in correct VLANs (two ports in VLAN 10 and one in VLAN 20 on S2)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct VLAN/trunk configuration across both switches (IDs, allowed lists, native as documented).",
+              "marks": 5
+            },
+            {
+              "criterion": "STP root placement on S1 verified for all listed VLANs.",
+              "marks": 5
+            },
+            {
+              "criterion": "Presence of a redundant path with at least one blocked port on S2 in STP state output.",
+              "marks": 4
+            },
+            {
+              "criterion": "Edge-port hardening: PortFast + BPDU Guard on access ports only; absent on trunks.",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality of documentation: all required show outputs present and legible.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "VLAN",
+            "Switching",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy inter-VLAN routing with static and single-area OSPF, verified end-to-end",
+          "brief": "Extend the previous build or start clean with one multilayer switch (MLS) and one router (R1). On the MLS, create SVIs for VLAN 10 (e.g., 10.10.10.1/24) and VLAN 20 (e.g., 10.20.20.1/24). Place two hosts (or simulator endpoints) in VLANs 10 and 20. Form OSPF area 0 adjacency between the MLS and R1 over a routed link (e.g., 192.168.12.0/30). Advertise VLAN 10 and VLAN 20 networks in OSPF from the MLS. On R1, advertise a separate test network (e.g., 172.16.30.0/24) into OSPF. Demonstrate end-to-end reachability (host in VLAN 10 to 172.16.30.x and host in VLAN 20 to 172.16.30.x) and show the OSPF neighbor state and routing tables. Optionally add a floating static default on the MLS pointing to an ISP next hop to show preference for OSPF over static.",
+          "deliverable": "A single zip/tar containing: MLS and R1 running-configs as text; and verification outputs as text files: `show ip ospf neighbor`, `show ip route`, `show ip protocols`, `show vlan brief` (on MLS), and ping outputs from VLAN 10 and VLAN 20 hosts to a 172.16.30.x address reachable via R1.",
+          "acceptance_criteria": [
+            "MLS has SVIs for VLAN 10 and VLAN 20 with correct IPs; access ports assigned appropriately.",
+            "OSPF area 0 adjacency established between MLS and R1 (`FULL` state visible).",
+            "OSPF advertises VLAN 10 and VLAN 20 from MLS; R1 advertises 172.16.30.0/24; routes appear in each device’s routing table with correct source protocol and AD.",
+            "Successful pings from a host in VLAN 10 and a host in VLAN 20 to a 172.16.30.x address behind R1, and successful reverse pings if tested.",
+            "If a floating static default is included on MLS, its AD is higher than OSPF such that OSPF is preferred when available."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct MLS inter-VLAN routing configuration (SVIs, VLAN-to-port assignment).",
+              "marks": 5
+            },
+            {
+              "criterion": "OSPF single-area adjacency formed with correct networks advertised and seen in `show ip route`.",
+              "marks": 7
+            },
+            {
+              "criterion": "End-to-end reachability demonstrated with clear ping evidence from both VLANs to the remote network.",
+              "marks": 6
+            },
+            {
+              "criterion": "Administrative distance preference demonstrated if floating static is included (or clear statement it was omitted).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Routing",
+            "VLAN",
+            "TCP/IP",
+            "Cisco"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-031-S03",
+      "skills_assessed": [
+        "DHCP",
+        "DNS",
+        "NAT",
+        "WLAN components",
+        "Wireless configuration",
+        "Wireless security",
+        "Network Troubleshooting"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A router-on-a-stick gateway serves VLAN 10 (wired) and VLAN 20 (WLAN clients). The DHCP server for both VLANs lives at 10.10.10.5 in VLAN 10. Clients in VLAN 20 fail to obtain an address.\n\nSwitch SVI and router config excerpts:\n```bash\n! Switch SVI for VLAN 20\ninterface Vlan20\n ip address 10.20.20.1 255.255.255.0\n no ip helper-address\n!\n! Router DHCP server scope (in VLAN 10)\nip dhcp pool CORP\n network 10.20.20.0 255.255.255.0\n default-router 10.20.20.1\n dns-server 10.10.10.10\n!\ninterface Gig0/0.10\n encapsulation dot1q 10\n ip address 10.10.10.1 255.255.255.0\n!\ninterface Gig0/0.20\n encapsulation dot1q 20\n ip address 10.20.20.1 255.255.255.0\n```\nWhich single configuration change will allow VLAN 20 clients to lease addresses from 10.10.10.5 without moving the DHCP server?",
+          "options": [
+            "```bash\ninterface Gig0/0.20\n ip dhcp snooping trust\n```",
+            "```bash\nip nat inside source static udp 10.10.10.5 67 interface Gig0/0.20 67\n```",
+            "```bash\nip dhcp relay information trusted\n```",
+            "```bash\ninterface Vlan20\n ip helper-address 10.10.10.5\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "VLAN 20 is a different subnet from the DHCP server. You must relay DHCP broadcasts from VLAN 20 to the unicast server using ip helper-address on the VLAN 20 gateway interface.",
+          "distractor_rationale": "B: Option 82 trust affects how relay agent information is handled, not the absence of a relay.\nC: DHCP snooping trust is a Layer 2 switch feature preventing rogue servers; it won't forward broadcasts inter-VLAN.\nD: NAT doesn't fix L3 broadcast scoping; DHCP requires a relay, not NAT on port 67.",
+          "skills_covered": [
+            "DHCP",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You changed the public A record for app.example.com from 198.51.100.20 to 203.0.113.20. Users still reach the old address for ~30 minutes. Resolver output from a client just after your change:\n```text\n$ dig +nocmd app.example.com A +noall +answer\napp.example.com.  1789  IN A  198.51.100.20\n\n$ nslookup -type=soa example.com\nexample.com\n        primary name server = ns1.authority.net\n        responsible mail addr = hostmaster.authority.net\n        serial  = 2026081502\n        refresh = 3600 (1 hour)\n        retry   = 900 (15 mins)\n        expire  = 1209600 (14 days)\n        default TTL = 1800 (30 mins)\n```\nTo reduce how long future changes persist in client caches during cutovers, what should you have done before changing the A record?",
+          "options": [
+            "Change client resolvers to use a different public DNS service that refreshes more frequently.",
+            "Increase the SOA serial retry value so secondaries poll more often.",
+            "Flush the resolver cache on your recursive DNS servers immediately after the change.",
+            "Lower the A record's TTL at the authoritative zone to, say, 60 seconds at least one TTL period before the change."
+          ],
+          "correct_option": "D",
+          "explanation": "Resolvers honor the record TTL from the authoritative zone. Lowering the TTL sufficiently in advance ensures caches expire sooner; do it at least one old-TTL period before the change.",
+          "distractor_rationale": "B: Flushing your recursive resolvers doesn't affect users on other resolvers and doesn't override TTLs already cached elsewhere.\nC: Public resolvers still honor authoritative TTLs; changing resolvers doesn't shorten existing caches.\nD: SOA retry affects secondary authoritative servers' zone transfer behavior, not resolver cache lifetimes.",
+          "skills_covered": [
+            "DNS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider this IOS NAT configuration and translation behavior:\n```bash\nip nat inside source static 10.0.0.10 203.0.113.10\nip nat inside source list 10 interface Gig0/1 overload\naccess-list 10 permit 10.0.0.0 0.0.0.255\n!\ninterface Gig0/0\n ip address 10.0.0.1 255.255.255.0\n ip nat inside\n!\ninterface Gig0/1\n ip address 198.51.100.2 255.255.255.248\n ip nat outside\n```\nWhen host 10.0.0.10 browses the Internet, which translation will be used?",
+          "options": [
+            "```text\n10.0.0.10 → 198.51.100.2:random-high-port (PAT on outside interface applies first)\n```",
+            "```text\n10.0.0.10 → 203.0.113.10 (static 1:1 takes precedence over PAT)\n```",
+            "```text\nA twice-NAT occurs: 10.0.0.10 → 203.0.113.10 → 198.51.100.2:random-high-port\n```",
+            "```text\nNo translation; ACL 10 does not include 10.0.0.10 due to an implicit deny\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "In IOS NAT order of operation, a static NAT entry is matched before dynamic PAT. Traffic from 10.0.0.10 will use the static mapping 203.0.113.10.",
+          "distractor_rationale": "B: Dynamic PAT is lower precedence than static NAT when both match the same flow.\nC: ACL 10 permits the entire 10.0.0.0/24, so 10.0.0.10 is included.\nD: Twice NAT is not implied by these rules; only a single translation applies.",
+          "skills_covered": [
+            "NAT",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "NTP on a router will not synchronize with the upstream server even though packets are flowing. Outputs:\n```bash\nRouter#show running-config | section ntp\nntp authenticate\nntp authentication-key 5 md5 S3cr3t\nntp server 198.51.100.10 key 5\n! (no ntp trusted-key configured)\n!\nRouter#show ntp associations\n  address         ref clock     st   when   poll reach  delay  offset   disp\n*~198.51.100.10   .INIT.        1     29     64   377  22.45  -0.123   1.23\n\nRouter#show ntp status\nClock is unsynchronized, stratum 16\n```\nWhat single configuration change is required to allow sync?",
+          "options": [
+            "```bash\nip access-list extended NTP\n permit udp any host 198.51.100.10 eq 123\ninterface Gig0/1\n ip access-group NTP in\n```",
+            "```bash\nclock timezone UTC 0\n```",
+            "```bash\nntp trusted-key 5\n```",
+            "```bash\nno ntp authenticate\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "With NTP authentication enabled, the key must also be trusted using ntp trusted-key <id>. Without it, associations remain unauthenticated and the clock stays unsynchronized.",
+          "distractor_rationale": "B: Disabling authentication would allow sync but weakens security; the question asks for the required change given the authenticated setup.\nC: Timezone settings do not affect NTP synchronization state.\nD: Packets are already flowing (reach 377); adding an ACL is not the root cause.",
+          "skills_covered": [
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "WAN egress QoS policy-map on interface Serial0/0 shows the following during a video call:\n```bash\nRouter#show policy-map interface s0/0\n Serial0/0 service-policy output QOS-WAN\n  Class-map: VOICE (match dscp ef)\n   priority 2000 (kbps), bursts 5000 (bytes)\n   output packets 52000, bytes 41M, drops 3800\n  Class-map: VIDEO (match dscp af41)\n   shape average 5000000 (bps)\n   output packets 110000, bytes 88M, drops 0\n  Class-map: class-default\n   fair-queue\n```\nUsers report choppy audio while video is fine. What most directly explains the VOICE drops?",
+          "options": [
+            "Video shaping at 5 Mbps steals bandwidth from voice, causing voice starvation regardless of priority.",
+            "The strict-priority queue is policed to 2 Mbps and overflow is dropped when sustained EF exceeds that rate.",
+            "DSCP EF is being remarked to AF31 upstream, causing a mismatch and drops at the egress policy.",
+            "Class-default fair-queue steals tokens from the priority queue, causing drops under any load."
+          ],
+          "correct_option": "B",
+          "explanation": "On IOS, the priority command enables a strict-priority queue that is policed to the configured rate. When EF traffic is sustained above 2 Mbps, excess is dropped, causing choppy audio.",
+          "distractor_rationale": "B: Shaping the VIDEO class does not preempt the priority queue; the priority queue is serviced first up to its policer.\nC: class-default fair-queue does not take bandwidth from the LLQ; it uses remaining bandwidth.\nD: There is no evidence of remarking here; the counters show EF matches and drops due to the policer.",
+          "skills_covered": [
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "After enabling Protected Management Frames (PMF) as \"required\" on a WPA2-Enterprise WLAN, several barcode scanners fail to connect. Controller logs show:\n```text\nAssoc failure: Unsupported management frame protection\nClient MAC: 00:11:22:33:44:55, RSN Capabilities: 0x000c\n```\nWhich change restores connectivity without weakening encryption for capable clients?",
+          "options": [
+            "Re-enable TKIP alongside AES to improve compatibility.",
+            "Set PMF to \"optional\" on the WLAN.",
+            "Disable 802.11r Fast Transition on the WLAN.",
+            "Migrate the WLAN to WPA3-Enterprise only."
+          ],
+          "correct_option": "B",
+          "explanation": "PMF optional allows capable clients to use PMF while permitting legacy devices that do not support PMF to associate. Encryption (AES) remains intact.",
+          "distractor_rationale": "B: 11r mismatches cause roam/auth issues, but the log cites PMF specifically.\nC: TKIP is deprecated and does not address PMF capability; it weakens security.\nD: WPA3-only would further exclude legacy clients and is not compatible with older scanners.",
+          "skills_covered": [
+            "Wireless security",
+            "Wireless configuration"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Lightweight APs obtain DHCP from a campus scope but never join the controller. Packet capture of the DHCP OFFER to an AP shows:\n```text\nyiaddr: 10.30.10.25\noptions:\n  1  (Subnet Mask) 255.255.255.0\n  3  (Router)      10.30.10.1\n  6  (DNS)         10.10.10.10\n 51 (Lease Time)   86400\n 54 (Server ID)    10.30.10.5\n (no option 43 present)\n```\nAssume CAPWAP multicast/broadcast discovery is disabled and the controller is not on the local subnet. What DHCP-side change enables AP discovery of the controller?",
+          "options": [
+            "Trust the switchport for DHCP snooping so offers are not dropped.",
+            "Increase the DHCP lease time so the AP retries discovery less often.",
+            "Add DHCP option 43 with the vendor-specific controller IP list formatted for the AP model.",
+            "Enable DHCP option 82 on the relay to preserve controller information."
+          ],
+          "correct_option": "C",
+          "explanation": "With local broadcast/multicast discovery disabled and no local controller, lightweight APs need DHCP option 43 containing controller IPs in the vendor-specific format to discover and join.",
+          "distractor_rationale": "B: Option 82 carries relay information, not controller discovery data.\nC: Lease time does not impact controller discovery mechanisms.\nD: DHCP snooping is unrelated unless drops occur; the capture shows valid offers being received.",
+          "skills_covered": [
+            "DHCP",
+            "WLAN components"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Internal clients access an internal web app by its public FQDN www.example.com. Public DNS resolves to 203.0.113.50. The server is actually 10.1.50.10 with static NAT on the edge router:\n```bash\nip nat inside source static 10.1.50.10 203.0.113.50\n!\ninterface Gi0/0 (inside)\n ip address 10.1.0.1 255.255.0.0\n ip nat inside\n!\ninterface Gi0/1 (outside)\n ip address 198.51.100.2 255.255.255.248\n ip nat outside\n```\nClients on 10.1.20.0/24 cannot reach www.example.com using the FQDN; direct access to 10.1.50.10 works. What is the most robust fix?",
+          "options": [
+            "Implement split-horizon DNS so internal queries for www.example.com return 10.1.50.10.",
+            "Add a static route on clients pointing 203.0.113.50 to 10.1.0.1.",
+            "Enable hairpin NAT so inside-to-outside-to-inside is translated on the same device.",
+            "Push a hosts file entry to all clients mapping the name to 10.1.50.10."
+          ],
+          "correct_option": "A",
+          "explanation": "Split-horizon DNS returns the internal IP to internal clients, avoiding NAT loopback complexities and ensuring consistent access without per-host changes.",
+          "distractor_rationale": "B: Hairpin NAT can work but is fragile, vendor-specific, and adds stateful complexity; DNS split-horizon is simpler and more reliable for internal users.\nC: Hosts file management does not scale and is error-prone.\nD: Clients won't route to a public IP via an internal gateway with a static host route reliably, and it doesn't address NAT translation needs.",
+          "skills_covered": [
+            "DNS",
+            "NAT"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have four 2.4 GHz APs in a single open-plan office. A survey shows strong co-channel interference when APs share channels. Choose a channel plan that minimizes CCI. AP placement (north to south): AP1, AP2, AP3, AP4.\n\nNeighbor RSSI matrix (dBm):\n```text\n       AP1  AP2  AP3  AP4\nAP1     --  -48  -65  -72\nAP2    -48   --  -50  -66\nAP3    -65  -50   --  -49\nAP4    -72  -66  -49   --\n```\nWhich assignment is best?",
+          "options": [
+            "```text\nAP1: 1\nAP2: 6\nAP3: 11\nAP4: 6\n```",
+            "```text\nAP1: 11\nAP2: 6\nAP3: 6\nAP4: 1\n```",
+            "```text\nAP1: 1\nAP2: 1\nAP3: 6\nAP4: 11\n```",
+            "```text\nAP1: 1\nAP2: 6\nAP3: 1\nAP4: 11\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Using non-overlapping channels 1/6/11 and avoiding adjacent APs sharing a channel minimizes CCI. With AP2 close to AP1 and AP3, giving AP2 channel 6 and AP3 11 while AP1 is 1, and AP4 reusing 6 (farthest) is a sound plan.",
+          "distractor_rationale": "B: AP1 and AP2 on channel 1 will cause severe CCI (-48 dBm proximity).\nC: AP1 and AP3 both on 1 are closer (-65 dBm), still problematic compared to A.\nD: AP2 and AP3 both on 6 are very close (-50 dBm), causing CCI.",
+          "skills_covered": [
+            "WLAN components",
+            "Wireless configuration"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "SIP phones behind an IOS NAT gateway can place calls but have one-way audio. Relevant config/output:\n```bash\nRouter#show running-config | include sip\nip nat service sip udp port 5060\n!\nRouter#show ip nat translations | include 5060\nudp 198.51.100.2:5060 203.0.113.50:5060 10.0.10.15:5060 203.0.113.50:5060\n!\n! RTP media uses UDP 16384-32767\n```\nWhat single change is most likely to fix one-way audio?",
+          "options": [
+            "Disable SIP ALG so SDP is not rewritten incorrectly by NAT.",
+            "Increase the SIP UDP timeout to keep pinholes open longer.",
+            "Open GRE (protocol 47) on the firewall to allow media to pass.",
+            "Enable TCP SIP (port 5060) instead of UDP to avoid NAT issues."
+          ],
+          "correct_option": "A",
+          "explanation": "SIP ALGs often mangle SDP, creating media path asymmetry that results in one-way audio. Disabling it avoids incorrect header rewriting; RTP can then be handled via standard dynamic translations or explicit ACLs.",
+          "distractor_rationale": "B: RTP is UDP, not GRE; opening GRE is irrelevant.\nC: Timeouts do not fix incorrect SDP rewrites; media may never flow correctly.\nD: Changing SIP transport to TCP does not address RTP (media) path handling or ALG behavior.",
+          "skills_covered": [
+            "NAT",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A 150-user branch office will deploy two SSIDs: CORP and GUEST. CORP users authenticate via 802.1X to a central RADIUS server at HQ over the WAN. GUEST must have internet-only access. The site has an ISR router, a Layer-3 switch, and five dual-band APs managed by a controller. HQ hosts internal DNS and DHCP for CORP; the branch edge performs NAT for internet. The WAN is 50 Mbps. Voice handsets use the CORP SSID and mark EF. Today there is no QoS, and the branch has a single flat VLAN.",
+          "task": "Propose an end-to-end design for DHCP, DNS, NAT, and QoS that supports both SSIDs and protects the WAN. Specify: (1) VLAN/SSIDs, IP addressing, and where DHCP lives and how CORP clients will obtain leases; (2) DNS resolution behavior for CORP vs GUEST; (3) NAT policy required for GUEST isolation and any static NATs needed; (4) QoS trust boundaries and queuing/marking on APs/switch/router to prioritize voice. Justify each choice and call out critical commands/features you would use.",
+          "expected_answer": "A strong answer creates two VLANs at minimum: CORP (e.g., VLAN 10, 10.10.10.0/24) and GUEST (e.g., VLAN 20, 10.20.20.0/24), mapped to SSIDs 1:1. CORP DHCP remains at HQ; the branch SVI for VLAN 10 (default-gw 10.10.10.1) uses ip helper-address pointing at HQ DHCP. Optionally enable DHCP relay information if needed by policy. GUEST uses a local DHCP scope on the branch router or switch to keep guest addressing independent of HQ.\n\nDNS: CORP clients use internal DNS servers (recursive/authoritative as appropriate) at HQ, resolvers configured via DHCP; split-horizon ensures internal names resolve to internal IPs. GUEST uses public DNS (e.g., ISP or 1.1.1.1) pushed via guest DHCP; no access to internal DNS IPs enforced by ACLs.\n\nNAT: Configure separate NAT policies: PAT for CORP and GUEST to the branch public IP, with a zone/policy or ACL ensuring GUEST cannot reach RFC1918 destinations; optionally anchor guest traffic through a separate outside if available. No static NATs are needed unless publishing a local service; if so, define specific static NAT and filter with ACLs. Ensure hairpin is not required by using split-horizon DNS internally.\n\nQoS: Set the trust boundary at the AP/controller for WMM UP-to-DSCP mapping for CORP only, not trusting end-station DSCP on guest. Map WMM Voice (UP 6/7) to EF at the controller. On the switch, trust CAPWAP DSCP on AP uplinks and enable mls qos trust dscp. On the WAN egress, implement LLQ for EF with a policer sized for expected voice calls (e.g., 2–4 Mbps), and shape remaining traffic with CBWFQ (e.g., AF classes for business apps, scavenger for guest). Confirm that guest traffic is marked best-effort and optionally police it.\n\nCritical commands/features: ip helper-address on CORP SVI; local ip dhcp pool for GUEST; ACLs isolating GUEST (deny ip any RFC1918, permit ip any any to internet); policy-map with priority percent or kbps for EF and class-default shaping; WLC QoS profile Platinum for CORP with PMF as appropriate; DNS settings per scope.",
+          "rubric": [
+            {
+              "criterion": "Creates a correct VLAN/SSID mapping with addressing and DHCP placement for both CORP and GUEST, including relay for CORP",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct DNS behavior (internal for CORP with split-horizon; public for GUEST) and enforces it via DHCP/ACLs",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines NAT policy that isolates GUEST and handles CORP appropriately; avoids hairpin by design or notes split-DNS",
+              "marks": 2
+            },
+            {
+              "criterion": "Designates trust boundaries and WAN QoS (LLQ for EF, shaping/queuing for rest) with plausible rates and mappings",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DHCP",
+            "DNS",
+            "NAT",
+            "WLAN components",
+            "Wireless configuration",
+            "Wireless security"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A new SSID STAFF (WPA2-Enterprise) was added to serve VLAN 30. Since the change, STAFF clients often fail to get IP addresses, and when they do, they cannot resolve internal hostnames. Excerpts:\n```bash\nSwitch#show run | s interface Vlan30\ninterface Vlan30\n ip address 10.30.30.1 255.255.255.0\n no ip helper-address\n!\nSwitch#show ip dhcp snooping\nDHCP snooping is enabled\nTrusted interfaces: uplink to router only\n\nWLC log:\nAssoc success to STAFF (00:aa:bb:cc:dd:ee)\nEAP success user=jdoe\nClient DHCP request forwarded to wired\n\nClient (when successful):\nIP 10.30.30.55/24, GW 10.30.30.1, DNS 10.10.10.10\nnslookup server1.corp.local -> timeout\nping 10.10.10.10 -> OK\n```\nHQ provides DHCP and DNS for STAFF on 10.10.10.0/24, reachable over the WAN.",
+          "task": "Identify the misconfigurations causing the DHCP failures and DNS timeouts. Propose the minimal change set to fix both issues, and justify why each change addresses the symptoms.",
+          "expected_answer": "Two faults: (1) No DHCP relay on SVI Vlan30. Without ip helper-address pointing to the HQ DHCP server, broadcasts are not relayed; intermittent successes likely came from a rogue/temporary source or prior lease retention. Add ip helper-address 10.10.10.5 (or HQ DHCP IP) to interface Vlan30. Ensure the relay interface is trusted for DHCP snooping or trust the appropriate uplink so replies are not dropped.\n\n(2) DNS timeouts while ping to 10.10.10.10 works suggests DNS is reachable at IP level but possibly blocked by ACL/QoS or MTU. Most likely, DHCP scope for STAFF is handing out the internal DNS (10.10.10.10), but an intermediate ACL on the WAN edge or guest DNS redirection policy is hijacking UDP/53 from VLAN 30. The fix is to ensure STAFF (VLAN 30) egress bypasses any guest DNS-redirect policy: update ACLs/policy-map/class-map to permit ip 10.30.30.0/24 to 10.10.10.10 eq 53 both ways, and remove it from any DNS-redirect class. After adding ip helper-address and correcting snooping trust/ACLs, DNS queries will succeed consistently.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies missing ip helper-address on VLAN 30 as primary DHCP failure cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses DHCP snooping trust path or equivalent relay path so offers are not dropped",
+              "marks": 1
+            },
+            {
+              "criterion": "Diagnoses DNS timeout as policy/ACL redirection issue (not simple reachability) and targets UDP/53 for STAFF",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a minimal, specific change set with justification (helper, trust/ACL fixes)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DHCP",
+            "DNS",
+            "Network Troubleshooting",
+            "Wireless configuration"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A mixed-client environment includes laptops (modern), VoIP handsets, and legacy scanners that only support WPA2-PSK and do not support PMF or 802.11r. Security requires protecting management frames where possible and isolating scanners from corporate resources except their application server.",
+          "task": "Design the SSID/security layout and L2/L3 segmentation to satisfy both security and compatibility. Specify the minimum number of SSIDs, authentication methods, PMF settings, any Fast Transition use, and network controls to limit the scanners' access. Justify trade-offs.",
+          "expected_answer": "Use two SSIDs to balance airtime and policy: (1) CORP: WPA2-Enterprise (or WPA3-Enterprise if clients allow) with PMF required (or optional if mix dictates), 802.11r enabled for voice/laptop roaming, 802.11k/v enabled. Map to VLAN 10 (corporate). (2) SCANNER: WPA2-PSK with PMF optional (legacy support) and 802.11r disabled; isolate via a dedicated VLAN 30 with ACLs only allowing access to the scanner application server(s) and necessary services (DNS/DHCP), denying lateral/RFC1918. Optionally enable client isolation on the SSID.\n\nRationale: Keeping scanners off the enterprise SSID avoids weakening PMF/11r settings for everyone. PMF required in CORP protects management frames for capable devices. Limiting SSIDs to two avoids excessive overhead. 11r on CORP aids voice roaming; disabling 11r on SCANNER avoids compatibility issues. DHCP scopes deliver appropriate DNS; corporate DNS or split-horizon if needed. Consider per-SSID QoS profiles (voice on CORP mapped to EF).",
+          "rubric": [
+            {
+              "criterion": "Chooses a minimal SSID set that separates legacy devices from corporate clients",
+              "marks": 2
+            },
+            {
+              "criterion": "Applies appropriate security per SSID (WPAx method, PMF setting, 11r usage) with correct compatibility reasoning",
+              "marks": 3
+            },
+            {
+              "criterion": "Implements L2/L3 isolation with VLANs and ACLs allowing only required destinations/services",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Wireless security",
+            "Wireless configuration",
+            "WLAN components",
+            "DNS",
+            "DHCP"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Guest access uses DNS redirection to a captive portal by policy-based NAT/ACL on the edge. After enabling the guest system, corporate clients intermittently fail DNS lookups to internal DNS across the WAN, but only when sourced from the new WLAN VLAN. Logs show the DNS-redirect policy classifies packets by UDP/53 without excluding corporate subnets.",
+          "task": "Propose precise policy and NAT changes to keep guest DNS redirection functional while ensuring corporate DNS queries are never intercepted. Include how you will test and verify the fix.",
+          "expected_answer": "Change classification to exclude corporate sources: in the DNS-redirect class-map, add a match-not for corporate subnets (e.g., 10.10.0.0/16, 10.30.30.0/24). Alternatively, create two class-maps: DNS-CORP (permit source 10.0.0.0/8 to internal DNS servers) and DNS-GUEST (permit any to any UDP/53). In the policy-map, place DNS-CORP permit/pass-through before DNS-GUEST redirect. For NAT, ensure the redirect (e.g., static PAT to captive portal IP/port) only applies to DNS-GUEST. Verify route-map ordering if PBR is used.\n\nTesting: From a STAFF client, query internal DNS (dig @10.10.10.10 corp.host). Confirm no NAT hits in the DNS-REDIRECT rule and the packet reaches the WAN. From a GUEST client, query any domain (dig @8.8.8.8 example.com) and confirm NAT redirect counters increment and the query is intercepted to the portal DNS. Validate with ACL/policy counters and packet captures on both VLAN SVI and WAN. Document show policy-map interface and show ip nat statistics before/after.",
+          "rubric": [
+            {
+              "criterion": "Creates correct classification that excludes corporate sources from DNS redirect using ACLs/class-maps and ordering",
+              "marks": 3
+            },
+            {
+              "criterion": "Scopes NAT/PBR so redirect applies only to guest and preserves corporate reachability to internal DNS",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete verification plan with specific commands/counters and positive/negative tests",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the original symptom occurred (overbroad UDP/53 match)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "NAT",
+            "Network Troubleshooting",
+            "Wireless configuration"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "IP Services Lab: DHCP relay, DNS behavior, NTP auth, NAT, and QoS on a branch edge",
+          "brief": "Build a small lab (emulator/simulator or physical) that demonstrates end-to-end IP services for a branch with two VLANs (CORP and GUEST) and a WAN edge. Implement: (1) DHCP relay for CORP to a remote DHCP server; local DHCP for GUEST; (2) DNS resolution such that CORP resolves internal names via internal DNS and GUEST uses public DNS; (3) NTP client with authentication to a lab NTP server; (4) NAT including one static NAT for a lab server and PAT for clients; (5) WAN egress QoS with a strict-priority class for EF and shaping for best-effort. Show working behavior and key edge cases (e.g., split-horizon DNS avoiding hairpin).",
+          "deliverable": "A single zip/tar archive named services-lab_<yourname>.zip containing: (a) device configurations (running-configs) as .txt; (b) a README.md describing topology, IP plan, and command steps; (c) captured outputs proving functionality in plain .txt files: show ip dhcp binding, show ntp associations/status with authenticated sync, show ip nat translations with both static and PAT entries, show policy-map interface with LLQ counters, dig/nslookup outputs from CORP and GUEST clients demonstrating different DNS behavior, and a traceroute demonstrating internal-name resolution without hairpin; (d) if using a simulator, the project file (e.g., Packet Tracer/GNS3).",
+          "acceptance_criteria": [
+            "CORP VLAN default gateway SVI shows ip helper-address to a remote DHCP server; GUEST uses a local ip dhcp pool; both subnets have active leases evidenced by show ip dhcp binding.",
+            "DNS proof: a query for an internal FQDN from CORP resolves to an internal IP; the same name from GUEST does not resolve internally and general internet domains resolve via public DNS. Include the exact dig/nslookup outputs.",
+            "NTP: show ntp associations/status indicates synchronized (stratum < 16) with authentication configured (ntp authenticate, ntp authentication-key, ntp trusted-key).",
+            "NAT: show ip nat translations includes at least one static mapping hit and PAT entries for client internet access. Include a test reaching the statically NATed service from outside (simulated) or via a loopback test harness.",
+            "QoS: show policy-map interface on the WAN egress shows EF class with packets (and no sustained drops under normal offered load) and shaped best-effort; include a brief traffic generation method and resulting counters.",
+            "All configs and outputs are internally consistent with the README topology and IP plan."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct DHCP implementation and evidence (relay for CORP, local scope for GUEST, bindings shown)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct and demonstrated DNS behavior for CORP vs GUEST with appropriate resolvers and outputs",
+              "marks": 4
+            },
+            {
+              "criterion": "NTP authenticated synchronization configured and proven via outputs",
+              "marks": 3
+            },
+            {
+              "criterion": "NAT configured with both static and PAT; demonstration outputs included and correct",
+              "marks": 4
+            },
+            {
+              "criterion": "QoS policy present on egress with meaningful counters and rationale in README",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "DHCP",
+            "DNS",
+            "NAT",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Wireless Design: SSIDs, security, addressing, and RF/channel plan for a mid-size office",
+          "brief": "Produce a design for an office floor (approx. 60m x 30m, open areas plus two meeting-room clusters) supporting 180 concurrent clients (laptops/phones) and 20 VoIP handsets. Requirements: two SSIDs (CORP with 802.1X, GUEST internet-only), minimize airtime overhead, prefer WPA3/PMF where possible but support legacy devices via a separate SSID if justified, and ensure good roaming for voice. Provide AP count/placement assumptions, channel/power plan for 2.4/5 GHz (6 GHz optional), SSID-to-VLAN/IP mapping, DHCP/DNS plan, security settings (PMF, 11r/k/v), and access controls for guest isolation. Include capacity/coverage rationale.",
+          "deliverable": "A design document (PDF or Markdown) named wireless-design_<yourname>.pdf|.md including: (1) a diagram of AP placement with identifiers; (2) a channel and power plan table for each band; (3) SSID-to-VLAN/IP mapping with DHCP scopes and DNS resolvers; (4) security parameters (WPA version, PMF, 802.1X/RADIUS flow, 11r/k/v usage) with compatibility notes; (5) guest isolation and upstream policies; (6) capacity estimate (clients/AP, airtime assumptions) and roaming considerations.",
+          "acceptance_criteria": [
+            "Diagram shows at least 6–8 APs with reasonable spacing and identifies AP IDs used in the channel plan.",
+            "Channel plan uses non-overlapping channels (1/6/11 for 2.4 GHz as needed; reuse with distance) and a valid 5 GHz plan avoiding adjacent co-channel cells; transmit power staged to limit CCI.",
+            "Exactly two SSIDs unless a justified third is proposed for legacy; justification must address airtime and security trade-offs.",
+            "Security settings explicitly list WPA version(s), PMF mode per SSID, and whether 802.11r/k/v are enabled; where disabled, provide a reason tied to client compatibility.",
+            "SSID-to-VLAN/IP mapping includes concrete subnet sizes and DHCP/DNS sources, consistent through the document.",
+            "Guest isolation measures are explicit (client isolation, ACLs toward RFC1918, NAT policy).",
+            "Capacity section includes a numeric estimate (clients/AP and airtime or throughput per AP) and addresses voice roaming needs (target RSSI, overlap, and FT where appropriate)."
+          ],
+          "rubric": [
+            {
+              "criterion": "RF design quality: AP count/placement rationale and coherent channel/power plan",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear SSID/VLAN/IP mapping with DHCP/DNS plans aligned to requirements",
+              "marks": 4
+            },
+            {
+              "criterion": "Security design depth: WPA/PMF/802.1X/FT choices with compatibility justification",
+              "marks": 5
+            },
+            {
+              "criterion": "Guest isolation controls and upstream policy clarity",
+              "marks": 2
+            },
+            {
+              "criterion": "Capacity and roaming considerations with numeric reasoning",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "WLAN components",
+            "Wireless configuration",
+            "Wireless security",
+            "DHCP",
+            "DNS"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-031-S04",
+      "skills_assessed": [
+        "ACLs",
+        "Device hardening",
+        "Network Troubleshooting",
+        "Cisco"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit the following edge config. Users on 10.10.10.0/24 report they cannot ping 8.8.8.8.\n\n```bash\ninterface GigabitEthernet0/0\n description LAN\n ip address 10.10.10.1 255.255.255.0\n ip access-group EDGE-FILTER out\n!\ninterface GigabitEthernet0/1\n description WAN\n ip address 198.51.100.2 255.255.255.252\n!\nip access-list extended EDGE-FILTER\n deny icmp any any echo\n permit ip any any\n!\n# Verification\nR1# show access-lists EDGE-FILTER\nExtended IP access list EDGE-FILTER\n    10 deny icmp any any echo (45 matches)\n    20 permit ip any any (1234 matches)\n```\nWhich change restores internal users' ability to ping the Internet while still blocking inbound pings from the Internet to LAN hosts, with the least disruption?",
+          "options": [
+            "Change the deny to use a host mask on the router SVI:\n```bash\n10 deny icmp any host 10.10.10.1 echo\n```",
+            "Move the ACL to the WAN interface inbound and change the deny to:\n```bash\ni p access-list extended EDGE-FILTER\n 10 deny icmp any 10.10.10.0 0.0.0.255 echo\n 20 permit ip any any\n!\ninterface Gi0/1\n ip access-group EDGE-FILTER in\n```",
+            "Add this line to the top of the ACL to allow returns:\n```bash\n5 permit icmp any any echo-reply\n```",
+            "Apply the existing ACL inbound on Gi0/0 instead of outbound."
+          ],
+          "correct_option": "B",
+          "explanation": "The current ACL is applied outbound on the LAN interface, so it blocks LAN-initiated ICMP echo traffic leaving toward the WAN. To block only unsolicited inbound pings from the Internet to LAN hosts, the ACL must see packets as they enter from the WAN and match destination 10.10.10.0/24 echo. Placing it inbound on Gi0/1 with a destination match to the LAN subnet enforces that without breaking internal egress pings.",
+          "distractor_rationale": "B is tempting because echo-replies must be allowed, but replies were never blocked; the deny matches echo on egress, not replies on return. C still blocks LAN-initiated pings because packets ingress Gi0/0 from hosts and would be dropped. D protects only the router's SVI address and does not address host protection, and it still leaves LAN egress echo blocked.",
+          "skills_covered": [
+            "ACLs",
+            "Cisco",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "An app team complains that their 10.0.0.0/24 management subnet lost HTTP access to server 172.16.1.100 after your ACL change. Current config:\n\n```bash\nip access-list extended WEB-POLICY\n 10 deny tcp any host 172.16.1.100 eq 80\n 20 permit tcp 10.0.0.0 0.0.0.255 host 172.16.1.100 eq 80\n 30 permit ip any any\n!\ninterface Gi0/1\n ip access-group WEB-POLICY in\nR1# show access-lists WEB-POLICY\nExtended IP access list WEB-POLICY\n    10 deny tcp any host 172.16.1.100 eq www (268 matches)\n    20 permit tcp 10.0.0.0 0.0.0.255 host 172.16.1.100 eq www (0 matches)\n    30 permit ip any any (9456 matches)\n```\nWhat single change fixes the issue while still blocking external HTTP to the server?",
+          "options": [
+            "Replace line 10 with:\n```bash\n10 deny tcp any host 172.16.1.100 range 1 79\n```",
+            "Append this line at the end:\n```bash\n40 permit tcp any host 172.16.1.100 eq 443\n```",
+            "Use the `established` keyword on line 20 to allow return traffic.\n```bash\n20 permit tcp 10.0.0.0 0.0.0.255 host 172.16.1.100 eq 80 established\n```",
+            "Move line 20 above line 10 so the management subnet is permitted before the general deny."
+          ],
+          "correct_option": "D",
+          "explanation": "ACLs are evaluated top-down. The general deny at line 10 matches and drops the management subnet before the specific permit at line 20. Reordering to place the specific permit above the general deny satisfies both requirements.",
+          "distractor_rationale": "B misunderstands ports; it still denies TCP/80 and doesn't solve ordering. C is unrelated; HTTPS/443 is not the problem. D `established` only matches ACK/RST and still suffers from rule ordering; new connections from 10.0.0.0/24 are dropped by line 10 first.",
+          "skills_covered": [
+            "ACLs",
+            "Cisco",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You want to capture only events of severity 4 and more critical to a remote syslog server. The device is configured as follows:\n\n```bash\nlogging host 192.0.2.50\nlogging trap warnings\n!\ninterface Gi0/1\n description WAN\n!\nR1# test logger msg \"Interface flap simulated\" level notifications\nR1# test logger msg \"Config change\" level warnings\n```\nWhich event reaches the syslog server under this configuration?",
+          "options": [
+            "Only \"Config change\" because level warnings (4) is within the trap level.",
+            "Neither, because `test logger` does not send to remote servers by design.",
+            "Only \"Interface flap simulated\" because `notifications` (5) is operationally more important than `warnings` (4).",
+            "Both, because the trap level is a floor and includes all severities numerically higher than 4."
+          ],
+          "correct_option": "A",
+          "explanation": "`logging trap warnings` sets the trap level to 4. Only messages with severity 0–4 (emergencies to warnings) are exported. `notifications` is severity 5 and will not be sent. The `test logger` commands do create messages at the specified severities.",
+          "distractor_rationale": "B is false; `test logger` generates syslog messages that follow the configured trap behavior. C confuses the direction: lower numbers are more severe; a trap at 4 includes 0–4, not 5+. D misinterprets syslog priorities; 5 (notifications) is less severe than 4 and is excluded by `trap warnings`.",
+          "skills_covered": [
+            "Cisco",
+            "Device hardening"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your tooling calls RESTCONF but receives 404. Device and request:\n\n```bash\nR1# show run | i http|restconf\nip http secure-server\n! (no 'restconf' present)\n```\n\n```http\nGET /restconf/data/ietf-interfaces:interfaces HTTP/1.1\nHost: 192.0.2.1\nAccept: application/yang-data+json\nAuthorization: Basic YWRtaW46YWRtaW4=\n```\nResponse:\n\n```http\nHTTP/1.1 404 Not Found\nContent-Type: application/yang-data+json\n\n{\"errors\":{\"error\":[{\"error-message\":\"no such resource\"}]}}\n```\nWhat must you enable on the device to resolve this?",
+          "options": [
+            "\n```bash\nnetconf-yang\n```",
+            "\n```bash\nrestconf\n```",
+            "\n```bash\nip http server\n```",
+            "\n```bash\nip http authentication local\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "RESTCONF requires the global `restconf` service to be enabled (along with HTTPS). With only `ip http secure-server`, the RESTCONF URI space is not served, yielding 404.",
+          "distractor_rationale": "B enables NETCONF, a different protocol. C enables insecure HTTP but still not RESTCONF. D configures authentication but does not expose the RESTCONF endpoints without `restconf`.",
+          "skills_covered": [
+            "Cisco",
+            "Device hardening"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Review this hardening extract:\n\n```bash\nline vty 0 4\n transport input ssh\n login local\n!\nip ssh version 2\nip http server\nip http secure-server\nservice password-encryption\n```\nWhich risk remains and what is the safest immediate change?",
+          "options": [
+            "Plain HTTP management is enabled; disable it with `no ip http server`.",
+            "Passwords are type 7 encrypted; immediately remove `service password-encryption`.",
+            "SSHv1 may still be negotiated; force SSHv2 with `ip ssh version 2`.",
+            "Local login on vty lines is unsafe; switch to `transport input telnet` to avoid key management issues."
+          ],
+          "correct_option": "A",
+          "explanation": "`ip http server` enables cleartext HTTP. Even if HTTPS is on, HTTP remains exposed unless explicitly disabled. Removing it closes a common management-plane risk with no client-side change.",
+          "distractor_rationale": "B misidentifies the risk; while type 7 is weak, removing encryption exposes cleartext in config and doesn't fix a network exposure. C is already addressed: SSHv2 is configured. D recommending Telnet weakens security rather than hardening it.",
+          "skills_covered": [
+            "Device hardening",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A path test fails with traceroute showing only asterisks after the first hop, but TCP connections to the destination still work. Edge ACL:\n\n```bash\nip access-list extended EDGE-IN\n 10 deny icmp any any\n 20 permit ip any any\n!\ninterface Gi0/1\n ip access-group EDGE-IN in\n```\nWhat explains the traceroute behavior?",
+          "options": [
+            "Traceroute fails because the ACL is applied outbound; moving it inbound will fix both traceroute and TCP.",
+            "Traceroute uses UDP/33434–33534 only, which the ACL denies; TCP works because it is stateful.",
+            "Traceroute relies on ICMP time-exceeded/TTL-expired messages, which the ACL blocks, while the actual TCP session is permitted by line 20.",
+            "Traceroute uses TCP SYN packets that require `established` to be allowed; TCP sessions succeed because of implicit state."
+          ],
+          "correct_option": "C",
+          "explanation": "Classic traceroute depends on ICMP time-exceeded messages generated by intermediate hops. The blanket ICMP deny drops those, so hop-by-hop visibility is lost, even though the end-to-end TCP flow is permitted by the general `permit ip any any`.",
+          "distractor_rationale": "B confuses platforms; while some traceroutes use UDP, the visible failure is due to ICMP replies being dropped. C invents statefulness on a stateless ACL. D is wrong about direction; the ACL is inbound as shown.",
+          "skills_covered": [
+            "ACLs",
+            "Network Troubleshooting",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "After applying an inbound ACL on a routed link, OSPF adjacency drops and stays in INIT. Excerpt:\n\n```bash\nip access-list extended WAN-IN\n 10 deny ip any any log\n!\ninterface Gi0/1\n ip access-group WAN-IN in\nR1# show ip ospf neighbor\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           1   INIT/DROTHER    00:00:28    203.0.113.2     Gi0/1\nR1# show access-lists WAN-IN\nExtended IP access list WAN-IN\n    10 deny ip any any log (112 matches)\n```\nWhat minimal ACL change restores OSPF without broadly opening traffic?",
+          "options": [
+            "Insert before the deny:\n```bash\n5 permit igmp any any\n```",
+            "Insert before the deny:\n```bash\n5 permit ospf any any\n```",
+            "Insert before the deny:\n```bash\n5 permit udp any any eq 89\n```",
+            "Append at the end:\n```bash\n20 permit ip any any\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "OSPF is IP protocol 89, not UDP/TCP. The minimal fix is to explicitly permit protocol `ospf` before the blanket deny, preserving the rest of the filter.",
+          "distractor_rationale": "B treats OSPF as UDP; it is its own IP protocol (89), so permitting UDP/89 does nothing. C defeats the purpose of the ACL entirely. D permits IGMP, unrelated to OSPF adjacency.",
+          "skills_covered": [
+            "ACLs",
+            "Cisco",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need to confirm which ACL (and in which direction) is actually active on an interface without risking impact. Which command gives you that directly?\n\n```bash\nR1# ?  (relevant commands only)\n show ip access-lists\n show ip interface <ifc>\n show running-config | section interface\n debug ip packet detail\n```",
+          "options": [
+            "\n```bash\nshow running-config | section interface\n```",
+            "\n```bash\nshow ip access-lists\n```",
+            "\n```bash\nshow ip interface GigabitEthernet0/1\n```",
+            "\n```bash\ndebug ip packet detail\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`show ip interface <ifc>` reports the ACLs applied inbound/outbound on that interface unambiguously. The other commands help but either lack direction specificity (B, C) or are intrusive and unsafe in production (D).",
+          "distractor_rationale": "B lists ACL definitions and counters but not bindings or direction. C shows config blocks but can be error-prone to parse and may miss dynamic bindings. D is a high-risk debug and not appropriate for quick, safe verification.",
+          "skills_covered": [
+            "Cisco",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You enabled config change logging but do not see messages on your syslog server.\n\n```bash\narchive\n log config\n  logging enable\n  notify syslog contenttype plaintext\n!\nlogging host 192.0.2.50\nlogging trap warnings\n```\nLocal buffer shows messages at level `informational (6)`. Why are they missing remotely, and what single change fixes it?",
+          "options": [
+            "They are below the trap threshold; raise to include informational with `logging trap informational`.",
+            "The syslog server is filtering by facility; change logging facility to `local7`.",
+            "The archive feature only logs to the buffer; add `archive log config logging enable` again.",
+            "Config logging requires `logging synchronous` under the console to forward remotely."
+          ],
+          "correct_option": "A",
+          "explanation": "`logging trap warnings` exports only severities 0–4. Archive config logs are informational (6), so they are excluded. Raising the trap to `informational` includes them.",
+          "distractor_rationale": "B is already configured correctly. C facility does not fix severity filtering on the device. D `logging synchronous` affects console display, not remote export.",
+          "skills_covered": [
+            "Cisco",
+            "Device hardening"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Remote management from 192.168.50.0/24 is failing after applying an access-class. Config:\n\n```bash\naccess-list 10 permit 192.168.50.0 255.255.255.0\n!\nline vty 0 4\n access-class 10 in\n transport input ssh\n login local\n```\nWhat change fixes access for that subnet without opening others?",
+          "options": [
+            "Convert to an extended ACL matching SSH:\n```bash\nip access-list extended VTY\n permit tcp 192.168.50.0 0.0.0.255 any eq 22\nline vty 0 4\n ip access-class VTY in\n```",
+            "Apply the ACL outbound on the VTY lines instead of inbound.",
+            "Use a host statement for the default gateway only:\n```bash\nno access-list 10\naccess-list 10 permit host 192.168.50.1\n```",
+            "Correct the wildcard mask in the standard ACL:\n```bash\nno access-list 10\naccess-list 10 permit 192.168.50.0 0.0.0.255\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Standard ACLs use wildcard masks, not netmasks. The incorrect mask causes no matches, so VTY access is denied. Changing to 0.0.0.255 admits exactly 192.168.50.0/24.",
+          "distractor_rationale": "B overcomplicates with an extended ACL; while it could work, `access-class` with a standard ACL is intended for VTY source filtering. C has no meaning on VTY (logical) lines; direction is relative to connection initiation and `in` is correct. D is too restrictive and would still block the rest of the subnet.",
+          "skills_covered": [
+            "ACLs",
+            "Device hardening",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A branch router connects a 10.20.0.0/24 LAN on Gi0/0 to the Internet on Gi0/1. Security policy requires: (1) deny inbound HTTP/HTTPS to LAN hosts from the Internet, (2) allow remote SSH to the router only from 203.0.113.50/32, (3) allow all LAN-initiated traffic out, (4) avoid breaking traceroute visibility for operations, and (5) changes must be verifiable with minimal impact. Existing config has no ACLs applied.",
+          "task": "Propose a concrete ACL design: exact entries, interface placement and direction. Justify each choice relative to the policy and traceroute requirement. Specify the exact verification commands and expected outputs you would use after deployment to prove compliance without enabling disruptive debugs. Include any needed log/monitoring tweaks.",
+          "expected_answer": "A correct answer places an extended ACL inbound on the WAN (Gi0/1) containing, in order: (a) permit ospf/other control if used (optional if not present), (b) permit tcp host 203.0.113.50 any eq 22 to router (if SSH to router is on WAN IP) or a VTY access-class alternative, (c) deny tcp any 10.20.0.0 0.0.0.255 eq 443, (d) deny tcp any 10.20.0.0 0.0.0.255 eq 80, (e) permit icmp any any time-exceeded and unreachable to preserve traceroute visibility, (f) permit ip any any to allow other inbound traffic only if explicitly required for stateful returns is not available; otherwise, better is to rely on anti-spoofing and allow established replies by not blocking them (on IOS classic ACLs, you cannot match state so you avoid blanket deny icmp). Placement inbound on Gi0/1 ensures filtering closest to the source and avoids blocking LAN egress. For SSH-to-router restriction, either an ACL line matching destination the router’s WAN IP with eq 22 or using `access-class` on VTY with a standard ACL for 203.0.113.50 is acceptable; the latter does not rely on interface ACLs for management-plane. Verification: `show ip interface Gi0/1` to confirm ACL bind and direction; `show access-lists <name>` to see counters increment per rule; from a test host on the Internet side, attempt TCP/80 and 443 to a LAN host should fail (no SYN-ACK), SSH to router from 203.0.113.50 should succeed, SSH from another address should fail. Run traceroute from a LAN host to the Internet and observe hops beyond the edge (ICMP time-exceeded replies) are visible because ICMP types are permitted. Optionally set `logging trap informational` and include `log` on denies to see hits on the syslog server. Document rollback: `no ip access-group <name> in` on Gi0/1.",
+          "rubric": [
+            {
+              "criterion": "Correct placement and direction (WAN ingress) justified against policy and avoiding LAN egress impact",
+              "marks": 2
+            },
+            {
+              "criterion": "ACL entries satisfy all four policy elements with correct protocols/ports and ordering (including SSH restriction)",
+              "marks": 3
+            },
+            {
+              "criterion": "Traceroute visibility preserved by permitting necessary ICMP types, with explanation",
+              "marks": 1
+            },
+            {
+              "criterion": "Verification plan with exact commands and expected outcomes, non-disruptive (no risky debugs)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ACLs",
+            "Cisco",
+            "Network Troubleshooting"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "After a change window, users report that SaaS access (tcp/443) works but on-prem web app 172.16.50.20:80 is unreachable from all branches. You gather these extracts from the hub router:\n\n```bash\ninterface Tunnel0\n ip access-group HUB-IN in\n!\nip access-list extended HUB-IN\n 10 deny ip any any log\n```\nChange ticket shows the intent was to block unsolicited inbound to the hub, not to break branch-to-hub flows over the DMVPN.",
+          "task": "Diagnose the immediate cause and propose a minimal, safe live fix. Provide the exact ACL entries (including ordering) you would add, and justify each. Then list the verification steps and command outputs you expect to confirm restoration without opening unintended paths.",
+          "expected_answer": "The blanket `deny ip any any` inbound on the DMVPN/tunnel interface drops all branch-to-hub traffic, including legitimate app flows. Minimal safe fix is to explicitly permit the intended traffic before the deny: (a) permit tcp <BRANCH-SUBNETS> host 172.16.50.20 eq 80, (b) permit any required control-plane (NHRP, GRE/UDP if applicable) or simply ensure the control protocols terminate prior to ACL on physical interface if IOS processes them pre-ACL, then (c) retain `deny ip any any log`. For multiple branches, either enumerate their subnets, use summarization, or deploy per-tunnel protection like IPsec selectors. Example:\n\n```bash\nip access-list extended HUB-IN\n 5 permit tcp 10.0.0.0 0.255.255.255 host 172.16.50.20 eq 80\n 10 deny ip any any log\n```\nVerification: `show ip access-lists HUB-IN` to see line 5 counters increment, a branch client can `curl` or `telnet 172.16.50.20 80` successfully, while an Internet-originated attempt is still dropped (observe hits on line 10 with `log`). Confirm no over-permit by attempting disallowed ports (e.g., 172.16.50.20:22) from a branch; they should be denied with counters on line 10. Justify ordering: specific permits must precede the blanket deny to avoid shadowing.",
+          "rubric": [
+            {
+              "criterion": "Accurate root cause linked to blanket deny on Tunnel0 inbound affecting legitimate branch traffic",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed ACL fix is minimal, correctly ordered, and appropriately scoped (subnets/host, tcp/80)",
+              "marks": 3
+            },
+            {
+              "criterion": "Verification steps include both positive and negative tests with expected counters/outputs",
+              "marks": 2
+            },
+            {
+              "criterion": "Security rationale preserves the intent (unsolicited inbound still denied)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ACLs",
+            "Network Troubleshooting",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Security review of an access switch shows the following:\n\n```bash\nline vty 0 4\n password cisco\n login\n transport input ssh telnet\n!\nusername admin privilege 15 secret 9 $9$abcdef...\n!\nip ssh version 2\nip http server\nno service password-encryption\n!\nntp server 192.0.2.123\nlogging host 192.0.2.200\n```\nThe site relies on Ansible over SSH keys for automation. Outage risk must be kept low during hardening.",
+          "task": "Identify the top-priority hardening gaps you will address immediately, in what order, and the exact commands to implement them without breaking Ansible. Briefly justify each change. Include how you will verify success and that automation remains functional.",
+          "expected_answer": "Priorities: (1) Remove cleartext management planes: `no ip http server` (retain/enable `ip http secure-server` only if a GUI is needed). (2) Eliminate Telnet on VTY: `line vty 0 4`, `transport input ssh` only. (3) Enforce AAA using local user database with key-based auth preserved: `line vty 0 4`, `login local` (already acceptable), remove plain `password` or leave as fallback but prefer `username admin secret ...`; ensure SSH public keys installed if used. (4) Enable login protections without impacting keys: `login block-for 120 attempts 3 within 60`. (5) Encrypt residual passwords in config: `service password-encryption` (or better, remove line passwords). (6) Optionally restrict VTY sources with a standard ACL: `access-list 11 permit 203.0.113.0 0.0.0.255`, `line vty 0 4`, `access-class 11 in`. Verifications: `show ip http server status` showing HTTP disabled, SSH reachable: `ssh admin@switch` (key-based login succeeds), `show line vty 0 4` for allowed transports, failed Telnet attempt is refused, `show login` for block-for status, and `show run | sec username|line vty|http` to confirm changes.",
+          "rubric": [
+            {
+              "criterion": "Identifies critical exposures (HTTP enabled, Telnet allowed, weak line password) and orders them sensibly",
+              "marks": 2
+            },
+            {
+              "criterion": "Commands implement hardening without breaking SSH/key-based automation (keeps SSHv2, uses login local)",
+              "marks": 2
+            },
+            {
+              "criterion": "Inclusion of VTY source restriction and/or login blocking with correct syntax and rationale",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear verification steps proving both security improvements and Ansible continuity",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Device hardening",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Users in VLAN 30 (192.168.30.0/24) cannot reach an internal API in VLAN 20 (192.168.20.50:443). Helpdesk notes that ping works to the server IP, but HTTPS fails. You collect:\n\n```bash\nR1# show ip interface brief | i Vlan2|Vlan3\nVlan20      192.168.20.1   up     up\nVlan30      192.168.30.1   up     up\n\nR1# show run | s access-list|Vlan2|Vlan3\nip access-list extended INTERVLAN\n 10 deny tcp 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255 eq 80\n 20 permit ip any any\n!\ninterface Vlan20\n ip address 192.168.20.1 255.255.255.0\n!\ninterface Vlan30\n ip address 192.168.30.1 255.255.255.0\n ip access-group INTERVLAN in\n```\n",
+          "task": "Explain why ping works but HTTPS fails. Propose the least-disruptive change to allow HTTPS from VLAN 30 to 192.168.20.50 only, while still denying web browsing (tcp/80) from VLAN 30 to VLAN 20. Provide the exact ACL lines (with correct order) and the verification you would run, including what counters you expect to see increment.",
+          "expected_answer": "Ping works because ICMP is permitted by line 20 `permit ip any any`, and the ACL only denies TCP/80. HTTPS fails because the current ACL does not explicitly permit TCP/443 before the general permit is evaluated inbound on VLAN 30; however, the general permit actually allows everything, so the real issue in the stem is mis-specified: to meet the policy (block 80 but allow 443 to a single host), you must add a specific permit for 443 to the API host before the deny and narrow the general permit. Minimal change:\n\n```bash\nip access-list extended INTERVLAN\n 5 permit tcp 192.168.30.0 0.0.0.255 host 192.168.20.50 eq 443\n 10 deny  tcp 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255 eq 80\n 20 permit ip 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255\n```\nThis preserves inter-VLAN reachability for non-HTTP to VLAN 20, allows HTTPS only to the API host, and continues to block HTTP. Verification: from a VLAN 30 client, `curl -k https://192.168.20.50` succeeds and increments line 5 counters; `curl http://192.168.20.50` fails and increments line 10; `ping 192.168.20.1` still succeeds and increments line 20 (or stays minimal). `show access-lists INTERVLAN` should reflect appropriate hits. Justify ordering: the specific 443 permit must precede the deny to avoid shadowing.",
+          "rubric": [
+            {
+              "criterion": "Correct diagnosis relating protocol specificity (TCP/80 vs TCP/443) and ACL evaluation/order",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed ACL implements least-disruptive, host-specific 443 permit before the deny, and tightens the general permit to VLAN20 only",
+              "marks": 3
+            },
+            {
+              "criterion": "Verification steps with expected counter increments for both allowed (443) and denied (80) tests",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ACLs",
+            "Network Troubleshooting",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Harden a two-device lab (Secured lab)",
+          "brief": "Using two IOS devices (one router, one switch or two routers), implement a baseline hardening suitable for automation-friendly environments. Do not break SSH-based management. Secure the management plane, restrict remote access, and configure logging/NTP. Document verification.",
+          "deliverable": "A zipped folder containing: (1) running-configs for both devices, (2) outputs of `show ip interface brief`, `show ip ssh`, `show line vty 0 4`, `show ip http server status`, `show access-lists`, `show login`, and `show run | sec username|line vty|aaa|http|ssh|archive`, (3) a text file with test results (SSH from allowed host succeeds; Telnet/HTTP attempts fail), and (4) if possible, a short syslog excerpt from your server proving receipt of deny logs or config-change logs.",
+          "acceptance_criteria": [
+            "Only SSHv2 is enabled for remote CLI (`ip ssh version 2`; `transport input ssh` on all VTYs).",
+            "HTTP is disabled (`no ip http server`); HTTPS either disabled or justified. If enabled, explain why and ensure it uses the secure server only.",
+            "VTY access is restricted to a management subnet using a standard ACL and `access-class in` (show in config).",
+            "Local user with a secret exists and is used for `login local`. No `password cisco` style line passwords remain active.",
+            "`login block-for` is configured with sane parameters and visible in `show login`.",
+            "`service password-encryption` is enabled or line passwords removed; no cleartext credentials remain.",
+            "NTP and remote syslog are configured; `logging trap` level is set to include at least warnings. If you cannot stand up a server, include the correct configuration stanzas anyway.",
+            "Banner MOTD is set.",
+            "Configuration change logging is enabled via `archive log config` (notify syslog).",
+            "All verification outputs included and consistent with the configuration."
+          ],
+          "rubric": [
+            {
+              "criterion": "Management plane exposure reduced (SSH-only, HTTP off, Telnet off) and shown in both config and verification outputs",
+              "marks": 6
+            },
+            {
+              "criterion": "Access control to VTY lines correctly implemented with standard ACL and proven via tests",
+              "marks": 4
+            },
+            {
+              "criterion": "Credential handling improved (local secret users, no cleartext, password encryption)",
+              "marks": 3
+            },
+            {
+              "criterion": "Operational logging/time set up (syslog trap level appropriate, NTP configured, archive logging)",
+              "marks": 3
+            },
+            {
+              "criterion": "Protections against brute-force (`login block-for`) and a proper banner are present",
+              "marks": 2
+            },
+            {
+              "criterion": "Submission completeness and clarity of evidence (all required show commands and test results)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Device hardening",
+            "ACLs",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Integrate and document a small routed network with policy (Integrated network)",
+          "brief": "Build a mini-topology (one router performing inter-VLAN routing for two VLANs and an external/WAN-facing interface). Implement an ACL that enforces a realistic policy: allow HTTPS from VLAN A to a specific host in VLAN B; deny HTTP from VLAN A to VLAN B; permit necessary ICMP for troubleshooting; keep other inter-VLAN traffic allowed. Produce a troubleshooting runbook and verification artifacts.",
+          "deliverable": "A zipped folder containing: (1) device configs, (2) `show vlan brief`, `show ip interface brief`, `show ip route`, `show access-lists <name>`, `show ip interface <SVI/WAN>` outputs, (3) test transcripts proving allowed flows (HTTPS/ICMP) succeed and denied flows (HTTP) are blocked, including counter increments, and (4) a concise troubleshooting runbook describing how to isolate and fix a broken flow in this topology using verification commands.",
+          "acceptance_criteria": [
+            "Inter-VLAN routing operational: hosts in both VLANs can ping their SVI and each other unless blocked by policy.",
+            "ACL is applied in the correct place/direction and implements: permit tcp VLAN A -> specific host in VLAN B eq 443; deny tcp VLAN A -> VLAN B eq 80; permit icmp time-exceeded/unreachable and echo/echo-reply; permit remaining VLAN A -> VLAN B IP as appropriate.",
+            "`show access-lists` demonstrates counters for both permits and denies based on your tests.",
+            "Verification artifacts include successful HTTPS test to the permitted host and failed HTTP to both permitted host and other hosts, as applicable.",
+            "Troubleshooting runbook lists at least: where the ACL is bound, how to confirm order/counters, and which `show` commands to use to isolate path vs. policy issues.",
+            "No risky debugs used in production-like verification."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct ACL design and placement aligned to the stated policy (including ICMP considerations)",
+              "marks": 7
+            },
+            {
+              "criterion": "Inter-VLAN routing and interface/VLAN configuration correctness, proven by outputs",
+              "marks": 4
+            },
+            {
+              "criterion": "Evidence of verification: tests and counters align with policy (both allowed and denied cases)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality of troubleshooting runbook (clear, stepwise isolation using safe verification commands)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "ACLs",
+            "Network Troubleshooting",
+            "Cisco"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

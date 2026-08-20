@@ -29,7 +29,7 @@ def _mark(label):
 
 
 from asgiref.wsgi import WsgiToAsgi  # noqa: E402
-from flask import Flask  # noqa: E402
+from flask import Flask, jsonify  # noqa: E402
 
 _mark("flask + asgiref")
 
@@ -38,6 +38,8 @@ from mangum import Mangum  # noqa: E402
 _mark("mangum")
 
 from sqlalchemy import text  # noqa: E402
+from sqlalchemy.exc import OperationalError  # noqa: E402
+from sqlalchemy.exc import TimeoutError as SQLAlchemyTimeoutError  # noqa: E402
 
 from config.database import DATABASE_URL, db  # noqa: E402
 
@@ -68,6 +70,10 @@ from api.recommendations.routes import recommendations_bp  # noqa: E402
 _mark("api.recommendations")
 
 from api.catalogue.routes import catalogue_bp  # noqa: E402
+
+_mark("api.achievements")
+
+from api.achievements.routes import achievements_bp  # noqa: E402
 
 _mark("api.catalogue")
 
@@ -107,9 +113,53 @@ app.register_blueprint(resume_bp, url_prefix="/api/resumes")
 app.register_blueprint(recommendations_bp, url_prefix="/api/recommendations")
 app.register_blueprint(projects_bp, url_prefix="/api/projects")
 app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
+app.register_blueprint(achievements_bp, url_prefix="/api/achievements")
 # No prefix of its own: the blueprint owns two unrelated top-level collections
 # (/api/courses and /api/careers), so the routes carry their own paths.
 app.register_blueprint(catalogue_bp, url_prefix="/api")
+
+
+# Database pressure is a 503, not a 500.
+#
+# Measured, not theoretical: 64 concurrent sittings against pool_size 1 /
+# max_overflow 2 produced 40 responses of `QueuePool limit of size 1 overflow 2
+# reached, connection timed out, timeout 10.00`, every one served as a 500. That
+# status is a lie with a cost — a 500 means "this request is broken, do not
+# retry", so a client that believed it would throw away a student's answer that
+# nothing was actually wrong with. A 503 with Retry-After says what is true:
+# the server is busy, the request was fine, send it again.
+#
+# The pool stays small on purpose. This runs as a container image Lambda, where
+# concurrency comes from more invocations rather than more threads, and one
+# connection per sandbox is what keeps Neon's connection limit reachable. The
+# pool is therefore not the bug; reporting its exhaustion as a server fault was.
+@app.errorhandler(SQLAlchemyTimeoutError)
+def database_busy(error):
+    app.logger.warning("database pool exhausted: %s", error)
+    return (
+        jsonify({
+            "error": "The server is busy. Your request was not lost — try again in a moment.",
+            "retryable": True,
+        }),
+        503,
+        {"Retry-After": "2"},
+    )
+
+
+@app.errorhandler(OperationalError)
+def database_unavailable(error):
+    # Neon autosuspends an idle compute and drops the connection with it, so a
+    # first request after a quiet spell can fail on a connection that looked
+    # alive. Also retryable, and also not a bug in the request.
+    app.logger.warning("database unavailable: %s", str(error)[:200])
+    return (
+        jsonify({
+            "error": "The database is waking up. Your request was not lost — try again in a moment.",
+            "retryable": True,
+        }),
+        503,
+        {"Retry-After": "3"},
+    )
 
 
 @app.route("/")

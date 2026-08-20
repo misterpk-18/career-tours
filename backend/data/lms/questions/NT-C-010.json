@@ -1,0 +1,1856 @@
+{
+  "course_code": "NT-C-010",
+  "course_name": "Video Editing",
+  "sections": [
+    {
+      "section_code": "NT-C-010-S01",
+      "skills_assessed": [
+        "Video Editing",
+        "Premiere Pro",
+        "file-based workflow",
+        "synchronise sound with images",
+        "Storytelling",
+        "convert different audiovisual formats"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive an AVCHD camera card and need to bring clips into your project. The card arrives like this:\n```text\nPRIVATE/\n  AVCHD/\n    BDMV/\n      CLIPINF/\n      PLAYLIST/\n      STREAM/\n        00012.MTS\n        00013.MTS\n        00014.MTS\n      INDEX.BDM\n      MOVIEOBJ.BDM\n```\nYou drag just the three .MTS files from `STREAM` into your bin via the OS. Later you notice a mid-take gap when cutting across 00012 and 00013.\nWhat actually caused the gap, given this import method?",
+          "options": [
+            "The spanned clip was split into separate files and timecode restarted on 00013, so the continuous take now has a missing segment at the join.",
+            "Premiere auto-stitches any adjacent .MTS files in a bin if they sort consecutively, so the gap must be a dropped frame on the card.",
+            "Proxy toggling created the gap by swapping frame rates between full-res and proxy media.",
+            "Nothing — AVCHD always embeds continuous timecode per file, so dragging .MTS is safe and cannot cause gaps."
+          ],
+          "correct_option": "A",
+          "explanation": "AVCHD often stores a single long take as multiple spanned .MTS files. Importing only the .MTS from the OS bypasses the metadata that tells Premiere to stitch spans and preserve continuous TC. Result: clips appear as separate items with TC resets and a gap or duplicate frames at the seam. Media Browser import at the card root (or copying the full card structure first) preserves spanned relationships.",
+          "distractor_rationale": "B is tempting because TC is \"embedded,\" but the stitching metadata isn't in the .MTS alone; it's in the AVCHD structure. C sounds plausible but Premiere doesn't infer stitching from filename order without the metadata. D confuses proxy workflow with ingest; proxy toggling doesn't create spanned-clip gaps.",
+          "skills_covered": [
+            "file-based workflow",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You have camera video recorded at 23.976 fps with dual-system audio recorded at 48 kHz, locked to the camera during production. Media info shows:\n```text\nVideo: 23.976 fps (24000/1001)\nAudio: 48,000 Hz WAV (external recorder)\n```\nYou mistakenly use Interpret Footage to set the video to 24.000 fps and sync it to the original audio without time-stretching the audio. After a 20-minute take, how much drift will you get between picture and sound?",
+          "options": [
+            "~2.4 seconds",
+            "~0.5 seconds",
+            "0.0 seconds — 23.976 to 24.000 is negligible over 20 minutes",
+            "~1.2 seconds"
+          ],
+          "correct_option": "D",
+          "explanation": "23.976 to 24.000 is roughly a 0.1% speed-up. Over 20 minutes (1,200 s), 0.1% is about 1.2 seconds. The audio stayed at true-time; the video was sped up, so sync drifts by ~1.2 s.",
+          "distractor_rationale": "A underestimates the cumulative effect. B is a common misremembered value. D doubles the actual 0.1% difference (confusing with 0.2%).",
+          "skills_covered": [
+            "synchronise sound with images",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You cut with attached proxies whose filenames include `_proxy`. Your exported EDL looks like:\n```text\nTITLE: Interview_Seq\nFCM: NON-DROP FRAME\n001  AX       V     C        00:00:00:00 00:00:12:10 01:00:00:00 01:00:12:10\n* FROM CLIP NAME: A001_C003_0101XY_proxy.mov\n002  AX       V     C        00:00:12:10 00:00:34:00 01:00:12:10 01:00:34:00\n* FROM CLIP NAME: B004_C017_0202AB_proxy.mov\n```\nYou send this EDL to an online house to conform against the camera masters (no proxies delivered). What actually happens during conform if nothing else is provided?",
+          "options": [
+            "It relinks to the proxy media or fails to match, because the reel/clip name references `_proxy` that doesn't exist in the camera master set.",
+            "It matches by timecode only, so clip names are irrelevant and conform is guaranteed.",
+            "The conform will randomly mix matching originals and proxies because EDLs carry file paths.",
+            "The conform system pulls the correct camera originals because EDLs ignore clip names."
+          ],
+          "correct_option": "A",
+          "explanation": "With EDL-only conforms, match often relies on reel/clip names and timecode. If the names encode `_proxy` and no reel/tape metadata ties back to the camera master names, matches can fail or pull the wrong files. Providing an XML/AAF with source file paths or setting correct reel metadata avoids this.",
+          "distractor_rationale": "A and C assume name independence; in practice, names matter unless consistent reel/tape metadata is set. D is wrong about EDL carrying file paths; standard CMX3600 EDLs do not include file paths.",
+          "skills_covered": [
+            "file-based workflow",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "After copying a shoot to two backup drives, you compare MD5 manifests:\n```text\nPRIMARY_DRIVE.md5\nb1946ac92492d2347c6235b4d2611184  A001_C001.MOV\n 4a7d1ed414474e4033ac29ccb8653d9b  A001_C002.MOV\n 900150983cd24fb0d6963f7d28e17f72  A001_C003.MOV\n\noffsite_DRIVE.md5\nb1946ac92492d2347c6235b4d2611184  A001_C001.MOV\n 4a7d1ed414474e4033ac29ccb8653d9b  A001_C002.MOV\n 900150983cd24fb0d6963f7d28e17f71  A001_C003.MOV   <-- mismatch\n```\nWhat is the correct next step to fix and validate your backups?",
+          "options": [
+            "Recalculate hashes on the primary; if they change, update the manifest and proceed.",
+            "Copy `A001_C003.MOV` from the primary drive to the offsite drive; since primary passed, it’s safe to mirror it.",
+            "Recopy only `A001_C003.MOV` from the original camera media/card to the offsite drive and re-verify its MD5 against the primary/original manifest.",
+            "Ignore the mismatch because one bit error in a long-GOP file is harmless once proxies are created."
+          ],
+          "correct_option": "C",
+          "explanation": "A checksum mismatch means the offsite copy of that file is corrupt. The correct fix is to recopy that file from a known-good source (original media or a verified primary) and then re-verify against the manifest. Best practice is to source from the camera original if still available, then confirm the hash matches the original manifest.",
+          "distractor_rationale": "A normalizes corruption by moving the goalposts. C spreads corruption if the primary were later found compromised; sourcing from the original is safer. D dangerously dismisses corruption; single-bit errors can break decodes and future conforms.",
+          "skills_covered": [
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You created proxies via Ingest with this preset:\n```json\n{\n  \"container\": \"mov\",\n  \"codec\": \"ProRes Proxy\",\n  \"width\": 1280,\n  \"height\": 720,\n  \"frameRate\": \"matchSource\",\n  \"includeAudio\": false\n}\n```\nYour source clips have 4 mono audio channels. While cutting, you toggle proxies on/off. What changes should you expect in audio behavior when toggling?",
+          "options": [
+            "Audio will drift slightly because proxy audio sample rate differs from source.",
+            "No change at all — proxy toggling in Premiere affects video only when proxies contain no audio; audio always plays from the source media.",
+            "Audio channelization will switch from 4 mono to stereo when proxies are on, risking muted channels.",
+            "Audio will go offline whenever proxies are toggled because of the channel mismatch."
+          ],
+          "correct_option": "B",
+          "explanation": "With common proxy workflows in Premiere, proxies are video-only when `includeAudio` is false. Toggling proxies swaps the video stream but continues to play audio from the full-resolution source with its original channel mapping. There should be no audio behavior change due to proxy toggling.",
+          "distractor_rationale": "A imagines channel remapping, but there is no proxy audio to switch to. B invents a sample-rate mismatch that doesn’t exist. D overstates the impact; audio doesn’t go offline when proxies toggle in this configuration.",
+          "skills_covered": [
+            "Premiere Pro",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You planned a dialogue scene with the 180° rule in mind. The blocking and planned coverage are noted:\n```text\nActors: Alex (left), Bea (right) facing each other.\nLine of action: from Alex to Bea.\nCameras:\n- Cam A: OTS Alex -> Bea (Camera is on Alex's left side)\n- Cam B: OTS Bea -> Alex (Camera is on Alex's left side)\n- Cam C: Wide two-shot from Alex's left side\n```\nDuring pickup, you accidentally shot one extra OTS of Bea from Alex's right side. To maintain continuity, which cut order hides the axis-crossing without re-shoots?",
+          "options": [
+            "Insert a J-cut to Bea's dialogue audio, then jump from Cam A to the incorrect OTS Bea without a neutral shot.",
+            "Stay on Cam B (correct side) and only use cutaways to props before and after the incorrect OTS Bea to mask the flip.",
+            "Cut from Cam C (wide) to the incorrect OTS Bea (right side) to Cam A (OTS Alex), using the wide as a neutral reframing.",
+            "Cut directly between Cam A (OTS Alex, left side) and the incorrect OTS Bea (right side) to create contrast."
+          ],
+          "correct_option": "C",
+          "explanation": "A neutral shot (the wide that straddles or re-establishes space) can reset audience geography. Going wide between correct-side and incorrect-side shots reduces the perceptual axis flip. Directly cutting across the line without a neutral can jar. Cutaways help, but a neutral re-establishing shot is the robust fix.",
+          "distractor_rationale": "B is the classic mistake — it emphasizes the axis flip. C mistakes an audio J-cut for a spatial fix; it doesn't correct spatial mismatch. D uses cutaways but never re-establishes geography; the flip remains apparent once you return to the incorrect OTS.",
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You set up Ingest copy in Premiere like this:\n```yaml\ncopy_media: true\ncreate_subfolder_per_card: false\nrename_on_ingest: false\ndestination: /Projects/Show/Media/Camera/\n```\nYou then copy two cards that both contain files named `C0001.MP4` ... `C0050.MP4` into the same destination. What side-effect should you expect from this configuration after ingest?",
+          "options": [
+            "All files merge with embedded volume IDs, so filenames stay identical without conflict.",
+            "Files from the second card are de-duplicated on copy (e.g., suffixed), creating non-camera-original filenames that can complicate future conforms.",
+            "Second card's files overwrite the first card's identical names, silently losing media.",
+            "Premiere aborts the second copy entirely when a duplicate filename is detected."
+          ],
+          "correct_option": "B",
+          "explanation": "When ingesting two sets of identically named files into a single folder without renaming or per-card subfolders, duplicates cannot coexist. Copy processes typically de-duplicate by adding suffixes. That preserves data but produces non-original filenames, complicating later conform workflows that depend on camera-original naming.",
+          "distractor_rationale": "A assumes silent overwrite, which robust ingest workflows avoid. B overstates; most tools continue by renaming rather than aborting. D imagines a feature that doesn't exist for simple filesystem destinations.",
+          "skills_covered": [
+            "file-based workflow",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You're building a multicam from two cameras and an external recorder. Metadata summary:\n```text\nCam A: 29.97 fps NDF, TC start 11:10:00:00\nCam B: 29.97 fps NDF, TC start 11:10:15:00\nRecorder: 29.97 fps DF, TC start 11:10:00;00 (jammed earlier, drift suspected)\n```\nYou must create a first-pass sync without manual offsets. Which method will most reliably align the angles given this mix?",
+          "options": [
+            "Synchronize by timecode across all clips.",
+            "Use clip start time in bins and align by creation date/time metadata.",
+            "Place roughly, then let Optical Flow retime B to match A.",
+            "Synchronize by audio waveform across all clips."
+          ],
+          "correct_option": "D",
+          "explanation": "Drop vs non-drop and potential jam drift make timecode matching unreliable here. Audio waveform sync leverages the same event (dialogue/clap) across devices and is robust to TC counting differences. It's the best first pass when TC bases differ.",
+          "distractor_rationale": "A seems right but DF vs NDF and drift break it. C uses weak, often-inaccurate OS timestamps. D confuses timing alignment with retiming; Optical Flow won't align clip starts automatically.",
+          "skills_covered": [
+            "synchronise sound with images",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have a two-camera interview. Notes and transcript excerpt:\n```text\nCam A: Medium on host. Cam B: Medium on guest.\nAt 00:03:14:00, guest turns to pick up a glass; hand begins moving at 00:03:13:22.\nTranscript:\n00:03:12:20 Guest: \"...the moment I realized—\"\n00:03:13:22 [hand starts moving]\n00:03:14:05 Guest: \"—we had to act fast.\"\n```\nYou want to hide a jump cut while maintaining action continuity. Where do you cut from A to B?",
+          "options": [
+            "Cut at 00:03:14:10 after the line completes, so the action is fully shown on A.",
+            "Cut at 00:03:13:22 on the first frame of the hand movement (match on action).",
+            "Cut at 00:03:13:21 just before the hand moves, switching to B as the action starts.",
+            "Cut at 00:03:12:20 on the word \"realized\" to emphasize the thought."
+          ],
+          "correct_option": "B",
+          "explanation": "Cutting on the first frame of the movement lets you match the action across angles, masking the edit and preserving continuity. Cutting just before or well after creates a perceptible discontinuity in gesture and eyeline.",
+          "distractor_rationale": "A prioritizes dialogue rhythm but risks a visible jump in gesture. B cuts before the action, making the start of the movement pop. D lingers too long, so the movement repeats or misaligns on B.",
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your sequence preview settings and export are:\n```text\nSequence: 1920x1080, 25fps\nPreviews: I-Frame Only MPEG, 1280x720, 12 Mbps\n\nExport:\n- Match Source (1920x1080)\n- Use Previews: ON\n- Codec: H.264\n```\nYou rendered the entire timeline before export. What is the actual impact on the exported master?",
+          "options": [
+            "Export will be 1080p but upscaled from 720p preview renders, inheriting the preview codec softness and artifacts.",
+            "Export will fail because preview and export resolutions differ.",
+            "Export will be true 1080p from source; previews are ignored because Match Source is on.",
+            "Export will be 720p because Use Previews forces export resolution to match previews."
+          ],
+          "correct_option": "A",
+          "explanation": "With Use Previews enabled, Premiere can substitute preview frames into the export. Although the file is encoded at 1080p, the underlying pictures are upscaled from the 720p previews and carry their compression characteristics, degrading quality.",
+          "distractor_rationale": "A misunderstands Use Previews. C is incorrect; Premiere can scale. D confuses preview content with export dimensions; the output dimension remains 1080p.",
+          "skills_covered": [
+            "Premiere Pro",
+            "file-based workflow",
+            "convert different audiovisual formats"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are handed a 3-minute branded piece to assemble from a half-day shoot. Assets arrive as:\n- Cam A: Sony A7S III, XAVC HS 4K (H.265, 10-bit 4:2:2), 23.976 VFR toggled on by mistake on a few clips.\n- Cam B: Canon C300 mkIII, XF-AVC Intra 4K (H.264 Intra, CFR) 23.976.\n- Audio: MixPre-6 WAV 48kHz, timecode jammed to C300 only.\n- Delivery: First edit pass within 24 hours; later online/color at a post house from camera originals.\nYou must build a workflow that lets you cut smoothly on a laptop, maintain continuity, and hand off cleanly for conform.",
+          "task": "Propose a concrete ingest and proxy plan for this project, including: card handling and backups, how you’ll import each camera’s media, whether/how to normalize the A7S VFR clips, proxy codec/size/framerate, sync strategy across A/B and audio, and what metadata you will set so the post house can conform to camera originals. Justify each choice in terms of performance, continuity, and conform reliability.",
+          "expected_answer": "A high-quality answer includes: copying full card structures with verified checksums (3-2-1: working + local backup + offsite), importing P2/XF-AVC via Media Browser to preserve metadata, inspecting A7S clips to detect VFR and either transcoding only the VFR offenders to CFR (e.g., ProRes 422 at native frame rate) or interpreting to 23.976 while noting any audio sync implications. Proxies: a single proxy preset for all media (e.g., ProRes Proxy 1280x720, match source fps) created on ingest, video-only proxies to avoid audio channel issues. Sync: build multicams by timecode for C300+MixPre and use audio waveform for A7S angles lacking jam TC; validate sync with a visible clap or shared transient. Set consistent ‘Reel’/‘Tape’ metadata derived from camera-original names (strip any `_proxy`) and keep original folder structure and filenames; avoid renaming in a flat folder to protect conform. Document all interpret/transcode exceptions. Outcome: smooth laptop cutting with proxies, continuity preserved by consistent fps, and clean online via XML/AAF using original names/TC.",
+          "rubric": [
+            {
+              "criterion": "Backups and card handling plan (full structure preserved, checksum verification, 3-2-1 articulated)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct import methods per camera format (Media Browser for structured media, avoid OS drag of essence-only)",
+              "marks": 2
+            },
+            {
+              "criterion": "VFR normalization decision with concrete method and sync implications handled",
+              "marks": 2
+            },
+            {
+              "criterion": "Proxy choice justified (codec, size, fps) with performance vs fidelity trade-offs",
+              "marks": 1
+            },
+            {
+              "criterion": "Sync strategy across devices (timecode where valid, waveform where not) plus validation step",
+              "marks": 1
+            },
+            {
+              "criterion": "Conform-readiness (reel/tape naming, avoid destructive renames, documentation for online house)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "Premiere Pro",
+            "synchronise sound with images",
+            "convert different audiovisual formats",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherit a messy project. The Project panel looks like this:\n```text\nProject\n├─ bin1\n│  ├─ A001_C001.MOV\n│  ├─ clip_final.mov\n│  └─ music.mp3\n├─ random\n│  ├─ A001_C002.MOV\n│  └─ interview_seq\n├─ Sequences\n│  └─ seq_v3 (no date)\n└─ Titles\n   └─ lower3rd_final_FINAL.mogrt\n```\nYou have to cut a two-minute story with clear A-roll (interview), B-roll (cutaways), and a cold-open hook, delivering a first pass today and handing the project to another editor next week.",
+          "task": "Define a bin schema, labeling system, and minimal metadata you will apply immediately to support story structure and continuity. Explain how your structure will help you: (a) build a cold open without duplicating media, (b) track selects and story beats, and (c) hand off cleanly.",
+          "expected_answer": "An effective re-org: create top-level bins: 01_A-Roll (interviews, synced subclips), 02_B-Roll (topic sub-bins or scene-based), 03_Audio (VO, music, SFX), 04_Gfx, 05_Sequences (dated, with versioning convention), 06_Deliverables, 99_Admin (logs). Use color labels to distinguish A-roll vs B-roll; apply metadata fields: Description (content), Good/Select markers, Scene/Shot/Take custom columns, and label clip names non-destructively via bins/labels (do not rename the underlying files). Build synced subclips or multicams for interview, stored in A-Roll bin; store the cold-open selects as a sub-sequence in 05_Sequences or a dedicated ‘00_Hook’ bin with subclips referencing original items (no duplication on disk). Add a README or Project Notes sequence outlining structure. Use date-stamped sequence names (e.g., 2026-08-19_seq_v01). This supports continuity (consistent labeling, beats tracked with markers) and clean handoff (predictable bins, original filenames preserved).",
+          "rubric": [
+            {
+              "criterion": "Clear, hierarchical bin schema aligned to story roles (A-roll, B-roll, audio, gfx, sequences)",
+              "marks": 2
+            },
+            {
+              "criterion": "Non-destructive organization choices (original filenames preserved; uses bins/labels/metadata)",
+              "marks": 2
+            },
+            {
+              "criterion": "Mechanism for cold open and beat tracking (sub-sequences/subclips, markers, labels)",
+              "marks": 2
+            },
+            {
+              "criterion": "Handoff readiness (versioning convention, project notes/README, predictable locations)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "Storytelling",
+            "Video Editing",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Mid-project, one of your backup drives shows SMART warnings. Your verification logs show that two files from a prior shoot night were only ever copied to that failing drive. The original camera cards are no longer available. Your current working drive has proxies attached to clips from that night, and the timeline uses them heavily.",
+          "task": "Decide precisely how to secure the media and protect the edit. Outline the steps you will take in order, including any extra exports from Premiere that reduce risk if more media fails, and how you will validate that your project can still conform later.",
+          "expected_answer": "Proposed steps: immediately clone the failing drive with a tool that retries and logs bad sectors; verify via checksum against any available manifests. From the cloned (or still-readable) files, copy the camera originals to the working storage and a fresh offsite drive; generate new checksums. In Premiere, confirm all master clips relink to originals (not proxies only). Export a Project Manager archive with ‘Collect Files and Copy’ for the sequence as an additional safety net, and export a robust interchange (FCP XML/AAF) plus a text change list. Export low-bitrate H.264 reference of the current cut and a frame-accurate audio stem to assist future conform. Validate by temporarily disabling proxies and playing through, checking for missing media flags, and spot-checking MD5s on a sample. Document any files that remain missing and mark them in the timeline for pickup or alternate coverage.",
+          "rubric": [
+            {
+              "criterion": "Data rescue plan for failing drive (clone-first, checksum-aware, non-destructive)",
+              "marks": 2
+            },
+            {
+              "criterion": "Creation of redundant, verified copies and updated manifests",
+              "marks": 2
+            },
+            {
+              "criterion": "Premiere project risk mitigation (Project Manager collect, XML/AAF, reference exports)",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation steps (disable proxies, relink checks, spot MD5s, documentation of gaps)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "Premiere Pro",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You’re building a 4-angle multicam of a panel talk. One camera is phone footage recorded VFR 30p, the others are 29.97 CFR. Audio came from the house console at 48kHz. On your first attempt, the phone angle drifts out by the end of the 40-minute talk, causing lip-sync offsets that become obvious across cuts.",
+          "task": "Choose a remediation plan that preserves sync and continuity in the edit while keeping performance reasonable on a mid-tier laptop. Describe whether you will transcode, interpret, or proxy the phone footage; how you will build the multicam; and how you will verify that drift is gone before you start fine-cutting.",
+          "expected_answer": "Normalize the problematic VFR phone footage to CFR: either transcode that angle to an intraframe CFR mezzanine (e.g., ProRes 422 LT at 29.97) or use a reliable tool to conform VFR to 29.97 without changing duration. Then generate proxies for all angles (e.g., ProRes Proxy 720p, match fps) to keep multicam smooth. Build the multicam by audio waveform aligned to the console feed; confirm sync by checking mouth hits at the start, middle, and end. Disable proxies to confirm full-res timing matches. Avoid interpreting footage to 30.00 or 24.00, which would desync the 48k audio. Lock the multicam and cut angles, confident that drift is resolved.",
+          "rubric": [
+            {
+              "criterion": "Correct normalization choice for VFR (transcode/conform to CFR without unintended speed change)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proxy plan appropriate for multicam performance",
+              "marks": 1
+            },
+            {
+              "criterion": "Robust sync method (audio waveform to master feed) and verification points across timeline",
+              "marks": 2
+            },
+            {
+              "criterion": "Continuity considerations articulated (avoid lip-sync pop across angle cuts; lock multicam before fine trims)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "synchronise sound with images",
+            "Premiere Pro",
+            "file-based workflow",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Structured edit plan for a 90-second story",
+          "brief": "You are given a client brief and a clip inventory (below). Produce a structured edit plan that maps story beats to specific shots, and defines the workflow you will use to maintain continuity and reliability through to online.\n\nClient brief (summary):\n```text\nGoal: 90-second launch video with a 5–7 second cold open hook.\nMessage: \"Solve X by doing Y\" with one on-camera founder and product b-roll.\nTone: energetic, credible.\nCTA: visit website.\n```\nClip inventory (summary):\n```text\nA-roll: 3 interview takes (founder), 23.976 CFR.\nB-roll: 45 shots mixed 23.976 and 60p (for slow motion), some VFR phone inserts.\nAudio: WAV 48kHz room tone; 2 music tracks (MP3); no jam TC on phone clips.\n```\nYour plan must state: narrative structure; which A/B-roll shots cover each beat; how you’ll handle slow-mo; continuity strategies (eyelines, 180°); sequence settings; proxy strategy; sync method(s); and backup/ingest approach.",
+          "deliverable": "Structured edit plan (PDF or Markdown) that includes: logline, beat outline with referenced clip IDs/timecodes, coverage notes (eyeline/axis considerations), transition plan, sequence and codec choices, proxy and sync plan, and backup/ingest checklist.",
+          "acceptance_criteria": [
+            "Plan includes a logline and a clear beat-by-beat outline that references specific clip IDs and approximate timecodes.",
+            "Identifies slow-motion sources and states a method (e.g., interpret to 23.976 at 40% for 60p) without changing duration unintentionally.",
+            "Explains continuity strategies (eyeline, 180° rule, match-on-action) applied to at least three specific cuts.",
+            "Specifies sequence settings and proxy format with rationale tied to performance and later conform.",
+            "Defines sync approach for A-roll vs phone inserts (e.g., audio waveform) and how verification will be done.",
+            "Lists ingest and backup steps including checksum verification and folder/bin schema to be used."
+          ],
+          "rubric": [
+            {
+              "criterion": "Narrative clarity and beat-to-shot mapping with concrete references",
+              "marks": 6
+            },
+            {
+              "criterion": "Continuity strategy tied to specific cuts and coverage (eyeline/axis/match action)",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical workflow choices (sequence, codecs, proxies) justified for performance and conform",
+              "marks": 4
+            },
+            {
+              "criterion": "Sync approach across sources and verification plan",
+              "marks": 3
+            },
+            {
+              "criterion": "Ingest/backup checklist demonstrates file-based workflow discipline",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing",
+            "file-based workflow",
+            "Premiere Pro",
+            "synchronise sound with images",
+            "convert different audiovisual formats"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Organised project handoff",
+          "brief": "Create a clean, handoff-ready Premiere Pro project from a small media set (use any comparable sample pack if none is provided). Demonstrate import, binning, proxies, and sync suitable for collaborative editing.",
+          "deliverable": "A zipped folder containing: the Premiere project (.prproj), a Project Panel CSV export listing all items, the proxy files folder, a checksums.txt for both original and proxy media, and a short README.md describing the bin schema and any deviations.",
+          "acceptance_criteria": [
+            "Project has a top-level bin schema separating A-Roll, B-Roll, Audio, GFX, Sequences, Admin (or equivalent), with items placed accordingly.",
+            "Media was imported preserving card structures (if applicable) and via Media Browser where needed; no orphaned essence-only imports for structured formats.",
+            "Proxies are attached for all video items; Project Panel metadata shows Proxy column = Attached for 100% of video clips.",
+            "At least one synced subclip or multicam sequence is present, created by timecode or waveform as appropriate, and plays in sync with proxies toggled on and off.",
+            "Project Panel CSV exists and reflects the bin structure; checksums.txt exists with hashes for both originals and proxies; README explains decisions and any known issues."
+          ],
+          "rubric": [
+            {
+              "criterion": "Project structure (bins, placement, naming conventions, sequences) is coherent and complete",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct ingest method and preservation of media structure; evidence via CSV and folder layout",
+              "marks": 4
+            },
+            {
+              "criterion": "Proxy creation/attachment completeness and correctness (verified via Proxy column)",
+              "marks": 5
+            },
+            {
+              "criterion": "Sync implementation (subclip or multicam) correct and verified with proxies on/off",
+              "marks": 4
+            },
+            {
+              "criterion": "Delivery artifacts (CSV, checksums, README) present and accurate",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "file-based workflow",
+            "synchronise sound with images",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-010-S02",
+      "skills_assessed": [
+        "Video Editing",
+        "Premiere Pro",
+        "audio post-production",
+        "Storytelling",
+        "conduct quality control analysis"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have this timeline with music under interview A-roll. You want to tighten the cut between two shots without changing the sequence length.\n\n```text\nSequence: 1080p25\nMarker M1 (music hit) at 00:00:12:00\n\nV1: [Clip A........] | [Clip B........]\nA1: (dialogue linked to V1, LINK OFF)\nA2: [-------------------Music Continuous--------------------]\n\nAction: Using the Rolling Edit Tool, you move the V1 cut 10 frames earlier (left) at 00:00:10:00.\n```\nWhat will be the result relative to sequence duration and the perceived alignment to the music hit at M1?",
+          "options": [
+            "```text\nThe total sequence duration is unchanged. The cut now lands 10 frames earlier than before, so if it previously hit M1 it will now precede M1 by 10 frames. Music timing is unchanged.\n```",
+            "```text\nThe total sequence duration shortens by 10 frames because the Rolling Edit ripples the timeline, and the music hit at M1 also shifts earlier by 10 frames.\n```",
+            "```text\nThe content of Clip B slips 10 frames earlier inside the same in/out, so the cut timing stays on the same frame and the music hit remains aligned.\n```",
+            "```text\nThe entire Clip B (video and any linked audio) slides 10 frames earlier, keeping its content intact, which keeps the cut aligned to M1 but creates a gap after Clip B.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A Rolling Edit adjusts the out of the left clip and the in of the right clip equally, preserving the overall sequence duration and all downstream timing (including the music track and marker). Moving the cut 10 frames earlier means the visual cut happens earlier against the unchanged music, so any previous hit alignment is lost by 10 frames.",
+          "distractor_rationale": "B confuses Rolling with Ripple. Ripple trims change sequence duration and downstream timing; Rolling does not. C describes a Slip edit, which changes a clip’s internal content while its in/out points stay fixed—cut timing would not move. D describes a Slide edit on Clip B, which would move the clip and create/close gaps; Rolling does not slide an entire clip.",
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You must align an action in a B‑roll insert to a specific dialogue beat without disturbing downstream timing. The B‑roll sits over A‑roll and covers a jump cut.\n\n```text\nTarget beat at 00:00:07:12\n\nV2:     [B-roll clip: \"factory_walkthrough\"]\nV1: [A-roll interview]-----------------------------\nA1: [Dialogue continuous]\nA2: [Music continuous]\n\nConstraint: Keep the B-roll clip’s start and end on V2 exactly where they are (it must still cover the jump). You only want the moment within the B‑roll that shows the door opening to land at 00:00:07:12.\n```\nWhich trim operation achieves this?",
+          "options": [
+            "```text\nSlide the B-roll clip left until the door opening aligns at 00:00:07:12.\n```",
+            "```text\nPerform a Rolling Edit on the V2 cut points around the B-roll.\n```",
+            "```text\nRipple trim the B-roll clip’s in-point earlier so the door opening lands at 00:00:07:12.\n```",
+            "```text\nSlip the B-roll clip on V2 until the door opening aligns at 00:00:07:12.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Slip changes which portion of media appears within a clip without moving the clip’s in/out on the timeline. That lets you align the internal moment (door opening) to 00:00:07:12 while preserving the clip’s coverage of the jump cut and downstream timing.",
+          "distractor_rationale": "B Ripple-trims a boundary and would shift downstream timing, potentially uncovering the jump. C Slide moves the entire clip and alters gaps/overlaps, again risking the jump cut exposure. D Rolling changes the adjacent edit points between two clips; here the B‑roll sits over A‑roll, and a Rolling Edit on V2’s edges would change its duration rather than its internal content.",
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have uneven dialogue that occasionally dips, mild low-end rumble, and occasional harsh S‑sounds. You want consistent level with clean tone and headroom.\n\nWhich processing order on the dialogue submix best achieves this without pumping up noise or clipping?",
+          "options": [
+            "```text\n1) True-peak limiter first at -1.0 dBTP\n2) Compressor 4:1 heavy GR\n3) Broad EQ sculpt\n4) Add +6 dB gain to compensate\n```",
+            "```text\n1) Clip gain to set healthy nominal level\n2) High-pass filter around 80 Hz\n3) De-esser targeting 5–7 kHz\n4) Compressor ~3:1, medium attack/release, a few dB GR\n5) True-peak limiter at -1.0 dBTP on the dialogue bus\n```",
+            "```text\n1) Heavy compressor first with high makeup gain\n2) De-esser\n3) High-pass filter\n4) No limiting\n```",
+            "```text\n1) Aggressive broadband denoise after compression\n2) True-peak limiter\n3) Add EQ if needed\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Setting clip gain first establishes a good working level, then removing rumble and taming sibilance before moderate compression yields evenness without exciting low-end noise or over-triggering the de-esser. A true-peak limiter last preserves headroom and catches stray peaks.",
+          "distractor_rationale": "B puts limiting first, which prevents the compressor from working musically and risks audible pumping after makeup gain. C compresses noisy material before cleanup, raising rumble and sibilance and risking clipping. D denoises after compression, which often raises noise into the compressor and creates watery artifacts when limited.",
+          "skills_covered": [
+            "audio post-production",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You need the audio of the next clip to pre‑lap by 8 frames while the video cut stays where it is, creating a J‑cut.\n\n```text\nCurrent:\nV1: [Clip A........]|[Clip B........]\nA1: [Clip A audio..]|[Clip B audio..]\n\nGoal:\nV1: [Clip A........]|[Clip B........]\nA1: [Clip A..]|[------Clip B audio------]\n          ^ 8-frame pre-lap on A1 only\n```\nWhich exact trim achieves this without moving downstream content?",
+          "options": [
+            "```text\nRipple-trim the A1 in-point of Clip B 8 frames earlier.\n```",
+            "```text\nSlide Clip B’s audio 8 frames earlier.\n```",
+            "```text\nSlip Clip B’s audio 8 frames earlier.\n```",
+            "```text\nRoll just the A1 edit between Clip A and Clip B 8 frames earlier (left) with linked selection disabled.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "A J‑cut is a split edit made by rolling the audio-only edit left. This advances the start of Clip B’s audio under Clip A’s picture while keeping total sequence timing unchanged.",
+          "distractor_rationale": "B ripple-trims and would pull everything left, shifting downstream timing. C slip changes the media heard inside the same in/out; it won’t create the pre‑lap. D slide moves the entire audio clip and disrupts adjacent timing and gaps.",
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You’re masking a jump cut in dialogue by laying B‑roll. There’s a natural inhale that lasts 6 frames just before the sentence continues. You want the jump masked and pacing to feel natural.\n\n```text\nDialogue timeline around the cut:\n00:00:03:00  inhale starts\n00:00:03:06  inhale ends, next word starts\n\nCandidate B-roll shots (with strong action moments):\nB1: Hand on doorknob (00:00:00:12–00:00:01:00)\nB2: Wide hallway push (00:00:02:20–00:00:03:16)\nB3: Close smile reaction (00:00:01:08–00:00:02:04)\nB4: Logo on wall (00:00:03:04–00:00:03:10)\n```\nWhich B‑roll timing choice best hides the cut while preserving the breathing rhythm?",
+          "options": [
+            "```text\nUse B2, in at 00:00:02:22 out at 00:00:03:08 so the peak camera move spans the 6‑frame inhale and returns to A‑roll on the first phoneme.\n```",
+            "```text\nUse B3, in at 00:00:01:08 out at 00:00:02:04, then hold A‑roll black for 6 frames over the inhale to avoid the jump.\n```",
+            "```text\nUse B4, in at 00:00:03:04 out at 00:00:03:10; come back mid‑word to feel energetic.\n```",
+            "```text\nUse B1, in at 00:00:00:12 out at 00:00:01:00; cut back during the inhale to emphasize anticipation.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Covering exactly over the inhale hides the jump and keeps the natural breath timing. Returning on the first phoneme preserves pacing and intelligibility.",
+          "distractor_rationale": "B lands far from the problem area and forces a cut to A‑roll during the inhale, exposing the jump. C introduces black and an off‑screen reaction unrelated to the breath timing, which feels like a stutter. D cutting back mid‑word feels abrupt and harms intelligibility.",
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "After your first pass mix you measure:\n\n```text\nIntegrated loudness: -20.0 LUFS-I (stereo)\nShort-term dialogue: ~ -17 LUFS-S\nTrue peak: -2.0 dBTP (master)\nMusic is tastefully low under VO.\nGoal: Bring program to -16 LUFS-I without exceeding -1.0 dBTP and without making noise/breaths more obvious.\n```\nWhich adjustment is most appropriate?",
+          "options": [
+            "```text\nBoost the master fader by +4 dB and let the current limiter shave whatever peaks exceed -1.0 dBTP.\n```",
+            "```text\nAdd ~2–3 dB gentle compression (2:1) on the dialogue bus with makeup gain to raise average level a few dB, then add a true-peak limiter at -1.0 dBTP on the master to catch peaks.\n```",
+            "```text\nRaise the music track by +4 dB so the integrated loudness increases without touching dialogue.\n```",
+            "```text\nNormalize each dialogue clip to -1 dBFS peak; this guarantees a -16 LUFS-I at the end.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Raising the dialogue’s average gently with light compression moves integrated loudness toward -16 LUFS without lifting pauses and noise as much as raw gain would. A master true-peak limiter at -1.0 dBTP protects headroom.",
+          "distractor_rationale": "B raises music and risks masking intelligibility and altering the intended balance. C global gain risks audible limiting and raises noise uniformly, including silences. D peak-normalizing clips does not target loudness and will produce inconsistent perceived level.",
+          "skills_covered": [
+            "audio post-production",
+            "conduct quality control analysis",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You attempt to create a longer J‑cut by rolling the A1 audio edit 12 frames earlier, but the incoming clip’s audio is already at its media start.\n\n```text\nClip B audio media start: 00:00:00:00\nTimeline attempt: Roll A1 edit left by 12 frames\nResult shown by NLE: \"Trim blocked: no more media\" on incoming side\n```\nWhat actually happens and what’s your viable next step if you still want more pre‑lap?",
+          "options": [
+            "```text\nThe NLE fills the missing audio with silence, so the J‑cut still works; no further action needed.\n```",
+            "```text\nThe NLE converts the roll to a slip on Clip B’s audio, shifting internal content to accommodate the extra 12 frames.\n```",
+            "```text\nThe roll stops at the media boundary; the edit will not move further. Use room tone or extend with a short audio dissolve over a duplicated tail from Clip A to create overlap.\n```",
+            "```text\nThe NLE will ripple the timeline automatically to create space, shortening the sequence by 12 frames.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "A roll cannot move beyond available handles. When the incoming side has no preroll, the operation is constrained. To create more pre‑lap, you must source audio from elsewhere (room tone, alt take) or creatively dissolve from the outgoing clip.",
+          "distractor_rationale": "B is not how a roll behaves; it never ripples sequence timing. C auto-filling with silence would create a gap, not a pre‑lap. D a roll never converts to a slip automatically; slips change content within fixed in/out points.",
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A noise gate on dialogue is set as follows:\n\n```text\nThreshold: -34 dBFS\nAttack: 5 ms\nHold: 0 ms\nRelease: 60 ms\nObserved breaths: peak around -32 dBFS just before words\n```\nOn playback you notice the start of words feel chopped and the bed noise pumps. What is the most likely cause and fix?",
+          "options": [
+            "```text\nThe threshold is too low; raise it to -20 dBFS so only loud words pass.\n```",
+            "```text\nBreaths exceed the threshold so the gate opens/closes rapidly around word starts, chopping transients. Lower the threshold (more negative), add some hold (e.g., 80–120 ms), or replace the gate with clip gain/keyframes on breaths.\n```",
+            "```text\nThe attack is too fast; increase to 50 ms so words sneak through.\n```",
+            "```text\nThe release is too long; shorten to 5 ms so the noise disappears instantly between syllables.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Breaths at -32 dBFS are above the -34 dBFS threshold, so the gate chatters and clips transients. Either lower the threshold so breaths don’t trigger, add hold to prevent chatter, or avoid gating and manually attenuate breaths.",
+          "distractor_rationale": "B a slower attack would miss the start of words even more. C a super-short release increases pumping artifacts. D raising the threshold that high would chop most of the dialogue.",
+          "skills_covered": [
+            "audio post-production",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You added identical EQ and de‑esser plugins to every dialogue clip. In split edits where two adjacent clips from the same mic overlap for a J/L cut, sibilants sound overly dull during the overlap.\n\nWhat change fixes this without re‑doing all keyframes?",
+          "options": [
+            "```text\nRoute dialogue tracks to a Dialogue submix and move shared processing (EQ/de-esser) there, leaving per-clip fixes minimal.\n```",
+            "```text\nNest the two clips into a sequence so the plugins process them as one.\n```",
+            "```text\nNormalize both clips to -23 LUFS so the de-esser triggers evenly.\n```",
+            "```text\nMove the processing to the Master bus so everything is affected equally.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Putting shared tone-shaping and sibilance control on a Dialogue submix ensures overlapping clips aren’t double-processed during split edits. Per-clip inserts can remain for specific problems.",
+          "distractor_rationale": "B the Master bus affects music and SFX too, changing the whole mix. C loudness normalization doesn’t address doubled processing. D nesting complicates the edit and still doesn’t prevent doubled processing if both sources feed the same nest with their own inserts.",
+          "skills_covered": [
+            "audio post-production",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You must cover a fixed 1.20 s gap in A‑roll audio with a B‑roll visual that currently lasts 1.50 s. You cannot move any audio or adjacent edits; only the B‑roll on V2 can change.\n\n```text\nNeeded V2 coverage: 1.20 s exactly\nCurrent B-roll duration: 1.50 s\nAudio: locked\n```\nWhat is the cleanest way to make the B‑roll fit without affecting anything else?",
+          "options": [
+            "```text\nSlip the B‑roll 0.30 s earlier so more action fits in.\n```",
+            "```text\nRipple-trim the B‑roll’s out-point by 0.30 s so it ends at the right place.\n```",
+            "```text\nUse Rate Stretch/Speed-Duration to 125% on the B‑roll so 1.50 s becomes 1.20 s, maintaining its in/out on the timeline.\n```",
+            "```text\nSlide the B‑roll 0.30 s later to keep the best moment under the gap.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Rate Stretch changes the clip’s duration without moving its start or end on the timeline if you target the needed length. 1.50 s / 1.20 s = 1.25 (125% speed).",
+          "distractor_rationale": "B ripple-trimming changes the end time and can expose the gap. C slip changes content, not duration. D slide moves the clip, altering coverage and possibly revealing the underlying jump.",
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You cut a 70 s interview-driven piece with a light music bed. The client says: “The middle drags from 00:00:28:00 to 00:00:44:00; it feels like we’re waiting for the point.” Your timeline shows two long A‑roll answers with a visible jump cut at 00:00:31:12 and three relevant B‑roll options: a door opening with a hand gesture, a nodding reaction, and a quick hallway push‑in. A music accent lands at 00:00:36:00. Dialogue is clean but there’s a small breath at 00:00:31:06.\n\n```text\nMarkers:\nM1: 00:00:31:06 (breath before the jump)\nM2: 00:00:31:12 (visible jump cut between takes)\nM3: 00:00:36:00 (music lift)\n\nB-roll bin notes:\nB1: Door/gesture (clear action at +00:00:00:08 into clip)\nB2: Reaction nod (neutral, can be held)\nB3: Hallway push-in (peak movement ~00:01:00:12 source TC)\n```\nYou must speed up the perceived pace, hide the jump, and land a point on the music lift without losing meaning. You cannot recut the VO text; only trims and B‑roll usage are allowed.",
+          "task": "Describe, with timecode references, exactly how you would trim and place B‑roll to tighten pacing and hit M3. Specify which trim tools you would use (ripple, roll, slip, slide) for each change, and justify why each move improves pacing while preserving intelligibility. Call out how you’ll handle the breath at M1 and the jump at M2.",
+          "expected_answer": "A strong answer proposes a split edit plan: roll or ripple to remove dead air before 00:00:31:06 while preserving natural breath, cover the inhale+jump with B‑roll whose internal action aligns to the breath window, and align a purposeful reveal to the music lift. For example: ripple trim 8–10 frames of A‑roll pause before M1, then place B1 over 00:00:31:04–00:00:31:16, slipping B1 so the hand gesture peaks across the 6‑frame inhale and masks the jump at M2. Follow with B3 from 00:00:33:20 to 00:00:36:04, slipping so the push‑in’s peak lands on M3. Use a J‑cut to pre‑lap the next sentence’s audio by ~6–8 frames to carry momentum. Justification notes that rolling/ripple trims remove slack without moving downstream hits, slip aligns internal B‑roll actions to beats, and the coverage choices prevent mid‑word returns. The breath is allowed to exist under B‑roll so pacing feels human, and the jump is fully hidden. The plan lands a meaningful visual accent exactly on 00:00:36:00.",
+          "rubric": [
+            {
+              "criterion": "Identifies dead air around M1 and proposes precise trims (with tool choice) that preserve the natural breath while removing slack",
+              "marks": 2
+            },
+            {
+              "criterion": "Selects B‑roll that masks the jump at M2 and explains slip timing so key action straddles the inhale window",
+              "marks": 2
+            },
+            {
+              "criterion": "Aligns a visual action to the music lift at M3 with correct tool usage (slip vs slide) and timecodes",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the chosen edits improve pacing without harming intelligibility (no mid‑word returns, breath handled)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You receive interview audio recorded on a lav mic in a quiet office. Issues: steady HVAC rumble, occasional plosives on P/B, noticeable sibilance on S, and level swings of about ±4 dB between sentences. Video is clean and locked. You must deliver a natural‑sounding mix with consistent level for web playback.",
+          "task": "Specify an ordered processing chain, including which items you would place on individual clips versus a dialogue submix, with sensible parameter ranges. Include how you will treat plosives and sibilance without lisping, stabilize level without audible pumping, and preserve headroom. Finish with how you will verify quality (meters/checks) before export.",
+          "expected_answer": "An ideal plan: per‑clip corrective edits first, then submix tone/level. On clips: remove worst plosives with razor+gain dips or a very low‑frequency shelf/cut centered ~120 Hz for the offending word only; fix obvious level jumps using clip gain to get nominal peaks around -6 to -9 dBFS. On submix: high‑pass at ~70–90 Hz (12 dB/oct) to remove HVAC rumble, then a de‑esser targeting 5–7 kHz with sidechain listen to set threshold to catch only bright S’s (2–4 dB reduction), followed by gentle compression ~2:1–3:1, medium attack (~10–20 ms), medium release (~80–150 ms) yielding 2–4 dB GR on sentences. Leave 3–4 dB headroom and place a true‑peak limiter at -1.0 dBTP on the master only. Verification: check integrated loudness (target roughly -16 LUFS-I stereo for web), ensure true peak ≤ -1.0 dBTP, listen through sibilant words to confirm no lisping, spot-check noise in pauses to ensure rumble is tamed without gate chatter.",
+          "rubric": [
+            {
+              "criterion": "Correctly separates per‑clip fixes (plosives, clip gain) from submix processing (HPF, de‑esser, compression) with justified order",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides reasonable parameter ranges for HPF, de‑esser, and compressor that avoid artifacts (no lisping/pumping)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes headroom management and limiter placement appropriately (master bus, true‑peak)",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines concrete QC checks with meters and critical listening (LUFS/TP targets, artifacts)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "audio post-production",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your A‑roll camera recorded two channels: Left = camera mic (roomy), Right = lav (clean). The editor before you hard‑panned them L/R in a stereo track. On headphones the voice drifts to the right, and when summed to mono it sounds phasey in wide shots with J‑cuts overlapping takes.",
+          "task": "Describe the precise routing and editing steps in Premiere Pro to fix this. Include: how to use the lav as your centered mono source, how to deal with overlap regions during split edits without doubling tone‑shaping, and how you will verify mono compatibility.",
+          "expected_answer": "Convert the clip audio to dual mono or use Modify > Audio Channels so each channel is a separate mono source. Use only the lav channel as the dialogue source, centered (pan 0), and disable/mute the camera mic. Route all dialogue tracks to a Dialogue submix where shared EQ/de‑ess/compression live, avoiding doubled processing during J/L overlaps. In overlap regions, ensure only one lav instance is active (or reduce one by -inf) to prevent comb filtering. Verify mono by temporarily routing to a mono master or summing to mono and listening for tone/level consistency; check phase meter (near zero correlation is bad; aim positive).",
+          "rubric": [
+            {
+              "criterion": "Correctly isolates the lav as a mono center source (modify channels/dual mono, panning) and disables the camera mic",
+              "marks": 2
+            },
+            {
+              "criterion": "Sets up routing to a Dialogue submix and explains why this avoids doubled processing in overlaps",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses J/L cut overlap management to prevent comb filtering or doubling",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains a concrete mono-compatibility verification method",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "audio post-production",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "In a 60 s brand piece, you have an answer that is too long by ~2 seconds. There’s a strong music sting at 00:00:22:00 you want to hit on a visual change, but the sentence runs slightly past it. You cannot rewrite VO. Available B‑roll: a dynamic hallway push and a logo cutaway. The performance is good; you just need tighter pacing.",
+          "task": "Propose a detailed edit strategy to reduce perceived duration by ~2 seconds while still landing a visual accent on 00:00:22:00. Specify at least one split edit (J or L), how you’ll use slip/roll/ripple to remove filler syllables or pauses without mid‑word cuts, and how you’ll place and time the B‑roll (including any speed change) to make the sting feel intentional.",
+          "expected_answer": "Plan: Identify micro-pauses and conjunctions to trim via ripple on A‑roll audio only, preserving room tone crossfaded to avoid clicks. Create a J‑cut so the next thought pre‑laps by ~6–8 frames into the current shot, carrying momentum. Use B‑roll (hallway push) leading into 00:00:22:00 and slip it so peak motion straddles the sting; rate-stretch slightly if needed (e.g., 105–110%) to time the peak exactly. If more coverage is needed around a breath or a stitch, cut to logo for 8–12 frames as a purposeful beat. Use roll trims to keep overall timing stable, and verify that returns from B‑roll land on phoneme starts, not mid‑word. Result: about 2 s perceived tightening without harming intelligibility, with the visual hit synced to the sting.",
+          "rubric": [
+            {
+              "criterion": "Identifies specific audio-only trims (with proper tool choices) that remove time without mid-word artifacts",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses split edits (J/L) to carry momentum and explains their placement relative to words/breaths",
+              "marks": 2
+            },
+            {
+              "criterion": "Times B‑roll to the sting using slip and, if needed, tasteful speed change; explains why it feels intentional",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures intelligibility and clean transitions (crossfades/room tone) in the justification",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Video Editing",
+            "Premiere Pro",
+            "audio post-production"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Short narrative edit with split edits and B‑roll",
+          "brief": "Using the provided interview A‑roll and B‑roll bin, cut a 45–75 s narrative. Hide at least one A‑roll jump cut with B‑roll, use both a J‑cut and an L‑cut to shape pacing, and align one intentional visual action to a musical lift without moving the music track. Focus on trims (roll, ripple, slip, slide) to control timing. Do not use dissolves between A‑roll shots except where motivated by B‑roll coverage.",
+          "deliverable": "1) An exported 1080p H.264 MP4 (45–75 s). 2) The Premiere Pro project file with a single final sequence named \"S02_NarrativeEdit\" containing markers named \"J-CUT\" and \"L-CUT\" at the exact split edits. 3) An EDL or screenshot of the timeline showing V1/V2/A1/A2 around the marked areas.",
+          "acceptance_criteria": [
+            "Duration between 00:00:45:00 and 00:01:15:00.",
+            "At least one J‑cut and one L‑cut are present and clearly audible/visible; markers \"J-CUT\" and \"L-CUT\" are placed on the sequence at those edits.",
+            "At least three B‑roll inserts on V2 that fully cover underlying A‑roll cuts (no flash frames or exposed jump).",
+            "One on-screen action is aligned within ±2 frames of a visible music lift/beat without moving the music clip.",
+            "No hard audio clicks at edit points; all audio transitions are clean (crossfades or continuous tone).",
+            "No black/gap frames; no unintended duplicate frames at cut points."
+          ],
+          "rubric": [
+            {
+              "criterion": "Effective use of split edits (one J, one L) to support pacing and meaning; markers correctly placed",
+              "marks": 5
+            },
+            {
+              "criterion": "B‑roll coverage quality: hides jumps cleanly, appropriate shot choice, no flash frames",
+              "marks": 5
+            },
+            {
+              "criterion": "Beat alignment: a purposeful visual action lands within ±2 frames of a music lift without harming intelligibility",
+              "marks": 4
+            },
+            {
+              "criterion": "Trim tool proficiency: evidence of roll/ripple/slip/slide used appropriately to achieve timing without collateral shifts",
+              "marks": 3
+            },
+            {
+              "criterion": "Technical cleanliness: no black frames or clicks; exports at correct specs",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Video Editing",
+            "Premiere Pro",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Balanced audio sequence: dialogue cleanup and mix",
+          "brief": "Mix a 30–60 s dialogue sequence with music bed and optional SFX. Clean dialogue, set consistent levels, duck music appropriately under speech, and ensure a clean start/end. Aim for a natural, broadcast-ready balance suitable for web.",
+          "deliverable": "1) Stereo WAV or MP4 of the mixed sequence (30–60 s). 2) Premiere Pro project with a \"S02_AudioMix\" sequence showing clip gain adjustments, dialogue submix processing, and music ducking keyframes. 3) A screenshot of a loudness meter taken on the full program showing integrated loudness and true-peak values.",
+          "acceptance_criteria": [
+            "Integrated loudness between -16.0 and -14.0 LUFS-I (stereo), measured over the full program.",
+            "Master true peak ≤ -1.0 dBTP; no visible red overloads on playback meters.",
+            "Dialogue intelligible throughout: music is ducked at least 6 dB under speech and returns smoothly within 300–800 ms after speech ends (verify via visible keyframes).",
+            "Low-frequency rumble reduced: HPF applied on dialogue; room tone/noise during pauses at least 6 dB lower than during speech (visible on waveform or meter).",
+            "At least one de-esser and one compressor used appropriately on dialogue (visible in project on clip or submix).",
+            "All clip boundaries have appropriate short crossfades; no clicks at ins/outs; clean fade in/out on program ends."
+          ],
+          "rubric": [
+            {
+              "criterion": "Overall loudness/peak compliance (-16 to -14 LUFS-I; TP ≤ -1.0 dBTP) with supporting meter screenshot",
+              "marks": 6
+            },
+            {
+              "criterion": "Dialogue clarity versus music: adequate ducking and smooth recovery with visible keyframes",
+              "marks": 5
+            },
+            {
+              "criterion": "Dialogue cleanup processing: appropriate HPF, de-esser, and compression settings used without artifacts",
+              "marks": 4
+            },
+            {
+              "criterion": "Noise control and transitions: reduced rumble, no clicks, proper fades/crossfades",
+              "marks": 3
+            },
+            {
+              "criterion": "Project organization/routing: dialogue submix used or clearly justified processing layout",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "audio post-production",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-010-S03",
+      "skills_assessed": [
+        "Video Editing",
+        "Premiere Pro",
+        "Color Correction",
+        "Motion Graphics",
+        "Typography"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You open a shot in Lumetri and see the RGB Parade like this:\n```text\nHighlights (right third): R≈85 IRE, G≈75 IRE, B≈60 IRE\nMidtones (middle):       R≈60 IRE, G≈52 IRE, B≈45 IRE\nShadows (left):          R≈5 IRE,  G≈5 IRE,  B≈5 IRE\n```\nNo neutral reference is visible in frame. Which first adjustment in Basic Correction brings the image closest to neutral without meaningfully changing contrast?",
+          "options": [
+            "```text\nTemperature: -15  (cooler)\nTint:        -5   (toward green)\n```",
+            "```text\nSaturation: -10\nVibrance:  +5\n```",
+            "```text\nExposure: -0.3\nContrast: +10\n```",
+            "```text\nTemperature: +15  (warmer)\nTint:        +5   (toward magenta)\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Red is highest and blue is lowest across highlights and midtones, indicating a warm/magenta bias. Pulling Temperature negative (toward blue) and Tint slightly toward green aligns the channels without shifting the luma distribution like Exposure or Contrast would.",
+          "distractor_rationale": "B is tempting because dropping Exposure lowers overall warmth perceptually, but it alters the entire luma range and won’t align the RGB channels. C reduces the visibility of the cast but doesn’t neutralize hue angle; the parade stays misaligned. D pushes further into warm/magenta, worsening the misalignment.",
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your vectorscope YUV shows the skin cluster here:\n```text\nAngle: ~28° (about 8° below the skin-tone line)\nSat:   ~40%\n```\nBackground is neutral gray walls you want to leave untouched. What precise adjustment corrects skin hue with minimal impact to neutrals?",
+          "options": [
+            "Increase Temperature by +4000K to warm the overall image, then lower Saturation by -10 to compensate.",
+            "Add +10 Tint (toward magenta) globally to move hues toward the skin line.",
+            "Use Hue vs Sat to reduce saturation around the orange range by -10 so the cast is less visible.",
+            "```text\nLumetri → Curves → Hue vs Hue:\nAdd three points around orange region; lift center ~+8° toward the skin line.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Hue vs Hue targeting the skin range rotates only that hue cluster toward the skin-tone line, leaving neutrals largely unchanged.",
+          "distractor_rationale": "B warms everything, shifting all hues and potentially breaking neutrals. C reduces saturation but leaves the hue angle error, so faces still look off, just duller. D is a global tint that will contaminate neutrals and push non-skin colors unnecessarily.",
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You’re matching two shots. On Clip B the waveform shows:\n```text\nWhites peaking ~99 IRE with texture still visible\nMidtones ~55 IRE\nBlacks ~3 IRE (not crushed)\n```\nYou need a touch more headroom without flattening mids. What do you do first?",
+          "options": [
+            "Lower Exposure by -0.3, then raise Shadows +10 to restore density.",
+            "```text\nLower Highlights ≈ -30, then nudge Whites down until peaks sit just under 100 IRE.\n```",
+            "Reduce Contrast by -20 to compress dynamic range and create headroom.",
+            "Add an S-curve that pulls down upper mids and raises lower mids simultaneously."
+          ],
+          "correct_option": "B",
+          "explanation": "Highlights primarily affect the upper end while sparing mids and blacks more than Exposure. Then fine-tune Whites to place peaks safely below 100 IRE.",
+          "distractor_rationale": "B shifts the whole range and then tries to undo part of it, often creating muddy mids. C reduces separation everywhere, not just the peaks. D can work but is heavier-handed and risks altering midtone contrast across the shot unnecessarily at the matching stage.",
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A lower-third graphic uses Position keyframes (linear) for a subtle overshoot:\n```text\n00:00:00:00  Position: (0,540)   [off-screen left]\n00:00:00:12  Position: (640,540) [on]\n00:00:00:20  Position: (620,540) [overshoot back]\n00:00:00:28  Position: (640,540) [settle]\n```\nViewers report a noticeable stutter at 00:00:00:12. Which single change smooths the motion while keeping the overshoot-behavior?",
+          "options": [
+            "Add 10% Scale keyframes to distract from the positional stutter.",
+            "Enable motion blur on the clip’s Motion property to hide the stutter.",
+            "Convert the 00:00:00:12 keyframe to Hold to remove the stutter at arrival.",
+            "Set 00:00:00:12 to Ease Out and 00:00:00:20 to Ease In (temporal), leaving positions as-is."
+          ],
+          "correct_option": "D",
+          "explanation": "The stutter is a hard velocity change at the on-position. Easing out of the arrival and easing into the overshoot keeps the bounce but removes the abrupt stop/start at that moment.",
+          "distractor_rationale": "B removes the stutter by freezing, but also kills the overshoot and looks wrong. C adds another variable without fixing the abrupt velocity change. D isn’t available on the Motion property in Premiere and blur would hide, not fix, the bad interpolation.",
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro",
+            "Typography"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your lower-third is reported cropped on some TVs. Program is 1920×1080. Current layout reads:\n```text\nText box baseline Y: 980\nLeftmost character X: 40\nEssential Graphics → Safe Margins: Title Safe 80%, Action Safe 90%\nBounding box slightly crosses Title Safe boundary at bottom.\n```\nWhat is the correct fix that avoids reflowing text or changing type size?",
+          "options": [
+            "Use Essential Graphics align tools to nudge the entire graphic inside Title Safe, maintaining size and tracking.",
+            "Reduce font size by 10% to force it into Title Safe, then increase tracking to keep length similar.",
+            "Switch to 95% Action Safe to be more permissive so it won’t crop.",
+            "Change sequence pixel aspect ratio to 1.33 to gain vertical room for titles."
+          ],
+          "correct_option": "A",
+          "explanation": "Title Safe is the correct constraint. Repositioning preserves design while ensuring compliance. Changing size, safes definition, or pixel aspect are the wrong levers.",
+          "distractor_rationale": "B changes typographic hierarchy and can break consistency. C abuses the guideline rather than fixing placement and won’t affect actual displays. D distorts the entire video and is unrelated to safe title placement.",
+          "skills_covered": [
+            "Typography",
+            "Motion Graphics",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You need to match midtones between two shots while keeping blacks and whites aligned. Shot A mids ≈50 IRE; Shot B mids ≈60 IRE. Blacks and whites already match. Which control is the safest first move?",
+          "options": [
+            "Lower Blacks by -5 to pull mids down indirectly.",
+            "Lower Midtones in Color Wheels by ~-10 to bring mids down without moving the endpoints much.",
+            "Lower Exposure by -0.2 to shift the whole waveform down uniformly.",
+            "Reduce Contrast by -10 to compress and lower mids."
+          ],
+          "correct_option": "B",
+          "explanation": "Midtones control targets the middle range and minimally affects endpoints, ideal for this adjustment.",
+          "distractor_rationale": "B moves endpoints too and will misalign blacks/whites. C primarily affects shadows and risks crushing. D alters the slope and separation rather than simply repositioning mids.",
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You must fake speed-based blur for a title sliding left→center over 12 frames using only Premiere effects. Current animation:\n```text\nPosition X: -300 → 0 (frames 0–12), eased in/out\n```\nWhich configuration best simulates velocity-proportional blur?",
+          "options": [
+            "Add Gaussian Blur 15 and animate Opacity from 70%→100% while moving.",
+            "Scale to 102% to hide edge tearing; the scaling will also simulate blur at speed.",
+            "Add Directional Blur to the graphic. Direction: 0°. Blur Length: ramp 0→18 (frames 0–6), then 18→0 (frames 6–12).",
+            "Use the clip’s Motion property and enable motion blur there to let Premiere auto-blur based on speed."
+          ],
+          "correct_option": "C",
+          "explanation": "Directional Blur aligned with motion and timed to the speed peak mimics motion blur in Premiere without After Effects.",
+          "distractor_rationale": "B blurs in all directions and opacity changes won’t simulate directional streaks. C Motion has no blur toggle in Premiere. D scaling hides edges but doesn’t create motion blur.",
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You’re revealing text with a matte in Premiere:\n```text\nV3: White rectangle (animated scale)\nV2: TEXT clip with Track Matte Key (Matte: V3)\nV1: Background video\nTrack Matte Key → Composite Using: Luma\n```\nEdges of the reveal look gray and aliased. What change produces crisp, fully opaque text during the reveal?",
+          "options": [
+            "Change Track Matte Key → Composite Using from Luma to Matte Alpha and keep the matte on V3 above the text.",
+            "Place the matte below the text so luma can add to opacity from underneath.",
+            "Increase the matte’s Scale by +5% to compensate for edge falloff.",
+            "Switch the text blend mode to Multiply so darker edges disappear."
+          ],
+          "correct_option": "A",
+          "explanation": "Using Matte Alpha respects the alpha channel of the shape layer and yields sharp edges, whereas luma can introduce semi-transparency at antialiased boundaries.",
+          "distractor_rationale": "B Track Matte expects the matte on a higher track; placing it below breaks the key. C enlarging the matte changes timing/geometry and can worsen artifacts. D Multiply will darken the background and not fix matte transparency.",
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro",
+            "Typography"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You balanced a shot but shadows still look slightly green. Scopes:\n```text\nVectorscope cluster near center biased toward green by ~5°\nWaveform RGB in shadows: G sits ~2–3 IRE above R and B under 10 IRE\n```\nWhat’s the cleanest targeted correction?",
+          "options": [
+            "Lower Exposure -0.2 and raise Contrast +10 to rebalance the shadows.",
+            "Nudge the Shadows color wheel slightly toward magenta, watching the vectorscope center pull neutral.",
+            "Push the Highlights wheel toward magenta so the overall average neutralizes.",
+            "Increase Tint +10 to globally neutralize the image."
+          ],
+          "correct_option": "B",
+          "explanation": "A subtle magenta move in Shadows addresses the green bias confined to low luminance without upsetting mids/highs.",
+          "distractor_rationale": "B is a global luma change that won’t fix chroma bias. C changes everything and risks contaminating mids and highlights. D targets the wrong tonal range and leaves the greenish blacks.",
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A logo lockup scales from 70%→100% while also moving from Y=700→Y=600 using clip Motion. Viewers notice the logo \"drifts\" vertically more than expected. Effect Controls:\n```text\nAnchor Point: (960,540)\nPosition Y: 700 → 600\nScale: 70% → 100%\nKeyframes aligned in time (linear)\n```\nWhat single change best removes the unintended vertical drift while preserving the animation?",
+          "options": [
+            "Reduce Scale range to 70%→90% so drift is less visible.",
+            "Switch Scale keyframes to Hold so only Position animates.",
+            "Reposition the Anchor Point to the logo’s baseline center before scaling, then re-keyframe Position Y.",
+            "Ease both Scale keyframes but leave Position linear to mask the drift."
+          ],
+          "correct_option": "C",
+          "explanation": "Scaling around the frame center moves the logo’s visual baseline. Setting the Anchor Point to the logo’s intended pivot (baseline center) stops apparent drift while keeping both animations.",
+          "distractor_rationale": "B eases won’t correct geometric pivot issues. C hides rather than fixes the cause and changes the brief. D kills the scale animation altogether.",
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro",
+            "Typography"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a 45-second montage from three cameras in the same room: A (daylight LED), B (tungsten practicals), C (mixed daylight spill). The client wants a natural, consistent look across cuts and a brand-yellow lower-third (HEX #FFC700) that must look identical on all shots. Two representative frame/grab scope reads:\n```text\nClip A parade (skin in key): R≈78, G≈75, B≈70 (highlights); mids ~55; blacks ~5\nClip B parade (skin in key): R≈85, G≈72, B≈60 (highlights); mids ~58; blacks ~6\nVectorscope (B skin): angle ~28°, sat ~35% (below skin line)\n```\nLower-third will sit over the footage near Y=850.",
+          "task": "Describe your end-to-end approach to: 1) correct and match the three cameras using scopes, 2) apply a basic grade, 3) ensure the brand-yellow lower-third renders consistently and stays legal on all shots. Include processing order, where you apply corrections (clip vs adjustment), which controls you prioritize, how you verify neutrality and midtone match, and how you protect the graphic from unintended changes.",
+          "expected_answer": "A strong answer specifies: correct on a per-clip basis first (WB Temp/Tint and/or RGB Curves/Color Wheels guided by parade to align channels, vectorscope to place skin on/near the skin line), then match shots (midtones via Midtones wheel or Curves, highlights via Highlights/Whites, not Exposure unless needed), then apply a subtle look on an adjustment layer above clips. It discusses verifying neutral grays and skin on scopes, checking IRE placement across cuts (blacks ~0–5 IRE, mids ~45–55 IRE, whites <100 IRE). For the graphic, place the lower-third on a track above the grade/adjustment layer (or nest clips under grade) so the grade does not affect the vector of the brand yellow; if any broadcast legality issue appears (vectorscope chroma excursion or luma >100 IRE from the solid yellow), tame with a Graphics-specific effect (e.g., a Fast Color Corrector/Lumetri on the graphic layer to reduce saturation slightly or a Legalize limiter) without altering the base grade. Confirm Title Safe, and validate the brand color with the vectorscope target and an eyedropper readback across different shots to ensure it remains unchanged.",
+          "rubric": [
+            {
+              "criterion": "Explains a logical processing order: per-clip correction → shot matching → global/basic grade → graphics on top",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses scopes correctly to neutralize and match (parade alignment, vectorscope skin-line placement, IRE targets)",
+              "marks": 3
+            },
+            {
+              "criterion": "Chooses appropriate controls (WB/Tint, Midtones/Highlights or Curves) with justification over blunt Exposure/Contrast moves",
+              "marks": 2
+            },
+            {
+              "criterion": "Protects graphics from grade (layering/nesting), ensures color consistency, and addresses legality if needed",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro",
+            "Video Editing",
+            "Typography",
+            "Motion Graphics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are tasked with a reusable lower-third animation for a 1080p news package. The brief: slide in from left over 12 frames with a slight overshoot, hold 4 seconds, slide out right over 8 frames; must sit within Title Safe and use Roboto Medium 64px with a two-line lockup (name above role) and a colored bar that wipes under the text.",
+          "task": "Specify exact keyframe timings, easing choices, and how you handle two-line vertical rhythm (leading/baseline grid) to prevent shimmer. Include how you’ll structure layers and parenting/masking for the wipe, and how you’ll package this so editors can change text quickly without breaking timing.",
+          "expected_answer": "Candidate should define: entry keyframes at 0f and 12f with Ease Out on arrival and a brief overshoot key at ~20f easing back to settle at ~28f; hold until ~4:28; exit from ~4:28 to ~5:04 with Ease In/Out for smoothness. Text within Title Safe using consistent baseline/leading (integer pixel values to avoid subpixel shimmer), with line spacing tuned for 1080 (e.g., 64px type with ~77–80px leading). Wipe is achieved via a rectangle matte above the text (Track Matte Key or Mask with Shape in EGP) animating scale/position; bar movement is synchronized with text overshoot for cohesion. Layers are grouped (or in a single EGP layer set), with parameters exposed for easy edit (name, role, color) and saved as a .mogrt or an Essential Graphics template. Alignment tools ensure consistent placement; safe margins visible during build.",
+          "rubric": [
+            {
+              "criterion": "Clear timing plan for in, overshoot, hold, and out; appropriate easing selections at each phase",
+              "marks": 2
+            },
+            {
+              "criterion": "Typographic execution: safe margins, baseline/leading choices that avoid shimmer, two-line lockup clarity",
+              "marks": 2
+            },
+            {
+              "criterion": "Masking/matte structure for the wipe and how it is synchronized with text motion",
+              "marks": 2
+            },
+            {
+              "criterion": "Template/reusability: parameters exposed and packaging as .mogrt or equivalent",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro",
+            "Typography",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two-camera interview. Camera 1 is balanced. Camera 2 looks okay by eye but skin is slightly off on scopes. Reads:\n```text\nCam1 skin: vector on/just above skin line at ~35% sat\nCam2 skin: vector ~6° toward yellow-green at ~30% sat; parade mids R≈55, G≈58, B≈53\n```\nBoth share matching blacks/whites and similar exposure.",
+          "task": "Propose a minimal, shot-specific correction on Camera 2 to match Camera 1’s skin hue and saturation without changing contrast. Specify tool(s), target moves, and how you’ll verify. Mention one pitfall to avoid during matching.",
+          "expected_answer": "Use Hue vs Hue to rotate the specific skin hue about +6° toward the skin line and Hue vs Sat to raise skin saturation ~+5% to match Cam1, or nudge the Midtones color wheel slightly magenta to neutralize the green bias (parade G above R/B) while keeping endpoints stable. Verify by comparing vectorscope angles and saturation and by A/B switching around a skin patch. Avoid global Temperature/Tint or Exposure changes that would also shift neutrals and contrast; don’t overdo saturation which can push chroma out of legal bounds.",
+          "rubric": [
+            {
+              "criterion": "Chooses targeted tools (Hue vs Hue and/or Midtones wheel; Hue vs Sat for fine sat match) and states sensible amounts",
+              "marks": 3
+            },
+            {
+              "criterion": "Verification plan using scopes and A/B checking around skin areas",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies a realistic pitfall (global WB/Exposure or over-saturation) and how to avoid it",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your timeline uses an adjustment layer with a subtle filmic curve above all clips. The art director provides a brand title (solid color fill #FFC700) and demands that color never change. Currently the title sits below the adjustment layer and looks darker than in the brand guide.",
+          "task": "Decide the correct layer/processing setup to keep the title color exact while maintaining the overall grade. Explain where to place the title, where to put any title-specific effects, and how you’ll confirm nothing in the grade alters the title across the sequence.",
+          "expected_answer": "Place the title on a track above the grading adjustment layer (or nest the graded footage below and apply the curve within the nest) so the brand graphic bypasses the grade. If any legalizing or subtle tweaks are needed for the graphic alone, apply them on the title layer itself, not the global grade. Confirm by sampling the title’s RGB values frame-by-frame with the eyedropper and by checking the vectorscope; values should remain constant across cuts. Avoid placing global looks above the title or precomping/nesting in a way that includes the title inside the graded stack.",
+          "rubric": [
+            {
+              "criterion": "Correct stacking: title isolated above the adjustment/grade or footage nested below the grade",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear rationale on protecting the title from global looks and where to apply any title-only effects",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification method (eyedropper readouts, vectorscope) ensuring color constancy across edits",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "Motion Graphics",
+            "Typography",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Consistent graded sequence using scopes",
+          "brief": "Grade and match a 45–60 second sequence of 5–7 mixed clips into a consistent look using Lumetri. Perform per-clip correction and matching, then apply a subtle, coherent basic grade. Use scopes to prevent clipping and to align skin tones and midtones across cuts.",
+          "deliverable": "A Premiere Pro project (.prproj) with the graded sequence, plus a high-quality H.264 export (Rec.709), and four stills (PNG) showing scopes (RGB Parade, Waveform, Vectorscope) for representative shots: before/after pairs labeled clearly.",
+          "acceptance_criteria": [
+            "No superwhites or crushed blacks in final export: whites ≤100 IRE; blacks ≥0 IRE",
+            "Skin tones sit on/near the vectorscope skin line across shots",
+            "Midtones match within ~5 IRE between adjacent shots",
+            "No visible color temperature jumps at cut points",
+            "Project uses non-destructive workflow (no baked-in LUTs required) and clearly labeled correction/grade layers"
+          ],
+          "rubric": [
+            {
+              "criterion": "Per-clip correction guided by scopes (WB/neutrality, channel alignment)",
+              "marks": 5
+            },
+            {
+              "criterion": "Shot-to-shot matching quality (mids alignment, consistent skin hue/sat)",
+              "marks": 6
+            },
+            {
+              "criterion": "Basic grade coherence without clipping or muddy shadows; appropriate use of Highlights/Whites/Curves",
+              "marks": 5
+            },
+            {
+              "criterion": "Submission quality: organized timeline, labeled layers, required exports and scope stills present and correctly labeled",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Color Correction",
+            "Premiere Pro",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Title and motion package (lower-thirds and bug)",
+          "brief": "Design and animate a small graphics package: two lower-third variants (single-line name; two-line name+role), and a persistent corner bug. Use Essential Graphics and keyframes to build motion that is clean, reusable, and title-safe.",
+          "deliverable": "A Premiere Pro project (.prproj) containing the graphics and animations, plus exported .mogrt files for both lower-thirds if possible. Include a 20–30 second demo sequence showing both variants and the bug over mixed footage.",
+          "acceptance_criteria": [
+            "All text sits within Title Safe on a 1920×1080 sequence",
+            "Entry/exit animations use easing to avoid stutter; no subpixel shimmer in text",
+            "Reveals use clean mattes/masks with crisp edges (no unintended transparency)",
+            "Editors can change names/roles/colors in Essential Graphics without breaking timing/layout",
+            "Bug remains legible at 16:9 across light and dark backgrounds (blend mode or stroke/box if needed)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Animation quality: timing, easing, overshoot/settle behavior, and smoothness (no stutter)",
+              "marks": 6
+            },
+            {
+              "criterion": "Typographic execution: hierarchy, safe margins, legibility, and absence of shimmer",
+              "marks": 5
+            },
+            {
+              "criterion": "Technical build: correct masking/matte usage, sharp edges, appropriate blending over varied footage",
+              "marks": 5
+            },
+            {
+              "criterion": "Reusability: parameters exposed, .mogrt or template readiness, clean layer organization",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Motion Graphics",
+            "Premiere Pro",
+            "Typography",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-010-S04",
+      "skills_assessed": [
+        "Video Editing",
+        "Premiere Pro",
+        "file-based workflow",
+        "convert different audiovisual formats",
+        "conduct quality control analysis",
+        "follow a brief"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You exported captions from a text editor and set Premiere Pro to export \"Captions: Create Sidecar File (.srt)\". The file you made looks like this:\n```text\n1\n00:00:01.000 --> 00:00:03.200\nWelcome to the demo\n\n2\n00:00:03.100 --> 00:00:05.000\nLet's get started\n```\nYou upload the MP4 and this .srt to YouTube. What happens and why?",
+          "options": [
+            "Premiere detects dot decimals during export and auto-converts the file to WebVTT for YouTube.",
+            "YouTube accepts it and silently converts the dot decimals to commas, so timing stays perfect.",
+            "YouTube rejects or ignores the .srt because SRT requires comma decimals (00:00:01,000) and this file isn’t valid SRT nor valid WebVTT (no WEBVTT header).",
+            "Captions upload and display, but they will drift because dot decimals make cues round to whole seconds."
+          ],
+          "correct_option": "C",
+          "explanation": "SRT requires comma as the milliseconds delimiter and simple numeric indices. The sample uses dot decimals and lacks a WEBVTT header, so it is neither valid SRT nor valid WebVTT. YouTube will fail to parse it and reject/ignore the upload.",
+          "distractor_rationale": "B sounds convenient, but YouTube does not rewrite malformed SRT. C plays on a half-truth (rounding), but invalid timing prevents parsing in the first place. D assumes Premiere fixes a sidecar after export; it does not post-process external files on YouTube’s side.",
+          "skills_covered": [
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this export without any manual reframing:\n```text\nSequence: 3840x2160 (16:9), clip Scale 100%\nExport: H.264, 1080x1920 (9:16)\nSource Scaling (export): Scale to Fill\nPosition: Center\n```\nWhat will the audience see in the 9:16 deliverable?",
+          "options": [
+            "Pillarboxed video with black bars left and right.",
+            "Stretched video that looks tall and skinny because pixels are scaled non-uniformly.",
+            "A center crop that fills the frame vertically, with left and right edges of the 16:9 image cut off.",
+            "Letterboxed video with black bars top and bottom."
+          ],
+          "correct_option": "C",
+          "explanation": "Scale to Fill scales until the target frame is filled; with 16:9 to 9:16 that means vertical fit and horizontal overfill, so the sides are cropped equally.",
+          "distractor_rationale": "A confuses Scale to Fit/letterbox behavior with Fill. C would require non-uniform scaling (stretch), which this setting does not do. D is the opposite pillar/letterbox idea; again, not with Fill.",
+          "skills_covered": [
+            "Premiere Pro",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your Facebook upload shows captions drifting late by ~300 ms over a 2-minute cut. MediaInfo for a key camera file:\n```text\nFormat: AVC\nWidth: 1920  Height: 1080\nFrame rate mode: Variable\nFrame rate: 29.970 FPS (approx)\n```\nPremiere export:\n```text\nMatch Source (29.97), H.264, VBR 1-pass\nCaptions: Sidecar SRT\n```\nWhat change most reliably prevents the drift across platforms?",
+          "options": [
+            "Enable Use Maximum Render Quality on export to improve scaling.",
+            "Transcode VFR camera files to constant frame rate (e.g., 29.97 CFR) and relink before export, then export CFR.",
+            "Set Time Interpolation to Frame Blending to smooth cadence.",
+            "Export at 60.00 fps so the platform has more frames to work with."
+          ],
+          "correct_option": "B",
+          "explanation": "Caption timing is based on stable timeline time; VFR sources can cause timestamp inconsistencies during decode/transcode on different platforms. Conform or transcode to CFR, relink, and export CFR to stabilize timings.",
+          "distractor_rationale": "B and C affect scaling/motion smoothing, not timestamp stability. D still leaves decode variability and introduces an unnecessary frame rate conversion that may add cadence issues.",
+          "skills_covered": [
+            "convert different audiovisual formats",
+            "conduct quality control analysis",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "QC notes: \"Colors look washed out on SDR browsers.\" MediaInfo from your master:\n```text\nColor primaries            : BT.2020\nTransfer characteristics   : HLG\nMatrix coefficients        : BT.2020 non-constant\n```\nWhat export approach yields consistent SDR rendering on YouTube and Instagram?",
+          "options": [
+            "In export, override color space to Rec.709 and apply HDR→SDR tone mapping (or convert the timeline to Rec.709 and export tagged Rec.709).",
+            "Change pixel aspect ratio to 1.33 (anamorphic) to restore contrast on SDR devices.",
+            "Increase saturation by 20% before export to compensate for the washout.",
+            "Enable Maximum Bit Depth; keep HLG tags and re-upload."
+          ],
+          "correct_option": "A",
+          "explanation": "HLG uploaded as HLG will map differently across devices. Converting to an SDR master (Rec.709) with proper tone mapping and tagging produces consistent, predictable results.",
+          "distractor_rationale": "B/C tweak processing or colorfulness but don’t fix the HDR/SDR transfer mismatch. D confuses pixel aspect with color transfer; it has no bearing on HDR tone mapping.",
+          "skills_covered": [
+            "conduct quality control analysis",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Client brief excerpt:\n```text\n- YouTube: closed captions as separate .srt sidecar\n- Instagram Reels: captions must be visible by default (no sidecars)\n- TikTok: captions visible by default or made in-app\n```\nYou duplicate a single export preset with Captions set to \"Create Sidecar File\" for all three. Outcome?",
+          "options": [
+            "YouTube misses the brief because YouTube doesn’t support SRT sidecars.",
+            "YouTube meets the brief; Instagram and TikTok miss it because sidecars are ignored. Those need burned‑in captions (or in‑app on TikTok).",
+            "Instagram will read the sidecar if the filename matches the video name exactly.",
+            "All three meet the brief because sidecars are universally supported."
+          ],
+          "correct_option": "B",
+          "explanation": "YouTube supports SRT sidecars. Instagram Reels and TikTok don’t accept sidecar caption files on upload; captions must be visible (burned-in) or created in-app.",
+          "distractor_rationale": "B is a common misconception. C is false; YouTube supports SRT. D imagines a filename trick; the platforms simply don’t ingest sidecar files for Reels/TikTok uploads.",
+          "skills_covered": [
+            "follow a brief",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You are choosing a YouTube master. Which option avoids any second transcode so viewers play your exact file bitstream?\n```text\nA) H.264, 3840x2160, VBR 2-pass, High, Level 5.1\nB) ProRes 422 HQ, 3840x2160\nC) HEVC (H.265), 3840x2160, Main10\nD) ???\n```",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "None. YouTube always re-encodes uploads to its own mezzanine/ABR ladder."
+          ],
+          "correct_option": "D",
+          "explanation": "YouTube transcodes every upload to multiple rungs of its adaptive ladder. You cannot bypass re-encoding.",
+          "distractor_rationale": "A/B/C are all good upload choices in different contexts, but none will be streamed bit-for-bit; YouTube creates its own encodes.",
+          "skills_covered": [
+            "conduct quality control analysis",
+            "convert different audiovisual formats"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You’re burning captions into a 1080x1920 TikTok export. Typical UI overlays cover the bottom ~15% of the frame. Current placement:\n```text\nBaseline: 90% of frame height\nBottom margin: 24 px\nFont size: 48 px\n```\nWhat change best ensures readability across devices with minimal redesign?",
+          "options": [
+            "Reposition so the caption baseline sits at ~78% of frame height and use a bottom safe margin of ~10% of frame height.",
+            "Keep placement but switch to ALL CAPS for legibility against the UI.",
+            "Keep baseline at 90% but halve the font size to 24 px so text fits above the UI.",
+            "Push captions lower to a 96% baseline so they sit as close to the bottom as possible."
+          ],
+          "correct_option": "A",
+          "explanation": "Moving the caption block above the common UI overlay and defining a percentage-based safe margin keeps text reliably visible across device variants.",
+          "distractor_rationale": "B reduces legibility without solving occlusion. C changes case but does nothing about overlap. D makes occlusion worse.",
+          "skills_covered": [
+            "Video Editing",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need filenames that clearly survive email/Slack handoffs and enable QC by just reading names. Which pattern is most robust?\n```text\n1) {Project}_{Platform}_{AR}_{v}.mp4        e.g., launch_TikTok_9x16_v03.mp4\n2) final.mp4\n3) {Date}-{Project}-{v}-{WxH}.mp4           e.g., 2026-05-01-launch-v03-1080x1920.mp4\n4) {Project}-{WxH}.mp4                       e.g., launch-1080x1920.mp4\n```",
+          "options": [
+            "Pattern 2",
+            "Pattern 1",
+            "Pattern 3",
+            "Pattern 4"
+          ],
+          "correct_option": "B",
+          "explanation": "Including platform, aspect ratio, and version directly supports multi-platform delivery and fast human QC. Resolution alone (4) omits platform; dates (3) help, but missing platform can cause misroutes.",
+          "distractor_rationale": "2 is the classic failure. 3 is decent but lacks the platform cue. 4 misses both platform and versioning, making audits and re-exports error-prone.",
+          "skills_covered": [
+            "file-based workflow",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "QC flags duplicate-frame cadence in your Instagram deliverable:\n```text\nSequence: 23.976 fps\nExport: H.264, 29.97 fps, Time Interpolation = Frame Sampling\nQC: Duplicated frames recurring (~ every 4th frame)\nPlatform: Instagram supports 23.976/24/25/30/60 fps\n```\nWhat change removes the cadence without adding motion blur?",
+          "options": [
+            "Export at 23.976 fps to match the sequence (platform supports it).",
+            "Keep 29.97 but switch to Frame Blending to avoid duplication.",
+            "Export at 60 fps to increase temporal resolution.",
+            "Enable Use Maximum Render Quality; leave other settings as-is."
+          ],
+          "correct_option": "A",
+          "explanation": "Matching export frame rate to the timeline eliminates cadence artifacts. Since the platform supports 23.976, there’s no need for conversion.",
+          "distractor_rationale": "B trades duplicates for blend blur. C still implies a frame rate conversion and won’t recreate missing frames. D affects scaling quality, not cadence.",
+          "skills_covered": [
+            "convert different audiovisual formats",
+            "conduct quality control analysis",
+            "Premiere Pro"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Client brief:\n```text\n- Format: 1:1 (1080x1080)\n- Max length: 00:30.000\n- CTA must appear by 00:05.000\n```\nCurrent timeline markers:\n```text\nM1 Hook: 00:02.000\nM2 CTA lower-third in: 00:07.000\nTotal duration: 00:28.500\n```\nWithout new VO, what minimal edit best meets the brief?",
+          "options": [
+            "Add a freeze-frame of the CTA at 00:05.000 without moving the CTA clip; keep original length.",
+            "Keep the cut but export at 0.9x speed so the CTA arrives by 00:05.000 without trimming.",
+            "Export 1080x1350 (4:5) to gain vertical space for an earlier CTA without re-editing.",
+            "Lift 2 seconds of pre-CTA B‑roll and slip the CTA clip earlier so it starts at 00:04.800; trim tail to keep total ≤ 00:30.000; maintain 1:1 output."
+          ],
+          "correct_option": "D",
+          "explanation": "Moving the CTA earlier and trimming preserves content intent and meets both the 5-second CTA and 30-second max within the required aspect ratio.",
+          "distractor_rationale": "B changes timing globally and pitch of audio. C violates the 1:1 spec. D fakes compliance but the CTA actually begins at 00:07; a freeze-frame marker doesn’t meet the brief’s intent.",
+          "skills_covered": [
+            "follow a brief",
+            "Video Editing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must deliver a campaign cut to three platforms from one 3840x2160 master sequence in Premiere. The brief requires: YouTube 16:9 4K with closed captions as SRT, Instagram Feed 1:1 with burned-in captions, TikTok 9:16 with burned-in captions. Turnaround is same day. The footage is Rec.709, the edit is locked, and the caption text is final in a Premiere caption track.",
+          "task": "Describe a concrete export plan that produces all three deliverables with minimal rework. Include: how you will reframe for 1:1 and 9:16 without breaking composition, exactly how you will handle captions per platform, naming/versioning so the team can audit files, and the QC checks you will run before handoff. Justify each key choice against the brief and common platform behavior.",
+          "expected_answer": "An excellent answer proposes duplicating the locked sequence into platform-specific sequences (16:9, 1:1, 9:16) under a common bin, enabling Auto Reframe for 1:1 and 9:16 with manual keyframe corrections on problem shots (e.g., sliding subject), and leaving the YouTube 16:9 as-is. For captions: export YouTube with Captions set to Create Sidecar (.srt), verifying SRT syntax and timing in a text editor or Premiere’s captions panel; export Instagram and TikTok with Captions set to Burn-in; reposition the caption style to sit above platform UI (e.g., baseline ~78% for 9:16) and within 1:1 safe areas. The plan names outputs with tokens including project, platform, AR, and version (e.g., launch_YouTube_16x9_v04.mp4; launch_IG_1x1_v04.mp4; launch_TikTok_9x16_v04.mp4). QC: check duration, frame rate matches sequence/platform support, verify no pillar/letterbox in the square and vertical cuts, spot-check for reframing errors, confirm no typos in SRT and that SRT loads in YouTube caption tester, and run MediaInfo to confirm Rec.709 tagging. Justification ties each step to the brief (sidecar vs burn-in), platform UI occlusion, and auditability via filenames.",
+          "rubric": [
+            {
+              "criterion": "Proposes correct multi-sequence or auto-reframe approach and describes when to manually adjust framing",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct caption handling per platform (SRT sidecar for YouTube; burn-in for IG/TikTok) and safe placement rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, checkable naming/versioning strategy aligned to platforms/aspect ratios",
+              "marks": 1
+            },
+            {
+              "criterion": "Concrete QC checklist (duration, frame rate, AR, pillarbox/crop, color tag Rec.709, caption validation)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification links choices to brief requirements and platform behaviors",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "follow a brief",
+            "conduct quality control analysis",
+            "file-based workflow"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "After publishing to YouTube, the client reports the 4K video appears washed out on some laptops but looks fine on their HDR phone. MediaInfo:\n```text\nColor primaries: BT.2020\nTransfer: HLG\nMatrix: BT.2020 non-constant\n```\nThey need consistent SDR look across YouTube, Instagram, and LinkedIn by end of day.",
+          "task": "Diagnose the cause and propose an end-to-end correction workflow in Premiere Pro (or Media Encoder) that results in an SDR master for all platforms. Include export settings and how you will verify the fix before re-upload.",
+          "expected_answer": "The master was exported/tagged as HLG. SDR devices/browsers apply different tone mapping, causing the washed-out look. Convert the timeline to SDR: either (a) duplicate the project, set sequence color management to Rec.709, apply an HDR-to-SDR transform (built-in HDR Graphics White mapping or an HLG-to-709 LUT) and grade trims, then export Rec.709; or (b) apply an adjustment layer with HDR→SDR conversion and export with color space override Rec.709 in Premiere/AME. Export H.264 (or ProRes) tagged Rec.709, confirm in MediaInfo. Verification: compare scopes (100 nits peak), side-by-side QC on an SDR monitor, and test-upload unlisted to YouTube and Instagram to confirm consistent contrast/saturation. Document that the original HDR master remains archived separately.",
+          "rubric": [
+            {
+              "criterion": "Correct diagnosis of HDR (HLG) tagging as root cause of SDR washout",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific steps to convert to SDR (sequence color management and/or HDR→SDR transform) in Premiere/AME",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate export settings and tagging for Rec.709 deliverables",
+              "marks": 1
+            },
+            {
+              "criterion": "Concrete verification plan (scopes, MediaInfo tags, test uploads across platforms)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "conduct quality control analysis",
+            "Premiere Pro",
+            "convert different audiovisual formats"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your caption sidecar is rejected by a platform with the error: \"Invalid SRT.\" The current file and notes:\n```text\n1\n00:00:00.000 --> 00:00:02.000\nWELCOME TO OUR APP\n\n2\n00:00:01.800 --> 00:00:04.000\nGET STARTED TODAY\n\n(Produced from a Google Doc export; lines exceed 45 characters)\n```\nThe editor wants a fix that also works when burning captions into a 1:1 Instagram export.",
+          "task": "Identify all issues in the SRT and provide a corrected 2-cue excerpt. Then specify export settings for (a) YouTube with sidecar and (b) Instagram with burn-in, including any text layout adjustments for readability/safe area.",
+          "expected_answer": "Issues: (1) SRT uses dot decimals; SRT requires commas. (2) Overlapping timings (cue 2 starts before cue 1 ends). (3) Potentially excessive line length for small square frames. Correction example:\n```text\n1\n00:00:00,000 --> 00:00:02,000\nWELCOME TO OUR APP\n\n2\n00:00:02,050 --> 00:00:04,000\nGET STARTED TODAY\n```\nFor YouTube: export video normally, Captions = Create Sidecar (.srt); verify load in YouTube preview. For Instagram: Captions = Burn-in; reduce line length to ~32–35 chars or break into two lines, add stroke/box, place baseline around 80% height to avoid UI, and check legibility at 1080x1080.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies timing-format error (comma vs dot) and the overlapping-cue problem",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a syntactically valid, non-overlapping SRT correction excerpt",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct export settings per platform (sidecar vs burn-in)",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses readability (line length, styling) and safe placement for 1:1",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A stakeholder asks for a quick swap of a product shot across all three deliverables (YouTube 16:9 + SRT, IG 1:1 burn-in, TikTok 9:16 burn-in). Your current project has one master sequence and two auto-reframed duplicates. The deadline is 2 hours, and prior v03 files have already been shared with partners.",
+          "task": "Outline a controlled revision plan that ensures the swap is consistent in all aspect ratios, guarantees filenames don’t collide with v03, and reduces the risk of missing the caption update. Include how you’ll validate the change and what you’ll submit.",
+          "expected_answer": "Plan: Replace the product shot in the 16:9 master, ripple as needed, then open the 1:1 and 9:16 reframed sequences to update Auto Reframe segments and add manual position keyframes if required. Update the caption segment timing if the swap changed durations. Batch export using platform-specific presets with incremented versions (v04) and platform/AR in names. Validate by (1) scrubbing through the changed region in all three AR timelines, (2) checking burned-in caption alignment for IG/TikTok and the sidecar timing for YouTube, (3) confirming MediaInfo duration matches within 1–2 frames across variants, and (4) visually confirming the new product shot appears in all three files. Deliverables: three v04 files plus the updated YouTube .srt, leaving prior v03 files intact for partners.",
+          "rubric": [
+            {
+              "criterion": "Describes consistent update across master and reframed sequences, including manual reframe checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Versioning and naming plan that prevents overwriting prior deliveries (e.g., v04)",
+              "marks": 2
+            },
+            {
+              "criterion": "Caption update procedure (sidecar timing and burn-in alignment)",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation steps that are concrete and time-feasible within 2 hours",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "file-based workflow",
+            "follow a brief",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Multi-platform export set",
+          "brief": "From your capstone edit (or a 30–60 second sequence you created in this course), produce three deliverables for different platforms: YouTube 16:9 with a sidecar SRT, Instagram 1:1 with burned-in captions, and TikTok 9:16 with burned-in captions. Reframe intelligently so subjects remain centered and no unintended pillar/letterboxing appears in the square/vertical cuts.",
+          "deliverable": "Multi-platform exports: three video files (MP4/H.264) named with platform and aspect ratio, plus one .srt file for the YouTube deliverable.",
+          "acceptance_criteria": [
+            "Each file’s resolution and aspect ratio are correct: 1920x1080 (16:9), 1080x1080 (1:1), 1080x1920 (9:16).",
+            "YouTube file has no burned-in captions and is accompanied by a valid .srt with comma decimals and non-overlapping cues.",
+            "Instagram and TikTok files have captions burned in and visibly clear above typical UI (not within the bottom 15% of the frame).",
+            "No unintended letterbox/pillarbox in the 1:1 and 9:16 exports; framing keeps key subjects in view.",
+            "MediaInfo (or properties) shows Rec.709 tagging on all files.",
+            "Filenames include project, platform, aspect ratio, and version (e.g., project_YouTube_16x9_vXX.mp4)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct technical specs for all three files (resolutions, Rec.709 tagging, codecs)",
+              "marks": 6
+            },
+            {
+              "criterion": "Captions compliance (YouTube sidecar validity; Instagram/TikTok clean burn-in and placement)",
+              "marks": 6
+            },
+            {
+              "criterion": "Reframing quality (subjects kept in frame; no unintended letterbox/pillarbox)",
+              "marks": 4
+            },
+            {
+              "criterion": "File naming/versioning clarity and presence of the required .srt for YouTube",
+              "marks": 2
+            },
+            {
+              "criterion": "Basic QC evidence in the files (no obvious export glitches, durations consistent across variants)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Premiere Pro",
+            "file-based workflow",
+            "convert different audiovisual formats",
+            "conduct quality control analysis",
+            "follow a brief"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Finished portfolio video",
+          "brief": "Using the provided brief below, finalize a 45–60 second portfolio piece that demonstrates your editing and delivery skills. Integrate on-screen captions and design the cut so a call-to-action appears by 5 seconds. Deliver one master in 16:9 (1080p). The brief: Audience = prospective clients on YouTube/LinkedIn; Tone = confident, concise; Must-have shots = product hero, 2 customer reactions, logo outro; CTA by 00:05.000; Music bed allowed, no profanity.",
+          "deliverable": "Finished portfolio video: one mastered MP4 (1920x1080, 45–60s) containing the final cut. Any case-study context and revision summary must be visible inside the video (e.g., brief title card and a 2–3 slide outro) so the assessor can verify by watching the file.",
+          "acceptance_criteria": [
+            "Single MP4 file, 1920x1080, 45–60s total duration.",
+            "CTA appears on-screen no later than 00:05.000.",
+            "Legible captions are present throughout and do not collide with safe areas; they can be stylistic but must be readable.",
+            "Contains the must-have shots: product hero, 2 distinct customer reactions, logo outro.",
+            "Includes a short, readable overlay sequence that states the brief in 1–2 lines at the start and a 1–2 slide outro that lists at least one revision you made and why.",
+            "Audio and picture are in sync; no unintended black frames or flash frames at in/out; export tagged Rec.709.",
+            "Filename includes project name and version (e.g., portfolioMaster_v02.mp4)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Meets timing, CTA by 5s, and includes all must-have shots",
+              "marks": 6
+            },
+            {
+              "criterion": "Caption presence and legibility across the piece (placement, readability)",
+              "marks": 4
+            },
+            {
+              "criterion": "Overall edit quality and coherence appropriate for portfolio (pacing, shot choice)",
+              "marks": 4
+            },
+            {
+              "criterion": "Case-study overlays present in-video (brief statement and revision summary) and are clear",
+              "marks": 4
+            },
+            {
+              "criterion": "Technical delivery quality (1080p, Rec.709, clean in/out, sync)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Video Editing",
+            "follow a brief",
+            "Premiere Pro",
+            "conduct quality control analysis"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

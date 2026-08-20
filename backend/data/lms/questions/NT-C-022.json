@@ -1,0 +1,1880 @@
+{
+  "course_code": "NT-C-022",
+  "course_name": "Advanced Excel",
+  "sections": [
+    {
+      "section_code": "NT-C-022-S01",
+      "skills_assessed": [
+        "Advanced Excel",
+        "Microsoft Excel",
+        "XLOOKUP",
+        "INDEX/MATCH",
+        "Dynamic Arrays"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have a threshold table and use approximate match to assign grades.\n\n```csv\nScore,Grade\n0,F\n50,D\n65,C\n75,B\n85,A\n```\nIn a separate cell, you enter:\n\n```text\n=XLOOKUP(74, A2:A6, B2:B6, , -1)\n```\nWhat is returned?",
+          "options": [
+            "B",
+            "D",
+            "C",
+            "#N/A"
+          ],
+          "correct_option": "C",
+          "explanation": "With match_mode -1, XLOOKUP finds the exact match or the next smaller item. 74 is not found; the next smaller in the sorted ascending scores is 65, which maps to C.",
+          "distractor_rationale": "B: Tempting if you think -1 means \"round up\" to the next larger threshold (that's match_mode 1 logic). #N/A: Chosen by learners who think approximate modes still require an exact value unless sorted. D: A misread that 74 should be rounded to 75's band; that's not how -1 behaves.",
+          "skills_covered": [
+            "XLOOKUP",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given the table below:\n\n```csv\nRegion,Product,Price\nEast,Widget,10\nEast,Gizmo,12\nWest,Widget,11\nWest,Gizmo,13\n```\nIn a single cell (Excel 365), you enter:\n\n```text\n=INDEX($C$2:$C$5, MATCH(1, ($A$2:$A$5=\"West\")*($B$2:$B$5=\"Gizmo\"), 0))\n```\nWhat value is returned?",
+          "options": [
+            "12",
+            "#N/A",
+            "11",
+            "13"
+          ],
+          "correct_option": "D",
+          "explanation": "The boolean arrays for Region and Product are multiplied to a 1 only where both conditions hold (row 5). MATCH locates that row within A2:A5, which is position 4; INDEX of C2:C5 at 4 returns 13.",
+          "distractor_rationale": "12: Would be right if the match found East/Gizmo instead of West/Gizmo. 11: Confusing West/Widget with West/Gizmo. #N/A: Chosen by those who think array multiplication requires Ctrl+Shift+Enter; with dynamic arrays this spills/evaluates fine in a normal formula.",
+          "skills_covered": [
+            "INDEX/MATCH",
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider the following list in A2:A6.\n\n```csv\nA\napple\nApple\napple \napple\nAPPle\n```\nIn a cell you enter:\n\n```text\n=ROWS(UNIQUE(A2:A6))\n```\nWhat number is returned?",
+          "options": [
+            "1",
+            "3",
+            "2",
+            "4"
+          ],
+          "correct_option": "D",
+          "explanation": "UNIQUE is case-sensitive and whitespace-sensitive. \"apple\", \"Apple\", \"apple \" (trailing space), and \"APPle\" are four distinct text values.",
+          "distractor_rationale": "3 or 2: These assume UNIQUE normalizes case or trims spaces automatically, which it does not. 1: Over-applies normalization that is not present unless you wrap with LOWER/TRIM.",
+          "skills_covered": [
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You have IDs and prices:\n\n```csv\nID,Price\nP001,12.50\nP002,8.00\nP003,#DIV/0!\nP004,9.75\n```\nCell B4 actually contains a formula `=1/0` so it evaluates to an error. You enter:\n\n```text\n=XLOOKUP(\"P003\", A2:A5, B2:B5, \"Missing\")\n```\nWhat is returned?",
+          "options": [
+            "0",
+            "#DIV/0!",
+            "#N/A",
+            "Missing"
+          ],
+          "correct_option": "B",
+          "explanation": "The `if_not_found` argument only applies when the lookup fails to find a match (#N/A). Here the key is found, and XLOOKUP returns the value from the return_array, which is the error in B4.",
+          "distractor_rationale": "Missing: Assumes `if_not_found` catches any error; it does not. #N/A: Would occur only if the key were absent. 0: A common belief that XLOOKUP coerces errors to zero; it returns the error unless wrapped in IFERROR.",
+          "skills_covered": [
+            "XLOOKUP",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given the grid below and a mixed-reference formula:\n\n```csv\n, A, B, C\n1, 2, 5, 3\n2, 7, , \n3, 4, , \n```\nCell B2 contains:\n\n```text\n=A$1 + $A2 + B$1\n```\nYou copy B2 to C3 (one column right, one row down). What value is in C3?",
+          "options": [
+            "12",
+            "9",
+            "8",
+            "10"
+          ],
+          "correct_option": "B",
+          "explanation": "In C3 the formula becomes `=A$1 + $A3 + C$1` due to the reference locks. Substituting values: 2 + 4 + 3 = 9.",
+          "distractor_rationale": "10 or 12: Results from mis-tracking which parts are locked to row or column. 8: Omits one of the header references or assumes both moved relatively.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Cell A2 contains the date 31-Mar-2024. You enter:\n\n```text\n=EOMONTH(A2,-1)+1\n```\nWhat date is returned?",
+          "options": [
+            "01-Mar-2024",
+            "01-Feb-2024",
+            "29-Feb-2024",
+            "31-Mar-2024"
+          ],
+          "correct_option": "A",
+          "explanation": "EOMONTH(A2,-1) gives the end of the previous month (29-Feb-2024). Adding 1 day yields 01-Mar-2024, the first day of March 2024.",
+          "distractor_rationale": "01-Feb-2024: Assumes you jump to first of previous month directly. 29-Feb-2024: Forgets the +1. 31-Mar-2024: No change applied.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Cell A2 is constructed as:\n\n```text\n=\"ACME\"&CHAR(160)&\"INC\"\n```\nYou enter:\n\n```text\n=LEN(TRIM(A2))\n```\nWhat number is returned?",
+          "options": [
+            "7",
+            "8",
+            "4",
+            "#VALUE!"
+          ],
+          "correct_option": "B",
+          "explanation": "TRIM in Excel removes ASCII space (code 32), not non‑breaking space (code 160). The NBSP remains; the length stays 8 (4 + 1 + 3).",
+          "distractor_rationale": "7: Assumes TRIM removes the NBSP. 4: Mistakenly expects only the first token to remain. #VALUE!: TRIM and LEN handle NBSP without error; they just don't remove it.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "In a blank cell you enter:\n\n```text\n=IFERROR(1/SEQUENCE(3,1,0,1),\"bad\")\n```\nWhat spills?",
+          "options": [
+            "```text\nbad\n1\n0.5\n```",
+            "```text\nbad  1  0.5\n```",
+            "#DIV/0!",
+            "```text\nbad\nbad\nbad\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "SEQUENCE returns 0,1,2 vertically. 1/0 errors; IFERROR substitutes \"bad\" only for that element. The remaining elements are 1 and 0.5, returned in a vertical spill.",
+          "distractor_rationale": "All \"bad\": Assumes IFERROR, once triggered, replaces the entire array. #DIV/0!: Assumes IFERROR doesn’t apply elementwise. Horizontal vector: Misunderstands SEQUENCE(3,1,...) which creates a 3×1 column, not a row.",
+          "skills_covered": [
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Evaluate the approximate lookup below:\n\n```text\n=INDEX({\"A\";\"B\";\"C\"}, MATCH(20, {5,15,25}, 1))\n```\nWhat is returned?",
+          "options": [
+            "#N/A",
+            "C",
+            "B",
+            "A"
+          ],
+          "correct_option": "C",
+          "explanation": "MATCH with 1 (approximate, next smaller) on an ascending list returns position 2 for 20 (since 15 is the largest value ≤ 20). INDEX at 2 returns \"B\".",
+          "distractor_rationale": "A or C: Assume rounding to nearest or next larger. #N/A: MATCH(1) on sorted ascending data does not error for in-range values.",
+          "skills_covered": [
+            "INDEX/MATCH",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You have item names and categories:\n\n```csv\nName,Category\nPro,Phone\nPro Max,Phone\nMini,Phone\nPro Case,Accessory\n```\nYou enter:\n\n```text\n=XLOOKUP(\"Pro*\", A2:A5, B2:B5)\n```\nAssuming defaults for omitted arguments, what happens?",
+          "options": [
+            "#N/A",
+            "Accessory",
+            "Phone",
+            "#VALUE!"
+          ],
+          "correct_option": "A",
+          "explanation": "By default XLOOKUP uses exact match. Wildcards are not active unless you set match_mode to 2. So it looks for the literal text \"Pro*\" and returns #N/A.",
+          "distractor_rationale": "Phone or Accessory: These assume wildcard matching is automatic. #VALUE!: Not raised here; the function call is syntactically valid.",
+          "skills_covered": [
+            "XLOOKUP",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your price list logs multiple effective prices per SKU over time. Orders must price at the most recent effective date on or before the order date. Sample data:\n\n```csv\nPrices_SKU,Effective,Price\nA100,2024-01-01,9.50\nA100,2024-03-01,10.00\nA100,2024-05-15,10.75\nB250,2024-02-10,5.00\nB250,2024-04-01,5.50\n```\nOn the Orders sheet you have `SKU` in H2 and `OrderDate` in H3. The list is not pre-sorted in any guaranteed order month-to-month.",
+          "task": "State the exact formula approach you would use to return the correct price for H2/H3, and justify your choices. Specify functions, match/search modes, and how you will handle no-match cases and unsorted source data. Mention at least one failure mode if your preconditions are not met.",
+          "expected_answer": "One robust approach is to filter to the candidate rows for the SKU and dates ≤ the order date, sort those dates descending, and then pick the first row’s price, with an explicit no-match fallback. For example (365):\n\n`=LET(\n  fRows, (Prices[Prices_SKU]=H2)*(Prices[Effective]<=H3),\n  d, SORT(FILTER(Prices[Effective], fRows),,-1),\n  p, FILTER(Prices[Price], fRows),\n  IFERROR(XLOOKUP(H3, d, p,, -1), \"No price\")\n)`\n\nRationale: FILTER applies both SKU and date ≤ OrderDate. SORT puts the dates in descending order, so XLOOKUP with match_mode -1 (next smaller) finds the first price at or before H3. IFERROR catches the case where fRows is empty (no effective price yet for that SKU), returning \"No price\". This works regardless of original table order. Failure mode: If you remove the sort and rely on search_mode -1 (search last to first) without ensuring data is date-descending, you may return an incorrect older or newer price; likewise, using approximate match without constraining dates ≤ order date can pick a future price.",
+          "rubric": [
+            {
+              "criterion": "Picks an approach that constrains by SKU and Effective<=OrderDate (e.g., FILTER or equivalent two-condition MATCH)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct use of XLOOKUP (or INDEX/MATCH) with appropriate match mode to find the last applicable date (e.g., -1 next smaller on a descending sequence or MAX approach)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses data order (sort descending or alternative MAX-of-filtered-dates) and explains why it matters",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides explicit error/no-match handling and calls out at least one realistic failure mode if preconditions are violated",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "XLOOKUP",
+            "INDEX/MATCH",
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A supplier list imported from web pages contains inconsistent capitalization and non‑breaking spaces. You need a clean, deduplicated validation list. Sample A2:A12 (visually):\n\n```text\n\" Acme Inc\"\n\"ACME INC\"\n\"acme inc\"\n\"Acme Inc \"\n\"acme  inc\"\n\"Acme INC\"  (NBSP between words)\n```\nNBSP = CHAR(160).",
+          "task": "Describe a formula pipeline (single-cell dynamic array if possible) to produce a sorted, unique list of normalized supplier names. State which text functions you will use, in what order, and why. Also note how you would prove the normalization worked (e.g., LEN checks) without manual inspection.",
+          "expected_answer": "Normalize, then de-duplicate and sort. Key is replacing NBSP (160) with regular spaces before TRIM and fixing case. Example (365):\n\n`=UNIQUE(SORT(LOWER(TRIM(SUBSTITUTE(A2:A100,CHAR(160),\" \")))))`\n\nExplanation: SUBSTITUTE first turns NBSP into normal spaces so TRIM can collapse/strip them. TRIM removes leading/trailing and reduces multiple spaces to a single space. LOWER standardizes case for consistent deduplication. UNIQUE de-dupes; SORT makes the list user-friendly. To verify, use spot checks: `=LEN(TRIM(SUBSTITUTE(A2,CHAR(160),\" \")))` should equal the LEN of the normalized form; also `=COUNTIF(result, LOWER(TRIM(SUBSTITUTE(A2,160,\" \"))))` should be ≥1 for any input row.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of NBSP and replacement via SUBSTITUTE(,CHAR(160),\" \") before TRIM",
+              "marks": 2
+            },
+            {
+              "criterion": "Application of case normalization (LOWER or UPPER) before UNIQUE to ensure true de-duplication",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of dynamic arrays to spill a unique, sorted list (UNIQUE with SORT or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete verification method (e.g., LEN/COUNTIF checks) showing normalization worked",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two systems store CustomerID inconsistently: the CRM stores text IDs with leading zeros (e.g., \"000123\"), while the finance export strips leading zeros and sometimes returns numeric types (123). You must retrieve the credit limit from the finance table for a CRM-provided ID.",
+          "task": "Propose a lookup that will succeed regardless of whether the finance key column is numbers or text, and whether the CRM key has leading zeros. Specify your normalization target, the exact lookup function and arguments, and how you will handle missing IDs without suppressing genuine data errors in the return column.",
+          "expected_answer": "Normalize both sides to the same textual representation, then look up, handling only #N/A at the key-matching stage. For example:\n\n`=XLOOKUP(TEXT(CRM!A2,\"0\"), TEXT(FIN!A:A,\"0\"), FIN!CreditLimit, \"ID not found\")`\n\nTEXT coerces both lookup_value and lookup_array to text with no truncation; numeric 123 becomes \"123\", text \"000123\" remains \"000123\" (or normalize to a fixed width if defined: \"000000\"). If fixed width 6 is required: `TEXT(…, \"000000\")` on both sides. Use the `if_not_found` argument to surface only missing keys as a friendly message. Do not wrap the whole call in IFERROR; that would hide real issues in FIN!CreditLimit (e.g., #DIV/0!) that you want to see and fix.",
+          "rubric": [
+            {
+              "criterion": "Chooses a consistent normalization target (text or fixed-width text) and applies it to both lookup_value and lookup_array",
+              "marks": 3
+            },
+            {
+              "criterion": "Uses an appropriate lookup (XLOOKUP or INDEX/MATCH) with arguments set to return correct matches post-normalization",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why not to blanket IFERROR the whole lookup and uses if_not_found (or equivalent) to handle only missing keys",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "XLOOKUP",
+            "INDEX/MATCH",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A transaction table (50,000 rows) needs a commission rate by revenue tier. Tiers are defined once in a separate small table of ascending thresholds:\n\n```csv\nRevenueFrom,Rate\n0,1.0%\n10000,1.5%\n25000,2.0%\n50000,2.5%\n```\nAnalysts previously used deeply nested IFs on each row and report sluggish recalcs.",
+          "task": "Recommend and justify a formula pattern that scales to 50k rows. Include exact function settings (match/search modes), data ordering requirements, and how to guard against unsorted tiers. Explain how your approach affects recalculation cost versus nested IFs.",
+          "expected_answer": "Use an approximate XLOOKUP over sorted ascending thresholds with binary search. For each Revenue in D2:D50001:\n\n`=XLOOKUP(D2, Tiers[RevenueFrom], Tiers[Rate], , -1, 2)`\n\nmatch_mode -1 chooses the next smaller threshold; search_mode 2 enables binary search on ascending data for far fewer comparisons than linear search or many IFs. Ensure Tiers[RevenueFrom] is strictly ascending; guard it with a check, e.g., `=IF(ISSORTED(Tiers[RevenueFrom],1), XLOOKUP(...), \"Tier table not sorted\")` (or pre-sort with `=SORT(Tiers)` feeding a LET). Compared to nested IFs, XLOOKUP references one small spill/array; the binary search dramatically reduces comparisons, lowering calc time across 50k rows. Failure if tiers are unsorted: approximate lookup may return a wrong lower tier; sorting or feeding a sorted array removes this risk.",
+          "rubric": [
+            {
+              "criterion": "Selects approximate lookup over thresholds (next-smaller logic) and identifies the correct functions/arguments",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies binary search (search_mode 2) and states the ascending sort requirement",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a concrete guard (pre-sorting or validation) against unsorted tiers and explains failure mode if violated",
+              "marks": 2
+            },
+            {
+              "criterion": "Compares recalculation cost vs nested IFs with a defensible performance rationale",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "XLOOKUP",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Formula exercises workbook (references, logic, text, date, error handling)",
+          "brief": "Create a workbook named \"Formula_Exercises.xlsx\" with a sheet named \"Formulas\". Paste the sample data below into A1:F11, then build formulas as specified. Do not hardcode results; all checks will inspect formulas.\n\n```csv\nOrderID,Qty,UnitPrice,DiscountPct,SKU,OrderDate\n1001,3,12.50,0.10, A C M E INC ,2024-03-29\n1002,0,9.99,0.00,acme inc,2024-02-01\n1003,5,7.20,0.05, ACME INC,2024-03-31\n1004,2,15.00,0.00,Acme Inc,2024-04-01\n1005,10,1.50,0.20, acme  inc ,2024-01-15\n1006,4,8.00,0.00,ACME  INC,2024-02-29\n1007,1,25.00,0.00,Acme Inc ,2024-03-01\n1008,6,4.75,0.15, ACME Inc,2024-02-28\n1009,8,3.00,0.00,Acme Inc,2024-01-31\n1010,0,100.00,0.50, ACME INC ,2024-02-29\n```\nNotes: Some SKUs contain NBSP (non-breaking spaces U+00A0) and extra spaces.\n\nTasks:\n- G: NetBeforeDisc = Qty*UnitPrice using relative references so the formula fills G2:G11 correctly.\n- H: Net = NetBeforeDisc*(1-DiscountPct). Use references so it fills H2:H11.\n- I: SafeUnit = IFERROR(UnitPrice/Qty, 0). Should return 0 when Qty is 0.\n- J: MonthStart = first day of the order's month using EOMONTH.\n- K: CleanSKU = normalized supplier text: replace NBSP with regular spaces, TRIM, collapse multiples, and UPPER-case.\n- L: Key = CLEAN concat of CleanSKU and MonthStart in yyyymm format, like \"ACME INC|202403\".\n\nEnsure formulas fill rows 2:11 via a single authored formula per column (no row-specific tweaks).",
+          "deliverable": "An .xlsx workbook named \"Formula_Exercises.xlsx\" containing the Formulas sheet with formulas in columns G:L operating on the provided data.",
+          "acceptance_criteria": [
+            "G2 contains a formula and evaluates to 37.50 for OrderID 1001; G11 is a formula, not a constant.",
+            "H3 evaluates to 34.20 (5*7.20*(1-0.05)).",
+            "I2 evaluates to 0 (division by zero handled); I3 evaluates to 1.44.",
+            "J2 equals 01-Mar-2024; J3 equals 01-Mar-2024; J4 equals 01-Apr-2024 (date values, not text).",
+            "K2 equals \"ACME INC\" (single space between words, uppercase); K5 equals \"ACME INC\" despite double spaces in source; K4 equals \"ACME INC\" despite NBSP.",
+            "L2 equals \"ACME INC|202403\"; L10 equals \"ACME INC|202402\".",
+            "Columns G:L in rows 2:11 each contain a single, filled formula per column (no hardcoded intermediates)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct relative/mixed referencing for G and H so fill-down yields accurate values on all rows",
+              "marks": 4
+            },
+            {
+              "criterion": "Error handling in I with IFERROR applied only to the division and producing correct zeros where Qty=0",
+              "marks": 4
+            },
+            {
+              "criterion": "Date logic in J using EOMONTH to compute first-of-month correctly for all sample dates",
+              "marks": 4
+            },
+            {
+              "criterion": "Text normalization in K correctly handling NBSP (CHAR(160)), TRIM, and case conversion",
+              "marks": 4
+            },
+            {
+              "criterion": "Stable key in L concatenating normalized name and yyyymm with correct formatting for all rows",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Lookup workbook (XLOOKUP, INDEX/MATCH, dynamic arrays)",
+          "brief": "Create a workbook named \"Lookup_Workbook.xlsx\" with sheets Prices, Orders, and Summary. Use the data below.\n\nPrices sheet (A1:D11):\n```csv\nSKU,Effective,Price,Category\nA100,2024-01-01,9.50,Widget\nA100,2024-03-01,10.00,Widget\nA100,2024-05-15,10.75,Widget\nB250,2024-02-10,5.00,Gizmo\nB250,2024-04-01,5.50,Gizmo\nC900,2024-03-05,20.00,Pro\nC900,2024-04-01,21.00,Pro Max\nD111,2024-02-28,3.00,Mini\n```\nOrders sheet (A1:D9):\n```csv\nOrderID,SKU,OrderDate,Qty\n2001,A100,2024-03-15,3\n2002,B250,2024-03-20,2\n2003,C900,2024-03-25,1\n2004,C900,2024-04-10,5\n2005,D111,2024-03-01,4\n2006,Z999,2024-03-01,1\n2007,A100,2024-01-01,2\n```\nBuild the following:\n- Orders!E:E UnitPrice_XL: XLOOKUP that returns the most recent Price on or before OrderDate for that SKU. Use a robust pattern that works regardless of Prices row order and shows \"No price\" when no match.\n- Orders!F:F UnitPrice_IDX: INDEX/MATCH equivalent returning the same numbers as E (or same text for no matches).\n- Orders!G:G ExtPrice: Qty*UnitPrice_XL.\n- Summary!A:A UniqueSKUs: dynamic array of unique SKUs from Orders, sorted A→Z.\n- Summary!B:B LatestPrice: price per SKU as of 2024-04-01 using a single spill formula aligned with A.\n- Summary!D1:D3 WildcardDemo: formula returning Category for names starting with \"Pro\" from Prices (use XLOOKUP with wildcard match) and demonstrate handling multiple matches by returning the first found category.\n\nDo not use helper columns unless they are formula-driven; no hardcoding.",
+          "deliverable": "An .xlsx workbook named \"Lookup_Workbook.xlsx\" with the three sheets and specified formula-driven outputs.",
+          "acceptance_criteria": [
+            "Orders!E2 returns 10.00, E3 returns 5.00, E4 returns 20.00, E5 returns 21.00, E6 returns 3.00, E7 returns \"No price\", E8 returns 9.50.",
+            "Orders!F:F produces identical results to E:E for all rows (including \"No price\" where applicable).",
+            "Orders!G2 equals 30.00 and G5 equals 12.00 (numeric calculations).",
+            "Summary!A:A spills a sorted unique list: A100, B250, C900, D111, Z999.",
+            "Summary!B:B spills aligned latest prices as of 2024-04-01: 10.00, 5.50, 21.00, 3.00, \"No price\" (aligned to A).",
+            "Summary!D1 returns \"Pro\" or \"Pro Max\" category via wildcard XLOOKUP, not #N/A (exact label may vary but must be one of the categories for names starting with \"Pro\").",
+            "All outputs are formulas (no hardcoded values); spot checks show XLOOKUP uses an approximate mode constrained by date and proper error handling for missing SKUs."
+          ],
+          "rubric": [
+            {
+              "criterion": "Orders!E:E uses a robust XLOOKUP pattern (filter/sort or equivalent) to select the last effective price on/before OrderDate with a clear \"No price\" fallback",
+              "marks": 5
+            },
+            {
+              "criterion": "Orders!F:F implements a correct INDEX/MATCH equivalent that agrees with column E for all rows",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate extended price calculation using returned unit prices and quantities",
+              "marks": 3
+            },
+            {
+              "criterion": "Summary!A:A and B:B use dynamic arrays to spill a sorted list and aligned prices as of a given date",
+              "marks": 4
+            },
+            {
+              "criterion": "Wildcard XLOOKUP demo returns a valid category without errors and documents match_mode usage",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "XLOOKUP",
+            "INDEX/MATCH",
+            "Dynamic Arrays",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-022-S02",
+      "skills_assessed": [
+        "Advanced Excel",
+        "Microsoft Excel",
+        "Data Cleaning",
+        "Data Quality"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have a structured table `Lines`:\n```csv\nOrderID,SKU,Qty,Price\n1001,A1,2,5\n1001,A1,2,5\n1002,A1,2,5\n1002,A1,2,6\n1003,B2,1,9\n```\nYou choose Table Design -> Remove Duplicates and select only `OrderID`, `SKU`, and `Qty` (you do not select `Price`). What exact rows remain, in order, after the operation?",
+          "options": [
+            "```csv\nOrderID,SKU,Qty,Price\n1001,A1,2,5\n1002,A1,2,6\n1003,B2,1,9\n```",
+            "```csv\nOrderID,SKU,Qty,Price\n1001,A1,2,5\n1002,A1,2,5\n1003,B2,1,9\n```",
+            "```csv\nOrderID,SKU,Qty,Price\n1001,A1,2,5\n1002,A1,2,5\n1002,A1,2,6\n1003,B2,1,9\n```",
+            "```csv\nOrderID,SKU,Qty,Price\n1001,A1,2,5\n1003,B2,1,9\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Remove Duplicates keeps the first occurrence by the selected key columns and discards later duplicates. With key (OrderID,SKU,Qty), the first, third, and fifth rows are the first occurrences of their keys. The differing `Price` on row 4 is ignored for duplicate detection when `Price` is not selected.",
+          "distractor_rationale": "- B: Tempting because `Price` differs on 1002, but you did not select `Price`, so those are duplicates and one is removed.\n- C: Assumes Excel prefers the last occurrence of the 1002 row; Excel keeps the first.\n- D: Assumes 1002 rows both drop because of a `Price` conflict. `Price` was not considered.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Microsoft Excel",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Column `Code` contains values like:\n```csv\nCode\nNY--001-Blue\n```\nYou run Text to Columns: Delimited, delimiter set to hyphen (-), and you check \"Treat consecutive delimiters as one\". What values land in the first three output columns?",
+          "options": [
+            "```csv\nNY,001,Blue\n```",
+            "```csv\nNY-,001,Blue\n```",
+            "```csv\nNY, ,001,Blue\n```",
+            "```csv\nNY,,001\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "With hyphen as delimiter and \"Treat consecutive delimiters as one\", the double hyphen is treated as a single delimiter. The split is NY | 001 | Blue.",
+          "distractor_rationale": "- A: What you'd get if you did not check \"Treat consecutive delimiters as one\" (it would create an empty field between the two hyphens).\n- C: Wrong placement of the blank; also only lists three outputs when four were implied in the option.\n- D: Misunderstands the delimiter; the hyphen is removed when splitting, not retained on the token.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have a lookups table `Lookups` with column `Brand`. A defined name `Brands` refers to:\n```text\n=Lookups[Brand]\n```\nCells B2:B100 on the `Entry` sheet have data validation List with Source:\n```text\n=Brands\n```\nYou append a new brand to the bottom of `Lookups[Brand]`. What happens to the dropdowns in B2:B100?",
+          "options": [
+            "Only newly created rows will see the new brand; existing cells keep the old list.",
+            "They immediately include the new brand without changing validation settings.",
+            "They will include it only after reopening the workbook.",
+            "They will not show it until you redefine the `Brands` name to a larger range."
+          ],
+          "correct_option": "B",
+          "explanation": "A defined name that points to a table column expands automatically as the table grows. Any validation list that uses that name sees the new items immediately.",
+          "distractor_rationale": "- B: True for static ranges, but a table column reference is dynamic.\n- C: Confuses list content with validation application. The list source is shared by all cells using the name.\n- D: Excel recalculates names immediately; no reopen needed.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Column A (A2:A100) has a custom data validation formula:\n```text\n=A2=TRIM(A2)\n```\nConsider entering these exact values into A2.\n```text\n1) \"ACME \"        (one trailing normal space, CHAR(32))\n2) \" ACME\"        (one leading normal space, CHAR(32))\n3) \"ACME\"+CHAR(160) (trailing non‑breaking space)\n```\nWhich of the three will be blocked by the validation?",
+          "options": [
+            "1 and 2 only",
+            "1 and 3 only",
+            "2 and 3 only",
+            "All three"
+          ],
+          "correct_option": "A",
+          "explanation": "`TRIM` removes leading and trailing normal spaces (CHAR(32)) so 1 and 2 fail A2=TRIM(A2) and are blocked. `TRIM` does not remove non‑breaking spaces (CHAR(160)), so case 3 passes unexpectedly.",
+          "distractor_rationale": "- B/C/D: Each assumes TRIM catches non‑breaking spaces or that all whitespace is equal. It does not; CLEAN/SUBSTITUTE are needed for CHAR(160).",
+          "skills_covered": [
+            "Data Quality",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "In table `Sales`, column `Total` has this formula entered in the first data row:\n```text\n=[@Qty]*[@Price]\n```\nYou then rename column header `Price` to `UnitPrice` and add a new row at the bottom with Qty=3 and UnitPrice=10. What happens?",
+          "options": [
+            "The header rename works but the column stops auto-filling; you must copy the formula down.",
+            "The new row calculates 30, but the formula text continues to use a hidden column index rather than the new header.",
+            "The formula stays as `[@Price]` and returns `#REF!` until you retype it.",
+            "The formula updates to `[@UnitPrice]`, and the new row's `Total` auto-fills to 30."
+          ],
+          "correct_option": "D",
+          "explanation": "Structured references track header names and table expansion. The reference updates on rename, and calculated columns auto-fill into new rows.",
+          "distractor_rationale": "- B: Structured references are resilient to header renames.\n- C: Calculated columns auto‑fill by design in tables unless disabled.\n- D: Excel shows the current header in structured references; there is no hidden index in the formula text.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A worksheet with table `Sales` is protected with these options:\n```text\n[✓] Select unlocked cells\n[✓] Use AutoFilter\n[ ] Sort\n[ ] Insert rows\n```\nTable data cells are unlocked. What can a user do to `Sales` while protection is on?",
+          "options": [
+            "Filter and sort the table via header dropdowns, but cannot add rows.",
+            "Filter the table; cannot sort; cannot add rows.",
+            "Cannot filter or sort, but can add rows inside the table only.",
+            "Can add rows and filter, but cannot sort."
+          ],
+          "correct_option": "B",
+          "explanation": "With Use AutoFilter allowed, filtering is permitted. Sorting requires the Sort permission, which is not granted. Insert Rows is not allowed, so adding rows is blocked.",
+          "distractor_rationale": "- B: Sorting requires the Sort permission even via header dropdowns.\n- C: Filtering is allowed here; adding rows is not.\n- D: Adding rows requires Insert Rows, which is not allowed.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Column `TransDate` contains text dates like `13/02/2024`. In Text to Columns you choose Delimited (/) and set the column data format to Date: MDY. After Finish, what value does Excel store?",
+          "options": [
+            "2024-13-02 (invalid)",
+            "2024-02-13",
+            "2025-01-02",
+            "Text \"13/02/2024\" (no change)"
+          ],
+          "correct_option": "C",
+          "explanation": "MDY interprets 13 as the month and 02 as the day. Excel normalizes month 13 to January of the next year and preserves the day, yielding 2025‑01‑02.",
+          "distractor_rationale": "- A: Correct only if DMY were chosen.\n- C: Text to Columns converts when a date format is specified; it doesn't leave text when normalization is possible.\n- D: Excel does not store invalid dates; it normalizes overflow.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Before splitting, your sheet looks like this:\n```text\nA              B\n---------------+-----------\nOrderRef       Note\n1001-Alpha     OK\n```\nYou select A2 and run Text to Columns (Delimited by hyphen), click Finish despite Excel's overwrite warning, and you do not insert extra columns. What happens?",
+          "options": [
+            "Excel inserts a new column C and shifts B to the right automatically.",
+            "A2 becomes \"1001\" and B2 becomes blank; the original \"OK\" moves to C2.",
+            "Cell B2 remains \"OK\" because only A splits.",
+            "Cell B2 is overwritten with \"Alpha\"."
+          ],
+          "correct_option": "D",
+          "explanation": "If there is no free column to the right and you proceed, Text to Columns writes the extra fields into adjacent cells, overwriting them. Here, B2 becomes the second split token (\"Alpha\").",
+          "distractor_rationale": "- B: Ignoring the explicit overwrite warning.\n- C/D: Excel does not auto-insert columns for this operation; it overwrites unless you insert space first.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Name Manager shows:\n```text\nName: CustList\nRefers to: =Table1[Customer]\n```\nYou rename `Table1` to `Customers`. What happens to `CustList`?",
+          "options": [
+            "It updates to `=Customers[Customer]` and continues to work.",
+            "It keeps `=Table1[Customer]` and returns a `#NAME?` until recreated.",
+            "It becomes a fixed A1 range to preserve the old area.",
+            "It clears the RefersTo, leaving the name blank."
+          ],
+          "correct_option": "A",
+          "explanation": "Defined names that point to a table and its columns follow table renames automatically.",
+          "distractor_rationale": "- B: Table renames are propagated; no error is raised.\n- C/D: Excel does not convert to static ranges or blank names on a rename.",
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Column `Code` has:\n```csv\nCode\nABC\nABC \nabc\n```\nYou run Remove Duplicates on this single column. What remains and in what order?",
+          "options": [
+            "```csv\nABC\n```",
+            "```csv\nABC\nabc\n```",
+            "```csv\nABC\nABC \n```",
+            "```csv\nABC \nabc\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Remove Duplicates is case‑insensitive, so `ABC` and `abc` are duplicates; the first occurrence (`ABC`) is kept. The entry with a trailing space (`ABC␠`) is a different string, so it remains. Order is preserved for first occurrences: `ABC`, then `ABC␠`.",
+          "distractor_rationale": "- B/C: Case is ignored, so `abc` will not remain if `ABC` appears first. The trailing‑space variant is distinct and should remain.\n- D: Would require trimming first; Remove Duplicates alone will not consolidate `ABC` and `ABC␠`.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your vendor master arrives weekly as a CSV with one column `VendorFull` that inconsistently looks like:\n```text\n\"ACME Ltd, UK\"\nACME  Ltd ;  UK\n\"Zen Labs,IN\"\nzen labs , in\n```\nYou must 1) create a clean, unique vendor list, and 2) build a controlled `Entry` sheet where users can only pick vendors from that list. Users must also be able to add a new vendor to the master so it appears in the dropdowns without reconfiguring validation.",
+          "task": "Describe the exact steps, in Excel, to transform the messy `VendorFull` into a clean vendor table and wire it into a dynamic data validation list on `Entry`. Be specific about Text to Columns settings, deduping keys, how you will normalize whitespace/case, how you will make the list dynamic, and what protection you will apply so users can filter but not sort or change headers. Justify each choice as a control for data quality.",
+          "expected_answer": "- Import the CSV to a `Raw` sheet.\n- Insert a helper area: Use Text to Columns on `VendorFull` with Delimited; delimiters: comma and semicolon; text qualifier: double quote (\"). Check \"Treat consecutive delimiters as one\". Output to two columns: `VendorName_raw`, `Country_raw`.\n- Normalize: add helper formulas to trim and clean: `=TRIM(SUBSTITUTE(VendorName_raw,CHAR(160),\" \"))` and same for Country. Optionally `=PROPER()` if policy requires. Create final columns `VendorName` and `Country` with these normalized values.\n- Create a structured table `Vendors` with columns `VendorName`, `Country`. Remove Duplicates on both columns to ensure uniqueness by (name,country). Sort as needed.\n- Create a defined name `VendorList` referring to `=Vendors[VendorName]` to drive validation (dynamic as table grows). If duplicates in name alone are unacceptable, optionally create a display column `VendorDisplay` =`VendorName & \" (\" & Country & \")\"` and point `VendorList` to that.\n- On `Entry` sheet, format entry area as a table (e.g., `Orders`). Set data validation List for the vendor column Source: `=VendorList`. Add input message and Stop alert.\n- Protect `Entry` sheet: unlock only the data cells; Protect Sheet with options: allow Select unlocked cells and Use AutoFilter; do not allow Sort/Insert Rows. This lets users filter the table but not alter headers or sort.\n- To allow new vendors: instruct users to add rows at the bottom of `Vendors` table. Because `VendorList` is a table column, dropdowns update instantly without reapplying validation.\n- As an added check, add a conditional format to flag any vendor on `Entry` not found in `Vendors` (e.g., `=ISNA(MATCH([@Vendor],Vendors[VendorName],0))`).",
+          "rubric": [
+            {
+              "criterion": "Correct Text to Columns configuration (delimiters comma/semicolon, text qualifier, consecutive delimiters) and output columns identified",
+              "marks": 2
+            },
+            {
+              "criterion": "Whitespace/non‑printing normalization approach using TRIM/CLEAN/SUBSTITUTE and rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Proper unique key for Remove Duplicates (VendorName+Country) and creation of a structured table",
+              "marks": 2
+            },
+            {
+              "criterion": "Dynamic data validation via defined name pointing to a table column; protection settings allowing filter but not sort/structural edits",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your controlled `Entry` table has strict data validations, but sales reps often paste values from emails, bypassing validation (for example, pasting `\" ACME\"` with a leading space into a trimmed text field or an out‑of‑list SKU). You cannot use VBA or Power Query in this workflow.",
+          "task": "Propose a design in Excel that maintains a controlled sheet yet detects and prevents bad data from propagating. Include how you’ll structure the entry vs. clean data areas, what validations and formulas you’ll add, what protection settings you’ll use, and how you’ll surface quality exceptions for remediation.",
+          "expected_answer": "- Keep `Entry` as the user input table with standard List/Numeric/Date validations and Stop alerts. Acknowledge paste can bypass DV.\n- Add a parallel `Clean` table fed by formulas from `Entry` (e.g., structured references). In `Clean`, apply transformations such as `=TRIM(SUBSTITUTE([@Vendor],CHAR(160),\" \"))`, and map SKUs with `MATCH` against a `SKUs` lookup table (or leave blank if not found). Only `Clean` is used for reporting/export.\n- In `Entry`, add visible helper columns (or a `Valid?` column) with rules: within-list check `=ISNUMBER(MATCH([@SKU],SKUs[SKU],0))`; trimmed-equality check `=EXACT([@TextField],TRIM(SUBSTITUTE([@TextField],CHAR(160),\" \")))`; numeric ranges using `AND(ISNUMBER([@Qty]),[@Qty]>=1,[@Qty]<=500)`.\n- Use Conditional Formatting to highlight invalid rows when any check fails.\n- Add a `DQ Summary` area with counts: total rows, invalid SKUs, leading/trailing space issues, blanks in required fields. These reference the `Entry`/`Clean` tables.\n- Protect `Entry` and `Clean`: unlock only the `Entry` data cells; allow Use AutoFilter; disallow Sort/Insert Rows to preserve structure. Lock `Clean` entirely so users cannot edit results.\n- Document a remediation workflow: users correct highlighted rows in `Entry`; once checks turn green, `Clean` updates. This design contains bad data and visibly surfaces issues without macros.",
+          "rubric": [
+            {
+              "criterion": "Separation of Entry (user input) and Clean (formula-driven) areas with clear data flow",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific, formula-based quality checks that detect paste-bypassed issues (list membership, trim/clean, numeric/date ranges)",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of structured tables, conditional formatting, and dynamic lookups to surface and count exceptions",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate protection choices (filter allowed; sort/structural edits blocked) and a clear remediation process",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Quality",
+            "Data Cleaning",
+            "Microsoft Excel",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You receive a CSV with addresses where commas appear inside quoted fields:\n```csv\nID,Name,Address\n1,Jane,\"12 King, Apt 3\"\n2,Bob,\"77 High Street\"\n3,Kim,\"5 Elm Rd, Unit 2\"\n```\nYou need to split this into three columns on the sheet without corrupting the address field and then run quality checks for extra spaces and duplicates on `Name,Address`.",
+          "task": "Explain exactly how you would use Excel's Text to Columns to import/split correctly, including key settings to handle the quotes. Then describe two robust quality checks you will perform on the resulting `Name` and `Address` columns before removing duplicates, and how you will remove duplicates safely.",
+          "expected_answer": "- Use Text to Columns with delimiter set to comma and set Text qualifier to double quote (\"). This preserves commas inside quoted `Address`. Ensure the destination has enough empty columns to the right to avoid overwrite.\n- After splitting, normalize `Name` and `Address` with helper formulas: `=TRIM(SUBSTITUTE([@Name],CHAR(160),\" \"))` and same for Address; optionally `=CLEAN` to remove control characters.\n- Quality check 1: Case-insensitive duplicate pre-check: helper key `=LOWER(TRIM(Name))&\"|\"&LOWER(TRIM(Address))`; use `COUNTIF` on this key to flag duplicates and a summary count area.\n- Quality check 2: Leading/trailing/multiple space check with `=LEN(x)<>LEN(TRIM(SUBSTITUTE(x,CHAR(160),\" \")))` and conditional formatting to highlight.\n- After cleaning, use Remove Duplicates on both `Name` and `Address` (or on the normalized helper columns if retained) to keep unique combos. Verify by re-counting the duplicate flags equals zero.",
+          "rubric": [
+            {
+              "criterion": "Correct Text to Columns configuration for quoted commas and safe destination planning",
+              "marks": 2
+            },
+            {
+              "criterion": "Whitespace/non‑printing normalization strategy on text columns",
+              "marks": 2
+            },
+            {
+              "criterion": "Well-defined duplicate detection approach using normalized keys and counts",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, safe Remove Duplicates step on the appropriate columns and post-check",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your order lines table contains repeated keys where `OrderID`+`SKU` is the business key, but `UnitPrice` sometimes differs due to data issues:\n```csv\nOrderID,SKU,Qty,UnitPrice\n1001,A1,2,5.00\n1001,A1,2,5.00\n1002,A1,1,4.75\n1002,A1,1,5.25\n1003,B2,3,9.00\n```\nYou must produce a de-duplicated dataset with one row per key and also surface any keys where price conflicts exist.",
+          "task": "Describe the exact steps to deduplicate correctly in Excel while preserving a check for price inconsistencies. Specify which columns you will select in Remove Duplicates, how you will retain or report conflicting prices, and what quality checks you will add to prove the result is consistent.",
+          "expected_answer": "- Create a helper table or pivot that groups by (`OrderID`,`SKU`) and computes `MinPrice` and `MaxPrice` per key: formulas like `=MINIFS(UnitPrice,OrderID,[@OrderID],SKU,[@SKU])` and `=MAXIFS(...)` or a PivotTable if allowed; price conflict when `MinPrice<>MaxPrice`.\n- Run Remove Duplicates on the original table selecting only `OrderID` and `SKU` to keep the first occurrence of each key as the representative record. Do not include `UnitPrice` in the selection, or duplicates with different prices will not collapse.\n- Join or add the conflict indicator to the deduped table (e.g., helper columns using structured references to the min/max lookups) to flag keys with inconsistent pricing.\n- Add a DQ summary: counts of total rows before/after, number of keys with conflicts, and verify that `AfterRows = COUNTROWS(UNIQUE(OrderID&\"|\"&SKU))` (conceptually via helper) and that conflicts are all investigated before use.",
+          "rubric": [
+            {
+              "criterion": "Correct selection of key columns for Remove Duplicates and rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound method to detect price inconsistencies (min/max per key or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear linkage of conflict flags back to the deduped table",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate DQ summary/verification steps demonstrating consistency",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a controlled data entry sheet with dynamic lists and protection",
+          "brief": "Create an Excel workbook that captures order entries in a controlled way and updates dropdowns dynamically when lookup lists grow. Include these sheets:\n- Lookups: structured tables providing valid `Customer` and `SKU` lists (add sample values).\n- Entry: a structured table `Orders` with columns `OrderID` (text), `OrderDate` (date), `Customer` (list), `SKU` (list), `Qty` (number), `UnitPrice` (number), `Notes` (text).\nRequirements:\n- Data validation: `Customer` and `SKU` must come from dynamic lists that expand when you append to the `Lookups` tables. `Qty` must be whole numbers 1..500. `UnitPrice` must be >0. `OrderDate` constrained to the current calendar year (use a rule that will work when the assessor opens it).\n- Uniqueness: enforce unique `OrderID` within `Orders` using a custom validation (no duplicates allowed).\n- Whitespace quality: block leading/trailing normal spaces in `Notes` with a custom validation; display a clear Stop alert message.\n- Protection: unlock only the `Orders` data cells. Protect the `Entry` sheet allowing Use AutoFilter but disallow Sort and structural changes; users should be able to filter but not sort or edit headers. Keep `Lookups` unprotected for maintenance.\n- Names: create defined names (e.g., `CustomerList`, `SKUList`) that refer to the relevant table columns and use these names in validation sources.\n- Documentation: include a `Readme` sheet briefly explaining how to add new lookup values and what protections are in place.",
+          "deliverable": "An .xlsx workbook containing sheets `Lookups`, `Entry`, and `Readme`. The `Entry` sheet must contain the `Orders` table with working validations and protection; `Lookups` must contain the source tables that drive the dropdowns.",
+          "acceptance_criteria": [
+            "`Lookups` contains structured tables with columns `Customer` and `SKU` and at least three sample values each.",
+            "Defined names (e.g., `CustomerList`, `SKUList`) refer to the corresponding table columns; inserting a new item at the bottom of a lookup table makes it appear in the `Entry` dropdowns without reapplying validation.",
+            "`Orders` is an Excel Table. Data validation rules exist for each specified column and behave as required (list, ranges, date window).",
+            "Custom validation prevents duplicate `OrderID` within `Orders` (attempting to enter a duplicate triggers a Stop alert).",
+            "Custom validation on `Notes` blocks entries with leading or trailing normal spaces.",
+            "`Entry` sheet protection is on, with Use AutoFilter allowed and Sort disallowed. Filtering works; sorting from headers is blocked; headers cannot be edited.",
+            "All data entry cells are unlocked; non-entry cells remain locked under protection.",
+            "`Readme` explains how to add lookup values and lists the protection settings."
+          ],
+          "rubric": [
+            {
+              "criterion": "Dynamic list setup using table-based defined names and correct application to validations",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct and robust validation rules (Qty, UnitPrice, OrderDate, Notes trim) with clear Stop alerts",
+              "marks": 5
+            },
+            {
+              "criterion": "Unique `OrderID` rule implemented via custom validation and verified to work",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate protection configuration (unlocked entry cells; filter allowed; sort/structure blocked)",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and completeness of the Readme documentation",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Advanced Excel",
+            "Microsoft Excel",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce a clean, de-duplicated dataset from a raw import with documented quality checks",
+          "brief": "Starting from a raw dataset you control or receive (create a small sample if needed), build a workbook that transforms it into a clean table using Excel-only features. Include these sheets:\n- Raw: the unmodified import (text as-is). Include at least columns `OrderID`, `SKU`, `Qty`, `UnitPrice`, and a composite text like `ProductCode` (e.g., `CAT-001-XL`) or a name/address field that needs splitting.\n- Clean: a structured table that results from your cleaning steps.\n- DQ Checks: a summary of quality metrics and exception lists.\nRequirements:\n- Use Text to Columns to split at least one composite text field (e.g., split `ProductCode` into `Category`, `Item`, `Variant` with hyphen delimiter, or split `Name,Address` with comma and correct text qualifier). Ensure you do not overwrite adjacent data.\n- Remove duplicates based on a business key you define (e.g., `OrderID`+`SKU`).\n- Normalize whitespace: ensure no leading/trailing normal spaces in key text fields (show how you detect/report non‑breaking spaces if present).\n- Prove the clean result with checks: counts before/after, number of duplicate keys detected pre-clean, number of rows with leading/trailing spaces, and number of nonnumeric `UnitPrice` or invalid `OrderDate` values.\n- Make `Clean` an Excel Table and ensure all DQ checks are formula-driven and reference the `Clean`/`Raw` tables (no hard-coded numbers).",
+          "deliverable": "An .xlsx workbook with sheets `Raw`, `Clean`, and `DQ Checks`. The `Clean` sheet must contain a structured table with split fields, duplicates removed per the stated key, and whitespace normalized; `DQ Checks` must contain formulas that calculate the requested metrics.",
+          "acceptance_criteria": [
+            "`Raw` contains an example dataset with at least 30 rows and the specified columns.",
+            "A composite field is split via Text to Columns with appropriate settings (delimiter and, if applicable, text qualifier), with no overwriting of adjacent cells (extra columns inserted as needed).",
+            "`Clean` is an Excel Table. Duplicate reduction is based on a clearly stated key (not including price/amount fields unless justified) and is actually applied (visible decrease or a documented zero-change).",
+            "DQ Checks sheet includes formulas that compute: total rows Raw vs Clean; count of pre-clean duplicate keys; count of rows with leading/trailing normal spaces (showing test logic); count of nonnumeric prices or invalid dates; and a list or count of keys that had conflicts if applicable.",
+            "Whitespace normalization approach is documented and demonstrated (e.g., helper columns using TRIM/SUBSTITUTE and evidence that strings equal their trimmed versions).",
+            "All references in DQ Checks are to table columns (structured references), not fixed A1 ranges."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct Text to Columns usage with safe layout (no overwrites) and appropriate delimiter/qualifier settings",
+              "marks": 5
+            },
+            {
+              "criterion": "Appropriate business key chosen and Remove Duplicates correctly applied to produce Clean table",
+              "marks": 5
+            },
+            {
+              "criterion": "Effective whitespace normalization (including handling notes on non‑breaking spaces) and demonstration thereof",
+              "marks": 4
+            },
+            {
+              "criterion": "Comprehensive, formula-driven DQ checks referencing tables (counts, duplicates, invalids)",
+              "marks": 5
+            },
+            {
+              "criterion": "Use of structured tables throughout and clarity of documentation within the workbook",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Data Quality",
+            "Microsoft Excel",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-022-S03",
+      "skills_assessed": [
+        "Advanced Excel",
+        "Microsoft Excel",
+        "PivotTables",
+        "PivotCharts",
+        "Dashboard Design",
+        "track key performance indicators"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You build a PivotTable from the following data and put `Date` on Rows. You then choose Group > Months, Years.\n```text\nDate,Region,Revenue\n2025-01-05,East,1200\n,West,850\n2025-01-12,West,430\n```\nWhat happens when you attempt to group?\n",
+          "options": [
+            "It only allows grouping by Months; Years is disabled because of the blank.",
+            "It groups by Months and Years; the blank row remains as (blank) outside the group.",
+            "It groups and coerces the blank to 0-Jan-1900, placing it under Jan-1900.",
+            "Excel returns an error: \"Cannot group that selection.\""
+          ],
+          "correct_option": "D",
+          "explanation": "Grouping a PivotTable date field requires all items be valid dates. A blank (or text) value in the grouped field prevents grouping and triggers \"Cannot group that selection.\"",
+          "distractor_rationale": "A is tempting because (blank) often appears in Pivots, but for grouped Date fields Excel blocks grouping entirely when any invalid value exists. C reflects a common misconception about date serials; Pivot date grouping does not silently coerce blanks to 0. D seems plausible, but Excel disables grouping altogether, not just one level.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Using the data below, you create a PivotTable with Rows = Region, Columns = Product, Values = Sum of Revenue, and set Show Values As = % of Column Total.\n```text\nRegion,Product,Revenue\nEast,X,100\nEast,Y,50\nWest,X,150\nWest,Y,200\n```\nWhat value displays at East ∩ X?\n",
+          "options": [
+            "20.0%",
+            "40.0%",
+            "66.7%",
+            "33.3%"
+          ],
+          "correct_option": "B",
+          "explanation": "Column X total is 100 + 150 = 250. East/X is 100. 100/250 = 0.4 = 40.0%.",
+          "distractor_rationale": "B treats 100 as a share of the row East total (150), not the column total. C confuses the Y column share (50/150) or swaps numerators. D is a random-seeming round number some choose when mixing up row vs column totals.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You create PT1 from Table `SalesTbl` on Sheet1 via Insert > PivotTable. You then create PT2 by repeating Insert > PivotTable on `SalesTbl` (you did not copy PT1). You insert one Slicer on `Region` and open its Report Connections dialog. Only PT1 is listed.\n```text\nSteps taken\n1) Insert PivotTable (PT1) from SalesTbl\n2) Insert PivotTable (PT2) again from SalesTbl (not a copy)\n3) Insert Slicer on Region\n4) Report Connections: PT1 visible, PT2 missing\n```\nWhat is the most likely reason?\n",
+          "options": [
+            "PT1 and PT2 use different PivotCaches because they were created in separate insert actions.",
+            "The Slicer cannot connect across worksheets.",
+            "Slicer connections require Subtotals to be off in both Pivots.",
+            "PT2 is missing the Region field in its layout, so it cannot be connected."
+          ],
+          "correct_option": "A",
+          "explanation": "Creating Pivots in separate insert actions creates separate PivotCaches by default. A Slicer can only connect to Pivots that share the same cache.",
+          "distractor_rationale": "B is false; slicers can connect across sheets. C is tempting but incorrect; a slicer can connect as long as the field exists in the cache, not necessarily placed in the layout. D is unrelated; subtotals do not affect slicer connectivity.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "On a single PivotTable, you place `Region` in the Report Filter. You also add a Slicer for `Region` connected to the same PivotTable. The Report Filter currently shows West. You click East (single select) on the Slicer.\nWhat happens?\n",
+          "options": [
+            "The Pivot shows no data because Slicer (East) ∩ Filter (West) is empty.",
+            "Both East and West remain visible because Report Filter overrides Slicers.",
+            "The Slicer selection is ignored when a Report Filter is already set.",
+            "The Report Filter updates to East and the Pivot shows East-only."
+          ],
+          "correct_option": "D",
+          "explanation": "A slicer on the same field is just another UI for that filter. Selecting East in the slicer updates the Report Filter to East; they do not conflict.",
+          "distractor_rationale": "A is a reasonable set-theory guess, but slicers and the report filter represent a single filter state. B reverses the precedence concept; neither overrides the other—they are the same filter. D is wrong; slicers are primary filter interfaces for Pivots.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You have a PivotChart with a Region series. In the Pivot field settings for `Region`, \"Show items with no data\" is ON. A slicer on `Region` is connected to this Pivot and you select only East and West, excluding South.\nWhat appears in the PivotChart legend/series for South?\n",
+          "options": [
+            "South remains and plots as zero-height bars/line segments.",
+            "South is removed entirely because slicer filtering hides items regardless of the \"Show items with no data\" setting.",
+            "South remains but is greyed out in the legend with no points.",
+            "South is kept but hidden behind other series until data returns."
+          ],
+          "correct_option": "B",
+          "explanation": "\"Show items with no data\" shows members that have no data due to aggregation, not those explicitly filtered out. A slicer filter excludes South, so it does not appear at all.",
+          "distractor_rationale": "A is a common misunderstanding: zero data and filtered-out are different states. B invents a visual state Excel does not use for PivotChart series. D is hand-wavy and incorrect; series order/overlap does not hide filtered items.",
+          "skills_covered": [
+            "PivotTables",
+            "PivotCharts",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You build a Pivot from this data and put Month on Rows.\n```text\nMonth,Revenue\nJan,100\nFeb,200\nMar,150\n```\nYou add a second Value field: Show Values As = Difference From (Base field: Month, Base item: (previous)). You then sort the Pivot descending by Revenue. What value shows in the Difference From column for Mar?\n",
+          "options": [
+            "-50",
+            "0",
+            "-150",
+            "+50"
+          ],
+          "correct_option": "A",
+          "explanation": "After sorting by Revenue desc, the order is Feb (200), Mar (150), Jan (100). \"Previous\" refers to previous in the current sort order, so Mar compares to Feb: 150 - 200 = -50.",
+          "distractor_rationale": "B treats previous as Jan (chronological) and subtracts 150 from 0. C assumes chronological order (Mar vs Feb) but flips the subtraction. D assumes first-in-sequence gives 0; Mar is not first after sorting.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A Region slicer has the Multi-Select button (top-left) turned OFF. The analyst wants East and West selected simultaneously and holds Ctrl while clicking East then West.\nWhat is the result?\n",
+          "options": [
+            "Only the last clicked item (West) remains selected.",
+            "Excel selects a contiguous range East–West only if they are adjacent.",
+            "Both East and West are selected.",
+            "Ctrl is ignored unless Multi-Select is ON, so only East remains."
+          ],
+          "correct_option": "C",
+          "explanation": "Ctrl-clicking supports multi-select regardless of the slicer’s Multi-Select toggle. The toggle enables multi-select without holding Ctrl; Ctrl still works.",
+          "distractor_rationale": "A is what happens without Ctrl. C is a believable but false limitation. D confuses slicers with Shift-selection behavior; slicers do not use contiguous range selection.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your dashboard applies RAG rules to three KPIs after slicers filter Region = North:\n```text\nRule: Green if Actual >= Target; Amber if Actual >= 95% of Target; else Red\nNorth after filters\n- Revenue: Actual 980k, Target 1,000k\n- Gross Margin %: Actual 31%, Target 30%\n- On-time Delivery: Actual 87%, Target 92%\n```\nWhich KPI tile should show Amber?\n",
+          "options": [
+            "On-time Delivery only",
+            "All three are Green",
+            "Revenue only",
+            "Gross Margin % only"
+          ],
+          "correct_option": "C",
+          "explanation": "Revenue is 98% of Target (Amber). GM% meets/exceeds its target (Green). On-time Delivery is 87/92 ≈ 94.6% (<95%), so Red.",
+          "distractor_rationale": "B misapplies the rule; GM% exceeds target so it is Green. C computes 87/92 incorrectly as >=95%. D ignores the shortfalls.",
+          "skills_covered": [
+            "Dashboard Design",
+            "track key performance indicators",
+            "PivotTables"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two PivotCharts are stacked on a dashboard sheet. After refresh, the upper Pivot expands row heights and the lower chart shifts down, breaking alignment. You want to prevent chart movement while allowing column-width-based resizing.\nWhich object setting solves this?\n",
+          "options": [
+            "Freeze Panes above the charts.",
+            "Set chart object properties to \"Don't move or size with cells\".",
+            "Turn off \"Show items with no data\" on all fields.",
+            "Lock the worksheet and protect objects."
+          ],
+          "correct_option": "B",
+          "explanation": "Setting each chart to \"Don't move or size with cells\" prevents positional shifts caused by row height changes while still allowing manual resizing and column-width design control.",
+          "distractor_rationale": "A affects Pivot members, not object positioning. C manages scrolling, not object anchoring. D prevents edits but doesn’t stop objects from shifting during Pivot recalculation.",
+          "skills_covered": [
+            "Dashboard Design",
+            "PivotCharts",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You copy a PivotTable (PT1) to create PT2. In PT2 you change the `Revenue` Value Field Settings > Number Format to Currency. PT1’s `Revenue` instantly shows Currency as well.\nWhy did both update?\n",
+          "options": [
+            "They share the same PivotCache; field number formats are stored at the cache field level and apply to all Pivots using that cache.",
+            "Refreshing PT2 forces a global style change for the PivotTable style used by both.",
+            "Both Pivots reference the same worksheet Table, so Excel mirrors number formats across all Pivots.",
+            "Slicer connections propagate formatting to all connected Pivots automatically."
+          ],
+          "correct_option": "A",
+          "explanation": "Copying a PivotTable makes a second view over the same PivotCache. Field-level properties like number format are cache-scoped, so all Pivots on that cache reflect the change.",
+          "distractor_rationale": "B sounds plausible, but slicers don’t transmit formatting. C confuses data source sameness with cache-sharing; separate caches over the same table would not auto-sync formatting. D conflates table styles with value field number formats.",
+          "skills_covered": [
+            "PivotTables",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You inherited a sales dashboard driven by a single transactions table (columns: Date, Region, Product, Revenue, Cost, GM%). The main KPI card shows \"Average of GM%\" and changes with slicers (Region, Product, Year). Finance reports that when you select a product mix (e.g., Region = East, Products = A, B), the GM% card is wrong because it averages row-level margins instead of computing a weighted margin. A PivotChart trend also appears volatile when filtering small segments.",
+          "task": "Redesign the Pivot setup and KPI card so the GM% is correctly weighted under any slicer selection, and the trend chart remains accurate. Describe precisely what you will change in the Pivot fields/config, any calculated elements you will add, and how you will validate the result against a manual check.",
+          "expected_answer": "- Remove the precomputed row-level GM% from Values. Using it with Average creates an unweighted mean that varies with granularity and filtering.\n- Add two Value fields: Sum of Revenue and Sum of Cost (or Sum of Profit as a helper column = Revenue − Cost).\n- Create a Calculated Field in the Pivot (non-OLAP source): name GM_wt% = (Sum of Revenue − Sum of Cost) / Sum of Revenue. This produces a weighted margin because both numerator and denominator are aggregations over the current filter context. Alternatively, compute Profit in the source table, then use a Calculated Field GM_wt% = Sum of Profit / Sum of Revenue.\n- Use GM_wt% as the KPI card’s value and format as Percentage with 1–2 decimals. Ensure \"Summarize Values By\" is Sum (it will behave as a derived measure over the sums).\n- For the trend PivotChart: Rows = Date (grouped to Months and Years), Values = GM_wt% (calculated field), optionally add Revenue as a secondary line to contextualize. Keep Year above Month in the Rows area, with Month sorted by month number not alphabetically. Use a Timeline on Date to constrain periods.\n- Validation: For a slicer selection (e.g., East, Products A and B, Year 2025, Mar), export the Pivot detail or filter the source table to the same selection and compute (ΣRevenue − ΣCost)/ΣRevenue manually. Confirm it matches the KPI and the chart point.\n- Guardrails: Turn off \"Average of GM%\" anywhere; ensure there is only one margin metric exposed. Lock number formats and show data labels as needed. Optional: hide subtotals/grand totals for GM% to avoid confusing rollups.",
+          "rubric": [
+            {
+              "criterion": "Diagnoses why \"Average of GM%\" is wrong (unweighted mean sensitive to row grain)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes correct weighted approach using aggregate Profit and Revenue (Calculated Field or source helper)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains Pivot configuration (fields, grouping for trend, sorting of months, formatting) that behaves correctly under slicers",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a concrete validation method against a manual calculation",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "PivotTables",
+            "Dashboard Design",
+            "track key performance indicators",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your executive wants the dashboard to compare monthly revenue across multiple years with a Timeline that can span several years. The current PivotChart uses Date on Axis and shows months repeating for each year, but when multiple years are selected, months appear out of chronological order and the current partial month misleads the audience.",
+          "task": "Propose a Pivot layout and chart design that supports multi-year comparison by month, keeps months in calendar order, and avoids plotting the current incomplete month. Explain how the Timeline and sort settings will interact, and how you will prevent the partial-month issue without manual edits each month.",
+          "expected_answer": "- Pivot layout: Place Month (from grouped Date) on the Axis/Rows, Year as a Legend/Columns series, Values = Sum of Revenue. Group Date by Years and Months so Month is a field with month numbers behind it. Ensure Month is sorted by month number (More Sort Options > Ascending > using field: Month Number) to prevent alphabetical Apr, Aug, etc.\n- Chart: Clustered column or multi-series line where each Year is a separate series across the same Jan–Dec axis. Add clear legend and consistent colors per Year.\n- Timeline: Connect it to the underlying Date field (not the grouped Month item). Selecting a span (e.g., 2023–2025) will filter the dataset; the grouped Month/Year fields respect that filter.\n- Excluding incomplete current month: Use one of\n  1) Add a helper column IsCompleteMonth = EOMONTH([Date],0) < EOMONTH(TODAY(),0); put it in the Pivot’s Filters area and set to TRUE; or\n  2) Apply a Value Filter on Date for \"Before\" the first day of next month; or\n  3) If using a calendar table, filter MonthEnd <= last completed month.\n- Ensure the filter is saved with the report so each refresh automatically hides the in-progress month.\n- Validate by checking that the latest month present in the Pivot equals EOMONTH(TODAY(),-1).",
+          "rubric": [
+            {
+              "criterion": "Correct Pivot field arrangement enabling month-on-month comparison across years",
+              "marks": 2
+            },
+            {
+              "criterion": "Maintains calendar month order under multi-year selection (explains sort by month number)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains Timeline interaction with grouped fields and why to connect it to the Date field",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides an automated method to exclude the current partial month",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "PivotTables",
+            "PivotCharts",
+            "Dashboard Design",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two PivotTables on the dashboard should be controlled by a single Region slicer. PT-A is built from Table `Sales2025`. PT-B is built from Table `ServiceTickets` (both have a `Region` column with matching values). Currently, one slicer cannot connect to both.",
+          "task": "Without using VBA, recommend a design that enables a single slicer to control both Pivots. Explain trade-offs and the exact steps you would take in Excel to implement it for this dashboard.",
+          "expected_answer": "Option 1 (simplest in this context): Rebuild both Pivots to share one PivotCache by pointing them at a single normalized table with a shared Region column. If the tables are truly different grains, create an appended table (same columns where possible) solely for Region slicing and base both Pivots on that common source. Copy PT-A to create PT-B (ensures same cache), then change PT-B’s layout/fields as needed. Result: the Region slicer can connect to both because they share a cache.\nOption 2 (if separate fact tables must remain): Use the Data Model (Add to Data Model) to load both tables and relate them to a shared Region lookup table. Create both Pivots as Data Model Pivots; a single Region slicer built from the Region lookup connects to both. Trade-off: introduces the model/relationship layer and changes some Pivot features (e.g., Calculated Fields are not available; you’d use measures instead).\nSteps for Option 1:\n- Ensure both Pivots are built by copying (duplicate PT-A to make PT-B) or by creating both from the same Insert action so they share a cache.\n- Confirm Report Connections for the slicer now list both Pivots.\nTrade-offs: Option 1 requires a common source and may force pre-aggregation or aligning columns; Option 2 adds modeling complexity but preserves separate fact tables properly.",
+          "rubric": [
+            {
+              "criterion": "Identifies why a single slicer cannot connect (different PivotCaches or separate tables)",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a viable no-VBA solution and the concrete Excel steps",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses trade-offs between shared cache vs Data Model approach",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains how to verify the slicer connects to both Pivots",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "PivotTables",
+            "Dashboard Design",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your dashboard has 6 slicers and 8 PivotCharts. Users report slow interactions and visual \"jumping\" after each selection. The data size is moderate (~200k rows). Some Pivots display subtotals and grand totals, and several fields retain thousands of old items. Charts occasionally misalign after refresh.",
+          "task": "Recommend concrete configuration and layout changes to improve responsiveness and visual stability without removing interactivity. Explain exactly which Pivot and object settings you will change and why.",
+          "expected_answer": "Performance and stability plan:\n- Make all Pivots share one PivotCache: build subsequent Pivots by copying an existing one or using the same Insert action on the same table. This reduces memory and recalculation overhead.\n- Disable AutoFit and preserve layout: PivotTable Options > Layout & Format: uncheck \"Autofit column widths on update\" and check \"Preserve cell formatting\"; for charts, set each object to \"Don't move or size with cells\" to prevent shifting.\n- Reduce render load: Hide Subtotals and Grand Totals where not needed; limit each chart to essential series/categories; avoid Calculated Items (they are slow) and replace with source helpers or Calculated Fields.\n- Clean field item bloat: PivotTable Options > Data: set \"Number of items to retain per field\" = None; Refresh All to drop orphaned members.\n- Defer heavy updates during design: temporarily disconnect slicers or use manual calculation; for end users, keep slicer connections but avoid chaining multiple slicers on highly cardinal fields.\n- Ensure all charts and Pivots use consistent field lists so slicers filter everything; avoid duplicate slicers on the same field.\n- Verify Timeline/slicer connections only include required Pivots to avoid unnecessary recalcs.\nResult: faster recalculation, fewer redraws, stable layout post-refresh.",
+          "rubric": [
+            {
+              "criterion": "Reduces recalculation cost (shared cache, avoid calculated items, limit series) with clear justifications",
+              "marks": 3
+            },
+            {
+              "criterion": "Improves visual stability via specific settings (AutoFit off, Preserve formatting, Don't move/size)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses field item retention and refresh strategy",
+              "marks": 1
+            },
+            {
+              "criterion": "Considers slicer connection scope and user interactivity trade-offs",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "PivotTables",
+            "PivotCharts",
+            "Dashboard Design",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Interactive Analysis: Pivot-driven exploration with grouping, slicers and a PivotChart",
+          "brief": "Build an interactive analysis of a transactional dataset (e.g., sales) using a PivotTable and PivotChart. The analysis must support slicing by Region and Product and navigating time by Year/Quarter/Month. Include at least one \"Show Values As\" transformation that changes correctly with slicers (e.g., % of Column Total or Difference From Previous Month). Connect a Timeline or Date slicer and ensure chart and Pivot stay synchronized.",
+          "deliverable": "Interactive analysis",
+          "acceptance_criteria": [
+            "One worksheet contains a PivotTable using the source transactions with fields: Date, a categorical dimension (e.g., Region), a product/category dimension, and a numeric measure.",
+            "Date is grouped into Years and Months (Quarters optional). Grouping works (no \"Cannot group\" error) and shows hierarchical drill.",
+            "At least two slicers exist (Region, Product or equivalent) and are connected to both the PivotTable and the PivotChart (Report Connections shows both).",
+            "A Timeline or Date slicer is present and filters the Pivot correctly.",
+            "There is at least one Value field using Show Values As (e.g., % of Column Total or Difference From (previous)). The numbers are correct for sample checks.",
+            "A PivotChart reflects the Pivot’s filters and updates when slicers change. Hidden items due to slicers do not appear as zero series.",
+            "AutoFit columns on update is OFF; the chart object is set to \"Don't move or size with cells\" to prevent shifting on refresh.",
+            "File refreshes without errors; no calculated items are used."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct Pivot construction and date grouping (years/months), no grouping errors",
+              "marks": 5
+            },
+            {
+              "criterion": "Slicers/Timeline present and correctly connected to both Pivot and PivotChart",
+              "marks": 4
+            },
+            {
+              "criterion": "Show Values As transformation implemented and numerically correct under different slicer states",
+              "marks": 5
+            },
+            {
+              "criterion": "PivotChart correctly reflects filters and remains readable (legends/axes/formatting)",
+              "marks": 4
+            },
+            {
+              "criterion": "Layout stability settings applied (AutoFit off; chart don’t move/size)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "PivotTables",
+            "PivotCharts",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Management Dashboard: KPI cards, charts and layout",
+          "brief": "Design a single-sheet management dashboard driven by PivotTables/PivotCharts. Include KPI tiles for Revenue, Gross Margin %, and one operational KPI (e.g., On-time Delivery), each with variance vs target and RAG status per defined thresholds. Provide at least three charts: a monthly trend (multi-year capable), a composition view (by Region or Product), and a Top N ranking. Ensure all visuals respond to a shared set of slicers (Region, Product, and a Timeline or Year). Apply a consistent layout and formatting suitable for management review.",
+          "deliverable": "Management dashboard",
+          "acceptance_criteria": [
+            "A dedicated sheet named \"Dashboard\" contains all KPI tiles, slicers, and charts without scrollbars at 100% zoom on a standard laptop resolution (approx. 1366×768 or wider).",
+            "Three KPI tiles show Actual, Target, Variance, and a RAG indicator using the rule provided in the file (or documented in the sheet). GM% is computed as (Sum Revenue − Sum Cost) / Sum Revenue (weighted), not an average of row GM%.",
+            "At least three PivotCharts: (1) monthly trend across years, (2) composition by Region or Product (e.g., stacked column or 100% stacked), (3) Top N ranking (e.g., Top 10 Products).",
+            "Slicers (Region, Product) and a Timeline (or Year slicer) are present and connected to all Pivots/Charts on the dashboard (Report Connections verifies all are ticked).",
+            "Charts and KPI tiles retain alignment after Refresh All (charts set to \"Don't move or size with cells\"; Pivots set not to AutoFit columns).",
+            "Number formats are appropriate (currency, percentages), and chart axes are labeled; no truncated labels or overlapping elements.",
+            "A brief note on the sheet or a hidden 'Readme' sheet documents KPI threshold rules and any exclusions (e.g., current partial month excluded)."
+          ],
+          "rubric": [
+            {
+              "criterion": "KPI logic correctness (weighted GM%, variance, RAG thresholds) and clear display",
+              "marks": 6
+            },
+            {
+              "criterion": "Interactivity: slicers/timeline control all visuals reliably (verified via Report Connections)",
+              "marks": 5
+            },
+            {
+              "criterion": "Chart selection and configuration (trend, composition, Top N) suit the KPIs and are readable",
+              "marks": 4
+            },
+            {
+              "criterion": "Dashboard layout craft (alignment, spacing, consistent styles, stability on refresh)",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation of rules/assumptions (thresholds, exclusions)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Dashboard Design",
+            "PivotTables",
+            "PivotCharts",
+            "track key performance indicators",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-022-S04",
+      "skills_assessed": [
+        "Advanced Excel",
+        "Microsoft Excel",
+        "Power Query",
+        "Data Cleaning",
+        "Data Quality",
+        "VBA"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit this query that sometimes fails when a source column goes missing for a day:\n\n```powerquery\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Raw\"]}[Content],\n  #\"Promoted Headers\" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  #\"Changed Type\" = Table.TransformColumnTypes(\n      #\"Promoted Headers\",\n      {{\"Date\", type date}, {\"Amount\", type number}, {\"Region\", type text}}\n  )\nin\n  #\"Changed Type\"\n```\nYesterday the `Region` column was absent in `Raw`, and the refresh errored. You must keep `Date` and `Amount` typed even when `Region` is missing, with no refresh error. Which edit meets that requirement?",
+          "options": [
+            "```powerquery\n#\"Changed Type\" = try Table.TransformColumnTypes(\n    #\"Promoted Headers\",\n    {{\"Date\", type date}, {\"Amount\", type number}, {\"Region\", type text}}\n) otherwise #\"Promoted Headers\"\n```",
+            "```powerquery\n-- leave as-is; selecting existing columns won't error when one is missing\n#\"Changed Type\" = Table.TransformColumnTypes(\n    #\"Promoted Headers\",\n    {{\"Date\", type date}, {\"Amount\", type number}, {\"Region\", type text}}\n)\n```",
+            "```powerquery\n#\"Changed Type\" = Table.TransformColumns(\n    #\"Promoted Headers\",\n    {{\"Date\", each Date.From(_), type date},\n     {\"Amount\", each Number.From(_), type number},\n     {\"Region\", each Text.From(_), type text}},\n    null,\n    MissingField.Ignore\n)\n```",
+            "```powerquery\n#\"Kept Columns\" = Table.SelectColumns(\n    #\"Promoted Headers\", {\"Date\",\"Amount\",\"Region\"}, MissingField.Ignore\n),\n#\"Changed Type\" = Table.TransformColumnTypes(\n    #\"Kept Columns\",\n    {{\"Date\", type date}, {\"Amount\", type number}, {\"Region\", type text}}\n)\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Table.TransformColumnTypes errors if a listed column is absent and offers no MissingField option. Table.TransformColumns supports a MissingField parameter; with MissingField.Ignore it will apply conversions where columns exist and skip absent ones, so Date and Amount still get typed and refresh succeeds even if Region is missing.",
+          "distractor_rationale": "B: Looks plausible because selecting existing columns normally works, but TransformColumnTypes will still error when a specified column is absent. C: try...otherwise avoids the error but also skips all typing when any one column is missing, violating the requirement to keep other columns typed. D: SelectColumns with MissingField.Ignore is safe for selection, but the subsequent TransformColumnTypes still lists Region and will error if Region was dropped by the selection because it's missing in the source.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider two queries:\n\n```powerquery\nlet\n  Customers = #table(type table [CustomerID = text], {{\"001\"},{\"002\"}})\nin Customers\n```\n\n```powerquery\nlet\n  Orders = #table(type table [CustomerID = number, Amount = number], {{1,100},{2,200}})\nin Orders\n```\nYou merge `Customers` (left as first table) to `Orders` with a Left Outer join on `CustomerID` and expand `Amount`.\nWhat does the resulting `Amount` column contain after the merge and expand?",
+          "options": [
+            "100 and 200, because Power Query automatically coerces types during merge.",
+            "Two nulls, because the key types differ (text vs number) so nothing matches.",
+            "An error in both rows, because merging different types throws a runtime error.",
+            "Null and 200, because \"001\" matches 1 after trimming leading zeros."
+          ],
+          "correct_option": "B",
+          "explanation": "Power Query requires exact equality including type. Text \"001\" does not equal number 1, so no rows match and the expanded Amounts are null.",
+          "distractor_rationale": "B: Tempting because many tools coerce types implicitly, but Power Query does not auto-coerce in joins. C: Leading zero trimming does not occur unless explicitly transformed. D: Merging different types does not itself error; it simply results in no matches.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "This macro refreshes a query and then prints totals:\n\n```vba\nSub BuildReport()\n  ThisWorkbook.Worksheets(\"Rpt\").ListObjects(\"Sales\").QueryTable.Refresh BackgroundQuery:=True\n  Debug.Print ThisWorkbook.Worksheets(\"Rpt\").Range(\"F2\").Value 'Total after refresh\nEnd Sub\n```\nSometimes it prints the old total. Which change makes the total reliable without using arbitrary waits?",
+          "options": [
+            "```vba\nApplication.CalculateFull\nDebug.Print ThisWorkbook.Worksheets(\"Rpt\").Range(\"F2\").Value\n```",
+            "```vba\nDoEvents\nDebug.Print ThisWorkbook.Worksheets(\"Rpt\").Range(\"F2\").Value\n```",
+            "```vba\nThisWorkbook.RefreshAll\nDebug.Print ThisWorkbook.Worksheets(\"Rpt\").Range(\"F2\").Value\n```",
+            "```vba\nWith ThisWorkbook.Worksheets(\"Rpt\").ListObjects(\"Sales\").QueryTable\n    .Refresh BackgroundQuery:=False\nEnd With\nDebug.Print ThisWorkbook.Worksheets(\"Rpt\").Range(\"F2\").Value\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "BackgroundQuery:=True is asynchronous; the code continues before data arrive. Forcing synchronous refresh on the specific QueryTable ensures the data and dependent totals are ready before printing, without unreliable timing loops.",
+          "distractor_rationale": "B: Full calculate won't help if the query hasn't finished returning data. C: DoEvents yields UI time but does not wait for query completion. D: RefreshAll is still asynchronous for connections unless you also disable background refresh; printing immediately remains a race.",
+          "skills_covered": [
+            "VBA",
+            "Advanced Excel",
+            "Microsoft Excel",
+            "Power Query"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You combine a local CSV (from `File.Contents`) with a web lookup (from `Web.Contents`). Refresh throws:\n\n```text\nFormula.Firewall: Query 'Combined' (step 'Merged Queries') references other queries or steps, so it may not directly access a data source. Please rebuild this data combination.\n```\nUnder tight governance you must keep privacy isolation enabled. Which action resolves the error with least risk?",
+          "options": [
+            "Set both data sources' Privacy Level to Organizational in Data Source Settings, and keep Combine data according to your Privacy Level settings enabled.",
+            "Move the merge earlier, before either source is materialized, so the engine can't detect the combination.",
+            "Wrap the web table in Table.Buffer before the merge to bypass privacy partitions.",
+            "Disable privacy checks (Fast Combine) in Options for this file."
+          ],
+          "correct_option": "A",
+          "explanation": "Aligning both sources to the same Organizational level allows the engine to combine them without violating isolation, and retains governance. Buffering does not change privacy partitions. Disabling privacy removes protection. Obscuring the merge increases risk and does not fix the underlying partitioning.",
+          "distractor_rationale": "B: Buffer can change evaluation timing but does not merge privacy partitions, so the error persists. C: Tempting for speed, but explicitly violates the governance constraint. D: Moving steps to hide the combination neither resolves partitions nor is reliable; it can also worsen folding and auditability.",
+          "skills_covered": [
+            "Power Query",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You used the Combine Files experience on a folder. The wizard created a `Transform Sample File` query with a `Changed Type` step. A new file appears missing one of those typed columns, and refresh errors. Which adjustment best prevents future errors while keeping types on columns that do exist?",
+          "options": [
+            "Turn on Detect Data Type in the final step instead of explicit typing so Power Query guesses types each refresh.",
+            "Keep typing in `Transform Sample File`; schema drift cannot be handled and files must match exactly.",
+            "Move typing out of `Transform Sample File` and apply it once in the final combined table using `Table.TransformColumns(..., MissingField.Ignore)` so absent columns are skipped.",
+            "Add a `Table.SelectColumns` before typing to keep only the expected columns; this will always succeed."
+          ],
+          "correct_option": "C",
+          "explanation": "Typing in the sample file propagates rigid expectations to every file. Typing once after the combine with TransformColumns and MissingField.Ignore applies types where present and skips missing columns, preventing hard failures while preserving types where possible.",
+          "distractor_rationale": "B: Assumes strict schemas; the requirement is to tolerate drift. C: Selecting expected columns still leaves the type step referencing absent columns or drops useful new columns without notice. D: Automatic detection varies by sample and can mis-type; it also doesn't prevent errors from missing columns referenced by downstream steps.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A CSV contains numbers with comma decimals:\n\n```csv\nRegion;Amount\nFR;12,50\nDE;3,00\n```\nYour M code is:\n\n```powerquery\nlet\n  Source = Csv.Document(File.Contents(\"C:\\\\data\\\\euro.csv\"),[Delimiter=\";\", Encoding=65001, QuoteStyle=QuoteStyle.None]),\n  #\"Promoted Headers\" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),\n  #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\", {{\"Amount\", type number}})\nin\n  #\"Changed Type\"\n```\n`Amount` becomes nulls. What change makes parsing stable without pre-cleaning the file?",
+          "options": [
+            "Switch delimiter to comma in `Csv.Document` so the comma is treated as decimal separator.",
+            "Wrap `File.Contents` in `Text.Replace` to swap commas with dots before typing.",
+            "Use `Number.FromText([Amount])` in a custom column; culture is ignored by `type number`.",
+            "Pass a culture to `Table.TransformColumnTypes`, e.g. `Table.TransformColumnTypes(#\"Promoted Headers\", {{\"Amount\", type number}}, \"fr-FR\")`."
+          ],
+          "correct_option": "D",
+          "explanation": "The third parameter of Table.TransformColumnTypes accepts a culture. Providing \"fr-FR\" parses comma decimals correctly without risky text surgery.",
+          "distractor_rationale": "B: `Number.FromText` does accept culture but not when called with default settings; moreover, using it ad hoc is inferior to using the built-in culture parameter. C: Changing the field delimiter breaks the CSV structure; the semicolon is correct. D: Text replacing inside bytes from File.Contents is brittle and encoding-sensitive, and unnecessary when culture-aware typing exists.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You add a calculated column:\n\n```powerquery\n#\"Added Custom\" = Table.AddColumn(#\"Previous\", \"UnitPrice\", each [Amount]/[Qty], type number)\n```\nSome rows have `Qty = 0` or null. You want to preserve good rows and stamp bad `UnitPrice` as nulls without stopping refresh or dropping the rows. Which step does that?",
+          "options": [
+            "```powerquery\n#\"Removed Errors\" = Table.RemoveRowsWithErrors(#\"Added Custom\", {\"UnitPrice\"})\n```",
+            "```powerquery\n#\"Replaced Errors\" = Table.ReplaceErrorValues(#\"Added Custom\", {{\"UnitPrice\", null}})\n```",
+            "```powerquery\n#\"Kept Errors\" = Table.SelectRowsWithErrors(#\"Added Custom\", {\"UnitPrice\"})\n```",
+            "```powerquery\n#\"Filtered\" = Table.SelectRows(#\"Added Custom\", each [Qty] <> 0)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Divide-by-zero or null divisions throw errors in `UnitPrice`. Replacing error values for that column with null preserves all rows and marks only the problematic results as nulls.",
+          "distractor_rationale": "B: Keeps only error rows, discarding all good data. C: Drops rows with errors, losing records you may still need. D: Filtering out zeros removes valid zero-quantity records that you might need to keep; it also doesn't handle null `Qty`.",
+          "skills_covered": [
+            "Power Query",
+            "Data Quality",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You move the workbook and data folder to a new machine; hard-coded file paths break. You need a portable design that your macro can drive. Which approach actually works in Excel + Power Query?",
+          "options": [
+            "Use `File.Contents(\"..\\\\Data\\\\file.csv\")` because M supports relative paths based on the workbook location.",
+            "Read a named range `DataFolder` via `Excel.CurrentWorkbook(){[Name=\"DataFolder\"]}[Content]{0}[Column1]` in M, have VBA set that cell to `ThisWorkbook.Path & \"\\Data\"`, then refresh.",
+            "Use the M function `Workbook.Path` so `File.Contents(Workbook.Path & \"\\\\Data\\\\file.csv\")` always resolves relative to the workbook.",
+            "Rely on `Transform Sample File` to infer the path from the current workbook automatically."
+          ],
+          "correct_option": "B",
+          "explanation": "Power Query cannot discover the workbook file path directly and does not support implicit relative file paths. A common, portable pattern is to store the folder path in a named range and let a macro update it relative to `ThisWorkbook.Path`; the query reads that value through `Excel.CurrentWorkbook()`.",
+          "distractor_rationale": "B: There is no built-in `Workbook.Path` function in M. C: M's `File.Contents` requires absolute paths; relative paths are not resolved to the workbook. D: The sample file machinery does not manage file system locations automatically.",
+          "skills_covered": [
+            "Power Query",
+            "VBA",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Query `Q2` references `Q1`:\n\n```powerquery\n// Q1\nlet\n  Source = Excel.CurrentWorkbook(){[Name=\"Raw\"]}[Content]\nin Source\n```\n\n```powerquery\n// Q2\nlet\n  Base = Q1,\n  Kept = Table.SelectRows(Base, each [Status] = \"Open\")\nin Kept\n```\nYou run this macro:\n\n```vba\nSub RefreshQ2()\n  ThisWorkbook.Queries(\"Q2\").Refresh\nEnd Sub\n```\n`Q1` is connection-only (not loaded to a sheet). What happens on refresh?",
+          "options": [
+            "`Q1` refreshes automatically as a dependency, then `Q2` runs against the updated `Q1`.",
+            "`Q1` is loaded to a hidden sheet temporarily, then cleared after `Q2` finishes.",
+            "The macro errors because `Queries(\"Q2\").Refresh` cannot resolve dependencies.",
+            "`Q2` runs against the last cached result of `Q1` because `Q1` is not loaded."
+          ],
+          "correct_option": "A",
+          "explanation": "Power Query tracks dependencies. Refreshing `Q2` triggers any upstream queries (`Q1`) to refresh first, whether or not they are loaded to a worksheet.",
+          "distractor_rationale": "B: Tempting if you think only loaded queries refresh, but dependency refresh does not require a worksheet load. C: The object model supports dependency refresh; no error occurs. D: There is no hidden temporary load step; data can flow through in-memory connections.",
+          "skills_covered": [
+            "Power Query",
+            "VBA",
+            "Advanced Excel"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your audit macro appends a row to sheet `AuditLog`:\n\n```vba\nSub WriteAudit()\n  Dim r As Long\n  With Worksheets(\"AuditLog\")\n    r = .Cells(.Rows.Count, 1).End(xlUp).Row + 1\n    .Cells(r, 1).Value = Now\n    .Cells(r, 2).Value = Environ$(\"Username\")\n  End With\nEnd Sub\n```\nOn a brand-new `AuditLog` sheet with no headers, the first write goes to row 1, overwriting nothing, but on some machines it writes to row 1,048,577. Why, and what’s the minimal robust fix?",
+          "options": [
+            "`.End(xlUp)` from an empty column jumps from the bottom to the bottom (row 1,048,576), then +1 overflows. Initialize a header or guard for empty sheet.\n```vba\nIf Application.WorksheetFunction.CountA(Worksheets(\"AuditLog\").Cells) = 0 Then r = 1 Else r = .Cells(.Rows.Count,1).End(xlUp).Row + 1\n```",
+            "The environment variable call offsets row detection; remove `Environ$` and it will stop.",
+            "This is due to different Excel versions. Force compatibility mode to fix it.",
+            "`.End(xlUp)` is unreliable. Replace with a hard-coded counter stored in a hidden Name."
+          ],
+          "correct_option": "A",
+          "explanation": "If column A is completely empty, `.End(xlUp)` from the bottom returns the bottom cell, so adding 1 overshoots. Seeding a header or testing for an empty sheet and starting at row 1 prevents the issue consistently across machines.",
+          "distractor_rationale": "B: Version isn’t the cause; behavior is by design. C: A manual counter is fragile and breaks if rows are deleted. D: `Environ$` has nothing to do with row navigation.",
+          "skills_covered": [
+            "VBA",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a monthly drop of CSVs in a folder. Columns can appear/disappear across months. Sample:\n\n```text\nData\\\\Sales\\\\\n  2024-04.csv   (columns: Date, Region, Product, Qty, Amount)\n  2024-05.csv   (columns: Date, Region, Product, Qty, Amount, Channel)\n```\nTypical issues: occasional `Qty=0`, European decimal commas in some vendor files, and a stray extra column in a future month. Finance needs a single combined table with stable columns: Date (date), Region (text), Product (text), Qty (number), Amount (number), plus a new column FileMonth derived from the filename. They also want a simple run log indicating how many files and rows were processed at each refresh.",
+          "task": "Propose a concrete Power Query design that will combine the folder, tolerate schema drift, type data correctly, and add `FileMonth`. Specify which steps go in the sample file query versus the final combined query, and how you will avoid refresh failures when a column is missing. Also state how you will produce a minimal run log without using external tools.",
+          "expected_answer": "A strong answer describes: (1) Using Folder.Files to list files, then the Combine Files helper to create `Transform Sample File` and an invoking query. (2) Keep `Promote Headers` in the sample file but move rigid column typing out of the sample query; in the final combined table, apply `Table.TransformColumns` with MissingField.Ignore to type Date, Qty, Amount, passing cultures where needed (e.g., fr-FR for known comma-decimal vendors or normalizing with Value.ReplaceType after splitting sources). (3) Derive `FileMonth` by parsing each `[Name]` from Folder.Files (e.g., Text.Start([Name],7) then Date.FromText). (4) Handle divide-by-zero or bad rows by adding UnitPrice later if needed and `Table.ReplaceErrorValues` on that column only. (5) Use `Table.SelectColumns` with MissingField.Ignore or `Table.RemoveColumns` only for truly unwanted columns, to keep new benign columns from breaking refresh. (6) For decimals, either split the flow: detect vendor by folder/file pattern and apply culture-specific typing before combine, or standardize Amount via locale-aware TransformColumnTypes on the combined table. (7) Minimal run log: create a small query (e.g., `RunLog`) that summarizes file count from Folder.Files and row count from the final table (Table.RowCount), and load it to a sheet; or write a tiny VBA snippet to stamp Now, file count, and row count into an `AuditLog` sheet after RefreshAll. (8) Justify choices: moving typing late avoids schema-driven failures; MissingField.Ignore preserves good columns; extracting `FileMonth` from name is resilient to data irregularities.",
+          "rubric": [
+            {
+              "criterion": "Correctly separates sample file vs final query responsibilities and explains why typing is moved to the final query",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how to apply culture-aware typing and handle comma decimals without brittle text replacements",
+              "marks": 2
+            },
+            {
+              "criterion": "Details a concrete, resilient approach to schema drift (MissingField.Ignore and safe column selection)",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how to derive FileMonth from filename and produce a checkable run log (file and row counts)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "Data Quality",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Current automation creates a weekly PDF. The macro is brittle and sometimes exports before queries finish. It also leaves no audit trail and uses a hard-coded path:\n\n```vba\nSub RunReport()\n  Application.ScreenUpdating = False\n  ThisWorkbook.RefreshAll\n  Sheets(\"Summary\").Range(\"A1\").ListObject.QueryTable.Refresh BackgroundQuery:=True\n  Sheets(\"Summary\").Calculate\n  Worksheets(\"Summary\").ExportAsFixedFormat Type:=xlTypePDF, Filename:=\"C:\\\\Reports\\\\Summary.pdf\"\n  Application.ScreenUpdating = True\nEnd Sub\n```\nSecurity policy forbids disabling privacy checks globally. The team needs a fix that (a) guarantees data are current when exporting, (b) logs run metadata (timestamp, user, row counts), (c) avoids hard-coded absolute paths, and (d) restores state even on errors.",
+          "task": "Identify at least four concrete defects in the macro and propose corrected code patterns for each, with a brief justification. Include how you will wait for refresh completion, where you will write the audit log, and how you will handle the output path.",
+          "expected_answer": "Defects and remedies: (1) Asynchronous refresh: `.Refresh BackgroundQuery:=True` allows export to race. Remedy: set BackgroundQuery:=False on each ListObject.QueryTable or iterate connections and set `OLEDBConnection.BackgroundQuery = False`, then call RefreshAll and, if needed, loop until no connections are `Refreshing`. (2) No error handling; ScreenUpdating may remain False. Remedy: `On Error GoTo CleanFail` with a `CleanExit:` label that restores Application flags; ensure both success and failure paths reset state. (3) Hard-coded path violates portability. Remedy: build `outPath = ThisWorkbook.Path & \"\\Output\\Summary_\" & Format(Now, \"yyyymmdd_hhnnss\") & \".pdf\"` and ensure the folder exists (MkDir if not). (4) No audit. Remedy: append to sheet `AuditLog` the timestamp, user (`Environ$(\"Username\")`), counts (e.g., `Table.RowCount` exposed via a small PQ query loaded to a named cell, or count visible rows in the output table), and success/failure. (5) Missing `Option Explicit` and variable declarations; remedy: add and declare. (6) Potential privacy/firewall prompts during RefreshAll; remedy: ensure data source privacy levels are configured and avoid setting Fast Combine in code. (7) Ordering: run export only after refresh completes and after `CalculateFullRebuild` if formulas depend on query results. Provide a concise code sketch tying these together.",
+          "rubric": [
+            {
+              "criterion": "Identifies asynchronous refresh issue and provides a correct, deterministic wait strategy without sleeps",
+              "marks": 2
+            },
+            {
+              "criterion": "Replaces hard-coded path with a robust relative path solution and ensures folder existence",
+              "marks": 2
+            },
+            {
+              "criterion": "Implements structured error handling and reliably restores Application state",
+              "marks": 2
+            },
+            {
+              "criterion": "Designs a concrete, checkable audit log write (what fields, where, and how to get counts)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "VBA",
+            "Advanced Excel",
+            "Microsoft Excel",
+            "Power Query"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A model merges a local CSV (Organizational) with an internal HTTPS service (also Organizational). Users hit Formula.Firewall when they refresh via a button macro. They previously considered disabling privacy checks but compliance rejected it. The workbook must refresh unattended on different desktops without prompts.",
+          "task": "Recommend a precise fix that resolves the firewall error, preserves query folding where possible, and keeps the macro simple. Explain the steps in Excel/UI terms and justify why this satisfies governance and reliability.",
+          "expected_answer": "Set both sources' Privacy Level to Organizational in Data Source Settings (Current Workbook), ensure credentials are stored appropriately (Organizational for the web endpoint), and leave \"Combine data according to your Privacy Level settings for each source\" enabled. If needed, refactor into staging queries: `CSV_Stage` (only the file), `API_Stage` (only the API), and `Combined` that merges the two. This aligns partitions so Power Query can legally combine the data, keeps folding for the API/table where applicable, and removes prompts so the macro can simply call `RefreshAll` synchronously. Avoid Table.Buffer hacks and do not disable privacy; document the data sources and privacy levels on a Documentation sheet for audit.",
+          "rubric": [
+            {
+              "criterion": "Specifies aligning both sources to the same privacy level in Data Source Settings and storing credentials correctly",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains or diagrams a staging + final combine pattern and why it helps",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses macro simplicity and unattended refresh (no prompts) while retaining folding where possible",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies governance compliance versus alternatives like Fast Combine or buffering",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Power Query",
+            "Data Quality",
+            "Advanced Excel",
+            "Microsoft Excel",
+            "VBA"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your workbook has 8 interdependent Power Query queries feeding a Summary sheet with formulas and a chart. Today’s macro is:\n\n```vba\nSub Go()\n  Application.ScreenUpdating = False\n  ThisWorkbook.RefreshAll\n  Worksheets(\"Summary\").ExportAsFixedFormat xlTypePDF, \"C:\\\\out\\\\Summary.pdf\"\n  Application.ScreenUpdating = True\nEnd Sub\n```\nSometimes the PDF shows stale numbers or a partially refreshed chart.",
+          "task": "Outline a reliable orchestration approach that ensures all queries finish, dependencies resolve in order, formulas recalc, and then the export occurs. Include concrete VBA patterns and any Power Query property changes you rely on. Briefly state how you would make this auditable.",
+          "expected_answer": "Approach: (1) Turn off background refresh for all PQ connections at workbook setup or in code (loop through `Workbook.Connections`: for OLEDBConnection or QueryTable set `BackgroundQuery=False`). (2) Kick off `ThisWorkbook.RefreshAll` and deterministically wait: poll `For Each c In ThisWorkbook.Connections: Do While c.Refreshing: DoEvents: Loop`. (3) After data load, call `Application.CalculateFull` or at least `Worksheets(\"Summary\").Calculate` to ensure formulas/charts update. (4) Only then export to a relative path built from `ThisWorkbook.Path`. (5) Wrap in `On Error GoTo` with `CleanExit` to restore state. (6) For auditability, append an entry to `AuditLog` with timestamp, user, duration, and key row counts read from designated cells fed by PQ queries (e.g., `=[@RowCount]`). Document this flow on a Documentation sheet.",
+          "rubric": [
+            {
+              "criterion": "Disables background refresh and describes a deterministic completion check for all connections",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures formula/charts recalc before export and uses a robust relative export path",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes error handling and state restoration for reliability",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, checkable audit logging mechanism",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "VBA",
+            "Power Query",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a schema-drift-tolerant folder combine (Repeatable query)",
+          "brief": "Create a repeatable Power Query that combines all monthly CSVs from a folder into a single table with stable columns and types. Requirements: handle files that may add/remove non-critical columns; parse European comma decimals correctly; add a `FileMonth` column from the filename; replace divide-by-zero errors in any calculated column with nulls (do not drop rows); and expose a lightweight run summary (file count and combined row count) that updates on refresh. The assessor will point the query at a different folder with similar files and expect it to refresh without edit.",
+          "deliverable": "Repeatable query",
+          "acceptance_criteria": [
+            "The submission is an Excel workbook containing a query that reads from a folder path not hard-coded in M: the path is read from a named range visible on a Parameters sheet.",
+            "Refreshing after adding a new file with an extra non-required column does not error; required columns Date, Region, Product, Qty, Amount exist and are correctly typed.",
+            "`FileMonth` is derived from the filename and is a valid date for all rows.",
+            "Comma-decimal values are parsed as numbers without pre-editing the CSVs (via culture-aware typing).",
+            "A query or small output table shows file count and total row count after refresh.",
+            "No step requires editing when the folder path changes; changing the named range and refreshing is sufficient.",
+            "The combined table has no dropped rows due solely to calculation errors; error values in calculated columns are replaced by nulls."
+          ],
+          "rubric": [
+            {
+              "criterion": "Folder combine is parameterized via named range and refreshes without editing M when folder changes",
+              "marks": 4
+            },
+            {
+              "criterion": "Design tolerates schema drift and preserves required columns with correct types",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct culture-aware number parsing and FileMonth derivation",
+              "marks": 4
+            },
+            {
+              "criterion": "Error handling preserves rows (e.g., ReplaceErrorValues) and no refresh-stopping errors remain",
+              "marks": 3
+            },
+            {
+              "criterion": "Run summary (file and row counts) present and updates on refresh",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "Data Quality",
+            "Advanced Excel",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Automated reporting workbook with audit and documentation",
+          "brief": "Create a macro-enabled reporting workbook that refreshes all Power Query connections synchronously, recalculates a Summary sheet, exports a timestamped PDF to an Output subfolder next to the workbook, and writes an audit log of each run. Include a Documentation sheet that explains data sources, privacy levels, refresh flow, and how to change the data folder path parameter.",
+          "deliverable": "Automated reporting workbook",
+          "acceptance_criteria": [
+            "Workbook is .xlsm or .xlsb and contains at least one Power Query feeding a Summary sheet.",
+            "A single entry point macro (e.g., RunReport) refreshes queries synchronously (no races) and exports a PDF named with timestamp to an Output folder relative to ThisWorkbook.Path (the macro creates the folder if missing).",
+            "Background refresh is disabled in code for all relevant connections before refresh proceeds; macro waits deterministically until all connections finish.",
+            "After refresh, formulas and charts on Summary are recalculated before export.",
+            "An AuditLog sheet appends a new row on each run with timestamp, username, file count and row count read from cells/queries, and success/failure status.",
+            "Macro has Option Explicit, structured error handling (On Error GoTo), and restores Application state even on error.",
+            "A Documentation sheet exists with: sources used, privacy levels chosen, how the folder path parameter works, and how to run the macro."
+          ],
+          "rubric": [
+            {
+              "criterion": "Synchronous, deterministic refresh (background disabled, wait implemented) and recalculation before export",
+              "marks": 6
+            },
+            {
+              "criterion": "Relative, timestamped PDF export with automatic Output folder creation",
+              "marks": 3
+            },
+            {
+              "criterion": "AuditLog row appended per run with required fields (time, user, counts, status)",
+              "marks": 5
+            },
+            {
+              "criterion": "Robust VBA structure (Option Explicit, error handling, state restoration)",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear Documentation sheet covering sources, privacy, parameterization, and run steps",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "VBA",
+            "Power Query",
+            "Advanced Excel",
+            "Microsoft Excel",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

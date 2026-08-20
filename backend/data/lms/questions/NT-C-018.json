@@ -1,0 +1,1842 @@
+{
+  "course_code": "NT-C-018",
+  "course_name": "Data Structures & Algorithms",
+  "sections": [
+    {
+      "section_code": "NT-C-018-S01",
+      "skills_assessed": [
+        "Data Structures",
+        "Algorithms",
+        "Complexity analysis (Big-O)",
+        "Arrays and strings",
+        "Two-pointer and sliding-window patterns"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need to count, for each index i, how far a right pointer j can advance in a non-decreasing array while values stay within a width W. Consider this implementation:\n```python\ndef count_reachable(arr, W):\n    n = len(arr)\n    j = 0\n    total = 0\n    for i in range(n):\n        while j < n and arr[j] - arr[i] <= W:\n            j += 1\n        total += (j - i - 1)  # number of indices strictly between i and j within width\n    return total\n```\nIn the worst case over all non-decreasing arrays and W, what is the tightest runtime bound in n, and why?",
+          "options": [
+            "O(n) because each of i and j advances at most n times across the whole run",
+            "O(n log n) because the inner loop is a search that halves the range on average",
+            "O(n^2) because there is a loop nested inside a loop",
+            "O(nW) because the inner loop may run W times for each i"
+          ],
+          "correct_option": "A",
+          "explanation": "The two-pointer amortization applies: j never moves backward and increments at most n times total across the entire for-loop. i increments n times. All work inside is O(1), so the tight bound is O(n).",
+          "distractor_rationale": "B: Tempting if you think of binary search, but this inner loop is linear advancing, not halving a range. C: Looks like nested loops imply O(n^2), but amortization kills the quadratic blow-up because j does not reset. D: W does not bound loop iterations per i; j's total increments are globally bounded by n, not W.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Two-pointer and sliding-window patterns",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You need the maximum sum of any length-k window in an array. A teammate proposes:\n```python\ndef max_sum_fixed_k(nums, k):\n    best = float('-inf')\n    n = len(nums)\n    for i in range(0, n - k + 1):\n        s = sum(nums[i:i+k])  # recomputed each time\n        if s > best:\n            best = s\n    return best\n```\nWhat is the tight worst-case time complexity in terms of n and k?",
+          "options": [
+            "O(n)",
+            "O(nk)",
+            "O(n + k)",
+            "O(n log k)"
+          ],
+          "correct_option": "B",
+          "explanation": "The built-in sum over a k-length slice is O(k) and runs for each of the n - k + 1 windows, giving Θ(nk).",
+          "distractor_rationale": "A: Would be true with a rolling sum, but not here. C: There is no heap or balanced tree, so log k does not appear. D: Suggests one-time preprocessing cost, which the code does not do.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Arrays and strings",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "This function checks if any pair in an array sums to target using the classic two-pointer technique:\n```python\ndef two_sum_sorted(a, target):\n    i, j = 0, len(a) - 1\n    while i < j:\n        s = a[i] + a[j]\n        if s == target:\n            return True\n        if s < target:\n            i += 1\n        else:\n            j -= 1\n    return False\n\nprint(two_sum_sorted([3, 1, 2, 4], 6))\n```\nWhat does this print, and why?",
+          "options": [
+            "It loops forever because i and j can oscillate",
+            "It raises IndexError when i passes j because of an off-by-one",
+            "True, because 2 + 4 == 6 exists in the array",
+            "False, because the method relies on the array being sorted and may skip valid pairs otherwise"
+          ],
+          "correct_option": "D",
+          "explanation": "On an unsorted array the left/right comparisons are not meaningful; the method may move past a valid complement. It returns False here even though 2 + 4 exists.",
+          "distractor_rationale": "A: This is the logical truth about the data, which tempts you, but the algorithm's precondition is violated so it will not find it. C: The loop guard prevents IndexError. D: i and j move monotonically, so no oscillation or infinite loop occurs.",
+          "skills_covered": [
+            "Arrays and strings",
+            "Two-pointer and sliding-window patterns",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider a two-pointer palindrome check that skips non-alphanumeric characters:\n```python\nimport string\nALNUM = set(string.ascii_letters + string.digits)\n\ndef is_pal(s):\n    i, j = 0, len(s) - 1\n    while i < j:\n        if s[i] not in ALNUM:\n            i += 1; continue\n        if s[j] not in ALNUM:\n            j -= 1; continue\n        if s[i].lower() != s[j].lower():\n            return False\n        i += 1; j -= 1\n    return True\n```\nIf s has length m and all characters are alphanumeric, how many character-comparisons of the form `s[i].lower() != s[j].lower()` occur in the worst case?",
+          "options": [
+            "m^2",
+            "floor(m/2)",
+            "m log m",
+            "m"
+          ],
+          "correct_option": "B",
+          "explanation": "With all characters alphanumeric, the two pointers meet in the middle, making exactly floor(m/2) symmetric comparisons.",
+          "distractor_rationale": "B: Each iteration compares two characters, not one per index. C and D: No sorting or nested full scans are present.",
+          "skills_covered": [
+            "Arrays and strings",
+            "Two-pointer and sliding-window patterns",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given the canonical in-place deduplication for a sorted array:\n```python\ndef remove_dups(nums):\n    if not nums:\n        return 0\n    w = 1\n    for r in range(1, len(nums)):\n        if nums[r] != nums[w-1]:\n            nums[w] = nums[r]\n            w += 1\n    return w  # new length; first w positions hold uniques\n\narr = [1,1,1,2,2,3]\nprint(remove_dups(arr))\nprint(arr[:6])\n```\nWhat length does this return?",
+          "options": [
+            "5",
+            "4",
+            "2",
+            "3"
+          ],
+          "correct_option": "D",
+          "explanation": "It keeps one of each distinct value. The unique values are [1,2,3], so the new length is 3.",
+          "distractor_rationale": "A and C: Miscount how many duplicates collapse. D: Overestimates by thinking one duplicate per value is allowed; here we keep exactly one copy total per distinct value.",
+          "skills_covered": [
+            "Arrays and strings",
+            "Two-pointer and sliding-window patterns",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A sliding-window solution for longest substring without repeating characters uses last-seen indices:\n```python\ndef lengthOfLongestSubstring(s):\n    last = [-1]*256\n    best = 0\n    left = 0\n    for right, ch in enumerate(s):\n        c = ord(ch) % 256\n        if last[c] >= left:\n            left = last[c] + 1\n        last[c] = right\n        best = max(best, right - left + 1)\n    return best\n\nprint(lengthOfLongestSubstring(\"abbaac\"))\n```\nWhat is the printed result?",
+          "options": [
+            "4",
+            "2",
+            "3",
+            "5"
+          ],
+          "correct_option": "C",
+          "explanation": "The longest non-repeating substrings are \"ab\" (2), \"ba\" (2), and \"bac\" (3). The algorithm correctly finds 3.",
+          "distractor_rationale": "A: Stops at the first repeat and never extends. C and D: Overcount by allowing repeats or failing to move left past the last occurrence.",
+          "skills_covered": [
+            "Arrays and strings",
+            "Two-pointer and sliding-window patterns",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Identify the off-by-one bug’s impact in this fixed-size window counter:\n```python\ndef count_windows(n, k):\n    cnt = 0\n    for i in range(0, n - k):   # BUG: should be n - k + 1\n        cnt += 1\n    return cnt\n\nprint(count_windows(5, 3))\n```\nWhat does this print?",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correct_option": "A",
+          "explanation": "There are actually 3 windows of size 3 in length-5 (starts at 0,1,2), but the code iterates range(0, 2), yielding only 2.",
+          "distractor_rationale": "B: The correct answer if the loop bound were fixed. C and D: Overcounts beyond possible windows.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Arrays and strings",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You benchmark two correct implementations for input size n:\n```text\nAlg A: T_A(n) ≈ 50 ns * n    (single-pass sliding window)\nAlg B: T_B(n) ≈ 5 ns * n * log2(n)  (balanced decisions per element)\n```\nFor n = 100,000, which is faster under these models?",
+          "options": [
+            "They are about equal",
+            "Algorithm B",
+            "Algorithm A",
+            "Cannot determine from the model"
+          ],
+          "correct_option": "C",
+          "explanation": "T_A ≈ 50e-9*1e5 = 5e-3 s. T_B ≈ 5e-9*1e5*log2(1e5) ≈ 5e-9*1e5*16.6 ≈ 8.3e-3 s, so A is faster at n=1e5.",
+          "distractor_rationale": "B: Ignores the log factor that dominates at this n despite B’s smaller constant. C: The numbers are not that close. D: The model gives enough to compare at a specific n.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Consider this pattern counting how often the right pointer advances:\n```python\ndef advance_counts(a, W):\n    n = len(a)\n    i = j = 0\n    moves = 0\n    while i < n:\n        while j < n and a[j] - a[i] <= W:\n            j += 1\n            moves += 1\n        i += 1\n    return moves\n```\nAssuming `a` is non-decreasing, what is the tightest upper bound on `moves` as a function of n?",
+          "options": [
+            "n",
+            "n log n",
+            "n^2",
+            "Depends on W more than on n"
+          ],
+          "correct_option": "A",
+          "explanation": "j never decreases and starts at 0, ends at most at n, so it increments at most n times total. W only affects how the increments are interleaved with i, not their total count.",
+          "distractor_rationale": "B: No halving occurs. C: Double loop misleads; amortization applies. D: W influences pattern but not the total number of j-increments.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Two-pointer and sliding-window patterns"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You must answer Q range-sum queries on an array. A teammate proposes prefix sums once, then O(1) per query:\n```python\ndef build_ps(a):\n    ps = [0]*(len(a)+1)\n    for i, x in enumerate(a, 1):\n        ps[i] = ps[i-1] + x\n    return ps\n\ndef range_sum(ps, l, r):  # inclusive l..r\n    return ps[r+1] - ps[l]\n```\nWhat is the tight total time to answer all Q queries after building prefix sums, in terms of n and Q?",
+          "options": [
+            "O(Q log n)",
+            "O(n + Q)",
+            "O(n + Q log n)",
+            "O(nQ)"
+          ],
+          "correct_option": "B",
+          "explanation": "Building the prefix sums is O(n). Each query becomes O(1), so Q queries add O(Q). Total O(n + Q).",
+          "distractor_rationale": "B: That’s the naive recomputation per query. C and D: There’s no binary search or tree here to introduce logs.",
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Arrays and strings",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You need to implement \"minimum window substring\" that returns the smallest substring of S containing all characters of pattern P (with multiplicities). Constraints: |S| up to 2,000,000, |P| up to 1000, ASCII only. Memory budget is tight but a few hundred KB is fine. Two proposals are on the table:\n\nA) Sort indices of S by character, then for each occurrence of P[0], two-pointer sweep across per-char index lists to try to cover all of P’s counts; track best window. Sorting plus many pointer walks.\n\nB) Classic sliding window over S with two counters of length 128: need[char] from P and have[char] for the current window; expand right, and when the window covers all needed counts, shrink left to minimality; record the best.\n\nBoth must be justified with clear complexity and edge-case handling, including duplicates in P (e.g., P = \"AAB\").",
+          "task": "Pick the approach you would implement and justify it rigorously. Your answer must state: the algorithm and data structures, the tight time and space bounds, why it remains O(n) despite inner while-loops, how duplicates in P are handled, and the exact shrink condition that preserves correctness. Also mention any pitfalls that would break correctness.",
+          "expected_answer": "Choose B. Use two fixed-size int arrays of length 128 for counts. Precompute need[c] from P and a counter `formed` counting how many distinct chars currently meet `have[c] >= need[c]`. Sweep right from 0..|S|-1, increment have[c]. When have[c] == need[c], increment formed. While formed == required_distinct, attempt to shrink from left: if (r - l + 1) is best, record it; decrement have[S[l]] and if have[S[l]] < need[S[l]], decrement formed and stop shrinking; advance l. The time is O(|S| + |P|): each pointer l and r advances at most |S|+|S| times total. Space is O(1) via 128-length arrays. Duplicates are correctly handled because need[c] can be >1 and the formed counter only increments when have[c] first reaches need[c]. Pitfalls: using `formed == total_chars_in_P` instead of distinct chars causes over-shrinking; not using multiplicities (checking presence instead of counts) fails when P has repeats; using a map keyed on characters is acceptable but not necessary for ASCII; forgetting to decrement formed when dropping below need breaks correctness.",
+          "rubric": [
+            {
+              "criterion": "Chooses sliding window with fixed-size counts and justifies data structures (two 128-length arrays and formed counter)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct time/space bounds and amortized argument that both l and r move O(n) total",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains handling of duplicates in P via counts and formed over distinct chars, not total chars",
+              "marks": 2
+            },
+            {
+              "criterion": "States precise shrink condition and the transition when formed decreases",
+              "marks": 1
+            },
+            {
+              "criterion": "Identifies at least one realistic pitfall (e.g., presence-vs-count bug, failing to update formed)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Two-pointer and sliding-window patterns",
+            "Arrays and strings",
+            "Complexity analysis (Big-O)",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are asked for the longest substring containing at most K distinct lowercase letters for strings up to 10^7 in length and K up to 26. A draft uses a nested loop that, for each left index, extends right until the substring becomes invalid, then restarts from left+1. Another draft uses a single sliding window with a 26-length frequency array and a running count of distinct letters.",
+          "task": "Decide which draft scales and explain exactly how to implement it to achieve linear time. Specify the invariants that make the while-loops amortize to O(n), what data you maintain, the check to shrink, and the tight bounds on time and space. Also discuss how to adapt for general ASCII (K up to 128).",
+          "expected_answer": "Pick the sliding window. Maintain freq[26] and a variable distinct for the current window. Expand right; when freq[c]++ changes 0→1, increment distinct. While distinct > K, shrink from left: decrement freq[ s[left] ]; if it becomes 0, decrement distinct; left++. Track best window size. Each character enters and leaves the window at most once, giving O(n) time and O(1) space (26 or 128 buckets). For ASCII, use arrays of length 128; the logic is unchanged, constants increase slightly. The invalid draft re-scans too much: after over-expanding it restarts from left+1 without reusing work, degenerating to Θ(n^2).",
+          "rubric": [
+            {
+              "criterion": "Selects the sliding-window approach and rejects the naive nested-loop rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Clearly states invariants and the distinct-count maintenance on expand/shrink",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct amortized O(n) time and O(1) space analysis; explains each index moves at most n times",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes adaptation from 26 to 128 buckets with unchanged asymptotics",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Two-pointer and sliding-window patterns",
+            "Arrays and strings",
+            "Complexity analysis (Big-O)",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A teammate applied the standard variable-length sliding window to find the shortest subarray with sum ≥ S:\n```python\ndef min_len_geq_s(a, S):\n    n = len(a)\n    best = float('inf')\n    left = 0\n    cur = 0\n    for right in range(n):\n        cur += a[right]\n        while cur >= S:\n            best = min(best, right - left + 1)\n            cur -= a[left]\n            left += 1\n    return 0 if best == float('inf') else best\n```\nOn input a = [2, -5, 7, 1], S = 3 this returns 1 (subarray [7]), but on other inputs with negative numbers it fails to find the true optimum.",
+          "task": "Diagnose precisely when this algorithm is valid and when it is not. Provide a specific counterexample where it fails, and explain the invariant it relies on and why negatives break it. State a correct precondition under which it works and its complexity in that regime.",
+          "expected_answer": "The algorithm is valid only when all array elements are non-negative. In that regime, expanding right never decreases the sum and shrinking left strictly decreases it, so once cur ≥ S, advancing left cannot cause us to miss a shorter window starting at the same left later; both pointers move monotonically, giving O(n). With negatives present, adding a[right] can reduce cur, and shrinking left may increase cur, breaking the monotonicity invariant needed for correctness. Example counterexample: a = [5, -4, 5], S = 6. The correct answer is 2 (subarray [5, -4, 5] from 0..2 sums to 6, but even better is [5,5]? not adjacent). The sliding window finds 3 or misses an existing optimal configuration depending on traversal. More directly: a = [3, -2, 3], S = 4. Optimal is length 2 ([3, -2, 3] has 4 over 0..2 but minimal is [ -2, 3 ]? sum 1). A better clear failing case is a = [2, -1, 2, 2], S = 4; the algorithm may shrink too aggressively after hitting 3 and never revisit left positions that could lead to a shorter valid window after negatives cancel. The key is: with negatives, the predicate \"if we advance left, cur decreases\" is false, so the greedy shrink is unsound. Correct precondition: all a[i] ≥ 0. Under that, time is O(n) and space is O(1).",
+          "rubric": [
+            {
+              "criterion": "States the precise precondition (all elements non-negative) under which the sliding window is correct",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains the monotonicity invariant (expand doesn’t decrease, shrink doesn’t increase) and why it guarantees correctness",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides at least one concrete failing counterexample with negatives and explains the failure mechanism",
+              "marks": 2
+            },
+            {
+              "criterion": "Gives correct time/space bounds under the valid precondition",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Two-pointer and sliding-window patterns",
+            "Complexity analysis (Big-O)",
+            "Arrays and strings"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Two teams propose different implementations for answering many range-sum queries on the same array: Team X recomputes each query by summing a[l..r] directly in a loop. Team Y builds a prefix-sum array once and answers each query in O(1). You must choose for a service that receives up to Q = 5 million queries on arrays of length n up to 10 million. Memory available for the prefix array is 80 MB. Integers are 64-bit.",
+          "task": "Pick an approach and justify it quantitatively. State asymptotic costs and give a back-of-the-envelope time estimate for both approaches assuming 3 GB/s memory bandwidth for streaming reads. Check that the prefix array fits in memory. Conclude which approach you would ship and why.",
+          "expected_answer": "Choose Team Y. Asymptotics: build prefix in O(n), then O(1) per query; total O(n + Q). Team X is O(Q·n) in the worst case. Memory: prefix has n+1 64-bit integers → 8·(n+1) bytes. With n = 1e7, ~80 MB, within budget. Time estimate: building prefix scans the array once (~80 MB read) plus writing the prefix (~80 MB), totaling ~160 MB; at 3 GB/s ~ 0.053 s. Each query reads two 8-byte values from prefix (~16 bytes), so 5e6 queries move ~80 MB more, ~0.027 s. Total well under a second ignoring overhead. Team X: worst-case reads the whole array per query: 80 MB · 5e6 ≈ 400,000 GB of memory traffic, completely infeasible. Conclusion: ship prefix sums.",
+          "rubric": [
+            {
+              "criterion": "States correct asymptotic costs for both approaches and selects prefix sums",
+              "marks": 2
+            },
+            {
+              "criterion": "Computes memory footprint of prefix array and confirms it fits",
+              "marks": 2
+            },
+            {
+              "criterion": "Produces reasonable bandwidth-based time estimates for build and queries",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear conclusion tied to both asymptotics and constants",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Arrays and strings",
+            "Algorithms",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Complexity worksheet",
+          "brief": "Analyze the time and space complexity of a set of code snippets central to traversal and two-pointer/sliding-window patterns, and validate selected claims with simple measurements. Complete the provided template with tight bounds and justifications, including any amortized analyses. Run timing experiments for two snippets across increasing n and summarize observations vs theory.",
+          "deliverable": "Complexity worksheet",
+          "acceptance_criteria": [
+            "Worksheet includes tight time and space bounds for each provided snippet, not just big-O upper bounds when tighter forms (Θ) are evident",
+            "Amortized arguments are explicitly written where pointers share work (e.g., j only advances overall O(n) times)",
+            "Measurement section includes: code used, problem sizes, hardware/OS, timing method, and raw results for at least 5 sizes",
+            "Plots or tables compare two approaches (e.g., naive O(nk) vs rolling-sum O(n)) and discuss crossover or constant-factor effects",
+            "All claims are tied to the given code lines; no generic textbook statements without reference to the snippet"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct asymptotic bounds for all snippets (tight where appropriate)",
+              "marks": 6
+            },
+            {
+              "criterion": "Sound amortized analyses for two-pointer/sliding-window patterns",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and reproducibility of measurements (methodology, sizes, environment)",
+              "marks": 4
+            },
+            {
+              "criterion": "Insightful comparison between measured results and theoretical predictions",
+              "marks": 3
+            },
+            {
+              "criterion": "Clarity, organization, and direct linkage from code to claims",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Complexity analysis (Big-O)",
+            "Algorithms",
+            "Two-pointer and sliding-window patterns",
+            "Arrays and strings"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Solved problem set: traversal, two-pointer and sliding-window",
+          "brief": "Implement a small set of array/string problems using traversal, two-pointer, and sliding-window patterns. Provide a README with algorithm choices, time/space complexity, and edge-case notes. Include a minimal test script and sample outputs. Problems:\n\n1) Longest substring without repeating characters (ASCII).\n2) Minimum window substring covering all characters of a pattern (ASCII, multiplicities).\n3) Max sum of any fixed-size window k (rolling sum; reject k > n).\n4) Remove duplicates in-place from a sorted array (return new length and mutate the prefix).\n\nProvide clean, idiomatic code in a language of your choice with function-level docstrings and a simple CLI or test harness that runs against given sample cases.",
+          "deliverable": "Solved problem set",
+          "acceptance_criteria": [
+            "All four problems implemented with function signatures documented and example usage",
+            "Each solution uses an appropriate traversal/two-pointer/sliding-window technique; no quadratic brute force for 1–3",
+            "README states time and space complexities and explains at least one edge case per problem",
+            "A test script with at least 3 non-trivial test cases per problem, including edge cases (empty inputs, k=1, all-duplicates, etc.)",
+            "Sample run output included (captured text) showing tests pass"
+          ],
+          "rubric": [
+            {
+              "criterion": "Functional correctness across provided and edge test cases for all four problems",
+              "marks": 8
+            },
+            {
+              "criterion": "Time complexity targets met (1–3 in O(n), 4 in O(n)) and explained in README",
+              "marks": 5
+            },
+            {
+              "criterion": "Proper use of two-pointer/sliding-window patterns and in-place updates where specified",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation quality (README explanations, docstrings) and clarity of code",
+              "marks": 2
+            },
+            {
+              "criterion": "Quality and coverage of tests and sample outputs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Two-pointer and sliding-window patterns",
+            "Arrays and strings",
+            "Algorithms",
+            "Complexity analysis (Big-O)",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-018-S02",
+      "skills_assessed": [
+        "Data Structures",
+        "Algorithms",
+        "Complexity analysis (Big-O)",
+        "Linked lists",
+        "Stacks and queues",
+        "Recursion and backtracking",
+        "Divide-and-conquer"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following Python code that attempts to reverse a singly linked list recursively:\n\n```python\nclass Node:\n    def __init__(self, val, nxt=None):\n        self.val = val\n        self.next = nxt\n\ndef reverse(head):\n    if head is None:\n        return None\n    new_head = reverse(head.next)\n    if head.next:\n        head.next.next = head\n    # BUG: missing `head.next = None`\n    return new_head if new_head else head\n\n# Build 1 -> 2 -> 3\nh = Node(1, Node(2, Node(3)))\nr = reverse(h)\n\n# Print first 5 values by following `next`\n\ndef print_k(node, k):\n    out = []\n    cur = node\n    for _ in range(k):\n        out.append(str(cur.val))\n        cur = cur.next\n    print(\",\".join(out))\n\nprint_k(r, 5)\n```\nWhat does the program print?",
+          "options": [
+            "3,2,1,None,None",
+            "1,2,3,2,1",
+            "3,2,1,1,1",
+            "3,2,1,2,1"
+          ],
+          "correct_option": "D",
+          "explanation": "Because `head.next = None` is missing, each link reversal creates a cycle back into the partially reversed suffix. After reversing 1->2->3, the structure reachable from the returned head is 3->2->1->2->1->..., so printing 5 steps yields 3,2,1,2,1.",
+          "distractor_rationale": "B is tempting if you expect a correct reversal to terminate with None, but the bug creates a cycle so None is never reached. C suggests printing the original then reversed order; however the traversal starts at the new head (3) and cycles. D imagines the tail node being duplicated repeatedly, but the actual cycle alternates between 2 and 1 after reaching 1.",
+          "skills_covered": [
+            "Linked lists",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A queue is implemented with two stacks `s_in` and `s_out`:\n\n```python\nclass MyQueue:\n    def __init__(self):\n        self.s_in = []\n        self.s_out = []\n    def push(self, x):\n        self.s_in.append(x)\n    def pop(self):\n        if not self.s_out:\n            while self.s_in:\n                self.s_out.append(self.s_in.pop())\n        return self.s_out.pop()\n```\nCount the total number of individual element moves between stacks (each `self.s_out.append(self.s_in.pop())` is one move) for this operation sequence:\n\n```text\npush 1, push 2, push 3, pop, push 4, pop, pop, push 5, push 6, pop, pop, pop\n```",
+          "options": [
+            "5",
+            "9",
+            "7",
+            "6"
+          ],
+          "correct_option": "D",
+          "explanation": "Elements move only when `s_out` is empty. First `pop` moves 3 items (1,2,3) to `s_out`. Later, after two more pops, `s_out` empties. The next three pushes load `s_in` with 4,5,6; the next `pop` again moves 3 items (4,5,6). Total moves = 3 + 3 = 6.",
+          "distractor_rationale": "A undercounts by missing the second refill. C assumes one extra refill that doesn't occur. D assumes elements might move more than once each on the same phase; with this implementation, each element migrates at most once from `s_in` to `s_out`.",
+          "skills_covered": [
+            "Stacks and queues",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider this backtracking function that avoids duplicate subsets:\n\n```python\ndef subsets_with_dup(nums):\n    nums.sort()\n    res, path = [], []\n    def backtrack(start):\n        res.append(path[:])\n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i-1]:\n                continue\n            path.append(nums[i])\n            backtrack(i+1)\n            path.pop()\n    backtrack(0)\n    return res\n\nprint(len(subsets_with_dup([1,2,2,2])))\n```\nWhat is printed?",
+          "options": [
+            "8",
+            "7",
+            "10",
+            "9"
+          ],
+          "correct_option": "A",
+          "explanation": "With values {1} and {2×3}, the distinct subset count is (1+1)×(3+1) = 2×4 = 8. The skip condition ensures only the first occurrence at each depth is considered, eliminating duplicates.",
+          "distractor_rationale": "A and C are near misses that misapply the duplicate-skipping rule (either skipping too many or too few). D assumes each duplicate 2 behaves independently, overcounting despite pruning.",
+          "skills_covered": [
+            "Recursion and backtracking",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given this function to return the middle node of a singly linked list:\n\n```python\ndef middle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n\n# Build 1->2->3->4\n```\nWhat value is returned for the list 1->2->3->4?",
+          "options": [
+            "4",
+            "2",
+            "3",
+            "None"
+          ],
+          "correct_option": "C",
+          "explanation": "When the length is even, this pattern returns the second middle. For 1->2->3->4, slow advances to 3 when fast reaches the end.",
+          "distractor_rationale": "A is the first middle, which some variants choose by altering loop conditions, but not this one. C is the tail, which slow never reaches under this loop. D would occur only for an empty list.",
+          "skills_covered": [
+            "Linked lists",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What does this program print?\n\n```python\ndef dfs(n, path=[]):\n    if n == 0:\n        return [path]\n    path.append(n)\n    a = dfs(n-1)\n    path.pop()\n    b = dfs(n-1)\n    return a + b\n\nres = dfs(2)\nprint([len(res), res[0]])\n```\n",
+          "options": [
+            "```text\n[4, []]\n```",
+            "```text\n[2, [2]]\n```",
+            "```text\n[4, [2, 1]]\n```",
+            "```text\n[3, [1]]\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "There are 2^2 base cases, so the length is 4. However, the function returns the same `path` list object without copying, so all references end up pointing at the final mutated state of `path`, which is []. Thus it prints [4, []].",
+          "distractor_rationale": "B assumes the path at the moment of base-case capture is preserved, forgetting that no copy is made. C and D both miscount the number of base cases and also ignore the shared reference bug.",
+          "skills_covered": [
+            "Recursion and backtracking",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Floyd’s cycle detection is used to find the start of a cycle:\n\n```python\nclass Node:\n    def __init__(self, v):\n        self.val = v\n        self.next = None\n\ndef cycle_start(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            break\n    else:\n        return None\n    slow = head\n    while slow is not fast:\n        slow = slow.next\n        fast = fast.next\n    return slow.val\n\n# Build 1->2->3->4->5 and make tail point to node with value 3\nnodes = [Node(i) for i in [1,2,3,4,5]]\nfor i in range(4):\n    nodes[i].next = nodes[i+1]\nnodes[4].next = nodes[2]\nprint(cycle_start(nodes[0]))\n```\nWhat is printed?",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "None"
+          ],
+          "correct_option": "B",
+          "explanation": "When a cycle exists and tail points to the node with value 3, Floyd’s algorithm realigns slow to head and advances both one step at a time to meet at the cycle start, which is 3.",
+          "distractor_rationale": "A and C confuse meeting point during detection with the entry point. D ignores that a cycle was explicitly created.",
+          "skills_covered": [
+            "Linked lists",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A naive recursive length function is called on a cyclic list:\n\n```python\ndef length(head):\n    if head is None:\n        return 0\n    return 1 + length(head.next)\n\n# Build 1->2->3 and create a cycle: 3.next = node with value 2\nclass Node:\n    def __init__(self, v, n=None):\n        self.val = v\n        self.next = n\nn1 = Node(1)\nn2 = Node(2)\nn3 = Node(3)\nn1.next = n2; n2.next = n3; n3.next = n2\nprint(length(n1))\n```\nWhat happens?",
+          "options": [
+            "It raises RecursionError after many calls",
+            "It returns 0",
+            "It prints 3",
+            "It prints infinity"
+          ],
+          "correct_option": "A",
+          "explanation": "The function never reaches a base case because the cycle prevents `head` from becoming None. Python’s recursion limit is eventually exceeded and a RecursionError is raised.",
+          "distractor_rationale": "A assumes a simple acyclic list. B is an informal intuition but not an actual outcome. D would require the head to be None initially.",
+          "skills_covered": [
+            "Linked lists",
+            "Recursion and backtracking"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Tail recursion does not get optimized away in CPython. Consider:\n\n```python\ndef sum_to(n, acc=0):\n    if n == 0:\n        return acc\n    return sum_to(n-1, acc + n)\n\nprint(sum_to(100000))\n```\nWhat happens when this runs on standard CPython?",
+          "options": [
+            "It returns 5000050000",
+            "It raises MemoryError due to list growth",
+            "It raises RecursionError",
+            "It loops forever"
+          ],
+          "correct_option": "C",
+          "explanation": "CPython does not perform tail call optimization. Each call consumes a stack frame, so at around n ≈ 1000 the interpreter raises RecursionError. At n=100000 it will certainly overflow the recursion limit.",
+          "distractor_rationale": "A incorrectly assumes tail-call optimization. C ignores the strictly decreasing argument guaranteeing termination. D mentions memory error but the failure mode here is stack depth, not heap growth.",
+          "skills_covered": [
+            "Recursion and backtracking",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "This function tries to remove the k-th node from the end without a dummy node:\n\n```python\nclass Node:\n    def __init__(self, v, n=None):\n        self.val = v\n        self.next = n\n\ndef remove_kth(head, k):\n    fast = slow = head\n    for _ in range(k):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next\n        slow = slow.next\n    # delete slow.next\n    slow.next = slow.next.next\n    return head\n\n# Build 1->2->3 and call with k = 3 (length of list)\nh = Node(1, Node(2, Node(3)))\nremove_kth(h, 3)\n```\nWhat happens?",
+          "options": [
+            "Head node is removed and list becomes 2->3",
+            "It raises an AttributeError on `fast.next`",
+            "It removes node with value 1 but leaves a cycle",
+            "It removes node with value 0 (no-op)"
+          ],
+          "correct_option": "B",
+          "explanation": "When k equals the list length, the `for` loop advances `fast` to None. The next line `while fast.next:` tries to access `next` of None, raising AttributeError. A correct approach uses a dummy head.",
+          "distractor_rationale": "A would be true for a correct implementation with a dummy or a different loop. C and D invent behaviors not supported by the code: there is no sentinel 0 and no assignment creates a cycle here.",
+          "skills_covered": [
+            "Linked lists",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A stack is implemented using two queues (costly `pop`):\n\n```python\nfrom collections import deque\n\nclass MyStack:\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n    def push(self, x):\n        self.q1.append(x)\n    def pop(self):\n        while len(self.q1) > 1:\n            self.q2.append(self.q1.popleft())\n        x = self.q1.popleft()\n        self.q1, self.q2 = self.q2, self.q1\n        return x\n    def top(self):\n        v = self.pop()\n        self.push(v)\n        return v\n\ns = MyStack()\nfor x in [1,2,3]: s.push(x)\n_ = s.pop()    # pops 3\ns.push(4)\nprint(s.top())\n```\nWhat is printed?",
+          "options": [
+            "1",
+            "4",
+            "2",
+            "3"
+          ],
+          "correct_option": "B",
+          "explanation": "Sequence behaves as a LIFO stack: push 1,2,3; pop removes 3; push 4; top returns the current top without altering order, which is 4.",
+          "distractor_rationale": "A and D reflect FIFO thinking. B assumes the earlier top (3) persists after the pop, but it was removed.",
+          "skills_covered": [
+            "Stacks and queues",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are asked to support O(1) deletion in a singly linked list when only a direct pointer to the node-to-delete is available (no access to the head or the predecessor). The list nodes are defined as below and used broadly across a latency-sensitive service:\n\n```python\nclass Node:\n    def __init__(self, val, nxt=None):\n        self.val = val\n        self.next = nxt\n```\nThe service expects deletions to be O(1) on average for non-tail nodes, and behavior for tail deletions must be well-specified.",
+          "task": "Provide a code snippet that performs the deletion given only `node` (the node to delete). State precisely what should happen if `node` is the tail, and justify the decision. Explain time and space complexity, invariants preserved (list connectivity, absence of leaks), and any side-effects (e.g., value semantics).",
+          "expected_answer": "Use the classic copy-and-bypass trick when `node.next` exists: copy `node.next.val` into `node.val`, then set `node.next = node.next.next`. This overwrites the current node with successor data and removes the successor, achieving O(1) without head access. If `node` is the tail (node.next is None), we cannot delete it in O(1) without predecessor, so we must either signal failure (return False/raise) or document that tail deletion requires head access. Complexity: O(1) time and O(1) extra space for non-tail; tail path is O(1) to detect and report. Invariants: list remains connected except for the removed successor; no memory leak in GC languages; in manual memory management, free the removed successor. Side-effect: node identity changes (its value becomes that of its successor), which is acceptable only if node identity is not externally observable beyond value. Provide code:\n\n```python\ndef delete_given_node(node):\n    if node is None or node.next is None:\n        # cannot delete tail without predecessor; signal policy\n        return False\n    nxt = node.next\n    node.val = nxt.val\n    node.next = nxt.next\n    return True\n```",
+          "rubric": [
+            {
+              "criterion": "Correct identification of the copy-and-bypass technique and correct non-tail code",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear, correct handling/policy for tail case with justification (why O(1) tail delete is impossible)",
+              "marks": 2
+            },
+            {
+              "criterion": "Complexity analysis and invariants (connectivity preserved, no leaks, side-effects on identity)",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity and correctness of code snippet (no off-by-one/None errors)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linked lists",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A teammate wrote a linked-list merge sort. Occasionally it hangs with 100% CPU. You inspect the split stage and find:\n\n```python\ndef split(head):\n    if not head or not head.next:\n        return head, None\n    slow = head\n    fast = head.next\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    mid = slow.next\n    # BUG: not disconnecting the left half\n    return head, mid\n```\nThe merge and recursive calls assume two disjoint lists are returned by `split`.",
+          "task": "Identify the bug, provide a corrected `split` (and any merge loop guard if needed), and explain precisely why the original code can hang. Justify the chosen fast/slow initialization with respect to even/odd lengths and stability concerns.",
+          "expected_answer": "The bug is failing to break the list into two disjoint halves. Without `slow.next = None`, the left half still points into the right half. Recursive calls keep seeing overlapping lists, causing infinite recursion or merge loops that never terminate. Correct split:\n\n```python\ndef split(head):\n    if not head or not head.next:\n        return head, None\n    slow, fast = head, head.next\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    mid = slow.next\n    slow.next = None  # disconnect left from right\n    return head, mid\n```\nIf the merge uses pointer walking like `while a and b:`, it should be fine once halves are disjoint. The `fast = head.next` initialization biases the left half to be the shorter on even lengths (or choose `fast = head` to bias right); either choice is acceptable if consistent, but the key is to avoid degenerate single-element right halves across levels. The hang arises because merges traverse a structure with an internal cycle created by repeatedly merging lists that still reference each other. Complexity remains O(n log n) time and O(log n) stack space once corrected.",
+          "rubric": [
+            {
+              "criterion": "Accurate identification and explanation of the missing disconnection and how it causes non-termination",
+              "marks": 3
+            },
+            {
+              "criterion": "Corrected split implementation with proper disconnection and appropriate fast/slow initialization",
+              "marks": 2
+            },
+            {
+              "criterion": "Discussion of merge loop termination conditions and how disjoint halves ensure progress",
+              "marks": 1
+            },
+            {
+              "criterion": "Complexity and stability/partitioning justification for even/odd handling",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Linked lists",
+            "Divide-and-conquer"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must choose a bounded queue implementation for a hot path: capacity N is known at construction; operations are single-threaded; requirements are strict O(1) enqueue/dequeue and minimal allocation churn. Two candidates:\n\n1) Array-backed circular buffer with indices `head`, `tail`, and count.\n2) Singly linked list with `head`/`tail` pointers and a size counter; on enqueue when size == N, reject.\n",
+          "task": "Choose one, justify the choice for this workload, specify exact invariants and edge-case handling (empty vs full), and show the constant-time update formulas. Include how you will distinguish full from empty without ambiguity and what happens on wrap-around or on removing the last element.",
+          "expected_answer": "Choose the array-backed circular buffer. It provides true O(1) with excellent cache locality and zero per-op allocation. Invariants: 0 ≤ count ≤ N; `head` points to the next element to dequeue when `count > 0`; `tail` points to the next slot to fill when `count < N`. Empty if count == 0; full if count == N. Update formulas:\n\n- Enqueue x: if count == N -> error; else `arr[tail] = x; tail = (tail + 1) % N; count += 1`.\n- Dequeue: if count == 0 -> error; else `x = arr[head]; head = (head + 1) % N; count -= 1`.\n\nWrap-around handled by modulo arithmetic. Removing the last element sets count to 0; `head` and `tail` positions are irrelevant but consistent under modulo arithmetic. The linked-list alternative would allocate/free nodes per operation (or require a node pool) and increases pointer chasing, harming locality; while still O(1), it violates the \"minimal allocation churn\" requirement unless an explicit free-list is managed.",
+          "rubric": [
+            {
+              "criterion": "Correct selection aligned to workload (array ring buffer) with clear justification (locality, zero allocations)",
+              "marks": 3
+            },
+            {
+              "criterion": "Precise invariants and unambiguous empty/full conditions",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct constant-time update formulas including wrap-around math",
+              "marks": 1
+            },
+            {
+              "criterion": "Discussion of edge cases (enqueue on full, dequeue on empty, removing last element) and why linked list is inferior here",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Stacks and queues",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You are designing a function to generate all unique permutations of a multiset, e.g., input `[1,1,2]`. The team wants guarantees: no duplicates, lexicographic order, and predictable memory footprint. The naive backtracking below produces duplicates:\n\n```python\ndef perms(nums):\n    res, path = [], []\n    used = [False]*len(nums)\n    def bt():\n        if len(path) == len(nums):\n            res.append(path[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            # missing duplicate skip\n            used[i] = True\n            path.append(nums[i])\n            bt()\n            path.pop()\n            used[i] = False\n    bt()\n    return res\n```\n",
+          "task": "Propose a corrected algorithm that meets the guarantees. Provide the key code change(s) for duplicate-skipping and ordering, argue correctness (why no duplicates, why all permutations still found), and analyze time/space complexity as a function of n and distinct value counts.",
+          "expected_answer": "Sort first, then at each depth skip equal values that were not used in the previous position at the same depth. This ensures lexicographic output and prunes duplicate branches. Key changes:\n\n```python\ndef unique_perms(nums):\n    nums.sort()\n    res, path = [], []\n    used = [False]*len(nums)\n    def bt():\n        if len(path) == len(nums):\n            res.append(path[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i-1] and not used[i-1]:\n                continue  # skip duplicate at this depth\n            used[i] = True\n            path.append(nums[i])\n            bt()\n            path.pop()\n            used[i] = False\n    bt()\n    return res\n```\nCorrectness: Sorting groups equal values; the condition prevents choosing the k-th copy of a value first at a depth when the (k−1)-th copy wasn't chosen, eliminating permutations that differ only by swapping identical elements. Completeness: for each multiset, at least one representative ordering per equivalence class is explored. Order: iterating i from 0..n−1 on the sorted array yields lexicographic order. Complexity: worst-case O(n·n!) time and O(n) recursion stack plus O(n) `used` and path space; with duplicates, the output size shrinks to n!/∏ c_i! and the explored subtree is correspondingly pruned.",
+          "rubric": [
+            {
+              "criterion": "Correct duplicate-skipping condition tied to sorted order (`i > 0 and nums[i] == nums[i-1] and not used[i-1]`)",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear correctness argument (no duplicates, completeness) and ordering guarantee",
+              "marks": 3
+            },
+            {
+              "criterion": "Complexity analysis with effect of duplicates and space discussion",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Recursion and backtracking",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Linked structures implementations: singly linked list, stack, queue (plus cycle ops and 2-stack queue)",
+          "brief": "Build core linked-structure implementations and demonstrate correctness with executable tests. Implement: (a) Singly linked list with push_front, push_back, insert_after, delete_first(value), reverse_iterative, reverse_recursive, find_middle (fast/slow), merge_two_sorted_lists (recursive), detect_cycle (Floyd) and remove_cycle (if present). (b) Stack with push, pop, peek, is_empty. (c) Queue with enqueue, dequeue, peek, is_empty using a linked list. (d) Queue implemented using two stacks with amortized O(1) operations. Provide unit tests that cover edge cases (empty structures, single-element, cycles, large sequences).",
+          "deliverable": "A repository or archive containing source code files, and a test suite with a script or instructions to run. The tests must print a concise summary showing all tests passed. Include a short README with commands to execute tests.",
+          "acceptance_criteria": [
+            "Singly linked list supports all listed methods; reverse_recursive produces a correct acyclic reversal on lists up to length 10^4 (validated by traversing length matches and last->None).",
+            "merge_two_sorted_lists produces a sorted list from two individually sorted inputs; test includes negative and duplicate values.",
+            "detect_cycle returns True for a list with a tail-to-middle cycle and False for an acyclic list; remove_cycle transforms a cyclic list into an acyclic one (validated by traversal without repetition up to original length).",
+            "Stack operations follow LIFO with correct behavior under empty-pop error handling (test expects a specific exception or return code documented in README).",
+            "Linked-list queue operations follow FIFO with correct behavior under empty-dequeue error handling.",
+            "Two-stack queue passes a stress test of 10^5 mixed operations within reasonable time (amortized O(1)); include an assertion that total transfers from in->out do not exceed total pushes.",
+            "All tests are automated and reproducible via a single command documented in README."
+          ],
+          "rubric": [
+            {
+              "criterion": "Singly linked list correctness across all required methods (including both reversals) with edge cases covered",
+              "marks": 6
+            },
+            {
+              "criterion": "Cycle detection and removal correctness demonstrated with targeted tests",
+              "marks": 4
+            },
+            {
+              "criterion": "Stack and linked-list queue API correctness and LIFO/FIFO semantics with robust empty-case handling",
+              "marks": 4
+            },
+            {
+              "criterion": "Two-stack queue correctness and amortized performance evidenced by stress test and assertions",
+              "marks": 3
+            },
+            {
+              "criterion": "Test suite quality (automation, clarity, coverage) and README instructions",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Linked lists",
+            "Stacks and queues",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Recursion, divide-and-conquer, and backtracking problem set",
+          "brief": "Solve the following problems using recursion/backtracking/divide-and-conquer and provide brief complexity notes in comments for each:\n1) unique_perms(nums): generate all unique permutations of a list with duplicates in lexicographic order.\n2) subsets_with_dup(nums): generate all unique subsets of a list with duplicates.\n3) n_queens_count(n): return the number of distinct solutions for the N-Queens problem for n up to 12, using efficient pruning (columns and diagonals bitmasks or sets).\n4) kth_smallest(arr, k): implement Quickselect (divide-and-conquer) returning the k-th smallest (1-indexed). Use in-place partitioning and average O(n) time; document pivot strategy.\nInclude unit tests that verify: unique_perms([1,1,2]) length is 3 and is ordered; subsets_with_dup([1,2,2]) length is 6; n_queens_count(8) equals 92; kth_smallest([7,2,5,3,5,3,9], 4) equals 5.",
+          "deliverable": "Source code for the four functions, with inline complexity notes, plus a test file that runs and prints expected outputs for the provided cases. Include a README with run instructions and any notes on recursion limits.",
+          "acceptance_criteria": [
+            "unique_perms sorts input, emits permutations in lexicographic order, and produces exactly 3 results for [1,1,2]: [[1,1,2],[1,2,1],[2,1,1]].",
+            "subsets_with_dup produces 6 subsets for [1,2,2] with no duplicates, order can be any deterministic order documented in README; no repeated identical subsets.",
+            "n_queens_count returns 92 for n=8 within 5 seconds on a typical laptop; solution uses pruning on columns and diagonals (bitmasks or sets).",
+            "kth_smallest returns correct answers on provided tests; partitioning is in-place and average-case O(n). For arrays with many duplicates, implementation must terminate and handle equals correctly (e.g., Lomuto or Hoare with careful bounds).",
+            "Tests are executable via a single command and print the exact expected outputs for the sample cases."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness and ordering of unique_perms with duplicate-skipping logic",
+              "marks": 5
+            },
+            {
+              "criterion": "Correctness of subsets_with_dup and absence of duplicate subsets",
+              "marks": 4
+            },
+            {
+              "criterion": "n_queens_count correctness and effective pruning (performance within constraint)",
+              "marks": 6
+            },
+            {
+              "criterion": "Quickselect correctness with robust partition handling of duplicates and average O(n) behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Quality and reproducibility of tests and documentation",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Recursion and backtracking",
+            "Divide-and-conquer",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-018-S03",
+      "skills_assessed": [
+        "Data Structures",
+        "Algorithms",
+        "Complexity analysis (Big-O)",
+        "Trees and BST",
+        "Priority queues and heaps",
+        "Hashing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this BST insert that sends equal keys to the left:\n\n```python\nclass Node:\n    def __init__(self, v):\n        self.v=v; self.l=None; self.r=None\n\ndef insert(t, x):\n    if not t: return Node(x)\n    if x <= t.v:\n        t.l = insert(t.l, x)\n    else:\n        t.r = insert(t.r, x)\n    return t\n\ndef inorder(t, out):\n    if not t: return\n    inorder(t.l, out)\n    out.append(t.v)\n    inorder(t.r, out)\n\nroot=None\nfor k in [7, 9, 7, 5, 8]:\n    root = insert(root, k)\nres=[]\ninorder(root, res)\nprint(res)\n```\nWhat does this program print?",
+          "options": [
+            "```text\n[5, 7, 7, 8, 9]\n```",
+            "```text\n[5, 7, 8, 7, 9]\n```",
+            "```text\n[5, 7, 8, 9, 7]\n```",
+            "```text\n[7, 5, 7, 8, 9]\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "With equals sent to the left, the inserted structure is: 7 root; 9 right; 7 (duplicate) goes to left of 7; 5 goes to left of that 7; 8 becomes left child of 9. In-order traversal yields [5, 7, 7, 8, 9].",
+          "distractor_rationale": "B places the duplicate 7 at the end as if in-order visited rightmost last, but it ignores that duplicate 7 is on the left. C is a pre-order-like listing, not in-order. D assumes equals go right, interleaving the second 7 after 8.",
+          "skills_covered": [
+            "Trees and BST",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Examine the heap operations:\n\n```python\nimport heapq\nh=[]\nheapq.heappush(h, 5)\nheapq.heappush(h, 3)\nheapq.heappush(h, 4)\na = heapq.heappushpop(h, 2)\nb = heapq.heappop(h)\nprint(a, b)\n```\nWhat is printed?",
+          "options": [
+            "```text\n3 3\n```",
+            "```text\n2 4\n```",
+            "```text\n2 3\n```",
+            "```text\n3 2\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "heappushpop pushes then pops the smallest. Since 2 is smaller than the current min (3), it returns 2 immediately without affecting the heap. The next pop then returns 3.",
+          "distractor_rationale": "B assumes the next pop is 4, forgetting the 3 remained. C swaps the return order misunderstanding heappushpop behavior. D imagines the 2 was inserted then popped again, duplicating 3 incorrectly.",
+          "skills_covered": [
+            "Priority queues and heaps",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A hash table of size 8 uses linear probing with tombstones. Hash function is h(k)=k mod 8. We insert 5, 13, 21, then delete 13 leaving a TOMBSTONE in its slot. How many probe steps does `find(21)` perform (counting each examined slot) under correct linear probing semantics?\n\n```text\nAfter inserts: idx[5]=5, idx[6]=13, idx[7]=21\nAfter delete(13): idx[6]=TOMBSTONE\n```\n",
+          "options": [
+            "4",
+            "3",
+            "2",
+            "1"
+          ],
+          "correct_option": "B",
+          "explanation": "find(21) probes idx 5 (occupied by 5), idx 6 (TOMBSTONE, cannot stop), and idx 7 (21 found). That is 3 probes.",
+          "distractor_rationale": "1 assumes direct hit ignoring collisions. 2 stops at the tombstone, which is precisely the bug correct probing avoids. 4 overcounts by assuming wrap or extra step after finding.",
+          "skills_covered": [
+            "Hashing",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Open addressing with linear probing and tombstones. Insertion records the first tombstone seen, continues probing until it finds either the key or an EMPTY slot, then inserts at the first recorded tombstone (or EMPTY if no tombstone seen). Current table (size 8):\n\n```text\nIndex: 0 1 2 3 4 5 6 7\nState: E 9 T 1 E E 17 T\n```\n`E`=EMPTY, `T`=TOMBSTONE, numbers are keys. Using h(k)=k mod 8, where will key 10 be placed by `insert(10)`?",
+          "options": [
+            "Index 2",
+            "Index 7",
+            "Index 5",
+            "Index 4"
+          ],
+          "correct_option": "A",
+          "explanation": "h(10)=2, first probe hits a tombstone at 2; insertion must remember it and continue to ensure the key is not already present. It encounters EMPTY at 4 having not found key 10, so it inserts at the first tombstone recorded: index 2.",
+          "distractor_rationale": "B confuses first EMPTY with insertion spot, ignoring the recorded tombstone rule. C is unrelated to the probe sequence for 10. D is a tombstone but not the first in the probe path from 2.",
+          "skills_covered": [
+            "Hashing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given the binary tree and iterative in-order traversal below, what is printed?\n\n```text\nTree shape (values at nodes):\n         7\n        / \\\n       3   9\n      / \\\n     1   5\n        /\n       4\n```\n\n```python\ndef inorder_iter(root):\n    st=[]; cur=root; out=[]\n    while cur or st:\n        while cur:\n            st.append(cur)\n            cur=cur.l\n        cur=st.pop()\n        out.append(cur.v)\n        cur=cur.r\n    print(out)\n```\n",
+          "options": [
+            "```text\n[3, 1, 4, 5, 7, 9]\n```",
+            "```text\n[7, 3, 1, 5, 4, 9]\n```",
+            "```text\n[1, 3, 4, 5, 7, 9]\n```",
+            "```text\n[4, 5, 3, 9, 7, 1]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Iterative in-order emits left-root-right. The left subtree yields 1,3,4,5 in order, then 7, then 9.",
+          "distractor_rationale": "B is pre-order of left subtree then rest. C is a scrambled post-order-like guess. D is pre-order of the whole tree.",
+          "skills_covered": [
+            "Trees and BST",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A BST is built by inserting in this order into an initially empty tree:\n\n```text\n1, 2, 3, 4, 5, 6, 7\n```\nHeight is defined by this function:\n\n```python\ndef height(t):\n    if not t: return 0\n    return 1 + max(height(t.l), height(t.r))\n```\nWhat is the height of the resulting BST?",
+          "options": [
+            "O(log n)",
+            "3",
+            "6",
+            "7"
+          ],
+          "correct_option": "D",
+          "explanation": "Ascending inserts create a completely skewed tree (a chain) of 7 nodes. The given height definition counts nodes along the longest path, so the height is 7.",
+          "distractor_rationale": "6 counts edges (n-1) instead of the function’s node-counting height. 3 assumes balanced. O(log n) is a complexity class, not a concrete height.",
+          "skills_covered": [
+            "Trees and BST",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You want a max-priority queue but use Python's min-heap with negated priorities:\n\n```python\nimport heapq\nh=[]\nheapq.heappush(h, (-5, 'A'))\nheapq.heappush(h, (-1, 'B'))\nheapq.heappush(h, (-3, 'C'))\nprint(heapq.heappop(h)[1])\n```\nWhich id is printed?",
+          "options": [
+            "B",
+            "A",
+            "C",
+            "It raises because tuples can't be compared"
+          ],
+          "correct_option": "B",
+          "explanation": "The smallest tuple by first element is (-5,'A'), corresponding to the highest original priority 5. So 'A' pops first.",
+          "distractor_rationale": "B and C invert the max-heap emulation. D is false in Python; tuples are comparable lexicographically when first elements differ.",
+          "skills_covered": [
+            "Priority queues and heaps"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A hash map resizes when `(size+1)/capacity > 0.75` before inserting a new key. Starting with `size=5, capacity=8`, at which insertion will a resize occur (before placing the element) if you perform two inserts back-to-back?",
+          "options": [
+            "On the 6th insert",
+            "No resize will occur",
+            "On the 8th insert",
+            "On the 7th insert"
+          ],
+          "correct_option": "D",
+          "explanation": "Before the 6th insert: (5+1)/8 = 0.75 which is not greater than 0.75, so no resize. Before the 7th: (6+1)/8 = 0.875 > 0.75, so a resize happens.",
+          "distractor_rationale": "A confuses ≥ with >. C overestimates how much you can insert before exceeding 0.75. D ignores the threshold logic.",
+          "skills_covered": [
+            "Hashing",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You maintain top-2 most frequent items using a dict for counts and a size-2 min-heap of `(count, key)`. After processing the stream:\n\n```python\nfrom collections import defaultdict\nimport heapq\nstream = ['a','b','a','c','b','a']\ncount = defaultdict(int)\nh=[]\nfor x in stream:\n    count[x]+=1\nfor k,c in count.items():\n    if len(h) < 2:\n        heapq.heappush(h, (c,k))\n    else:\n        if c > h[0][0]:\n            heapq.heapreplace(h, (c,k))\nprint(sorted(k for _,k in h))\n```\nWhat does it print?",
+          "options": [
+            "```text\n['a', 'b']\n```",
+            "```text\n['a', 'c']\n```",
+            "```text\n['b', 'c']\n```",
+            "```text\n['a']\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Final counts are a:3, b:2, c:1. The size-2 min-heap keeps the two largest counts, which are a and b.",
+          "distractor_rationale": "B and C include c=1, which should be evicted. D forgets the heap is of size 2.",
+          "skills_covered": [
+            "Priority queues and heaps",
+            "Hashing",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A separate-chaining map with capacity 4 stores buckets as lists of `(key,val)`. This `put` has a subtle bug:\n\n```python\nbuckets = [[] for _ in range(4)]\nsize = 0\n\ndef put(k, v):\n    global size\n    i = k % 4\n    # BUG: appends without checking existing key\n    buckets[i].append((k,v))\n    size += 1\n\nfor k in [0, 4, 8]:\n    put(k, 1)\nput(4, 2)  # overwrite expected\nprint(len(buckets[0]), size)\n```\nWhat is printed?",
+          "options": [
+            "```text\n1 2\n```",
+            "```text\n3 4\n```",
+            "```text\n3 3\n```",
+            "```text\n2 3\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "All keys hash to bucket 0. Because `put` never checks for an existing key, `put(4,2)` appends a duplicate entry instead of overwriting. Bucket 0 has four entries total, and the map’s size has been incorrectly incremented to 4.",
+          "distractor_rationale": "B assumes size tracked correctly despite the append bug. C assumes correct overwrite semantics and correct size. D assumes bucket length reflects an overwrite while size is wrong.",
+          "skills_covered": [
+            "Hashing",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are implementing a job scheduler. Each job has an id and a priority that can decrease over time. The current code uses a min-heap of `(priority, id)` and, when a job’s priority decreases, simply pushes a new pair; there is no decrease-key operation. Occasionally the same job is executed twice because the older, stale entry resurfaces later.\n\n```python\nimport heapq\nh=[]\nlatest = {}  # id -> latest priority\n\ndef submit(id, p):\n    latest[id]=p\n    heapq.heappush(h, (p,id))\n\ndef next_job():\n    p,id = heapq.heappop(h)\n    return id  # sometimes returns a stale entry\n```\nThe system must: (1) always execute the job with the smallest current priority, (2) never execute a job whose priority was superseded, (3) support submit and next_job in logarithmic time on the number of heap entries currently stored.",
+          "task": "Design a fix that preserves heap performance without adding a true decrease-key primitive. Specify the additional data you would maintain, show the modified `next_job()` logic, and explain the time and space complexity and any trade-offs (including memory retention of stale entries).",
+          "expected_answer": "Maintain a hash map `latest` from id to current priority (already present) and add lazy deletion of stale entries during pop. Pseudocode:\n\n```python\ndef next_job():\n    while h:\n        p,id = heapq.heappop(h)\n        if latest.get(id) == p:\n            # this is the current version\n            # optionally: del latest[id] if jobs are one-shot\n            return id\n        # else stale; drop and continue\n    return None\n```\nSubmit remains O(log n) by pushing a new (p,id), n is current heap size. `next_job` may pop multiple stale entries, but each stale entry is discarded once; amortized O(log n) per valid pop. Space: O(m) where m is the number of outstanding heap entries; stale entries remain until popped, trading memory for avoiding decrease-key. Optionally, to support cancellation, keep a `canceled` set and check it similarly. Correctness: the minimum according to current `latest` is returned because any stale minimum is skipped until the first non-stale min surfaces. Tie-breaking by id is fine because equality on (p,id) still aligns with `latest`.",
+          "rubric": [
+            {
+              "criterion": "Proposes lazy deletion using a hash structure keyed by id to validate popped entries (notifies how to detect staleness)",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides correct pop loop that discards stale heap entries until a current one is found",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains amortized O(log n) time for submit and next_job and why extra stale pops do not break complexity",
+              "marks": 1
+            },
+            {
+              "criterion": "Discusses memory trade-off of retaining stale entries and any optional cancellation handling",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Priority queues and heaps",
+            "Hashing",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A custom open-addressing hash set uses linear probing. Deletion is implemented by writing EMPTY into the slot. After this sequence, a lookup fails unexpectedly:\n\n```text\nm=8, h(k)=k mod 8\ninsert 1 -> idx 1\ninsert 9 -> probes 1,2 -> idx 2\ninsert 17 -> probes 1,2,3 -> idx 3\ndelete 9 -> writes EMPTY at idx 2  (BUG)\ncontains 17 -> probes 1, stops at 2 (EMPTY), returns False (WRONG)\n```\n",
+          "task": "Identify the exact defect and provide corrected `delete` and `contains` logic that preserves correctness under linear probing. Justify why the fix works, including probe termination conditions for both search and insertion.",
+          "expected_answer": "The defect is clearing a deleted slot to EMPTY. That prematurely terminates probe sequences for keys that lie past the deleted slot. Correct approach: mark deletions with a TOMBSTONE and never terminate search at a tombstone.\n\nCorrected logic:\n\n```python\nEMPTY, TOMBSTONE = object(), object()\n\ndef delete(k):\n    i = h(k)\n    while table[i] is not EMPTY:\n        if table[i] != TOMBSTONE and table[i] == k:\n            table[i] = TOMBSTONE\n            return True\n        i = (i+1) % m\n    return False  # not found\n\ndef contains(k):\n    i = h(k)\n    while table[i] is not EMPTY:  # stop only at true EMPTY\n        if table[i] != TOMBSTONE and table[i] == k:\n            return True\n        i = (i+1) % m\n    return False\n```\nWhy it works: TOMBSTONE preserves the continuity of probe sequences so keys inserted after a collision remain discoverable. Search stops only on EMPTY; insertion can remember the first tombstone to reuse it, maintaining performance while correctness is preserved.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies EMPTY-on-delete as the root cause and explains why it breaks probing",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents corrected delete using TOMBSTONE without breaking clusters",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents corrected contains that skips tombstones and stops only at EMPTY",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains probe termination and insertion reuse of tombstones (first-tombstone rule)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Hashing",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You need to compute the sum of all BST keys inside a closed interval [L, R]. The dataset can be large and the BST may be skewed. A naive traversal that visits every node is too slow in practice.",
+          "task": "Design and explain a traversal that prunes branches using BST ordering to achieve time proportional to the number of visited nodes. Provide clear pseudocode and analyze best/worst-case time in terms of n and the number of reported nodes k.",
+          "expected_answer": "Use an in-order traversal with pruning: if node.v < L, skip the entire left subtree; if node.v > R, skip the entire right subtree. Otherwise include node.v and recurse both sides. Pseudocode:\n\n```python\ndef range_sum(t, L, R):\n    if not t: return 0\n    if t.v < L:\n        return range_sum(t.r, L, R)  # all left < L\n    if t.v > R:\n        return range_sum(t.l, L, R)  # all right > R\n    return t.v + range_sum(t.l, L, R) + range_sum(t.r, L, R)\n```\nComplexity: Best case (tight pruning, balanced-ish or keys outside range) is O(h + k) where h is height and k is number of nodes in [L,R]; with a balanced tree h=O(log n). Worst case (all nodes in range or a skewed tree) degrades to O(n). Space is O(h) recursion depth (or O(h) if implemented iteratively with a stack).",
+          "rubric": [
+            {
+              "criterion": "Correct pruning logic using BST order properties on both sides of the interval",
+              "marks": 3
+            },
+            {
+              "criterion": "Pseudocode that is complete and unambiguous",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct time analysis including best/typical vs worst-case and dependency on h and k",
+              "marks": 1
+            },
+            {
+              "criterion": "Space complexity and note on iterative alternative",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Trees and BST",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A telemetry service maintains a growing set of unique event ids and must quickly answer two operations under heavy load: (1) record(id), (2) fetch_min() to return the smallest id not yet processed. The current implementation is a plain BST built by insertion order, which becomes a tall chain on near-sorted ids, causing periodic latency spikes that violate SLOs.",
+          "task": "Redesign the data structure using only concepts from this section to avoid worst-case spikes while keeping operations fast. Specify the structures you would combine, the operations’ complexities, and why the new design is robust to insertion order. Call out any trade-offs (e.g., memory, iteration order).",
+          "expected_answer": "Use two structures: a hash set S for O(1)-average membership/duplicate checks on record(id), and a min-heap H for the pool of candidate ids to return from fetch_min().\n\nDesign:\n- On record(id): if id not in S, add to S and push id into H. O(1) average for the set and O(log n) for the heap push.\n- On fetch_min(): pop from H until the top id is still present in S and not yet processed (maintain a processed flag or remove from S when fetched). Return that id. Amortized O(log n); lazy deletion skips stale heap entries if duplicates were pushed.\n\nRobustness: The hash set’s expected O(1) behavior is independent of key order; the heap’s structure does not degenerate with sorted inputs. There is no rotation/balancing dependence on arrival order, avoiding the skew that broke the BST.\n\nTrade-offs: Memory overhead from storing ids in both S and H (and any stale entries until popped). Iterating all ids in sorted order is less direct than an in-order BST traversal; if full sorted iteration is required, additional work is needed (e.g., pop repeatedly, which is O(n log n)). If deletions are required, apply tombstones/lazy deletion or synchronize S and H carefully.",
+          "rubric": [
+            {
+              "criterion": "Selects an appropriate combination (hash set + min-heap) and explains roles of both",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct operational details for record and fetch_min, including lazy skipping on heap pops",
+              "marks": 2
+            },
+            {
+              "criterion": "Complexity analysis for both operations in average/amortized terms",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses robustness to input order and trade-offs (memory, sorted iteration)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Hashing",
+            "Priority queues and heaps",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "BST range-query explorer (Tree application)",
+          "brief": "Build a command-line program that constructs a Binary Search Tree of integers from an input file and supports: (1) duplicate policy \"equals go to left child\" as specified, (2) printing traversals (in-order, pre-order, level-order), (3) reporting height as defined by nodes on the longest path, and (4) answering range queries: given L and R, output all keys in [L,R] in ascending order and their sum, using pruning. Handle up to 100k values without recursion depth errors on skewed input (use iterative traversal or increase stack safely).",
+          "deliverable": "Source code + README + sample I/O. The CLI must accept: `build <path_to_file>`, `print inorder|preorder|level`, `height`, `range <L> <R>`. Provide a sample input file and the corresponding outputs in the README.",
+          "acceptance_criteria": [
+            "Duplicate keys are inserted to the left; demonstrated by a case where inserting [7,9,7,5,8] yields inorder [5,7,7,8,9].",
+            "`print inorder` matches sorted order for a valid BST; `print preorder` and `print level` are consistent with the same tree.",
+            "`height` returns node-count height per the provided definition.",
+            "`range L R` prints all keys in [L,R] in ascending order and a line `sum=<value>`; must prune branches and run in O(h + k) for k outputs on balanced trees.",
+            "Program correctly handles n=100,000 ascending inputs without crashing and finishes `build` + `print inorder` within a reasonable time (indicative O(n log n))."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct BST insert with equals-left and all three traversals implemented accurately",
+              "marks": 6
+            },
+            {
+              "criterion": "Height computed per definition and matches for skewed and balanced cases",
+              "marks": 4
+            },
+            {
+              "criterion": "Range query outputs correct keys and sum, with pruning logic (verified on test cases)",
+              "marks": 6
+            },
+            {
+              "criterion": "Robustness/performance on a 100k ascending dataset; no stack overflow; reasonable runtime",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Trees and BST",
+            "Algorithms",
+            "Complexity analysis (Big-O)",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Open-addressing hash set with linear probing (Lookup solutions)",
+          "brief": "Implement an integer hash set from scratch using open addressing with linear probing. Support `add(x)`, `contains(x)`, and `remove(x)` with TOMBSTONE handling, and automatic resize when `(size+1)/capacity > 0.75`. Provide a small CLI or script to read commands from stdin and print results.",
+          "deliverable": "Source code + README + test script. The script must read lines like `add 13`, `contains 21`, `remove 9` and print `true/false` for queries. Include a test case file that exercises collisions, wrap-around, tombstones, and resizing.",
+          "acceptance_criteria": [
+            "Linear probing implemented with wrap-around; deletion marks TOMBSTONE, not EMPTY.",
+            "Insertion reuses the first tombstone in a probe sequence and avoids duplicate entries.",
+            "`contains` does not stop at TOMBSTONE and stops only at EMPTY; passes the scenario: insert 5,13,21; remove 13; contains 21 -> true.",
+            "Resizing doubles capacity and rehashes all non-EMPTY, non-TOMBSTONE entries; behavior is identical before/after resize.",
+            "Average-case performance near O(1) with 10,000 random operations; provide simple timing or operation count in README."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct probing semantics across add/contains/remove, including TOMBSTONE usage",
+              "marks": 8
+            },
+            {
+              "criterion": "Resizing at threshold with correct rehash and preserved membership",
+              "marks": 4
+            },
+            {
+              "criterion": "Probe reuse of first tombstone on insertion; no duplicate element entries",
+              "marks": 4
+            },
+            {
+              "criterion": "Usable CLI/test harness that demonstrates collisions, wrap-around, tombstones, and resizing",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Hashing",
+            "Algorithms",
+            "Complexity analysis (Big-O)",
+            "Data Structures"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-018-S04",
+      "skills_assessed": [
+        "Algorithms",
+        "Complexity analysis (Big-O)",
+        "Graphs (representation, BFS, DFS, shortest-path basics)",
+        "Sorting algorithms",
+        "Dynamic programming",
+        "Priority queues and heaps",
+        "Stacks and queues"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this BFS implementation. Neighbors are enqueued in the listed order.\n```python\nfrom collections import deque\n\ngraph = {\n    'A': ['B','C'],\n    'B': ['D','E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['F'],\n    'F': []\n}\n\ndef bfs(s):\n    visited = set([s])\n    q = deque([s])\n    order = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in graph[u]:\n            if v not in visited:\n                visited.add(v)\n                q.append(v)\n    return order\n\nprint(bfs('A'))\n```\nWhat does this print?",
+          "options": [
+            "['A','B','D','E','C','F']",
+            "['A','B','C','D','E','F']",
+            "['A','C','F','B','D','E']",
+            "['A','C','B','F','D','E']"
+          ],
+          "correct_option": "B",
+          "explanation": "BFS visits by layers. From A we enqueue B,C. We dequeue B then C, enqueueing D,E then F. Final dequeue order is A,B, C, D, E, F.",
+          "distractor_rationale": "B: Looks like DFS from A via C first; but BFS takes B before C only if neighbor order had C,B or if queueing was last-in-first-out. C: Tempting if you think all of B’s subtree must be fully processed before touching C; BFS still dequeues C before exploring D and E’s children fully. D: DFS-like path A→C→F→… is not BFS behavior.",
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Stacks and queues"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "This DFS sets each node's parent when first discovered. What is `parent['F']` after `dfs('A')`?\n```python\ngraph = {\n    'A': ['B','C'],\n    'B': ['D','E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['F'],\n    'F': []\n}\n\nparent = {}\nvisited = set()\n\ndef dfs(u):\n    visited.add(u)\n    for v in graph[u]:\n        if v not in visited:\n            parent[v] = u\n            dfs(v)\n\ndfs('A')\nprint(parent['F'])\n```\nNeighbors are iterated in the listed order.",
+          "options": [
+            "'B'",
+            "'C'",
+            "'A'",
+            "'E'"
+          ],
+          "correct_option": "D",
+          "explanation": "DFS explores A→B→D (back), then E→F, so F is first discovered from E. C is explored afterwards; its edge to F is ignored because F is already visited.",
+          "distractor_rationale": "A: Misreads parent as the root for all nodes. B: Assumes F is reached from B directly, but B’s adjacency lists only D and E. C: F is reachable via C, but DFS has already visited F via E when it later reaches C.",
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Run Dijkstra from A on this directed weighted graph; ties broken by any order, min-heap implementation.\n```text\nEdges (u -> v, w):\nA->B,1\nA->C,4\nB->C,2\nB->D,6\nC->D,1\n```\nWhat shortest path and total cost does the algorithm compute from A to D?",
+          "options": [
+            "Path A→C→D, cost 5",
+            "Path A→C→B→D, cost 9",
+            "Path A→B→C→D, cost 4",
+            "Path A→B→D, cost 7"
+          ],
+          "correct_option": "C",
+          "explanation": "Relax A→B (1), then B→C (3), then C→D (4). Direct A→C→D gives 5; A→B→D gives 7. The optimal path is A→B→C→D with total cost 4.",
+          "distractor_rationale": "A: Misses the improvement via C (2+1). B: Locally reasonable from A→C, but not optimal once A→B→C is found. D: Double-counting and wrong direction; no edge C→B; also cost inflated.",
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Priority queues and heaps",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You accidentally run plain BFS (each edge costs 1) on a weighted graph with 0/1 weights instead of using 0-1 BFS or Dijkstra. For the graph below, what distance to T does BFS compute compared to the true minimum total weight?\n```text\nS--0-->A--1-->T\n \\\n  1\n   \\\n    v\n     B--0-->T\n```\nEdges carry shown weights; all edges forward. Start at S.",
+          "options": [
+            "BFS distance 2; true min cost 1",
+            "BFS distance 1; true min cost 1",
+            "BFS distance 1; true min cost 2",
+            "BFS distance 2; true min cost 2"
+          ],
+          "correct_option": "A",
+          "explanation": "BFS counts hops: S→A→T (2 hops) or S→B→T (2 hops). True min sum of weights is 1 (either 0+1 or 1+0). Treating 0 as 1 overestimates path cost in hops.",
+          "distractor_rationale": "A: Confuses hops with weighted sum. B: Both hops and cost are 2 only if all edges had weight 1. D: Implies BFS magically prefers the zero-weight edge to make hop count 1, which it cannot.",
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must sort a stream known to be k-sorted (each element is at most k positions from its final place). Consider this min-heap approach:\n```python\nimport heapq\n\ndef sort_k_sorted(stream, k):\n    it = iter(stream)\n    heap = []\n    for _ in range(k+1):\n        try: heapq.heappush(heap, next(it))\n        except StopIteration: break\n    out = []\n    for x in it:\n        out.append(heapq.heappushpop(heap, x))\n    while heap:\n        out.append(heapq.heappop(heap))\n    return out\n```\nAsymptotically in n (items) and k, what is the comparison complexity?",
+          "options": [
+            "O(n log k)",
+            "O(nk)",
+            "O(n)",
+            "O(n log n)"
+          ],
+          "correct_option": "A",
+          "explanation": "Each push/pop is O(log k) on a heap of size k+1, done O(n) times, so O(n log k).",
+          "distractor_rationale": "B: Insertion sort on k-sorted runs O(nk), but the heap solution avoids that. C: Full comparison sort bound; k<<n removes the log n factor. D: Only true if k is O(1) and hidden constants dominate, not asymptotically.",
+          "skills_covered": [
+            "Sorting algorithms",
+            "Priority queues and heaps",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You want a final ordering by (dept, then name). You run two stable sorts: first by name, then by dept. Given rows:\n```csv\nid,dept,name\n1,B,Zoe\n2,A,Ann\n3,A,Bob\n4,B,Ann\n5,A,Ann\n```\nWhat is the final sequence of ids?",
+          "options": [
+            "4,2,5,3,1",
+            "2,5,3,4,1",
+            "2,3,5,4,1",
+            "2,4,5,3,1"
+          ],
+          "correct_option": "B",
+          "explanation": "Stable sort by name gives [2(Ann),4(Ann),5(Ann),3(Bob),1(Zoe)]. Stable sort by dept then groups A before B while preserving prior intra-group order: A → [2,5,3], B → [4,1].",
+          "distractor_rationale": "A: Puts id4 before id5 within dept A, breaking stability from the first pass. C: Starts with a B-dept id; violates the dept primary key. D: Disrupts the stable order of the Ann records within dept A.",
+          "skills_covered": [
+            "Sorting algorithms"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "This 0/1 knapsack uses a 1D DP but iterates capacity in the wrong direction.\nWhat does it return for `W=6`, `wt=[3]`, `val=[4]`?\n```python\ndef knap(W, wt, val):\n    dp = [0]*(W+1)\n    for i in range(len(wt)):\n        for w in range(0, W+1):  # BUG: should be reversed\n            if wt[i] <= w:\n                dp[w] = max(dp[w], dp[w-wt[i]] + val[i])\n    return dp[W]\n\nprint(knap(6, [3], [4]))\n```\n",
+          "options": [
+            "0",
+            "4",
+            "8",
+            "12"
+          ],
+          "correct_option": "C",
+          "explanation": "Forward iteration allows reusing the current item multiple times (unbounded knapsack behavior). It takes two 3-weight copies to reach W=6, value 8.",
+          "distractor_rationale": "A: Only if no items fit. B: The correct 0/1 answer, but the bug inflates it. D: Requires three copies; capacity only fits two.",
+          "skills_covered": [
+            "Dynamic programming",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Coin denominations are `[1, 3, 4]`. For amount `6`, what is the minimum number of coins?",
+          "options": [
+            "1",
+            "2",
+            "4",
+            "3"
+          ],
+          "correct_option": "B",
+          "explanation": "Optimal is 3+3 (2 coins). Greedy 4+1+1 uses 3 coins and is suboptimal here.",
+          "distractor_rationale": "A: Impossible with given coins. C: Greedy trap (4+1+1). D: Overshoots even the greedy count.",
+          "skills_covered": [
+            "Dynamic programming",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Shortest path in a grid (4-neighborhood). `1` is a wall, `0` is free. Start is S at (0,0); target T at (2,3).\n```python\ngrid = [\n  ['S', 0,   1,   0],\n  [  1,  0,  1,  0],\n  [  0,  0,  0, 'T'],\n]\n```\nWhat is the BFS shortest path length from S to T?",
+          "options": [
+            "6",
+            "7",
+            "4",
+            "5"
+          ],
+          "correct_option": "D",
+          "explanation": "One shortest path is (0,0)→(0,1)→(1,1)→(2,1)→(2,2)→(2,3), which is 5 moves.",
+          "distractor_rationale": "A: Misses one step through the (2,2) waypoint. C/D: Overestimates; BFS on this layout reaches T in 5.",
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Stacks and queues"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Merging k sorted lists of equal length m with a min-heap of current heads. Let total elements be N=mk. What is the time complexity?",
+          "options": [
+            "O(mk log k)",
+            "O(m log m)",
+            "O(m log k)",
+            "O(mk)"
+          ],
+          "correct_option": "A",
+          "explanation": "Each of the N=mk extractions/pushes costs O(log k) on the heap, so O(mk log k).",
+          "distractor_rationale": "B: Ignores k input lists; sorting m elements isn’t the task. C: Pairwise merge in a chain could be O(mk^2); heap merging needs log k. D: Omits factor k for all elements processed.",
+          "skills_covered": [
+            "Priority queues and heaps",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A transit-routing service models stations as nodes and edges as transfers. Most transfers take 1 minute, but some are zero-minute platform crossovers. Transfers are directed. You need the minimum travel time from a source to all stations. The graph has up to 5 million edges, weights are only 0 or 1, and there are no negative weights.",
+          "task": "Choose and justify the algorithm, data structures, and complexity to compute all-pairs-from-source minimum times. Explain why your choice is correct on 0/1 weights and what would break if you used plain BFS or standard Dijkstra with a binary heap instead. Outline how you would implement it to be cache-friendly on an adjacency-list graph.",
+          "expected_answer": "Use 0-1 BFS with a deque. Maintain distance array dist initialized to +inf except source 0. For each popped u, relax edge (u,v,w): if dist[u]+w < dist[v], update dist[v]; push v to the front of the deque if w==0, else to the back if w==1. Correctness follows from the fact that with weights in {0,1}, the deque maintains nodes in nondecreasing dist order without a full priority queue; it simulates Dial’s algorithm for small integer weights. Complexity is O(V+E) time and O(V) space, as each edge is processed once and each vertex is enqueued/dequeued O(1) amortized. Plain BFS fails because it counts hops, treating 0 as 1 (overestimates). Standard Dijkstra with a binary heap is correct but runs in O((V+E) log V); asymptotically slower and with larger constants. Data structures: contiguous CSR (compressed sparse row) adjacency to improve locality, a fixed-size deque, and an array of ints for dist. Implementation notes: store edges as (to,weight) with weight as uint8; guard against overflow; early exit if all remaining deque nodes have dist >= current best to a queried target. If weights could be 2 or more, generalize to Dial’s buckets or standard Dijkstra with a min-heap.",
+          "rubric": [
+            {
+              "criterion": "Chooses 0-1 BFS with deque and states why 0/1 weights enable it",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct complexity analysis (O(V+E) time, O(V) space) and comparison against BFS/Dijkstra",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains correctness argument (monotone dist order via deque or bucket interpretation)",
+              "marks": 2
+            },
+            {
+              "criterion": "Implementation/data-structure details for large graphs (CSR, memory, integer types, guardrails)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Priority queues and heaps",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You ingest a time-ordered log stream where each record may arrive at most k positions late (k known, k<<n). You must output the records in global ascending timestamp order online with low memory and near-linear throughput. Stability is required for equal timestamps.",
+          "task": "Propose an algorithm and design a component that outputs the stream in order with bounded memory. Include: data structures, how many items you buffer, how you prove stability, and complexity in n and k. Also discuss how you would handle a sudden spike where k temporarily doubles without data loss or order violation.",
+          "expected_answer": "Maintain a min-heap of size at most k+1 holding the next k+1 records by timestamp. Push each arriving record; once the heap exceeds k+1, pop and emit the smallest. This guarantees the minimum among any window of k+1 is safe to emit, since any element’s true predecessor can be at most k earlier arrivals. Stability: store (timestamp, arrival_index, payload) and compare (timestamp, arrival_index) so ties break by arrival order. Complexity: O(n log k) time, O(k) memory. For a spike where k temporarily doubles, switch to a larger buffer threshold (2k+1); expose backpressure to upstream or spill to disk while maintaining a second-level buffer; still emit by repeatedly popping the min across in-memory and spill heaps. Prove correctness by window argument: when emitting, every not-yet-emitted element either sits in the heap or hasn’t arrived but cannot have a timestamp smaller than the min of the heap if lateness bound holds. If the spike violates the bound, pause emission until enough items buffered to restore the bound.",
+          "rubric": [
+            {
+              "criterion": "Correct heap-based design with buffer size k+1 and stability tie-breaker",
+              "marks": 3
+            },
+            {
+              "criterion": "Complexity stated as O(n log k) time and O(k) memory with justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound correctness argument based on lateness window reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Handling k spike: strategy that preserves order and avoids loss (backpressure/spill)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Sorting algorithms",
+            "Priority queues and heaps",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A payment service must compute the minimum number of coins to make change. You are given arbitrary coin systems where greedy can fail. Example: coins = [1, 4, 6]. For amount 8, greedy takes 6+1+1=3 coins, but 4+4=2 is optimal.",
+          "task": "Design a dynamic programming solution and explain the state, recurrence, base cases, iteration order, and how to reconstruct one optimal multiset of coins. Analyze time/space complexity. Demonstrate on coins=[1,4,6], amount=8 with the resulting dp array and one optimal solution.",
+          "expected_answer": "Use 1D DP over amount: dp[a] = min coins to make amount a. Base: dp[0]=0; dp[a]=+inf initially. For each a from 1..A, dp[a] = min over coins c≤a of (dp[a−c]+1). Track parent[a] = c that achieved the min to reconstruct. Iteration order: ascending a ensures subproblems dp[a−c] are done. Complexity: O(A·m) time, O(A) space (A amount, m coin types). For coins [1,4,6] and A=8: dp[0]=0; dp[1]=1(1), dp[2]=2(1+1), dp[3]=3, dp[4]=1(4), dp[5]=2(4+1), dp[6]=1(6), dp[7]=2(6+1 or 4+1+1+1 but 2 is min using 6+1), dp[8]=2 via 4+4. parent reconstructs 4,4.",
+          "rubric": [
+            {
+              "criterion": "Correct state, recurrence, and base cases for min-coin DP",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct iteration order and reconstruction method (parent array or backpointers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Complexity analysis O(A·m) time, O(A) space",
+              "marks": 1
+            },
+            {
+              "criterion": "Worked example for [1,4,6], A=8 with correct dp values and reconstruction",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Dynamic programming",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must compute not only the hop-count shortest distance in an unweighted directed graph from S to every node, but also the number of distinct shortest paths to each node modulo 1e9+7. The graph may have up to 200k vertices and 1M edges.",
+          "task": "Propose an algorithm that outputs both distances and counts. Explain how updates happen when discovering a node for the first time and when finding an alternative path with the same distance. Specify data structures and complexity. Illustrate on this graph from S:\n```text\nS->A, S->B\nA->C, B->C, A->D, B->D\nC->T, D->T\n```\nWhat are dist[T] and count[T]?",
+          "expected_answer": "Run BFS from S to compute levels. Maintain arrays dist (initialized to +inf; dist[S]=0) and ways (ways[S]=1). When relaxing edge (u,v):\n- If dist[v] == +inf, set dist[v]=dist[u]+1 and ways[v]=ways[u]. Enqueue v.\n- Else if dist[v] == dist[u]+1, add ways[u] to ways[v] (mod M). Ignore longer paths.\nUse adjacency lists and a queue. Complexity O(V+E). On the example: dist[A]=1, dist[B]=1; dist[C]=2 via A or B so ways[C]=2; dist[D]=2 and ways[D]=2. dist[T]=3 and ways[T]=ways[C]+ways[D]=4.",
+          "rubric": [
+            {
+              "criterion": "Correct BFS-level framework with dist and ways arrays and update rules",
+              "marks": 3
+            },
+            {
+              "criterion": "Data structures and complexity O(V+E) stated",
+              "marks": 1
+            },
+            {
+              "criterion": "Correct handling of equal-length alternative paths (mod sum)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct example outcome (dist[T]=3, count[T]=4) with brief justification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Algorithms"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Graph problems: shortest paths toolkit",
+          "brief": "Build a command-line toolkit that computes shortest paths in directed graphs from a given source using three methods: (1) BFS for unweighted graphs, (2) 0-1 BFS for graphs with weights in {0,1}, and (3) Dijkstra’s algorithm with a binary heap for nonnegative integer weights. The tool must read an adjacency-list file, output distances and one recovered shortest path to a specified target if reachable, and detect/report the presence of any negative edges (abort with an error in that case). Include unit tests and a README with complexity and design notes.",
+          "deliverable": "Graph problems",
+          "acceptance_criteria": [
+            "CLI interface: `solve <method> <graph_file> <source> [<target>]` where method ∈ {bfs, zeroone, dijkstra}",
+            "Input format accepted: text file with lines `u v w` (w omitted => treat as 1); nodes are strings; multiple edges allowed; ignore self-loops",
+            "Correctness: For provided sample graphs (unweighted, 0/1-weighted, weighted nonnegative), outputs exact distances from source to all nodes and prints a valid shortest path to target when given",
+            "Negative edge detection: if any edge has w<0, tool exits nonzero with message and no distances computed",
+            "Performance: On a synthetic graph with 1e5 edges, each method completes within 5 seconds on a typical laptop (note in README the observed runtime)",
+            "Unit tests: at least 6 tests covering disconnected nodes, multiple edges, zero-weight edges, tie paths, and path reconstruction",
+            "README: documents algorithms used, complexities (BFS O(V+E), 0-1 BFS O(V+E), Dijkstra O((V+E) log V)), and data-structure choices (adjacency lists, deque, heap)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Implements all three algorithms correctly with appropriate data structures",
+              "marks": 6
+            },
+            {
+              "criterion": "I/O contract and CLI behavior match specification (formats, flags, errors)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correctness on edge cases and provided tests (includes path reconstruction)",
+              "marks": 5
+            },
+            {
+              "criterion": "Negative-edge detection and graceful abort for invalid method/graph",
+              "marks": 2
+            },
+            {
+              "criterion": "Quality of README (complexities, design tradeoffs, performance notes)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Graphs (representation, BFS, DFS, shortest-path basics)",
+            "Priority queues and heaps",
+            "Algorithms",
+            "Complexity analysis (Big-O)",
+            "Stacks and queues"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone problem portfolio (sorting, greedy, dynamic programming)",
+          "brief": "Produce a small portfolio that demonstrates advanced patterns: (A) Sorting: implement two comparison-based sorts (e.g., mergesort and quicksort with median-of-three pivot) and a heap-based k-sorted stream sorter; (B) Greedy: solve activity selection (max non-overlapping intervals) with proof of correctness sketch; (C) Dynamic programming: solve two problems (minimum coins to make change with reconstruction; 0/1 knapsack with 1D DP). Include complexity analyses and unit tests. Provide a short write-up explaining when greedy fails (with a counterexample) and how the DP handles it.",
+          "deliverable": "Capstone problem portfolio",
+          "acceptance_criteria": [
+            "Repository/folder with src code, tests, and a short write-up (markdown or PDF)",
+            "Sorting: correct implementations of mergesort and quicksort; both stable/instability properties noted; measured runtime on random arrays (n≥1e5) included in write-up",
+            "K-sorted stream sorter using a min-heap of size k+1; correctness test with shuffled stream of lateness ≤k",
+            "Greedy activity selection: returns optimal set; includes a counterexample where greedy for coin change fails",
+            "Dynamic programming: (1) coin change returns min coin count and one optimal composition; (2) 0/1 knapsack returns optimal value and the chosen item indices; both include time/space complexities",
+            "Unit tests: ≥10 tests across all tasks, including edge cases (ties, duplicates, zero/empty inputs)",
+            "Build/run instructions that work on a clean machine; no hidden dependencies"
+          ],
+          "rubric": [
+            {
+              "criterion": "Sorting implementations (mergesort, quicksort) correctness and analysis",
+              "marks": 5
+            },
+            {
+              "criterion": "Heap-based k-sorted stream sorter correctness and complexity reasoning",
+              "marks": 4
+            },
+            {
+              "criterion": "Greedy activity selection correctness and counterexample for greedy coin change",
+              "marks": 3
+            },
+            {
+              "criterion": "DP coin change and 0/1 knapsack correctness with reconstruction and complexities",
+              "marks": 6
+            },
+            {
+              "criterion": "Tests, documentation, and build instructions quality",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Sorting algorithms",
+            "Priority queues and heaps",
+            "Dynamic programming",
+            "Algorithms",
+            "Complexity analysis (Big-O)"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

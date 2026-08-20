@@ -183,6 +183,53 @@ through to its default credential chain and picks up the **execution role** — 
 static keys later is an env-var change with no code change, once the role has
 `s3:PutObject`/`s3:GetObject` on `arn:aws:s3:::career-tours-bkt/*`.
 
+### Database pressure returns 503, not 500
+
+Two `errorhandler`s in `app.py` turn a transient database failure into a `503` with
+`Retry-After` and `"retryable": true`:
+
+| Exception | Cause | Retry-After |
+|---|---|---|
+| `sqlalchemy.exc.TimeoutError` | connection pool exhausted | 2s |
+| `sqlalchemy.exc.OperationalError` | Neon compute waking, or a dropped connection | 3s |
+
+Measured: 64 concurrent sittings against `pool_size: 1, max_overflow: 2` produced
+40 responses of `QueuePool limit of size 1 overflow 2 reached, timeout 10.00`, every
+one served as a `500`. **That status is a lie with a cost** — a 500 means "this
+request is broken, do not retry", so a client that believed it would discard a
+student's answer that nothing was actually wrong with.
+
+**The pool is not the bug and should stay small.** This runs as a container-image
+Lambda, where concurrency comes from more invocations rather than more threads, and
+one connection per sandbox is what keeps Neon's connection limit reachable. After
+the change, the same 64-concurrent run produced zero 500s and all 250 answer-saves
+succeeded.
+
+The remaining ceiling is therefore Neon connections × Lambda concurrency, not this
+code: each sandbox holds one connection, so concurrent invocations map roughly 1:1
+onto Neon connections. Worth knowing the plan's limit before a full cohort sits
+tests at once.
+
+### Round trips are the latency, not the queries
+
+One round trip to this Neon instance measures **~74ms** (cross-region), so per-request
+trip *count* dominates. The answer-save path was cut from 6 to 4:
+
+- The clock used to be its own `SELECT EXTRACT(EPOCH ...)`. It is now computed by
+  the database in the same query that reads the sitting row — 74ms of pure latency
+  removed from every request that touches a sitting, for a subtraction the previous
+  query could do for free.
+- The path fetched all ten stems and explanations just to rebuild the option
+  shuffle. It now uses a key-only projection, cached in-process for 5 minutes
+  (`section_code` → ids, options, correct option). Both projections were verified to
+  produce an identical shuffle, so the cache cannot change what a student sees.
+  TTL rather than permanent because `load_section_questions.py` can reload the
+  corpus without a restart; in Lambda it is usually a per-container memo.
+
+Sequential p50 for one answer save: 538ms → **466ms**. `pool_pre_ping` adds one
+more trip per checkout, which is deliberate — a connection can be dead after a
+Lambda freeze.
+
 ### Known risk: secrets are plaintext
 
 Every secret above — including `OPENAI_API_KEY`, `HF_TOKEN`, `LANGSMITH_API_KEY`,

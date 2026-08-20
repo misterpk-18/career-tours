@@ -1,0 +1,1776 @@
+{
+  "course_code": "NT-C-026",
+  "course_name": "AWS Cloud",
+  "sections": [
+    {
+      "section_code": "NT-C-026-S01",
+      "skills_assessed": [
+        "AWS IAM",
+        "cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run this call from Account A (111122223333):\n```bash\naws sts assume-role \\\n  --role-arn arn:aws:iam::444455556666:role/Deploy \\\n  --role-session-name build \\\n  --external-id abc\n```\nCaller identity:\n```json\n{\n  \"UserId\": \"AIDA...:ci-user\",\n  \"Account\": \"111122223333\",\n  \"Arn\": \"arn:aws:iam::111122223333:user/ci-user\"\n}\n```\nTarget role trust policy in Account B (444455556666):\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:role/CI\"},\n      \"Action\": \"sts:AssumeRole\",\n      \"Condition\": {\"StringEquals\": {\"sts:ExternalId\": \"abc\"}}\n    }\n  ]\n}\n```\nCloudTrail shows AccessDenied on AssumeRole. Without creating new IAM entities, which change makes this succeed while keeping least privilege?",
+          "options": [
+            "Keep the trust policy as-is and add `--source-identity ci-user` to the CLI call.",
+            "Update the trust policy Principal to the specific user ARN:\n```json\n{\n  \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:user/ci-user\"}\n}\n```",
+            "Attach an inline policy to the target role granting it `\"Action\": \"sts:AssumeRole\"` on itself.",
+            "Broaden the trust to the whole account root:\n```json\n{\n  \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:root\"}\n}\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "AssumeRole authorization is controlled by the target role's trust policy. The caller is a user, but the trust allows only a role principal. Changing the Principal to the exact user ARN authorizes the caller with least privilege and matches the external ID requirement.",
+          "distractor_rationale": "B: The role’s permissions policy does not control who can assume it; the trust policy does. C: `--source-identity` tags the session but does not satisfy the trust Principal mismatch. D: Trusting the account root would work but is broader than necessary and violates least privilege.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A bucket policy allows uploads only from the office IP range, breaking a Lambda integration that egresses via a NAT with dynamic IPs. Current bucket policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"OfficeOnly\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": [\"s3:PutObject\"],\n      \"Resource\": \"arn:aws:s3:::example-bucket/*\",\n      \"Condition\": {\"IpAddress\": {\"aws:SourceIp\": \"203.0.113.0/24\"}}\n    }\n  ]\n}\n```\nThe Lambda function role is `arn:aws:iam::111122223333:role/ingestor-lambda`. Choose the revision that preserves the office IP restriction for everyone else but restores ingestion from the Lambda role.",
+          "options": [
+            "Add a targeted allow for the Lambda role without the IP condition:\n```json\n{\n  \"Sid\": \"LambdaException\",\n  \"Effect\": \"Allow\",\n  \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:role/ingestor-lambda\"},\n  \"Action\": [\"s3:PutObject\"],\n  \"Resource\": \"arn:aws:s3:::example-bucket/*\"\n}\n```",
+            "Match the Lambda client by user agent:\n```json\n{\n  \"Condition\": {\"StringLike\": {\"aws:UserAgent\": \"*AWSLambda*\"}}\n}\n```",
+            "Detach the bucket policy and instead attach this identity policy to the Lambda role:\n```json\n{\n  \"Effect\": \"Allow\",\n  \"Action\": [\"s3:PutObject\"],\n  \"Resource\": \"arn:aws:s3:::example-bucket/*\"\n}\n```",
+            "Keep the policy and add a condition to rely on AWS internals:\n```json\n{\n  \"Condition\": {\"Bool\": {\"aws:ViaAWSService\": \"true\"}}\n}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "An additional Allow for the specific Lambda role bypasses the IP condition for that principal only. With no explicit Deny present, the request is authorized for that role and remains restricted by IP for all other principals.",
+          "distractor_rationale": "B: Identity-based allows cannot override a bucket policy’s restrictions if the bucket policy does not grant access; the request is still implicitly denied. C: `aws:ViaAWSService` does not apply to direct S3 API calls made by a role; it applies when a service calls on your behalf. D: User agent strings are not a reliable or recommended control and can be spoofed; also S3 does not expose it as a policy key for authorization.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your security team adds this guardrail as a permission policy attached to all human IAM users to reduce risk/cost outside the EU:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"DenyOutsideEU\",\n      \"Effect\": \"Deny\",\n      \"Action\": \"*\",\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringNotEqualsIfExists\": {\n          \"aws:RequestedRegion\": [\"eu-west-1\", \"eu-central-1\"]\n        }\n      }\n    }\n  ]\n}\n```\nWhich call still succeeds for those users?",
+          "options": [
+            "```bash\naws iam create-user --user-name temp-ops\n```",
+            "```bash\naws ec2 run-instances --region us-east-1 --image-id ami-1234567890abcdef0 --instance-type t3.micro\n```",
+            "```bash\naws s3api create-bucket --bucket test-outside-eu --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1\n```",
+            "```bash\naws sts assume-role --role-arn arn:aws:iam::999999999999:role/Cross --role-session-name test\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "With StringNotEqualsIfExists, if a service does not set `aws:RequestedRegion` (IAM is global), the condition does not evaluate to true and the Deny does not apply. Regioned EC2/S3 calls set the key and are denied. STS requests generally resolve to a region (global or regional endpoint) and will be denied when the resolved region is not in the allowed list.",
+          "distractor_rationale": "B and C: Both are region-scoped and set `aws:RequestedRegion` to us-east-1, which fails the condition and triggers the Deny. D: STS requests resolve to a region; using the global endpoint typically maps to us-east-1 and will be denied by the guardrail.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Change ticket for CVE-XXXX-YYYY mitigation reads:\n```text\n1) EC2 web fleet (Amazon Linux 2): wait for AWS to patch the OS on our instances\n2) Amazon RDS MySQL: rely on AWS to patch the underlying OS\n3) AWS Lambda runtimes: rely on AWS to patch the managed runtime\n4) S3 buckets: ensure server-side encryption is configured per company policy\n```\nWhich line misassigns responsibility under the shared responsibility model?",
+          "options": [
+            "3) AWS Lambda runtimes: rely on AWS to patch the managed runtime",
+            "1) EC2 web fleet (Amazon Linux 2): wait for AWS to patch the OS on our instances",
+            "2) Amazon RDS MySQL: rely on AWS to patch the underlying OS",
+            "4) S3 buckets: ensure server-side encryption is configured per company policy"
+          ],
+          "correct_option": "B",
+          "explanation": "On EC2, the customer is responsible for OS-level patching inside the instance. AWS patches the hypervisor and underlying infrastructure. RDS OS patching and Lambda runtime patching are AWS responsibilities, while configuring S3 encryption to meet policy is the customer's responsibility.",
+          "distractor_rationale": "B: For RDS, AWS manages the underlying OS; customers patch at the engine-level per maintenance window. C: AWS manages the Lambda runtime environment. D: Customers must configure S3 encryption; this is correctly assigned to the customer.",
+          "skills_covered": [
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Group `Admins` has this policy to enforce MFA:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Deny\",\n      \"Action\": [\"iam:DeleteUser\", \"iam:CreateAccessKey\", \"ec2:*\", \"s3:*\", \"rds:*\", \"*\"],\n      \"Resource\": \"*\",\n      \"Condition\": {\"Bool\": {\"aws:MultiFactorAuthPresent\": \"false\"}}\n    }\n  ]\n}\n```\nAn admin without MFA enabled sees `AccessDenied` when trying `ec2:StartInstances`. What action allows them to proceed without weakening the control?",
+          "options": [
+            "Add an extra Allow for `ec2:StartInstances` to the user to override the Deny.",
+            "Use long-lived access keys with the AWS CLI to bypass console MFA prompts.",
+            "Sign in with MFA and obtain a session where `aws:MultiFactorAuthPresent` is true.",
+            "Remove the Deny and keep only Allows on required actions."
+          ],
+          "correct_option": "C",
+          "explanation": "The explicit Deny based on `aws:MultiFactorAuthPresent` overrides any Allows. The correct fix is to meet the condition by authenticating with MFA.",
+          "distractor_rationale": "B: Removing the Deny weakens enforcement and violates the requirement. C: Explicit Deny takes precedence over Allows; it will not override. D: Long-lived keys are still subject to the same condition; using them without MFA remains denied.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "User `dev1` has an inline policy and is in group `Viewers`.\nInline user policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\"Effect\": \"Allow\", \"Action\": \"ec2:*\", \"Resource\": \"*\"}]\n}\n```\nGroup `Viewers` policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\"Effect\": \"Deny\", \"Action\": \"ec2:TerminateInstances\", \"Resource\": \"*\"}]\n}\n```\nWhat happens when `dev1` runs `aws ec2 terminate-instances --instance-ids i-0123456789abcdef0`?",
+          "options": [
+            "Allowed only if the instance has a specific tag permitting termination.",
+            "Allowed, because user inline policies take precedence over group policies.",
+            "Allowed, but only in the region where the user was created.",
+            "Denied, because explicit Deny in any applicable policy overrides Allows."
+          ],
+          "correct_option": "D",
+          "explanation": "An explicit Deny in any applicable policy (user, group, boundary, or session) overrides all Allows. The terminate action is denied.",
+          "distractor_rationale": "A: There is no precedence where user inline beats group; evaluation considers all policies and Deny wins. B: IAM users are global; region of creation is irrelevant. D: No tag condition exists in the provided policies; introducing one would be a different configuration.",
+          "skills_covered": [
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "An EC2 instance with an attached instance profile cannot get credentials:\n```bash\ncurl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/\n# returns empty\n```\nRole trust policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\"Effect\": \"Allow\", \"Principal\": {\"AWS\": \"*\"}, \"Action\": \"sts:AssumeRole\"}\n  ]\n}\n```\nWhich change is required for the instance to receive role credentials via IMDS?",
+          "options": [
+            "Set the trust policy Principal to the EC2 service:\n```json\n{\n  \"Principal\": {\"Service\": \"ec2.amazonaws.com\"}\n}\n```",
+            "Use long-term access keys on the instance profile instead of a role.",
+            "Add an inline policy to the role allowing `sts:GetSessionToken`.",
+            "Attach an identity policy allowing `sts:AssumeRole` to the EC2 instance."
+          ],
+          "correct_option": "A",
+          "explanation": "For EC2 instances to assume a role via the instance profile, the role's trust policy must trust the EC2 service principal `ec2.amazonaws.com`.",
+          "distractor_rationale": "A: Instances don’t have identities that can hold identity policies; the instance role is assumed by the EC2 service. B: `GetSessionToken` is irrelevant; the issue is trust, not permissions. C: Long-term keys on an instance defeat the purpose of roles and do not integrate with IMDS.",
+          "skills_covered": [
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You try to restrict DescribeInstances to a specific instance:\nPolicy attached to user:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Action\": [\"ec2:DescribeInstances\"],\n    \"Resource\": [\"arn:aws:ec2:us-east-1:111122223333:instance/i-0123456789abcdef0\"]\n  }]\n}\n```\nCommand:\n```bash\naws ec2 describe-instances --instance-ids i-0123456789abcdef0 --region us-east-1\n```\nResult: AccessDenied. Why, and what change fixes it without over-broadening?",
+          "options": [
+            "The instance ARN is missing a wildcard; change it to `...:instance/*`.",
+            "Use `ec2:GetInstance` instead of `DescribeInstances` to target a single ARN.",
+            "DescribeInstances does not support resource-level permissions; set `\"Resource\": \"*\"` and rely on request parameters to scope results.",
+            "Switch to the `ec2:ListInstances` action which supports ARNs."
+          ],
+          "correct_option": "C",
+          "explanation": "Many EC2 Describe/List actions are not resource-level and require `Resource: *`. You must allow the action broadly and scope with request parameters on the client side.",
+          "distractor_rationale": "B: Wildcards don't help when the action itself is not resource-scoped. C and D: These actions do not exist; the correct action is DescribeInstances.",
+          "skills_covered": [
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You need a policy to prevent resource creation outside `eu-west-1` and `eu-central-1` without breaking global services. Pick the best statement to attach alongside existing Allows.",
+          "options": [
+            "```json\n{\n  \"Effect\": \"Deny\",\n  \"Action\": \"*\",\n  \"Resource\": \"*\",\n  \"Condition\": {\"StringNotEquals\": {\"aws:RequestedRegion\": [\"eu-west-1\", \"eu-central-1\"]}}\n}\n```",
+            "```json\n{\n  \"Effect\": \"Deny\",\n  \"NotAction\": [\"iam:*\", \"route53:*\", \"cloudfront:*\", \"support:*\", \"budgets:*\"],\n  \"Resource\": \"*\",\n  \"Condition\": {\"StringNotEqualsIfExists\": {\"aws:RequestedRegion\": [\"eu-west-1\", \"eu-central-1\"]}}\n}\n```",
+            "```json\n{\n  \"Effect\": \"Allow\",\n  \"Action\": \"*\",\n  \"Resource\": \"*\",\n  \"Condition\": {\"StringEquals\": {\"aws:RequestedRegion\": [\"eu-west-1\", \"eu-central-1\"]}}\n}\n```",
+            "```json\n{\n  \"Effect\": \"Deny\",\n  \"Action\": \"*\",\n  \"Resource\": \"*\",\n  \"Condition\": {\"StringEquals\": {\"aws:Region\": [\"eu-west-1\", \"eu-central-1\"]}}\n}\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Using Deny with `StringNotEqualsIfExists` avoids impacting calls where the key is not set, and `NotAction` exempts global services that should remain usable. This is a common pattern for region guardrails without collateral damage.",
+          "distractor_rationale": "A: Without IfExists or exemptions, global services may be inadvertently blocked. C: `aws:Region` is not a valid condition key. D: Relying only on Allows is bypassable by other Allows and does not create a hard guardrail.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You attach this policy to enforce tag-on-create for cost allocation:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Sid\": \"DenyWithoutCostCenter\",\n    \"Effect\": \"Deny\",\n    \"Action\": [\"ec2:RunInstances\"],\n    \"Resource\": \"*\",\n    \"Condition\": {\"Null\": {\"aws:RequestTag/CostCenter\": \"true\"}}\n  }]\n}\n```\nA developer runs:\n```bash\naws ec2 run-instances \\\n  --image-id ami-1234567890abcdef0 \\\n  --instance-type t3.micro \\\n  --region eu-west-1\n```\nWhat happens and why?",
+          "options": [
+            "The deny applies to console launches only; CLI calls are unaffected.",
+            "The launch is allowed only in eu-west-1 due to the organization’s region guardrail.",
+            "The launch succeeds; the instance can be tagged later to satisfy cost allocation.",
+            "The launch is denied until the developer supplies a `CostCenter` tag in the request."
+          ],
+          "correct_option": "D",
+          "explanation": "The `Null` condition denies when the request does not include the required tag key at create time, enforcing least privilege and governance at the API boundary.",
+          "distractor_rationale": "B: This policy enforces tag-on-create; post-creation tagging does not satisfy the condition. C: The policy shown is not region-scoped; region guardrails would be separate. D: IAM policies apply uniformly to API calls regardless of console or CLI.",
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A vendor’s CI system in Account A must deploy CloudFormation stacks to your Account B only in EU regions to meet data residency commitments and contain spend. Auditors also require that no deployments occur outside `eu-west-1` or `eu-central-1`, and that long-lived credentials are not issued to the vendor.",
+          "task": "Design the access pattern and controls. Specify the IAM role, trust policy (including any external ID), session configuration, and guardrail policy needed to restrict regions while preserving the vendor’s ability to deploy in the two allowed regions. Justify each design choice in terms of least privilege and shared responsibility.",
+          "expected_answer": "Propose a cross-account role `DeployEUOnly` in Account B with a trust policy that names only the vendor’s principal (their CI role or user) and requires a specific `sts:ExternalId`. Limit the assume role session duration (e.g., 1 hour) and consider `sts:TagSession` for traceability. Attach to the role a permissions policy that allows only the CloudFormation/related actions required. Add a separate Deny statement using `StringNotEqualsIfExists` on `aws:RequestedRegion` to enforce region restriction, optionally with `NotAction` exempting IAM/Route53/etc. Show example trust and permissions policy JSON. Explain why roles (ephemeral credentials) satisfy the no-long-lived-keys requirement, and how region guardrails reduce risk/cost. Note IAM’s global scope and how `IfExists` avoids breaking global services. Mention logging (CloudTrail) and conditions like `aws:PrincipalArn` or external ID to prevent confused-deputy problems.",
+          "rubric": [
+            {
+              "criterion": "Correctly proposes role-based cross-account access (no long-lived keys) with a precise Principal and ExternalId in trust policy",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes and correctly explains a region guardrail using `aws:RequestedRegion` with IfExists and appropriate exemptions",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines least-privilege permissions for deployment (scoped actions/resources) and short session duration",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains reasoning tied to shared responsibility, risk reduction, and auditability (e.g., session tags/CloudTrail)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your security scanner flags that an S3 bucket with customer PDFs is publicly readable. The platform team says, “AWS made it public.” The bucket was created two years ago. You must restore least privilege and document responsibility boundaries and corrective actions.",
+          "task": "Write what actually caused the exposure under IAM’s evaluation logic and shared responsibility, then propose a concrete remediation plan and verifiable checks to prove closure. Your plan must avoid breaking existing producers that write into the bucket from a VPC.",
+          "expected_answer": "Cause is customer-side misconfiguration: a public bucket policy and/or ACL, not AWS. Under shared responsibility, AWS secures the infrastructure; customers configure access policies. Remediation: enable and enforce S3 Block Public Access at the account and bucket level; remove public ACLs and any `Principal: *` Allows; keep required access via specific principals (roles) and/or VPC endpoints. Add a bucket policy that allows only specific role ARNs and denies non-VPC endpoint access if using Gateway Endpoint (Condition on `aws:SourceVpce`), leaving producers unaffected. Verification: Access Analyzer finding resolved; `aws s3api get-bucket-policy-status` shows not public; attempt unauthenticated GET fails; authenticated role PUT still succeeds; CloudTrail shows only authorized principals. Document the controls and who owns them.",
+          "rubric": [
+            {
+              "criterion": "Correctly attributes responsibility to customer configuration and explains IAM evaluation (public policy/ACL) rather than AWS fault",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete remediation steps including Block Public Access, policy/ACL fixes, and principal-specific access that preserves producer flows",
+              "marks": 3
+            },
+            {
+              "criterion": "Verifiable checks (Access Analyzer status, CLI/API evidence of deny to public and allow to producers)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your company mandates MFA for all human administrators, but an automation role used by a deployment pipeline is failing because of an account-wide policy that denies actions when `aws:MultiFactorAuthPresent` is false.",
+          "task": "Propose a corrected policy design that enforces MFA for humans without blocking non-interactive automation roles. Describe how you will separate or target the controls, and provide policy snippets that demonstrate the change. Explain trade-offs and how you will prove it works.",
+          "expected_answer": "Separate human users from automation by identity (e.g., put human users in a `Humans` group; automation uses roles). Attach an explicit Deny to the `Humans` group that triggers only for users: use a condition targeting user principals (e.g., scope by Principal ARN pattern `arn:aws:iam::*:user/*`, or better, require a principal tag `Type=Human` and enforce tagging with a permission boundary or provisioning process). Example Deny: Effect Deny, Action `*`, Resource `*`, Condition `BoolIfExists` on `aws:MultiFactorAuthPresent=false`, combined with `StringLike` `aws:PrincipalArn` for `*:user/*`. Exempt roles by not attaching the Deny to them (or add a Condition that requires `aws:PrincipalTag/Type=Human=true`). Validate: console/API calls by tagged users without MFA are denied; the pipeline role executes when assuming the role without MFA. Log evidence via CloudTrail and test calls.",
+          "rubric": [
+            {
+              "criterion": "Clear separation strategy between human users and automation roles (groups, tags, or both)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct IAM condition targeting (Principal pattern/tag) and MFA-based Deny that does not impact roles",
+              "marks": 3
+            },
+            {
+              "criterion": "Test/verification plan demonstrating both enforcement for humans and non-impact for automation",
+              "marks": 2
+            },
+            {
+              "criterion": "Discussion of least privilege and operational trade-offs (e.g., tagging governance, boundary use)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "A new customer portal must meet a 99.9% monthly availability target, keep EU customer data in-region, and avoid surprise bills during a pilot. There is no cross-region DR requirement for the pilot; business traffic is mostly in Ireland and Germany.",
+          "task": "Choose a region/AZ strategy, identify which controls are yours vs AWS under shared responsibility, and name price levers you will consciously set at launch. Deliver a concise architecture note outline with justifications.",
+          "expected_answer": "Pick a single EU region with multi-AZ for the pilot, e.g., `eu-west-1` (Ireland) for latency to Irish users, optionally `eu-central-1` if nearer to Germany, stating rationale. Use at least two AZs for stateful tiers to hit 99.9% with managed services that support multi-AZ. Data residency: ensure all data stores and backups remain in-region; restrict regions with an organization/user policy using `aws:RequestedRegion` IfExists pattern. Shared responsibility: customer configures IAM, encryption, patching on EC2, backup strategy; AWS operates facilities, AZ isolation, managed service substrates. Price levers: choose right-size instance types or serverless, enable multi-AZ only where needed, use on-demand for pilot, set budgets/alerts, and avoid cross-AZ chatter where not required. Include brief notes on monitoring and rollback.",
+          "rubric": [
+            {
+              "criterion": "Region and AZ choice tied to availability target and EU residency, with clear justification",
+              "marks": 2
+            },
+            {
+              "criterion": "Shared responsibility delineation listing at least three customer controls (IAM, patching, encryption/backups) vs AWS responsibilities",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete price levers (instance class/serverless choice, on-demand vs commitment, cross-AZ traffic awareness, budgets)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explicit region guardrail mention to prevent drift, and operational considerations (monitoring/rollback)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "cloud security and compliance",
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Architecture note: EU-resident pilot with 99.9% availability and spend guardrails",
+          "brief": "Produce a 1–2 page architecture note for a simple web application pilot that must keep data in the EU, meet 99.9% availability, and avoid accidental spend in non-EU regions. Focus on region/AZ choice, shared responsibility controls, and price levers. Include any IAM guardrail snippets you propose.",
+          "deliverable": "Architecture note document (Markdown or PDF) containing named region(s) and AZ count, a short HA plan, a shared responsibility control list, a cost control section, and at least one fenced IAM policy JSON snippet for region restriction.",
+          "acceptance_criteria": [
+            "Document explicitly names the chosen AWS region(s) and the number of AZs used, with a one-paragraph justification.",
+            "Contains a short HA plan describing what fails over where (e.g., multi-AZ for stateful tiers) to meet 99.9%.",
+            "Lists at least five controls with responsibility assignment (e.g., OS patching, encryption at rest, IAM/MFA, backups, monitoring), and clearly indicates customer vs AWS responsibilities.",
+            "Includes a fenced JSON IAM policy snippet that uses `StringNotEqualsIfExists` on `aws:RequestedRegion` (or an equivalent safe pattern) to restrict regions, with a one-sentence explanation.",
+            "Names at least three price levers (e.g., instance size or serverless, on-demand vs commitment, budgets/alerts, cross-AZ traffic considerations)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Region/AZ selection and justification aligned to availability and EU residency",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear HA plan consistent with 99.9% (multi-AZ for appropriate tiers)",
+              "marks": 4
+            },
+            {
+              "criterion": "Shared responsibility control list with correct ownership for at least five items",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct, safe IAM guardrail policy snippet and explanation",
+              "marks": 3
+            },
+            {
+              "criterion": "Price levers identified and tied to the pilot context",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "cloud security and compliance",
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Access lab: Least-privilege EU-only access with MFA",
+          "brief": "In a sandbox account, implement and test an IAM setup that enforces: (1) MFA for a human user before performing privileged actions, and (2) region restriction to `eu-west-1` and/or `eu-central-1`. Prove via CLI that allowed actions succeed in EU and fail elsewhere, and that automation via a role is not blocked by human MFA enforcement.",
+          "deliverable": "A single lab bundle (zip or folder) containing: (a) IAM policy JSON files (MFA-enforce policy and region-guardrail policy), (b) trust and permissions policies for one automation role, (c) a README with exact CLI commands used and their outputs (pasted), including failed and successful calls, and (d) a brief note explaining why each result occurred.",
+          "acceptance_criteria": [
+            "User `eu-admin` exists and is in a group with an explicit Deny based on `aws:MultiFactorAuthPresent=false` that applies to human actions; evidence shows an attempted privileged call without MFA fails, and the same call with MFA succeeds.",
+            "A region guardrail policy using `StringNotEqualsIfExists` on `aws:RequestedRegion` is attached (user or group) and evidence shows a successful `Describe` or `List` in `eu-west-1` (or `eu-central-1`) and a denied equivalent in `us-east-1`.",
+            "An automation role (e.g., `PipelineRole`) with a precise trust policy (service or principal) exists and can perform a benign action (e.g., `sts:GetCallerIdentity` or a read-only list) in an allowed EU region without MFA; evidence of AssumeRole success is included.",
+            "README includes raw CLI outputs for: `aws sts get-caller-identity`, one allowed call in EU region, one denied call in a non-EU region, and an AssumeRole call, with brief annotations connecting to the attached policies."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct MFA enforcement policy applied to human user with demonstrated deny/allow behavior",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct and safe region guardrail policy with demonstrated EU allow and non-EU deny",
+              "marks": 6
+            },
+            {
+              "criterion": "Automation role set up with precise trust and demonstrated function without MFA blockage",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and completeness of evidence (commands, outputs, and explanations) mapping to policies",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-026-S02",
+      "skills_assessed": [
+        "Amazon VPC",
+        "Subnetting",
+        "Routing",
+        "DNS",
+        "Amazon EC2",
+        "Amazon S3",
+        "Amazon EBS",
+        "cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "An EC2 instance in a private subnet must read from S3 without traversing the public internet and without managing NAT infrastructure. Current state:\n\n```yaml\nvpc:\n  cidr: 10.0.0.0/16\nsubnets:\n  private-a: { cidr: 10.0.1.0/24, az: us-east-1a, route_table: rtb-priv }\nroute_tables:\n  rtb-priv:\n    - { destination: 10.0.0.0/16, target: local }\n    # no 0.0.0.0/0 route, no S3 prefix-list route\nendpoints:\n  # none\ninstance:\n  id: i-0abc, subnet: private-a, public_ip: null\nsecurity_group_egress:\n  - { protocol: tcp, port: 443, cidr: 0.0.0.0/0 }\n```\n\nFrom the instance:\n\n```bash\naws s3 ls s3://my-data-bucket --region us-east-1\n# error: Could not connect to the endpoint URL: \"https://s3.us-east-1.amazonaws.com/\"\n```\n\nWhat single change enables access as required?",
+          "options": [
+            "Create a NAT Gateway in a public subnet and add 0.0.0.0/0 -> NAT to rtb-priv.",
+            "Open the security group egress to TCP/443 for 0.0.0.0/0 so HTTPS to S3 is allowed.",
+            "Create an S3 Gateway VPC Endpoint in us-east-1 and associate it with rtb-priv so S3 routes via the prefix list.",
+            "Assign a public IP to i-0abc so it can reach S3 directly over the internet."
+          ],
+          "correct_option": "C",
+          "explanation": "An S3 Gateway VPC Endpoint lets instances in private subnets reach S3 over the AWS network without internet or NAT. Associating the endpoint to the private route table automatically adds the S3 prefix-list route so traffic stays private.",
+          "distractor_rationale": "B is tempting because S3 uses HTTPS, but the route table has no path to the internet; permitting egress alone cannot create a path. C would require the subnet to be public with a route to an Internet Gateway; simply assigning a public IP in a private subnet with no IGW route will not work. D would work technically but violates the constraint to avoid traversing the public internet and managing NAT infrastructure.",
+          "skills_covered": [
+            "Amazon S3",
+            "Amazon VPC",
+            "Routing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You attempt to attach an existing EBS volume with data to an instance and get an error:\n\n```bash\naws ec2 describe-instances --instance-ids i-0123456789 --query 'Reservations[0].Instances[0].Placement.AvailabilityZone'\n# \"us-east-1a\"\n\naws ec2 describe-volumes --volume-ids vol-0abcd1234 --query 'Volumes[0].AvailabilityZone'\n# \"us-east-1b\"\n\naws ec2 attach-volume --volume-id vol-0abcd1234 --instance-id i-0123456789 --device /dev/xvdf\n# An error occurred (InvalidParameter) when calling the AttachVolume operation: \n#  The volume 'vol-0abcd1234' is not in the same availability zone as instance 'i-0123456789'\n```\n\nData on the volume must be preserved. What should you do?",
+          "options": [
+            "Stop i-0123456789 and change its Availability Zone to us-east-1b, then attach the volume.",
+            "Create a snapshot of vol-0abcd1234, then create a new volume from that snapshot in us-east-1a and attach it to i-0123456789.",
+            "Use EBS Multi-Attach to attach vol-0abcd1234 across AZs to i-0123456789.",
+            "Modify vol-0abcd1234 and change its Availability Zone to us-east-1a, then attach it."
+          ],
+          "correct_option": "B",
+          "explanation": "EBS volumes are AZ-scoped. To preserve data, snapshot the volume and create a new volume from that snapshot in the instance's AZ, then attach.",
+          "distractor_rationale": "A is impossible; an instance’s AZ cannot be changed after launch. C is invalid here; Multi-Attach works only for specific io1/io2 volumes and only within the same AZ. D cannot be done; you cannot change a volume’s AZ in-place.",
+          "skills_covered": [
+            "Amazon EBS",
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider this S3 bucket lifecycle and versioning state:\n\n```json\n{\n  \"Rules\": [\n    {\n      \"ID\": \"current-to-IA-30\",\n      \"Status\": \"Enabled\",\n      \"Filter\": {\"Prefix\": \"\"},\n      \"Transitions\": [ {\"Days\": 30, \"StorageClass\": \"STANDARD_IA\"} ],\n      \"NoncurrentVersionTransitions\": [ {\"NoncurrentDays\": 60, \"StorageClass\": \"GLACIER\"} ]\n    }\n  ]\n}\n```\n\nVersioning is enabled. For object key \"reports/summary.csv\": version v2 is 45 days old (current), and version v1 became noncurrent 45 days ago. What storage class applies now to each?",
+          "options": [
+            "v2: STANDARD_IA, v1: GLACIER",
+            "v2: STANDARD, v1: GLACIER",
+            "v2: STANDARD_IA, v1: STANDARD",
+            "v2: STANDARD, v1: STANDARD"
+          ],
+          "correct_option": "C",
+          "explanation": "The current version transitions to STANDARD_IA after 30 days, so v2 is in STANDARD_IA at day 45. The noncurrent version transitions to GLACIER after 60 noncurrent days; at 45 days noncurrent v1 has not yet transitioned and remains in STANDARD.",
+          "distractor_rationale": "B swaps timings; noncurrent to GLACIER at 60 days is not yet reached. C wrongly puts v1 in GLACIER at 45 days. D ignores the 30-day transition for the current version.",
+          "skills_covered": [
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A private instance cannot list an S3 bucket via a configured S3 Gateway Endpoint. DNS lookups from the instance time out. VPC details:\n\n```yaml\nvpc_cidr: 10.1.0.0/16\nvpc_dns_resolver: 10.1.0.2  # base+2\nsubnet: 10.1.1.0/24 (private)\nsecurity_group_egress:\n  - { proto: tcp, port: 443, to: 0.0.0.0/0 }  # only rule\nnotes: S3 Gateway Endpoint associated to this subnet's route table\n```\n\nFrom the instance:\n\n```bash\ndig +time=2 s3.amazonaws.com @10.1.0.2\n# ;; connection timed out; no servers could be reached\n```\n\nWhat is the minimal change that restores S3 access while keeping all traffic private?",
+          "options": [
+            "Add an inbound rule allowing UDP/53 from 10.1.0.2 on the instance’s security group.",
+            "Add 0.0.0.0/0 -> Internet Gateway to the private subnet’s route table.",
+            "Add an egress rule allowing TCP/443 to 0.0.0.0/0 on the instance’s security group.",
+            "Add an egress rule allowing UDP/53 to 10.1.0.2 on the instance’s security group."
+          ],
+          "correct_option": "D",
+          "explanation": "The instance must reach the VPC DNS resolver at 10.1.0.2 over UDP/53 to resolve S3. Allowing UDP/53 egress to the resolver enables DNS while keeping data traffic private via the S3 endpoint.",
+          "distractor_rationale": "B already exists; allowing 443 does not fix DNS. C is unnecessary because the instance initiates DNS queries outbound. D would send traffic to the internet and is not required for S3 access with a gateway endpoint.",
+          "skills_covered": [
+            "cloud security and compliance",
+            "DNS",
+            "Amazon VPC"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You created a NAT Gateway in a public subnet and a private route table with 0.0.0.0/0 -> NAT. Yet an instance in a private subnet still has no outbound internet. Current associations:\n\n```text\nRoute tables\n------------\nrtb-public (subnet associations): subnet-public-a, subnet-private-b\n  Routes: 10.0.0.0/16 -> local\n          0.0.0.0/0   -> igw-123\n\nrtb-private (subnet associations): subnet-private-a\n  Routes: 10.0.0.0/16 -> local\n          0.0.0.0/0   -> nat-abc\n```\n\nThe failing instance is in subnet-private-b. What fixes egress from that instance?",
+          "options": [
+            "Associate subnet-private-b with rtb-private so it uses 0.0.0.0/0 -> NAT.",
+            "Add 0.0.0.0/0 -> Internet Gateway to rtb-private.",
+            "Allocate and attach an Elastic IP to the instance in subnet-private-b.",
+            "Move the NAT Gateway into the same AZ as subnet-private-b."
+          ],
+          "correct_option": "A",
+          "explanation": "Subnet-private-b is mistakenly associated with the public route table, which routes 0.0.0.0/0 to the Internet Gateway. Without a public IP, that instance will not have egress. Associating it with the private route table uses the NAT route, enabling outbound internet.",
+          "distractor_rationale": "B won’t help in a private subnet without an IGW route in its route table. C makes the private route table public, but the instance is not associated to that table. D is unnecessary; NAT Gateways are AZ-specific for resilience and cost, but using one in a different AZ does not block routing by itself.",
+          "skills_covered": [
+            "Routing",
+            "Amazon VPC",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Instances in VPC vpc-aaaa cannot resolve names from a Route 53 private hosted zone despite the zone being associated to the VPC. Records exist. VPC settings:\n\n```bash\naws ec2 describe-vpc-attribute --vpc-id vpc-aaaa --attribute enableDnsSupport\n# {\n#   \"VpcId\": \"vpc-aaaa\",\n#   \"EnableDnsSupport\": { \"Value\": true }\n# }\naws ec2 describe-vpc-attribute --vpc-id vpc-aaaa --attribute enableDnsHostnames\n# {\n#   \"VpcId\": \"vpc-aaaa\",\n#   \"EnableDnsHostnames\": { \"Value\": false }\n# }\n```\n\nWhat change enables resolution from the private hosted zone?",
+          "options": [
+            "Open UDP/53 on all instance security groups to 0.0.0.0/0.",
+            "Enable DNS hostnames on the VPC (set EnableDnsHostnames to true).",
+            "Disassociate and re-associate the private hosted zone with the VPC.",
+            "Add an A record for the querying instance in the private hosted zone."
+          ],
+          "correct_option": "B",
+          "explanation": "Private hosted zone resolution in a VPC requires both DNS support and DNS hostnames to be enabled. Here hostnames are disabled; enabling them fixes resolution.",
+          "distractor_rationale": "B does not address the disabled DNS hostnames setting. C is irrelevant; resolution failing is not caused by a missing specific A record given that records already exist. D is not necessary and over-permissive; the issue is VPC-level DNS settings, not SG rules.",
+          "skills_covered": [
+            "DNS",
+            "Amazon VPC"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A 100-GB gp2 EBS volume attached to a Nitro-based EC2 instance shows sustained ~3000 IOPS with spikes then throttling. You need sustained 10,000 IOPS without increasing total allocated storage beyond 150 GB and without RAID.\n\n```text\niostat / fio summary:\n- Read IOPS sustained ~3000, latency rises after a few minutes\n- Burst credits deplete quickly on gp2\n```\n\nWhat change meets the requirement?",
+          "options": [
+            "Modify the volume to gp3 and provision 10,000 IOPS and appropriate throughput.",
+            "Enable EBS-optimized on the instance to lift the cap.",
+            "Increase the gp2 volume size to ~3.5 TB to raise baseline IOPS to 10,000.",
+            "Attach two additional gp2 volumes and stripe them in RAID0."
+          ],
+          "correct_option": "A",
+          "explanation": "gp3 decouples IOPS/throughput from size; you can provision 10,000 IOPS on a 100–150 GB volume. This meets the sustained IOPS requirement without RAID or upsizing beyond 150 GB.",
+          "distractor_rationale": "B would technically raise gp2 baseline IOPS but violates the storage-size constraint and is inefficient. C violates the no-RAID constraint. D can remove instance-level bottlenecks but cannot raise a gp2 volume’s baseline IOPS beyond its size-derived limit.",
+          "skills_covered": [
+            "Amazon EBS",
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You host a static website in an S3 bucket named \"example.com\" with static website hosting enabled in us-east-1:\n\n```text\nWebsite endpoint: http://example.com.s3-website-us-east-1.amazonaws.com\n```\n\nIn Route 53, how do you correctly map the zone apex to the S3 website?\n\nChoose the record that will work at the apex.",
+          "options": [
+            "```json\n{\n  \"Name\": \"example.com.\",\n  \"Type\": \"A\",\n  \"AliasTarget\": {\n    \"DNSName\": \"example.com.s3-website-us-east-1.amazonaws.com.\",\n    \"EvaluateTargetHealth\": false\n  }\n}\n```",
+            "```json\n{\n  \"Name\": \"example.com.\",\n  \"Type\": \"A\",\n  \"ResourceRecords\": [ { \"Value\": \"198.51.100.23\" } ]\n}\n```",
+            "```json\n{\n  \"Name\": \"example.com.\",\n  \"Type\": \"CNAME\",\n  \"ResourceRecords\": [ { \"Value\": \"example.com.s3-website-us-east-1.amazonaws.com.\" } ]\n}\n```",
+            "```json\n{\n  \"Name\": \"example.com.\",\n  \"Type\": \"A\",\n  \"AliasTarget\": {\n    \"DNSName\": \"s3.amazonaws.com.\",\n    \"EvaluateTargetHealth\": false\n  }\n}\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "At the zone apex you must use an alias A to the S3 website endpoint, not a CNAME. Pointing to the REST endpoint is incorrect for website hosting.",
+          "distractor_rationale": "B is tempting but CNAMEs are not allowed at the apex. C targets the REST endpoint, which does not serve static website hosting features. D points to an arbitrary IP and ignores S3 hosting.",
+          "skills_covered": [
+            "DNS",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have VPC peering between VPC-A and VPC-B. In VPC-A you try to add an inbound rule referencing a security group from VPC-B and get:\n\n```text\nOnly security groups in the same VPC can be referenced by security group rules.\n```\n\nYou want only instances in VPC-B to reach TCP/5432 on a database in VPC-A. What should you do in VPC-A’s database security group?",
+          "options": [
+            "Enable a peering setting to allow cross-VPC security group references.",
+            "Use a network ACL in VPC-A that references the peer's security group.",
+            "Reference the peer's security group by its full ARN instead of group ID.",
+            "Use the CIDR block of VPC-B in the inbound rule for TCP/5432."
+          ],
+          "correct_option": "D",
+          "explanation": "Security group references must be within the same VPC. For peered VPCs, use the peer VPC’s CIDR as the source in the security group rule.",
+          "distractor_rationale": "B and C are not supported features; you cannot reference SGs across VPCs regardless of identifier format. D is impossible; NACLs cannot reference security groups and are stateless CIDR-based filters.",
+          "skills_covered": [
+            "Amazon VPC",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two instances in the same VPC cannot communicate across subnets. Security groups allow the traffic. The private subnet’s route table is:\n\n```text\nDestination     Target\n-------------   -----------------\n10.1.0.0/16     local\n10.1.3.0/24     nat-0abcfed123\n0.0.0.0/0       nat-0abcfed123\n```\n\nSource: 10.1.2.10 (this subnet)\nDestination: 10.1.3.20 (peer private subnet)\n\nWhy is the traffic failing, and what change fixes it?",
+          "options": [
+            "Security groups are stateful; add a matching outbound rule on the destination instance.",
+            "Traffic to 10.1.3.0/24 is sent to the NAT due to the more specific route; remove the 10.1.3.0/24 route so the local route is used.",
+            "Attach a second ENI to the source instance in the 10.1.3.0/24 subnet.",
+            "Add an Internet Gateway route so the NAT can return traffic."
+          ],
+          "correct_option": "B",
+          "explanation": "The 10.1.3.0/24 route to the NAT is more specific than the local 10.1.0.0/16 route, so traffic to 10.1.3.20 is misrouted. Removing that specific route lets the local route handle intra-VPC traffic.",
+          "distractor_rationale": "B misattributes the failure to SG asymmetry; SGs already allow traffic and are stateful. C is irrelevant; intra-VPC traffic should never traverse the IGW or NAT. D is unnecessary and complicates the design; correct routing fixes the issue.",
+          "skills_covered": [
+            "Routing",
+            "Amazon VPC"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must deploy a small two-tier web application on AWS. Constraints:\n- Web tier: EC2 hosts must be reachable from the internet on HTTP/HTTPS.\n- App tier: EC2 hosts must not be internet-reachable; they pull artifacts from S3 and talk to the web tier only.\n- Availability across two AZs in one region.\n- Keep egress costs and NAT complexity low if possible.\n- Provide internal DNS names for app tier (app.internal.example) resolvable by instances only.\n- Store web access logs durably with an age-based retention policy.\n",
+          "task": "Propose a VPC, subnet, routing, security group, S3 and DNS design that satisfies the constraints. Explicitly state: CIDRs, subnet roles per AZ, route table entries (including any VPC endpoints), security group rules, where logs go and their lifecycle, and how internal DNS will resolve. Justify how your choices meet the constraints and trade-offs (cost, availability, blast radius).",
+          "expected_answer": "A strong answer includes:\n- VPC 10.0.0.0/16 with four subnets across two AZs: public-a 10.0.0.0/24 and public-b 10.0.1.0/24; private-app-a 10.0.2.0/24 and private-app-b 10.0.3.0/24.\n- Internet Gateway attached. NAT Gateways optional per AZ depending on need; to minimize NAT, add an S3 Gateway Endpoint and avoid NAT for app S3 access. If other internet egress is needed, deploy one NAT per AZ and route only required subnets to it.\n- Route tables: public RTs with 0.0.0.0/0 -> IGW; private app RTs with 10.0.0.0/16 -> local, 0.0.0.0/0 -> NAT in same AZ if non-S3 egress required, and S3 prefix-list via Gateway Endpoint associated to both private RTs.\n- Security groups: web-sg allows inbound 80/443 from 0.0.0.0/0, outbound ephemeral; app-sg allows inbound from web-sg on app ports only, outbound 443 to S3 endpoint (no CIDR) and to web-sg as needed; least privilege and SG references rather than CIDRs within the VPC.\n- DNS: enableDnsSupport and enableDnsHostnames on the VPC. Create a Route 53 private hosted zone internal.example and associate it to the VPC. Create A/AAAA records for app hosts or use a private namespace that the app tier registers into. Public DNS (optional) can map a public name to web tier if required.\n- Logs: S3 bucket for access logs (or app logs) with lifecycle: transition to STANDARD_IA after 30 days; expire after 365 days. Optionally separate prefixes per environment. Bucket policy least-privilege from web tier if writing directly.\n- High availability: subnets per AZ, web ASG optional (not required here), NAT per AZ if used to avoid cross-AZ dependencies; endpoints reduce NAT reliance and egress cost.\n- Justification ties each choice to constraints: private app, internet-reachable web, minimized egress via S3 endpoint, internal-only DNS via PHZ, and lifecycle retention.",
+          "rubric": [
+            {
+              "criterion": "Subnet and CIDR plan across two AZs is valid, non-overlapping, and maps public vs private roles clearly.",
+              "marks": 2
+            },
+            {
+              "criterion": "Routing design correctly uses IGW for public, NAT per AZ if needed for private, and S3 Gateway Endpoint on private route tables with justification to minimize NAT.",
+              "marks": 2
+            },
+            {
+              "criterion": "Security group rules enforce least privilege and use SG references between tiers; no unnecessary CIDR-wide openings on app tier.",
+              "marks": 2
+            },
+            {
+              "criterion": "DNS plan uses a Route 53 private hosted zone with VPC DNS settings enabled, and records resolve only inside the VPC.",
+              "marks": 1
+            },
+            {
+              "criterion": "Logging to S3 with a sensible lifecycle policy and correct write path from web tier.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon VPC",
+            "Subnetting",
+            "Routing",
+            "DNS",
+            "Amazon EC2",
+            "Amazon S3",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "An admin cannot SSH to an instance intended to be public. Evidence:\n\n```yaml\ninstance:\n  id: i-0feed\n  subnet: subnet-public-a\n  private_ip: 10.0.0.23\n  public_ip: null\n  sg_inbound:\n    - { proto: tcp, port: 22, cidr: 203.0.113.10/32 }  # office IP\nsubnet-public-a route_table:\n  - { dest: 10.0.0.0/16, target: local }\n  - { dest: 0.0.0.0/0,   target: igw-123 }\nnotes: auto-assign public IPv4 on subnet-public-a is disabled\n```\nThe office IP is correct, and there is no corporate firewall blocking outbound SSH. What is wrong, and what are two viable remediations?",
+          "task": "Diagnose why SSH fails and propose two distinct, correct remediations that preserve the security intent (only office IP can reach SSH). Include any route table or addressing changes needed.",
+          "expected_answer": "Root cause: The instance has no public IP in a subnet that routes to an Internet Gateway, so there is no public address for the office IP to target. Two valid remediations:\n1) Assign an Elastic IP to the instance (or enable subnet auto-assign public IP and relaunch). Keep the SG inbound restricted to 203.0.113.10/32. No route change needed because the subnet already has 0.0.0.0/0 -> IGW.\n2) Keep the instance private (no public IP) and introduce a managed ingress path: a bastion/jump host in a public subnet with an Elastic IP restricted to the office IP, or use AWS Systems Manager Session Manager (if permitted later). From the bastion, SSH to the instance over private IP. This preserves least privilege and avoids exposing the private instance.\nEither approach should confirm VPC DNS/hostnames as needed but does not require NAT. Do not try to add a public IP to a private subnet or open SG to 0.0.0.0/0 on port 22.",
+          "rubric": [
+            {
+              "criterion": "Identifies the absence of a public IP as the blocker despite a correct IGW route and SG.",
+              "marks": 2
+            },
+            {
+              "criterion": "Remediation 1: Assign Elastic IP (or enable auto-assign on subnet and relaunch) with SG remaining least-privilege.",
+              "marks": 2
+            },
+            {
+              "criterion": "Remediation 2: Proposes private access path (bastion or equivalent) that avoids exposing the instance directly.",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids incorrect fixes (e.g., changing to NAT, opening SSH broadly) and addresses security implications.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon EC2",
+            "Amazon VPC",
+            "cloud security and compliance",
+            "Routing"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A nightly ETL on EC2 reads from s3://data-bucket/raw/ and writes to s3://data-bucket/processed/. You enabled the following lifecycle on the bucket:\n\n```json\n{\n  \"Rules\": [\n    {\n      \"ID\": \"aggressive-archive\",\n      \"Status\": \"Enabled\",\n      \"Filter\": {\"Prefix\": \"raw/\"},\n      \"Transitions\": [ {\"Days\": 1, \"StorageClass\": \"GLACIER\"} ],\n      \"NoncurrentVersionTransitions\": [ {\"NoncurrentDays\": 1, \"StorageClass\": \"GLACIER\"} ]\n    },\n    {\n      \"ID\": \"processed-ia-30\",\n      \"Status\": \"Enabled\",\n      \"Filter\": {\"Prefix\": \"processed/\"},\n      \"Transitions\": [ {\"Days\": 30, \"StorageClass\": \"STANDARD_IA\"} ]\n    }\n  ]\n}\n```\nAfter enabling, the next ETL run became extremely slow and expensive. You cannot change the ETL to restore GLACIER objects before reading. Storage cost should still be optimized over time.",
+          "task": "Propose concrete lifecycle changes that restore ETL performance while keeping costs reasonable. Explain exactly what to change and why. Address versioning status if relevant, and any rules for aborting incomplete multipart uploads or expiring delete markers.",
+          "expected_answer": "Problem: Transitioning current objects under raw/ to GLACIER after 1 day makes them inaccessible without a restore, so the ETL stalls on day-2 reads. Fix: do not transition current versions in raw/ before the ETL’s retention window. Options:\n- Adjust raw/ rule to keep current objects in STANDARD for at least 7 days (or the ETL lookback window), then optionally STANDARD_IA after 7–30 days, and only later to GLACIER (e.g., 60–90 days). If versioning is enabled, keep NoncurrentVersionTransitions separate and slower than current transitions.\n- Keep processed/ as STANDARD_IA at 30 days, optionally add an expiration after 365 days.\n- Add AbortIncompleteMultipartUpload (e.g., 7 days) to cap MPU cost.\n- If versioning is on, add a rule to expire noncurrent versions/delete markers after an appropriate period to control costs.\nRationale: Keep frequently accessed raw data in STANDARD long enough for the ETL to read without restores; move colder data stepwise (STANDARD_IA then GLACIER) to balance performance and cost.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies that current-version transition of raw/ to GLACIER is the cause of slow/expensive ETL.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes specific lifecycle timing changes for raw/ that keep current objects hot long enough, with an appropriate later transition path (e.g., STANDARD_IA then GLACIER).",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses versioning side-effects (noncurrent versions, delete markers) and MPU aborts to control cost.",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains cost/performance trade-offs of the new policy.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "On-prem clients (192.168.0.0/16) connected via Site-to-Site VPN must resolve names in a Route 53 private hosted zone (corp.internal) used by workloads in your VPC. Today, EC2 instances in the VPC resolve corp.internal fine, but on-prem clients cannot. There is no Direct Connect. VPC DNS support/hostnames are enabled; the PHZ is correctly associated to the VPC. No special DNS endpoints exist.",
+          "task": "Design DNS resolution so on-prem clients can resolve corp.internal while keeping resolution for VPC instances unchanged. Specify the AWS components to deploy, how traffic flows, any security group or network allowances, and high-availability considerations.",
+          "expected_answer": "Deploy Route 53 Resolver inbound endpoints in two subnets across different AZs. Configure the on-prem DNS servers with conditional forwarders for corp.internal pointing to the two endpoint IPs (UDP/TCP 53). Ensure the resolver endpoint security group allows UDP/TCP 53 from the on-prem DNS source IP ranges over the VPN. No changes are required for VPC instances; they continue to use the VPC resolver (base+2) for the PHZ. Confirm that firewall/VPN rules allow DNS between on-prem and the endpoint IPs. For HA, place endpoints in separate AZs and provide both IPs to on-prem. Optionally, to resolve certain on-prem zones from EC2, add outbound endpoints and rules, but this is not required for the stated goal.",
+          "rubric": [
+            {
+              "criterion": "Identifies Route 53 Resolver inbound endpoints as the mechanism for on-prem to query the VPC’s private hosted zone.",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes traffic flow from on-prem DNS to the inbound endpoints and security group/firewall allowances on UDP/TCP 53.",
+              "marks": 2
+            },
+            {
+              "criterion": "Confirms VPC DNS/PHZ association remains as-is for EC2 resolution.",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses high availability across AZs for resolver endpoints.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "Amazon VPC"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Host a public web workload on EC2 with persistent EBS data and S3 log retention",
+          "brief": "Provision a minimal public web server on EC2 in a correctly designed VPC subnet, persist application data on a separate EBS volume, and store access logs in S3 with a lifecycle policy. Do not use a NAT Gateway. Keep all resources in one region and two AZs are not required for this task.",
+          "deliverable": "A zip/tar archive containing: 1) a text file with command outputs showing instance networking and reachability, 2) the EBS mount evidence, 3) the S3 lifecycle configuration JSON, and 4) the security group description. Name files as instructed in Acceptance Criteria.",
+          "acceptance_criteria": [
+            "instance.txt includes: output of `aws ec2 describe-instances --instance-ids <id> --query` showing the instance has a public IPv4 address, the subnet ID, and the route table has 0.0.0.0/0 -> igw; plus `curl -s http://<public-dns-or-ip>/` returns your custom page title.",
+            "sg.txt includes: `aws ec2 describe-security-groups --group-ids <sg>` proving inbound TCP/80 from 0.0.0.0/0, and no unnecessary open ports; outbound can be all.",
+            "ebs.txt includes: `lsblk` and `mount` showing an additional EBS volume (not the root) formatted and mounted at /data, and `sudo reboot` followed by `mount` shows it persists via fstab.",
+            "s3-lifecycle.json is the exact lifecycle configuration applied to the logs bucket: transition to STANDARD_IA at >=30 days and expire at >=365 days; `aws s3api get-bucket-lifecycle-configuration --bucket <bucket>` must match.",
+            "logs-evidence.txt includes either the web server access log object keys in the S3 bucket (`aws s3 ls s3://<bucket>/logs/ --recursive`) or server config snippet showing logs delivered to S3."
+          ],
+          "rubric": [
+            {
+              "criterion": "EC2 networking is correct: instance in a public subnet with IGW route and reachable over HTTP as evidenced by curl and instance description.",
+              "marks": 6
+            },
+            {
+              "criterion": "EBS data volume: created, attached, formatted, mounted at /data, and persists across reboot as shown by evidence.",
+              "marks": 5
+            },
+            {
+              "criterion": "S3 bucket lifecycle policy matches the required transition/expiration and is correctly attached to the bucket; evidence of log delivery path provided.",
+              "marks": 5
+            },
+            {
+              "criterion": "Security group least-privilege for this workload and all required artefacts present, well named, and reproducible.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Amazon EC2",
+            "Amazon EBS",
+            "Amazon S3",
+            "Amazon VPC",
+            "cloud security and compliance",
+            "Routing"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Design a VPC network for a two-tier app with private S3 access",
+          "brief": "Produce a network design artefact for a VPC hosting a web tier and a private app tier. Minimize internet egress from the app by using VPC endpoints. The design should be suitable for implementation and reviewable without logging into AWS.",
+          "deliverable": "One diagram file (PNG/PDF) plus a text document (Markdown or text) that lists CIDRs, subnets, route tables, security group rules, and DNS records. Include the rationale for each major choice.",
+          "acceptance_criteria": [
+            "Diagram shows a single VPC with non-overlapping CIDR and four subnets across two AZs: two public and two private; each subnet labeled with AZ, CIDR, and role.",
+            "Text document lists: route tables for public (0.0.0.0/0 -> IGW) and private (0.0.0.0/0 -> NAT or none if justified) and includes an S3 Gateway Endpoint associated to private route tables with prefix-list routes.",
+            "Security group definitions include: web-sg (inbound 80/443 from 0.0.0.0/0; outbound ephemeral) and app-sg (inbound only from web-sg on app ports; outbound to S3 via endpoint). If NAT is included, justify per-AZ deployment; if omitted, justify with endpoints-only egress.",
+            "DNS plan includes: Route 53 private hosted zone name, example records for app tier, VPC DNS settings (enableDnsSupport/Hostnames), and, if applicable, public DNS for web. Document how resolution works for instances.",
+            "All CIDRs and routes are internally consistent (no overlaps, correct prefix lengths), and the design avoids single points of failure where reasonably possible (e.g., per-AZ NAT if used)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Addressing and subnetting plan across AZs is correct, non-overlapping, and clearly documented.",
+              "marks": 5
+            },
+            {
+              "criterion": "Route tables and endpoint design are technically correct and minimize unnecessary internet egress; associations to the correct subnets are explicit.",
+              "marks": 6
+            },
+            {
+              "criterion": "Security group model enforces least privilege, uses SG references appropriately, and is fully specified (ports, sources).",
+              "marks": 4
+            },
+            {
+              "criterion": "DNS plan (PHZ, VPC DNS settings, record examples) is coherent and explains resolution paths for instances (and optionally clients).",
+              "marks": 3
+            },
+            {
+              "criterion": "Artefacts (diagram + text) are clear, consistent, and implementation-ready.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon VPC",
+            "Subnetting",
+            "Routing",
+            "DNS",
+            "cloud security and compliance",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-026-S03",
+      "skills_assessed": [
+        "Amazon RDS",
+        "Load Balancing",
+        "Auto Scaling",
+        "Backup and Recovery"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your Java app connects to a Multi-AZ RDS MySQL instance using the hostname. After you trigger a failover, RDS reports the primary is back in 65 seconds, but your app keeps failing to connect for ~3 minutes. You find this JVM setting:\n\n```properties\n# java.security\nnetworkaddress.cache.ttl=300\n```\n\nApp pool (HikariCP) shows many reconnects during that period but no new successful connections until ~180s post-failover. What change most directly eliminates the extended outage without reducing pool size?\n",
+          "options": [
+            "Lower the JVM DNS cache TTL to a few seconds so the hostname resolves to the new primary quickly.",
+            "Enable HikariCP keepalive so existing connections are kept alive across the failover.",
+            "Add application-level retries that back off for roughly three minutes after a failover.",
+            "Replace the RDS endpoint with the instance IP to avoid DNS updates during failover."
+          ],
+          "correct_option": "A",
+          "explanation": "During RDS Multi-AZ failover, the CNAME flips to the new primary. If the JVM caches DNS for 300s, the app keeps trying the stale IP until the cache expires, extending outage. Lowering DNS cache TTL (or disabling long-lived caching) ensures the app resolves the new IP soon after RDS completes failover.",
+          "distractor_rationale": "B is tempting because keepalives sound like resilience, but stale TCP connections to the old IP won't work after failover. C sounds prudent, but it treats the symptom; you still wait for the DNS cache to expire. D feels like “remove the moving part,” but RDS endpoints are designed to move; pinning to an IP breaks HA entirely.",
+          "skills_covered": [
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A production RDS PostgreSQL instance has automated backups (7 days). A bad migration ran at 2026-02-12 17:20 UTC and corrupted data. You have this timeline:\n\n```text\nAutomated backups retention: 7 days\nManual snapshot: 2026-02-10 01:00 UTC\nIncident: DELETE at 2026-02-12 17:20 UTC\n```\n\nBinary/WAL logs are enabled. To minimize data loss, which action should you take?\n",
+          "options": [
+            "Promote an existing read replica to replace the primary, since it lags behind.",
+            "Restore the 2026-02-10 01:00 UTC manual snapshot and continue from there.",
+            "Use point-in-time restore to 2026-02-12 17:19 UTC and create a new DB instance from that restore.",
+            "Increase retention to 14 days and then restore to 2026-02-12 17:19 UTC."
+          ],
+          "correct_option": "C",
+          "explanation": "Point-in-time restore (PITR) replays WAL/binlogs from the automated backup base to the requested point. Restoring to just before the bad change minimizes loss. Manual snapshots are not used as PITR bases, and changing retention after the fact doesn't recover past states.",
+          "distractor_rationale": "B loses up to ~2 days of data. C is tempting because replicas may lag, but lag is variable and replicas often apply changes quickly; also it won’t take you to the precise point before the DELETE. D misunderstands retention; it’s not retroactive.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Users report intermittent 503s after moving to HTTPS-only. Target group health checks show flapping. Current config and server behavior:\n\n```json\n{\n  \"TargetGroup\": {\n    \"Protocol\": \"HTTP\",\n    \"Port\": 80,\n    \"HealthCheckProtocol\": \"HTTP\",\n    \"HealthCheckPort\": \"80\",\n    \"HealthCheckPath\": \"/health\",\n    \"Matcher\": {\"HttpCode\": \"200\"}\n  }\n}\n```\n\n```nginx\nserver {\n  listen 80;\n  return 301 https://$host$request_uri;\n}\n```\n\nWhich change will stop the flapping and validate the true health path?\n",
+          "options": [
+            "Adjust the matcher to 200-399 so redirects count as healthy.",
+            "Increase HealthyThreshold from 5 to 10 to smooth transient failures.",
+            "Enable stickiness so users consistently hit the same target.",
+            "Run the health check over HTTPS on port 443 to reach the actual health endpoint."
+          ],
+          "correct_option": "D",
+          "explanation": "Because port 80 redirects to HTTPS, an HTTP health check sees a 301, not the actual health response on 443. Switching the health check to HTTPS/443 verifies the real endpoint and stops flapping tied to redirects.",
+          "distractor_rationale": "A makes flapping stop by accepting 301s, but it never verifies the app on HTTPS. B hides the symptom without fixing reachability. D is unrelated to health checks and won’t change target health state.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "An ALB spans two AZs with cross-zone load balancing DISABLED. Targets registered:\n\n```text\nus-east-1a: 1 instance\nus-east-1b: 3 instances\n```\n\nWhat distribution of requests should you expect across instances (assuming even traffic to each ALB node)?\n",
+          "options": [
+            "About 50% to the single instance in 1a; about 16-17% to each instance in 1b.",
+            "About 75% to instances in 1b, split evenly; 25% to 1a.",
+            "Even across all four because the ALB balances globally regardless of AZ.",
+            "About 25% to each instance."
+          ],
+          "correct_option": "A",
+          "explanation": "With cross-zone disabled, each ALB node only sends traffic to targets in its own AZ. Each AZ’s node handles roughly half the traffic; that half is split among targets in that AZ. Thus ~50% to the lone 1a target; the other ~50% split three ways in 1b.",
+          "distractor_rationale": "A and D assume global balancing across all targets, which is what cross-zone provides, not the current config. C misstates that 1b gets 75%; each AZ’s node gets ~50% before splitting among its targets.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A migration script accidentally points writes to an RDS MySQL read replica. The app log shows:\n\n```sql\nINSERT INTO orders ...\nERROR 1290 (HY000): The MySQL server is running with the --read-only option so it cannot execute this statement\n```\n\n`describe-db-instances` reveals `ReadReplicaSourceDBInstanceIdentifier` is set. You need to offload some writes to this instance temporarily. What must you do first?\n",
+          "options": [
+            "Add an option group enabling file import to bypass read-only mode.",
+            "Promote the read replica to a standalone instance and repoint the app to its endpoint.",
+            "Attach the replica to an ALB target group that supports writes.",
+            "Enable Multi-AZ on the replica so it can accept writes."
+          ],
+          "correct_option": "B",
+          "explanation": "Read replicas are read-only. To accept writes, you must promote the replica to a standalone instance, which removes replication and read-only status, then point the app at its endpoint.",
+          "distractor_rationale": "B improves HA but doesn’t change read-only. C confuses HTTP load balancing with database behavior. D changes DB features but not the read-only replica role.",
+          "skills_covered": [
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "On a single-AZ RDS PostgreSQL instance, p99 latency spikes during the automated backup window. Event log excerpt:\n\n```text\n01:00:01 Automated backup started\n01:00:45 I/O suspension complete\n01:02:15 Automated backup finished\n```\n\nWhat configuration change removes the I/O suspension without moving the window?\n",
+          "options": [
+            "Increase the instance class by one size to absorb backup load.",
+            "Enable Multi-AZ for the instance so snapshots are taken from the standby.",
+            "Set binlog/WAL format to a mode optimized for backups.",
+            "Change the backup window to a quieter period."
+          ],
+          "correct_option": "B",
+          "explanation": "With Multi-AZ, RDS performs backups from the standby, eliminating I/O suspension on the primary. Changing the window avoids the impact but doesn’t remove it. Log format and larger size don’t remove the brief suspension semantics.",
+          "distractor_rationale": "B is operationally helpful but not a technical removal of suspension. C is a red herring; WAL/binlog modes don’t change RDS backup mechanics. D may help symptoms but won’t eliminate the suspension event.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "An Auto Scaling group (default termination policy) must scale in by 1. Current instances:\n\n```text\nus-east-1a:\n  i-aaa (LT v1, launched 12:00)\n  i-aab (LT v1, launched 12:05)\nus-east-1b:\n  i-baa (LT v2, launched 12:10)\n  i-bab (LT v2, launched 12:12)\n  i-bac (LT v2, launched 12:15)\n```\n\nWhich instance will terminate?\n",
+          "options": [
+            "i-baa",
+            "i-aaa",
+            "i-bac",
+            "i-aab"
+          ],
+          "correct_option": "A",
+          "explanation": "Default policy first chooses the AZ with the most instances (1b), then prefers instances with the oldest launch configuration/template; within the same template, it terminates the oldest instance. That is i-baa in 1b.",
+          "distractor_rationale": "A and B are older, but the policy balances AZs first, so 1a is not chosen. D is in the correct AZ but it’s the newest, not the oldest.",
+          "skills_covered": [
+            "Auto Scaling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "During scale-out, newly launched instances behind an ALB immediately receive full traffic and return 5xx for ~60s while warming caches. Current target group attributes:\n\n```json\n{\n  \"load_balancing.algorithm.type\": \"round_robin\",\n  \"deregistration_delay.timeout_seconds\": 300,\n  \"slow_start.duration_seconds\": 0\n}\n```\n\nWhat change most directly reduces the 5xx surge without code changes?\n",
+          "options": [
+            "Switch to least_outstanding_requests algorithm only.",
+            "Enable slow start with a duration like 120 seconds.",
+            "Enable stickiness so users keep hitting warm targets.",
+            "Lower deregistration delay to 30 seconds so failing targets drain quickly."
+          ],
+          "correct_option": "B",
+          "explanation": "ALB slow start ramps traffic to new targets over the configured duration, preventing an immediate full load while the instance warms. The others don’t address initial overload on newly added targets.",
+          "distractor_rationale": "B affects scale-in/draining, not the first minute of scale-out. C changes distribution but doesn’t throttle initial send. D may help reuse warmed targets but doesn’t protect brand-new ones.",
+          "skills_covered": [
+            "Load Balancing",
+            "Auto Scaling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your RDS MySQL primary is Multi-AZ. Current workload:\n\n```text\nReads: ~2000 QPS, Writes: ~50 QPS\nP95 read latency: 80 ms on db.m5.large\nGoal: reduce read latency and add read capacity without sacrificing HA for writes.\n```\n\nWhat is the best next step?\n",
+          "options": [
+            "Increase `max_connections` to allow more concurrent reads.",
+            "Put an ALB in front of the primary to load balance queries.",
+            "Convert to single-AZ and double the instance size to reduce latency.",
+            "Add two read replicas and direct read-only traffic to them."
+          ],
+          "correct_option": "D",
+          "explanation": "Read replicas scale read throughput and can reduce latency for reads while keeping the primary Multi-AZ for HA. The others don’t add read capacity in a scalable way or conflate HTTP load balancing with databases.",
+          "distractor_rationale": "B introduces a single point of failure and may not fix queuing. C can worsen contention if the instance is already saturated. D is inapplicable; ALB doesn’t load balance MySQL protocols.",
+          "skills_covered": [
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You restored production to a new RDS instance for PITR. Current app config and DNS:\n\n```text\nDB_HOST=db.prod.internal\n\nDNS:\n  db.prod.internal.  CNAME  prod-db.abcxyz.us-east-1.rds.amazonaws.com\n  (restored instance endpoint: prod-db-restore.abcd1234.us-east-1.rds.amazonaws.com)\n```\n\nYou want the cleanest cutover with minimal app changes and downtime. What should you do?\n",
+          "options": [
+            "Modify the old instance in place to adopt the restored storage.",
+            "Rename the restored instance’s endpoint to match the old one.",
+            "Update the CNAME to point to the restored instance’s endpoint, then flush short-TTL caches.",
+            "Restart all app servers so they reconnect to the same endpoint."
+          ],
+          "correct_option": "C",
+          "explanation": "Use an indirection CNAME for the DB host. Point it to the restored instance endpoint so clients using `DB_HOST` follow the DNS change. RDS endpoints aren’t renameable, and changing the old instance in place isn’t a restore path.",
+          "distractor_rationale": "A isn’t supported for RDS endpoints. C is not a supported operation. D alone doesn’t switch endpoints; they’ll reconnect to wherever `DB_HOST` resolves.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You operate a stateless web app behind an ALB with an Auto Scaling group across two AZs. Deployments replace instances gradually. During deployments, synthetic monitoring shows brief spikes of 502/504 and user session drops immediately after new instances register healthy. Current settings:\n\n```json\n{\n  \"TargetGroup\": {\n    \"HealthCheckPath\": \"/health\",\n    \"HealthCheckProtocol\": \"HTTPS\",\n    \"Matcher\": {\"HttpCode\": \"200\"},\n    \"slow_start.duration_seconds\": 0,\n    \"deregistration_delay.timeout_seconds\": 300\n  },\n  \"ALB\": {\"cross_zone.enabled\": true},\n  \"ASG\": {\n    \"HealthCheckType\": \"ELB\",\n    \"HealthCheckGracePeriod\": 60,\n    \"DefaultInstanceWarmup\": 0\n  }\n}\n```\n\nThe app needs ~90 seconds to warm caches after boot but returns 200 on `/health` almost immediately. You cannot change app code this sprint.",
+          "task": "Recommend and justify a configuration-only change set that will eliminate the 5xx spikes and session drops during deployments, and explain why it works. Include trade-offs.",
+          "expected_answer": "A strong answer proposes: enable ALB target group slow start (e.g., 120–180s) so traffic ramps up to new instances; increase ASG instance warmup and ELB health check grace period (e.g., to 120–180s) so scaling logic and replacement actions do not consider the instance ready too early; ensure `/health` only reports healthy after dependencies are available (if config-only, use target group healthy threshold and/or a more discriminating path). Maintain deregistration delay (connection draining) to let in-flight requests finish, possibly paired with a preStop hook or Terminating lifecycle hook. Keep cross-zone enabled. Explain that these changes prevent sending full traffic to just-booted nodes (reducing 5xx) and avoid yanking connections from draining nodes (reducing session drops). Trade-offs: slightly slower rollouts and longer failover to restore full capacity; slow start can hide genuine issues if set too long; increasing grace/warmup delays scale-in/out decisions.",
+          "rubric": [
+            {
+              "criterion": "Identifies ALB slow start and sets a sensible duration with reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Adjusts ASG warmup and/or health check grace period with correct effect explained",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses drain behavior (deregistration delay/lifecycle hook) to prevent dropped sessions",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains trade-offs (latency of scaling, rollout speed, masking issues) clearly",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Load Balancing",
+            "Auto Scaling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A DBA accidentally ran a destructive statement at 14:05 UTC on your RDS PostgreSQL primary. You have 7-day automated backups and no manual snapshot from today. The application connects using a CNAME alias `db.prod.internal` that currently points to the primary’s RDS endpoint. Stakeholders want the database back to 14:04 with minimal downtime and a clean, verifiable cutover plan.",
+          "task": "Describe the exact recovery plan you will execute to reach 14:04, verify data, and cut over safely. Include DNS considerations and how you will minimize risk to production during verification.",
+          "expected_answer": "Plan: 1) Use RDS point-in-time restore to create a new DB instance from the latest automated backup to 2026-xx-xx 14:04:00 UTC. 2) Place the restored instance in the same VPC/subnets/SGs but do not point production at it yet. 3) Run schema/data sanity checks on the restored instance (checksum critical tables, spot-check recent rows), and block external writes by using security groups or not exposing the endpoint to the app during validation. 4) Prepare cutover by updating the `db.prod.internal` CNAME to the restored instance’s endpoint; set a low TTL ahead of time (or wait TTL) to reduce propagation delay. 5) Quiesce production briefly (application maintenance mode) to prevent writes during the switch, then update the CNAME. 6) Monitor app error rates and DB connections; be ready with rollback (original instance untouched). 7) After cutover, take a fresh snapshot of the restored instance and increase the TTL back. Justify that PITR uses WAL/binlogs to reach 14:04 precisely and DNS indirection enables minimal app change and quick rollback.",
+          "rubric": [
+            {
+              "criterion": "Uses PITR to exact timestamp on a new instance and keeps original untouched",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear verification steps on the restored instance without exposing it to production",
+              "marks": 2
+            },
+            {
+              "criterion": "DNS cutover with TTL strategy and brief quiescence to avoid split-brain writes",
+              "marks": 2
+            },
+            {
+              "criterion": "Rollback and post-cutover validation considerations",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A spiky workload runs behind an ALB and an Auto Scaling group. You observe oscillations: scale-out to 10 instances, CPU average plummets, then immediate scale-in to 4, followed by another spike. Health check grace is 30s, new instances serve full traffic within seconds, and your scaling policy targets 50% average CPU with instance warmup 0s.",
+          "task": "Propose a revised scaling configuration to stop oscillation. Explain the mechanics of why each setting change stabilizes the group.",
+          "expected_answer": "Recommended changes: set ASG DefaultInstanceWarmup to ~300s so new instances are excluded from average metrics and scale-in decisions until warm; increase HealthCheckGracePeriod to ~300s to allow apps to actually be ready before being eligible for replacement; keep target tracking at 50% but add a floor via minimum capacity sized for baseline traffic; optionally switch ALB target group to slow start 120s so new nodes aren’t flooded, reducing CPU dips; consider a modest scale-in cooldown (or rely on warmup) to prevent immediate scale-in after scale-out; ensure cross-zone is enabled so per-AZ imbalances don’t trigger rebalances. Together, these prevent new cold instances from dragging averages down and delay scale-in until capacity is proven useful, removing the sawtooth.",
+          "rubric": [
+            {
+              "criterion": "Sets and justifies a nonzero ASG instance warmup",
+              "marks": 2
+            },
+            {
+              "criterion": "Adjusts grace/cooldown or min/max to prevent premature scale-in",
+              "marks": 2
+            },
+            {
+              "criterion": "Incorporates ALB-side mitigation (slow start or equivalent) with reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains the oscillation mechanism and how the changes break it",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Auto Scaling",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You’re choosing a managed relational option for a multi-tenant SaaS requiring: ACID transactions, many concurrent read replicas across at least two AZs, fast failover for writes, and simpler read endpoint management. Current database is RDS MySQL Single-AZ. The team can accept minor engine changes but wants to stay in managed relational offerings.",
+          "task": "Recommend a target architecture using RDS family services and justify it against the requirements. Address failover behavior, read scaling, endpoints, and operational complexity.",
+          "expected_answer": "Recommend migrating to Amazon Aurora MySQL-Compatible in a Multi-AZ cluster with 1 writer and multiple readers. Justify: Aurora provides faster failover (seconds) compared to standard RDS, supports up to 15 Aurora Replicas with shared storage for low-lag reads, and offers cluster/reader endpoints that simplify routing (single reader endpoint distributes across replicas; writer endpoint is stable). Multi-AZ is inherent at the storage layer, improving availability. Operationally, backups are continuous and PITR is simpler. Note trade-offs: engine nuances from community MySQL, instance class choices, and potential cost increase; ensure parameter/testing alignment and connection handling.",
+          "rubric": [
+            {
+              "criterion": "Chooses an appropriate RDS-family option that meets HA and read-scale needs",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains failover characteristics and how endpoints simplify routing",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses operational aspects (backups/PITR, maintenance) and trade-offs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Database lab: RDS HA, replicas, and PITR drill",
+          "brief": "Provision a managed relational database on RDS with high availability, add at least one read replica, and demonstrate point-in-time recovery on a small sample schema. Do this in a throwaway environment.",
+          "deliverable": "A single compressed folder containing: 1) a short lab report (PDF or Markdown) with step-by-step notes and screenshots; 2) an SQL file creating a sample schema and inserting test data; 3) command outputs in text files showing the instance configuration, replica, and backups; 4) evidence of PITR validation.",
+          "acceptance_criteria": [
+            "Primary RDS instance is Multi-AZ and shown via CLI output in a file named `rds-primary.txt` that includes `MultiAZ: true`.",
+            "At least one read replica exists; provide `aws rds describe-db-instances` or console screenshot saved as `rds-replica.txt/png` showing `ReadReplicaSourceDBInstanceIdentifier`.",
+            "Automated backups retention set to >= 7 days; show via CLI (`BackupRetentionPeriod`) in `rds-backups.txt`.",
+            "Provide `schema.sql` that creates at least one table and inserts rows; demonstrate a read from the replica after a write on the primary (include timestamps) in `replication-proof.txt`. For MySQL, include `SHOW SLAVE STATUS\\G` with `Seconds_Behind_Master`; for PostgreSQL, include `SELECT now(), pg_last_xact_replay_timestamp();`.",
+            "Perform a PITR to a time between two known inserts; include the exact timestamp used and a screenshot or CLI call (`aws rds restore-db-instance-to-point-in-time`) plus a query result proving data state matches the intended point (`pitr-proof.txt`).",
+            "All resources, endpoints, and times are redacted of secrets and clearly labeled. The report explains any engine-specific commands used."
+          ],
+          "rubric": [
+            {
+              "criterion": "Primary Multi-AZ correctly provisioned and evidenced",
+              "marks": 4
+            },
+            {
+              "criterion": "Read replica created and replication evidence provided",
+              "marks": 5
+            },
+            {
+              "criterion": "Backups configured (>=7 days) and correctly evidenced",
+              "marks": 3
+            },
+            {
+              "criterion": "PITR executed to the intended timestamp with proof of state",
+              "marks": 6
+            },
+            {
+              "criterion": "Clarity and completeness of the lab report and artifacts",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon RDS",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Resilient design: ALB + Auto Scaling across AZs",
+          "brief": "Build a simple resilient web tier: an ALB fronting an Auto Scaling group spanning two AZs. Configure health checks, graceful draining, and settings to make deployments and scale events smooth. Demonstrate resilience by terminating an instance under load and showing uninterrupted responses.",
+          "deliverable": "A single compressed folder containing: 1) a short report (PDF or Markdown) of your design decisions; 2) CLI outputs `alb-targets.txt` (from `aws elbv2 describe-target-health`), `asg.txt` (from `aws autoscaling describe-auto-scaling-groups`), and `scaling-activities.txt`; 3) target group attributes export `tg-attrs.txt`; 4) a load test log (`hey`/`ab` output) before, during, and after terminating an instance; 5) at least one screenshot showing successful scale-out/in events.",
+          "acceptance_criteria": [
+            "ALB spans two AZs with cross-zone load balancing enabled; show via attributes in `tg-attrs.txt`.",
+            "Target group health check uses the correct protocol/path and returns 200; show configuration and a sample `curl` from inside the VPC or via an attached instance.",
+            "`deregistration_delay.timeout_seconds` set >= 120 and slow start configured >= 60 seconds; show both keys in `tg-attrs.txt`.",
+            "ASG spans two AZs, has a nonzero instance warmup and health check grace period >= 120 seconds; show in `asg.txt`.",
+            "Load test demonstrates no 5xx responses during a deliberate termination of one instance; include timestamps aligning the termination with the test output.",
+            "Scaling activities show at least one scale-out and one scale-in event; included in `scaling-activities.txt` or screenshots."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct ALB/target group configuration (cross-zone, health checks, attributes) evidenced",
+              "marks": 6
+            },
+            {
+              "criterion": "ASG configured for resilience (AZs, warmup, grace) with proof",
+              "marks": 5
+            },
+            {
+              "criterion": "Load test under termination with zero 5xx and coherent evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Clarity of report and reproducibility (commands, steps, timestamps)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Load Balancing",
+            "Auto Scaling"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-026-S04",
+      "skills_assessed": [
+        "AWS Lambda",
+        "Amazon CloudWatch",
+        "cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You connected a Lambda function to API Gateway (Lambda proxy integration). The handler is:\n```javascript\nexports.handler = async (event) => {\n  return { message: \"ok\" };\n};\n```\nA client performs:\n```http\nGET /prod/ping HTTP/1.1\nHost: api.example.com\n```\nWhat does the client receive and why?",
+          "options": [
+            "502 Bad Gateway with an error like `Malformed Lambda proxy response` because the response lacks `statusCode` and string `body`",
+            "500 Internal Server Error from Lambda because the handler threw",
+            "200 OK with body `{ \"message\": \"ok\" }` because API Gateway auto-wraps missing fields",
+            "200 OK with body `ok` because API Gateway stringifies any object returned by Lambda"
+          ],
+          "correct_option": "A",
+          "explanation": "With Lambda proxy integration, the function must return an object with `statusCode`, `headers` (optional), and a string `body`. Returning `{ message: \"ok\" }` is a malformed proxy response. API Gateway responds with 502 and a message indicating an invalid Lambda proxy response. The function itself did not throw.",
+          "distractor_rationale": "A: Tempting if you think API Gateway auto-serializes arbitrary objects; it requires the proxy shape. B: Sounds plausible but API Gateway does not auto-wrap or infer `statusCode`. D: The handler did not throw; the gateway rejected the response shape, so it is not a 500 from Lambda.",
+          "skills_covered": [
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "On the first invocation of a new Lambda, you see this in CloudWatch Logs:\n```text\nSTART RequestId: 9b... Version: $LATEST\nUnable to create log stream. AccessDeniedException: User: arn:aws:sts::123456789012:assumed-role/lambda-exec-role/my-fn is not authorized to perform: logs:CreateLogStream on resource: arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/my-fn:log-stream:*\nEND RequestId: 9b...\n```\nWhat change resolves this without over-privileging?",
+          "options": [
+            "Give the function VPC access so it can reach CloudWatch Logs endpoints",
+            "Increase the function timeout so log calls have time to complete",
+            "Attach the AWS managed policy `AWSLambdaBasicExecutionRole` to the function's execution role",
+            "Add a resource policy to the log group that allows `logs:PutLogEvents` from the function role, no IAM change needed"
+          ],
+          "correct_option": "C",
+          "explanation": "New Lambda functions need permissions to create log groups/streams and put log events. The managed policy `AWSLambdaBasicExecutionRole` grants `logs:CreateLogGroup`, `logs:CreateLogStream`, and `logs:PutLogEvents`. VPC access and timeouts do not fix authorization. A log group resource policy is uncommon and still would not grant `CreateLogStream` to the principal.",
+          "distractor_rationale": "B: Endpoint reachability is not the issue; the error is explicit AccessDenied. C: A resource policy alone won’t grant `CreateLogStream` to the role and complicates management. D: Longer timeouts do not fix missing permissions.",
+          "skills_covered": [
+            "Amazon CloudWatch",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A Lambda is triggered by S3 `ObjectCreated:Put`. Occasionally one upload increments your downstream counter twice. CloudWatch Logs show:\n```text\nProcessing s3://bucket/reports/2026-08-19.csv eventId=2a1b... versionId=3L4k...\nProcessing s3://bucket/reports/2026-08-19.csv eventId=5c7d... versionId=3L4k...\n```\nWhat is the correct explanation and mitigation?",
+          "options": [
+            "S3 delivers events at-most-once; duplicates indicate an application bug, so add client-side retries only",
+            "Increase Lambda memory so the handler runs faster and avoids duplicate triggers",
+            "Enable FIFO on S3 event notifications to remove duplicates and preserve order",
+            "S3 delivers events at-least-once; implement idempotency (e.g., use key + versionId as a de-dup key) to make processing safe on retries"
+          ],
+          "correct_option": "D",
+          "explanation": "S3 event notifications are at-least-once. Duplicate notifications for the same object can occur. Use an idempotency key (object key + versionId) in a token store to ensure each object is processed once.",
+          "distractor_rationale": "A: S3 is not at-most-once. C: There is no FIFO setting for S3 event notifications. D: Performance does not prevent duplicates caused by delivery semantics.",
+          "skills_covered": [
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You have a scheduled EventBridge rule targeting a Lambda. The Lambda has an async on-failure destination to SQS. The rule itself has a dead-letter config to an SNS topic:\n```yaml\n# EventBridge rule (target is the Lambda)\nDeadLetterConfig:\n  Arn: arn:aws:sns:us-east-1:123456789012:rule-dlq\nRetryPolicy:\n  MaximumRetryAttempts: 24\n  MaximumEventAgeInSeconds: 3600\n```\nThe Lambda handler throws an error for a specific event. Where does that failed event end up, assuming no permission errors delivering to the target?",
+          "options": [
+            "Only the Lambda on-failure destination (SQS) receives the event",
+            "Both the rule DLQ (SNS) and the Lambda on-failure destination (SQS) receive the event",
+            "Only the rule DLQ (SNS) receives the event because the rule invoked the function",
+            "Neither DLQ receives it because the invocation was accepted by Lambda"
+          ],
+          "correct_option": "A",
+          "explanation": "EventBridge considers delivery successful once Lambda accepts the asynchronous invocation. If the function then errors, Lambda's own async retry and on-failure destination apply. The rule's DLQ is used when EventBridge cannot deliver to the target at all (e.g., permission issues).",
+          "distractor_rationale": "A: Sounds safe but duplicates are not produced in this success-then-function-error flow. C: Misunderstands ownership of retries/error handling after delivery to Lambda. D: Lambda does accept the event; subsequent function failure is handled by Lambda destinations.",
+          "skills_covered": [
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You publish a custom metric only when a failure occurs:\n```python\n# On error only\ncloudwatch.put_metric_data(\n  Namespace='Checkout',\n  MetricData=[{\"MetricName\":\"PaymentFailures\",\"Value\":1}]\n)\n```\nYour alarm is:\n```json\n{\n  \"Namespace\":\"Checkout\",\n  \"MetricName\":\"PaymentFailures\",\n  \"Statistic\":\"Sum\",\n  \"Period\":300,\n  \"EvaluationPeriods\":1,\n  \"Threshold\":1,\n  \"ComparisonOperator\":\"GreaterThanOrEqualToThreshold\",\n  \"TreatMissingData\":\"breaching\"\n}\n```\nDuring quiet periods with no failures, what happens and why?",
+          "options": [
+            "The alarm goes to INSUFFICIENT_DATA because there are no samples",
+            "The alarm flaps between ALARM and OK depending on the last state, unrelated to `TreatMissingData`",
+            "The alarm stays OK because the sum is zero when no points are published",
+            "The alarm moves to ALARM because missing data are treated as breaching; configure `TreatMissingData` as `notBreaching`"
+          ],
+          "correct_option": "D",
+          "explanation": "Because the metric is emitted only on failure, there are missing periods during quiet times. With `TreatMissingData` set to `breaching`, CloudWatch interprets the lack of data as a breach and sets ALARM. Use `notBreaching` or emit a 0 regularly.",
+          "distractor_rationale": "B: There is no zero unless you publish it; missing != zero. C: You explicitly overrode missing to `breaching`. D: Flapping here is driven by the missing-data treatment, not random state memory.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your Lambda writes key=value log lines:\n```text\nlevel=error msg=\"db timeout\" orderId=123\nlevel=info msg=\"ok\" orderId=124\n```\nCloudWatch Logs Insights query returns no rows:\n```sql\nfields @timestamp, @message\n| stats count() by level\n```\nWhich query correctly extracts the level and returns counts by level?",
+          "options": [
+            "```sql\nfields @timestamp\n| parse @message \"level=* \" as level\n| stats count() by level\n```",
+            "```sql\nfields @timestamp, level\n| stats count() by level\n```",
+            "```sql\nstats count(level)\n```",
+            "```sql\nfilter @message like /error/\n| stats count() by level\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "With key=value logs, you must parse fields from `@message`. The parse pattern pulls `level` into a field the query can aggregate.",
+          "distractor_rationale": "A: Filters errors but still never extracts `level`, so `by level` fails. C: Refers to a non-existent parsed field. D: `count(level)` on an undefined field returns nothing.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "CloudWatch shows high p95 duration for a CPU-bound Lambda:\n```text\np95 Duration (ms): 1800 at 12:00 UTC (MemorySize: 128 MB)\nInvocations steady at ~20 RPS, cold starts rare\n```\nYou cannot change code today. Which change most likely reduces p95 latency immediately?",
+          "options": [
+            "Add retries with exponential backoff in the client",
+            "Increase memory size (e.g., to 1024 MB) to allocate more CPU to the function",
+            "Enable provisioned concurrency to eliminate cold starts",
+            "Increase function timeout to 5 minutes to avoid timeouts"
+          ],
+          "correct_option": "B",
+          "explanation": "In Lambda, more memory allocates proportionally more CPU and network. For a CPU-bound workload, raising memory improves execution time. Timeouts, cold-start optimizations, and client retries do not reduce per-invocation compute time.",
+          "distractor_rationale": "B: Prevents timeouts but not latency. C: Cold starts are rare and provisioned concurrency doesn’t speed warm execution. D: Retries can worsen load and latency.",
+          "skills_covered": [
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Account concurrency limit is 100. You set Reserved Concurrency for `fnA` to 90. `fnB` (no reservation) begins throttling during a spike, even though it needs only ~30 concurrent. Why?",
+          "options": [
+            "Reserved Concurrency has no effect on other functions; throttles must be from API Gateway",
+            "`fnB` needs its own Provisioned Concurrency to avoid throttles",
+            "Reserved Concurrency on `fnA` reduces the unreserved pool to 10, so `fnB` competes for only 10 and throttles",
+            "`fnB` should increase timeout; throttles are due to short timeouts"
+          ],
+          "correct_option": "C",
+          "explanation": "Reserved concurrency guarantees capacity for `fnA` and removes that capacity from the unreserved pool, leaving only 10 for all other functions. `fnB` throttles when it exceeds the unreserved pool. Give `fnB` its own reserved concurrency or lower `fnA`'s reservation.",
+          "distractor_rationale": "A: Provisioned concurrency addresses cold starts, not throttling by account concurrency. C: Incorrect; reservations directly affect the unreserved pool. D: Timeouts are unrelated to throttling responses from Lambda service.",
+          "skills_covered": [
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You try to subscribe a log group to a Lambda for real-time processing:\n```bash\naws logs put-subscription-filter \\\n  --log-group-name /aws/lambda/orders \\\n  --filter-name toOrdersETL \\\n  --filter-pattern '' \\\n  --destination-arn arn:aws:lambda:us-east-1:123456789012:function:etl\n```\nIt fails with a message that CloudWatch Logs is not authorized to invoke the function. What is the minimal fix?",
+          "options": [
+            "Create a service-linked role for CloudWatch Logs that allows `lambda:InvokeFunction` on any function",
+            "Add a resource policy to the function with `lambda:AddPermission` granting `logs.us-east-1.amazonaws.com` permission to invoke it, scoped to the log group ARN",
+            "Increase the function timeout to give the subscription time to attach",
+            "Attach `AWSLambdaBasicExecutionRole` to the function's role"
+          ],
+          "correct_option": "B",
+          "explanation": "Lambda must have a resource-based policy statement allowing CloudWatch Logs to invoke it, typically added via `lambda:add-permission` with `Principal=logs.<region>.amazonaws.com` and the log group as `SourceArn`. Execution-role policies don’t control who can invoke via resource policies.",
+          "distractor_rationale": "A: Execution-role policies apply to what the function can do, not who can call it. C: No general service-linked role is required; permission is on the Lambda resource policy. D: Timeouts are irrelevant to authorization.",
+          "skills_covered": [
+            "Amazon CloudWatch",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your Lambda behind API Gateway sometimes takes ~30 seconds. The handler simulates work:\n```javascript\nexports.handler = async () => {\n  await new Promise(r => setTimeout(r, 30000));\n  return { statusCode: 200, body: \"done\" };\n};\n```\nClients receive a 504 after ~29 seconds, but CloudWatch Logs show the function completes at ~30 seconds. What happened?",
+          "options": [
+            "Lambda killed the function at 29s; increase Lambda timeout",
+            "API Gateway's integration timeout (~29s) expired before Lambda finished; Lambda kept running; reduce work or offload async",
+            "Provisioned concurrency would prevent timeouts here",
+            "VPC networking caused the extra second; enable NAT gateways"
+          ],
+          "correct_option": "B",
+          "explanation": "API Gateway has a maximum integration timeout of 29 seconds for REST APIs. When exceeded, it returns 504, but the Lambda continues to run until its own timeout. The fix is to shorten the path (optimize, split, or make it asynchronous).",
+          "distractor_rationale": "A: Lambda did not time out; logs show completion. C: Not a networking issue. D: Provisioned concurrency affects cold starts, not long-running requests.",
+          "skills_covered": [
+            "AWS Lambda",
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You ingest daily CSV files to S3. An S3 `ObjectCreated:Put` event triggers a Lambda that parses the file and posts aggregates to an internal API. The API is not idempotent; duplicate posts corrupt totals. Twice last week, finance reported double-counting for the same file. CloudWatch Logs show two invocations for the same object within 30 seconds, each with a different S3 `eventID` but identical `key` and `versionId`. Current Lambda config: async invocation, no DLQ, default retries, basic logging. Current monitoring: a single CloudWatch Alarm on `Errors > 0`.",
+          "task": "Design a change that prevents double-posting and makes the pipeline observable when duplicates or retries happen. Specify the idempotency approach, where to store tokens, how to configure retries/DLQ, and which metrics/alarms/dashboards you will add. Justify each choice.",
+          "expected_answer": "- State that S3 notifications are at-least-once; duplicates are possible by design.\n- Implement idempotency in the Lambda: compute a deterministic key such as `bucket/key/versionId` (or `eTag` if versioning off) and perform a conditional write to a token store before posting (e.g., DynamoDB `PutItem` with `attribute_not_exists`, or S3 object metadata as a lock). Only proceed to post if the token write succeeds.\n- Configure Lambda async on-failure destination or DLQ (SQS) to capture events that still fail after retries; add an alarm on DLQ depth > 0.\n- Keep Lambda retries (default) but ensure the idempotency check guards replays; optionally reduce max event age if stale reprocessing is harmful.\n- Emit custom metrics: `DuplicateEventDetected` (increment when token already exists), `RecordsProcessed`, and `PostLatency` (timing the API call). Add CloudWatch Alarms: `DuplicateEventDetected > 0` (warn), `Errors > 0` (critical), and `Duration p95 > threshold`. Treat missing data as not breaching for sparse metrics.\n- Build a dashboard with widgets for Invocations, Errors, Throttles, Duration p95, custom metrics above, and DLQ depth. Add Logs Insights saved query parsing per-file processing and surfacing duplicate attempts.\n- Security: least-privilege IAM for the function (read object from S3 path, write to token store only on needed keys, post to internal API), and if using KMS-encrypted env vars or buckets, ensure `kms:Decrypt` on the CMK for runtime.",
+          "rubric": [
+            {
+              "criterion": "Explains at-least-once delivery and ties it to observed duplicates",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a concrete, correct idempotency mechanism keyed by object identity with a conditional write",
+              "marks": 3
+            },
+            {
+              "criterion": "Configures retries and a DLQ/destination appropriately and adds a DLQ-depth alarm",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines meaningful metrics/alarms and a dashboard to observe duplicates and failures",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "AWS Lambda",
+            "Amazon CloudWatch",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A public API backed by Lambda+API Gateway must keep p95 latency under 200 ms during business hours (09:00–18:00 local). Current metrics show: p95 ~80 ms off-hours, ~350 ms shortly after 09:00, then ~210–230 ms until noon, improving to ~180 ms later. Errors are near zero. Cold starts spike at 09:00 and memory usage peaks around 60% during mid-morning. Budget is limited; you cannot over-provision 24/7.",
+          "task": "Propose a configuration plan to consistently meet the p95 SLO during business hours. Specify which Lambda settings to change (and when), what to measure, and how to alarm. Include any API Gateway adjustments required. Justify the trade-offs.",
+          "expected_answer": "- Use Provisioned Concurrency scheduled for business hours (e.g., Application Auto Scaling target tracking or a cron schedule) to eliminate the 09:00 cold-start spike, sized to baseline RPS.\n- Increase Lambda memory (e.g., from 256 to 512/1024 MB) to gain more CPU, based on observed 60% memory and CPU-bound symptoms, reducing steady-state p95. Validate with p95 Duration and Max MemoryUsed metrics.\n- If JSON serialization dominates, enable gzip compression at API Gateway for large responses; ensure small response sizes to keep under 200 ms.\n- Enable keep-alive/connection reuse in the handler for any outbound calls; initialize SDK clients outside the handler to improve warm-path performance.\n- Monitoring: dashboard charts for Invocations, p95 Duration, Cold Starts (via `InitDuration` or custom metric), and Errors. Alarms: `p95 Duration > 200 ms` for 2 of 3 periods during business hours only; Errors > 0 always. Treat missing data as not breaching for time windows with no traffic.\n- Cost control: scale Provisioned Concurrency down/off outside 09:00–18:00; optionally use provisioned concurrency utilization metrics to right-size.\n- Security: no change in auth; ensure logging of request IDs without PII.",
+          "rubric": [
+            {
+              "criterion": "Addresses cold-start spike with time-windowed Provisioned Concurrency and justifies schedule/size",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains memory/CPU trade-off and proposes a concrete memory increase to lower p95",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines concrete monitoring (p95, cold starts, errors) and time-windowed alarms with correct missing-data treatment",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes at least one API Gateway-side adjustment or handler optimization and defends the cost trade-off",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "AWS Lambda",
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You must alert on real failures but avoid noise. Current setup: a CloudWatch Alarm on Lambda `Errors > 0` pages on-call. Many pages are benign (client 4xx validation). Logs are structured `level=...` with a `status` field from the response. API Gateway is proxy-integrated and emits `5XXError` metric.",
+          "task": "Design a signal that pages only when your Lambda reports an error AND API Gateway `5XXError` > 0 in the same period. Specify the exact CloudWatch components (metric filters or custom metrics, alarms, composite alarm), missing-data handling, and how you would test it.",
+          "expected_answer": "- Create a CloudWatch Logs Insights metric filter (or direct PutMetricData) to publish a custom metric `AppErrors` for `level=error` events that correspond to server faults (exclude validation 4xx by checking `status>=500` in logs or via a filter pattern). Alternatively, emit `AppErrors` explicitly in code for server faults only.\n- Alarm A: `AppErrors Sum >= 1` over 1–5 minutes, TreatMissingData = notBreaching.\n- Alarm B: API Gateway `5XXError Sum >= 1` over same period and stage.\n- Create a Composite Alarm C: ALARM when A AND B are ALARM. Set OK when either clears. Use appropriate description/runbook.\n- Testing: inject a synthetic 500 response in a non-prod stage and verify both A and B fire and Composite C pages; inject a 400-only path to ensure only A or neither fires and C stays OK.\n- Dashboard: include both metrics and alarm status widgets for quick triage.",
+          "rubric": [
+            {
+              "criterion": "Specifies creation of an application-specific error metric via filter or code that excludes 4xx/validation",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines two concrete underlying alarms with thresholds and correct missing-data treatment",
+              "marks": 2
+            },
+            {
+              "criterion": "Combines them with a Composite Alarm using logical AND and explains state behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines a realistic test plan to prove noise reduction without missing real failures",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Security review of a Lambda handling webhook payloads with PII. Findings:\n1) Execution role policy:\n```json\n{\n  \"Effect\":\"Allow\",\n  \"Action\":\"s3:*\",\n  \"Resource\":\"*\"\n}\n```\n2) Environment variable `DB_PASSWORD` is plaintext; KMS key exists but not referenced.\n3) Function cannot decrypt a KMS-encrypted S3 object; CloudWatch logs show `KMSAccessDeniedException`.\n4) CloudWatch Log Group has infinite retention and wide-open resource policy granting all principals `logs:CreateLogStream`.\n",
+          "task": "Identify the highest-risk misconfigurations and propose exact remediations (policy statements, key policy/IAM adjustments, and logging/retention changes) that satisfy least privilege and compliance without breaking the app.",
+          "expected_answer": "- Replace wildcard S3 permissions with least-privilege: restrict to exact bucket and necessary actions (e.g., `s3:GetObject` on `arn:aws:s3:::sensitive-bucket/prefix/*`, `s3:PutObject` if needed). Add condition keys (e.g., `s3:prefix`) where applicable.\n- Encrypt sensitive env vars with a customer-managed KMS key: configure `KmsKeyArn` on the Lambda and move the secret to AWS Secrets Manager or Systems Manager Parameter Store with KMS encryption; grant the role `kms:Decrypt` on that CMK. Remove plaintext `DB_PASSWORD` from env.\n- For decrypting KMS-encrypted S3 objects, ensure the execution role has `kms:Decrypt` for the object’s CMK and that the CMK key policy permits the role principal. If cross-account, update key policy or grant via grants.\n- Tighten CloudWatch Logs: set retention to an appropriate period (e.g., 14 or 30 days); remove overly broad resource policy. Typically, no log-group resource policy is needed; rely on IAM. If a resource policy is required (subscriptions), scope it to specific principals and actions.\n- Document the changes and add an alarm on `AccessDenied` occurrences via a Logs metric filter to detect future drift.",
+          "rubric": [
+            {
+              "criterion": "Replaces wildcard S3 policy with concrete, least-privilege resources/actions (includes example ARNs)",
+              "marks": 2
+            },
+            {
+              "criterion": "Properly secures secrets (env var removal, KMS CMK use, and appropriate decrypt permissions)",
+              "marks": 2
+            },
+            {
+              "criterion": "Resolves KMS decrypt failure by addressing both IAM permissions and CMK key policy/grants",
+              "marks": 2
+            },
+            {
+              "criterion": "Fixes logging posture (finite retention, scoped resource policy) and adds detection for regressions",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "cloud security and compliance",
+            "Amazon CloudWatch",
+            "AWS Lambda"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Implement and expose a serverless function with event and API triggers",
+          "brief": "Build a Lambda function that: (1) serves an API Gateway endpoint `GET /ping` returning a JSON health payload and `POST /orders` that validates a JSON body and echoes an order id; and (2) is also invoked every 5 minutes by an EventBridge schedule to emit a heartbeat log and a custom metric. Configure the function with least privilege and basic observability.",
+          "deliverable": "A zip or repository containing: (a) function code; (b) IaC template (AWS SAM/CloudFormation/Terraform) creating the Lambda, API Gateway (proxy or explicit routes), and an EventBridge rule; (c) `curl` transcripts showing 200 for `GET /ping` and 201/400 handling for `POST /orders`; (d) CloudWatch Logs excerpts showing scheduled heartbeat lines; (e) a screenshot or JSON of the created resources (e.g., `sam deploy` output or `aws cloudformation describe-stacks`), and the output of `aws lambda get-function-configuration` for the function.",
+          "acceptance_criteria": [
+            "`GET /ping` returns HTTP 200 with JSON including a timestamp and `status:\"ok\"`.",
+            "`POST /orders` returns HTTP 201 with a JSON body containing a generated or echoed `orderId` when given a valid JSON payload, and HTTP 400 with an error JSON when invalid.",
+            "An EventBridge rule triggers the same Lambda every 5 minutes; CloudWatch Logs show a heartbeat entry at least twice with accurate timestamps.",
+            "The IaC template defines least-privilege execution role permissions (e.g., CloudWatch Logs write, and only the services actually required).",
+            "Custom metric `OrdersHeartbeat` (or similar) is published on scheduled runs; a screenshot or `get-metric-data` output shows at least two points."
+          ],
+          "rubric": [
+            {
+              "criterion": "Functional API: correct responses and status codes for GET/POST with evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Scheduled invocation configured and evidenced in CloudWatch Logs",
+              "marks": 4
+            },
+            {
+              "criterion": "IaC completeness and correctness (Lambda, API Gateway, EventBridge)",
+              "marks": 4
+            },
+            {
+              "criterion": "Least-privilege IAM for the function (no wildcards beyond what is necessary)",
+              "marks": 3
+            },
+            {
+              "criterion": "Custom metric published with evidence",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "AWS Lambda",
+            "Amazon CloudWatch",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Monitor the serverless function with dashboards, alarms, and safe logging",
+          "brief": "Add CloudWatch monitoring for the function you built: a dashboard, alarms for errors/throttles/latency, a Logs metric filter for `level=error`, and an SNS notification. Set a finite log retention policy. Prove the alarms fire appropriately without paging on 4xx validation errors.",
+          "deliverable": "Artifacts to verify configuration: (a) exported CloudWatch Dashboard JSON; (b) JSON for at least three alarms: `Errors > 0`, `Throttles > 0`, and `p95 Duration` over a chosen threshold, with TreatMissingData explicitly set; (c) Logs metric filter definition JSON and the associated alarm JSON; (d) SNS topic ARN and a screenshot or JSON of a delivered notification; (e) `describe-log-groups` output showing the function's log group with a finite `retentionInDays`; (f) steps and evidence (logs/metrics) of a forced server error test and a 4xx-only test showing only the intended alarm(s) fired.",
+          "acceptance_criteria": [
+            "Dashboard JSON contains widgets for Invocations, Errors, Throttles, and p95/Max Duration for the function.",
+            "Alarms exist with correct dimensions to the function and explicit `TreatMissingData` settings; composite or suppression is acceptable to avoid 4xx noise.",
+            "A metric filter detects `level=error` (or equivalent) from function logs and drives an alarm.",
+            "An SNS topic is configured as an alarm action; delivery evidence provided (email/SMS/HTTP payload).",
+            "Log group retention is set to a finite value (>= 7 days).",
+            "Test evidence shows server 5xx triggers the error alarm while a 4xx validation does not page on-call."
+          ],
+          "rubric": [
+            {
+              "criterion": "Dashboard completeness and correct metrics for the target Lambda",
+              "marks": 4
+            },
+            {
+              "criterion": "Correctly configured alarms (dimensions, thresholds, and missing data treatment) with evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Logs metric filter and alarm correctly discriminate server errors from 4xx",
+              "marks": 4
+            },
+            {
+              "criterion": "SNS notification wiring and proof of delivery",
+              "marks": 3
+            },
+            {
+              "criterion": "Finite log retention configuration and evidence",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Amazon CloudWatch",
+            "AWS Lambda",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

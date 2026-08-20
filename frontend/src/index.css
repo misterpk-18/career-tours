@@ -13,105 +13,114 @@
    CSS @layer and loses its ordering guarantees.
    ========================================================================= */
 @layer base {
-  /* COLOUR CONTRACT
-     `brand` (indigo) is the ONLY decorative colour: identity, selection, primary
-     action, links, model-generated content.
-     `success` / `warning` / `danger` are STATE ONLY — legal iff the thing they
-     label can be good, at-risk, or failed. A category, a rank, a difficulty and
-     a percentage are none of those, so they are neutral.
-     No gradients. Two structural radii (xl, lg) plus `full` for pills. One
-     filled button style. */
+  /* COLOUR CONTRACT — Solarized Dark, single theme.
+     ---------------------------------------------------------------------------
+     Ethan Schoonover's Solarized Dark, with the accent ramp adapted for text.
+     There is no light theme and no toggle: one palette, so a colour choice is
+     never "which theme is this legible in".
+
+     The adaptation matters and is not decoration. Solarized's accents sit at
+     mid-luminance by design, so on base03 they measure:
+
+       blue 4.08   yellow 4.68   green 4.69   orange 3.26   red 3.25
+
+     Every one of those is below 4.5:1 for small text, and base01 (the palette's
+     own "secondary content" colour) is 2.79. So the raw hues are used for FILLS
+     and STROKES, where the bar is 3:1, and every `*-fg` token that carries text
+     is the hue lifted toward base2 until it clears 4.5:1 on the darkest AND
+     lightest surface it can sit on. Measured, not eyeballed.
+
+     `brand` (blue) is identity, selection, primary action, links, and
+     model-generated content. Lifted 12% so base03 text on a filled button
+     reaches 4.65:1 — dark-on-blue, which is the Solarized button.
+     `accent` (yellow) is ACHIEVEMENT ONLY: XP, levels, streaks, badges, and the
+     celebration on a good score. Narrow on purpose — a yellow that also meant
+     "highlight" would stop meaning "you earned something".
+     `success` (green) / `warning` (orange) / `danger` (red) are STATE ONLY, and
+     none of them ever carries text on a fill, which is why they stay at their
+     true Solarized values.
+
+     Subtle chip backgrounds are ONE neutral for every hue. Blending yellow or
+     red into a teal ground produces mud — measured at rgb(46,58,57) for warning,
+     which is indistinguishable from grey — so the hue is carried by the text and
+     the border instead. That is also how Solarized itself works: a monochrome
+     field, coloured content.
+
+     Gradients are permitted on EARNED surfaces only — a result hero, an XP bar,
+     a level ring. Not on cards, not on nav, not behind body copy.
+
+     Three structural radii (2xl, xl, lg) plus `full` for pills. `md`/`3xl` are
+     deliberately absent so they compile to nothing rather than creeping back in.
+
+     One filled button style. */
   :root {
-    color-scheme: light;
-
-    --canvas: 250 251 253;
-    --surface: 255 255 255;
-    --surface-2: 248 250 252;
-    --surface-3: 241 245 249;
-    --surface-inverse: 15 23 42;
-
-    --overlay: 15 23 42;
-    --overlay-alpha: 0.45;
-
-    --line: 226 232 240;
-    /* slate-500: 4.7:1 on white, 3.6:1 on the dark surface — one value clears
-       the 3:1 non-text minimum in both themes. */
-    --line-strong: 100 116 139;
-
-    --fg: 15 23 42;
-    --fg-secondary: 51 65 85;
-    /* Replaces text-slate-500 (3.75:1) and text-slate-600 (2.37:1). */
-    --fg-muted: 71 85 105;
-    --fg-on-solid: 255 255 255;
-
-    --brand-solid: 79 70 229;
-    --brand-solid-hover: 67 56 202;
-    --brand-fg: 67 56 202;
-    --brand-subtle: 238 242 255;
-    --brand-subtle-fg: 55 48 163;
-
-    --success-solid: 5 150 105;
-    --success-fg: 4 120 87;
-    --success-subtle: 236 253 245;
-
-    --warning-solid: 217 119 6;
-    --warning-fg: 180 83 9;
-    --warning-subtle: 255 251 235;
-
-    --danger-solid: 220 38 38;
-    --danger-fg: 185 28 28;
-    --danger-subtle: 254 242 242;
-
-    --focus: 79 70 229;
-
-    --shadow-e1: 0 1px 2px rgb(15 23 42 / 0.06);
-    --shadow-e2: 0 4px 12px -4px rgb(15 23 42 / 0.1);
-    --shadow-e3: 0 16px 40px -12px rgb(15 23 42 / 0.16);
-  }
-
-  [data-theme='dark'] {
     color-scheme: dark;
 
-    --canvas: 9 13 22;
-    --surface: 15 23 42;
-    --surface-2: 30 41 59;
-    --surface-3: 20 28 46;
-    --surface-inverse: 241 245 249;
+    /* base03 / base02 and two lifts of base02 toward base01. Kept close
+       together on purpose: the text ramp below is validated against the
+       LIGHTEST of these, so a brighter panel would break fg-muted. */
+    --canvas: 0 43 54;
+    --surface: 7 54 66;
+    --surface-2: 15 60 71;
+    --surface-3: 23 65 76;
+    --surface-inverse: 238 232 213;
 
-    --overlay: 2 6 23;
+    --overlay: 0 26 33;
     --overlay-alpha: 0.78;
 
-    --line: 30 41 59;
-    --line-strong: 100 116 139;
+    --line: 28 69 79;
+    /* base00. 3.37:1 on canvas, clearing the 3:1 non-text minimum. base01
+       (2.79) does not, which is why it is not this value. */
+    --line-strong: 101 123 131;
 
-    --fg: 241 245 249;
-    --fg-secondary: 203 213 225;
-    --fg-muted: 148 163 184;
-    --fg-on-solid: 255 255 255;
+    /* base2, then two steps down. fg-muted is base1 lifted 10%: base1 alone is
+       4.14:1 on surface-3 and this app puts a lot of small text in that token. */
+    --fg: 238 232 213;
+    --fg-secondary: 174 182 177;
+    --fg-muted: 156 168 166;
+    /* Dark text on a filled control — the Solarized way round. */
+    --fg-on-solid: 0 43 54;
 
-    --brand-solid-hover: 99 102 241;
-    --brand-fg: 165 180 252;
-    --brand-subtle: 30 27 75;
-    --brand-subtle-fg: 199 210 254;
+    /* ACHIEVEMENT accent (yellow). */
+    --accent-solid: 181 137 0;
+    --accent-solid-hover: 192 156 43;
+    --accent-fg: 205 177 89;
+    --accent-subtle: 20 63 74;
+    --accent-subtle-fg: 208 183 102;
 
-    --success-solid: 16 185 129;
-    --success-fg: 52 211 153;
-    --success-subtle: 2 44 34;
+    /* Identity (blue), lifted 12% so dark text on a fill reaches 4.65:1. */
+    --brand-solid: 62 150 210;
+    --brand-solid-hover: 78 158 211;
+    --brand-fg: 128 181 211;
+    --brand-subtle: 20 63 74;
+    --brand-subtle-fg: 138 186 212;
 
-    --warning-solid: 245 158 11;
-    --warning-fg: 251 191 36;
-    --warning-subtle: 69 26 3;
+    --success-solid: 133 153 0;
+    --success-fg: 177 186 89;
+    --success-subtle: 20 63 74;
 
-    --danger-solid: 239 68 68;
-    --danger-fg: 248 113 113;
-    --danger-subtle: 69 10 10;
+    --warning-solid: 203 75 22;
+    --warning-fg: 222 161 127;
+    --warning-subtle: 20 63 74;
 
-    --focus: 129 140 248;
+    --danger-solid: 220 50 47;
+    --danger-fg: 230 150 138;
+    --danger-subtle: 20 63 74;
+
+    /* cyan — the one accent not otherwise spoken for, so a focus ring is never
+       confused with a state or an achievement. */
+    --focus: 42 161 152;
+
+    /* EARNED LAYER. An alpha wash, because on a dark ground it picks up the
+       surface beneath instead of flattening it. Blue into yellow: the field is
+       Solarized blue and the medal on it is Solarized yellow. */
+    --gradient-earned: linear-gradient(135deg, rgb(var(--brand-solid) / 0.22), rgb(var(--accent-solid) / 0.18));
 
     --shadow-e1: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-e2: 0 6px 16px -6px rgb(0 0 0 / 0.5);
     --shadow-e3: 0 20px 48px -16px rgb(0 0 0 / 0.65);
   }
+
 
   /* ---------------------------------------------------------------- base --- */
 
@@ -189,14 +198,6 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-  }
-
-  /* Suppresses transitions for one frame while the theme swaps, so switching
-     doesn't animate every colour on the page independently. */
-  html[data-theme-switching] *,
-  html[data-theme-switching] *::before,
-  html[data-theme-switching] *::after {
-    transition: none !important;
   }
 }
 
@@ -316,5 +317,62 @@
 
   :focus-visible {
     outline-color: Highlight !important;
+  }
+}
+
+/* Syntax highlighting for question artefacts.
+ *
+ * highlight.js emits these class names; the colours are the app's own tokens
+ * rather than one of its bundled themes. Importing github.css and
+ * github-dark.css would ship two stylesheets fighting over the same selectors
+ * with no awareness of [data-theme], and the palette would drift from the rest
+ * of the page. Six roles is enough for the languages this corpus uses.
+ */
+@layer components {
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-built_in,
+  .hljs-literal {
+    color: rgb(var(--brand-fg));
+    font-weight: 600;
+  }
+
+  .hljs-string,
+  .hljs-attr,
+  .hljs-symbol,
+  .hljs-meta-string {
+    color: rgb(var(--success-fg));
+  }
+
+  .hljs-number,
+  .hljs-regexp,
+  .hljs-template-variable {
+    color: rgb(var(--warning-fg));
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: rgb(var(--fg-muted));
+    font-style: italic;
+  }
+
+  .hljs-title,
+  .hljs-section,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: rgb(var(--fg));
+    font-weight: 600;
+  }
+
+  .hljs-variable,
+  .hljs-attribute,
+  .hljs-type,
+  .hljs-params {
+    color: rgb(var(--fg-secondary));
+  }
+
+  .hljs-deletion {
+    color: rgb(var(--danger-fg));
   }
 }

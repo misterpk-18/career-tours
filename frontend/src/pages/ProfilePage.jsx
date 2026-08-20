@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GraduationCap, Save, Target, User } from 'lucide-react';
+import { Award, BarChart3, GraduationCap, Save, Target, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { studentsAPI } from '../services/api';
 import PageShell from '../components/ui/PageShell';
@@ -10,6 +10,10 @@ import Button from '../components/ui/Button';
 import TextField from '../components/ui/TextField';
 import SelectField from '../components/ui/SelectField';
 import SectionHeading from '../components/ui/SectionHeading';
+import XpBar from '../components/motion/XpBar';
+import BadgeShelf from '../components/motion/BadgeShelf';
+import Leaderboard from '../components/motion/Leaderboard';
+import { achievementsAPI } from '../services/api';
 import useSubmit from '../hooks/useSubmit';
 
 // Values are the ones the CHECK constraints on `students` accept — not labels.
@@ -62,6 +66,28 @@ const Section = ({ icon, title, children }) => (
 );
 
 export const ProfilePage = () => {
+  // Achievements load separately from the profile form and never block it: a
+  // failed XP fetch must not stop someone editing their phone number.
+  const [achievements, setAchievements] = useState(null);
+  const [leaderboard, setLeaderboard] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all([
+      achievementsAPI.mine().catch(() => null),
+      achievementsAPI.leaderboard(8).catch(() => null),
+    ]).then(([mine, board]) => {
+      if (cancelled) return;
+      setAchievements(mine);
+      setLeaderboard(board);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const { student, updateStudent } = useAuth();
 
   const [form, setForm] = useState(() => toForm(student));
@@ -132,6 +158,48 @@ export const ProfilePage = () => {
 
   return (
     <PageShell>
+      {/* Achievements sit above the form because they are the reason a student
+          opens this page more than once. The form is why they opened it the
+          first time. */}
+      {achievements ? (
+        <div className="mb-6 space-y-4">
+          <XpBar
+            xp={achievements.xp}
+            level={achievements.level}
+            xpIntoLevel={achievements.xp_into_level}
+            xpForLevel={achievements.xp_for_level}
+            streak={achievements.streak}
+          />
+
+          <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+            <Card padding="lg" className="space-y-4">
+              <SectionHeading as="h2" size="sm" icon={Award} iconClassName="text-accent-fg">
+                Badges
+              </SectionHeading>
+              <BadgeShelf badges={achievements.badges} />
+            </Card>
+
+            <Card padding="lg" className="space-y-4">
+              <SectionHeading as="h2" size="sm" icon={BarChart3} iconClassName="text-accent-fg">
+                Where you rank
+              </SectionHeading>
+              {leaderboard?.entries?.length ? (
+                <>
+                  <Leaderboard entries={leaderboard.entries} />
+                  <p className="text-2xs text-fg-muted">
+                    Ranked by XP. Other students are never named.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-fg-muted">
+                  Submit a section to appear on the board.
+                </p>
+              )}
+            </Card>
+          </div>
+        </div>
+      ) : null}
+
       <form onSubmit={submit} className="space-y-6">
         <Card padding="lg" className="space-y-8">
           <Section icon={User} title="Basic identity & contact">

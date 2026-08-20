@@ -1,0 +1,258 @@
+{
+  "course_code": "NT-C-026",
+  "course_name": "AWS Cloud",
+  "sources": [
+    {
+      "name": "AWS Certified Solutions Architect - Associate (SAA-C03) Sample Exam Questions",
+      "url": "https://d1.awsstatic.com/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf",
+      "note": "Official AWS sample questions, (c) Amazon Web Services. Used as concept source only; both items drawn from it are rewritten scenarios, not reproductions."
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Associate (SAA-C03) Exam Guide",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html",
+      "note": "Official exam guide, used to calibrate domain weighting and difficulty pitch. No question text taken."
+    },
+    {
+      "name": "AWS IAM User Guide - Policy evaluation logic",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon EBS User Guide - Amazon EBS snapshots",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon S3 User Guide - Managing the lifecycle of objects",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon Route 53 Developer Guide - Choosing between alias and non-alias records",
+      "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon RDS User Guide - Working with DB instance read replicas",
+      "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon EC2 Auto Scaling User Guide - Health checks for instances",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-health-checks.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "AWS Lambda Developer Guide - Lambda execution environment",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "Amazon CloudWatch User Guide - Install the CloudWatch agent",
+      "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "note": "Official AWS documentation. Item authored from the documented mechanism."
+    },
+    {
+      "name": "AWS Certification Handbook - AWS Solutions Architect Associate exam questions",
+      "url": "https://www.awscertificationhandbook.com/guides/aws-solutions-architect-associate-exam-questions/",
+      "note": "Third-party practice bank surveyed during collection. Candidates reviewed; none of its items survived filtering (all recognition-level), so no text is reused here."
+    },
+    {
+      "name": "PUPUWEB - AWS SAA-C03 exam question and answer set",
+      "url": "https://pupuweb.com/aws-saa-c03-actual-exam-question-answer-dumps-4/4/",
+      "note": "Third-party question set surveyed during collection. Unverified provenance and at least one disputed key, so used only to widen the candidate pool; no text reused."
+    },
+    {
+      "name": "Tutorials Dojo - AWS Certified Cloud Practitioner CLF-C02 sample exam questions",
+      "url": "https://tutorialsdojo.com/aws-certified-cloud-practitioner-clf-c02-sample-exam-questions/",
+      "note": "Third-party sample set surveyed during collection. Foundational tier, below this corpus's difficulty bar; no text reused."
+    },
+    {
+      "name": "VMExam - AWS Cloud Practitioner CLF-C02 certification sample questions",
+      "url": "https://www.vmexam.com/aws/aws-clf-c02-certification-exam-sample-questions",
+      "note": "Third-party sample set surveyed during collection. Foundational tier; no text reused."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "A nightly batch job runs on EC2 Standard Reserved Instances and normally finishes in about 7 hours inside a 10-hour processing window. At the end of each month the data volume grows enough that the reserved fleet alone would overrun the window. Once the job starts it cannot resume from a checkpoint; an interrupted run must begin again from the start. The team wants the extra month-end capacity at the lowest cost that still guarantees the job completes inside the window. Which purchase option should carry the additional instances?",
+      "options": [
+        "Spot Instances, since the extra fleet is needed for only a few hours and Spot carries the deepest discount",
+        "On-Demand Instances launched only for the month-end runs and terminated afterwards",
+        "A second Reserved Instance purchase sized for the month-end peak",
+        "A modification of the existing reservation to a larger instance size that covers the peak"
+      ],
+      "correct_option": "B",
+      "explanation": "Spot capacity can be reclaimed by AWS with a two-minute warning. A job that cannot resume from a checkpoint would have to restart from the beginning after an interruption, which can push it past the 10-hour window, so the Spot discount does not survive the must-finish constraint. Reserved pricing only pays off when the capacity is used for most of the hours it is billed for, and this extra capacity is needed a few hours a month. On-Demand bills per second only while the additional instances actually run, which is the cheapest option that still guarantees completion.",
+      "distractor_rationale": "A is the trap for anyone who memorised 'Spot is cheapest' without the interruptible precondition that the scenario deliberately removes. C looks like disciplined capacity planning but bills the peak fleet every hour of the month for capacity used on one night. D confuses vertical resizing with the real constraint, carries the same full-month cost, and Standard Reserved Instances cannot be modified across instance families in any case.",
+      "skills_covered": ["Amazon EC2"],
+      "difficulty": "hard",
+      "source_name": "AWS Certified Solutions Architect - Associate (SAA-C03) Sample Exam Questions",
+      "source_url": "https://d1.awsstatic.com/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "A developer's IAM user belongs to a group whose identity policy allows s3:* on arn:aws:s3:::reports/*. The reports bucket has a bucket policy that allows s3:GetObject to the whole account but also carries a statement that denies s3:GetObject when the aws:SourceVpce condition key does not match the account's S3 gateway endpoint. Calls from the developer's laptop over the internet are refused, while the identical call from an EC2 instance inside the VPC succeeds. Which account of the evaluation is correct?",
+      "options": [
+        "Every applicable policy is collected before a decision is made, and an explicit Deny in any of them terminates evaluation with a denial regardless of any Allow",
+        "A resource policy only takes effect where the identity policy is silent; it is applying here because the group policy grants s3:* rather than naming s3:GetObject",
+        "Conflicts resolve in favour of the more specific statement, and the conditioned bucket policy statement is more specific than the group's wildcard grant",
+        "The laptop request carries no applicable Allow and is therefore implicitly denied; adding the endpoint condition to the group's identity policy would grant it"
+      ],
+      "correct_option": "A",
+      "explanation": "Inside a single account, IAM gathers the identity policy, resource policy, permissions boundary, service control policy and session policy that apply to the request. An explicit Deny found in any of them ends evaluation immediately with a denial, and nothing later can restore access. The VPC call succeeds only because the aws:SourceVpce condition matches, so the Deny statement does not apply to it at all.",
+      "distractor_rationale": "B states the widespread belief that a bucket policy is a fallback used only when the identity policy says nothing; that is roughly true across accounts, where both sides must allow, but wrong within one account. C imports 'most specific rule wins' from route-table longest-prefix matching and ordered NACL rules, neither of which is how IAM breaks ties. D describes implicit denial, which is what a principal with no Allow at all receives; this developer does have an Allow, so the denial is explicit and no identity-policy edit can override it.",
+      "skills_covered": ["AWS IAM", "cloud security and compliance"],
+      "difficulty": "hard",
+      "source_name": "AWS IAM User Guide - Policy evaluation logic",
+      "source_url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "A 500 GB EBS volume is snapshotted nightly: Snap-1 on Monday (the first snapshot of the volume), Snap-2 on Tuesday, Snap-3 on Wednesday. To cut storage cost an administrator deletes Snap-2. What happens to a later restore from Snap-3, and to the storage actually reclaimed?",
+      "options": [
+        "Snap-3 is invalidated, because it stores only the blocks that changed since Snap-2 and its chain is now broken",
+        "Snap-3 still restores the complete Wednesday volume; only blocks that no remaining snapshot references are freed, so the reclaimed space may be far smaller than Snap-2's reported size",
+        "Snap-3 still restores, but AWS must re-read the volume to rebuild a baseline, so the next nightly snapshot is taken as a full snapshot",
+        "Snap-3 restores only Wednesday's changed blocks; the administrator must restore Snap-1 first and then apply Snap-3 on top of it"
+      ],
+      "correct_option": "B",
+      "explanation": "EBS snapshots are incremental in how they are stored but each one is independently restorable. Deleting a snapshot removes only the data blocks that no remaining snapshot still references; any block Snap-2 held that Snap-3 still points to is retained and simply re-attributed. That is why deleting an intermediate snapshot never invalidates a later one, and why the bill often drops much less than the snapshot's displayed size.",
+      "distractor_rationale": "A is the mental model imported from incremental file backups, where removing a link in the chain destroys everything after it - the single most common wrong belief about EBS snapshots. C invents a re-baselining step; AWS never promotes a later snapshot to a full one or re-reads the volume as a result of a deletion. D confuses the storage representation with restore semantics and describes a differential-restore procedure that EBS does not require or support.",
+      "skills_covered": ["Amazon EBS", "Backup and Recovery"],
+      "difficulty": "hard",
+      "source_name": "Amazon EBS User Guide - Amazon EBS snapshots",
+      "source_url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "A versioning-enabled S3 bucket has a lifecycle rule with an Expiration action set to 30 days after object creation. Ninety days later the default console listing for the bucket shows almost no objects, but the bucket's storage charge has not fallen at all. Which explanation accounts for both observations?",
+      "options": [
+        "On a versioning-enabled bucket, Expiration writes a delete marker and makes the prior version noncurrent; the data is only removed once a noncurrent-version expiration action is added",
+        "Expiration is measured from the object's last-accessed time, so objects read within the previous 30 days were never eligible for the rule",
+        "Charges for expired objects continue until the current monthly billing cycle closes, after which they are credited back",
+        "The rule was created without a prefix filter, so S3 treated it as ambiguous and never applied it to any object"
+      ],
+      "correct_option": "A",
+      "explanation": "On a versioning-enabled bucket an Expiration action is non-destructive. S3 inserts a delete marker as the new current version and the previously current version becomes noncurrent. Noncurrent versions keep incurring storage charges and do not appear in the default listing, which is exactly the pair of symptoms described. Removing the data requires a NoncurrentVersionExpiration action, usually alongside a rule to abort incomplete multipart uploads.",
+      "distractor_rationale": "B substitutes last-accessed time for creation time, which is the model behind Intelligent-Tiering's access-based transitions rather than behind an Expiration rule. C assumes a billing lag instead of a data-retention mechanism, and would predict the charge eventually falling on its own, which it does not. D reflects the belief that lifecycle rules require a prefix; a rule with an empty filter is valid and applies to every object in the bucket.",
+      "skills_covered": ["Amazon S3"],
+      "difficulty": "hard",
+      "source_name": "Amazon S3 User Guide - Managing the lifecycle of objects",
+      "source_url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "Application-tier EC2 instances run in private subnets across two Availability Zones and must download OS patches from the internet while remaining unreachable from the internet. An internet gateway is attached to the VPC and a NAT gateway has been created in a public subnet with an Elastic IP, but the instances still cannot reach the patch repositories. Which remaining change makes patching work without exposing the instances?",
+      "options": [
+        "Associate the private subnets with a route table whose 0.0.0.0/0 route targets the NAT gateway",
+        "Add a 0.0.0.0/0 route targeting the internet gateway to the route table the private subnets already use",
+        "Assign Elastic IP addresses to the application instances so that return traffic can be routed back to them",
+        "Add an outbound rule to the instances' security group permitting 0.0.0.0/0 on port 443, since security groups deny egress by default"
+      ],
+      "correct_option": "A",
+      "explanation": "Creating the NAT gateway changes nothing on its own: a subnet uses whichever route table it is associated with, and the private subnets are still on a table that has only the local VPC route. Pointing their default route at the NAT gateway lets the gateway perform source translation using its own Elastic IP in the public subnet, so outbound connections and their replies succeed while no host on the internet can open a connection inward.",
+      "distractor_rationale": "B is the fix that works for a public subnet and is the most common wrong answer; it would also silently convert the private subnets to public, defeating the stated requirement. C reflects the belief that an instance needs a public address before it can receive replies, when the NAT gateway is precisely the component doing that translation. D misstates the default: security groups allow all outbound traffic unless the default egress rule has been removed, so the port 443 rule changes nothing here.",
+      "skills_covered": ["Amazon VPC", "Subnetting", "Routing"],
+      "difficulty": "hard",
+      "source_name": "AWS Certified Solutions Architect - Associate (SAA-C03) Sample Exam Questions",
+      "source_url": "https://d1.awsstatic.com/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A team needs example.com at the zone apex to resolve to an internet-facing Application Load Balancer whose underlying IP addresses change over time. Their first attempt, a CNAME record at the apex, is rejected by Route 53. Which approach satisfies the requirement, and why does it work where the CNAME could not?",
+      "options": [
+        "Create a Route 53 alias A record at the apex targeting the load balancer; the alias is resolved inside Route 53 and answers with the balancer's current addresses at query time",
+        "Create an A record at the apex holding the load balancer's current IP addresses, plus a CloudWatch alarm that fires when they change so the record can be updated",
+        "Create the CNAME on www.example.com and point an apex A record at a small EC2 instance that redirects apex traffic to www",
+        "Delegate the apex to the load balancer's hosted zone with an NS record so that the balancer's own name servers answer apex queries"
+      ],
+      "correct_option": "A",
+      "explanation": "DNS forbids a CNAME from coexisting with the SOA and NS records that must exist at a zone apex, which is why the CNAME is refused. A Route 53 alias record is published as an A record, so the apex constraint is satisfied, and Route 53 resolves the target internally, substituting the load balancer's current addresses on every query. Nothing has to be updated when those addresses change, and alias queries to an AWS target are not charged.",
+      "distractor_rationale": "B is what teams build before they learn alias records exist; ALB addresses change without notice and there is no CloudWatch metric that reports the change, so the record goes stale between updates. C is a genuine workaround on DNS providers that lack alias support, but it adds an instance to run and patch and still leaves the apex not resolving to the balancer. D misreads NS delegation as a general-purpose pointer; Elastic Load Balancing does not operate authoritative name servers for a customer's zone.",
+      "skills_covered": ["DNS", "Load Balancing"],
+      "difficulty": "hard",
+      "source_name": "Amazon Route 53 Developer Guide - Choosing between alias and non-alias records",
+      "source_url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "An RDS for MySQL instance is deployed Multi-AZ. Reporting queries are saturating the primary's I/O and slowing down write transactions. A DBA proposes pointing the reporting tool at the standby instance in the second Availability Zone to take the read load off the primary. Which assessment of that proposal is correct?",
+      "options": [
+        "The standby cannot serve the reports: a Multi-AZ standby is not addressable and accepts no connections, so a read replica with its own endpoint is what offloads reads",
+        "The standby can serve the reports, but reports may lag the primary by minutes because the replication to it is asynchronous",
+        "The standby can serve the reports only if the client opens the connection in read-only mode; a read-write connection would trigger a failover",
+        "Pointing reports at the standby works and is better than a read replica, because synchronous replication means reports always see the latest committed writes"
+      ],
+      "correct_option": "A",
+      "explanation": "Multi-AZ exists for availability, not read scaling. The standby has no endpoint of its own and serves no traffic; the DB instance endpoint always resolves to the current primary, and a failover simply repoints that same endpoint. Offloading reads requires creating a read replica, which is a separately addressable instance the application must be changed to use for its read traffic.",
+      "distractor_rationale": "B has the architecture backwards in a plausible way: asynchronous lag describes a read replica, not the synchronous Multi-AZ standby. C invents a connection-mode gate and the idea that reading from the standby could trigger a failover, which is how some self-managed clusters behave. D is the most seductive because its premise is right - Multi-AZ replication really is synchronous - and only the conclusion is wrong, since a standby that accepts no connections cannot serve anything however current its data is.",
+      "skills_covered": ["Amazon RDS"],
+      "difficulty": "hard",
+      "source_name": "Amazon RDS User Guide - Working with DB instance read replicas",
+      "source_url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "An Auto Scaling group behind an Application Load Balancer runs an application that needs roughly four minutes after boot to warm its cache before it can answer requests. The group has ELB health checks enabled. Instances are being launched, marked unhealthy, terminated and relaunched in a continuous loop, and the group never reaches a steady state - yet an instance launched by hand from the same AMI serves traffic normally after a few minutes. Which change most directly ends the loop?",
+      "options": [
+        "Increase the Auto Scaling group's health check grace period past the application's warm-up time so health check results are not counted until the instance is ready",
+        "Switch the group's health check type from ELB back to EC2 so that the instance status check, which passes at boot, is the one that decides health",
+        "Raise the target group's unhealthy threshold so that more consecutive failed checks are required before a target is considered unhealthy",
+        "Increase the group's desired capacity so that enough ready instances are always in service while others are starting"
+      ],
+      "correct_option": "A",
+      "explanation": "With ELB health checks enabled the group begins honouring target health as soon as the grace period expires. If that grace period is shorter than the application's start-up time, every new instance is still failing its check the first time it is evaluated, so the group terminates it and launches a replacement that meets exactly the same fate - a self-sustaining loop. Extending the grace period beyond the four-minute warm-up lets each instance reach a healthy state before its result counts.",
+      "distractor_rationale": "B removes the symptom by ignoring application health entirely: the EC2 status check passes as soon as the instance boots, so a hung application would afterwards be left in service indefinitely, trading a visible failure for a silent one. C is the right fix when checks are flapping around a working application, but here the target genuinely fails throughout warm-up, so demanding more consecutive failures only delays the same termination. D adds instances that hit precisely the same start-up race, increasing the churn and the cost.",
+      "skills_covered": ["Auto Scaling", "Load Balancing", "Amazon EC2"],
+      "difficulty": "hard",
+      "source_name": "Amazon EC2 Auto Scaling User Guide - Health checks for instances",
+      "source_url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-health-checks.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A Lambda function authenticates the caller, assigns the resulting user object to a module-level variable declared outside the handler, and returns data for that user. In testing and under light traffic it is always correct. Under sustained load a small proportion of responses come back holding a different user's data. Which mechanism explains the behaviour?",
+      "options": [
+        "Lambda reuses a warm execution environment for later invocations, so module-level state written by one invocation survives into the next invocation that environment handles",
+        "Lambda runs concurrent invocations as threads inside a single environment, so the module-level variable is shared across them and needs a mutex",
+        "The function's reserved concurrency is set too low, so Lambda batches several pending requests into one invocation payload",
+        "The API layer in front of the function is caching responses, so a later caller is served the cached body produced for an earlier one"
+      ],
+      "correct_option": "A",
+      "explanation": "An execution environment handles one invocation at a time, but it is reused. Code outside the handler runs once per environment during initialization, and anything written to module scope persists into subsequent invocations served by that environment. Per-request state must therefore live inside the handler; only things safe to share across requests - SDK clients, connection pools, configuration - belong in the initialization phase. The bug surfaces under load precisely because that is when warm environments are being reused most heavily.",
+      "distractor_rationale": "B is the familiar multi-threaded server model and points at locking, which cannot help because there is no concurrency inside a single execution environment - the sharing is across time, not across threads. C misreads a concurrency limit as request batching; Lambda throttles synchronous invocations rather than combining them. D is plausible when a cache sits in front, but response caching keys on the request and would return identical bodies for identical requests, not another user's data to a differently authenticated caller.",
+      "skills_covered": ["AWS Lambda"],
+      "difficulty": "hard",
+      "source_name": "AWS Lambda Developer Guide - Lambda execution environment",
+      "source_url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "An operations team wants a CloudWatch alarm to fire when an EC2 instance's memory utilisation stays above 85 percent for 15 minutes. They enable detailed monitoring on the instance, wait, and still find no memory metric anywhere in the AWS/EC2 namespace. What has to be done for the alarm to be possible?",
+      "options": [
+        "Install and configure the CloudWatch agent on the instance, with an instance role permitting PutMetricData, so memory is published as a custom metric the alarm can target",
+        "Nothing more - detailed monitoring publishes memory at one-minute granularity and the metric appears once a few hours of data have been collected",
+        "Enable the EC2 status checks, which surface memory pressure as an impaired instance status that an alarm can be built on",
+        "Create a CloudTrail trail for the instance and define a metric filter over its memory events"
+      ],
+      "correct_option": "A",
+      "explanation": "The built-in EC2 metrics are collected by the hypervisor, which can observe CPU, disk and network activity from outside the instance but has no visibility into the guest operating system. Memory utilisation and disk-space usage are guest-level facts, so they require an in-guest agent that publishes them as custom metrics, plus an instance role granting cloudwatch:PutMetricData. Detailed monitoring only shortens the collection interval from five minutes to one; it adds no new metrics at all.",
+      "distractor_rationale": "B is the single most widespread misconception about what detailed monitoring buys, and it fits the team's reasoning for enabling it in the first place. C conflates the two EC2 status checks - system and instance - which report reachability and underlying host health, not resource pressure inside the guest. D misassigns the services' roles: CloudTrail records API calls made to AWS, not telemetry generated inside an instance, and no memory events exist for a filter to match.",
+      "skills_covered": ["Amazon CloudWatch"],
+      "difficulty": "hard",
+      "source_name": "Amazon CloudWatch User Guide - Install the CloudWatch agent",
+      "source_url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "provenance": "adapted"
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "course_code": "NT-C-040",
+  "course_name": "ServiceNow",
+  "sources": [
+    {
+      "name": "ServiceNow University - Certified System Administrator (CSA) Mainline Exam Blueprint",
+      "url": "https://nowlearning.servicenow.com/kb?id=kb_article_view&sysparm_article=KB0011554",
+      "note": "Used only to scope which platform mechanisms the CSA exam actually tests. No item text taken from the blueprint."
+    },
+    {
+      "name": "ServiceNow Product Documentation",
+      "url": "https://www.servicenow.com/docs",
+      "note": "ServiceNow copyright. Used as a factual reference for platform behaviour; all stems and options here are original wording."
+    },
+    {
+      "name": "ServiceNow Community (developer forum, developer blog, ITSM blog)",
+      "url": "https://www.servicenow.com/community",
+      "note": "User-contributed content under ServiceNow community terms. Concepts adapted, wording rewritten. Not reproduced verbatim."
+    },
+    {
+      "name": "ServiceNow SDK - Tables, Columns, Column Overrides, and Relationships Guide",
+      "url": "https://servicenow.github.io/sdk/guides/table-guide",
+      "note": "Public ServiceNow developer documentation. Used for inheritance and column-override semantics."
+    },
+    {
+      "name": "Emergys - Retroactive Start and Pause Features for SLA in ServiceNow",
+      "url": "https://www.emergys.com/blog/retroactive-start-and-pause-in-sla/",
+      "note": "Third-party vendor blog. Concept adapted into an original arithmetic scenario; no text reused."
+    },
+    {
+      "name": "IK Consulting - What Activities Are Recorded in a ServiceNow Update Set?",
+      "url": "https://ikconsulting.com/post/what-activities-are-recorded-in-a-servicenow-update-set",
+      "note": "Third-party consultancy blog. Concept adapted; no text reused."
+    },
+    {
+      "name": "SNReady - ServiceNow CSA Practice Test: 200 Questions",
+      "url": "https://snready.com/blog/servicenow-csa-practice-test-200-questions-2026",
+      "note": "Third-party practice bank surveyed for candidate topics and difficulty calibration. Its items were almost entirely definitional and none were carried forward; listed for transparency about the candidate pool."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "A developer creates u_facility_request as a new table that extends Task. Two weeks later a different admin adds a field u_site_code to the Task table itself. On u_facility_request only, u_site_code must now be mandatory and default to \"HQ\", without changing how it behaves on Incident or Change Request. Which statement describes what is actually required?",
+      "options": [
+        "u_site_code is already a column on u_facility_request, and a dictionary override on that table can set mandatory and a default value without affecting Task's other children",
+        "u_site_code lives only on Task, so u_facility_request must dot-walk to it, and a dictionary override can change read-only but not default value",
+        "u_site_code must be recreated as a separate column on u_facility_request, because a child table receives only the fields the parent had at the moment the child was created",
+        "The mandatory flag must be set on the Task dictionary entry and then suppressed on Incident and Change Request with per-table UI policies, since overrides cannot make a field mandatory"
+      ],
+      "correct_option": "A",
+      "explanation": "Extending a table means the child shares the parent's columns, including columns added to the parent afterwards, so inherited fields are never dot-walked. To vary an inherited field's dictionary attributes for one child only, you create a sys_dictionary_override on that child; overrides cover mandatory, default value, read-only, calculated and reference qualifier, and leave the parent and its sibling tables untouched.",
+      "distractor_rationale": "B confuses inheritance with reference fields - a very common error, since dot-walking is how you reach fields on a *referenced* table, not an inherited one - and repeats the belief that overrides are read-only-only. C is the mental model borrowed from copy-based schema tools where a child is a snapshot, which makes retro-added parent fields feel impossible. D is what an admin who has never found the Dictionary Overrides related list does: change the parent and paper over the fallout with UI policies, which also silently fails on imports and the API.",
+      "skills_covered": ["ServiceNow"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Product Documentation - Define a dictionary override",
+      "source_url": "https://docs.servicenow.com/en-US/bundle/vancouver-platform-administration/page/administer/data-dictionary-tables/task/t_DefineADictionaryOverride.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "An admin secures Incident with two write access controls: one on incident with no field specified, requiring the itil role and no script; and one on incident.priority requiring no role, with a condition that is true for every record. A user who holds only snc_internal opens an existing incident and finds Priority is not editable. What accounts for this?",
+      "options": [
+        "The row-level result and the field-level result are combined with AND, so a field-level grant cannot rescue a row-level denial",
+        "Field-level access controls are consulted only on insert, so on an existing record only the row-level control is evaluated",
+        "An access control that names no role is ignored by the evaluator, because every access control must specify at least one role to take effect",
+        "The two controls conflict, so the platform falls back to the field's dictionary read-only attribute, which is set on Priority in the base system"
+      ],
+      "correct_option": "A",
+      "explanation": "Within one level, every matching access control is OR'd - passing any one of them is enough. Across levels, the row-level outcome and the field-level outcome are AND'd. The user fails the row-level write control because they lack itil, so the write is denied on the record regardless of how permissive the incident.priority control is.",
+      "distractor_rationale": "B is a plausible misreading of the insert/update/write operation split and of why field ACLs are so often described as 'form-level'. C is genuinely widespread: because almost every ACL in the base system names a role, admins conclude a role is mandatory, when in fact a role-less ACL with a true condition grants to everyone - and that misbelief is exactly what makes this configuration dangerous elsewhere. D invents a fallback rule and blames the dictionary, which is where an admin looks when a field is greyed out and no ACL seems to explain it.",
+      "skills_covered": ["Data Security", "ServiceNow"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - Evaluating Row level and Field level ACLs",
+      "source_url": "https://www.servicenow.com/community/in-other-news/evaluating-row-level-and-field-level-acls/ba-p/2268703",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "In March a user was granted the itil role directly on their user record. In June they were also added to a group that grants itil. In August an admin removes them from that group in order to revoke fulfiller access, but the user can still open and update incidents the next morning. Which explanation is correct?",
+      "options": [
+        "The March grant is its own sys_user_has_role record that group membership never superseded; it survives the group removal and must be deleted separately",
+        "Group-based revocation only takes effect after the scheduled job that refreshes role assignments runs, so the access will drop on its own within a day",
+        "Removing the user from the group deletes only the roles the group's role contained; the parent itil role always remains and can be cleared only by deactivating the user",
+        "The user keeps access because snc_internal implicitly contains itil for any user who has previously been assigned an incident"
+      ],
+      "correct_option": "A",
+      "explanation": "Role grants are individual sys_user_has_role rows. A group grant creates an inherited row tied to the group membership and is removed when membership ends; a direct grant is an independent row with no link to any group and is unaffected. The user therefore keeps itil until that direct row is deleted from their Roles related list.",
+      "distractor_rationale": "B is the reflex explanation whenever revoked access lingers - blame caching or a nightly job - and it is dangerous precisely because it persuades the admin to wait instead of looking. C garbles role inheritance: 'contains roles' propagates a parent role's children downward, and this option inverts that relationship while adding a fictitious deactivation-only rule. D invents inheritance from snc_internal, which is plausible to anyone who has noticed that snc_internal appears on nearly every fulfiller and assumes it is the umbrella role.",
+      "skills_covered": ["User Management"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - User is not part any group but still has the roles",
+      "source_url": "https://www.servicenow.com/community/developer-forum/user-is-not-part-any-group-but-still-has-the-roles/m-p/2787679",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "On the Incident form an onLoad client script sets Assignment group to read-only. A UI policy on the same table, whose condition is satisfied on load, lists Assignment group with Read only set to false. A before business rule on Incident also writes to Assignment group. A fulfiller opens an existing incident. What is the state of Assignment group on the loaded form, and why?",
+      "options": [
+        "Editable, because UI policies run after onLoad client scripts on form load and their field properties overwrite what the script applied",
+        "Read only, because client scripts are procedural and run last, so the script's setting is the final one applied",
+        "Read only, because the before business rule executes during form load and holds the field locked until the record is saved",
+        "Editable only for admins, because UI policy field settings are skipped for non-admin users whenever a client script sets the same property"
+      ],
+      "correct_option": "A",
+      "explanation": "On form load the client-side order is onLoad client scripts first, then UI policies; on a field change it is onChange client scripts, then UI policies. Where both touch the same field property, the UI policy applies last and therefore wins. The before business rule is irrelevant here: before rules run at save time, not load time - the load-time server hook is a display business rule, which passes data forward via g_scratchpad.",
+      "distractor_rationale": "B is the 'code beats configuration' intuition that most developers bring from other platforms, and it is reinforced by the fact that a client script is the thing you had to write. C confuses before with display business rules, which is the single most common gap in client/server timing, and it puts a server-side rule inside the browser's load sequence. D invents a role-based override for conflict resolution, which sounds reasonable to someone who has only ever tested as admin and seen the field behave differently.",
+      "skills_covered": ["ServiceNow", "Data Quality"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - A Race between UI Policy and Client script",
+      "source_url": "https://www.servicenow.com/community/developer-blog/a-race-between-ui-policy-and-client-script/ba-p/2292668",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "A transform map loads contractor records into sys_user, with both employee_number and email mapped and Coalesce checked on each. A source row arrives whose employee_number matches one existing sys_user record and whose email matches a different existing sys_user record. What does the transform do with that row?",
+      "options": [
+        "Inserts a new sys_user record, because every coalesce field must match the same existing record for the transform to update rather than insert",
+        "Updates the record matched on employee_number, because the coalesce field that appears first in the map's field order takes priority",
+        "Updates both matched records, because each coalesce field is evaluated independently against the target table",
+        "Skips the row and logs an error on the import set row, because an ambiguous coalesce match halts processing for that record"
+      ],
+      "correct_option": "A",
+      "explanation": "Multiple coalesce fields are combined with AND against a single target record. A partial match - one coalesce value found, another not found on that same record - is not a match, so the transform inserts. The usual fix is to map a single scripted field that concatenates the two source values and coalesce on that one field instead.",
+      "distractor_rationale": "B is the priority-ordering belief, and it is credible because a single coalesce field really does behave as a lookup key, so adding a second one feels like adding a fallback. C is the OR reading of multiple coalesce fields, which is the most frequently held misconception here and the one that produces silent duplicate users in production. D assumes the platform is defensive about ambiguity; in practice it inserts quietly, which is why this failure mode is usually found weeks later.",
+      "skills_covered": ["Data Quality"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - Should import set transform map update all Coalesce target fields",
+      "source_url": "https://www.servicenow.com/community/servicenow-ai-platform-forum/should-import-set-transform-map-update-all-coalesce-target/td-p/1116015",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A platform team restarts a password-reset service roughly twice a week. Each restart must be raised, tracked and closed without waiting on the CAB, while still leaving an auditable record of who authorised the procedure. In a baseline ServiceNow change implementation, which approach matches how the platform is designed to handle this?",
+      "options": [
+        "Submit the procedure once as a standard change proposal; after it is approved it enters the standard change catalogue, and each subsequent request is created pre-authorised without a per-request approval",
+        "Raise each restart as an emergency change, since emergency is the only change type that skips the approval activity entirely",
+        "Raise each restart as a normal change and set the Approval field to Approved manually, since standard changes cannot be scheduled or assigned to a group",
+        "Raise each restart as an incident with a change task attached, since recurring maintenance falls outside the scope of change management"
+      ],
+      "correct_option": "A",
+      "explanation": "The authorisation in a standard change happens once, at the template level: the proposal goes through review, and once approved the template is published to the standard change catalogue. Individual changes created from it inherit that pre-authorisation and move straight to implementation. The audit trail lives on the approved proposal, not on each occurrence.",
+      "distractor_rationale": "B conflates 'no waiting for CAB' with 'emergency', which is the most common change-type error in practice; emergency changes get an expedited or retrospective approval, not none, and misusing them corrupts change metrics. C is the habit that actually happens on real instances - manually forcing the Approval field - and its stated reason is false, since standard changes carry the full task fields. D is the process-avoidance answer, appealing because an incident is quicker to raise and nobody reviews it.",
+      "skills_covered": ["apply operations for an ITIL-based environment"],
+      "difficulty": "medium",
+      "source_name": "ServiceNow Product Documentation - Propose a standard change template",
+      "source_url": "https://www.servicenow.com/docs/r/it-service-management/change-management/propose-standard-chg-template.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "A P1 SLA definition has a duration of 4 hours, a 24x7 schedule, Retroactive start selected with Set start to = Created, and a pause condition of State is On Hold. An incident is created at 09:00. Its Priority is only raised to 1 at 11:00, which is the first moment the start condition matches. The incident is On Hold from 12:00 to 13:00. When does this SLA breach?",
+      "options": [
+        "14:00",
+        "13:00",
+        "16:00",
+        "15:00"
+      ],
+      "correct_option": "A",
+      "explanation": "Retroactive start moves the SLA's start time back to the Created value of 09:00 even though the task SLA record is only attached at 11:00. Elapsed time therefore accrues from 09:00: three hours to 12:00, nothing between 12:00 and 13:00 while the pause condition holds, then one more hour to reach the 4-hour duration at 14:00.",
+      "distractor_rationale": "13:00 comes from applying retroactive start correctly but treating the pause condition as cosmetic - a stage label rather than something that stops the elapsed clock. 16:00 comes from ignoring retroactive start and beginning the clock at 11:00 when the condition matched, which is exactly right for any SLA definition without the checkbox, and is the single most common error. 15:00 compounds both mistakes: clock from 11:00 and no pause credit.",
+      "skills_covered": ["SLAs"],
+      "difficulty": "hard",
+      "source_name": "Emergys - Retroactive Start and Pause Features for SLA in ServiceNow",
+      "source_url": "https://www.emergys.com/blog/retroactive-start-and-pause-in-sla/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "A flow triggered on Incident update has Run As set to \"User who initiates session\". One of its actions writes to a restricted CMDB table that only the cmdb_admin role can update. The same flow also calls a subflow whose own Run As is set to \"System User\", and that subflow writes to the same restricted table. A fulfiller without cmdb_admin triggers the flow. What happens?",
+      "options": [
+        "The parent flow's action fails the access control check while the subflow's write succeeds, because a subflow runs under its own Run As rather than inheriting the parent's",
+        "Both writes fail, because the subflow inherits the parent flow's Run As setting for the whole execution",
+        "Both writes succeed, because Run As only determines which user is stamped on the record, not which access controls are evaluated",
+        "The flow never starts, because a flow set to run as the initiating user is only triggered for users who can write to every table its actions touch"
+      ],
+      "correct_option": "A",
+      "explanation": "Running as the initiating user means flow actions are evaluated against that user's access controls, so the fulfiller's write to the restricted table is refused. The parent's Run As setting does not propagate to child subflows: each subflow uses the Run As configured on itself, and System User is a service context not bound by access controls, so the subflow's write goes through.",
+      "distractor_rationale": "B is the natural inheritance assumption - almost everything else in the platform cascades - and it is the reason teams are surprised when a subflow quietly performs an update the parent could not. C reduces Run As to an audit stamp, which is how it looks when you only ever test as admin and every write succeeds either way. D invents a pre-flight permission gate at trigger time; flows evaluate access per action as they execute, and partial completion with a failed action is exactly the outcome that makes this hard to debug.",
+      "skills_covered": ["Flow Designer", "No-code Automation"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - Functionality of \"run as\" in Flow Designer",
+      "source_url": "https://www.servicenow.com/community/developer-forum/servicenow-learning-42-functionality-of-quot-run-as-quot-in-flow/m-p/2690828",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A service owner wants a single report listing, for each closed incident, the incident number, its assignment group, and the recorded duration of a metric captured against that incident. A report built on Incident cannot reach the metric value, and a report built on Metric Instance cannot reach the assignment group. Which configuration produces this report?",
+      "options": [
+        "Build a database view joining Metric Instance, Metric Definition and Incident on the metric instance's record identifier, then report on the view",
+        "Add Metric Instances as a related list on the Incident form and export the related list, since related lists are the platform's cross-table reporting mechanism",
+        "Report on Incident and dot-walk to the metric instance's value field, since any table that points at Incident is reachable by dot-walking from Incident",
+        "Build a dashboard with an interactive filter that points at both Incident and Metric Instance, which joins the two tables when the dashboard renders"
+      ],
+      "correct_option": "A",
+      "explanation": "Dot-walking only follows reference fields outward from the reporting table, and Metric Instance links back to its task through a document identifier rather than a plain reference to Incident, so no dot-walk from either side reaches the other's fields. A database view declares the join between the contributing tables and exposes their columns as one reportable pseudo-table, which is precisely the case it exists for.",
+      "distractor_rationale": "C is the belief that dot-walking is bidirectional, which survives a long time because dot-walking outward works so smoothly that the asymmetry is never noticed; it also ignores that a document identifier is not a reference field. B mistakes a form-level convenience for a reporting capability, and an exported related list is one incident at a time. D misunderstands interactive filters, which narrow what already-defined widgets show and never create a join.",
+      "skills_covered": ["Dashboard Design"],
+      "difficulty": "hard",
+      "source_name": "ServiceNow Community - Measure What Matters: Leverage Metric Instance Tables for Smarter ServiceNow Reports",
+      "source_url": "https://www.servicenow.com/community/developer-blog/measure-what-matters-leverage-metric-instance-tables-for-smarter/ba-p/3326296",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "A developer builds a triage feature in a development instance, capturing everything in one update set: a new field on Incident, a business rule that reads a custom u_triage_rule table, three configuration rows entered into u_triage_rule, a new choice value on Incident Category, and a new assignment group with two members. The update set previews clean and commits without error on the test instance, but the business rule does nothing there. What is the most likely cause?",
+      "options": [
+        "The three u_triage_rule rows and the group with its memberships are data rather than configuration records, so the update set never captured them and the business rule reads an empty table",
+        "Business rules are committed in an inactive state and must be set to Active on the target instance before they will run",
+        "The new choice value on Category was not captured, so the business rule's condition never matches on the target instance",
+        "A committed update set only applies to the global scope, so the business rule has to be recreated inside the target instance's application scope"
+      ],
+      "correct_option": "A",
+      "explanation": "Update sets track configuration records - dictionary entries, business rules, UI policies, choice lists and the like - but not rows of ordinary data. Records in a custom table, and sys_user_group records with their group memberships, are data and are excluded, so the logic arrives on the target instance with nothing to read. Data has to be moved separately, through an export and import set or by explicitly adding individual records to the update set where the table supports it.",
+      "distractor_rationale": "B invents a deactivate-on-commit safety rule, which is attractive because the symptom - a rule that exists but does nothing - looks exactly like an inactive rule. C is half right in spirit and wrong in fact: choice values live in sys_choice and are captured, but suspecting them is a very natural first guess for anyone who has seen choices go missing after a scope change. D garbles scoped application behaviour, mixing the real rule that scoped artefacts are tracked against an application version with the false claim that commits are global-only.",
+      "skills_covered": ["Update discipline", "Application Deployment"],
+      "difficulty": "hard",
+      "source_name": "IK Consulting - What Activities Are Recorded in a ServiceNow Update Set?",
+      "source_url": "https://ikconsulting.com/post/what-activities-are-recorded-in-a-servicenow-update-set",
+      "provenance": "adapted"
+    }
+  ]
+}

@@ -1,0 +1,1805 @@
+{
+  "course_code": "NT-C-012",
+  "course_name": "MERN Stack",
+  "sections": [
+    {
+      "section_code": "NT-C-012-S01",
+      "skills_assessed": [
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "Responsive Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider the following code:\n```javascript\nlet c = 0;\nconst get = () => ++c;\n\nfunction logA({ a = get() }) {\n  console.log(a);\n}\n\nlogA({ a: 0 });\nlogA({});\nlogA({ a: undefined });\n```\nWhat is printed to the console, in order, and why?",
+          "options": [
+            "```text\nundefined\n1\n2\n```",
+            "```text\n0\nundefined\n2\n```",
+            "```text\n0\n1\nundefined\n```",
+            "```text\n0\n1\n2\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Default values in object destructuring are used when the property is missing or its value is `undefined`. The first call passes `a: 0`, so it logs 0 and does not call `get()`. The second call has no `a`, so `get()` runs, increments `c` to 1, and logs 1. The third call has `a: undefined`, which also triggers the default; `get()` runs again, increments `c` to 2, and logs 2.",
+          "distractor_rationale": "- Option B: Assumes defaults apply only when the property is missing, not when it is `undefined`.\n- Option C: Assumes defaults do not apply when the property is missing.\n- Option D: Ignores that the first call explicitly sets `a` to 0, so no default runs, and mistakenly thinks the first print is affected by the default.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "What does the following log and why?\n```javascript\nconst obj = {\n  x: 5,\n  m: function () {\n    const getX = () => this.x;\n    const alt = function () { return this && this.x; };\n    return [getX(), alt()];\n  }\n};\n\nconsole.log(obj.m());\n```",
+          "options": [
+            "```text\n[undefined, undefined]\n```",
+            "```text\n[5, 5]\n```",
+            "```text\n[5, undefined]\n```",
+            "```text\n[undefined, 5]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Arrow functions capture `this` lexically from `m`, so `getX()` returns 5. The `alt` function is called as a bare function, so `this` is the global object in non-strict mode or `undefined` in strict mode. Either way, `this.x` is not 5 here, so it evaluates to `undefined`.",
+          "distractor_rationale": "- Option B: Assumes both functions share `this` from `obj` even though `alt` is a normal function call without binding.\n- Option C: Assumes arrows do not capture `this` lexically.\n- Option D: Reverses which function captures `this` correctly.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given the event loop ordering, what is the output order?\n```javascript\nconsole.log('a');\nsetTimeout(() => console.log('b'));\nPromise.resolve().then(() => console.log('c'));\n(async () => {\n  console.log('d');\n  await null;\n  console.log('e');\n})();\nconsole.log('f');\n```",
+          "options": [
+            "```text\na, d, f, c, e, b\n```",
+            "```text\na, d, c, f, e, b\n```",
+            "```text\na, d, f, e, c, b\n```",
+            "```text\na, f, d, c, e, b\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Synchronous logs run first in order: a, d, f. Then microtasks run: the `.then` callback (c) and the continuation after `await` (e). Macrotasks like `setTimeout` run afterward (b).",
+          "distractor_rationale": "- Option B: Places `f` before `d`, ignoring that `d` is synchronous inside the IIFE.\n- Option C: Moves `c` ahead of `f`, misunderstanding that microtasks queue after the current synchronous turn completes.\n- Option D: Swaps `c` and `e`, misunderstanding that both are microtasks but `await` continuation is queued after the current microtask queue setup, not before the already-scheduled promise then.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "What does this print and why?\n```javascript\nconst a = { p: { q: 1 }, r: 2 };\nconst b = { ...a };\nb.p.q = 9;\nb.r = 3;\nconsole.log(a.p.q, a.r);\n```",
+          "options": [
+            "```text\n1 3\n```",
+            "```text\n9 2\n```",
+            "```text\n1 2\n```",
+            "```text\n9 3\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Object spread makes a shallow copy. The nested object `p` is shared, so mutating `b.p.q` changes `a.p.q`. The top-level property `r` is copied by value, so changing `b.r` does not affect `a.r`.",
+          "distractor_rationale": "- Option B: Assumes a deep copy.\n- Option C: Assumes both nested and top-level references are shared.\n- Option D: Mixes up which properties are shared and which are copied.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider the following and assume the environment supports ES modules (strict mode):\n```javascript\nconst user = { name: 'A' };\nuser.name = 'B';\ntry {\n  // Attempt to reassign the const binding\n  // (this throws in strict mode)\n  // eslint-disable-next-line no-const-assign\n  user = {};\n} catch (e) {\n  console.log('E');\n}\nconsole.log(user.name);\n```\nWhat is printed?",
+          "options": [
+            "```text\nE\nundefined\n```",
+            "```text\nE\nB\n```",
+            "```text\nE\nA\n```",
+            "```text\nB\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`const` prevents rebinding, not mutation. Changing `user.name` to 'B' succeeds. Reassigning `user = {}` throws a `TypeError` in strict mode and is caught, printing 'E'. The final log prints 'B'.",
+          "distractor_rationale": "- Option B: Assumes the caught error clears or resets the object.\n- Option C: Forgets the catch block prints 'E'.\n- Option D: Assumes properties of a `const` object are immutable.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given the markup and styles:\n```html\n<article class=\"card\">\n  <p class=\"card\">Hi</p>\n</article>\n```\n```css\n.card p { color: red; }\narticle.card p { color: blue; }\np.card { color: green; }\n.card > p.card { color: purple; }\n```\nWhat color does the text \"Hi\" render as?",
+          "options": [
+            "green",
+            "red",
+            "blue",
+            "purple"
+          ],
+          "correct_option": "D",
+          "explanation": "`.card > p.card` has specificity (0,2,1) and matches the paragraph, outranking `article.card p` (0,1,2) and the others. Source order also places it last, but specificity already decides it.",
+          "distractor_rationale": "- Blue: Underestimates the additional class in `.card > p.card`.\n- Green: Misreads descendant versus child and specificity counts.\n- Red: Assumes source order of the first rule holds despite lower specificity.",
+          "skills_covered": [
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "In the following layout, what width does each item end up with?\n```html\n<div class=\"row\">\n  <div class=\"item\">A</div>\n  <div class=\"item\">B</div>\n  <div class=\"item\">C</div>\n</div>\n```\n```css\n.row { display: flex; width: 600px; }\n.item { flex: 1 1 200px; width: 100px; }\n```\nAssume no margins, borders, or gaps.",
+          "options": [
+            "100px each",
+            "varies: A=200px, B=100px, C=300px",
+            "200px each",
+            "cannot determine without content size"
+          ],
+          "correct_option": "C",
+          "explanation": "`flex-basis` is 200px (from `flex: 1 1 200px`) and overrides `width` for the flex base size. The sum of bases is exactly 600px, so no free space to distribute. Each item stays 200px.",
+          "distractor_rationale": "- 100px each: Assumes `width` overrides `flex-basis` when both are set.\n- A/B/C different: Misunderstands how free space is distributed when the base sizes already fill the container.\n- Cannot determine: Overestimates the role of intrinsic content since no min-content constraints are specified here.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given these rules, what background does `.box` have at a viewport width of 800px?\n```css\n.box { background: gray; }\n@media (min-width: 700px) { .box { background: green; } }\n@media (min-width: 500px) { .box { background: blue; } }\n```\nAssume the rules appear in exactly this order.",
+          "options": [
+            "blue",
+            "it alternates as the viewport grows beyond 700px",
+            "gray",
+            "green"
+          ],
+          "correct_option": "A",
+          "explanation": "Both media queries match at 800px. With equal specificity, the later rule wins. The `(min-width: 500px)` block is last, setting background to blue.",
+          "distractor_rationale": "- Green: Ignores cascade ordering when both queries match.\n- Gray: Forgets that both media queries apply at 800px.\n- Alternates: Misconception; CSS applies the most specific/latest matching rule, not alternating behavior.",
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Which image resource will the browser most likely pick?\n```html\n<img\n  src=\"small.jpg\"\n  srcset=\"\n    small.jpg 400w,\n    medium.jpg 800w,\n    large.jpg 1200w\"\n  sizes=\"(min-width: 900px) 50vw, 90vw\"\n  alt=\"\"\n/>\n```\nViewport width is 1000px and device pixel ratio (DPR) is 2.",
+          "options": [
+            "medium.jpg",
+            "large.jpg",
+            "cannot be determined without network speed",
+            "small.jpg"
+          ],
+          "correct_option": "B",
+          "explanation": "At 1000px viewport, the `sizes` slot is 50vw = 500 CSS px. At DPR 2, the ideal resource width is ~1000 device pixels. The smallest candidate ≥ 1000w is `large.jpg` (1200w).",
+          "distractor_rationale": "- Medium: 800w underfills a 1000 device-pixel slot at DPR 2.\n- Small: Even more undersized.\n- Cannot determine: While network conditions can affect selection heuristics, given these candidates the correct choice to meet density is `large.jpg`.",
+          "skills_covered": [
+            "HTML",
+            "Responsive Design",
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You audit this markup and notice nested `main` elements:\n```html\n<body>\n  <main>\n    <article>\n      <main>\n        <h1>Title</h1>\n        <p>...</p>\n      </main>\n    </article>\n  </main>\n</body>\n```\nWhich change fixes the landmark structure without altering visual layout?",
+          "options": [
+            "Replace the inner `<main>` with `<section aria-labelledby=\"title-1\">` and give the `<h1 id=\"title-1\">`",
+            "Replace both `<main>` elements with `<div>`s",
+            "Keep both `<main>`s but add `role=\"main\"` to each to be explicit",
+            "Wrap the outer `<main>` inside another `<main>` to balance landmarks"
+          ],
+          "correct_option": "A",
+          "explanation": "Only one `main` is allowed per document, and it must not be nested. Using a `<section>` with `aria-labelledby` preserves semantics for the titled region without introducing a second main.",
+          "distractor_rationale": "- Wrap another main: Compounds the error; multiple mains are invalid.\n- Replace both with divs: Removes useful landmarks and reduces accessibility for no reason.\n- Add role=\"main\" to both: Still incorrect; ARIA cannot make invalid HTML valid and should not duplicate main landmarks.",
+          "skills_covered": [
+            "HTML"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You need to fetch details for an array of product IDs and transform them. Each fetch is independent and returns JSON `{ id, price, tags }`. You must return an array of `{ id, priceWithTax, tagCount }`, where `priceWithTax = round(price * 1.2, 2)`. Some fetches may fail (404). Current code:\n```javascript\nasync function getAll(ids, fetcher) {\n  const results = [];\n  for (const id of ids) {\n    try {\n      const res = await fetcher(id); // returns a promise\n      results.push({\n        id: res.id,\n        priceWithTax: Math.round(res.price * 1.2 * 100) / 100,\n        tagCount: res.tags.length\n      });\n    } catch (e) {\n      // skip failures\n    }\n  }\n  return results;\n}\n```\nData sets can be hundreds of IDs, and sequential `await` is slow. You consider:\nA) Replace the loop with `await Promise.all(ids.map(async ...))` and filter nulls.\nB) Use `Promise.allSettled` and then filter fulfilled results; transform in map.\nC) Keep the loop but `await` only every 10 items to batch.\nAssume `fetcher` is well-behaved but network is variable.",
+          "task": "Choose the best approach and justify it. Then write a correct implementation that keeps concurrency high, handles partial failures without rejecting the whole batch, and avoids loading all results into memory before starting any network I/O.",
+          "expected_answer": "Approach B is best: `Promise.allSettled` maintains high concurrency like `Promise.all` but does not reject on a single failure, which is required here. It also allows per-item transformation alongside fetching. Approach A rejects the entire `Promise.all` on the first rejection unless each mapper catches internally, which complicates code and can mask errors. Approach C's ad-hoc batching retains underutilized concurrency and adds complexity without clear benefit.\nImplementation should kick off all requests immediately, handle per-item success/failure, and return only successful transforms:\n```javascript\nasync function getAll(ids, fetcher) {\n  const tasks = ids.map(async (id) => {\n    const res = await fetcher(id);\n    return {\n      id: res.id,\n      priceWithTax: Math.round(res.price * 1.2 * 100) / 100,\n      tagCount: Array.isArray(res.tags) ? res.tags.length : 0\n    };\n  });\n  const settled = await Promise.allSettled(tasks);\n  return settled\n    .filter(s => s.status === 'fulfilled')\n    .map(s => s.value);\n}\n```\nIf strict rate limits exist, a small concurrency limiter can wrap `fetcher`, but the core remains: fire concurrently, settle individually, and keep only fulfilled values. The code starts I/O immediately via mapping, does not serialize work, and does not let one failure drop all results.",
+          "rubric": [
+            {
+              "criterion": "Chooses `Promise.allSettled` (or `Promise.all` with explicit per-task try/catch) and justifies concurrency and failure isolation",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct implementation that starts requests concurrently (no sequential awaits)",
+              "marks": 2
+            },
+            {
+              "criterion": "Returns only successful transforms; failed fetches do not reject the whole call",
+              "marks": 1
+            },
+            {
+              "criterion": "Correct transformation logic (rounding to 2 decimals; safe tag length)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A product card grid breaks between 640px and 760px viewport widths: the third card overflows the row and causes horizontal scrolling. Current CSS and markup:\n```html\n<section class=\"grid\">\n  <article class=\"card\">...</article>\n  <article class=\"card\">...</article>\n  <article class=\"card\">...</article>\n</section>\n```\n```css\n.grid {\n  display: flex;\n  gap: 16px;\n}\n.card { flex: 1 1 300px; }\n@media (min-width: 760px) {\n  .grid { flex-wrap: nowrap; }\n}\n@media (min-width: 480px) {\n  .grid { flex-wrap: wrap; }\n}\n```\nYou cannot change the HTML. Cards have variable content heights but similar widths. At 700px viewport, overflow appears.",
+          "task": "Diagnose precisely why overflow occurs and propose the minimal CSS change(s) to prevent it while keeping two columns around tablet widths and three on desktop. Provide the corrected rules and explain why ordering matters.",
+          "expected_answer": "Overflow occurs because at widths ≥480px the container allows wrapping, but at ≥760px a later rule disables wrapping. However, at 700px (between 480 and 760), wrapping is enabled but three cards with `flex-basis: 300px` plus `gap: 16px` cannot fit in one row, so two should wrap — but the container currently has no explicit width constraint; the real issue is source order: the `@media (min-width: 760px)` rule comes before the `@media (min-width: 480px)` rule, so at ≥760px the later 480px rule re-enables wrapping. At 700px specifically, wrapping is on, but overflow happens because each card's flex base is 300px and with gaps summing to 32px, two columns require 632px; if the container's padding or scrollbar reduces usable space, a third item still tries to stay on the line briefly due to `flex: 1 1 300px` and the browser's flexing before wrapping.\nMinimal, robust fix: declare explicit wrapping default and set column behavior via `flex-basis` that adapts, and order media queries mobile-first. For example:\n```css\n.grid { display: flex; flex-wrap: wrap; gap: 16px; }\n.card { flex: 1 1 calc((100% - 16px) / 1); }\n@media (min-width: 640px) {\n  .card { flex-basis: calc((100% - 16px) / 2); }\n}\n@media (min-width: 960px) {\n  .card { flex-basis: calc((100% - 32px) / 3); }\n}\n```\nThis sets one column by default, two columns at tablet (approx 640px), and three at desktop (≥960px), accounting for gaps in the basis calculation. Ordering matters because later media queries override earlier ones; writing mobile-first ensures the most specific larger-breakpoint rules win without being undone by smaller ones written later.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies overflow cause (flex-basis + gaps exceeding available width and media query order interactions)",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes minimal CSS changes that ensure 1/2/3 columns across breakpoints",
+              "marks": 2
+            },
+            {
+              "criterion": "Accounts for gap in basis calculation or otherwise prevents rounding overflow",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains media query order/cascade implications (mobile-first reasoning)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are generating article markup from data. Current template code and output:\n```javascript\nfunction renderArticle({ title, author, bodyHtml, imageUrl }) {\n  return `\n  <article>\n    <h1>${title}</h1>\n    <img src=\"${imageUrl}\">\n    <section>\n      <h1>By ${author}</h1>\n      ${bodyHtml}\n    </section>\n  </article>`;\n}\n```\nIssues reported: multiple `<h1>`s per article, images announced as \"image\" with no description, and the author heading is semantically confusing.",
+          "task": "Propose a revised template string that fixes the semantics while keeping the same visual intent (title, image with caption, author as a byline subheading, then body). Justify each semantic change.",
+          "expected_answer": "Use a single `<h1>` for the article title, demote the author line to a subheading or byline, add `alt` text or mark the image as decorative if purely presentational, and use `<figure>`/`<figcaption>` when a caption is shown. Example:\n```javascript\nfunction renderArticle({ title, author, bodyHtml, imageUrl }) {\n  return `\n  <article>\n    <header>\n      <h1>${title}</h1>\n      <p class=\"byline\"><span class=\"visually-hidden\">By </span>${author}</p>\n    </header>\n    <figure>\n      <img src=\"${imageUrl}\" alt=\"${title}\">\n      <figcaption>${title}</figcaption>\n    </figure>\n    <section aria-labelledby=\"article-body-heading\">\n      <h2 id=\"article-body-heading\">Article</h2>\n      ${bodyHtml}\n    </section>\n  </article>`;\n}\n```\nJustification: Only one `<h1>` per article improves outline; the author is a byline in a `<p>` (or could be `<h2>` if truly a section heading) and not another `<h1>`. The image now has an informative `alt` (or `alt=\"\"` if purely decorative). Wrapping the image in `<figure>` lets the title or a true caption be associated. The body has a labelled section for navigation by assistive tech.",
+          "rubric": [
+            {
+              "criterion": "Uses a single top-level heading for the article title and demotes or reworks the author line appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides appropriate `alt` handling and/or `figure`/`figcaption` use with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Labels the body content accessibly (e.g., `aria-labelledby` or meaningful heading)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explanation justifies each change in terms of semantics/accessibility, not just style",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Design needs an image to display full-width on mobile and one-third width on desktop in a three-column grid. Current CSS:\n```css\n.gallery { display: grid; grid-template-columns: 1fr; gap: 12px; }\n@media (min-width: 900px) {\n  .gallery { grid-template-columns: repeat(3, 1fr); }\n}\n.figure img { width: 100%; height: auto; }\n```\nYou will ship three image widths: 480w, 960w, 1440w. The container widths are approximately the viewport width on mobile and one third of it on desktop (minus gaps).",
+          "task": "Write the correct `srcset` and `sizes` for the `<img>` to balance quality and bandwidth. Explain how the browser chooses the resource at 375px @2x and 1200px @1x viewports.",
+          "expected_answer": "Supply width descriptors and a `sizes` that matches the CSS layout: 100vw on mobile; about one third of viewport on desktop. Example:\n```html\n<img\n  src=\"img-480.jpg\"\n  srcset=\"\n    img-480.jpg 480w,\n    img-960.jpg 960w,\n    img-1440.jpg 1440w\"\n  sizes=\"(min-width: 900px) 33.33vw, 100vw\"\n  alt=\"Gallery item\"\n/>\n```\nAt 375px @2x, the slot is 100vw = 375 CSS px; DPR 2 implies ~750 device px needed, so the browser will choose 960w as the smallest ≥750. At 1200px @1x, the slot is about 33.33vw ≈ 400 CSS px; DPR 1 implies ~400 device px, so 480w is the smallest ≥400 and will be chosen. This matches the grid behavior and avoids oversending large images.",
+          "rubric": [
+            {
+              "criterion": "Correct use of width descriptors in `srcset` and a `sizes` attribute that reflects the CSS grid behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate explanation of browser selection at the two specified viewport/DPR cases",
+              "marks": 3
+            },
+            {
+              "criterion": "Demonstrates bandwidth/quality trade-off understanding (choosing smallest adequate candidate)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "Responsive Design",
+            "CSS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Modern JavaScript data utilities with async processing",
+          "brief": "Build a small JS module exposing pure utilities and one async function to process product data. Focus on modern syntax (ES modules, destructuring, rest/spread, arrow functions), functions and closures, objects, and async/await with Promise combinators. No external libraries.",
+          "deliverable": "A folder `js-utils/` containing ES module source files (`*.mjs` or `*.js` with `type: module`), a `README.md` with run instructions, and a single `run.mjs` script that logs sample outputs for verification.",
+          "acceptance_criteria": [
+            "Uses ES modules (either `.mjs` files or `package.json` with `{ \"type\": \"module\" }`) and no transpiler",
+            "Exports at least three pure functions: e.g., `sumBy`, `groupByTag`, `applyDiscount` implemented with array methods and destructuring",
+            "Includes one higher-order function demonstrating closure (e.g., `makeTaxAdder(rate)` returning a function) and is used in `run.mjs`",
+            "Implements `processProductsAsync(ids, fetcher)` that fetches product JSON concurrently and returns transformed results; single failures do not reject the whole call",
+            "Uses at least one of: optional chaining, nullish coalescing, default parameters",
+            "`run.mjs` prints deterministic results for provided mock data and a mocked async `fetcher` (no network required)",
+            "Code passes `node --check` (syntax check) and runs under Node 18+ without errors",
+            "No global variables; functions are pure where specified, with inputs/outputs demonstrated in `run.mjs`"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct use of modern syntax (modules, destructuring, rest/spread, arrows, optional chaining/nullish/defaults)",
+              "marks": 5
+            },
+            {
+              "criterion": "Pure functions implemented correctly and covered by `run.mjs` demonstrations",
+              "marks": 5
+            },
+            {
+              "criterion": "Higher-order function with closure implemented and meaningfully used",
+              "marks": 3
+            },
+            {
+              "criterion": "Async processing function concurrently fetches, handles failures per-item, and returns correct transformation",
+              "marks": 5
+            },
+            {
+              "criterion": "Project structure and README clarity (run instructions, no external deps)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a semantic, responsive two-page microsite",
+          "brief": "Create two responsive pages (Home and Article) focusing on semantic HTML, CSS, and responsive design. No JavaScript. Use mobile-first CSS with Flexbox/Grid, accessible landmarks and headings, and responsive images.",
+          "deliverable": "A folder `site/` containing `index.html`, `article.html`, `styles.css`, and an `assets/` directory with images. Include a `README.md` explaining breakpoints and how to view the site.",
+          "acceptance_criteria": [
+            "Valid HTML5 (no errors in the W3C validator) and a single `<main>` per page",
+            "Landmarks present and correctly used: `<header>`, `<nav>`, `<main>`, `<footer>`; heading hierarchy logical (only one `<h1>` per page)",
+            "Mobile-first CSS with at least two breakpoints (e.g., 600px and 900px) and no horizontal scrolling between 320px and 1200px",
+            "Layout uses CSS Grid or Flexbox for a card grid on Home and a readable Article layout (line length 45–85ch)",
+            "Images use `srcset` with width descriptors and a correct `sizes` attribute matching the CSS layout",
+            "Color contrast meets WCAG AA for text (demonstrate with a note in README and CSS variables for colors)",
+            "Keyboard navigation reaches all interactive elements in a sensible order; visible focus styles present",
+            "Pages render acceptably in Chromium-based and Firefox browsers"
+          ],
+          "rubric": [
+            {
+              "criterion": "Semantic structure and landmarks are correct; heading hierarchy valid on both pages",
+              "marks": 5
+            },
+            {
+              "criterion": "Responsive layout works across specified viewport range with mobile-first media queries; no horizontal scroll",
+              "marks": 6
+            },
+            {
+              "criterion": "Use of Flexbox/Grid is appropriate and robust (e.g., gap usage, wrapping, grid templates)",
+              "marks": 3
+            },
+            {
+              "criterion": "Responsive images correctly implemented with matching `sizes` to layout",
+              "marks": 3
+            },
+            {
+              "criterion": "Accessibility basics: contrast, focus styles, keyboard order; README notes on contrast rationale",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "HTML",
+            "CSS",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-012-S02",
+      "skills_assessed": [
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "React",
+        "Routing",
+        "API Integration"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Consider this component rendered as `<Counter start={0} />`:\n\n```jsx\nimport { useEffect, useState } from 'react';\n\nfunction Counter({ start = 0 }) {\n  const [count, setCount] = useState(start);\n\n  useEffect(() => {\n    const id = setInterval(() => {\n      console.log('tick', count);\n      setCount(c => c + 1);\n    }, 1000);\n    return () => clearInterval(id);\n  }, []);\n\n  return <div>{count}</div>;\n}\n```\nAfter 3 seconds, what is printed to the console and what number is displayed in the UI?",
+          "options": [
+            "Console prints: tick 0, tick 0, tick 0; UI shows 3",
+            "Console prints: tick 1, tick 2, tick 3; UI shows 3",
+            "Console prints: tick 0, tick 1, tick 2; UI shows 2",
+            "Console prints: tick 0, tick 1, tick 2; UI shows 3"
+          ],
+          "correct_option": "A",
+          "explanation": "The interval callback closes over the initial value of `count` (0) because the effect's dependency array is empty, so it logs `tick 0` every time. The UI uses the functional updater `setCount(c => c + 1)`, which increments correctly to 3 after 3 seconds.",
+          "distractor_rationale": "B is tempting if you assume `count` in the closure updates as state changes; it does not because the effect has no dependencies. C assumes an off-by-one but still requires the closure to see updated state, which it doesn't. D assumes the render lags one behind because of batching, but the functional updater ensures each tick increments the UI reliably.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A parent renders `<Price value={10} />`. Later, the parent updates to `<Price value={20} />` without remounting the child. What does `Price` display?\n\n```jsx\nfunction Price({ value }) {\n  const [price, setPrice] = useState(value);\n  // ...never calls setPrice based on props later\n  return <span>{price}</span>;\n}\n```",
+          "options": [
+            "It becomes undefined for one render then 20",
+            "It stays at 10 until `Price` is remounted or `setPrice` is called",
+            "It throws because props and state disagree",
+            "It updates to 20 because `useState` re-initializes when props change"
+          ],
+          "correct_option": "B",
+          "explanation": "`useState(value)` only uses `value` for the initial render. Subsequent prop changes do not reinitialize state. Without an effect syncing state to prop (with correct conditions), `price` remains 10.",
+          "distractor_rationale": "B reflects a common misconception: `useState` does not re-run initialization on prop change. C imagines a transient undefined, which doesn't happen here. D suggests React enforces consistency between state and props; it doesn't throw for this pattern.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Typing in one row's input sometimes appears in a different row after filtering or re-sorting. The list currently uses array index as the key:\n\n```jsx\nfunction Row({ item, onNameChange }) {\n  return <input value={item.name} onChange={e => onNameChange(item.id, e.target.value)} />;\n}\n\nfunction List({ items }) {\n  return (\n    <ul>\n      {items.map((item, i) => (\n        <li key={i}>\n          <Row item={item} onNameChange={/* updates by id */} />\n        </li>\n      ))}\n    </ul>\n  );\n}\n```\nWhich change fixes the bug?",
+          "options": [
+            "```text\n<li key={item.id}>\n```",
+            "```text\n<li key={i} data-id={item.id}>\n```",
+            "```text\nconst Row = React.memo(function Row(...) { ... })\n```",
+            "```text\n<input key={item.id} value={item.name} onChange={...} />\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Using a stable key derived from the item's identity (`item.id`) ensures React doesn't reuse DOM nodes across different items after reordering/filtering, so controlled inputs stay with the correct data.",
+          "distractor_rationale": "B adds a key to the input but leaves the parent list keyed by index, so React can still mismatch list items. C memoizes rendering but doesn't change reconciliation; the wrong DOM node can still be reused. D adds metadata but doesn't affect React's diffing; keys control identity, not attributes.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given this React Router v6 route tree:\n\n```jsx\nconst router = createBrowserRouter(createRoutesFromElements(\n  <Route path=\"/\" element={<Layout/>}>\n    <Route index element={<Home/>} />\n    <Route path=\"users\" element={<Users/>}>\n      <Route index element={<List/>} />\n      <Route path=\":id\" element={<Profile/>} />\n    </Route>\n    <Route path=\"users/new\" element={<NewUser/>} />\n    <Route path=\"*\" element={<NotFound/>} />\n  </Route>\n));\n```\nWhen navigating to `/users/new`, which component(s) render inside `<Layout/>`?",
+          "options": [
+            "`<Users/>` with `<NewUser/>` nested inside it",
+            "`<Users/>` with `<List/>`",
+            "`<NotFound/>`",
+            "Only `<NewUser/>`"
+          ],
+          "correct_option": "D",
+          "explanation": "`/users/new` matches the explicit sibling route `path=\"users/new\"`, not the nested `users` branch. Therefore, only `<NewUser/>` is rendered in Layout's outlet; `<Users/>` is not part of this match.",
+          "distractor_rationale": "B assumes all `users/*` paths render `<Users/>`, but the sibling `users/new` route bypasses it. C would match `/users` or `/users/` only. D would be chosen only if no route matched, which is not the case.",
+          "skills_covered": [
+            "Routing",
+            "React"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "This detail page fetches by route param:\n\n```jsx\nfunction UserDetail() {\n  const { id } = useParams();\n  const [user, setUser] = useState(null);\n\n  useEffect(() => {\n    fetch(`/api/users/${id}`).then(r => r.json()).then(setUser);\n  }, []);\n\n  return user ? <div>{user.name}</div> : <div>Loading...</div>;\n}\n```\nThe app links from `/users/1` to `/users/2` without remounting `UserDetail` (same route, different `:id`). What happens?",
+          "options": [
+            "It triggers a force update because `useParams` changed",
+            "It fetches `/api/users/2` automatically because `useParams` changed",
+            "It keeps showing user 1 until a remount or the effect depends on `id`",
+            "It throws due to changing props during an effect"
+          ],
+          "correct_option": "C",
+          "explanation": "The effect has an empty dependency array, so it runs only once. Route params changing do not rerun it unless `id` is in the dependencies or the component remounts.",
+          "distractor_rationale": "A assumes `useParams` changes auto-retrigger effects; they don't. C imagines an error; React doesn't throw here. D suggests React forces updates on param change; while a render occurs, the effect still won't rerun without the dependency.",
+          "skills_covered": [
+            "Routing",
+            "API Integration",
+            "React"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Why doesn't this checkbox reliably toggle the UI?\n\n```jsx\nfunction Terms() {\n  const [form, setForm] = useState({ agree: false });\n  const onChange = e => {\n    form.agree = e.target.checked; // mutate\n    setForm(form);                 // same reference\n  };\n  return <input type=\"checkbox\" checked={form.agree} onChange={onChange} />;\n}\n```\nWhich change fixes the bug?",
+          "options": [
+            "```jsx\nstartTransition(() => setForm(form));\n```",
+            "```jsx\nsetForm(JSON.parse(JSON.stringify(form)));\n```",
+            "```jsx\nconst ref = useRef(false); ref.current = e.target.checked; setForm(form);\n```",
+            "```jsx\nsetForm(prev => ({ ...prev, agree: e.target.checked }));\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "React state must be treated as immutable. Creating a new object reference with the updated field ensures React detects the change and re-renders.",
+          "distractor_rationale": "B writes to a ref, which doesn't cause a re-render and still passes the same state reference. C clones but keeps the same `agree` value unless you also update it; cloning alone doesn't set the new value. D `startTransition` doesn't fix identity; it schedules a low-priority update with the same reference, so React may still bail out.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A filtered list passes a callback to a memoized child:\n\n```jsx\nfunction Parent({ items, query }) {\n  const filter = query.toLowerCase();\n  const onSelect = useCallback((id) => {\n    trackSelection(filter, id);\n  }, []);\n  return <List items={items} onSelect={onSelect} />; // List is React.memo\n}\n```\nWhen `query` changes, what happens and how should it be fixed?",
+          "options": [
+            "Move `filter` into a ref to avoid dependency churn and keep `[]`",
+            "`onSelect` uses the old `filter` until reload; include `filter` (or `query`) in the dependency array",
+            "Wrapping `List` in `React.memo` prevents any stale values",
+            "Child re-renders anyway so nothing breaks; leave dependencies empty"
+          ],
+          "correct_option": "B",
+          "explanation": "The callback closes over `filter` from when it was created. With an empty dependency array, it never updates, so it uses stale data. Include `filter` (or `query`) in the dependencies to update the callback when the filter changes.",
+          "distractor_rationale": "B assumes re-rendering the parent refreshes the callback; the function identity is stable due to `useCallback([])`. C `React.memo` only controls child re-renders; it doesn't refresh captured variables. D a ref won't update the closed-over value unless you read `ref.current` inside the callback and you still need a stable mechanism to ensure correctness.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Inside the `Users` route from earlier, this button appears in a nested component:\n\n```jsx\nfunction Toolbar() {\n  return <Link to=\"new?ref=list\">Create</Link>;\n}\n```\nWhen clicked from `/users`, what URL is pushed and which branch renders?",
+          "options": [
+            "Navigates to `/users?ref=list` and renders `<List/>`",
+            "Navigates to `/users/new?ref=list` and renders `<NewUser/>` (not `<Users/>`)",
+            "Navigates to `/users/new?ref=list` and renders `<Users/>` wrapping `<NewUser/>`",
+            "Navigates to `/new?ref=list` and renders `<NotFound/>`"
+          ],
+          "correct_option": "B",
+          "explanation": "`to=\"new\"` is relative to the current route in v6, so it resolves to `/users/new?ref=list`. That matches the sibling `users/new` route, which renders `<NewUser/>` directly without `<Users/>`.",
+          "distractor_rationale": "B incorrectly assumes `users/new` is a child of `users` and must render `<Users/>`. C would require `to=\"/new\"`. D changes the path and would match the index route, which the link does not do.",
+          "skills_covered": [
+            "Routing",
+            "React"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A list page fetches items on mount but sometimes navigates away before the response returns:\n\n```jsx\nfunction Items() {\n  const [items, setItems] = useState([]);\n  useEffect(() => {\n    fetch('/api/items').then(r => r.json()).then(setItems);\n  }, []);\n  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>;\n}\n```\nWhat issue can occur and what prevents it?",
+          "options": [
+            "Nothing problematic; React ignores late setState calls after unmount",
+            "A memory leak only if using `async/await`; switch to `.then` to avoid it",
+            "A \"setState on unmounted component\" warning; prevent by aborting/canceling the fetch in the effect cleanup",
+            "The request is automatically canceled by the browser when navigating away, so no action needed"
+          ],
+          "correct_option": "C",
+          "explanation": "If the component unmounts before the fetch resolves, calling `setItems` triggers the \"Can't perform a React state update on an unmounted component\" warning. Use an `AbortController` (and check for `err.name === 'AbortError'`) or a mounted flag to avoid setting state after unmount.",
+          "distractor_rationale": "B is false; React warns on setting state after unmount. C the problem isn't `async/await` vs `.then` but lack of cancellation. D navigation does not automatically abort all fetches; you must cancel them explicitly.",
+          "skills_covered": [
+            "API Integration",
+            "React"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Why does this effect keep running repeatedly?\n\n```jsx\nfunction Demo({ count }) {\n  const dep = { a: count };\n  useEffect(() => {\n    // expensive work\n  }, [dep]);\n  return null;\n}\n```\nWhat change stops the loop while still responding to `count` changes?",
+          "options": [
+            "Memoize `dep` or depend directly on `count`, e.g., `useEffect(..., [count])`",
+            "Put the object literal inline: `[ { a: count } ]` so it's clearer",
+            "Use `useRef` for `dep` and keep `[dep]`",
+            "Wrap the effect body in `useCallback`"
+          ],
+          "correct_option": "A",
+          "explanation": "`dep` is a new object on every render, so the dependency comparison always differs. Either memoize it (`const dep = useMemo(() => ({ a: count }), [count])`) and depend on `dep`, or more simply depend directly on `count`.",
+          "distractor_rationale": "B keeps a stable ref object but `[dep]` still changes if you recreate the ref or does nothing to update when `count` changes. C wrapping the body doesn't affect dependency identity. D inlining the object makes it even worse by recreating it every render.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A search page shows results for query `q` from the URL. Users type quickly: `re` -> `react` -> `react r`. The UI sometimes flashes results for `re` after `react r` because earlier requests resolve later. Current code:\n\n```jsx\nfunction SearchPage() {\n  const [results, setResults] = useState([]);\n  const [loading, setLoading] = useState(false);\n  const { q } = Object.fromEntries(new URLSearchParams(location.search));\n\n  useEffect(() => {\n    setLoading(true);\n    fetch(`/api/search?q=${encodeURIComponent(q)}`)\n      .then(r => r.json())\n      .then(data => setResults(data))\n      .finally(() => setLoading(false));\n  }, [q]);\n\n  // ...render results\n}\n```\nThe backend is fine; the bug is client-side.",
+          "task": "Propose a concrete change that guarantees the UI shows results for the most recent `q` only, even if earlier requests finish last. Justify your approach in terms of effect lifecycle and cancellation. Show any code you would add or change.",
+          "expected_answer": "Use `AbortController` in the effect and ignore aborted responses. Alternatively, use a request token/sequence to discard out-of-date responses. Example with abort:\n\n```jsx\nuseEffect(() => {\n  const controller = new AbortController();\n  setLoading(true);\n  fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: controller.signal })\n    .then(r => r.json())\n    .then(data => setResults(data))\n    .catch(err => { if (err.name !== 'AbortError') throw err; })\n    .finally(() => setLoading(false));\n  return () => controller.abort();\n}, [q]);\n```\nThis ties each fetch to the effect invocation for a specific `q`. When `q` changes, cleanup runs, aborting the in-flight fetch so its resolution can't clobber state. A sequence counter variant:\n\n```jsx\nuseEffect(() => {\n  let alive = true; const seq = ++lastSeqRef.current;\n  setLoading(true);\n  fetch(url).then(r => r.json()).then(d => { if (alive && seq === lastSeqRef.current) setResults(d); })\n    .finally(() => alive && setLoading(false));\n  return () => { alive = false; };\n}, [q]);\n```\nBoth ensure only the latest request updates state.",
+          "rubric": [
+            {
+              "criterion": "Identifies race condition (out-of-order responses) as the root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes effect-scoped cancellation or response discarding (AbortController or sequence token)",
+              "marks": 3
+            },
+            {
+              "criterion": "Shows correct dependency management tied to `q` and explains cleanup timing",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete code that would work in React (handling AbortError or token check)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "API Integration",
+            "React",
+            "Routing",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A 3-step onboarding wizard should preserve partial input when navigating between steps and allow deep-linking directly to a step. Steps need per-step validation and the Next button should be disabled until the current step is valid. Current approach keeps each step's local state and pushes data upward on Next, causing lost input when the user navigates back via the browser button.",
+          "task": "Design the routing and state architecture to meet these requirements using React Router v6 and React hooks only. Specify where the form state lives, how steps read/write it, how validation gates navigation, and how URLs map to steps. Justify why your approach prevents lost state and supports deep links.",
+          "expected_answer": "Define nested routes under `/onboard` with explicit step paths: `/onboard/step-1`, `/onboard/step-2`, `/onboard/step-3`, and a catch-all redirect to step-1. Maintain a single source of truth for form data in a parent `<OnboardLayout>` that renders an `<Outlet/>` and provides `[data, setData]` and validation/helpers via context or `Outlet` context. Each step reads/writes via that shared API, so browser navigation never discards state. Gate Next by local validation: compute `isValid` in the step from its slice (or centralize with a validator that accepts the slice), and disable Next until true; on Next, use `useNavigate()` to push the next route. Example:\n\n```jsx\nfunction OnboardLayout() {\n  const [data, setData] = useState({ name:'', email:'', plan:'' });\n  return <OnboardContext.Provider value={{ data, setData }}><Outlet /></OnboardContext.Provider>;\n}\n\nfunction Step1() {\n  const { data, setData } = useContext(OnboardContext);\n  const valid = data.name.trim().length >= 2;\n  return (\n    <>\n      <input value={data.name} onChange={e => setData(d => ({ ...d, name: e.target.value }))} />\n      <button disabled={!valid} onClick={() => navigate('../step-2')}>Next</button>\n    </>\n  );\n}\n```\nDeep-linking works because loading `/onboard/step-2` renders `<OnboardLayout>` first (creating state) then `<Step2>`. State persists across steps since it lives above them. Validation is per-step and only gates navigation from that step. Back/forward uses URLs; state remains intact until leaving the flow or unmounting the layout.",
+          "rubric": [
+            {
+              "criterion": "Defines route structure with per-step paths and nested under a shared layout",
+              "marks": 2
+            },
+            {
+              "criterion": "Places form state in a parent (context or Outlet context) and explains persistence across navigation",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains per-step validation gating and how buttons/links are disabled or prevented",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies deep-link support and back/forward behavior with this structure",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Routing",
+            "React",
+            "HTML",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A product table allows inline editing of names. After sorting by price, some edited names appear on the wrong rows. Current code uses index keys and row-local state for the editing value:\n\n```jsx\nfunction Row({ product }) {\n  const [name, setName] = useState(product.name);\n  return <input value={name} onChange={e => setName(e.target.value)} />;\n}\n\nfunction Table({ products }) {\n  return products.map((p, i) => <Row key={i} product={p} />);\n}\n```",
+          "task": "Explain precisely why the bug occurs and propose a robust fix that ensures edits stay with the correct product through sorting/filtering. Include any changes to state location and keys, and justify them.",
+          "expected_answer": "The bug is from using index keys: when order changes, React reuses DOM nodes by index, so the input previously associated with product A is now attached to product B's props. Because `Row` also initializes its own local state from props only on first mount, the input shows the wrong value after reorder. Fixes:\n- Use stable identity keys: `key={product.id}`.\n- Keep source of truth for edits in the parent keyed by product id, not in each row's local state. Pass `value` and `onChange` down, e.g. `value={drafts[product.id] ?? product.name}` and `onChange={(v) => setDrafts(d => ({ ...d, [product.id]: v }))}`.\nThis way, keys prevent DOM reuse across products and state location ensures the edit follows the product regardless of its position.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies index keys and one-time state initialization as the cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes stable `key={id}` and explains reconciliation impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Moves editing state to a parent keyed by id (or properly syncs local state)",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies how the fix survives sorting/filtering and re-renders",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A large form (100 controlled inputs) lags on each keystroke. The form stores all values in a single object in the top-level component and passes `value` and `onChange` to each `<Field/>`. Profiling shows all 100 `<Field/>` components re-render on every change because the parent creates new handlers and computed props each render.",
+          "task": "Propose a concrete optimization plan to make typing responsive without sacrificing validation. Include specific component boundaries, memoization strategies, and handler stability. Explain why each step reduces renders and which cases it will not help.",
+          "expected_answer": "Split the form into memoized `Field` components that only re-render when their own `value` or local error changes. Ensure props are referentially stable:\n- Wrap `Field` with `React.memo` and keep its props minimal: `{ name, value, onChange, error }`.\n- Use `useCallback` to create stable per-field `onChange` functions, e.g., `const onChange = useCallback((e) => setForm(f => ({ ...f, [name]: e.target.value })), [name])` so the identity is stable for a given `name`.\n- Avoid creating new objects per render for each field's props. Compute derived errors per-field inside `Field` or memoize them in the parent with `useMemo` keyed by that field's value.\n- Optionally, for very large forms, make fields uncontrolled and commit on blur: `defaultValue` + `onBlur` to update central state, running validation then. This decouples keystrokes from parent re-renders.\n- If using context for form state, supply a selector per field (or split contexts) so only the field that changed re-renders.\nThese changes reduce child renders from O(n) per keystroke to O(1) (only the edited field), while preserving validation timing. They won't help if global state or errors are recomputed monolithically on every render without memoization.",
+          "rubric": [
+            {
+              "criterion": "Defines memoized Field boundary and limits props that change",
+              "marks": 2
+            },
+            {
+              "criterion": "Ensures handler identity stability (useCallback or equivalent) and explains why it matters",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses derived computations/validation to avoid global recomputation and re-render storms",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses alternative (uncontrolled/onBlur) and trade-offs; notes limitations",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "JavaScript",
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Component application: Task manager with local persistence and derived stats",
+          "brief": "Build a small React component application that manages a list of tasks with tags and completion status. Focus on components, props, state, and hooks. Persist tasks to localStorage and restore on load. Provide filtering by tag and completion, and show live derived stats (e.g., counts per tag, percent complete). Avoid prop drilling beyond two levels by composing components thoughtfully.",
+          "deliverable": "A runnable React app (source + README) implementing the task manager as described. This is the \"Component application\" completion evidence.",
+          "acceptance_criteria": [
+            "At least 4 React components (e.g., App, TaskList, TaskItem, FilterBar, Stats) with props used for data and callbacks",
+            "Tasks can be added, edited (name), toggled complete, and deleted",
+            "Stable keys by task id; no index keys in lists",
+            "State managed with `useState` and derived values memoized with `useMemo` (e.g., filteredTasks, counts)",
+            "Effects used to sync with localStorage (load on mount, save on changes) without infinite loops",
+            "Inputs are controlled; no loss of focus or wrong-row edits when filtering/sorting",
+            "No external state libraries; only React and standard libraries",
+            "README with setup/run instructions"
+          ],
+          "rubric": [
+            {
+              "criterion": "Component decomposition and clear prop interfaces (at least 4 components)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct state management with immutable updates; controlled inputs behave correctly",
+              "marks": 5
+            },
+            {
+              "criterion": "Derived data and performance: correct use of useMemo/useCallback where needed",
+              "marks": 4
+            },
+            {
+              "criterion": "Persistence: loads from and saves to localStorage with correct effect lifecycles",
+              "marks": 4
+            },
+            {
+              "criterion": "List rendering with stable keys; no observable reconciliation bugs",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "JavaScript",
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Multi-page SPA: Book explorer with routing, form validation, and API integration",
+          "brief": "Create a multi-page SPA using React Router v6 that lets users search books, view details, and submit a review (client-side only). Integrate a public API (e.g., Open Library Search) for search and details. Include a review form with client-side validation. Handle loading, error states, and cancel in-flight requests on route changes or rapid typing.",
+          "deliverable": "A runnable React app (source + README) implementing the described SPA. This is the \"Multi-page SPA\" completion evidence.",
+          "acceptance_criteria": [
+            "Routes: Home (`/`), Search (`/search?q=`), Book Detail (`/book/:id`), and a 404 fallback",
+            "Navigation via `<Link>` or `<NavLink>`; relative links used inside nested routes where appropriate",
+            "Search page debounces input (≥300ms) and updates `q` in the URL; results update accordingly",
+            "API integration: fetches search results and book details with loading and error UI",
+            "Effect cleanup: uses AbortController (or equivalent) to cancel stale requests on param/query changes and unmount",
+            "Detail page refetches when `:id` changes without remounting (effect depends on id)",
+            "Review form: controlled inputs with validation (e.g., required title, rating 1–5, min 10 chars) and inline error messages; Submit disabled until valid",
+            "Stable keys for all lists; no index keys",
+            "README with setup/run instructions and API notes"
+          ],
+          "rubric": [
+            {
+              "criterion": "Routing structure (pages, params, 404) and correct relative linking",
+              "marks": 5
+            },
+            {
+              "criterion": "Search/query param management with debounced input and URL sync",
+              "marks": 4
+            },
+            {
+              "criterion": "API integration with loading/error states and cancellation on change/unmount",
+              "marks": 5
+            },
+            {
+              "criterion": "Detail page correctly reacts to `:id` changes (dependencies, no stale data)",
+              "marks": 3
+            },
+            {
+              "criterion": "Form implementation: controlled inputs, validation, and disabled submit until valid",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Routing",
+            "API Integration",
+            "React",
+            "JavaScript",
+            "HTML",
+            "CSS"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-012-S03",
+      "skills_assessed": [
+        "JavaScript",
+        "Node.js",
+        "Express.js",
+        "REST API",
+        "MongoDB",
+        "Routing"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run this Express 4 app without any extra libraries:\n\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.get('/boom', async (req, res) => {\n  await Promise.resolve();\n  throw new Error('fail');\n});\n\napp.use((err, req, res, next) => {\n  res.status(500).json({ msg: 'err' });\n});\n\napp.listen(3000);\n```\nA client calls GET /boom. What happens on the wire and why?",
+          "options": [
+            "A 200 OK with an empty body is sent because no response was written in the handler.",
+            "The request never receives a response; the error is an unhandled rejected promise that Express 4 does not route to the error handler.",
+            "The Node process immediately crashes on the thrown error before any response is written.",
+            "A 500 JSON response is sent by the error handler because Express catches thrown errors from async route handlers."
+          ],
+          "correct_option": "B",
+          "explanation": "In Express 4, async route handlers that throw result in rejected promises that Express does not catch. No response is sent, and the request hangs (until client timeout). The error handler is only invoked when next(err) is called or a synchronous throw occurs inside a non-async handler.",
+          "distractor_rationale": "B is tempting because it is true in Express 5 (and with express-async-errors), but not in stock Express 4. C can happen for synchronous throws in some setups, but here the throw is inside a Promise chain, producing an unhandled rejection, not an immediate crash in typical defaults. D assumes Express auto-sends something; it does not.",
+          "skills_covered": [
+            "Node.js",
+            "Express.js",
+            "Routing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Given this data in `orders`:\n\n```json\n{ \"_id\": 1, \"userId\": \"u1\", \"items\": [ {\"sku\":\"A\",\"qty\":2,\"price\":10}, {\"sku\":\"B\",\"qty\":1,\"price\":5} ], \"status\":\"paid\" }\n{ \"_id\": 2, \"userId\": \"u1\", \"items\": [ {\"sku\":\"A\",\"qty\":1,\"price\":10} ], \"status\":\"cancelled\" }\n{ \"_id\": 3, \"userId\": \"u2\", \"items\": [ {\"sku\":\"B\",\"qty\":4,\"price\":5} ], \"status\":\"paid\" }\n```\nAnd this pipeline:\n\n```javascript\ndb.orders.aggregate([\n  { $match: { status: 'paid' } },\n  { $unwind: '$items' },\n  { $group: { _id: '$userId', spent: { $sum: { $multiply: ['$items.qty', '$items.price'] } } } },\n  { $sort: { spent: -1 } }\n])\n```\nWhat does the pipeline return?",
+          "options": [
+            "```json\n[\n  { \"_id\": \"u2\", \"spent\": 20 },\n  { \"_id\": \"u1\", \"spent\": 25 }\n]\n```",
+            "```json\n[\n  { \"_id\": \"u1\", \"spent\": 30 }\n]\n```",
+            "```json\n[\n  { \"_id\": \"u1\", \"spent\": 25 },\n  { \"_id\": \"u2\", \"spent\": 20 }\n]\n```",
+            "```json\n[\n  { \"_id\": \"u1\", \"spent\": 35 },\n  { \"_id\": \"u2\", \"spent\": 20 }\n]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Only paid orders are included. For _id:1, total is 2*10 + 1*5 = 25 for u1. For _id:3, total is 4*5 = 20 for u2. Sorted descending by spent gives u1 then u2.",
+          "distractor_rationale": "B wrongly includes the cancelled order (_id:2). C forgets u2 entirely. D has correct amounts but wrong sort order (ascending instead of the requested descending).",
+          "skills_covered": [
+            "MongoDB",
+            "REST API"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have these indexes on `products`:\n\n```javascript\ndb.products.createIndex({ category: 1, price: 1, rating: -1 })\ndb.products.createIndex({ price: 1 })\ndb.products.createIndex({ rating: -1, category: 1 })\n```\nAnd you run this query:\n\n```javascript\ndb.products.find(\n  { category: 'phone', price: { $gte: 300, $lte: 800 } },\n  { _id: 0, name: 1, price: 1, rating: 1 }\n).sort({ rating: -1 }).limit(20)\n```\nAssuming a large data set, which index can both support the filter and avoid an in-memory sort?",
+          "options": [
+            "```javascript\n{ rating: -1, category: 1 }\n```",
+            "```javascript\n{ category: 1, price: 1, rating: -1 }\n```",
+            "```javascript\n{ price: 1 }\n```",
+            "None; MongoDB will always sort in memory when a range filter is involved."
+          ],
+          "correct_option": "B",
+          "explanation": "The compound index `{ category:1, price:1, rating:-1 }` matches the equality on `category`, the range on `price`, and provides the requested sort on `rating:-1`. The order of fields aligns with the query and sort requirements.",
+          "distractor_rationale": "B supports only the price predicate and cannot satisfy the `category` equality or the sort. C places `rating` first, which doesn't help the filter and will not satisfy the sort after filtering by `category` and `price`. D is false here; while range filters constrain sort usage for subsequent fields in some patterns, this particular index order still supports the requested sort because the sort field is included after equality and range constraints in the index ordering.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider this router mounted at `/users`:\n\n```javascript\nconst express = require('express');\nconst router = express.Router();\n\nrouter.get('/:id', (req, res) => res.send('show ' + req.params.id));\nrouter.get('/new', (req, res) => res.send('new form'));\n\napp.use('/users', router);\n```\nWhat does a GET `/users/new` return?",
+          "options": [
+            "404 Not Found",
+            "```text\nshow new\n```",
+            "500 Internal Server Error",
+            "```text\nnew form\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Route matching is order-dependent. With `/:id` defined before `/new`, the literal `new` is captured as the `id` parameter and the first handler runs.",
+          "distractor_rationale": "B would be correct if `/new` were defined before `/:id`. C is tempting if one assumes dynamic parameters don't match literals, but they do. D has no basis here; nothing throws.",
+          "skills_covered": [
+            "Express.js",
+            "Routing"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Starting doc in `posts`:\n\n```json\n{ \"_id\": 1, \"counters\": { \"views\": 10 }, \"tags\": [ {\"name\":\"a\",\"score\":1}, {\"name\":\"b\",\"score\":2} ] }\n```\nYou run:\n\n```javascript\ndb.posts.updateOne(\n  { _id: 1 },\n  {\n    $inc: { 'counters.views': 5, 'tags.$[t].score': 1 },\n    $set: { 'tags.$[t].touched': true }\n  },\n  { arrayFilters: [ { 't.name': { $in: ['a','c'] } } ] }\n)\n```\nWhat does the document look like after the update?",
+          "options": [
+            "```json\n{ \"_id\": 1, \"counters\": { \"views\": 15 }, \"tags\": [ {\"name\":\"a\",\"score\":2,\"touched\":true}, {\"name\":\"b\",\"score\":2} ] }\n```",
+            "```json\n{ \"_id\": 1, \"counters\": { \"views\": 15 }, \"tags\": [ {\"name\":\"a\",\"score\":2}, {\"name\":\"b\",\"score\":2} ], \"touched\": true }\n```",
+            "```json\n{ \"_id\": 1, \"counters\": { \"views\": 15 }, \"tags\": [ {\"name\":\"a\",\"score\":1,\"touched\":true}, {\"name\":\"b\",\"score\":2} ] }\n```",
+            "```json\n{ \"_id\": 1, \"counters\": { \"views\": 15 }, \"tags\": [ {\"name\":\"a\",\"score\":2,\"touched\":true}, {\"name\":\"b\",\"score\":3,\"touched\":true} ] }\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The array filter matches tag `name` in ['a','c'], so only tag `a` is updated. `views` increments to 15. Tag `b` is untouched.",
+          "distractor_rationale": "B incorrectly assumes both tags are updated. C applies `touched` to the root doc, not the filtered array element. D forgets the `$inc` of `score` for the matched tag.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given this Express app:\n\n```javascript\nconst express = require('express');\nconst app = express();\napp.use(express.json());\n\napp.post('/x', (req, res) => {\n  res.json({ ok: true });\n});\n\napp.use((err, req, res, next) => {\n  res.status(400).json({ code: 'BAD_JSON' });\n});\n```\nA client sends `POST /x` with `Content-Type: application/json` and body `{\" invalid` (malformed JSON). What is the response?",
+          "options": [
+            "HTTP 415 Unsupported Media Type",
+            "HTTP 500 with default Express error HTML",
+            "```json\n{ \"code\": \"BAD_JSON\" }\n``` with HTTP 400",
+            "```json\n{ \"ok\": true }\n``` with HTTP 200 because the handler still runs"
+          ],
+          "correct_option": "C",
+          "explanation": "`express.json()` parses the body before the route. Malformed JSON triggers a `SyntaxError` that is forwarded to the error-handling middleware, which returns the 400 JSON.",
+          "distractor_rationale": "B assumes the route still runs; it does not. C would require rejecting the content type, but it is `application/json`. D is tempting if no custom error handler existed; here, a custom 400 is provided.",
+          "skills_covered": [
+            "Express.js",
+            "REST API"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "TTL index behavior. You create:\n\n```javascript\ndb.sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 })\n```\nThen:\n\n```javascript\ndb.sessions.insertOne({ _id: 1, expiresAt: new Date(Date.now() + 5000) })\n// 2 seconds later\ndb.sessions.updateOne({ _id: 1 }, { $set: { expiresAt: new Date(Date.now() + 600000) } })\n```\nWhat happens to the document in practice?",
+          "options": [
+            "It never expires because updating a TTL field disables TTL for that document.",
+            "It still expires around 5s because TTL is computed from the original insert time.",
+            "It is deleted immediately on update because TTL indexes don't allow updates to the indexed field.",
+            "It will not expire at 5s; it will be deleted sometime after the new `expiresAt` (with up to ~60s TTL monitor delay)."
+          ],
+          "correct_option": "D",
+          "explanation": "TTL uses the value of the indexed Date field at the time the monitor checks (roughly once per minute). Updating the field pushes expiration out; deletion occurs after the new timestamp plus monitor delay.",
+          "distractor_rationale": "B confuses TTL with a fixed lifetime since insert. C is false; updating TTL fields is allowed. D is incorrect; TTL continues to apply to the updated date.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given index and query:\n\n```javascript\ndb.items.createIndex({ price: 1, rating: -1 })\n\ndb.items.find({ price: { $gte: 100 } }).sort({ rating: -1 })\n```\nWhich statement about the winning plan is correct?",
+          "options": [
+            "The index is used to filter by price, but MongoDB must do an in-memory sort for rating because the sort field follows a range predicate on the index prefix.",
+            "MongoDB cannot use the index at all due to the sort on a different field; it performs a full collection scan and sort.",
+            "The query fails with an error because sorting after a range predicate is illegal.",
+            "The compound index fully satisfies both the filter and the sort; no in-memory sort is needed."
+          ],
+          "correct_option": "A",
+          "explanation": "For compound indexes, MongoDB can use subsequent index fields for sort only when preceding fields are constrained by equality. A range on `price` prevents using the index to also provide the `rating` sort, so an in-memory sort is required.",
+          "distractor_rationale": "B ignores the equality requirement for using index order to satisfy sort. C is too pessimistic; the filter still benefits from the index. D is simply false; the query is valid.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A route handler opens and closes a MongoDB client per request:\n\n```javascript\napp.get('/users', async (req, res) => {\n  const client = await MongoClient.connect(process.env.MONGODB_URI);\n  const users = await client.db().collection('users').find().toArray();\n  await client.close();\n  res.json(users);\n});\n```\nUnder heavy load (hundreds of RPS), what outcome is most likely and why?",
+          "options": [
+            "Throughput collapses due to connection handshakes per request and connection pool thrashing; reuse a single client/pool instead.",
+            "Random data loss occurs because closing clients commits partial reads.",
+            "Responses speed up because new TCP connections bypass pooled latency.",
+            "It scales fine; each request has its own connection so there is no contention."
+          ],
+          "correct_option": "A",
+          "explanation": "Establishing and tearing down TCP/TLS connections per request is expensive. The Node driver is designed to reuse a single `MongoClient` with an internal pool. Recreating clients per request leads to handshake overhead and pool churn.",
+          "distractor_rationale": "B misunderstands the cost of connection establishment and pool warm-up. C is the opposite of reality. D conflates reads with transactions; closing a client does not corrupt data, but it does hurt performance.",
+          "skills_covered": [
+            "Node.js",
+            "MongoDB",
+            "REST API"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Consider the following pipeline:\n\n```javascript\ndb.events.aggregate([\n  { $project: { a: 1, b: 1 } },\n  { $match: { c: 5 } }\n])\n```\nThe collection contains documents where `c` is present and equals 5 on many records. What is the result and why?",
+          "options": [
+            "A server error because `$match` cannot reference fields not in the prior stage.",
+            "All documents are returned because `$project` includes unspecified fields by default.",
+            "All documents with `c:5` because `$match` is independent of `$project`.",
+            "An empty result set because `$project` removed `c` before the `$match` stage."
+          ],
+          "correct_option": "D",
+          "explanation": "`$project` limits the fields that flow downstream. By projecting only `a` and `b`, the pipeline removes `c`, so `$match: { c: 5 }` cannot match anything and yields no results.",
+          "distractor_rationale": "B treats stages as accessing the base collection; they operate on the stream. C is incorrect; referencing a missing field isn't an error, it just doesn't match. D misstates `$project` behavior; unspecified fields are excluded when using inclusion syntax.",
+          "skills_covered": [
+            "MongoDB"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your Express API exposes `GET /reports/top-customers?since=YYYY-MM-DD&limit=10`. Data is in `orders` documents shaped like:\n\n```json\n{\n  \"_id\": ObjectId(\"...\"),\n  \"userId\": \"u123\",\n  \"status\": \"paid\" | \"cancelled\",\n  \"createdAt\": ISODate(\"...\"),\n  \"items\": [ { \"sku\": \"A\", \"qty\": 2, \"price\": 10 }, ... ]\n}\n```\nCurrent aggregation:\n\n```javascript\n[\n  { $match: { status: 'paid', createdAt: { $gte: ISODate(since) } } },\n  { $unwind: '$items' },\n  { $group: { _id: '$userId', spent: { $sum: { $multiply: ['$items.qty', '$items.price'] } } } },\n  { $sort: { spent: -1 } },\n  { $limit: 10 }\n]\n```\nOn a 20M-document collection, the endpoint is slow and spikes CPU. The `orders` collection currently has only `{ createdAt: -1 }` and `{ userId: 1 }` indexes.",
+          "task": "Propose concrete changes to both the database (indexes and pipeline) and the Express route to make this endpoint predictably fast. Justify each change with how it affects the query planner and server behavior under load.",
+          "expected_answer": "- Add a selective compound index to support the `$match` on `status` and `createdAt`, and optionally include `userId` to make grouping by `userId` cheaper to fetch: `db.orders.createIndex({ status: 1, createdAt: 1, userId: 1 })`. This allows an index scan on status+date rather than a COLLSCAN.\n- Keep `$match` as the first stage (already correct) to minimize documents entering `$unwind`/`$group`.\n- If `since` is always provided, ensure it is parsed and validated in the route before hitting the DB; otherwise default to a bounded window (e.g., last 90 days) to avoid unbounded scans.\n- Consider pushing a `$project` before `$unwind` to reduce per-document payload to `items`, `userId` only.\n- If very skewed users produce huge `items` arrays, use `$setWindowFields` or leave as is; `$unwind` is appropriate here.\n- Ensure the app reuses a single `MongoClient` with pooling; avoid creating a client per request.\n- Set a hard `limit` from the query param (max 50) and always include `$limit` after `$sort` (already present) to cap work.\n- Optionally add `allowDiskUse: true` for protection under bursty loads, but the index should mostly prevent spills.\n- If `status` has low cardinality and `createdAt` is selective, the planner will use the compound index. The sort by `spent` happens after grouping and cannot be indexed, but the input size is now bounded by the selective match.",
+          "rubric": [
+            {
+              "criterion": "Chooses an appropriate compound index and explains how it makes the initial $match an index scan (not a COLLSCAN)",
+              "marks": 3
+            },
+            {
+              "criterion": "Identifies pipeline ordering improvements (keep $match first; optional $project before $unwind) with reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes Express-side guards (date validation, upper-bound on limit, pooled MongoClient) tied to performance impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains remaining sort/group cost and why it’s acceptable after selectivity; mentions allowDiskUse trade-off",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Express.js",
+            "REST API",
+            "Node.js"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Intermittently, your `POST /orders` returns `200 OK` with JSON, but logs show `Error: Can't set headers after they are sent.` Code excerpt:\n\n```javascript\napp.use(express.json());\napp.use((req, res, next) => { req.start = Date.now(); next(); });\n\napp.post('/orders', async (req, res, next) => {\n  const doc = await db.collection('orders').insertOne(req.body);\n  res.status(201).json({ id: doc.insertedId });\n  next(); // trace middleware expects to run\n});\n\napp.use((req, res, next) => {\n  console.log('Trace', req.method, req.url, Date.now() - req.start);\n  res.set('X-Trace', 'ok'); // sometimes throws\n  next();\n});\n\napp.use((err, req, res, next) => res.status(500).json({ error: 'boom' }));\n```\nTraffic includes some proxies that retry on 5xx.",
+          "task": "Explain precisely why the error occurs and propose a safe refactor that preserves tracing and headers without risking double-send. Include any middleware ordering changes and handler patterns you would adopt.",
+          "expected_answer": "- The route sends a 201 response, then calls `next()`. Downstream middleware attempts to mutate headers (`res.set`) after the response has been committed, triggering `Can't set headers after they are sent.` Under some timings it may not throw (if not yet flushed), hence intermittent.\n- Fix: Do not call `next()` after sending a response. Either (a) move tracing ahead of the route (pre-handler), recording start time and register `on('finish')` to log when the response ends, or (b) implement trace as terminal middleware that only observes `res` events and does not attempt to write headers.\n- Example pattern:\n\n```javascript\napp.use((req, res, next) => {\n  req.start = Date.now();\n  res.on('finish', () => {\n    console.log('Trace', req.method, req.url, Date.now() - req.start);\n  });\n  next();\n});\n\napp.post('/orders', async (req, res, next) => {\n  try {\n    const doc = await db.collection('orders').insertOne(req.body);\n    res.status(201).set('X-Trace', 'ok').json({ id: doc.insertedId });\n  } catch (e) {\n    next(e);\n  }\n});\n```\n- Ensure error-handling middleware stays last. Avoid any middleware writing to the response after a handler has sent it.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies that calling next() after res.status(...).json(...) leads downstream middleware to mutate a committed response",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes an event-driven tracing approach using res.on('finish') or pre-route tracing that avoids header writes after send",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows an error-safe route handler using try/catch and next(e) without double-send",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions correct middleware ordering (error handler last; tracing before routes)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Express.js",
+            "Routing",
+            "Node.js"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A product detail endpoint `/products/:id` joins reviews via aggregation. Collections:\n\n```json\nproducts: { _id, name, category, ratingAvg, ratingCount }\nreviews: { _id, productId, userId, stars, text, createdAt }\n```\nCurrent request does a `$lookup` of all reviews then sorts/limits in memory to show the top 3 most recent, and separately computes an average. P95 latency is poor for popular products with 50k+ reviews.",
+          "task": "Propose a data model and query plan that makes this endpoint consistently fast. Your answer must cover: whether to embed or reference, which fields to precompute and store in `products`, which indexes to add, and the exact aggregation or read path taken by the endpoint.",
+          "expected_answer": "- Keep reviews in a separate `reviews` collection (high cardinality, write-heavy). In `products`, denormalize summary fields: `ratingAvg`, `ratingCount`, and optionally a small embedded `recentReviews` (top 3 `{userId, stars, text, createdAt}`) updated on write.\n- Indexes:\n  - `reviews`: `{ productId: 1, createdAt: -1 }` to support recent-first paging and top-3 fetch without in-memory sort.\n  - `products`: `{ _id: 1 }` (default) and if querying by slug, `{ slug: 1 }`.\n- Read path options:\n  1) Fast path: read `products` by id, return embedded `recentReviews` and summary fields with no join; this is O(1).\n  2) If strict freshness needed, run a targeted find on `reviews` with the compound index:\n\n```javascript\nconst product = await products.findOne({ _id });\nconst recent = await reviews\n  .find({ productId: _id })\n  .project({ userId: 1, stars: 1, text: 1, createdAt: 1, _id: 0 })\n  .sort({ createdAt: -1 })\n  .limit(3)\n  .toArray();\nreturn { ...product, recentReviews: recent };\n```\n- Average and count maintained transactionally or via outbox/worker on review writes; endpoint never scans 50k docs. No `$lookup` of full review sets.",
+          "rubric": [
+            {
+              "criterion": "Chooses references for reviews and justifies against embedding due to high cardinality and write patterns",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies denormalized summary fields in products and explains update strategy",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies effective indexes that eliminate in-memory sort for recent reviews",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a concrete read path (either cached embed or indexed query) that avoids scanning/joining entire review set",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "REST API",
+            "Node.js"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your search endpoint `GET /items?category=phone&min=300&max=800&sort=rating_desc` is slow and sometimes spills to disk. Current query and indexes:\n\n```javascript\n// Query\ndb.items.find(\n  { category: 'phone', price: { $gte: 300, $lte: 800 } },\n  { name: 1, price: 1, rating: 1, _id: 0 }\n).sort({ rating: -1 }).skip(2000).limit(20)\n\n// Indexes\n{ category: 1 }\n{ price: 1 }\n```\nWorkload: frequent deep pagination, many concurrent users, sustained writes that update ratings.",
+          "task": "Recommend an index strategy and pagination approach that eliminates in-memory sorts and reduces cost of deep pages. Provide the modified query code and justify how it changes the query plan and latency profile.",
+          "expected_answer": "- Create a compound index to support the filter and sort in one scan: `{ category: 1, price: 1, rating: -1 }`. This satisfies equality on `category`, range on `price`, and provides the requested rating-desc order, preventing sort spills.\n- Replace skip/limit with keyset (cursor) pagination to avoid walking N+2000 records. Use the index order and last seen `(category, price, rating, _id)` as a tie-breaker for stable pagination.\n- Example code:\n\n```javascript\nconst q = { category: 'phone', price: { $gte: 300, $lte: 800 } };\nconst sort = { rating: -1, _id: 1 }; // stable order\nif (cursor) {\n  // cursor encodes last { rating, _id }\n  q.$or = [\n    { rating: { $lt: cursor.rating } },\n    { rating: cursor.rating, _id: { $gt: cursor._id } }\n  ];\n}\nconst docs = await db.items\n  .find(q, { projection: { name: 1, price: 1, rating: 1, _id: 1 } })\n  .sort(sort)\n  .limit(20)\n  .toArray();\n```\n- Return a `nextCursor` from the last doc. Deep pages no longer scan and discard thousands of records; latency becomes roughly constant per page.",
+          "rubric": [
+            {
+              "criterion": "Picks a correct compound index that satisfies both filter and rating-desc sort; explains why it avoids in-memory sort",
+              "marks": 3
+            },
+            {
+              "criterion": "Replaces skip/limit with a correct keyset pagination pattern including a stable tie-breaker",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete query code with proper projection and sort",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains latency improvements and reduced disk spill under writes",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "REST API"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a production-friendly Orders REST service (Express + MongoDB)",
+          "brief": "Implement an Express server exposing CRUD for `orders` and one aggregation report. Use a pooled MongoDB connection. Include validation, meaningful HTTP status codes, and indexes to support query patterns. Provide a small seed script.",
+          "deliverable": "A Git repo or zip containing: source code, `README.md` with setup/run instructions, `.env.example` for `MONGODB_URI` and `PORT`, a `seed.js` script, and a Postman collection or curl script demonstrating the endpoints.",
+          "acceptance_criteria": [
+            "Server starts with `npm start` on PORT, connects once to MongoDB, and logs readiness.",
+            "`POST /orders` accepts a JSON body `{ userId, items:[{sku, qty, price}], status }`, returns 201 with `{ id }`. Invalid JSON returns 400 `{ code: 'BAD_JSON' }`. Missing required fields returns 422 with error details.",
+            "`GET /orders/:id` returns 200 with the stored order or 404 if not found.",
+            "`PATCH /orders/:id` supports partial updates for `status` and items (e.g., replace entire items array). Conflicts on immutable fields (e.g., userId) return 409.",
+            "`DELETE /orders/:id` returns 204 on success, 404 if not found.",
+            "`GET /orders?status=paid&minTotal=20&limit=5` returns orders filtered by computed total (sum of items), sorted by `createdAt` desc, with stable keyset pagination via `nextCursor` in the response. No in-memory sort is used for filter/sort (verified by an index and explain).",
+            "`GET /reports/revenue-by-user?since=YYYY-MM-DD` returns `[ { userId, spent } ]` sorted desc. The pipeline matches on `status: 'paid'` and `createdAt >= since`, unwinds items, groups by `userId`, and sums `qty*price`.",
+            "Indexes exist: `orders.createIndex({ status: 1, createdAt: 1, userId: 1 })` and `orders.createIndex({ userId: 1 })`. `explain(true)` for the list endpoint shows an index scan, not COLLSCAN or in-memory sort.",
+            "Middleware ordering prevents double-send: no `next()` after a response is sent; a global error handler returns JSON 500 for thrown errors from async handlers.",
+            "`seed.js` inserts at least 20 orders spanning statuses and createdAt; README shows example curl invocations and expected shapes."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, pooled MongoDB client and clean server startup/shutdown",
+              "marks": 4
+            },
+            {
+              "criterion": "CRUD endpoints meet HTTP semantics and validation/error responses (400/422/404/409/204)",
+              "marks": 6
+            },
+            {
+              "criterion": "Aggregation endpoint correctness and sort order; computes `spent` accurately",
+              "marks": 4
+            },
+            {
+              "criterion": "Indexing strategy implemented and demonstrated via explain; pagination is keyset-based and stable",
+              "marks": 4
+            },
+            {
+              "criterion": "Middleware/error-handling correctness (no double-send; malformed JSON -> 400)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Express.js",
+            "REST API",
+            "Node.js",
+            "MongoDB",
+            "Routing",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Design a persistent data layer for Orders with indexed queries and aggregations",
+          "brief": "Create a `data/` module that encapsulates MongoDB access for `orders`, including CRUD operations, an aggregation `revenueByUser(since)`, and index creation on startup. Provide a CLI demo script that exercises the module without the web server.",
+          "deliverable": "Folder `data/` with `index.js` (connection + index creation), `orders.js` (DAO functions), `schemas.md` (document shape and constraints), `demo.js` script to run from CLI, and a README section explaining usage and decisions.",
+          "acceptance_criteria": [
+            "`data/index.js` exports `connect(uri)` returning a pooled client/db and ensures indexes: `{ status:1, createdAt:1, userId:1 }` on `orders`. Repeated calls are idempotent.",
+            "`orders.js` exports: `create(order)`, `getById(id)`, `updatePartial(id, patch)`, `remove(id)`, and `revenueByUser(sinceDate)` that returns `[ { userId, spent } ]` sorted desc. All functions validate inputs and reject with informative errors.",
+            "`demo.js` connects via `MONGODB_URI`, seeds a few orders if none exist, then logs: one created order id, fetched order, result of an update, count after delete, and output of `revenueByUser` for the last 7 days.",
+            "Running `node demo.js` twice does not duplicate indexes or crash; prints consistent results. Exits with code 0.",
+            "`orders.getById` uses projection to return only `{ _id, userId, status, createdAt, total }` where `total` is computed on read (aggregation or $addFields).",
+            "Repository includes a brief justification in `schemas.md` of chosen fields, types, and how totals are derived; specifies that writes should validate items `[ { sku, qty, price } ]`. "
+          ],
+          "rubric": [
+            {
+              "criterion": "Clean connection lifecycle and idempotent index creation in the data layer",
+              "marks": 5
+            },
+            {
+              "criterion": "DAO functions correctness (CRUD + revenueByUser) with validation and clear error handling",
+              "marks": 7
+            },
+            {
+              "criterion": "CLI demo completeness and repeatability; demonstrates functions and prints expected outputs",
+              "marks": 4
+            },
+            {
+              "criterion": "Documentation of schema and reasoning; computed total implemented efficiently (aggregation or projection)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "MongoDB",
+            "Node.js",
+            "JavaScript",
+            "REST API"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-012-S04",
+      "skills_assessed": [
+        "Authentication",
+        "Unit Testing",
+        "Git",
+        "Application Deployment"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You issue both access and refresh tokens with the same secret and algorithm:\n\n```javascript\n// middleware/auth.js\nconst jwt = require('jsonwebtoken');\nmodule.exports = function auth(req, res, next) {\n  const token = (req.headers.authorization || '').replace('Bearer ', '');\n  try {\n    const payload = jwt.verify(token, process.env.JWT_SECRET);\n    req.user = payload;\n    return next();\n  } catch (err) {\n    return res.status(401).json({ error: 'invalid token' });\n  }\n}\n```\n\n```javascript\n// elsewhere when logging in\nconst access = jwt.sign({ sub: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });\nconst refresh = jwt.sign({ sub: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });\n```\n\nA client accidentally sends the refresh token in the `Authorization: Bearer ...` header when calling `GET /profile` (which only needs authentication, not a specific role). What actually happens and why?",
+          "options": [
+            "The middleware exchanges the refresh token for an access token implicitly and continues.",
+            "The request is treated as authenticated because `jwt.verify` only checks signature/expiry and both tokens share the secret.",
+            "The middleware rejects the token with 403 because the payload has no `role` field.",
+            "`jwt.verify` throws `JsonWebTokenError: jwt malformed` because a refresh token cannot be verified by `verify` intended for access tokens."
+          ],
+          "correct_option": "B",
+          "explanation": "`jwt.verify` validates the signature and expiration using the provided secret. If access and refresh tokens share the same secret and algorithm, a valid refresh token will verify and the middleware will attach its payload to `req.user`, treating the request as authenticated. This is a serious authorization design flaw.",
+          "distractor_rationale": "B sounds plausible because some routes later check `role`, but the middleware shown does not. C reflects a misconception that refresh and access tokens are structurally different to verification; they are just JWTs. D is wrong because the middleware does not implement token exchange.",
+          "skills_covered": [
+            "Authentication"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A teammate wrote the following login check:\n\n```javascript\n// login.js\nconst isValid = await bcrypt.compare(\n  await bcrypt.hash(req.body.password, 10),\n  user.passwordHash\n);\nif (!isValid) return res.status(401).json({ error: 'bad creds' });\n```\n\n`user.passwordHash` is a standard bcrypt hash (salted, cost=10). What will this do in practice when a real user tries to log in with the correct password?",
+          "options": [
+            "Always reject: `bcrypt.compare` expects a plaintext first argument, not a hashed string.",
+            "Succeed as long as the cost factor matches (10 here).",
+            "Succeed only if the new hash happens to reuse the original salt by chance.",
+            "Throw at runtime because `bcrypt.compare` requires a plaintext and a salt, not two hashes."
+          ],
+          "correct_option": "A",
+          "explanation": "`bcrypt.compare(plaintext, hash)` compares the plaintext by hashing it with the salt embedded in `hash`. Passing `bcrypt.hash(password, 10)` as the first argument means you are comparing a hash to another hash, which will never match. The result is always false and valid logins are rejected.",
+          "distractor_rationale": "B and D confuse bcrypt's use of salts: a new salt is generated each time, so a new hash almost never matches the stored one even if the cost is the same. C is tempting, but `compare` won't throw here; it returns false.",
+          "skills_covered": [
+            "Authentication",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider this authorization middleware and route:\n\n```javascript\nfunction requireRole(roles) {\n  return (req, res, next) => {\n    if (!roles.includes(req.user.role)) return next();\n    return res.status(403).json({ error: 'forbidden' });\n  };\n}\n\nrouter.get('/admin/users', auth, requireRole(['admin']), listUsers);\n```\n\nWhat actually happens when admins and non-admins call `/admin/users`?",
+          "options": [
+            "Non-admins are allowed through and admins get 403 due to the reversed condition.",
+            "Everyone gets 403 because `roles.includes` is always truthy for arrays.",
+            "Only admins are allowed through as intended.",
+            "Everyone is allowed through because `return next()` is executed in all cases."
+          ],
+          "correct_option": "A",
+          "explanation": "The check is inverted. If the user's role is not in the allowed list, `next()` runs, allowing access. If it is in the list (admin), a 403 is returned. The logic is backwards.",
+          "distractor_rationale": "B mistakes `roles.includes` behavior; it returns a boolean, not always truthy. C ignores the conditional. D describes the intended behavior, not the actual code.",
+          "skills_covered": [
+            "Authentication"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A Jest test for a protected route is written as:\n\n```javascript\nit('blocks unauthenticated', () => {\n  request(app).get('/private').expect(401);\n});\n```\n\nThe route currently (incorrectly) returns 200. How will Jest report this test?",
+          "options": [
+            "It will pass because the promise is neither returned nor awaited, so Jest doesn't wait for the assertion.",
+            "It will reliably fail because Supertest throws inside Jest's test runner.",
+            "Jest will hang with an open handle warning until it times out.",
+            "It will be flaky: sometimes pass, sometimes fail depending on timing."
+          ],
+          "correct_option": "A",
+          "explanation": "Without returning or awaiting the Supertest promise (or using `done`), Jest considers the test synchronous and completes it immediately. The `expect(401)` is never observed, so the test passes even though the route returns 200.",
+          "distractor_rationale": "B assumes Jest automatically waits for unhandled promises. C can happen for other issues but not here. D suggests nondeterminism; this case is deterministically passing.",
+          "skills_covered": [
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your CI shows intermittent failures with this error while running Jest in parallel workers:\n\n```text\nMongoServerError: E11000 duplicate key error collection: test.users index: email_1 dup key: { email: \"a@example.com\" }\n```\n\nTwo test files each seed a user with `email: 'a@example.com'`. Setup connects once to the same test database. What is the most likely root cause?",
+          "options": [
+            "Mongoose model caching causes the same document to be saved twice.",
+            "Parallel test workers share the same database and state; without isolation/cleanup, unique indexes collide.",
+            "bcrypt's async hashing creates a race that duplicates user creation.",
+            "The unique index on `email` was not created yet; ensure `ensureIndexes` runs before tests."
+          ],
+          "correct_option": "B",
+          "explanation": "By default, Jest runs test files in parallel. If they point at the same DB and don't clean between tests or use per-worker DB names, concurrent inserts of the same email will violate the unique index.",
+          "distractor_rationale": "B misreads the error: the index exists. C and D are plausible-sounding but not the mechanism causing a duplicate key error across separate test files.",
+          "skills_covered": [
+            "Unit Testing",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A `.env` file with real secrets was committed and pushed. You removed it and added it to `.gitignore`, but the secret still exists in history. Given this history:\n\n```text\nb9c2f1e add .env with keys\nc1a7d42 implement auth\n...\n```\n\nWhich sequence actually purges the secret from all branches and tags before re-pushing?",
+          "options": [
+            "```text\ngit rm --cached .env\ngit commit -m \"remove env\"\ngit push\n```",
+            "```text\ngit filter-repo --path .env --invert-paths\ngit push --force --all\ngit push --force --tags\n```",
+            "```text\ngit reset --hard HEAD~1\ngit push\n```",
+            "```text\ngit revert b9c2f1e\ngit push\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "History-rewriting tools (`git filter-repo` or BFG) must be used to remove the file from all commits, then force-push branches and tags. Merely removing the file in a new commit or reverting leaves the secret in older commits.",
+          "distractor_rationale": "B and C leave the secret in earlier commits. D only drops the last commit on the current branch and still leaves the bad commit reachable elsewhere.",
+          "skills_covered": [
+            "Git"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your React client (Create React App) configures Axios like this:\n\n```javascript\n// src/api.js\nexport const api = axios.create({\n  baseURL: process.env.API_URL\n});\n```\n\nYou deploy to Vercel and add an `API_URL` environment variable after the build completes. What happens in production?",
+          "options": [
+            "Adding `dotenv` at runtime on the client will load `API_URL` without rebuilding.",
+            "This works as long as you restart the Vercel instance; the bundle will re-read `process.env`. ",
+            "The runtime environment variable will override the bundle and the app will immediately point at the new API.",
+            "`baseURL` is `undefined` because CRA only exposes `REACT_APP_*` variables at build time; you must use `REACT_APP_API_URL` and rebuild."
+          ],
+          "correct_option": "D",
+          "explanation": "CRA inlines environment variables prefixed with `REACT_APP_` at build time. Unprefixed variables are not exposed. Changing Vercel env after build does nothing to an already-built SPA; you must rebuild with `REACT_APP_API_URL`.",
+          "distractor_rationale": "B/D assume runtime evaluation in the client bundle. C is impossible: dotenv cannot run in the browser to load process env.",
+          "skills_covered": [
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Behind Nginx, your Express app rate-limits by IP and logs the client address:\n\n```javascript\napp.use(rateLimit({ windowMs: 60_000, max: 100, keyGenerator: req => req.ip }));\napp.use(morgan(':remote-addr :method :url'));\n```\n\nAll requests appear to come from `127.0.0.1` and the limiter is ineffective. Nginx sets `X-Forwarded-For`. What single Express change fixes both logging and rate-limiting?",
+          "options": [
+            "Enable CORS with `credentials: true`.",
+            "Increase `windowMs` and `max` to account for proxying.",
+            "Use `helmet()` defaults to parse proxy headers.",
+            "Add `app.set('trust proxy', 1)` before the middleware so Express uses `X-Forwarded-For`."
+          ],
+          "correct_option": "D",
+          "explanation": "When behind one proxy, `app.set('trust proxy', 1)` tells Express to read `X-Forwarded-For` for `req.ip`. This makes both Morgan and the rate limiter use the real client IP.",
+          "distractor_rationale": "B and C don't change how `req.ip` is derived. D changes limits but doesn't address the root cause.",
+          "skills_covered": [
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your containerized API exposes `/health` but returns 500 until the DB connects. Dockerfile:\n\n```dockerfile\nHEALTHCHECK --interval=10s --timeout=2s --retries=3 \\\n  CMD curl -fsS http://localhost:3000/health || exit 1\n```\n\nIn Kubernetes, Pods repeatedly restart. What is happening and what change is appropriate?",
+          "options": [
+            "Health checks are ignored by Kubernetes; the restarts are due to OOM. Remove the health check to stabilize.",
+            "`curl` caches responses causing flapping; switch to `wget` to fix.",
+            "The liveness check fails during startup and the orchestrator restarts the Pod. Use a separate readiness probe or add an initial delay/startupProbe so temporary DB unavailability doesn't kill the container.",
+            "Unhealthy states increase reliability by replacing Pods quickly; do nothing."
+          ],
+          "correct_option": "C",
+          "explanation": "A liveness probe that fails during normal startup causes restarts. Use a readiness (and optionally startup) probe that tolerates startup delays, or return 200 with degraded status while liveness remains healthy.",
+          "distractor_rationale": "B is false (probes are honored). C invents a `curl` caching issue. D suggests ignoring a misconfiguration.",
+          "skills_covered": [
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your GitHub Actions workflow only deploys on pushes to `main`:\n\n```yaml\non:\n  push:\n    branches: [main]\n```\n\nYou want deployments to also trigger when you push version tags like `v1.2.3`. What change is needed?",
+          "options": [
+            "```text\non:\n  release:\n    types: [created]\n```",
+            "Add `if: startsWith(github.ref, 'refs/tags/v')` to the job while leaving the `on` section unchanged.",
+            "```text\non:\n  push:\n    branches: [main]\n    tags:\n      - 'v*.*.*'\n```",
+            "```text\non:\n  push:\n    branches: ['v*.*.*']\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "To trigger on tag pushes, you must include a `tags` pattern under the `push` event. The pattern `'v*.*.*'` matches semantic version tags.",
+          "distractor_rationale": "B configures branches, not tags. C listens to release events, which may not fire on tag pushes alone. D filters jobs but doesn't change triggering events, so the workflow won't start for tags.",
+          "skills_covered": [
+            "Git",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You host a React SPA at `https://app.example.com` and an API at `https://api.example.com`. Requirements: (1) short-lived access tokens (≈15 min), (2) refresh tokens with rotation and reuse detection, (3) protect against CSRF and XSS, (4) support native mobile clients that cannot use third-party cookies, and (5) deploy behind a CDN/reverse proxy. Current API auth middleware accepts any JWT signed with your secret. CORS is default-deny right now.",
+          "task": "Propose a concrete token storage and transport design for web and mobile that satisfies all requirements. Specify cookie attributes, headers, CORS settings, and endpoint behavior for login, refresh, and logout. Explain how reuse detection and invalidation work across devices, and what changes you would make to the middleware to prevent refresh tokens from authenticating API calls. Justify your choices in terms of risk trade-offs.",
+          "expected_answer": "A strong answer proposes: Web uses an httpOnly, Secure, SameSite=None refresh token cookie scoped to `api.example.com` with `Path=/auth/refresh` only; access token kept in memory (not localStorage) and sent via `Authorization: Bearer` header. CORS allows origin `https://app.example.com` with `credentials: true`; preflight is enabled only for that origin and necessary methods. `axios` configured with `withCredentials: true` for refresh calls only. Mobile gets refresh and access tokens in response body and stores them in secure OS storage; mobile refresh calls send `Authorization` with the refresh token (no cookies). Implement refresh rotation: store a hashed refresh token with device identifier and expiry in DB; on refresh, verify the presented token, issue new pair, mark the previous token as used, and reject any subsequent reuse (triggering session revocation for that device). Logout deletes the stored refresh token record and clears the cookie on web. Middleware change: access-control middleware verifies token type/claims (e.g., `typ: 'access'`, audience, issuer) and rejects tokens missing required claims; a separate refresh endpoint verifies `typ: 'refresh'` only. Also set `app.set('trust proxy', 1)` so `Secure` cookies and rate-limiting work behind the proxy. Explain CSRF mitigation: refresh endpoint is cookie-authenticated but also requires a CSRF token (double submit or SameSite=None + custom header) or is designed to accept only refresh tokens in the body/header rather than cookies. Include token lifetimes, clock skew handling, and reason why memory-stored access token plus httpOnly refresh cookie reduces XSS and CSRF risks.",
+          "rubric": [
+            {
+              "criterion": "Clearly differentiates access vs refresh tokens, their lifetimes, and where each is stored/transmitted for web and mobile",
+              "marks": 2
+            },
+            {
+              "criterion": "Cookie attributes and CORS configuration are precise (origin allowlist, credentials, SameSite=None, Secure, path scoping) and correct behind a proxy",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains refresh rotation and reuse detection with server-side state (hash, device binding) and invalidation semantics",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies and fixes middleware verification (claims/type) so refresh tokens cannot authenticate API calls; addresses CSRF considerations",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your team wants a CI/CD pipeline that (a) runs unit/integration tests for both the API and client, (b) blocks deploys if any tests fail, (c) injects environment-specific secrets safely, and (d) deploys on pushes to `main` or version tags. Current workflow only runs `npm test` in the API and deploys unconditionally.",
+          "task": "Design the workflow changes: job structure, triggers, secret management, and deployment gates. Outline how you would handle per-environment configuration (dev/staging/prod), include a rollback strategy based on health checks, and describe how Git practices (branches/tags) interact with the pipeline. You may write a brief YAML sketch to illustrate.",
+          "expected_answer": "A complete plan: Use a multi-job workflow in GitHub Actions with `on: push: { branches: [main], tags: ['v*.*.*'] }`. Define separate jobs `test_api` and `test_client` that run in parallel. Use caching for dependencies. Provide environment variables via GitHub Environments or repository/organization secrets; never commit `.env` and supply `.env.example`. The `deploy` job `needs: [test_api, test_client]` and runs only on `main` or semantic tags; guard it with required reviewers on `production` environment. For the API, inject secrets at deploy target (Render/Railway/Heroku) rather than bundling. For the client, ensure `REACT_APP_*` variables are set at build. Use health checks: after deploy, poll `/healthz` until success; if fails or times out, auto-rollback by reactivating previous release (Heroku release rollback, Render service rollback, or blue/green flip). Include a strategy for database migrations (run in a separate `migrate` step before switching traffic; rollback via backward-compatible migrations or down scripts). Git practice: feature branches -> PR -> `main`. Protected `main` requires status checks. Releases are cut by pushing tags `vX.Y.Z`, which also trigger deploy to production. Document steps and include `git filter-repo` policy for secret exposure incidents.",
+          "rubric": [
+            {
+              "criterion": "Defines correct triggers and job dependencies so deploy waits for both client and API tests",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains secure secret/env handling for both client (build-time) and server (runtime) across environments",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes post-deploy health checks and an actionable rollback strategy",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains branching/tagging strategy aligning with environments and approvals",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "Application Deployment",
+            "Unit Testing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Production latency spikes are reported. Current Express logging is:\n\n```javascript\napp.use(morgan(':method :url :status - :response-time ms'));\nlogger.info('User login', { email: req.body.email, ip: req.ip });\n```\n\nLogs are text, lack request IDs, and occasionally show `ip: 127.0.0.1` even for internet clients. You deploy behind a single reverse proxy and aggregate logs in a hosted service that prefers JSON.",
+          "task": "Propose specific logging improvements for production that help diagnose spikes without leaking sensitive data. Include changes to Express trust configuration, log structure/levels, correlation IDs, redaction, sampling (if any), and how you would make this safe-by-default across environments. Provide short code snippets to illustrate.",
+          "expected_answer": "Suggested solution: `app.set('trust proxy', 1)` to honor `X-Forwarded-For` for real client IPs. Switch to structured JSON logs using Winston/Pino. Add a request-scoped correlation ID middleware (use `x-request-id` header if present, otherwise generate UUID) and include it in both access logs and app logs. Replace Morgan format with a JSON stream that logs method, url, status, response-time, request-id, userId if available, and remote address from `req.ip`. Implement redaction for PII (e.g., never log raw emails; log user IDs; configure Winston `format` to strip or hash sensitive fields). Use `logger.level = 'info'` in production, `debug` in dev, and allow `LOG_LEVEL` env override; optionally sample debug logs during incidents. Ensure error logs include stack traces and request-id. Provide code that wires Morgan to Winston. Document retention and rotation at the log aggregator, and ensure health checks are excluded or downsampled.",
+          "rubric": [
+            {
+              "criterion": "Configures trust proxy to fix client IP and integrates correlation IDs end-to-end",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes structured JSON logs with appropriate fields and severity levels, differing by environment",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses PII/redaction and avoids logging secrets; shows awareness of compliance/risk",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides concrete code snippets or configuration that an assessor could implement",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Integration tests pass locally but fail in CI with:\n\n```text\nJsonWebTokenError: secretOrPrivateKey must have a value\n```\n\nThe app signs access tokens with `jwt.sign(payload, process.env.JWT_SECRET)`. Locally you have `.env` loaded by `dotenv`. In CI, no `.env` is present. Jest spawns tests in parallel and also hits a real MongoDB service that is slow to start.",
+          "task": "Diagnose all likely causes of the CI failure and propose concrete fixes that make tests reliable and hermetic. Cover configuration, secrets, database, and Jest execution model. Provide code/config where needed.",
+          "expected_answer": "Root causes: (1) `JWT_SECRET` is not set in CI, leading to the signing error. (2) Tests depend on external MongoDB timing, causing flakiness. Fixes: In CI, set `JWT_SECRET` (and other required vars) via pipeline secrets or GitHub Environments; for tests, load a `.env.test` with fallback defaults using `dotenv-flow` or Jest `setupFiles`. Make tests hermetic: use `mongodb-memory-server` or Testcontainers to provision an isolated DB per worker; alternatively, run Jest with `--runInBand` and use a unique DB name per worker via `JEST_WORKER_ID`. Add proper global setup/teardown to connect/disconnect and clear collections between tests. Ensure async tests `await` Supertest requests or return promises. Optionally stub JWT in pure unit tests. Document these changes and enforce via CI that `npm test` fails if env vars are missing (schema validate config).",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies missing `JWT_SECRET` in CI and provides a secure injection mechanism",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes hermetic DB strategy (memory server/Testcontainers) or correct parallelism/isolation with cleanup",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses Jest async correctness (await/return) and global setup/teardown",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides actionable config/code snippets (dotenv setup, Jest config, CI env)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Unit Testing",
+            "Application Deployment",
+            "Authentication"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Secure the API and prove it with tests",
+          "brief": "Harden your existing MERN API with robust authentication and authorization, then demonstrate correctness with automated tests. Implement short-lived access tokens and rotating refresh tokens, role-based authorization on at least one route, password hashing, and basic abuse controls. Provide a reproducible test suite that exercises success and failure paths, including token expiry and refresh rotation.",
+          "deliverable": "A public Git repository URL containing: (1) API source code, (2) Jest test suite and coverage report, (3) Postman or HTTPie/curl scripts demonstrating login/refresh/protected routes, (4) `.env.example` with all required variables, and (5) a README with setup, test, and usage instructions.",
+          "acceptance_criteria": [
+            "Passwords are never stored in plaintext; user records contain bcrypt hashes. Provide a sample redacted user record or DB export to verify.",
+            "`POST /auth/login` returns a short-lived access token and a refresh token; web-safe variant may set the refresh token in an httpOnly, Secure cookie. README documents the exact contract.",
+            "`POST /auth/refresh` rotates refresh tokens. Presenting the previous refresh token after a successful rotation is rejected (reuse detection).",
+            "At least one route is protected by role-based middleware (e.g., `admin`); accessing it with a non-admin user returns 403, with an admin returns 200. Include example requests in the scripts.",
+            "Automated tests: `npm test` exits 0 and generates a text coverage summary showing ≥80% statements and ≥80% branches for the auth/authorization modules (include the coverage summary in CI artifacts or repo). Tests include: invalid password (401), valid login, protected route with/without token, expired access token path, refresh rotates tokens, RBAC 403 and 200 cases.",
+            "Repository includes `.env.example` and no real secrets in history. Running `git log --oneline` shows no `.env` additions after your last rewrite; `.gitignore` excludes secrets.",
+            "README explains token lifetimes, cookie attributes (if used), and how to run tests locally."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct access/refresh implementation with secure storage/transport and documented contracts",
+              "marks": 5
+            },
+            {
+              "criterion": "Refresh rotation and reuse detection enforced and test-covered",
+              "marks": 5
+            },
+            {
+              "criterion": "Role-based authorization enforced and demonstrated (403/200)",
+              "marks": 4
+            },
+            {
+              "criterion": "Automated tests pass with ≥80% coverage on auth paths; tests correctly await async behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "Repository hygiene: `.env.example` present, no secrets committed; clear README",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "Unit Testing",
+            "Git"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deploy the MERN app with production logging and documentation",
+          "brief": "Deploy your MERN project so that both client and API are publicly reachable over HTTPS. Configure environment variables per environment, structured logging suitable for a hosted aggregator, correct proxy settings, CORS to only allow your client, and a health endpoint suitable for platform health checks. Document everything needed to reproduce the deployment.",
+          "deliverable": "A public Git repository URL and live URLs for the frontend and backend. Include: (1) `.env.example` covering all required variables (client and server), (2) logging configuration in the server (e.g., Winston/Pino + Morgan), (3) screenshots or links to live logs demonstrating real client IPs, and (4) a README with deployment steps (platform chosen), environment variable mapping, health check endpoints, and rollback steps.",
+          "acceptance_criteria": [
+            "Backend live URL responds to `GET /healthz` with HTTP 200 and a JSON body including at least `{ status: 'ok', uptime, timestamp }`. Link included in README.",
+            "Frontend live URL loads and calls the API successfully. CORS is restricted to the frontend origin; requests from other origins are rejected (include evidence via a curl or browser console screenshot).",
+            "Express is configured with `trust proxy` appropriate to the platform. Logs in the aggregator show real client IPs (not 127.0.0.1) and are structured JSON including method, url, status, response-time, and a request ID.",
+            "Server logging level is controlled by an env var (e.g., `LOG_LEVEL`). Changing it to `warn` suppresses info logs in production (provide evidence: two screenshots with different levels).",
+            "Environment variables are configured on the hosting platforms (not committed). `.env.example` is complete and accurate. For the client, build-time variables use the required prefix (e.g., `REACT_APP_API_URL`).",
+            "README documents step-by-step deployment, environment variables with descriptions, health check configuration on the platform, and a simple rollback procedure (e.g., revert to previous deployment or tag)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Successful live deployment of client and API with working health endpoints",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct environment configuration (runtime for API, build-time for client) with `.env.example` and CORS restriction",
+              "marks": 5
+            },
+            {
+              "criterion": "Production-ready logging (structured, real client IPs via trust proxy, configurable levels) with evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear, reproducible documentation including rollback steps",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Git"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

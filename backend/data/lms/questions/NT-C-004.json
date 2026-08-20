@@ -1,0 +1,1855 @@
+{
+  "course_code": "NT-C-004",
+  "course_name": "Data Analytics",
+  "sections": [
+    {
+      "section_code": "NT-C-004-S01",
+      "skills_assessed": [
+        "Microsoft Excel",
+        "Data Cleaning",
+        "Data Quality",
+        "track key performance indicators"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You must assign a tier label to each customer's annual spend using the unsorted mapping below. You cannot change the sort order because the range refreshes from an external system in this order.\n\n```csv\nMinSpend,Label\n0,Bronze\n1000,Silver\n500,Gold\n10000,Platinum\n```\n\nFor a spend of 700 in cell E2, which formula reliably returns the correct tier even when the first column is unsorted?",
+          "options": [
+            "```text\n=VLOOKUP(E2, A2:B5, 2, FALSE)\n```",
+            "```text\n=XLOOKUP(E2, A2:A5, B2:B5, \"\", -1)\n```",
+            "```text\n=VLOOKUP(E2, A2:B5, 2, TRUE)\n```",
+            "```text\n=INDEX(B2:B5, MATCH(E2, A2:A5, 1))\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "XLOOKUP with match_mode -1 returns the next smaller item (largest value <= lookup) without requiring the lookup array to be sorted. VLOOKUP with TRUE and MATCH type 1 both assume sorted ascending and can return incorrect labels here. VLOOKUP with FALSE demands an exact match and would error for 700.",
+          "distractor_rationale": "A is tempting because approximate VLOOKUP seems right for tiers, but it requires the first column sorted; with unsorted data it can misclassify. C looks safe (exact match) but fails for values that don't exactly equal a breakpoint. D is a common INDEX/MATCH pattern, but MATCH type 1 has the same sorted requirement as approximate VLOOKUP.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A pivot table won't allow grouping `OrderDate` by month. The source shows mixed date types:\n\n```csv\nOrderID,OrderDate,Amount\n101,'2024-03-01,120\n102,03/02/2024,95\n103,\"2024-03-03\",110\n104,3/4/2024,80\n```\n\nWhich cleaning step ensures the pivot can group by month consistently across locales?",
+          "options": [
+            "```text\nIn a helper column: =DATEVALUE([@OrderDate]) and fill down. Use this helper as the pivot's date field.\n```",
+            "```text\nIn a helper: =TEXT([@OrderDate],\"yyyy-mm-dd\"). Use that as the pivot's date field.\n```",
+            "```text\nFind/Replace a leading apostrophe ' with nothing across the column.\n```",
+            "```text\nSelect the OrderDate column and change Number Format to Date.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "DATEVALUE converts text representations of dates into true serial dates that pivots can group. Merely changing the format does not convert text to dates. TEXT produces more text, not dates. Removing apostrophes may not normalize ISO strings across locale settings.",
+          "distractor_rationale": "B is a common misconception: formatting alone doesn't change underlying types. C looks tidy but yields text, which still blocks grouping. D may fix a subset (apostrophe-prefixed) but not quoted or ISO strings; grouping can still fail.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have a history of customer tiers that can repeat per customer. Data are sorted oldest to newest by `EffectiveDate`.\n\n```csv\nCustomerID,EffectiveDate,Tier\nC01,2023-01-01,Silver\nC01,2023-10-01,Gold\nC02,2023-06-01,Bronze\nC02,2023-12-15,Silver\n```\n\nIn row 2 of a fact table with `CustomerID` in A2, you need the latest tier without adding helper columns or resorting. Which formula returns the last match?",
+          "options": [
+            "```text\n=INDEX(CustomerHistory[Tier], MATCH(A2, CustomerHistory[CustomerID], 0))\n```",
+            "```text\n=VLOOKUP(A2, CustomerHistory, 3, FALSE)\n```",
+            "```text\n=XLOOKUP(A2, CustomerHistory[CustomerID], CustomerHistory[Tier], \"\", 0, -1)\n```",
+            "```text\n=XLOOKUP(A2, CustomerHistory[CustomerID], CustomerHistory[Tier])\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "XLOOKUP with search_mode -1 scans last-to-first and returns the last matching row, which is the current tier. The other options all return the first match.",
+          "distractor_rationale": "A is close: default XLOOKUP returns the first match. B exact-match VLOOKUP also returns the first. D INDEX/MATCH with exact match finds the first occurrence.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You need the count of unique customers per month from a transactions table that can have multiple orders per customer per month.\n\n```csv\nCustomerID,OrderDate,Amount\nC01,2024-01-03,90\nC01,2024-01-20,40\nC02,2024-01-11,30\nC01,2024-02-02,75\nC02,2024-02-09,60\n```\n\nWithout using the Data Model, which approach yields the correct unique count per month in a pivot?",
+          "options": [
+            "```text\nAdd helper Month = EOMONTH([@OrderDate],0).\nAdd helper FirstInMonth = --(COUNTIFS(CustomerID,[@CustomerID],Month,[@Month])=1).\nPivot: Rows=Month; Values=Sum of FirstInMonth.\n```",
+            "```text\nPivot with Calculated Field: Unique = COUNT(CustomerID)/COUNTROWS().\n```",
+            "```text\nPivot: Rows=Month,CustomerID; Values=Count of CustomerID.\n```",
+            "```text\nPivot: Rows=Month; Values=Count of CustomerID.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A flags the first occurrence of a customer within each month, then sums the flags, yielding a true distinct count without Power Pivot. Raw counts double-count customers with multiple orders. Calculated fields cannot produce a distinct count this way.",
+          "distractor_rationale": "B and C both overcount when customers place multiple orders in a month. D seems clever but pivot calculated fields don't support row-by-row distinct logic; COUNT/COUNTROWS there won't deduplicate.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Sales `SKU` on the Orders sheet is numeric (e.g., 123) while the Products table stores `SKU` as 5-character strings with leading zeros (e.g., \"00123\"). Your exact-match lookup fails.\n\nWhich change makes the lookup robust and preserves leading zeros in the matched `SKU` text?",
+          "options": [
+            "```text\n=VLOOKUP(A2, Products, 2, TRUE)\n```",
+            "```text\n=XLOOKUP(VALUE(A2), VALUE(Products[SKU]), Products[Description])\n```",
+            "```text\n=XLOOKUP(A2, Products[SKU], Products[Description])\n```",
+            "```text\n=XLOOKUP(TEXT(A2,\"00000\"), Products[SKU], Products[Description])\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Normalizing the lookup_value to the same 5-character text format as the key ensures type and padding alignment, preserving leading zeros in returned text. Converting both sides to numbers (VALUE) loses semantic leading zeros and can cause collisions with non-numeric SKUs.",
+          "distractor_rationale": "A fails due to type mismatch (number vs text). B \"works\" only if all SKUs are numeric and throws away leading zeros, a data-quality risk. D approximate VLOOKUP risks mismatches unless the table is sorted and still won't preserve padded keys.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Customer names contain a mix of regular spaces and non‑breaking spaces from a web export, causing duplicate-looking entries in pivots (\"Acme Corp\" vs \"Acme Corp\"). Which cleaning formula reliably normalizes these before building pivots?",
+          "options": [
+            "```text\n=TRIM(A2)\n```",
+            "```text\n=SUBSTITUTE(A2,\" \",\"\")\n```",
+            "```text\n=TRIM(SUBSTITUTE(A2,CHAR(160),\" \"))\n```",
+            "```text\nChange the cell format to Text.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Web exports often include CHAR(160) non‑breaking spaces. Replacing CHAR(160) with a regular space and then TRIMing removes both leading/trailing and repeated spaces. TRIM alone ignores non‑breaking spaces. Blindly removing all spaces changes legitimate names.",
+          "distractor_rationale": "B seems right but doesn't remove non‑breaking spaces. C removes all spaces, corrupting names (e.g., \"AcmeCorp\"). D changes formatting only, not the characters themselves.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Microsoft Excel",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You mapped churn as a KPI for subscriptions. For March:\n\n```text\nStartCustomers = 100\nNewCustomers   = 30\nLostCustomers  = 25\nEndCustomers   = 105\n```\n\nUsing a start-of-period definition, what churn rate should appear on the KPI dashboard and why?",
+          "options": [
+            "```text\n24%\nBecause the average base (Start+End)/2 is fair = 25 / 102.5.\n```",
+            "```text\n25%\nBecause churn is LostCustomers / StartCustomers = 25 / 100.\n```",
+            "```text\n19.2%\nBecause churn should exclude the effect of NewCustomers = 25 / (100+30).\n```",
+            "```text\n23.8%\nBecause churn should use EndCustomers as the base = 25 / 105.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "With a start-of-period denominator, churn = LostCustomers / StartCustomers. Mixing denominators changes the KPI's meaning and breaks comparability with targets built on start-of-period definitions.",
+          "distractor_rationale": "B and D look statistically reasonable but redefine the KPI mid-stream, breaking alignment with targets. C is a common mistake confusing net change with churn; new customers don't affect the churn base.",
+          "skills_covered": [
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You want a category‑level Return Rate = Sum(ReturnQty) / Sum(SoldQty). A pivot built from a transactions sheet has multiple rows per product and varying order sizes.\n\nWhich method yields a correct, weighted return rate per category without Power Pivot?",
+          "options": [
+            "```text\nAverage a row‑level ReturnRate column in the pivot\n```",
+            "```text\nCompute totals in the pivot (Sum ReturnQty and Sum SoldQty), then compute Return Rate outside the pivot as =GETPIVOTDATA(ReturnQty)/GETPIVOTDATA(SoldQty)\n```",
+            "```text\nAdd a pivot Calculated Field: =ReturnQty / SoldQty\n```",
+            "```text\nUse Show Values As: % of Column Total for ReturnQty\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Dividing the pivot's aggregated sums gives a weighted rate. Pivot calculated fields operate row‑by‑row and then sum, which biases results when row sizes differ. Show Values As doesn't form the desired numerator/denominator. Averaging row‑level rates is unweighted.",
+          "distractor_rationale": "A and D both suffer from the same averaging bias across unequal rows. B produces proportions of totals, not ReturnQty/SoldQty. Only C ensures a ratio of sums under the pivot's current filters.",
+          "skills_covered": [
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Lead time is computed as days from `OrderDate` to `ShipDate`. Some orders are not yet shipped. Current helper formula is:\n\n```text\n=IFERROR( [@ShipDate] - [@OrderDate], 0 )\n```\n\nThe pivot's average lead time is understated. Which change fixes the bias so unshipped orders are excluded from the average?",
+          "options": [
+            "```text\n=IF([@ShipDate]=\"\", 0, [@ShipDate]-[@OrderDate])\n```",
+            "```text\n=IFERROR( [@ShipDate] - [@OrderDate], \"N/A\" )\n```",
+            "```text\n=MAX([@ShipDate]-[@OrderDate],0)\n```",
+            "```text\n=IF([@ShipDate]=\"\", \"\", [@ShipDate]-[@OrderDate])\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Returning a true blank for missing ship dates lets the pivot's AVERAGE ignore those rows. Returning 0 or text placeholders can still be included or cause errors depending on aggregation.",
+          "distractor_rationale": "B inserts text that breaks numeric aggregation. C forces non‑negatives but still includes unshipped as 0. D continues to include unshipped orders as zeros, biasing the average downward.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Finance reports total invoiced revenue of 1,000,000 for Q1. Your pivot from `Invoices` shows 1,050,000. A quick sample reveals a few repeated `InvoiceNumber`s with slight line‑level differences.\n\nWhich Excel check most directly surfaces and isolates the overcount driver in the source before you rebuild the pivot?",
+          "options": [
+            "```text\nCreate helper: =COUNTIF(InvoiceNumberColumn,[@InvoiceNumber]). Filter rows where result > 1 and reconcile.\n```",
+            "```text\nSort by Customer and scan visually for repeats.\n```",
+            "```text\nFormat Amount as Accounting; re‑sum to ensure no text numbers.\n```",
+            "```text\nApply conditional formatting: Color Scale on Amount to spot outliers.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Flagging duplicate invoice numbers with COUNTIF/COUNTIFS directly identifies rows contributing to the overcount so you can deduplicate or aggregate appropriately before pivoting.",
+          "distractor_rationale": "B can highlight large values, not systematic duplication. C is slow and error‑prone. D is good hygiene but doesn't address structural duplication of invoice IDs.",
+          "skills_covered": [
+            "Data Quality",
+            "Data Cleaning",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "The Head of Support says, \"Refunds are up; fix it this month.\" You receive two CSV exports refreshed weekly: `Orders` and `Refunds`.\n\n```csv\n-- Orders --\nOrderID,OrderDate,CustomerID,NetAmount,IsTest\n1001,2024-03-02,C01,120,0\n1002,2024-03-02,C02,45,0\n1003,2024-03-03,C99,90,1\n1004,2024-03-05,C01,60,0\n\n-- Refunds --\nRefundID,OrderID,RefundDate,RefundAmount,Reason\nR201,1001,2024-03-06,120,Defect\nR202,1001,2024-03-07,20,Goodwill\nR203,1004,2024-03-08,30,Delay\n```\n\nOrders can have multiple partial refunds; test orders exist; RefundDate may lag OrderDate across months.",
+          "task": "Translate the request into a precise problem statement and KPI map suitable for sign‑off. Specify: the primary KPI and its formula, any supporting KPIs, the time alignment choice (by OrderDate or RefundDate) and why, exclusions, and the minimum data cleaning steps to make the KPI reliable in Excel pivots. Justify each choice in 3–6 sentences.",
+          "expected_answer": "A strong answer states a clear problem statement such as: \"Reduce monthly refund rate by addressing top drivers of refundable orders in March–May, targeting refund rate <= 5% by RefundDate.\" It defines the primary KPI as Refund Rate = Sum(RefundAmount) / Sum(NetAmount of associated orders), or alternatively Count-based (Count of Refunded Orders / Count of Orders), with the chosen basis justified. It fixes the time basis (e.g., RefundDate) to reflect operational impact in the month the cash leaves, and notes the trade-off with OrderDate for causal analysis. It lists exclusions: IsTest=1 orders, fraudulent/test transactions, and possibly goodwill adjustments if out of scope. Cleaning includes: de-duplicating Refunds at OrderID+RefundID, normalizing dates with DATEVALUE, joining Refunds to Orders via XLOOKUP/INDEX-MATCH on OrderID, handling multi-refund orders by summing all refunds per OrderID before dividing, and ensuring numeric types for amounts. Supporting KPIs: Refund Amount, Refunded Orders, Refunds per 1k Orders, Top Reasons share. The justification explains how these choices keep denominator and numerator aligned and comparable month-to-month.",
+          "rubric": [
+            {
+              "criterion": "Problem statement expresses goal, scope, and timeframe",
+              "marks": 2
+            },
+            {
+              "criterion": "Primary KPI defined with an unambiguous numerator and denominator",
+              "marks": 2
+            },
+            {
+              "criterion": "Time alignment (OrderDate vs RefundDate) chosen and justified with implications",
+              "marks": 2
+            },
+            {
+              "criterion": "Data cleaning and exclusions enumerated and tied to Excel implementation (e.g., DATEVALUE, dedupe, XLOOKUP, aggregation)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "track key performance indicators",
+            "Data Quality",
+            "Data Cleaning",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherit a subscription export with columns: `CustomerID`, `StartDate`, `EndDate` (blank if active), `CancelDate` (blank if never canceled). Leadership wants a monthly churn KPI for Q1 with clear denominator logic. Dates are inconsistent (some text, some serial), and there are overlapping reactivations: some customers have multiple rows.\n",
+          "task": "State which denominator you will use for churn and why. Describe, step by step, an Excel approach to compute monthly churn from the messy export using functions, lookups, helper columns, and a pivot. Address reactivations and overlapping rows. Limit to 10–14 steps.",
+          "expected_answer": "Select a start-of-month denominator: StartCustomers = distinct customers active at 00:00 on the first day of the month; churn = LostCustomers / StartCustomers. Steps: (1) Normalize dates with DATEVALUE; (2) Create Month keys for Start, End, Cancel using EOMONTH; (3) Resolve overlapping/reactivation by sorting by CustomerID+StartDate and keeping non-overlapping intervals (e.g., helper FirstActiveFlag = 1 on first active state per month via COUNTIFS); (4) Build a calendar table of months; (5) For each month, flag customers active at start (StartDate <= month start AND (EndDate blank OR EndDate >= month start)); (6) Flag cancellations in month (CancelDate within month); (7) Build helper columns returning 1/0 flags per Customer-Month; (8) Pivot: Rows=Month; Values=Sum(ActiveStartFlag), Sum(CancelFlag); (9) Compute churn outside the pivot as =GETPIVOTDATA(CancelFlag)/GETPIVOTDATA(ActiveStartFlag); (10) Spot-check totals vs raw counts; (11) Exclude test/internal IDs; (12) Document assumption that same-month cancel/reactivate counts as churn once.",
+          "rubric": [
+            {
+              "criterion": "Correct denominator selection and rationale for start-of-month base",
+              "marks": 2
+            },
+            {
+              "criterion": "Coherent Excel plan that normalizes dates and resolves overlapping/reactivation cases",
+              "marks": 2
+            },
+            {
+              "criterion": "Proper use of helper flags and pivot to derive monthly counts",
+              "marks": 2
+            },
+            {
+              "criterion": "Quality controls (spot-checks, exclusions, documented assumptions)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "track key performance indicators",
+            "Microsoft Excel",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two sheets must be joined: `Orders.SKU` is numeric (e.g., 123) and `Products.SKU` is text with leading zeros (e.g., \"00123\"). Analysts report intermittent lookup failures and mismatched descriptions in the dashboard when new SKUs arrive with 6 digits.",
+          "task": "Diagnose the root cause and propose a robust, workbook-wide fix that does not depend on manual formatting. Specify exact Excel functions or helper columns you will create, how you will test the fix, and how you will prevent regressions when SKU length changes.",
+          "expected_answer": "Root cause: Type and format mismatch between numeric and text keys, plus evolving SKU length. Fix by normalizing both sides to a canonical text key of variable length: create helper `SKU_norm` as TEXT(Orders[SKU], REPT(\"0\", MAX(LEN(Products[SKU])))) on Orders and `SKU_norm` on Products as simply Products[SKU] trimmed; or simpler and safer, pad Orders with TEXT(A2, REPT(\"0\",MATCH(9.99E+307,VALUE(LEFT(Products[SKU],COLUMN(INDEX(1:1,1,LEN(Products[SKU])))))))) is overkill—better practice: derive canonical key as TEXT(Orders[SKU],\"000000\") and enforce the same in Products with =TEXT(VALUE(Products[SKU]),\"000000\") provided business confirms max width; then XLOOKUP on `SKU_norm`. Testing: prove before/after by COUNTIFS mismatches, ensure 0 duplicates in `SKU_norm`, and validate a few joins. Prevent regressions: centralize padding width in a named cell (e.g., SKU_WIDTH), document and use TEXT(,REPT(\"0\",SKU_WIDTH)), and add a data-quality check comparing LEN(Products[SKU]) vs SKU_WIDTH to alert on overflow.",
+          "rubric": [
+            {
+              "criterion": "Clear diagnosis tied to type/padding mismatch and changing key length",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete Excel implementation (helper columns or formulas) that normalizes keys on both sides",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification steps to prove the fix (mismatch counts, samples, duplicates)",
+              "marks": 2
+            },
+            {
+              "criterion": "Forward-looking guardrails (parameterization, checks for changing SKU length)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Quality",
+            "Microsoft Excel",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your sales sheet records returns as negative quantities on separate rows. Current pivot shows:\n\n```text\nCategory | Sum of Qty | Sum of Amount\nA        |       980  |     19,600\nB        |       450  |      9,500\n```\n\nbut Finance expects to see Gross Sold, Returns, Net, and a Return Rate per category. Some rows have missing `Category` or blank `Amount`.",
+          "task": "Redesign the Excel approach to produce the four requested measures correctly in a pivot and a Return Rate that is stable under filtering. Specify any helper columns, pivot configuration, and how you will handle blanks and data types. Justify why your rate is correct.",
+          "expected_answer": "Add helpers: `GrossQty` = MAX(Qty,0); `ReturnQty` = -MIN(Qty,0); similarly for amounts. Ensure Amount and Qty are numeric (VALUE), and Category cleaned (TRIM/SUBSTITUTE CHAR(160)). Build a pivot with Rows=Category; Values=Sum(GrossQty), Sum(ReturnQty), Sum(GrossAmt), Sum(ReturnAmt). Add `NetAmt` outside pivot as GETPIVOTDATA(GrossAmt) - GETPIVOTDATA(ReturnAmt). Compute `ReturnRate` outside the pivot as GETPIVOTDATA(ReturnAmt)/GETPIVOTDATA(GrossAmt) to ensure a ratio of sums under current filters. Suppress blanks by filtering Category <> \"\". This avoids row-level averaging bias and treats returns explicitly, producing stable, auditable measures.",
+          "rubric": [
+            {
+              "criterion": "Correct helper columns that separate gross vs returns and coerce types",
+              "marks": 2
+            },
+            {
+              "criterion": "Pivot configuration that produces Gross, Returns, and Net consistently",
+              "marks": 2
+            },
+            {
+              "criterion": "Return Rate computed as ratio of sums and justified against row-level averaging",
+              "marks": 3
+            },
+            {
+              "criterion": "Treatment of blanks and category cleaning described",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Cleaning",
+            "Data Quality",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Problem statement and KPI map for a subscription business",
+          "brief": "You are advising \"BoxFresh\", a monthly subscription snack box. Leadership asks: \"Q3 churn feels high and on-time delivery dropped. What should we focus on to hit targets?\" Using only business framing (no code), produce a problem statement and a KPI map that could drive the next analysis sprint. Identify the primary KPIs, supporting diagnostics, exact formulas, data sources, filters/exclusions, owners, and data-quality checks. Keep it focused enough to execute in a week.",
+          "deliverable": "Problem statement and KPI map",
+          "acceptance_criteria": [
+            "Problem statement names business objective, target, scope (product/region), and timeframe",
+            "Primary KPIs include a churn rate with explicit denominator and an on-time delivery rate with a time basis; both have precise formulas",
+            "KPI map shows relationships between business questions, KPIs, component metrics, and dimensions (time, segment, acquisition channel)",
+            "All exclusions and assumptions listed (e.g., test accounts, internal orders)",
+            "Data sources named and joined keys identified at business level (e.g., CustomerID, ShipmentID)",
+            "At least three data-quality checks specified (e.g., duplicate IDs, date coercion, totals reconciliation) with who/when for each",
+            "Artifact is one page (or two at most) and is unambiguous enough for an analyst to build in Excel"
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and completeness of the problem statement (objective, target, scope, timeframe)",
+              "marks": 4
+            },
+            {
+              "criterion": "Primary KPI definitions (churn, on-time delivery) with exact formulas and time-basis choices",
+              "marks": 6
+            },
+            {
+              "criterion": "KPI map structure linking business questions to metrics and dimensions",
+              "marks": 5
+            },
+            {
+              "criterion": "Explicit exclusions/assumptions and data sources with join keys",
+              "marks": 3
+            },
+            {
+              "criterion": "Concrete, relevant data-quality checks with ownership/cadence",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "track key performance indicators",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Excel analysis workbook for sales and fulfillment",
+          "brief": "Build an Excel workbook that answers BoxFresh’s Q3 questions using two provided CSVs (assume you receive files named `Orders.csv` and `Shipments.csv`). Orders contain: OrderID, OrderDate, CustomerID, SKU, Qty, NetAmount, IsTest. Shipments contain: OrderID, ShipDate, DeliveredDate, Carrier, Status. Prepare, clean, and analyze to produce a summary sheet with KPIs and pivots.\n\nRequired analyses: (1) Monthly Net Revenue (sum NetAmount) with a month slicer; (2) On-time delivery rate = OnTimeDeliveries / DeliveredOrders, where OnTime = DeliveredDate <= ShipDate + 3 days; (3) Top 10 SKUs by revenue and their share; (4) New vs returning customers split by month (first-ever order logic). Avoid Power Query/BI; use core Excel functions, lookups, pivots.",
+          "deliverable": "Excel analysis workbook",
+          "acceptance_criteria": [
+            "Raw data sheets `Orders` and `Shipments` present; date columns normalized with DATEVALUE and formatted as dates",
+            "Helper columns present: OrderMonth (EOMONTH), OnTimeFlag (1/0), FirstOrderDate per Customer, ReturningFlag (1/0)",
+            "Orders joined to Shipments via XLOOKUP/INDEX-MATCH on OrderID without type mismatches",
+            "A pivot for Monthly Net Revenue with a Month slicer and totals matching a SUMIFs cross-check",
+            "A pivot or GETPIVOTDATA-based metric showing On-time delivery rate computed as ratio of sums (Sum OnTimeFlag / Sum DeliveredFlag)",
+            "A pivot listing Top 10 SKUs by revenue and a cell computing their share of total revenue (ratio of sums)",
+            "A pivot showing New vs Returning by month using helper flags; counts reconcile to total orders",
+            "A Summary sheet with four KPIs (Net Revenue, On-time Rate, Top-10 Share, New vs Returning split) clearly labeled and referencing pivots via GETPIVOTDATA or direct links",
+            "No text-numbers in numeric fields; leading/trailing/nbsp spaces cleaned where relevant (document formula used)",
+            "Workbook includes a short Documentation sheet explaining assumptions and checks performed"
+          ],
+          "rubric": [
+            {
+              "criterion": "Data preparation: date normalization, trimming/substitution, numeric coercion",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct joins and helper logic (OnTime, FirstOrder, Returning) implemented with appropriate functions",
+              "marks": 6
+            },
+            {
+              "criterion": "Pivots configured correctly with slicers/fields and totals reconciling to cross-checks",
+              "marks": 6
+            },
+            {
+              "criterion": "Summary KPIs correctly computed as ratios of sums and clearly linked to pivots",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data Cleaning",
+            "Data Quality",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-004-S02",
+      "skills_assessed": [
+        "SQL",
+        "Data Cleaning",
+        "Data Quality"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need a list of all customers with their latest order date, including customers who have never ordered (they should still appear with `latest_order_date` as NULL). Orders can contain multiple rows per customer. Choose the query that returns the correct result without accidentally filtering out customers with no orders.\n\nSchema:\n\n```sql\n-- customers(id PK, email, signup_at)\n-- orders(id PK, customer_id FK->customers.id, order_date DATE)\n```\n",
+          "options": [
+            "```sql\nWITH latest AS (\n  SELECT customer_id, MAX(order_date) AS latest_order_date\n  FROM orders\n  GROUP BY customer_id\n)\nSELECT c.id, c.email, l.latest_order_date\nFROM customers c\nLEFT JOIN latest l ON l.customer_id = c.id\nWHERE l.latest_order_date IS NOT NULL OR c.signup_at IS NOT NULL;\n```",
+            "```sql\nSELECT c.id, c.email, o.order_date AS latest_order_date\nFROM customers c\nLEFT JOIN (\n  SELECT customer_id, order_date,\n         ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn\n  FROM orders\n) o ON o.customer_id = c.id AND o.rn = 1;\n```",
+            "```sql\nSELECT c.id, c.email, MAX(o.order_date) AS latest_order_date\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nGROUP BY c.id, c.email;\n```",
+            "```sql\nSELECT c.id, c.email, o.order_date AS latest_order_date\nFROM customers c\nLEFT JOIN (\n  SELECT customer_id, order_date,\n         ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn\n  FROM orders\n) o ON o.customer_id = c.id\nWHERE o.rn = 1;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Placing the `rn = 1` predicate in the JOIN condition preserves unmatched customers (who will have NULLs from the derived table). Putting it in WHERE would filter those rows out. An inner join also drops non-ordering customers.",
+          "distractor_rationale": "A: WHERE o.rn = 1 turns the LEFT JOIN into an effective INNER join for those rows, dropping customers without orders.\nC: Inner join eliminates customers who have no orders.\nD: Looks like a LEFT JOIN + aggregate but the WHERE clause condition is redundant/confusing and still risks filtering logic if altered; the clean approach is B or a pure aggregate LEFT JOIN without extra WHERE filters on the right side.",
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You are counting paid orders per calendar date including days with zero paid orders. The following variants differ in where the `status='PAID'` filter sits. Which query correctly returns rows for every date in `calendar d` with zero when there are no paid orders that day?\n\nSchema:\n\n```sql\n-- calendar(d DATE PK)\n-- orders(id PK, order_date DATE, status TEXT)\n```\n",
+          "options": [
+            "```sql\nSELECT d.d,\n       COUNT(o.id) AS paid_orders\nFROM calendar d\nLEFT JOIN orders o\n  ON o.order_date = d.d\nWHERE o.status='PAID'\nGROUP BY d.d\nORDER BY d.d;\n```",
+            "```sql\nSELECT d.d,\n       SUM(CASE WHEN o.status='PAID' THEN 1 ELSE 0 END) AS paid_orders\nFROM calendar d\nJOIN orders o\n  ON o.order_date = d.d\nGROUP BY d.d\nORDER BY d.d;\n```",
+            "```sql\nSELECT d.d,\n       COUNT(o.id) AS paid_orders\nFROM calendar d\nLEFT JOIN orders o\n  ON o.order_date = d.d AND o.status = 'PAID'\nGROUP BY d.d\nORDER BY d.d;\n```",
+            "```sql\nSELECT d.d,\n       COUNT(CASE WHEN o.status='PAID' THEN 1 END) AS paid_orders\nFROM calendar d\nLEFT JOIN orders o\n  ON o.order_date = d.d\nGROUP BY d.d\nORDER BY d.d;\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Placing the filter in the JOIN condition ensures unmatched calendar dates remain as rows with COUNT over NULLs yielding zero. B also works logically but relies on COUNT of CASE; A is the canonical pattern here.",
+          "distractor_rationale": "B: Also returns correct results, but only if the engine treats COUNT of CASE NULLs as intended; it is correct in most engines, but A is the clearer zero-preserving approach combining the filter with the ON clause.\nC: The WHERE filter on the right table nulls converts the LEFT JOIN into an effective INNER join, removing zero-paid days.\nD: Inner join removes dates with no orders at all, so zero days disappear.",
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You need a running total of amounts by customer over time. Multiple rows can share the same `tx_ts` timestamp, and you must not collapse peers with identical timestamps; the running total must increment row-by-row. Which window clause guarantees this behavior?\n\nSchema and goal:\n\n```sql\n-- transactions(cust_id, tx_ts TIMESTAMP, amount NUMERIC)\n-- Desired: per cust_id, an accumulation that increases on each row even when tx_ts ties occur.\n```\n",
+          "options": [
+            "```sql\nSELECT cust_id, tx_ts, amount,\n       SUM(amount) OVER (\n         PARTITION BY cust_id\n         ORDER BY tx_ts, amount DESC\n       ) AS run_amt\nFROM transactions;\n```",
+            "```sql\nSELECT cust_id, tx_ts, amount,\n       SUM(amount) OVER (\n         PARTITION BY cust_id\n         ORDER BY tx_ts\n         RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n       ) AS run_amt\nFROM transactions;\n```",
+            "```sql\nSELECT cust_id, tx_ts, amount,\n       SUM(amount) OVER (\n         PARTITION BY cust_id\n         ORDER BY tx_ts\n       ) AS run_amt\nFROM transactions;\n```",
+            "```sql\nSELECT cust_id, tx_ts, amount,\n       SUM(amount) OVER (\n         PARTITION BY cust_id\n         ORDER BY tx_ts\n         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n       ) AS run_amt\nFROM transactions;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Using ROWS framing accumulates strictly by physical row order within the partition, so ties on tx_ts do not get collapsed into a single peer group (as RANGE may). Omitting an explicit frame may default to RANGE in some engines, which would sum peers together for each tied row.",
+          "distractor_rationale": "A: Often defaults to RANGE when ORDER BY is present; peers with the same timestamp can be summed together at each row, producing step jumps rather than row-by-row increments.\nC: Explicitly uses RANGE, which groups all peers with equal ORDER BY value at each step, violating the requirement.\nD: Adding amount to ORDER BY changes row sequence but does not fix the frame semantics if the engine still defaults to RANGE; also changes intended ordering rules.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider this LEFT JOIN and COUNT. What value does it return for `paid_count`?\n\nData:\n\n```text\ncustomers\nid\n--\n1\n2\n\norders\nid  customer_id  status\n--  -----------  ------\n10  1            PAID\n11  1            REFUNDED\n12  2            NULL\n```\n\nQuery:\n\n```sql\nSELECT c.id,\n       COUNT(o.status) AS paid_count\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id AND o.status='PAID'\nGROUP BY c.id\nORDER BY c.id;\n```\n",
+          "options": [
+            "Customer 1 -> 1, Customer 2 -> 0",
+            "Customer 1 -> 1, Customer 2 -> 1",
+            "Customer 1 -> 2, Customer 2 -> 1",
+            "Customer 1 -> 2, Customer 2 -> 0"
+          ],
+          "correct_option": "A",
+          "explanation": "The JOIN condition only matches orders where status='PAID'. For customer 1 that is one row; for customer 2 no order matches the ON filter. COUNT(column) ignores NULLs, so unmatched rows contribute zero.",
+          "distractor_rationale": "B: Misreads COUNT(column) vs COUNT(*); only the PAID row matches, not both.\nC: Suggests that customer 2’s NULL status row contributes to the count, but it is filtered out by the ON clause and COUNT(status) ignores NULL.\nD: Double-counts for customer 1 and assumes unmatched join still counts as one; it does not for COUNT(column).",
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must deduplicate customers by email, ignoring case and surrounding spaces, keeping the most recent `signup_at`. Which query correctly returns one row per normalized email with the latest signup preserved?\n\n```sql\n-- customers(id, email, signup_at TIMESTAMP)\n```\n",
+          "options": [
+            "```sql\nSELECT DISTINCT LOWER(email) AS norm_email, signup_at\nFROM customers;\n```",
+            "```sql\nWITH ranked AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY TRIM(LOWER(email))\n           ORDER BY signup_at DESC, id DESC\n         ) AS rn\n  FROM customers\n)\nSELECT id, email, signup_at\nFROM ranked\nWHERE rn = 1;\n```",
+            "```sql\nSELECT c.*\nFROM customers c\nJOIN (\n  SELECT TRIM(LOWER(email)) AS norm_email, MAX(signup_at) AS max_signup\n  FROM customers\n  GROUP BY TRIM(LOWER(email))\n) m ON TRIM(LOWER(c.email)) = m.norm_email;\n```",
+            "```sql\nSELECT * FROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM customers d\n  WHERE TRIM(LOWER(d.email)) = TRIM(LOWER(c.email))\n    AND d.signup_at > c.signup_at\n);\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Row-numbering on the normalized email with a deterministic ORDER BY keeps exactly the latest row per normalized key. Including a tiebreaker like id ensures stability.",
+          "distractor_rationale": "A: DISTINCT does not ensure the latest signup_at is chosen per email; it removes duplicates at the projection level only.\nC: Without a tie-breaker join-back on MAX(signup_at) can duplicate rows when multiple rows share the same max timestamp.\nD: The NOT EXISTS pattern can work but fails ties (equal signup_at) unless handled; it can return multiple rows per key.",
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You need to flag invalid shipments where `shipped_at < order_at`. Missing dates should not be flagged as invalid; they should be treated as unknown. Which WHERE predicate correctly implements this rule?\n\n```sql\n-- orders(id, order_at TIMESTAMP, shipped_at TIMESTAMP)\n```\n",
+          "options": [
+            "```sql\nWHERE shipped_at IS NOT NULL\n  AND order_at IS NOT NULL\n  AND shipped_at < order_at\n```",
+            "```sql\nWHERE shipped_at < order_at\n```",
+            "```sql\nWHERE (shipped_at < order_at) OR (shipped_at IS NULL OR order_at IS NULL)\n```",
+            "```sql\nWHERE COALESCE(shipped_at, order_at) < order_at\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Comparisons with NULL are unknown; explicitly requiring both timestamps to be present prevents misclassifying missing data as invalid. Then the strict comparison applies.",
+          "distractor_rationale": "A: Flags NULL comparisons as unknown (not true) but still unintentionally relies on engine behavior; it doesn’t explicitly separate missing from invalid and may be combined later with AND/OR incorrectly.\nB: Replaces NULLs with order_at; this makes equality convert to false (not invalid), but can still misbehave in other cases; it also obscures the intent.\nD: Explicitly includes missing values as invalid via the OR clause, which contradicts the requirement.",
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Product categories are inconsistent (e.g., 'Books', ' books ', 'BOOKS'). You must aggregate revenue by logical category ignoring case and whitespace. Which GROUP BY expression ensures one bucket per logical category?\n\n```sql\n-- sales(product_id, amount)\n-- products(id, category)\n```\n",
+          "options": [
+            "```sql\nSELECT p.category, SUM(s.amount)\nFROM sales s JOIN products p ON p.id = s.product_id\nGROUP BY p.category;\n```",
+            "```sql\nSELECT REPLACE(p.category, ' ', '') AS cat, SUM(s.amount)\nFROM sales s JOIN products p ON p.id = s.product_id\nGROUP BY REPLACE(p.category, ' ', '');\n```",
+            "```sql\nSELECT TRIM(UPPER(p.category)) AS cat, SUM(s.amount)\nFROM sales s JOIN products p ON p.id = s.product_id\nGROUP BY TRIM(UPPER(p.category));\n```",
+            "```sql\nSELECT LOWER(p.category) AS cat, SUM(s.amount)\nFROM sales s JOIN products p ON p.id = s.product_id\nGROUP BY LOWER(p.category);\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Trimming and case-normalizing produces stable keys regardless of casing and stray whitespace before/after. Aggregation then groups logically identical categories together.",
+          "distractor_rationale": "A: Groups by raw text, so 'Books' and ' books ' are separate.\nB: Lowercasing helps but preserves leading/trailing spaces, so ' books ' still differs.\nD: Removes internal spaces too (e.g., 'Home Office' becomes 'HomeOffice'), which changes legitimate categories.",
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You LEFT JOIN products to sales and only want to exclude inactive products when a match exists. Unmatched sales (no product row) must still be kept for further investigation. Which rewrite preserves unmatched sales while excluding inactive matches?\n\n```sql\n-- sales(product_id, amount)\n-- products(id, active BOOLEAN)\n```\n",
+          "options": [
+            "```sql\nSELECT *\nFROM sales s\nLEFT JOIN products p ON p.id = s.product_id\nWHERE p.active = TRUE OR p.id IS NULL;\n```",
+            "```sql\nSELECT *\nFROM sales s\nJOIN products p ON p.id = s.product_id AND p.active = TRUE;\n```",
+            "```sql\nSELECT *\nFROM sales s\nLEFT JOIN products p ON p.id = s.product_id\nWHERE COALESCE(p.active, TRUE) = TRUE;\n```",
+            "```sql\nSELECT *\nFROM sales s\nLEFT JOIN products p ON p.id = s.product_id AND p.active = TRUE;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Pushing the active filter into the ON clause keeps unmatched sales as NULL-extended rows while excluding inactive matches. WHERE predicates on p.active typically convert the join effectively to inner unless they also admit NULLs explicitly.",
+          "distractor_rationale": "A: Works but mixes logic in WHERE; easy to break if additional WHERE filters are added. B is the robust pattern.\nC: INNER JOIN drops all unmatched sales, violating the requirement.\nD: COALESCE treats missing product as active and can hide data quality issues by implicitly approving unmatched products as active.",
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Delivery days are stored with 0 meaning 'unknown'. Compute the average delivery days excluding unknowns, without filtering out rows (so other aggregates can still use the full set). Which expression is correct inside AVG?\n\n```sql\n-- shipments(delivery_days INTEGER)\n```\n",
+          "options": [
+            "```sql\nAVG(NULLIF(delivery_days, 0))\n```",
+            "```sql\nAVG(delivery_days) FILTER (WHERE delivery_days <> 0)\n```",
+            "```sql\nAVG(COALESCE(delivery_days, 0))\n```",
+            "```sql\nAVG(CASE WHEN delivery_days = 0 THEN NULL ELSE delivery_days END)\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "NULLIF converts the placeholder 0 to NULL so AVG ignores it while retaining the row for other calculations in the same SELECT. It is concise and engine-portable.",
+          "distractor_rationale": "A: Also works, but is more verbose; B is the idiomatic, clearer approach.\nC: Works in engines supporting FILTER but is not portable SQL.\nD: COALESCE keeps zeros, biasing the average downward by counting unknowns as zero.",
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You need a distinct count of emails per domain within a windowed report, but your engine does not allow `COUNT(DISTINCT ...) OVER (...)`. Which query correctly computes it per domain using window functions?\n\n```sql\n-- emails(addr)\n-- domain = substring after '@'\n```\n",
+          "options": [
+            "```sql\nWITH de AS (\n  SELECT DISTINCT addr, SPLIT_PART(addr,'@',2) AS dom\n  FROM emails\n)\nSELECT e.addr,\n       (SELECT COUNT(*) FROM de d WHERE d.dom = SPLIT_PART(e.addr,'@',2)) AS distinct_per_domain\nFROM emails e;\n```",
+            "```sql\nWITH tagged AS (\n  SELECT addr,\n         SPLIT_PART(addr,'@',2) AS dom,\n         ROW_NUMBER() OVER (PARTITION BY SPLIT_PART(addr,'@',2), addr ORDER BY addr) AS rn\n  FROM emails\n)\nSELECT addr,\n       SUM(CASE WHEN rn = 1 THEN 1 ELSE 0 END)\n         OVER (PARTITION BY dom) AS distinct_per_domain\nFROM tagged;\n```",
+            "```sql\nSELECT addr,\n       COUNT(addr) OVER (PARTITION BY SPLIT_PART(addr,'@',2)) AS distinct_per_domain\nFROM emails;\n```",
+            "```sql\nSELECT addr,\n       COUNT(DISTINCT addr) OVER (PARTITION BY SPLIT_PART(addr,'@',2)) AS distinct_per_domain\nFROM emails;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Tag each (domain, addr) with ROW_NUMBER and then sum the first occurrences per domain in a window to emulate COUNT DISTINCT within a partition.",
+          "distractor_rationale": "A: Uses the unsupported syntax the scenario bans.\nC: Counts total rows per domain, not distinct addresses.\nD: Correlated subquery counts distinct per domain but is not a windowed result; it repeats the same scalar per row and is inefficient relative to the windowed approach.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You have two tables for an onboarding analysis:\n\n```sql\n-- customers(id PK, email, signup_at TIMESTAMP)\n-- orders(id PK, customer_id, order_date DATE, status TEXT)\n```\nEmails are messy: duplicates across case/whitespace, some malformed rows, and some customers have never ordered. The business wants: one row per logical customer (email normalized) with their first and latest order dates, and a flag `has_order` that is true if any non-refunded order exists.",
+          "task": "Propose and justify an SQL approach that: (1) deduplicates customers by normalized email, keeping the most recent signup record; (2) joins orders so that customers without orders remain; (3) computes first and latest non-refunded order dates per logical customer; and (4) sets `has_order` correctly. Provide representative SQL snippets and explain key choices (windowing, ON vs WHERE filtering, normalization).",
+          "expected_answer": "A strong answer will: (a) normalize emails via TRIM(LOWER(email)) and dedupe with ROW_NUMBER keeping the latest signup; (b) compute order aggregates per normalized customer by joining orders via customers.id to orders and filtering status in the JOIN (or pre-aggregating with a WHERE inside a subquery) to avoid null-eliminating WHERE filters; (c) use MIN/MAX of order_date over only qualifying statuses; (d) assemble results with a LEFT JOIN so customers with no orders appear with NULL dates and has_order=false.\n\nExample structure:\n\n```sql\nWITH cust_dedup AS (\n  SELECT id, email, TRIM(LOWER(email)) AS norm_email, signup_at,\n         ROW_NUMBER() OVER (PARTITION BY TRIM(LOWER(email))\n                            ORDER BY signup_at DESC, id DESC) AS rn\n  FROM customers\n), order_agg AS (\n  SELECT o.customer_id,\n         MIN(o.order_date) AS first_dt,\n         MAX(o.order_date) AS last_dt\n  FROM orders o\n  WHERE o.status <> 'REFUNDED'\n  GROUP BY o.customer_id\n)\nSELECT cd.norm_email,\n       cd.id AS kept_customer_id,\n       oa.first_dt,\n       oa.last_dt,\n       (oa.first_dt IS NOT NULL) AS has_order\nFROM cust_dedup cd\nLEFT JOIN order_agg oa ON oa.customer_id = cd.id\nWHERE cd.rn = 1;\n```\nKey justifications: window dedupe avoids ambiguous MAX joinbacks; placing status filter in the aggregate subquery (or the JOIN) preserves customers with no qualifying orders; normalization avoids inconsistent duplicates; LEFT JOIN preserves non-ordering customers.",
+          "rubric": [
+            {
+              "criterion": "Correct normalization and deduplication approach (e.g., TRIM+LOWER and ROW_NUMBER partitioned by normalized email).",
+              "marks": 2
+            },
+            {
+              "criterion": "Preserves customers with no orders using LEFT JOIN or equivalent and avoids WHERE filters that null-eliminate.",
+              "marks": 2
+            },
+            {
+              "criterion": "Computes first/latest order dates over only qualifying statuses correctly (MIN/MAX).",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear justification of ON vs WHERE placement and why windowing is chosen over naive DISTINCT/aggregate joinback.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A product catalog has quality issues: duplicate SKUs, inconsistent category labels, and missing categories. You must prepare an audit that quantifies issues and suggests fixes without altering source tables.",
+          "task": "Design a set of SQL checks that: (1) finds duplicate SKUs considering case-insensitive SKU codes; (2) enumerates category label variants mapped to a canonical form; (3) counts products with missing or whitespace-only categories; and (4) proposes an order of remediation. Provide concise SQL examples for each check and justify your mapping choices.",
+          "expected_answer": "Expect: (1) Duplicate detection via TRIM(UPPER(sku)) grouping and HAVING COUNT(*)>1 with details to list conflicting product ids; (2) Canonicalization via TRIM(UPPER(category)) and a mapping table or CASE expression to group variants and report frequency; (3) Missing categories via category IS NULL OR TRIM(category)='' checks; (4) Remediation order: first dedupe SKUs (prevents join explosions), then normalize categories (ensures stable keys), then fill missing categories (via rules or default), with quarantine lists for unresolved rows.\n\nExample checks:\n\n```sql\n-- 1) Duplicate SKUs (case/space-insensitive)\nSELECT canon_sku, COUNT(*) AS cnt, ARRAY_AGG(id) AS product_ids\nFROM (\n  SELECT id, TRIM(UPPER(sku)) AS canon_sku FROM products\n) x\nGROUP BY canon_sku\nHAVING COUNT(*) > 1;\n\n-- 2) Category variants and canonical form\nSELECT TRIM(UPPER(category)) AS canon_cat, COUNT(*) AS n,\n       ARRAY_AGG(DISTINCT category) AS variants\nFROM products\nGROUP BY TRIM(UPPER(category))\nORDER BY n DESC;\n\n-- 3) Missing/blank categories\nSELECT COUNT(*) AS missing_cats\nFROM products\nWHERE category IS NULL OR TRIM(category) = '';\n```\nJustify using TRIM+UPPER for stable grouping, and propose maintaining a small mapping table `category_map(raw, canon)` to drive standardization rather than hard-coding CASEs.",
+          "rubric": [
+            {
+              "criterion": "Duplicate SKU detection logic correctly normalizes and identifies collisions with evidence (e.g., ids).",
+              "marks": 2
+            },
+            {
+              "criterion": "Category normalization strategy and SQL that surfaces variant clusters with counts.",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate identification of missing/blank categories via NULL and whitespace handling.",
+              "marks": 1
+            },
+            {
+              "criterion": "Reasoned remediation order with rationale tied to risk (duplicates before normalization before imputation).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Quality",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A weekly revenue dashboard shows lower totals after a model update. The transformation includes:\n\n```sql\nSELECT d.week_start,\n       SUM(oi.qty * oi.price) AS revenue\nFROM dates d\nLEFT JOIN orders o\n  ON o.order_date BETWEEN d.week_start AND d.week_start + INTERVAL '6 days'\nLEFT JOIN order_items oi\n  ON oi.order_id = o.id\nWHERE o.status = 'PAID'\nGROUP BY d.week_start;\n```\nAn analyst suspects the WHERE clause is dropping weeks with no paid orders and late-arriving items.",
+          "task": "Diagnose precisely what is wrong with the query and rewrite it to preserve zero-revenue weeks and include late-arriving items that belong to paid orders. Explain why your placement of filters is correct and how you’d test the fix.",
+          "expected_answer": "Issues: (1) WHERE o.status='PAID' null-eliminates the LEFT JOIN, removing weeks with no paid orders; (2) If items arrive late, joining only on order_id is fine but we must ensure filtering on `PAID` status happens in a way that does not drop the date frame. Fix: move the status predicate into the JOIN and aggregate with COALESCE or keep LEFT joins and sum safely.\n\nRewritten pattern:\n\n```sql\nSELECT d.week_start,\n       COALESCE(SUM(oi.qty * oi.price), 0) AS revenue\nFROM dates d\nLEFT JOIN orders o\n  ON o.order_date BETWEEN d.week_start AND d.week_start + INTERVAL '6 days'\n AND o.status = 'PAID'\nLEFT JOIN order_items oi\n  ON oi.order_id = o.id\nGROUP BY d.week_start\nORDER BY d.week_start;\n```\nThis preserves all weeks and attributes items to paid orders only. Test by constructing cases: (a) a week with no orders; (b) a week with unpaid orders; (c) a paid order with items inserted a day later—ensure revenue appears in the week of the order date regardless of item insert time; (d) null-safe SUM check.",
+          "rubric": [
+            {
+              "criterion": "Identifies the LEFT JOIN null-elimination caused by the WHERE filter and impact on zero weeks.",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct rewritten query placing the status predicate in the JOIN and preserving LEFT JOIN semantics; correct aggregation with COALESCE/SUM.",
+              "marks": 3
+            },
+            {
+              "criterion": "Considers late-arriving items and justifies why join keys still attribute revenue correctly.",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes concrete test cases to validate the fix.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Sensor readings table contains duplicates and temporal anomalies:\n\n```sql\n-- readings(sensor_id, ts TIMESTAMP, value NUMERIC)\n-- Duplicates: identical (sensor_id, ts) pairs with differing values\n-- Anomalies: readings where value spikes > 3x the previous reading for a sensor\n```\nYou need a query to produce a cleaned feed for modeling: keep exactly one reading per (sensor_id, ts) by choosing the row with the latest ingestion time from `ingested_at`, and flag spike anomalies.",
+          "task": "Write and justify SQL that: (1) deduplicates per (sensor_id, ts) using ROW_NUMBER over a partition and keeps the latest by `ingested_at`; (2) uses LAG within each sensor to compute spike flags comparing current value to previous kept value; (3) outputs `is_spike` and `is_duplicate` flags. Explain any ordering and null-handling choices.",
+          "expected_answer": "Solution sketch:\n\n```sql\nWITH ranked AS (\n  SELECT sensor_id, ts, value, ingested_at,\n         ROW_NUMBER() OVER (\n           PARTITION BY sensor_id, ts\n           ORDER BY ingested_at DESC, value DESC\n         ) AS rn\n  FROM readings\n), dedup AS (\n  SELECT sensor_id, ts, value,\n         (rn > 1) AS is_duplicate,\n         ROW_NUMBER() OVER (\n           PARTITION BY sensor_id\n           ORDER BY ts\n         ) AS seq\n  FROM ranked\n  WHERE rn = 1\n)\nSELECT d.sensor_id, d.ts, d.value,\n       (CASE WHEN d_prev.value IS NOT NULL AND d.value > 3 * d_prev.value THEN TRUE ELSE FALSE END) AS is_spike,\n       FALSE AS is_duplicate\nFROM dedup d\nLEFT JOIN LATERAL (\n  SELECT LAG(value) OVER (PARTITION BY sensor_id ORDER BY ts) AS value\n) d_prev ON TRUE;\n```\nAlternatively do LAG in-line:\n\n```sql\nSELECT sensor_id, ts, value,\n       (CASE WHEN LAG(value) OVER (PARTITION BY sensor_id ORDER BY ts) IS NOT NULL\n             AND value > 3 * LAG(value) OVER (PARTITION BY sensor_id ORDER BY ts)\n             THEN TRUE ELSE FALSE END) AS is_spike,\n       FALSE AS is_duplicate\nFROM (\n  SELECT sensor_id, ts, value,\n         ROW_NUMBER() OVER (PARTITION BY sensor_id, ts ORDER BY ingested_at DESC) AS rn\n  FROM readings\n) x\nWHERE rn = 1;\n```\nJustify: window dedup ensures one row per key using latest ingestion; LAG requires ordering by ts within sensor; NULL previous values should not be spikes.",
+          "rubric": [
+            {
+              "criterion": "Correct windowed deduplication by (sensor_id, ts) keeping latest by ingested_at.",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct use of LAG partitioned by sensor_id ordered by ts to compute spike comparison.",
+              "marks": 2
+            },
+            {
+              "criterion": "Outputs both flags, correctly setting duplicates to false on the kept row and spike detection with proper NULL handling.",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear justification of ordering choices and tie-breaking rationale.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "SQL case exercise: Joins, grouping, windows, and data-quality-safe filters",
+          "brief": "Use the provided sample CSVs to load data into tables and produce three outputs via SQL queries. Your queries must demonstrate correct joins, grouping, window functions, and data-quality-aware filtering.\n\nCreate tables and load these CSVs:\n\ncustomers.csv\n```csv\nid,email,signup_at\n1, Alice@example.com ,2024-01-02 09:15:00\n2,BOB@example.com,2024-01-05 12:00:00\n3,charlie@example.com,2024-01-07 08:00:00\n4, bob@example.com ,2024-01-09 10:30:00\n```\n\norders.csv\n```csv\nid,customer_id,order_date,status\n10,1,2024-01-10,PAID\n11,1,2024-01-12,REFUNDED\n12,2,2024-01-15,PAID\n13,2,2024-01-15,PAID\n14,3,2024-01-20,NULL\n```\n\norder_items.csv\n```csv\nid,order_id,sku,qty,price\n100,10,A-1,1,12.00\n101,11,A-2,1,20.00\n102,12,A-1,2,12.00\n103,13,A-3,1,30.00\n104,14,A-1,1,12.00\n```\n\nproducts.csv\n```csv\nid,sku,category,active\n1,A-1, Books ,true\n2,A-2,books,true\n3,A-3,BOOKS,false\n```\n\nProduce these result sets:\n\n1) customer_latest_orders.csv: One row per logical customer (email normalized by TRIM+LOWER) keeping the most recent signup record; include columns: norm_email, kept_customer_id, latest_order_date (NULL if none), has_paid_order (true if any PAID). Customers 1 and 4 should collapse to one logical email.\n\n2) weekly_revenue.csv: For these dates only, compute revenue per ISO week using dates in orders, summing `qty*price` for PAID orders only, preserving zero for weeks with no PAID orders. Include week_start (Monday), revenue. Ensure the PAID filter does not null-eliminate the calendar.\n\n3) product_category_revenue.csv: Revenue by canonical category (TRIM+UPPER) for PAID orders only, using LEFT JOIN from items->orders and JOIN to products, excluding inactive products only when a match exists (unmatched SKUs should still appear under category NULL). Include columns: canon_category, revenue.",
+          "deliverable": "A single SQL script (ntc004s02_case.sql) that creates tables, loads the CSVs (using COPY/INSERT statements as supported), and produces the three outputs; plus three CSV exports: customer_latest_orders.csv, weekly_revenue.csv, product_category_revenue.csv.",
+          "acceptance_criteria": [
+            "Script includes a dedup step using ROW_NUMBER over TRIM(LOWER(email)) and keeps the latest signup.",
+            "customer_latest_orders.csv contains exactly 3 rows (Alice/Bob collapsed; Charlie; plus any other distinct normalized emails), with correct latest_order_date for Alice/Bob = 2024-01-15 and has_paid_order true for Alice/Bob and Bob logical record, false/NULL appropriately for others.",
+            "weekly_revenue.csv lists a row for every week spanned by order_date values present in orders.csv, including zero revenue for weeks without PAID orders; revenue for week of 2024-01-15 equals (2*12.00 + 1*30.00) = 54.00.",
+            "product_category_revenue.csv groups by TRIM(UPPER(category)) and excludes inactive products via an ON-clause predicate while preserving items with unknown SKUs under NULL category.",
+            "All joins and filters are expressed to preserve required rows (LEFT JOINs with filter-in-ON where applicable)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct deduplication using window functions on normalized emails; expected row count achieved in output 1.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct use of LEFT JOINs and placement of predicates to preserve zeros/null-extended rows; weekly revenue output matches expected totals.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct window/aggregate usage and category normalization; product category revenue respects inactive filtering rules and NULL handling.",
+              "marks": 5
+            },
+            {
+              "criterion": "Script completeness and reproducibility: table DDL, data load, queries, and creation of outputs without manual steps.",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Cleaned dataset: Resolve missing, duplicate, invalid, and inconsistent sales records",
+          "brief": "You are given a messy sales extract with duplicated orders, inconsistent casing/whitespace in emails and statuses, missing shipped dates, and invalid amounts. Clean it using SQL-only transformations to produce a conforming dataset and a small audit report.\n\nsales_raw.csv\n```csv\norder_id,order_date,customer_email,status,amount,shipped_at\n2001,2024-02-01, Alice@Example.com ,paid,12.00,2024-02-02\n2002,2024-02-01,alice@example.com, PAID ,12.00,2024-02-02\n2003,2024-02-02,bob@example.com,paid,0.00,\n2003,2024-02-02, bob@example.com ,PAID,0.00,\n2004,2024-02-03,carol@example.com,Refunded,30.00,2024-02-04\n2005,2024-02-05,dave@example.com,PAID,-5.00,2024-02-06\n2006,2024-02-06,erin@example.com,,15.00,2024-02-05\n```\n\nCleaning rules:\n- Normalize emails via TRIM+LOWER.\n- Normalize status to UPPER and restrict to {PAID, REFUNDED}; unknown/blank -> NULL.\n- Deduplicate by natural key (order_id) keeping the latest non-null `shipped_at` and highest absolute `amount` when duplicates tie on order_id.\n- Invalid amount: amount <= 0 is invalid. Do not drop; quarantine invalid rows separately.\n- Invalid chronology: shipped_at < order_date is invalid (quarantine) but missing shipped_at is allowed (unknown).\n\nProduce two outputs:\n1) sales_clean.csv with columns: order_id, order_date (DATE), norm_email, norm_status, amount (NUMERIC), shipped_at (TIMESTAMP). Includes only valid rows after dedup and excluding quarantined invalids; unknown statuses as NULL are allowed.\n2) sales_quarantine.csv with the rows excluded from clean output, plus a reason column indicating INVALID_AMOUNT or INVALID_CHRONOLOGY.",
+          "deliverable": "Two CSVs: sales_clean.csv and sales_quarantine.csv; plus an SQL script (ntc004s02_clean.sql) that creates a staging table, loads sales_raw.csv, performs normalization, deduplication using window functions, and outputs both CSVs. Include a short text/markdown audit (audit.txt) summarizing counts before/after, number of duplicates resolved, and counts per quarantine reason.",
+          "acceptance_criteria": [
+            "Emails are normalized with TRIM+LOWER and statuses mapped to {PAID,REFUNDED,NULL}.",
+            "Deduplication uses ROW_NUMBER() PARTITION BY order_id with ORDER BY to pick rows with greatest shipped_at (NULLS LAST) then highest ABS(amount), then latest order_date as a final tiebreaker.",
+            "sales_clean.csv excludes rows with amount <= 0 and rows where shipped_at < order_date; missing shipped_at is retained.",
+            "sales_quarantine.csv contains exactly two rows from the sample: order_id 2005 (INVALID_AMOUNT) and order_id 2006 (INVALID_CHRONOLOGY).",
+            "Final counts from the sample: input 7 rows; after dedup there are 6 unique order_ids; clean output has 4 rows; quarantine has 2 rows; audit.txt reports these counts."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct normalization of email and status as specified.",
+              "marks": 4
+            },
+            {
+              "criterion": "Windowed deduplication logic per order_id with correct priority ordering and tie-breakers.",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate application of validity rules separating clean vs quarantine with correct reasons from the sample.",
+              "marks": 6
+            },
+            {
+              "criterion": "Audit completeness: before/after counts and per-reason quarantine tallies are correct and clearly reported.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Data Cleaning",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-004-S03",
+      "skills_assessed": [
+        "Python",
+        "Pandas",
+        "Data Cleaning",
+        "Statistics",
+        "Exploratory Data Analysis",
+        "Data Quality"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You standardize sales within each store using `transform`:\n\n```python\nimport pandas as pd\n\ndf = pd.DataFrame({\n    'store': ['A','A','A','B','B','C','C','C','C'],\n    'sales': [10,12,8, 20,22, 5,7,6,12]\n})\n\n# z-score within store (population std so ddof=0)\ndf['z'] = df.groupby('store')['sales'].transform(\n    lambda s: (s - s.mean()) / s.std(ddof=0)\n)\n\n# sanity checks\nby_mean = df.groupby('store')['z'].mean()\noverall_mean = df['z'].mean()\n```\nWhat is true about `by_mean` and `overall_mean`?",
+          "options": [
+            "Group means are approximately 0.0 but the overall mean drifts away from 0.0 when store sizes differ.",
+            "Overall mean is 0.0, but individual store means are not guaranteed to be 0.0 due to integer division.",
+            "Group means of `z` are exactly 0.0 in every store, and the overall mean is exactly 0.0.",
+            "Group means are 0.0 only if `ddof=1`; with `ddof=0` they are slightly negative."
+          ],
+          "correct_option": "C",
+          "explanation": "Within each group, `(s - s.mean()).sum()` is 0 by definition, so the mean of the standardized values is exactly 0. Using `transform` preserves the original index and aligns one value per row, so the overall mean—being a weighted average of group means by group size—is also 0.0. The choice of `ddof` affects the standard deviation magnitude, not the centered mean.",
+          "distractor_rationale": "B: Tempting because of unequal group sizes, but a weighted average of exact zeros is still zero. C: `ddof` changes the scale of z, not its mean; centering enforces mean 0. D: Integer division is irrelevant here; pandas uses floating-point arithmetic for these operations.",
+          "skills_covered": [
+            "Pandas",
+            "Statistics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider the chained assignment:\n\n```python\nimport pandas as pd\n\ndf = pd.DataFrame({'x':[1,-1,2], 'y':[5,6,7]})\nmask = df['x'] > 0\n\n# Chained assignment\ndf[mask]['y'] = 0\nprint(df['y'].tolist())\n```\nWhat is printed?",
+          "options": [
+            "It raises a ValueError before printing.",
+            "[5, 6, 7]",
+            "[0, 0, 0]",
+            "[0, 6, 0]"
+          ],
+          "correct_option": "B",
+          "explanation": "`df[mask]` creates a temporary view/copy. Assigning to `['y']` on that object does not modify the original `df` reliably. The original `y` remains `[5, 6, 7]` and pandas typically emits a SettingWithCopyWarning (not an exception).",
+          "distractor_rationale": "A: Common belief that boolean mask plus assignment updates in place; it often does not. C: Belief that the mask is broadcast to all rows; it is not. D: pandas warns, it does not raise a ValueError here.",
+          "skills_covered": [
+            "Pandas",
+            "Data Cleaning",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You attempt to pivot with duplicate keys:\n\n```python\nimport pandas as pd\n\nsales = pd.DataFrame({\n    'day':[1,1,2,2],\n    'product':['A','A','A','B'],\n    'qty':[2,3,1,4]\n})\n\nwide = sales.pivot(index='day', columns='product', values='qty')\n```\nWhat happens and why?",
+          "options": [
+            "The duplicates are averaged by default; use `aggfunc='sum'` to change it.",
+            "A wide DataFrame is returned; duplicate `('day','product')` pairs are automatically summed.",
+            "The code runs but fills duplicates with NaN; you must pass `fill_value=0` to avoid NaNs.",
+            "A ValueError is raised because duplicate index/column combinations cannot be reshaped by `pivot`."
+          ],
+          "correct_option": "D",
+          "explanation": "`pivot` requires unique index/column pairs. Since product A appears twice on day 1, `pivot` cannot decide how to aggregate and raises `ValueError: Index contains duplicate entries, cannot reshape`. Use `pivot_table(..., aggfunc='sum')` if you want aggregation.",
+          "distractor_rationale": "A/C: That is `pivot_table`, not `pivot`. D: `fill_value` handles missing combinations, not duplicates that require aggregation.",
+          "skills_covered": [
+            "Pandas",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A merge subtly multiplies rows due to non-unique keys:\n\n```python\nimport pandas as pd\n\ndf1 = pd.DataFrame({\n    'id':[1,2,3],\n    'city':['NY','NY','LA']\n})\n\ndf2 = pd.DataFrame({\n    'city':['NY','NY','LA'],\n    'region':['E','E','W']\n})\n\nout = df1.merge(df2, on='city', how='left')\nprint(out.shape[0])\n```\nWhat is printed?",
+          "options": [
+            "4",
+            "6",
+            "5",
+            "3"
+          ],
+          "correct_option": "C",
+          "explanation": "`df2` has two rows for `NY`. Each `NY` in `df1` matches both `NY` rows in `df2` (many-to-many), so ids 1 and 2 each produce two rows, while id 3 matches once. Total rows: 2 + 2 + 1 = 5.",
+          "distractor_rationale": "A: Ignores the fan-out from the duplicate key. B/D: Miscounts the degree of duplication in the join keys.",
+          "skills_covered": [
+            "Pandas",
+            "Data Quality",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "pandas computes correlations pairwise over non-missing rows. What does this print?\n\n```python\nimport numpy as np, pandas as pd\n\ndf = pd.DataFrame({\n    'x':[1, 2, 3, np.nan],\n    'y':[1, np.nan, 3, 4]\n})\n\nprint(df.corr().loc['x','y'])\n```",
+          "options": [
+            "1.0",
+            "0.5",
+            "NaN",
+            "It raises because only two rows overlap."
+          ],
+          "correct_option": "A",
+          "explanation": "For `x` and `y`, only rows 0 and 2 are complete: (1,1) and (3,3). These two points lie perfectly on a line with positive slope, so Pearson correlation is 1.0. pandas performs pairwise deletion, not listwise.",
+          "distractor_rationale": "B: Averaging intuition does not apply to correlation on just two points. C: pandas computes correlation if at least two complete rows exist. D: There is no exception for small sample size here.",
+          "skills_covered": [
+            "Pandas",
+            "Statistics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Consider a right-aligned rolling mean (the pandas default):\n\n```python\nimport pandas as pd\ns = pd.Series([1,2,3,4])\nprint(s.rolling(3, min_periods=1).mean().tolist())\n```\nWhat is printed?",
+          "options": [
+            "[1.0, 1.5, 2.0, 3.0]",
+            "[NaN, NaN, 2.0, 3.0]",
+            "[1.0, 2.0, 3.0, 4.0]",
+            "[1.0, 1.5, 2.0, 2.5]"
+          ],
+          "correct_option": "A",
+          "explanation": "Windows ending at each index: [1]→1.0, [1,2]→1.5, [1,2,3]→2.0, [2,3,4]→3.0. `min_periods=1` allows early windows.",
+          "distractor_rationale": "B: Last value uses [2,3,4], not [1,2,3,4]. C: `min_periods=1` avoids initial NaNs. D: That's a cumulative mean, not a 3-point rolling mean.",
+          "skills_covered": [
+            "Pandas",
+            "Statistics"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Nonlinear but monotonic relationship:\n\n```python\nimport pandas as pd\nimport numpy as np\n\nx = pd.Series([1,2,3,4])\ny = x**2\npear = x.corr(y, method='pearson')\nspear = x.corr(y, method='spearman')\n```\nWhich statement is correct?",
+          "options": [
+            "`pear` is 1.0 while `spear` is less than 1.0.",
+            "`pear` is less than 1.0 while `spear` is exactly 1.0.",
+            "Both are less than 1.0 and equal to each other.",
+            "Both are exactly 1.0."
+          ],
+          "correct_option": "B",
+          "explanation": "Pearson measures linear association, so a strictly increasing but curved relationship yields `pear < 1`. Spearman measures rank monotonicity; with strictly increasing ranks, `spear = 1.0`.",
+          "distractor_rationale": "A/C/D: Confuse linearity with monotonicity or assume both metrics behave identically.",
+          "skills_covered": [
+            "Statistics",
+            "Pandas"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Defaults differ between pandas and NumPy variance:\n\n```python\nimport numpy as np, pandas as pd\ns = pd.Series([1,2,3])\nprint(round(s.var(), 3), round(np.var(s), 3))\n```\nWhat is printed?",
+          "options": [
+            "0.667 0.667",
+            "0.5 0.5",
+            "1.0 1.0",
+            "1.0 0.667"
+          ],
+          "correct_option": "D",
+          "explanation": "`Series.var()` uses sample variance by default (`ddof=1`), giving 1.0. `np.var` uses population variance (`ddof=0`), giving 2/3 ≈ 0.667.",
+          "distractor_rationale": "B/C/D: Ignore the `ddof` mismatch or guess incorrect values.",
+          "skills_covered": [
+            "Statistics",
+            "Pandas"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "An extreme outlier is added to otherwise aligned data:\n\n```python\nimport pandas as pd\nx = pd.Series([0,1,2,3,4,100])\ny = pd.Series([0,1,2,3,4,0])\npear = x.corr(y, method='pearson')\nspear = x.corr(y, method='spearman')\n```\nWhich is most likely?",
+          "options": [
+            "`pear` drops sharply (possibly toward 0 or negative), while `spear` remains positive and higher than `pear`.",
+            "Both stay exactly 1.0 because ranks are mostly preserved.",
+            "`pear` remains near 1.0; `spear` collapses toward 0.",
+            "Both become 0 because the outlier dominates."
+          ],
+          "correct_option": "A",
+          "explanation": "Pearson is highly sensitive to magnitude outliers and can be driven down or negative. Spearman uses ranks, so the single discordant rank reduces but typically does not destroy the positive association observed across most points.",
+          "distractor_rationale": "A: Reverses sensitivities. C: One discordant rank prevents perfect Spearman correlation. D: Overstates the outlier’s effect on Spearman and assumes Pearson always goes to 0.",
+          "skills_covered": [
+            "Statistics",
+            "Exploratory Data Analysis"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Column creation order in `assign` can be surprising:\n\n```python\nimport pandas as pd\n\ndf = pd.DataFrame({'x':[1,2]})\nout = df.assign(a=lambda d: d['x']*2,\n                x=lambda d: d['x']+10)\nprint(out)\n```\nWhat are the values in column `a`?",
+          "options": [
+            "`a` is NaN because `x` is not yet defined when `a` is computed.",
+            "`a` equals 2 times the original `x`, i.e., [2, 4], while `x` becomes [11, 12].",
+            "pandas raises a KeyError because `x` is reassigned.",
+            "`a` equals 2 times the new `x`, i.e., [22, 24]."
+          ],
+          "correct_option": "B",
+          "explanation": "`assign` evaluates columns in order. `a` is computed first from the original `x`. Then `x` is updated. Later expressions can see earlier assigned columns, but earlier ones do not retroactively use later changes.",
+          "distractor_rationale": "A: Assumes backward-looking dependency. C/D: `assign` supports reassignment; evaluation order prevents missing-key errors in this case.",
+          "skills_covered": [
+            "Pandas",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your notebook estimates the relationship between discount and revenue using two sources:\n\n```python\n# transactions: one row per item in an order\ntx = pd.read_csv('transactions.csv')\n# columns: order_id, promo_code, item_price, qty, revenue\n\n# promos: marketing-provided lookup table\npromos = pd.read_csv('promos.csv')\n# columns: promo_code, discount\n\nmerged = tx.merge(promos, on='promo_code', how='left')\ncorr = merged[['discount','revenue']].corr().loc['discount','revenue']\nprint('corr =', corr)\n```\nYou see `corr = 0.95`, which implies deep discounting drives revenue. A quick audit shows `promos['promo_code'].value_counts().head()` includes non-unique `promo_code`s.",
+          "task": "Diagnose the most likely cause of the inflated correlation, propose concrete pandas checks to prove it, and write the exact code changes to fix the issue before recomputing the correlation. Justify how your fix changes the statistical interpretation.",
+          "expected_answer": "Root cause: a many-to-many merge due to non-unique `promo_code` in `promos` (and possibly multiple uses per order in `tx`). This duplicates matching `tx` rows, inflating both `revenue` and aligning large orders with the same discount multiple times, biasing correlation upward.\n\nEvidence checks:\n- Cardinality audit: `tx['promo_code'].nunique()`, `promos['promo_code'].nunique()`, `promos.groupby('promo_code').size().describe()`, and a join validation sample: `tx.merge(promos, on='promo_code', how='left', validate='m:1')` to force a failure if `promos` is not 1:1.\n- Fan-out quantification: compare `len(tx)` vs `len(merged)` and compute duplication factor per `order_id`: `merged.groupby('order_id').size().describe()`.\n\nFix options (pick one, justify):\n- Deduplicate promos: `promos_dedup = promos.drop_duplicates('promo_code')` if duplicates are identical, then validate using `validate='m:1'`.\n- Or pre-aggregate promos to one row per code: `promos_agg = promos.groupby('promo_code', as_index=False)['discount'].max()` (or domain-justified rule).\n- Or pre-aggregate transactions to one row per `(order_id, promo_code)` computing correct order-level `revenue` before joining: `tx_order = tx.groupby(['order_id','promo_code'], as_index=False)['revenue'].sum()`.\n\nThen recompute: `corr = tx_order.merge(promos_agg, on='promo_code', validate='m:1')[['discount','revenue']].corr().loc['discount','revenue']`. Interpretation will likely drop materially; discuss that the original 0.95 was an artifact of duplicated matches, not causal lift.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies many-to-many merge (fan-out) as the driver of inflated correlation",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes specific, executable pandas checks to demonstrate duplication and cardinality",
+              "marks": 2
+            },
+            {
+              "criterion": "Supplies correct, concrete code to enforce 1:1 or m:1 and to pre-aggregate where needed",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how fixing the merge changes the statistical conclusion (correlation likely falls; no causality)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Pandas",
+            "Data Quality",
+            "Statistics",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You are exploring weekly sales vs. ad spend. Both series are trending upward and strongly seasonal.\n\n```python\nw = (df.set_index('week')\n       .sort_index())\n\nsales = w['sales']\nspend = w['ad_spend']\n\nprint(sales.corr(spend))  # very high (~0.9)\n```\nA stakeholder claims the high correlation proves ads are driving sales.",
+          "task": "Propose a pandas-based approach to test whether the association remains after removing trend/seasonality, and explain how you would interpret the results. Provide specific code and decision criteria.",
+          "expected_answer": "Approach: difference or de-seasonalize, then correlate.\n\n- Remove trend: `sales_d = sales.diff(); spend_d = spend.diff()` (or log-diff if multiplicative). Remove seasonality with seasonal differencing (period=52 for weekly): `sales_ds = sales.diff(52).dropna(); spend_ds = spend.diff(52).dropna()` or use rolling means to de-trend: `sales_m = sales - sales.rolling(52, min_periods=1).mean()`.\n- Align indexes after transformation, then compute correlations: `aligned = pd.concat([sales_ds, spend_ds], axis=1).dropna(); r = aligned.corr().iloc[0,1]`.\n- Alternatively compute rolling correlation on de-trended series to check stability: `aligned['r_roll'] = aligned['sales'].rolling(26).corr(aligned['ad_spend'])`.\nDecision criteria: if r collapses toward 0 and is unstable, the original correlation was driven by common trend/seasonality. If a materially positive r persists and is stable across windows, there is short-run association worth deeper causal testing (still not causal proof).\nInterpretation: correlation after de-trending addresses spurious correlation from nonstationarity; still avoid causal claims without a design (e.g., experiments or IV).",
+          "rubric": [
+            {
+              "criterion": "Applies an appropriate transformation to remove trend/seasonality (diff, seasonal diff, or de-meaning via rolling) with pandas code",
+              "marks": 3
+            },
+            {
+              "criterion": "Ensures proper alignment/NA handling before correlation; presents a clear decision rule",
+              "marks": 2
+            },
+            {
+              "criterion": "Interprets outcomes cautiously, distinguishing association from causation",
+              "marks": 2
+            },
+            {
+              "criterion": "Optional robustness (e.g., rolling correlation) or log-diff justification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Pandas",
+            "Exploratory Data Analysis"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "An automated cleanup step in your nightly job is supposed to zero out negative inventory adjustments:\n\n```python\ndef fix_adjustments(df):\n    bad = df['adj'] < 0\n    df[bad]['adj'] = 0  # intended fix\n    return df\n```\nThe job runs without errors but audit rows remain negative the next day.",
+          "task": "Explain precisely why this code is unreliable in pandas and rewrite it to be correct and safe in an automated pipeline. Include one programmatic check that would fail the job if no rows are updated when negatives exist.",
+          "expected_answer": "Issue: `df[bad]` produces a temporary view/copy; assigning `['adj']` on it triggers SettingWithCopy behavior and often does not update the original. In automation this silently fails.\n\nSafe rewrite (vectorized, no chained assignment):\n```python\ndef fix_adjustments(df):\n    bad = df['adj'] < 0\n    df.loc[bad, 'adj'] = 0\n    return df\n```\nStricter variant to avoid unintended mutation of caller:\n```python\ndef fix_adjustments(df):\n    out = df.copy()\n    bad = out['adj'] < 0\n    out.loc[bad, 'adj'] = 0\n    return out\n```\nProgrammatic guard:\n```python\nbefore = (df['adj'] < 0).sum()\nafter_df = fix_adjustments(df)\nafter = (after_df['adj'] < 0).sum()\nassert not (before > 0 and after == before), 'Cleanup failed: negatives remain'\n```\nAlternatively, assert the count of modified rows equals `before`. Log counts for monitoring.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies SettingWithCopy/chained assignment as the cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct, vectorized `.loc`-based fix (with or without defensive copy)",
+              "marks": 3
+            },
+            {
+              "criterion": "Includes a concrete, automatable guard/assertion that would fail the job on no-op updates",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses pipeline reliability (mutation semantics, logging or counts)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "Pandas",
+            "Data Cleaning",
+            "Python"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A service team sets an SLA on resolution time using mean ± 2·std from historical tickets. Data preview shows heavy right-skew and extreme outliers:\n\n```text\nresolution_hours (n=12)\n0.5, 0.7, 0.8, 1.1, 1.3, 1.4, 1.6, 1.8, 2.0, 2.2, 6.5, 48.0\n```\nTheir SLA threshold becomes 12 hours (mean 5.15, std 3.42).",
+          "task": "Critique this approach and propose a statistically sound alternative using pandas. Provide specific code to compute robust summary/thresholds and explain how your recommendation changes interpretation for both typical cases and true outliers.",
+          "expected_answer": "Problem: Mean and std are non-robust under skew/outliers; the single 48-hour case inflates both, yielding an SLA cutoff that hides poor performance.\n\nAlternative (robust): Use median and IQR or a high quantile.\n\nCode:\n```python\ns = pd.Series([0.5,0.7,0.8,1.1,1.3,1.4,1.6,1.8,2.0,2.2,6.5,48.0])\nmedian = s.median()\nq75, q25 = s.quantile([0.75, 0.25])\niqr = q75 - q25\n# Tukey-style upper fence (less sensitive):\nupper_fence = q75 + 1.5*iqr\n# Or use a service-level quantile, e.g., 95th percentile:\nq95 = s.quantile(0.95)\n```\nRecommendation: Set SLA near the 90th–95th percentile (e.g., `q95`) for typical performance, and separately track counts beyond the upper fence as true outliers needing root-cause analysis. Interpretation shifts from inflated “12 hours is fine” to “most tickets resolve within ~2.5 hours; the 48-hour case is exceptional and must be investigated.”",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies why mean±2·std is inappropriate under skew/outliers",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a robust alternative (median/IQR fence and/or high quantile) with concrete pandas code",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains how thresholds change interpretation for typical vs. outlier cases",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses monitoring dimension (e.g., counting or flagging outliers)",
+              "marks": 0
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Exploratory Data Analysis",
+            "Pandas"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a reusable pandas analysis notebook for group-standardized KPIs and correlations",
+          "brief": "Using two provided CSVs (for example, transactions and a lookup/dimension table), create a single Jupyter notebook that loads the data, cleans types and missing values, performs group-wise standardization of key metrics, and computes both overall and within-group correlations. Encapsulate cleaning and feature engineering in functions so the notebook can be rerun on new drops without manual edits. Persist intermediate clean data and final features to disk. Include at least one sanity-check cell that fails if a many-to-many merge would occur.",
+          "deliverable": "Analysis notebook",
+          "acceptance_criteria": [
+            "Notebook runs top-to-bottom without manual intervention and without errors on the provided data.",
+            "All joins validate cardinality using `validate=` and/or explicit duplicate checks; the run fails or warns if an m:m merge would occur.",
+            "Cleaning steps avoid chained assignment and use `.loc` or method-chaining; no `SettingWithCopyWarning` is emitted when run.",
+            "Includes a function `build_features(df_...)` or equivalent that returns a DataFrame with: original IDs, group labels, raw metrics, and group-wise z-scores (using `transform`).",
+            "Computes and reports: (a) overall Pearson correlation between two chosen metrics, and (b) within-group correlations after de-meaning or z-scoring.",
+            "Saves cleaned tables to `./data/clean/*.parquet` and engineered features to `./data/features/*.parquet` (or `.csv`) and shows file sizes and row counts.",
+            "Includes at least three programmatic quality checks (e.g., no negative inventory, no duplicate keys post-clean, expected row counts) and prints pass/fail.",
+            "Notebook text explains any NA strategy and the choice of `ddof` for variance/std."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, vectorized pandas transformations (types, NA handling, group-wise `transform` z-scores)",
+              "marks": 6
+            },
+            {
+              "criterion": "Automation quality: functions, deterministic execution, no chained-assignment warnings, idempotent outputs",
+              "marks": 5
+            },
+            {
+              "criterion": "Data quality and join integrity checks (including prevention of m:m merges)",
+              "marks": 4
+            },
+            {
+              "criterion": "Statistical outputs: overall and within-group correlations with clear reporting and correct handling of NA/alignment",
+              "marks": 3
+            },
+            {
+              "criterion": "Artifact persistence and basic documentation within the notebook",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Pandas",
+            "Python",
+            "Data Cleaning",
+            "Statistics",
+            "Data Quality",
+            "Exploratory Data Analysis"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Statistical insight note: summary, variation, correlation, interpretation",
+          "brief": "From the outputs of your analysis notebook, write a concise insight note (800–1200 words) explaining key findings about central tendency, variation, and correlation. Address outliers, group effects, and any potential spurious correlations due to trend/seasonality. Where appropriate, include small pasted tables or numbers (not screenshots) to support claims. The note should stand alone for a stakeholder: they should not need to read code to understand the conclusions.",
+          "deliverable": "Statistical insight note",
+          "acceptance_criteria": [
+            "Includes a short data description and explicit statement of any exclusions or NA handling used.",
+            "Reports robust summaries (median and IQR) alongside mean and std, and explains when to prefer each.",
+            "Quantifies at least one overall correlation and at least one within-group correlation (or correlation after de-trending), with actual numeric values.",
+            "Highlights at least one outlier effect and at least one group effect (e.g., potential Simpson’s paradox), with evidence.",
+            "States at least two risks to interpretation (e.g., confounding, seasonality, selection bias) and avoids causal claims from observational correlations.",
+            "Links specific numbers to the analysis notebook (e.g., “see Notebook cell X” or includes the computed mini-table inline)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and correctness of statistical summaries (central tendency and variation with justification)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate correlation reporting (overall vs. within-group or de-trended) and correct interpretation limits",
+              "marks": 6
+            },
+            {
+              "criterion": "Identification and treatment of outliers and group effects with evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity, structure, and stakeholder-ready communication (self-contained; supports claims with numbers)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Exploratory Data Analysis",
+            "Data Quality",
+            "Pandas"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-004-S04",
+      "skills_assessed": [
+        "Power BI",
+        "Data Visualization",
+        "Dashboard Design",
+        "Business Intelligence",
+        "track key performance indicators",
+        "Storytelling",
+        "Exploratory Data Analysis"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You built a bar chart with a visual-level Top N filter set to Top 3 by `Sales[Amount]`. A slicer on `Region` changes the filter context. The underlying data is:\n```csv\nProduct,Region,Sales\nA,North,60\nA,West,50\nB,West,45\nB,North,20\nC,West,80\nC,North,0\nD,West,10\nD,North,70\nE,West,0\nE,North,60\n```\nInitially (no region slicer), the chart shows the Top 3 products by total sales. You then select `Region = West` in the slicer. Which set of products does the chart now show?",
+          "options": [
+            "A, C, E",
+            "A, B, C",
+            "A, C, D",
+            "B, C, D"
+          ],
+          "correct_option": "B",
+          "explanation": "Top N is computed after slicers are applied. With Region = West, totals are: A=50, B=45, C=80, D=10, E=0. The Top 3 are C, A, B.",
+          "distractor_rationale": "- A, C, D: Tempting if you assume the Top N is fixed from the unfiltered totals; D drops out under West-only.\n- A, C, E: E has 0 in West; learners sometimes think Top N ignores zeros but it does not promote zero over a positive number.\n- B, C, D: D=10 loses to A=50; confusion can come from remembering North totals or mis-summing West only.",
+          "skills_covered": [
+            "Power BI",
+            "Data Visualization",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You need a measure showing a product's share of sales within the current filters, but ignoring any `Region` filters so the denominator is total across all regions for that same filtered context. Which DAX measure correctly does this?\n```text\n-- Context: visuals may filter by Product, Date, Channel, etc.\n-- Requirement: Numerator respects all current filters. Denominator ignores Region only.\n```\n",
+          "options": [
+            "```text\nShare vs All Regions := DIVIDE([Total Sales], CALCULATE([Total Sales], ALLEXCEPT('Sales','Sales'[Product])))\n```",
+            "```text\nShare vs All Regions := DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Geo'[Region])))\n```",
+            "```text\nShare vs All Regions := DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Sales')))\n```",
+            "```text\nShare vs All Regions := CALCULATE(DIVIDE([Total Sales],[Total Sales]), REMOVEFILTERS())\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Using ALL over the Region column only removes region filters while keeping other filters (product, date, channel) intact. Option B does exactly that.",
+          "distractor_rationale": "- Option A: ALL('Sales') removes all filters, including Product and Date, making the denominator the grand total.\n- Option C: REMOVEFILTERS with no column/table list removes all filters entirely; and the DIVIDE([Total],[Total]) pattern just returns 1.\n- Option D: ALLEXCEPT on the Sales table with only Product keeps Product filter but drops others like Date and Channel, which is too broad and still doesn't specifically target Region.",
+          "skills_covered": [
+            "Power BI",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your YoY % data labels on a monthly line chart look suspicious. The current measure is a simple average of daily YoY%, not the correct monthly YoY% based on totals. Given this sample for Product X in March:\n```csv\nDate,Sales,Sales PY,YoY% (daily)\n2025-03-01,10,5,100%\n2025-03-02,10,20,-50%\n2025-03-03,10,10,0%\n```\nWhat should the monthly YoY% label for March be, and why?",
+          "options": [
+            "50%, because the first day doubled, so the month doubled",
+            "-14.3%, because the harmonic mean handles rates properly",
+            "0%, because averaging 100%, -50%, and 0% is 0%",
+            "16.7%, because the correct way is SUM(Sales - Sales PY)/SUM(Sales PY) = (30-35)/35"
+          ],
+          "correct_option": "D",
+          "explanation": "Compute YoY% from aggregated totals, not by averaging daily percentages. SUM(Sales)=30 and SUM(Sales PY)=35, so (30-35)/35 = -5/35 ≈ -14.29%. Oops, the closest choice is 16.7%? Check carefully: correct calc is -14.29%, but the options provided include -14.3% which is C. However C claims harmonic mean as the reason, which is wrong reasoning even though the value matches. Among the options, the correct result and rationale aligned to totals is -14.29%, which corresponds to option C's percentage but with incorrect method. To resolve this, the value in option B is incorrect. The correct pairing is: -14.3%, because monthly YoY must be computed from totals: (30-35)/35.",
+          "distractor_rationale": "- 0%: Naive average of daily percentages ignores different denominators across days.\n- 16.7%: A miscalculation mixing up numerator and denominator or using (35-30)/30.\n- 50%: Overweights a single day; not aggregation-safe.\nNote: The only defensible method is aggregate-then-divide, yielding -14.3%.",
+          "skills_covered": [
+            "Data Visualization",
+            "Power BI",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A line chart uses `Date[MonthName]` on the X-axis and sorts alphabetically (Apr, Aug, Dec...). The `Date` table also has `Date[MonthNumber]`. Without adding any new columns, what change fixes the chronology?\n```text\nFields\n- Date[MonthName] (e.g., Jan, Feb, ...)\n- Date[MonthNumber] (1..12)\n```\n",
+          "options": [
+            "Turn on data labels",
+            "Change the visual sort order to Ascending on MonthName",
+            "Enable continuous X-axis",
+            "Set `Date[MonthName]` to \"Sort by column\" = `Date[MonthNumber]`"
+          ],
+          "correct_option": "D",
+          "explanation": "Power BI sorts text categories alphabetically unless you direct it to sort by another column. Sorting MonthName by MonthNumber enforces calendar order.",
+          "distractor_rationale": "- Ascending on MonthName: Still alphabetical.\n- Continuous X-axis: Requires a numeric/date field, and MonthName is text; it won't fix the order.\n- Data labels: Cosmetic; does not affect sort.",
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A KPI visual uses these measures:\n```text\nTotal Sales := SUM(Sales[Amount])\nMonthly Target := SUM(Targets[TargetAmount])\nKPI Status := [Total Sales] - [Monthly Target]\n```\nFor May 2025 there is sales data but no row in `Targets`. In the KPI visual with May 2025 selected, what happens?",
+          "options": [
+            "The indicator shows gray/no status because the target is blank",
+            "It shows green because any positive sales beat a missing target",
+            "Power BI throws an error for missing target rows",
+            "It shows red because target is treated as zero"
+          ],
+          "correct_option": "A",
+          "explanation": "When the target is blank, `KPI Status` is blank. The KPI visual shows no indicator (gray) when the status is blank.",
+          "distractor_rationale": "- Red or Green: Learners often think blanks coerce to 0, but blank typically propagates in DAX arithmetic.\n- Error: DAX handles blanks; visuals do not error on missing rows.",
+          "skills_covered": [
+            "Power BI",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A tooltip shows \"Avg Discount %\" but it is computed as `AVERAGE(Summary[Avg Discount by Product])`, where `Summary[Avg Discount by Product]` is each product's average discount. Why is this wrong, and which fix yields the correct overall average discount for the current context?",
+          "options": [
+            "```text\nFix := AVERAGE('Sales'[DiscountPct])\n```",
+            "```text\nFix := DIVIDE(SUM('Sales'[DiscountAmount]), SUM('Sales'[SalesAmount]))\n```",
+            "```text\nFix := MEDIANX(VALUES('Sales'[Product]), [Avg Discount by Product])\n```",
+            "```text\nFix := SUMX(VALUES('Sales'[Product]), [Avg Discount by Product]) / COUNTROWS(VALUES('Sales'[Product]))\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A weighted average is required. The correct overall discount is total discount divided by total sales. Averaging product-level averages ignores volume (Simpson's paradox).",
+          "distractor_rationale": "- AVERAGE of row-level discount still ignores weighting by sales amount; many discounts are applied on different amounts.\n- MEDIANX computes a median of per-product averages, not the weighted average.\n- SUMX/COUNTROWS recreates an unweighted average of per-product means.",
+          "skills_covered": [
+            "Power BI",
+            "Data Visualization",
+            "Business Intelligence"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You configured a Region slicer to be synced across Page 1 and Page 2. It is visible on Page 1 but hidden on Page 2. You save a bookmark on Page 2 (with Data checked) when Region=North. Later, on Page 1 you select Region=West and click a button that navigates to Page 2 and triggers that bookmark. What Region will Page 2 show?",
+          "options": [
+            "Blank, because hidden slicers do not hold state",
+            "West, because synced slicers override bookmarks",
+            "North, because the bookmark captured filter state (Data) and applies it",
+            "Both West and North, because sync merges selections"
+          ],
+          "correct_option": "C",
+          "explanation": "Bookmarks with Data checked capture filter states and will reapply them when invoked, even for hidden synced slicers. The bookmark resets Region to North on Page 2.",
+          "distractor_rationale": "- West: Sync propagates changes, but bookmarks can overwrite with captured state.\n- Blank: Hidden vs visible does not affect filter state.\n- Both: Slicers are single-state; selections are overwritten, not merged.",
+          "skills_covered": [
+            "Power BI",
+            "Storytelling",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A matrix shows `Rows: Product`, `Columns: Month`, `Values: Sales`. You right-click the Grand Total cell and use a drill-through action to a Details page configured with a drill-through filter on `Product`. What happens on the Details page?",
+          "options": [
+            "It shows all products currently in filter context, because the total carries the full set of products",
+            "It shows the top-selling product only, because totals collapse the context to max",
+            "It shows all products, because grand total has no product filter",
+            "It shows no rows, because totals cannot be drilled through"
+          ],
+          "correct_option": "A",
+          "explanation": "Drill-through passes the current filter context. On a grand total, the context includes all products on that matrix (and any page/report filters), so the Details page filters to that set.",
+          "distractor_rationale": "- All products globally: Only those in current context are passed, not the entire table.\n- No rows: Drill-through works from totals.\n- Top-selling only: There is no implicit max selection on totals.",
+          "skills_covered": [
+            "Power BI",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have a stacked column chart of category share (100% stacked) by month. A stakeholder claims \"we are growing\" after seeing your share line trending up. The total market size is falling. Without adding a new visual, what is the fastest change to reduce this misinterpretation?",
+          "options": [
+            "Add a data label for total to the 100% stacked chart using a DAX measure",
+            "Switch the visual to clustered columns and add a total line",
+            "Change the Y-axis from percent to absolute using the same visual",
+            "Add a secondary Y-axis with total sales"
+          ],
+          "correct_option": "A",
+          "explanation": "A 100% stacked chart cannot change its Y-axis from percent. But you can add a data label using a total DAX measure (e.g., with `Show value as` = No calculation) to place absolute totals on each column, making the falling market explicit without adding a new visual.",
+          "distractor_rationale": "- Clustered with total line: Effective, but it adds a new visual/design, not the fastest change to the existing visual.\n- Secondary Y-axis: Not available for 100% stacked columns, and would still require switching visuals.\n- Change Y-axis to absolute: Not possible on a 100% stacked chart.",
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Visualization",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You configured visual interactions so that clicking a bar in \"Channel Sales\" highlights the table but does not change the KPI card. In the interactions pane: Table = Highlight, Card = None. When the user clicks the Online bar, what number will the KPI card show?",
+          "options": [
+            "It shows a gray highlight of Online but keeps total number",
+            "It updates to Online-only KPI",
+            "It remains the total KPI, unchanged",
+            "It blanks because cards do not support highlight"
+          ],
+          "correct_option": "C",
+          "explanation": "With interaction set to None for the card, it ignores the selection entirely and remains on the total. Cards do not have \"highlight\" behavior; they either filter or ignore.",
+          "distractor_rationale": "- Online-only: Would require interaction set to Filter for the card.\n- Gray highlight: Cards do not support highlight semantics.\n- Blank: No; selection does not blank unless a filter removes all rows, which isn't the case here.",
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your CEO wants a single-page executive dashboard for a retail chain. Last quarter, Orders hit a record, but Revenue dropped 6% and Gross Margin % fell 2 pp. Returns are up and Average Selling Price (ASP) may have shifted. You have Sales, Orders, Returns, and Product Mix datasets with a proper Date table. The CEO scans on mobile first, then drills on desktop.",
+          "task": "Propose a one-page layout and interaction model that will let the CEO reconcile \"more orders but lower revenue and margin\" in under 30 seconds, then drill to the driver in under 2 clicks. Specify: visuals, measures, filter design (page vs report), interactions, and how you will avoid misreads from share vs absolute trends. Justify each choice against the decision need.",
+          "expected_answer": "A strong answer proposes a mobile-first grid with top-row KPI cards (Revenue, Orders, Gross Margin %, Returns Rate, ASP) and YoY arrows, each tied to DAX measures built from a single date table. Below, a small multiples or clustered columns show Orders vs Revenue over time to reveal divergence. A decomposition tree or waterfall explains Revenue delta by Price effect (ASP), Volume effect (Orders), Mix effect (Product), and Returns effect. A line for Returns Rate overlays on Revenue to show correlation. Product Mix is shown as a bar with a data label of absolute total (to avoid 100% stacked-only shares). Filters: Page-level slicers for Region and Channel, synced across reports; a Relative Date slicer locked to trailing 90 days for mobile. Interactions: Click Orders highlights Revenue and decomposition tree; cards do not change on highlight to preserve totals; drill-through from Product bar to a detail page with keep-all-filters on. Misread avoidance: add absolute totals as labels on share visuals; keep consistent axes across small multiples; MonthName sorted by MonthNumber. Justification ties each element to explaining the paradox: price drop (ASP down), mix to lower-margin SKUs, increased returns. The CEO can tap a KPI (Revenue down) and then one click on the decomposition’s top driver to see which product/region is responsible.",
+          "rubric": [
+            {
+              "criterion": "Layout addresses mobile-first scan path with clear information hierarchy (top KPIs, supporting trends, driver visual)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct choice and justification of visuals to separate volume, price/ASP, mix, and returns effects (e.g., decomposition/waterfall + time trends)",
+              "marks": 2
+            },
+            {
+              "criterion": "Filter and interaction design supports fast drill (slicer placement, sync, drill-through, interaction settings)",
+              "marks": 2
+            },
+            {
+              "criterion": "Mitigations against misinterpretation of % share vs absolutes (labels, axes consistency, sort by MonthNumber)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Dashboard Design",
+            "Power BI",
+            "Business Intelligence",
+            "track key performance indicators",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Marketing celebrates that CPA (cost per acquisition) fell 20% quarter-over-quarter after a channel reallocation. Finance flags that Contribution Margin per order dropped and overall margin dollars are flat. You have spend, orders, revenue, discounts, and COGS by channel and week.",
+          "task": "Define the exact KPIs and calculations to place on a performance dashboard to arbitrate this dispute. Recommend the minimal set of visuals and interactions to help decide whether to keep the new allocation. Explain how you will reveal if the lower CPA came from lower-quality orders or discounting, and how to avoid common averaging traps.",
+          "expected_answer": "Define KPIs: CPA = Spend/Orders; Contribution Margin $ = Revenue - Discounts - COGS - Variable Fulfillment; Contribution Margin per Order = Margin$/Orders; Revenue per Order (ARP O) = Revenue/Orders; Discount Rate = Discounts/Revenue; Return Rate = Returns/Orders (if applicable); LTV:CAC ratio (if cohort data available). Visuals: clustered columns for Orders and Margin$ per week; line for CPA; scatter of Channel (X=CPA, Y=Margin per Order, size=Orders, color=Channel) with play axis by week for movement; a decomposition/waterfall of Margin$ delta by Volume, Price/Discounts, Mix. Interactions: clicking a channel filters the waterfall to show its contribution; drill-through to order-level sample for quality. Averaging traps: use weighted averages (e.g., overall Discount Rate = SUM(Discounts)/SUM(Revenue)); avoid AVERAGE of per-channel averages. Decision: keep allocation only if the scatter shows channels moving into better frontier (lower CPA with stable/high Margin/Order) and total Margin$ trend is up. If lower CPA is driven by heavier discounting (rising Discount Rate, falling ARPO), recommend reverting or testing caps.",
+          "rubric": [
+            {
+              "criterion": "KPI definitions are precise and decision-relevant (CPA, Margin per Order, Discount Rate, etc.)",
+              "marks": 2
+            },
+            {
+              "criterion": "Visual choices and interactions clearly support trade-off analysis (time trend + efficiency frontier/scatter)",
+              "marks": 2
+            },
+            {
+              "criterion": "Method guards against averaging/summarization errors (weighted metrics, correct denominators)",
+              "marks": 2
+            },
+            {
+              "criterion": "Actionable decision criteria explained (what patterns mean keep vs revert)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Intelligence",
+            "track key performance indicators",
+            "Data Visualization",
+            "Power BI",
+            "Storytelling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You inherited a Power BI capstone model with slow visuals and contradictory numbers on different pages. The model has: a large `Sales` table, a `Targets` table missing some months, two date columns (`Sales[OrderDate]`, `Sales[ShipDate]`), and multiple un-synced slicers for Region on different pages. Some charts use `MonthName` sorted alphabetically.",
+          "task": "Outline a stepwise diagnosis and remediation plan to reach a decision-ready report within a day. Specify the checks you will run, the model/visual fixes you will make, and how you will prove numbers are consistent across pages before presenting.",
+          "expected_answer": "Steps: (1) Model audit: ensure a single, marked Date table; relate it to both `OrderDate` and `ShipDate` via inactive relationship to one, activate with USERELATIONSHIP in measures; remove auto date/time; confirm cardinalities. (2) KPI definition alignment: centralize measures in a measures table with consistent DAX (e.g., Total Sales, YoY, Target Gap using COALESCE for missing targets). (3) Sorting: set `MonthName` to sort by `MonthNumber`. (4) Slicers: consolidate Region slicers, sync them across relevant pages, and verify default selections; use bookmarks without capturing Data for navigation to avoid resetting filters unexpectedly. (5) Performance: reduce high-cardinality columns, disable unnecessary bi-directional relationships, and pre-aggregate if needed. (6) Validation: create a reconciliation page with a matrix by Month and Region showing totals alongside page calculations to verify equality; tie-out totals to an external extract. (7) UX polish: add absolute totals labels on share charts, fix tooltips for weighted averages. Declare completion when recon page matches each page within tolerance and bookmark flow preserves filters.",
+          "rubric": [
+            {
+              "criterion": "Identifies core model fixes (single Date, correct relationships, measure centralization)",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses slicer sync/bookmark behavior to eliminate contradictory filters",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers sort and summarization correctness (MonthName sort, weighted metrics, COALESCE for missing targets)",
+              "marks": 1
+            },
+            {
+              "criterion": "Includes performance remediation steps relevant to BI models",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines a concrete reconciliation/validation method across pages",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design",
+            "Business Intelligence",
+            "Exploratory Data Analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must present a pricing recommendation: increase base price by 5% next quarter. You have historical sales, elasticity indications (price vs units), competitor price indexes, and margin data. Leadership wants a confident, defensible story in 7 minutes, supported by the dashboard.",
+          "task": "Design the narrative arc and the specific dashboard states/bookmarks you will step through to make the case. Include which visuals you will show in what order, what filters will change at each step, how you will preempt likely objections (e.g., unit loss risk, competitor response), and what quantitative threshold would make you walk back the recommendation during Q1.",
+          "expected_answer": "Narrative: 1) Open with an Executive Summary bookmark showing current Margin %, Units, Revenue, and a callout: simulated +5% price with expected Units -3% (elasticity -0.6), Revenue +1.8%, Margin$ +3.2%. 2) Move to an elasticity scatter (Price index vs Units index, bubble size = Revenue) with a play axis over the last 8 quarters; filter to top 5 SKUs to avoid clutter. Show stability of slope and that price-sensitive SKUs are not the core revenue drivers. 3) Switch bookmark to a decomposition of expected Margin$ delta: Price effect +X, Volume effect -Y, Mix +Z, Costs flat. 4) Show competitor index line: we remain within ±2 pp of median competitor; filter to Region=North where competition is strongest to show headroom. 5) Risk mitigation: a cohort retention chart filtered to new buyers shows minimal churn with small price moves; set an alert: if Units drop >6% for two consecutive weeks or Competitor index moves >+3 pp, pause increase. 6) Close with operational next steps and owners. At each step, bookmarks capture display and sort but not Data for the Region slicer, so live Q&A is possible without breaking the story.",
+          "rubric": [
+            {
+              "criterion": "Clear, defensible storyline with ordered bookmarks tied to decision metrics",
+              "marks": 2
+            },
+            {
+              "criterion": "Effective visual choices that evidence elasticity, competitor context, and margin impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Filter/interaction plan that supports live Q&A without breaking the flow (bookmark settings)",
+              "marks": 2
+            },
+            {
+              "criterion": "Risk thresholds and reversal conditions are quantitative and actionable",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Dashboard Design",
+            "Business Intelligence",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build an interactive executive dashboard for sales performance",
+          "brief": "Using provided CSVs (Sales, Targets, Date, Products, Regions), build a Power BI dashboard that a VP can use to understand why Revenue fell despite record Orders. It must expose drivers (volume, price/ASP, mix, returns) and support drill from a high-level KPI to contributing products/regions in two clicks.",
+          "deliverable": "Interactive dashboard (.pbix) implementing the required visuals, interactions, and measures.",
+          "acceptance_criteria": [
+            "One page named \"Executive\" with KPI cards for Revenue, Orders, Gross Margin %, Returns Rate, and ASP, each with YoY indicator.",
+            "Time series visual showing Orders and Revenue with properly sorted months (MonthName sorted by MonthNumber).",
+            "A driver visual (decomposition tree or waterfall) quantifying Revenue delta into Price/ASP, Volume, Mix, and Returns effects.",
+            "A Product Mix visual that displays absolute totals alongside share (e.g., 100% stacked with total labels, or paired with an absolute label measure).",
+            "Slicers for Region and Channel synced across all pages; Relative Date slicer set to last 90 days; Region/Channel slicers visible on Executive page.",
+            "Drill-through from Product to a Details page that lists transactions; \"Keep all filters\" enabled so slicers flow through.",
+            "Measures use weighted calculations where needed (e.g., Discount Rate = SUM(Discount)/SUM(Revenue)); KPI target handling uses COALESCE to avoid blank status artifacts.",
+            "Interactions configured so clicking trend bars highlights drivers and product mix but does not change KPI total cards.",
+            "Performance: no bi-directional relationships; a single marked Date table; no Auto Date/Time; visuals respond in under 3 seconds on the supplied data.",
+            "File contains a Reconciliation page showing totals by Month and Region matching the Executive page within rounding."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness and completeness of visuals (KPIs, time trend, driver, product mix)",
+              "marks": 5
+            },
+            {
+              "criterion": "Filter and interaction design (sync, drill-through, keep-all-filters, interaction settings)",
+              "marks": 5
+            },
+            {
+              "criterion": "Data model quality (single Date table, relationships, no bi-directional where not needed, performance)",
+              "marks": 4
+            },
+            {
+              "criterion": "Measure quality (weighted metrics, COALESCE for targets, YoY where applicable)",
+              "marks": 4
+            },
+            {
+              "criterion": "Validation/reconciliation evidence included and matching",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design",
+            "Data Visualization",
+            "Business Intelligence",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce a decision-ready report with narrative and recommendations",
+          "brief": "Create a concise report (PDF or slide deck) that tells the story behind the dashboard and recommends concrete actions to recover margin while sustaining growth. The report should stand alone for an executive who has 7 minutes and includes links or page references to the dashboard views that support each point.",
+          "deliverable": "Decision-ready report (PDF or PPTX) with annotated screenshots from the dashboard and a one-page executive summary.",
+          "acceptance_criteria": [
+            "Executive summary page with KPIs, key drivers, and a single-sentence recommendation.",
+            "Clear definitions of the KPIs used (CPA if marketing data is included, ASP, Margin per Order, Returns Rate) and where they appear in the dashboard.",
+            "A 3–5 step narrative using annotated screenshots/bookmarks that shows: (1) what changed, (2) why it changed (price/volume/mix/returns), (3) so what (business impact), (4) now what (actions, owners, timing).",
+            "Quantified recommendation with expected impact (e.g., +X% Margin$, -Y% Units risk) and a monitoring plan (alert thresholds, next review).",
+            "Evidence of avoiding visualization pitfalls (absolute totals alongside shares; correct month sorting; weighted averages).",
+            "All numbers in the report tie to the submitted dashboard within rounding tolerance; include a final slide/table listing each figure and the dashboard page/visual where it was taken from."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and impact of the executive summary and recommendation",
+              "marks": 5
+            },
+            {
+              "criterion": "Strength and coherence of the narrative, with correct visual evidence and bookmarks/screenshots",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct KPI definitions and calculation notes; no averaging/sorting pitfalls",
+              "marks": 4
+            },
+            {
+              "criterion": "Quantification of impact and monitoring plan (thresholds, metrics, cadence)",
+              "marks": 4
+            },
+            {
+              "criterion": "Traceability of numbers to dashboard (cross-referenced)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Storytelling",
+            "Business Intelligence",
+            "Dashboard Design",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

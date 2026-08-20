@@ -1,0 +1,1771 @@
+{
+  "course_code": "NT-C-002",
+  "course_name": "Java Full Stack",
+  "sections": [
+    {
+      "section_code": "NT-C-002-S01",
+      "skills_assessed": [
+        "Java",
+        "Object-Oriented Programming"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run the following program:\n```java\nimport java.util.Arrays;\n\npublic class Main {\n  public static void main(String[] args) {\n    int[] a = {1, 2, 3};\n    int i = 0;\n    int x = a[i++] + a[i++];\n    int y = a[i]++ + ++a[0];\n    System.out.println(x + \" \" + y + \" \" + Arrays.toString(a));\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n4 5 [2, 3, 4]\n```",
+            "```text\n4 6 [2, 3, 4]\n```",
+            "```text\n3 5 [2, 2, 4]\n```",
+            "```text\n3 6 [2, 2, 4]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "x = a[0] + a[1] = 1 + 2 = 3 (then i becomes 2). y = a[2]++ + ++a[0] = 3 + 2 = 5 while mutating: a[2] becomes 4 and a[0] becomes 2. Final array is [2, 2, 4].",
+          "distractor_rationale": "B: Assumes ++a[0] returns 3 instead of 2.\nC/D: Misapply pre/post increment on the correct elements or forget that a[i]++ mutates the array element, not i.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider Java's pass-by-value semantics:\n```java\npublic class Main {\n  static void f(String s) {\n    s = s.trim();\n  }\n  static void g(StringBuilder sb) {\n    sb.append(\"!\");\n    sb = new StringBuilder(\"hi\");\n  }\n  public static void main(String[] args) {\n    String s = \" hi \";\n    StringBuilder sb = new StringBuilder(\"hi\");\n    f(s);\n    g(sb);\n    System.out.println(s.length() + \" \" + sb.length());\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n4 3\n```",
+            "```text\n2 3\n```",
+            "```text\n2 2\n```",
+            "```text\n4 2\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "String is immutable and the reference is passed by value, so f cannot affect caller's s; length remains 4. StringBuilder is mutable, so appending inside g mutates the same object; reassigning sb only changes the local parameter; length becomes 3.",
+          "distractor_rationale": "A/B/D: Mix up String immutability with parameter reassignment, or assume sb reassignment affects caller reference.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Overload resolution with null:\n```java\npublic class Main {\n  static void m(Object o) { System.out.print(\"O\"); }\n  static void m(CharSequence c) { System.out.print(\"C\"); }\n  static void m(String s) { System.out.print(\"S\"); }\n  public static void main(String[] args) { m(null); }\n}\n```\nWhat happens and why?",
+          "options": [
+            "```text\nPrints S, because String is the most specific applicable overload.\n```",
+            "```text\nPrints O, because Object is chosen when null is passed.\n```",
+            "```text\nPrints C, because CharSequence is the nearest common supertype of null.\n```",
+            "```text\nCompilation error due to ambiguity among all three overloads.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "All three are applicable to null, but the most specific is m(String) because String is a subtype of CharSequence and Object. The most specific applicable overload is selected.",
+          "distractor_rationale": "B: CharSequence is a supertype of String, not more specific than String.\nC: Object is least specific.\nD: There is no ambiguity because String is strictly more specific than the other two.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given a custom type used in a HashSet:\n```java\nimport java.util.*;\n\nclass Point {\n  final int x, y;\n  Point(int x, int y) { this.x = x; this.y = y; }\n  @Override public boolean equals(Object o) {\n    if (!(o instanceof Point)) return false;\n    Point p = (Point) o;\n    return x == p.x && y == p.y;\n  }\n  // hashCode is NOT overridden\n}\n\npublic class Main {\n  public static void main(String[] args) {\n    Set<Point> s = new HashSet<>();\n    s.add(new Point(1,2));\n    s.add(new Point(1,2));\n    System.out.println(s.size() + \" \" + s.contains(new Point(1,2)));\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n2 true\n```",
+            "```text\n2 false\n```",
+            "```text\n1 false\n```",
+            "```text\n1 true\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Without a matching hashCode, equal Points likely land in different buckets so both inserts remain, size = 2. contains uses hashCode to find the bucket, so it fails to locate the equal object; returns false.",
+          "distractor_rationale": "A: Assumes HashSet uses equals alone; it also requires consistent hashCode.\nB: Assumes contains scans all buckets; it uses hashCode first.\nD: Inconsistent with allows-duplicate behavior already implied by missing hashCode.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider try-with-resources and suppressed exceptions:\n```java\nimport java.util.*;\n\nclass R implements AutoCloseable {\n  final int id;\n  R(int id) { this.id = id; }\n  public void close() { throw new RuntimeException(\"close \" + id); }\n}\n\npublic class Main {\n  public static void main(String[] args) {\n    try (R r1 = new R(1); R r2 = new R(2)) {\n      throw new RuntimeException(\"work\");\n    } catch (RuntimeException e) {\n      System.out.println(e.getMessage());\n      System.out.println(Arrays.toString(e.getSuppressed()));\n    }\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\nwork\n[java.lang.RuntimeException: close 2, java.lang.RuntimeException: close 1]\n```",
+            "```text\nclose 1\n[java.lang.RuntimeException: work, java.lang.RuntimeException: close 2]\n```",
+            "```text\nclose 2\n[java.lang.RuntimeException: work, java.lang.RuntimeException: close 1]\n```",
+            "```text\nwork\n[java.lang.RuntimeException: close 1, java.lang.RuntimeException: close 2]\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "The primary exception is from the try block (\"work\"). Resources are closed in reverse order (r2 then r1); their exceptions are suppressed on the primary in that order: close 2, then close 1.",
+          "distractor_rationale": "B/C: Assume a close exception becomes the primary.\nD: Gets suppression order wrong; closing is LIFO.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Stream reuse:\n```java\nimport java.util.stream.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    Stream<String> s = Stream.of(\"a\", \"b\");\n    long c1 = s.count();\n    try {\n      long c2 = s.filter(x -> true).count();\n      System.out.println(c1 + \",\" + c2);\n    } catch (IllegalStateException e) {\n      System.out.println(\"reused:\" + c1);\n    }\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n0,2\n```",
+            "```text\nreused:2\n```",
+            "```text\nreused:0\n```",
+            "```text\n2,2\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "A Stream cannot be consumed twice. After the first terminal operation (count), the second terminal operation throws IllegalStateException; the catch prints reused:2.",
+          "distractor_rationale": "A/C: Assume a Stream can be reused or that count resets the stream.\nD: Misunderstands c1 already computed as 2.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Short-circuit behavior and laziness with side effects:\n```java\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    List<Integer> nums = Arrays.asList(3, 2, 2, 1);\n    nums.stream()\n        .peek(System.out::print)\n        .filter(n -> n % 2 == 0)\n        .map(n -> { System.out.print(\"m\" + n); return n; })\n        .findFirst()\n        .ifPresent(System.out::print);\n  }\n}\n```\nWhat is printed (ignoring the trailing newline, if any)?",
+          "options": [
+            "```text\n322m2\n```",
+            "```text\n32m2\n```",
+            "```text\n3m22\n```",
+            "```text\n32m22\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "peek prints 3 (rejected by filter). Next element 2: peek prints 2; filter passes; map prints m2; findFirst returns 2 and terminates; ifPresent prints 2. Sequence: 3, 2, m2, 2 -> 32m22.",
+          "distractor_rationale": "B: Assumes map runs for 3; it does not pass the filter.\nC: Wrong order; map runs only after filter on the first passing element.\nD: Omits the final ifPresent print of 2.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Mutating arrays via enhanced for:\n```java\nimport java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    int[] a = {1, 2, 3};\n    for (int x : a) { x++; }\n    System.out.println(Arrays.toString(a));\n    for (int i = 0; i < a.length; i++) a[i]++;\n    System.out.println(Arrays.toString(a));\n  }\n}\n```\nWhat is printed?",
+          "options": [
+            "```text\n[2, 3, 4]\n[3, 4, 5]\n```",
+            "```text\n[1, 2, 3]\n[1, 2, 3]\n```",
+            "```text\n[2, 3, 4]\n[2, 3, 4]\n```",
+            "```text\n[1, 2, 3]\n[2, 3, 4]\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "The enhanced for assigns each element value to a local copy x, so x++ does not affect the array. The index-based loop mutates the array elements.",
+          "distractor_rationale": "A/D: Assume enhanced for mutates the array elements directly.\nC: Misses the second loop’s in-place increment.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Checked exceptions and overriding:\n```java\nimport java.io.*;\n\nclass A {\n  void f() throws IOException {}\n}\nclass B extends A {\n  @Override\n  void f() throws Exception {}\n}\n```\nWhat happens when compiling this code?",
+          "options": [
+            "```text\nCompiles; B.f may widen the checked exception to Exception.\n```",
+            "```text\nDoes not compile; B.f cannot declare a broader checked exception than A.f.\n```",
+            "```text\nDoes not compile; B.f must declare no throws clause at all.\n```",
+            "```text\nCompiles; throws clauses are not part of the method signature.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "An overriding method cannot declare new or broader checked exceptions than the method it overrides. Exception is broader than IOException, so the code fails to compile.",
+          "distractor_rationale": "A/C: Misunderstand checked exception rules on overrides.\nD: Overly strict; B.f may declare the same or a narrower checked exception.",
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Collectors.toMap with duplicate keys:\n```java\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    List<String> cities = Arrays.asList(\"LA\", \"NY\", \"la\");\n    Map<Character,String> m = cities.stream()\n        .collect(Collectors.toMap(\n            s -> Character.toLowerCase(s.charAt(0)),\n            s -> s));\n    System.out.println(m);\n  }\n}\n```\nWhat happens at runtime?",
+          "options": [
+            "```text\nPrints {l=la, n=NY} because later values overwrite earlier ones by default.\n```",
+            "```text\nPrints {l=LA, n=NY} because first values win by default.\n```",
+            "```text\nThrows IllegalStateException due to duplicate key 'l'.\n```",
+            "```text\nThrows NullPointerException because the key function can return duplicate characters.\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "toMap without a merge function throws IllegalStateException when a duplicate key is encountered. Both \"LA\" and \"la\" map to 'l'.",
+          "distractor_rationale": "B/C: Incorrect belief that toMap overwrites or keeps first by default; it requires an explicit merge function.\nD: Duplicate keys do not cause NPE; they trigger the duplicate-key IllegalStateException.",
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You inherited a method that computes the average of integers from a text file, one value per line. It intermittently throws NumberFormatException due to blank lines and sometimes keeps the file locked on Windows, preventing deletion after the run.\n```java\nimport java.nio.file.*;\nimport java.util.stream.*;\n\npublic double avg(Path p) throws Exception {\n  Stream<String> lines = Files.lines(p);\n  double result = lines\n      .map(Integer::parseInt) // crashes on blanks\n      .mapToInt(i -> i)\n      .average()\n      .orElseThrow(() -> new IllegalStateException(\"no data\"));\n  // later code tries to delete the file here and fails on Windows\n  return result;\n}\n```\nThe file may contain blanks, extra spaces, or comment lines starting with '#'. Deletions after computing the average must succeed on all platforms.",
+          "task": "Propose a corrected implementation and justify your choices. Your answer must address: safe resource management, robust parsing rules, and what happens if the file has no valid numbers. Provide the code and explain why your design fixes the observed issues.",
+          "expected_answer": "Key points:\n- Use try-with-resources so the stream (and underlying file channel) is closed deterministically before any deletion attempt.\n- Preprocess lines by trimming, skipping blanks and comment lines; handle NumberFormatException locally by filtering.\n- Decide the empty-case contract; e.g., throw IllegalStateException with a clear message.\nExample:\n```java\nimport java.nio.file.*;\nimport java.util.stream.*;\n\npublic double avg(Path p) throws Exception {\n  try (Stream<String> lines = Files.lines(p)) {\n    return lines\n        .map(String::trim)\n        .filter(s -> !s.isEmpty())\n        .filter(s -> !s.startsWith(\"#\"))\n        .mapToInt(s -> {\n          try { return Integer.parseInt(s); }\n          catch (NumberFormatException e) { return Integer.MIN_VALUE; }\n        })\n        .filter(v -> v != Integer.MIN_VALUE)\n        .average()\n        .orElseThrow(() -> new IllegalStateException(\"no valid numbers\"));\n  }\n}\n```\nRationale: try-with-resources closes the stream before returning; parsing is robust to blanks, spaces, and comments; invalid lines are skipped; the empty-case behavior is explicit.",
+          "rubric": [
+            {
+              "criterion": "Uses try-with-resources (or equivalent) to ensure Files.lines is closed before return",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly filters out blanks/comments and trims input",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids propagating NumberFormatException from bad lines while still parsing valid lines",
+              "marks": 2
+            },
+            {
+              "criterion": "Clearly defines and implements behavior for no valid numbers (e.g., throws) and justifies it",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A deduplication job reads millions of Order objects and inserts them into a HashSet to remove duplicates before further processing. The job's memory usage grows unexpectedly and the output still contains duplicates with the same id and timestamp.\n```java\nimport java.util.*;\nclass Order {\n  final String id; final long ts; final String payload;\n  Order(String id, long ts, String payload) { this.id=id; this.ts=ts; this.payload=payload; }\n  @Override public boolean equals(Object o) {\n    if (!(o instanceof Order)) return false;\n    Order other = (Order)o;\n    return Objects.equals(id, other.id) && ts == other.ts; // duplicates defined by (id, ts)\n  }\n  // hashCode not overridden\n}\n\nSet<Order> unique = new HashSet<>();\n// stream of orders ... each added to 'unique'\n```\nThe team also needs iteration order to match insertion order for downstream reconciliation logs.",
+          "task": "Diagnose the bug precisely and propose a fix that meets both deduplication semantics and the insertion-order requirement. Provide code and justify why your changes solve both problems without adding unnecessary overhead.",
+          "expected_answer": "Bug: equals is overridden but hashCode is not, violating the general contract used by hash-based collections; equal objects may occupy different buckets, causing duplicates and poor performance.\nFix: Implement a consistent hashCode using the same fields as equals; choose LinkedHashSet to preserve insertion order.\nExample:\n```java\nclass Order {\n  final String id; final long ts; final String payload;\n  Order(String id, long ts, String payload) { this.id=id; this.ts=ts; this.payload=payload; }\n  @Override public boolean equals(Object o) {\n    if (this == o) return true;\n    if (!(o instanceof Order)) return false;\n    Order other = (Order)o;\n    return ts == other.ts && Objects.equals(id, other.id);\n  }\n  @Override public int hashCode() {\n    return Objects.hash(id, ts);\n  }\n}\n\nSet<Order> unique = new LinkedHashSet<>();\n```\nJustification: equals/hashCode consistency ensures logical duplicates collide and one is retained; LinkedHashSet preserves insertion order with minimal extra overhead versus HashSet.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies equals/hashCode contract violation as root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct, consistent hashCode aligned with equals",
+              "marks": 2
+            },
+            {
+              "criterion": "Selects an appropriate collection to preserve insertion order (e.g., LinkedHashSet) and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Considers performance/overhead and shows the fix does not introduce unnecessary costs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are designing a small value type Range [start, end] for integers to be stored in sets and used as map keys. Constraints: start <= end; the type must be immutable; equality is by value (start and end). The API should offer contains(int) and a mergeIfOverlapping(Range other) method that returns an Optional<Range> merged range when overlapping or adjacent, or Optional.empty otherwise.",
+          "task": "Propose the class design and key methods. Show code for the class, equals/hashCode, contains, and mergeIfOverlapping. Explain how your design enforces immutability and the start <= end invariant, and how it behaves in collections.",
+          "expected_answer": "A compact immutable value object with final fields, defensive checks in constructor, and value-based equals/hashCode. Example:\n```java\nimport java.util.*;\n\npublic final class Range {\n  private final int start;\n  private final int end;\n  public Range(int start, int end) {\n    if (start > end) throw new IllegalArgumentException(\"start > end\");\n    this.start = start; this.end = end;\n  }\n  public int start() { return start; }\n  public int end() { return end; }\n  public boolean contains(int x) { return x >= start && x <= end; }\n  public Optional<Range> mergeIfOverlapping(Range other) {\n    if (other == null) throw new NullPointerException(\"other\");\n    if (other.end < this.start - 0 || other.start > this.end + 0) {\n      // not overlapping or adjacent\n      if (other.end < this.start - 1 || other.start > this.end + 1) return Optional.empty();\n    }\n    // Overlap or adjacency: [minStart, maxEnd]\n    int ns = Math.min(this.start, other.start);\n    int ne = Math.max(this.end, other.end);\n    if (other.end < this.start - 1 || other.start > this.end + 1) return Optional.empty();\n    return Optional.of(new Range(ns, ne));\n  }\n  @Override public boolean equals(Object o) {\n    if (this == o) return true;\n    if (!(o instanceof Range)) return false;\n    Range r = (Range)o;\n    return start == r.start && end == r.end;\n  }\n  @Override public int hashCode() { return Objects.hash(start, end); }\n  @Override public String toString() { return \"[\"+start+\",\"+end+\"]\"; }\n}\n```\nNotes: final class + final fields ensures immutability; constructor enforces invariant; equals/hashCode support proper behavior in sets/maps; merge considers adjacency (e.g., [1,3] and [4,5]) as mergeable.",
+          "rubric": [
+            {
+              "criterion": "Immutability enforced (final class or non-extensible state, final fields, no setters)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct invariant enforcement (start <= end) in constructor",
+              "marks": 1
+            },
+            {
+              "criterion": "Value-based equals/hashCode consistent with start/end",
+              "marks": 2
+            },
+            {
+              "criterion": "contains and mergeIfOverlapping semantics correct and explained (including adjacency)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You must compute the top K most frequent words from a large UTF-8 text file that may not fit in memory if fully loaded. The output must list words lowercased, excluding lines starting with '#', and ties broken by lexicographic order. The current attempt reads all lines into a List<String> and sorts it repeatedly, causing memory pressure and slow performance.",
+          "task": "Propose an approach using the Java streams API and collections that is memory-conscious and efficient. Provide code for a method topK(Path file, int k) that returns List<Map.Entry<String,Long>> containing the top k, and justify how your approach avoids the current pitfalls.",
+          "expected_answer": "Stream the file line-by-line, normalize, filter comments, split into tokens, and update a mutable frequency map, or use groupingBy with a downstream counting collector. Then select top k via a bounded heap or sort only the entries. Example (simple and acceptable for k << distinct words):\n```java\nimport java.nio.file.*;\nimport java.util.*;\nimport java.util.function.*;\nimport java.util.stream.*;\n\npublic static List<Map.Entry<String,Long>> topK(Path file, int k) throws Exception {\n  Map<String, Long> freq;\n  try (Stream<String> lines = Files.lines(file)) {\n    freq = lines\n      .filter(s -> !s.startsWith(\"#\"))\n      .flatMap(s -> Arrays.stream(s.toLowerCase().split(\"\\\\W+\")))\n      .filter(w -> !w.isEmpty())\n      .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));\n  }\n  return freq.entrySet().stream()\n      .sorted(Comparator\n        .comparing(Map.Entry<String,Long>::getValue).reversed()\n        .thenComparing(Map.Entry::getKey))\n      .limit(k)\n      .collect(Collectors.toList());\n}\n```\nJustification: Files.lines streams without loading the entire file; groupingBy + counting builds only the frequency map; final sort occurs over distinct words only; limit(k) ensures we materialize at most k results after sorting.",
+          "rubric": [
+            {
+              "criterion": "Processes file as a stream without loading all lines at once (e.g., Files.lines in try-with-resources)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct normalization/filtering (lowercase, exclude comments, tokenization)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct frequency aggregation using collections/streams",
+              "marks": 2
+            },
+            {
+              "criterion": "Top-k selection with correct ordering and reasoning about efficiency",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Array-based Sudoku Validator (console program)",
+          "brief": "Build a console program that reads a 9x9 Sudoku grid from standard input and validates it. Input format: nine lines, each with nine digits 0–9 (0 means empty). The program must print either VALID if all filled cells obey Sudoku rules, or INVALID plus the first violation found in the form ROW r, COL c, or BOX b (boxes numbered 1–9, left-to-right, top-to-bottom). Use arrays, control flow, and methods; do not rely on external libraries.",
+          "deliverable": "A compilable Java project with a Main class that reads from stdin and prints the validation result. Include a README with exact run instructions and 3 sample inputs with expected outputs.",
+          "acceptance_criteria": [
+            "Reads exactly 9 lines of input; rejects malformed input (non-digits, wrong length) with a clear error message and exits non-zero.",
+            "Implements validation via separate methods: validateRows, validateCols, validateBoxes, each returning a boolean and/or an error descriptor.",
+            "Prints VALID when all rules hold; otherwise prints INVALID and the first violation encountered deterministically (documented order: rows, then columns, then boxes).",
+            "Uses only arrays and core Java (no collections required); uses loops and methods appropriately.",
+            "Program exits with status code 0 on VALID and non-zero on INVALID or malformed input."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct parsing and input validation (9 lines, digits, proper handling of malformed input)",
+              "marks": 5
+            },
+            {
+              "criterion": "Row/column/box validation logic correctness (including detection of duplicates ignoring zeros)",
+              "marks": 7
+            },
+            {
+              "criterion": "Clear, deterministic error reporting format and exit codes",
+              "marks": 4
+            },
+            {
+              "criterion": "Code organization: methods for each validator; readable, idiomatic control flow and array usage",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Java"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Mini Library Catalog (tested Java application)",
+          "brief": "Implement a small in-memory library system with OOP, collections, exceptions, and streams. Model Book(id, title, author, year) and Library with operations: addBook, removeBook, findByTitle(query), listAvailableSorted(), borrow(id), returnBook(id). Throw DuplicateBookException on duplicate id add; BookNotFoundException on missing id; BookNotAvailableException when borrowing a checked-out book. Provide a simple TestRunner with deterministic assertions that exercises these behaviors and prints a summary.",
+          "deliverable": "A compilable Java project containing domain classes, custom exceptions, a Library class using collections and streams, and a TestRunner main that runs at least 8 tests and prints a final line ALL TESTS PASSED or lists failures.",
+          "acceptance_criteria": [
+            "Book is a proper value type for identity by id: overrides equals/hashCode based on id only; immutable fields for id/title/author/year.",
+            "Library stores books in a Map<String,Book> and tracks availability; duplicate add triggers DuplicateBookException; remove deletes by id; borrow/return toggle availability with correct exceptions.",
+            "findByTitle(query) returns List<Book> of books whose title contains query case-insensitively, using streams; listAvailableSorted() returns available books sorted by title then id, using streams.",
+            "TestRunner executes at least 8 independent tests covering: add duplicate, borrow success, borrow unavailable, return success, return missing, remove missing, search by title (case-insensitive), and sorted listing. It prints PASS/FAIL per test and a final summary line.",
+            "No external libraries; standard Java only. Include a README with build/run instructions and sample output from TestRunner."
+          ],
+          "rubric": [
+            {
+              "criterion": "Domain modeling and immutability (Book fields, equals/hashCode by id)",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct exception design and enforcement in Library operations",
+              "marks": 6
+            },
+            {
+              "criterion": "Use of collections and streams to implement find/sort requirements",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality and completeness of the TestRunner (>=8 tests, deterministic assertions, clear summary)",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-002-S02",
+      "skills_assessed": [
+        "SQL",
+        "Database Design",
+        "JavaScript",
+        "React",
+        "Responsive Design"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You need a list of all customers who have no PAID orders, even if they have orders in other statuses.\n\nSchema:\n```sql\nCREATE TABLE customers (\n  id INT PRIMARY KEY,\n  name TEXT\n);\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  status TEXT NOT NULL,\n  amount DECIMAL(10,2) NOT NULL,\n  FOREIGN KEY (customer_id) REFERENCES customers(id)\n);\n```\nWhich query returns exactly those customers with zero PAID orders?\n",
+          "options": [
+            "```sql\nSELECT c.id\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id AND o.status = 'PAID'\nWHERE o.id IS NULL;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.id AND o.status = 'PAID'\n) AND EXISTS (\n  SELECT 1 FROM orders o2\n  WHERE o2.customer_id = c.id\n);\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id\nWHERE o.status <> 'PAID' OR o.status IS NULL\nGROUP BY c.id;\n```",
+            "```sql\nSELECT c.id\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.id\n);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Anti-join via LEFT JOIN ... WHERE o.id IS NULL after filtering o.status='PAID' in the JOIN returns customers with zero matching paid rows regardless of other statuses. It includes customers with unpaid/pending orders but none that are PAID.",
+          "distractor_rationale": "B: Tempting because it includes NULLs, but it also includes customers that do have PAID orders if they also have any non-PAID order; those paid rows are filtered, but the non-PAID rows remain, incorrectly including such customers.\nC: Excludes customers that have any orders at all, even if none are PAID, which is too strict.\nD: Adds EXISTS forcing only customers that have at least one order (any status), excluding customers with no orders. The requirement does not exclude customers with no orders; they should be included as having zero PAID orders.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Orders table:\n```sql\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  status TEXT NOT NULL, -- 'PAID','PENDING','CANCELLED'\n  amount DECIMAL(10,2) NOT NULL,\n  order_date DATE NOT NULL\n);\n```\nReturn customer_ids that, in 2025, placed at least two orders with amount >= 100, and had zero CANCELLED orders (in 2025). Which query correctly enforces both conditions?\n",
+          "options": [
+            "```sql\nSELECT customer_id\nFROM orders\nWHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'\n  AND amount >= 100 AND status <> 'CANCELLED'\nGROUP BY customer_id\nHAVING COUNT(*) >= 2;\n```",
+            "```sql\nSELECT DISTINCT customer_id\nFROM orders\nWHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'\n  AND amount >= 100\nINTERSECT\nSELECT customer_id\nFROM orders\nWHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'\n  AND status <> 'CANCELLED';\n```",
+            "```sql\nSELECT customer_id\nFROM orders\nWHERE status <> 'CANCELLED'\n  AND order_date >= '2025-01-01' AND order_date < '2026-01-01'\nGROUP BY customer_id\nHAVING COUNT(*) >= 2 AND SUM(CASE WHEN amount >= 100 THEN 1 ELSE 0 END) >= 2;\n```",
+            "```sql\nSELECT customer_id\nFROM orders\nWHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'\nGROUP BY customer_id\nHAVING SUM(CASE WHEN amount >= 100 THEN 1 ELSE 0 END) >= 2\n   AND SUM(CASE WHEN status = 'CANCELLED' THEN 1 ELSE 0 END) = 0;\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Option A applies both constraints in HAVING within the 2025 slice: counts orders with amount >= 100 and separately ensures zero CANCELLED orders. B drops CANCELLED rows in WHERE, thereby ignoring their existence when enforcing the \"zero CANCELLED\" constraint. C does not enforce at least two qualifying orders. D fails because it removes cancelled rows in WHERE and counts only amount>=100 rows, ignoring cancelled presence.",
+          "distractor_rationale": "B: Common mistake—filtering out CANCELLED in WHERE prevents you from knowing if any existed.\nC: INTERSECT ensures at least one non-cancelled order and at least one >= 100 order but not two such orders.\nD: Requires ≥2 non-cancelled orders ≥100 but ignores whether any cancelled orders also occurred that year.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You need a case-insensitive prefix search on `products(name)` that can use an index. Current query and index:\n```sql\n-- current index\nCREATE INDEX idx_products_name ON products(name);\n\n-- current query\nSELECT id, name FROM products WHERE LOWER(name) LIKE LOWER(?) || '%';\n```\nWhich change makes the query sargable with an index on the expression?\n",
+          "options": [
+            "```sql\n-- Create a trigram index; prefix search will always use it\nCREATE INDEX idx_products_trgm ON products USING gin (name gin_trgm_ops);\nSELECT id, name FROM products WHERE LOWER(name) LIKE ? || '%';\n```",
+            "```sql\n-- Create a functional index and keep the predicate on the same expression\nCREATE INDEX idx_products_lower_name ON products(LOWER(name));\n-- Then\nSELECT id, name FROM products WHERE LOWER(name) LIKE ? || '%';\n```",
+            "```sql\n-- Keep the existing index, move LOWER to the right hand side only\nSELECT id, name FROM products WHERE name LIKE LOWER(?) || '%';\n```",
+            "```sql\n-- Use ILIKE so the index will be used automatically\nSELECT id, name FROM products WHERE name ILIKE ? || '%';\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Applying the same deterministic function to the indexed column and the predicate makes it sargable. A functional index on LOWER(name) can be used when the WHERE clause is on LOWER(name) with a prefix. The RHS should not wrap the parameter with LOWER once the parameter is already lowercased before binding, but the index match is on the LHS expression.",
+          "distractor_rationale": "B: Moving LOWER only to the RHS keeps a mismatched expression on the column; most engines cannot use idx_products_name for case-insensitive search.\nC: ILIKE may still prevent a B-tree index from being used unless the collation and engine support it specially; the generic case is not sargable without a matching functional index.\nD: Trigram GIN can help contains searches, but for pure prefix lookups a simple B-tree on LOWER(name) is better and supported; also the LHS still mismatches the index expression here.",
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "React component in production build (no StrictMode dev double-invoke). What happens?\n```jsx\nfunction List() {\n  const [items, setItems] = React.useState([]);\n\n  React.useEffect(() => {\n    // fetchData returns a new array each time\n    fetchData().then(data => setItems(data));\n  }, [items]);\n\n  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>;\n}\n```\n",
+          "options": [
+            "The effect runs twice only on mount due to React 18 behavior, then stabilizes.",
+            "It throws because setItems cannot be called inside useEffect.",
+            "The effect runs on every render causing an infinite loop of fetching.",
+            "The effect runs once after mount and then never again."
+          ],
+          "correct_option": "C",
+          "explanation": "`items` is in the dependency list. The effect sets `items`, which triggers a render, which triggers the effect again. Since `fetchData` resolves to a new array reference each time, the state keeps changing, looping indefinitely.",
+          "distractor_rationale": "A: Would be true if the dependency array were `[]`, not `[items]`.\nB: Conflates dev StrictMode double-invoke with production behavior; here the dependency ensures a loop regardless of StrictMode.\nD: Calling setState in useEffect is valid; the problem is the dependency cycle, not the call site.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "What is the console output order?\n```javascript\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');\n```\n",
+          "options": [
+            "A D B C",
+            "A D C B",
+            "A C D B",
+            "C A D B"
+          ],
+          "correct_option": "B",
+          "explanation": "Synchronous logs run first: A, D. Microtasks (Promise then) run after the current call stack: C. Macrotasks (setTimeout 0) run after microtasks: B. So A, D, C, B.",
+          "distractor_rationale": "A: Swaps microtask and macrotask order.\nB: Suggests promise then runs before the second sync log, which is false.\nD: Implies microtask runs before initial sync, which is impossible.",
+          "skills_covered": [
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Given:\n```html\n<p class=\"lead\" id=\"title\">Hello</p>\n```\n```css\np { font-size: 14px; }\n#title { font-size: 18px; }\n@media (max-width: 480px) {\n  .lead { font-size: 12px; }\n}\n```\nOn a 400px-wide screen, what font-size applies to the paragraph?\n",
+          "options": [
+            "18px, because the id selector has higher specificity than the class rule in the media query.",
+            "It is undefined due to conflicting rules in the cascade.",
+            "12px, because the media query overrides other rules at small widths.",
+            "14px, because the base element selector is defined first."
+          ],
+          "correct_option": "A",
+          "explanation": "At 400px the media query is active, but specificity still controls precedence. `#title` (id) outranks `.lead` (class), so 18px applies.",
+          "distractor_rationale": "A: Media queries do not change specificity; they only gate applicability.\nB: Source order only matters when specificities tie; here they do not.\nD: The cascade deterministically resolves to the most specific matching rule.",
+          "skills_covered": [
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A list with editable inputs:\n```jsx\nfunction Users({ initial }) {\n  const [users, setUsers] = React.useState(initial);\n  return (\n    <ul>\n      {users.map((u, i) => (\n        <li key={i}>\n          <input value={u.name} onChange={e => {\n            const copy = users.slice();\n            copy[i] = { ...u, name: e.target.value };\n            setUsers(copy);\n          }} />\n          <button onClick={() => setUsers(users.filter(x => x.id !== u.id))}>Delete</button>\n        </li>\n      ))}\n    </ul>\n  );\n}\n```\nAfter typing in the third input and then deleting the second user, what bug is most likely observed?\n",
+          "options": [
+            "The third input clears because React re-mounts the list.",
+            "All inputs lose focus but keep their text.",
+            "The third input keeps its text correctly.",
+            "The third input's text jumps to the second row (now occupying index 1)."
+          ],
+          "correct_option": "D",
+          "explanation": "Using the index as the key causes keys to shift on deletion. React reuses DOM nodes for subsequent items, so the controlled input for the third user becomes associated with the second user's data, making the typed text appear on the wrong row.",
+          "distractor_rationale": "A: Would be true with stable keys (e.g., `key={u.id}`), not with index keys.\nB: React tries to preserve DOM elements when keys are reused; it does not unconditionally re-mount everything.\nD: Focus behavior may change, but the salient bug is state (and input value) jumping rows due to unstable keys.",
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Pick the query that deterministically selects exactly one latest order per customer (ties by `order_date` broken by highest `id`).\n```sql\nCREATE TABLE orders(\n  id INT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  order_date DATE NOT NULL\n);\n```\n",
+          "options": [
+            "```sql\nSELECT o.*\nFROM (\n  SELECT *, RANK() OVER(\n    PARTITION BY customer_id\n    ORDER BY order_date DESC\n  ) AS r\n  FROM orders\n) o\nWHERE o.r = 1;\n```",
+            "```sql\nSELECT DISTINCT ON (customer_id) *\nFROM orders\nORDER BY customer_id, order_date DESC;\n```",
+            "```sql\nSELECT o.*\nFROM (\n  SELECT *, ROW_NUMBER() OVER(\n    PARTITION BY customer_id\n    ORDER BY order_date DESC, id DESC\n  ) AS rn\n  FROM orders\n) o\nWHERE o.rn = 1;\n```",
+            "```sql\nSELECT o.*\nFROM orders o\nJOIN (\n  SELECT customer_id, MAX(order_date) AS d\n  FROM orders\n  GROUP BY customer_id\n) m ON m.customer_id = o.customer_id AND m.d = o.order_date;\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "ROW_NUMBER with a secondary sort on id ensures exactly one row per customer with deterministic tie-breaking. B returns all tied rows when dates tie. C with RANK returns all ties. D is non-standard (PostgreSQL-specific) and still lacks secondary tie-breaker on id as written.",
+          "distractor_rationale": "B: Overlooks ties; duplicates may return.\nC: RANK allows multiple rows with rank 1 on ties.\nD: Vendor-specific and missing the id tie-breaker; also non-portable for general SQL competence.",
+          "skills_covered": [
+            "SQL"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You must prevent duplicate course enrollments per student per term. Which DDL enforces the rule while allowing the same student to enroll in the same course again in a different term?\n```sql\n-- columns: enrollments(id, student_id, course_id, term_id)\n```\n",
+          "options": [
+            "```sql\nALTER TABLE enrollments ADD CONSTRAINT uq UNIQUE(student_id, course_id, term_id);\n```",
+            "```sql\nCREATE UNIQUE INDEX uq ON enrollments(id, student_id, course_id, term_id);\n```",
+            "```sql\nALTER TABLE enrollments ADD CONSTRAINT uq UNIQUE(student_id, course_id);\n```",
+            "```sql\nALTER TABLE enrollments ADD CONSTRAINT uq UNIQUE(course_id, term_id);\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Uniqueness across the triple (student, course, term) prevents duplicates within a term but allows repeats in different terms.",
+          "distractor_rationale": "A: Blocks repeats across all terms, which is too restrictive.\nC: Allows the same student to enroll multiple times in the same course in the same term, which violates the rule.\nD: Includes `id` in the uniqueness, which makes the unique index ineffective for preventing logical duplicates because `id` is already unique.",
+          "skills_covered": [
+            "Database Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A React search box should return products whose names start with the query (case-insensitive) and leverage an index. Current backend uses:\n```sql\nSELECT id, name FROM products WHERE name LIKE '%' || ? || '%';\n```\nWhich change best matches the UI requirement and improves performance with proper indexing?\n",
+          "options": [
+            "```sql\n-- Keep contains but limit rows\nSELECT id, name FROM products WHERE name LIKE '%' || ? || '%' LIMIT 50;\n```",
+            "```sql\n-- Switch to prefix search with a functional index\nCREATE INDEX idx_lower_name ON products(LOWER(name));\nSELECT id, name FROM products WHERE LOWER(name) LIKE LOWER(?) || '%';\n```",
+            "```sql\n-- Keep LIKE contains but add an index on name\nCREATE INDEX idx_name ON products(name);\n```",
+            "```sql\n-- Use REGEXP for starts-with; regex is faster\nSELECT id, name FROM products WHERE name REGEXP '^' || ?;\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Prefix search on the same expression as a functional index (LOWER(name)) is sargable and uses the index. It aligns with the UI's starts-with semantics and is typically much faster than a contains search.",
+          "distractor_rationale": "A: A B-tree on name won't help case-insensitive matching if the predicate applies LOWER(name), and contains search prevents index usage.\nC: Regex is not inherently faster and typically cannot use a B-tree; also non-portable.\nD: LIMIT reduces result size but not the scan cost and still mismatches UI semantics (contains vs prefix).",
+          "skills_covered": [
+            "SQL",
+            "React"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A dashboard shows per-customer revenue for the last 90 days. Current query is slow at ~2.5s on 2M orders. Schema:\n```sql\nCREATE TABLE customers(\n  id INT PRIMARY KEY,\n  created_at TIMESTAMP\n);\nCREATE TABLE orders(\n  id BIGINT PRIMARY KEY,\n  customer_id INT NOT NULL,\n  status TEXT NOT NULL,\n  amount_cents INT NOT NULL,\n  placed_at TIMESTAMP NOT NULL,\n  FOREIGN KEY (customer_id) REFERENCES customers(id)\n);\nCREATE INDEX idx_orders_customer ON orders(customer_id);\nCREATE INDEX idx_orders_placed_at ON orders(placed_at);\n```\nExisting query and plan excerpt:\n```sql\nSELECT c.id, COALESCE(SUM(o.amount_cents),0) AS revenue\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id\nWHERE o.placed_at >= NOW() - INTERVAL '90 days'\n  AND o.status = 'PAID'\nGROUP BY c.id;\n```\n```text\nPlan (simplified): Filter on orders, Seq Scan orders (status='PAID'), Hash Join to customers, GroupAggregate\n```\n",
+          "task": "Propose a concrete rewrite and indexing strategy that brings execution under 200ms. Explain why your changes help, referencing join order, predicate placement, and index usage. Provide the exact SQL you would deploy (index DDL and query).",
+          "expected_answer": "- Move filters on orders into the JOIN and make the join a LEFT JOIN that preserves customers without qualifying orders. This enables pushing down predicates before the join and reduces joined rows.\n- Add a composite index on orders to match the filter and grouping path, e.g., (status, placed_at, customer_id) or (placed_at, status, customer_id) depending on engine selectivity. If most orders are not PAID, starting with status can be best; if the 90-day slice is highly selective, leading with placed_at can be better. Include customer_id in the index so the join and grouping can use the index without extra lookups.\n- Revised SQL:\n```sql\nCREATE INDEX IF NOT EXISTS idx_orders_paid_90 ON orders(status, placed_at, customer_id);\n\nSELECT c.id,\n       COALESCE(SUM(o.amount_cents), 0) AS revenue\nFROM customers c\nLEFT JOIN orders o\n  ON o.customer_id = c.id\n AND o.status = 'PAID'\n AND o.placed_at >= NOW() - INTERVAL '90 days'\nGROUP BY c.id;\n```\n- Rationale: The left-join predicate placement prevents eliminating customers. The composite index allows an index range scan over the recent PAID orders and produces rows pre-ordered by (status, placed_at, customer_id), reducing scanned rows to only those in the 90-day window and using the index to locate rows for each customer efficiently. The engine can start with the orders index scan and hash-aggregate per customer, or it can hash customers then probe orders via the composite index. Both avoid a full orders scan, delivering sub-200ms on typical cardinalities.",
+          "rubric": [
+            {
+              "criterion": "Places order predicates in JOIN and keeps LEFT JOIN semantics correct",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a composite index with justified column order matching filters",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct, executable SQL (index DDL and rewritten query)",
+              "marks": 2
+            },
+            {
+              "criterion": "Performance reasoning: explains reduction in scanned rows and join/aggregation impact",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A React counter with an interval drifts and sometimes skips updates after fast interactions:\n```jsx\nfunction Counter() {\n  const [count, setCount] = React.useState(0);\n  React.useEffect(() => {\n    const id = setInterval(() => {\n      setCount(count + 1);\n    }, 1000);\n    window.addEventListener('visibilitychange', () => {\n      if (document.hidden) console.log('hidden at', count);\n    });\n    return () => {\n      clearInterval(id);\n      window.removeEventListener('visibilitychange', () => {});\n    };\n  }, []);\n  return <div>{count}</div>;\n}\n```\nIn production, the number increments inconsistently and the visibility log prints stale values.",
+          "task": "Diagnose the precise cause of the bugs and propose a minimal, correct fix. Your answer must include the corrected code for the effect and a justification that references closures, dependencies, and cleanup symmetry.",
+          "expected_answer": "- Cause: The interval callback closes over the initial `count` (0) because the effect runs once with `[]`. Each tick calls `setCount(count + 1)` using the stale value. React batches updates and external interactions can exacerbate drift.\n- The visibilitychange listener also closes over stale `count` and the removeEventListener uses a different function reference, so it never unsubscribes.\n- Fix: Use the functional form of setState to avoid stale closures, and hoist stable handler references for add/remove. Example:\n```jsx\nfunction Counter() {\n  const [count, setCount] = React.useState(0);\n\n  React.useEffect(() => {\n    const id = setInterval(() => {\n      setCount(c => c + 1); // functional update uses latest state\n    }, 1000);\n\n    const onVis = () => {\n      // read latest via state updater or a ref\n      console.log('hidden at', document.hidden);\n    };\n    window.addEventListener('visibilitychange', onVis);\n\n    return () => {\n      clearInterval(id);\n      window.removeEventListener('visibilitychange', onVis);\n    };\n  }, []);\n}\n```\n- Justification: Functional updates remove the need to include `count` in the dependency array, avoiding re-creating the interval each render while still using the latest value. Matching function references ensure cleanup symmetry. Alternatively, if logging the latest count is required, store count in a ref inside setCount, or include `count` in deps and recreate interval/listener with proper cleanup.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies stale closure over `count` as the root cause for both issues",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why removeEventListener failed and proposes stable handler cleanup",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides corrected effect code that uses functional updates and proper cleanup",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies dependency choices (why `[]` is acceptable with functional updates or how to use deps with cleanup)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "JavaScript"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A product list UI must filter by tags. Current schema stores CSV tags in a single column:\n```sql\nCREATE TABLE products(\n  id INT PRIMARY KEY,\n  name TEXT NOT NULL,\n  tags TEXT -- e.g., 'red,summer,clearance'\n);\n```\nThe UI needs: filter by multiple tags (AND semantics), fast counts per tag, and tag rename without scanning all products. The current \"LIKE '%tag%'\" approach is too slow and inaccurate (substring collisions).",
+          "task": "Propose a normalized schema and migration that supports the UI requirements. Provide DDL, a migration strategy to backfill tags, and an example query to fetch products that match ALL of ['red','summer'] with an index strategy. Briefly note one necessary React change to render and filter with the new shape.",
+          "expected_answer": "- Normalized schema:\n```sql\nCREATE TABLE tags(\n  id SERIAL PRIMARY KEY,\n  name TEXT NOT NULL UNIQUE\n);\nCREATE TABLE product_tags(\n  product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,\n  tag_id INT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,\n  PRIMARY KEY (product_id, tag_id)\n);\nCREATE INDEX idx_product_tags_tag ON product_tags(tag_id, product_id);\n```\n- Migration/backfill:\n  1) Create `tags` and `product_tags`.\n  2) For each row `products.tags`, split on comma, TRIM, INSERT INTO tags(name) ON CONFLICT DO NOTHING; then INSERT INTO product_tags(product_id, tag_id) using the looked-up tag id.\n  3) After verification, drop or deprecate `products.tags`.\n- Query for products that have ALL of ['red','summer']:\n```sql\nWITH wanted AS (\n  SELECT id FROM tags WHERE name IN ('red','summer')\n), matched AS (\n  SELECT pt.product_id\n  FROM product_tags pt\n  JOIN wanted w ON w.id = pt.tag_id\n  GROUP BY pt.product_id\n  HAVING COUNT(DISTINCT pt.tag_id) = (SELECT COUNT(*) FROM wanted)\n)\nSELECT p.* FROM products p JOIN matched m ON m.product_id = p.id;\n```\n- Counts per tag:\n```sql\nSELECT t.name, COUNT(pt.product_id) AS product_count\nFROM tags t LEFT JOIN product_tags pt ON pt.tag_id = t.id\nGROUP BY t.id;\n```\n- React change: treat tags as an array of ids/names per product and drive filters from a selected-tags set, issuing an AND match query or client-side intersection on pre-fetched tag ids. Rendering chips now maps over normalized tags rather than parsing CSV.",
+          "rubric": [
+            {
+              "criterion": "Provides correct many-to-many schema (junction table, uniqueness)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a viable backfill/migration path from CSV to normalized form",
+              "marks": 2
+            },
+            {
+              "criterion": "Gives a correct ALL-tags matching query and appropriate indexes",
+              "marks": 2
+            },
+            {
+              "criterion": "Notes a concrete React adjustment to state/props for normalized tags",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Database Design",
+            "SQL",
+            "React"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A responsive card grid layout breaks on small phones (cards overflow). Current markup and CSS:\n```html\n<div class=\"grid\">\n  <article class=\"card\">...</article>\n  <!-- many cards -->\n</div>\n```\n```css\n.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }\n.card { min-width: 280px; }\n@media (max-width: 768px) {\n  .grid { grid-template-columns: repeat(2, 1fr); }\n}\n```\nOn 360px-wide screens, 2 columns are still attempted and overflow due to `.card { min-width: 280px; }`. Product wants: 1 col on small phones, 2 on tablets, 4 on desktop, with cards respecting their min width without overflow and filling rows neatly.",
+          "task": "Propose concrete CSS changes to achieve the requirement without media-query bloat. Provide the exact rules and justify why they resolve overflow while keeping good density across breakpoints.",
+          "expected_answer": "Use CSS Grid's auto-fit/auto-fill with minmax to make columns responsive to available space instead of fixed repeats, and remove the conflicting min-width from the card.\n\n```css\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 16px;\n}\n.card { /* remove rigid min-width; let minmax handle it */\n  /* optional intrinsic sizing */\n}\n\n@media (min-width: 1200px) { /* optional hard cap at 4 cols on very wide screens */\n  .grid { grid-template-columns: repeat(4, 1fr); }\n}\n```\n- Explanation: `repeat(auto-fit, minmax(240px, 1fr))` ensures as many columns as fit given a 240px minimum, collapsing to 1 column on narrow phones and expanding to 2 and 4 as space allows, without overflow. Removing `.card { min-width: 280px; }` avoids fighting the grid's track sizing. The optional media query caps desktop at exactly 4 columns if mandated by design.",
+          "rubric": [
+            {
+              "criterion": "Uses grid auto-fit/auto-fill with minmax to control responsive columns",
+              "marks": 2
+            },
+            {
+              "criterion": "Eliminates the overflow cause (conflicting fixed min-width)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides exact CSS rules that meet 1/2/4 column targets",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies how the change prevents overflow and preserves density",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Database-backed exercise: JDBC-driven product catalog queries",
+          "brief": "Build a small CLI program that manages a product catalog backed by a relational database via JDBC. Provide DDL, seed data, and Java code that executes parameterized queries and a transaction. Use an embedded DB (SQLite or H2) so the assessor can run it locally.",
+          "deliverable": "A repository/zip containing: 1) schema.sql and seed.sql, 2) src with Java code using JDBC (no ORM), 3) a README with build/run commands, and 4) console screenshots/logs of example runs.",
+          "acceptance_criteria": [
+            "schema.sql creates tables products(id, name, price_cents), categories(id, name UNIQUE), product_categories(product_id, category_id, PRIMARY KEY(product_id, category_id)) with foreign keys",
+            "At least one useful index that is used by a query (e.g., index on LOWER(name) for prefix search); README includes the CREATE INDEX",
+            "Program uses only PreparedStatement with bind parameters (no string concatenation of user input)",
+            "Implements: (a) case-insensitive prefix search by name, (b) list products by category, (c) top-N most expensive products",
+            "Implements a transaction: move a product to a new category (delete from old mapping, insert new mapping) with commit/rollback on error",
+            "README includes exact commands to build/run and how to change DB path; for SQLite, includes a sample run of `EXPLAIN QUERY PLAN` (or H2 `EXPLAIN`) for the prefix search showing index usage",
+            "No uncaught exceptions on valid inputs; graceful error messages on invalid input"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct relational schema and constraints (3 NF-ish, junction table, FKs)",
+              "marks": 5
+            },
+            {
+              "criterion": "Secure and correct JDBC usage (PreparedStatement, no injection, proper resource handling/try-with-resources)",
+              "marks": 5
+            },
+            {
+              "criterion": "Implements required queries and shows working outputs; prefix search uses the intended index",
+              "marks": 5
+            },
+            {
+              "criterion": "Implements transactional category move with proper rollback and README instructions to run and verify (including EXPLAIN evidence)",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Database Design"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Responsive UI: React product grid with search and sort",
+          "brief": "Build a React single-page view that displays a product grid from local JSON data. Include a debounced search box (case-insensitive, starts-with), sort by price/name, and a responsive grid (1/2/4 columns). Ensure accessibility basics (labels, keyboard focus, alt text).",
+          "deliverable": "A repository/zip containing: 1) /public/products.json sample data, 2) React app source (Vite/Create React App acceptable), 3) instructions to run (`npm install && npm start`), and 4) a short video or screenshots at 360px, 768px, and 1200px widths.",
+          "acceptance_criteria": [
+            "Loads data from products.json via fetch and renders cards with name, price, and image (use placeholder if missing)",
+            "Search filters by prefix on LOWER(name); implemented with a 250ms debounced input; no filtering on every key stroke",
+            "Sort toggle for name A→Z/Z→A and price low→high/high→low; stable across re-renders",
+            "Responsive grid: 1 column ≤ 480px, ~2 columns around tablet widths, and 4 columns ≥ 1200px without overflow, implemented with CSS Grid auto-fit/minmax (no heavy media-query layering)",
+            "List items use stable keys (e.g., product id), not array index",
+            "Basic a11y: input has a visible label, images have alt text, controls are keyboard operable (tab order)",
+            "No console errors; lighthouse/accessibility warnings minimized (aria-labels where appropriate)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Functional requirements: loads data, renders cards, implements debounced prefix search",
+              "marks": 6
+            },
+            {
+              "criterion": "Sorting correctness and stability across state changes",
+              "marks": 4
+            },
+            {
+              "criterion": "Responsive layout meets 1/2/4 column targets without overflow (uses grid minmax/auto-fit)",
+              "marks": 5
+            },
+            {
+              "criterion": "Accessibility and React correctness (stable keys, labeled controls, no console errors)",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "React",
+            "JavaScript",
+            "Responsive Design"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-002-S03",
+      "skills_assessed": [
+        "Java",
+        "Object-Oriented Programming",
+        "Spring Boot",
+        "REST API",
+        "ORM"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have two beans implementing the same interface and one injection point:\n\n```java\npublic interface NotificationSender { void send(String msg); }\n\n@Component(\"fastSender\")\nclass SmsSender implements NotificationSender { public void send(String m){ /*...*/ } }\n\n@Component\n@Primary\nclass EmailSender implements NotificationSender { public void send(String m){ /*...*/ } }\n\n@Service\nclass ReportService {\n  private final NotificationSender sender;\n  public ReportService(@Qualifier(\"fastSender\") NotificationSender sender) {\n    this.sender = sender;\n  }\n  public void run(){ sender.send(\"ok\"); }\n}\n```\nAt runtime, which bean is injected into `ReportService` and why?",
+          "options": [
+            "SmsSender, because the `@Qualifier` on the constructor parameter overrides `@Primary`.",
+            "EmailSender, because `@Primary` always wins over qualifiers to avoid ambiguity.",
+            "EmailSender, because it's the only bean without an explicit name and Spring prefers unnamed beans when no qualifier matches.",
+            "An injection error occurs because there are two beans of the same type and Spring cannot decide."
+          ],
+          "correct_option": "A",
+          "explanation": "When both `@Primary` and `@Qualifier` are present, `@Qualifier` wins. The explicit qualifier `\"fastSender\"` selects `SmsSender` even though `EmailSender` is marked `@Primary`.",
+          "distractor_rationale": "B is tempting if you overgeneralize `@Primary` precedence. C sounds plausible but Spring does not prefer \"unnamed\" beans; names are irrelevant when a qualifier matches. D is tempting if you think Spring ignores qualifiers at constructor parameters, which it does not.",
+          "skills_covered": [
+            "Spring Boot",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider the following configuration properties class and YAML. The application attempts to inject `TaxProps` into a service.\n\n```java\n// no stereotype annotation here\n@ConfigurationProperties(prefix = \"app.tax\")\npublic class TaxProps {\n  private BigDecimal rate;\n  private String countryCode;\n  // getters/setters\n}\n\n@Service\nclass BillingService {\n  private final TaxProps props;\n  BillingService(TaxProps props){ this.props = props; }\n}\n```\n\n```yaml\n# application.yml\napp:\n  tax:\n    rate: 0.2\n    country-code: DE\n```\nThe main application has only `@SpringBootApplication` (no extra annotations). What happens at startup?",
+          "options": [
+            "Successful startup; the presence of matching properties in YAML makes Spring create the bean on demand.",
+            "A `NoSuchBeanDefinitionException` for `TaxProps` because it's not a bean and there is no `@ConfigurationPropertiesScan` or `@EnableConfigurationProperties`.",
+            "Successful startup; Spring Boot auto-registers any `@ConfigurationProperties` class on the classpath since 2.2+.",
+            "Startup fails only if `countryCode` is missing; otherwise the presence of values triggers bean creation."
+          ],
+          "correct_option": "B",
+          "explanation": "`@ConfigurationProperties` alone does not make the class a bean. You need `@Component`, `@ConfigurationPropertiesScan`, or `@EnableConfigurationProperties(TaxProps.class)`. Without one, injecting `TaxProps` causes a `NoSuchBeanDefinitionException`.",
+          "distractor_rationale": "B confuses relaxed binding with automatic bean registration. C and D assume Spring creates beans just because properties exist; it does not.",
+          "skills_covered": [
+            "Spring Boot",
+            "Java"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You define a configuration with bean methods calling each other:\n\n```java\n@Configuration(proxyBeanMethods = false)\npublic class AppConfig {\n  @Bean\n  public B b() { return new B(); }\n\n  @Bean\n  public A a() { return new A(b()); }\n}\n```\n`A` depends on `B`. How many `B` instances exist at runtime and which one does `A` hold?",
+          "options": [
+            "Two `B` instances; both are managed singletons under different names.",
+            "One `B` instance; but `A` receives a proxy that lazily creates `B` on first use.",
+            "One `B` instance; `A` holds the same `B` managed by the container via method interception.",
+            "Two `B` instances; `A` holds a direct new `B` not managed by the container."
+          ],
+          "correct_option": "D",
+          "explanation": "With `proxyBeanMethods=false` (lite mode), calling `b()` inside `a()` is a normal Java call, not intercepted. Spring registers one singleton `B` bean, but `a()` constructs `A` with a separate `new B()` result, so there are two `B` objects and only one is managed. `A` holds the unmanaged one.",
+          "distractor_rationale": "B is true only when `proxyBeanMethods=true` (full mode). C is incorrect; Spring won't register two singletons from the same method. D is wrong; there is no proxying semantics for simple `@Bean` return types here.",
+          "skills_covered": [
+            "Spring Boot",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Given this controller:\n\n```java\n@RestController\n@RequestMapping(\"/users\")\nclass UserController {\n  @GetMapping(\"/search\")\n  public List<User> search(@RequestParam String q) { /*...*/ }\n\n  @GetMapping(\"/{id}\")\n  public User byId(@PathVariable Long id) { /*...*/ }\n}\n```\nWhich handler matches the request below?\n\n```http\nGET /users/search?q=ann HTTP/1.1\nAccept: application/json\n```\n",
+          "options": [
+            "Depends on ordering of methods in the source file; Spring picks the first it finds.",
+            "The `byId` method, because `{id}` greedily matches any segment including `search`.",
+            "The `search` method, because exact path patterns take precedence over variable templates.",
+            "Ambiguous mapping error at startup because both paths could match `/search`."
+          ],
+          "correct_option": "C",
+          "explanation": "Spring MVC gives higher precedence to more specific patterns. `/users/search` is more specific than `/users/{id}`, so `search` handles the request.",
+          "distractor_rationale": "B is a common misconception; variable templates yield lower precedence. C would only occur if patterns were indistinguishable, which they are not. D is false; handler resolution ignores source order.",
+          "skills_covered": [
+            "REST API",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider this idempotent PUT endpoint and JPA repository:\n\n```java\n@PutMapping(\"/products/{id}\")\npublic ResponseEntity<Product> upsert(@PathVariable Long id, @RequestBody Product p) {\n  p.setId(id);\n  Product saved = repo.save(p);\n  return ResponseEntity.ok(saved);\n}\n```\nThe `id` is an assigned identifier (not generated). The database initially has no row with that `id`. Two identical PUT requests with the same body arrive back-to-back. What is the final database state?",
+          "options": [
+            "A single row with that `id` and the provided data; the second PUT updates the same row.",
+            "Two identical rows are inserted; `save` always inserts on PUT.",
+            "A single row with that `id`, but one field is null due to entity merge semantics.",
+            "Zero rows; the second call rolls back the first because they conflict."
+          ],
+          "correct_option": "A",
+          "explanation": "With an assigned ID, the first `save` inserts, the second executes an update (or a no-op update) on the same primary key. Properly implemented, PUT is idempotent and results in one row.",
+          "distractor_rationale": "B confuses `save` semantics; with assigned IDs, the second call is an update. C suggests transaction interference not present here. D invents merge side-effects that don't apply to a simple full-replacement model.",
+          "skills_covered": [
+            "REST API",
+            "ORM"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Open-Session-in-View is disabled. You have:\n\n```java\n@Entity\nclass Order {\n  @OneToMany(mappedBy = \"order\", fetch = FetchType.LAZY)\n  private List<OrderItem> items;\n}\n\n@RestController\nclass OrderController {\n  private final OrderRepository repo;\n  OrderController(OrderRepository repo){this.repo=repo;}\n\n  @GetMapping(\"/orders/{id}\")\n  public Order get(@PathVariable Long id){\n    return repo.findById(id).orElseThrow();\n  }\n}\n```\nA client calls `GET /orders/1`. What is the most likely outcome?",
+          "options": [
+            "A 200 where `items` is fetched automatically via bytecode enhancement even outside a session.",
+            "A 500 response with `LazyInitializationException` when Jackson tries to serialize `items`.",
+            "A 404 because `orElseThrow()` maps to `NOT_FOUND` automatically in Spring.",
+            "A 200 with empty `items` because LAZY collections are ignored by Jackson by default."
+          ],
+          "correct_option": "B",
+          "explanation": "With OSIV disabled, the persistence context is closed before serialization. Accessing a LAZY collection during JSON serialization triggers `LazyInitializationException`, causing a 500 unless handled.",
+          "distractor_rationale": "B is incorrect; Jackson will access getters unless told otherwise. C assumes optional bytecode features not enabled by default. D is false; `orElseThrow()` throws `NoSuchElementException`, which does not automatically map to 404.",
+          "skills_covered": [
+            "REST API",
+            "ORM"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Within a single `@Transactional` method you attempt to persist two entities with a unique `code`:\n\n```java\n@Transactional\npublic void createTwice() {\n  repo.save(new Item(\"X\")); // line 1\n  repo.save(new Item(\"X\")); // line 2\n  long n = repo.count();     // line 3\n}\n```\nWhen does the unique-constraint violation surface? Assume no explicit `flush()` calls and that `count()` triggers a query.",
+          "options": [
+            "Only at transaction commit, not before.",
+            "At line 3, because executing a query forces a flush that detects the violation.",
+            "Never; JPA silently updates the existing row when a unique conflict is detected.",
+            "At line 2, because `save` always flushes immediately."
+          ],
+          "correct_option": "B",
+          "explanation": "JPA providers flush before executing queries to maintain consistency. The flush at line 3 synchronizes pending inserts, and the database raises the unique constraint violation then.",
+          "distractor_rationale": "B is wrong; `save` does not flush unless configured. C can happen if no intervening query occurs, but here a query at line 3 forces a flush. D is incorrect; unique violations are not auto-merged.",
+          "skills_covered": [
+            "ORM",
+            "Java"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Given:\n\n```java\n@Entity\nclass User {\n  @OneToMany(mappedBy = \"user\", fetch = FetchType.LAZY)\n  List<Order> orders;\n}\n\npublic interface UserRepository extends JpaRepository<User, Long> {\n  @Query(\"select distinct u from User u left join fetch u.orders\")\n  List<User> findAllWithOrders();\n}\n```\nWhat happens when calling `findAllWithOrders()` for 100 users each with 10 orders?",
+          "options": [
+            "It still triggers N+1 selects because LAZY cannot be overridden in JPQL.",
+            "It loads users in one query but each user's orders in separate queries (N+1 persists).",
+            "It fails because `fetch` cannot be used with `left join`. ",
+            "It loads all users and their orders in one query and returns 100 `User` instances; `distinct` avoids duplicates."
+          ],
+          "correct_option": "D",
+          "explanation": "The `join fetch` eagerly loads the association in one query. Without `distinct`, JPA would return duplicates at the entity level, but `distinct` ensures 100 `User` instances are materialized.",
+          "distractor_rationale": "B and C misunderstand `join fetch`, which explicitly overrides LAZY for that query. D is false; `left join fetch` is valid JPQL.",
+          "skills_covered": [
+            "ORM"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A controller exposes:\n\n```java\n@GetMapping(\"/api/items\")\npublic Page<Item> list(Pageable pageable) { return repo.findAll(pageable); }\n```\nThe client requests:\n\n```http\nGET /api/items?page=1&size=5&sort=name,desc&sort=createdAt,asc\n```\nHow is the page and sort interpreted?",
+          "options": [
+            "First page (1-based), 5 items, sorted by `createdAt` then `name` because later sort wins.",
+            "Second page (0-based), 5 items, sorted ascending by both fields because ascending is the default.",
+            "Second page (0-based), 5 items, sorted by `name` descending then `createdAt` ascending as a tiebreaker.",
+            "First page (1-based), 5 items, unsorted because multiple `sort` params cancel each other."
+          ],
+          "correct_option": "C",
+          "explanation": "Spring Data uses 0-based paging. Multiple `sort` parameters are combined in order: primary by `name` DESC, secondary by `createdAt` ASC. Page 1 is the second page with size 5.",
+          "distractor_rationale": "B gets page indexing and sort precedence wrong. C ignores the explicit `desc` for `name`. D is incorrect; multiple `sort` params are supported and combined.",
+          "skills_covered": [
+            "REST API"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You have both an exception class and a global handler:\n\n```java\n@ResponseStatus(HttpStatus.NOT_FOUND)\nclass UserNotFoundException extends RuntimeException {}\n\n@ControllerAdvice\nclass ApiErrors {\n  @ExceptionHandler(UserNotFoundException.class)\n  ResponseEntity<String> handle(UserNotFoundException ex) {\n    return ResponseEntity.status(HttpStatus.GONE).body(\"gone\");\n  }\n}\n```\nA controller throws `new UserNotFoundException()`. What HTTP status is returned?",
+          "options": [
+            "410 Gone, because the `@ExceptionHandler`'s explicit `ResponseEntity` takes precedence.",
+            "200 OK with body \"gone\", because `ResponseEntity` without body defaults to 200.",
+            "500 Internal Server Error, because the annotations conflict.",
+            "404 Not Found, because `@ResponseStatus` on the exception always wins."
+          ],
+          "correct_option": "A",
+          "explanation": "An `@ExceptionHandler` that returns a `ResponseEntity` controls the response and overrides the exception’s `@ResponseStatus`. The client receives 410 with body \"gone\".",
+          "distractor_rationale": "B is a common misconception; handler methods can override. C is incorrect; there is no conflict error. D misunderstands `ResponseEntity.status(...).body(...)`, which sets 410 explicitly.",
+          "skills_covered": [
+            "REST API",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Open-Session-in-View is disabled. A GET returns 500s sporadically in production. Code:\n\n```java\n@Entity\nclass Order {\n  @OneToMany(mappedBy = \"order\", fetch = FetchType.LAZY, cascade = CascadeType.ALL)\n  private List<OrderItem> items;\n  // getters\n}\n\n@Service\nclass OrderService {\n  private final OrderRepository repo;\n  OrderService(OrderRepository repo){this.repo=repo;}\n\n  @Transactional(readOnly = true)\n  public Order find(Long id){\n    return repo.findById(id).orElseThrow();\n  }\n}\n\n@RestController\nclass OrdersApi {\n  private final OrderService service;\n  OrdersApi(OrderService s){this.service=s;}\n\n  @GetMapping(\"/orders/{id}\")\n  public Order get(@PathVariable Long id){\n    return service.find(id); // returns entity directly\n  }\n}\n```\nThe stacktrace mentions `LazyInitializationException` during JSON serialization of `items`. You must fix it with minimal performance cost and without reopening OSIV.",
+          "task": "Propose a concrete change and justify it against at least one alternative. Your answer should include the exact code or JPQL you would introduce and an explanation of why your choice addresses both correctness and performance risks.",
+          "expected_answer": "One robust fix is to fetch the needed graph in the service and return a DTO. For example:\n\n```java\npublic interface OrderRepository extends JpaRepository<Order, Long> {\n  @Query(\"select o from Order o left join fetch o.items where o.id = :id\")\n  Optional<Order> findWithItems(@Param(\"id\") Long id);\n}\n\n@Transactional(readOnly = true)\npublic OrderDto find(Long id){\n  Order o = repo.findWithItems(id).orElseThrow();\n  return OrderDto.from(o); // map fields and items explicitly\n}\n```\nJustification: `join fetch` guarantees `items` are initialized inside the transaction, preventing `LazyInitializationException`. Mapping to a DTO avoids exposing entities and prevents accidental lazy access to other associations during serialization. Alternatives: using `@EntityGraph(attributePaths = \"items\")` is equivalent in effect and more declarative; acceptable. Annotating the controller with `@Transactional` is brittle because serialization happens after the controller returns, once the transaction may be closed; it also risks opening more than required. Re-enabling OSIV defers all lazy loads to the web layer and can hide N+1 issues; not recommended for performance. Eagerly changing the mapping to `EAGER` couples fetch strategy globally and may load too much in other use cases.",
+          "rubric": [
+            {
+              "criterion": "Proposes a concrete, code-level solution that ensures `items` are initialized before serialization (fetch join or entity graph).",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why the solution prevents `LazyInitializationException` given transaction boundaries and OSIV disabled.",
+              "marks": 2
+            },
+            {
+              "criterion": "Compares against at least one alternative (e.g., OSIV, controller-level `@Transactional`, EAGER mapping) with a performance/coupling rationale.",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses DTO mapping or otherwise justifies controlling the serialized shape (prevents accidental lazy loads).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ORM",
+            "REST API",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your API currently accepts both POST and PUT for `/products`. The team is confused about idempotency and status codes. Current handlers:\n\n```java\n@PostMapping(\"/products\")\npublic ResponseEntity<Product> create(@RequestBody Product p) {\n  Product saved = repo.save(p); // id generated by DB\n  return ResponseEntity.ok(saved);\n}\n\n@PutMapping(\"/products/{id}\")\npublic ResponseEntity<Product> put(@PathVariable Long id, @RequestBody Product p) {\n  p.setId(id);\n  return ResponseEntity.ok(repo.save(p));\n}\n```\nClients sometimes send PUT with a new id that doesn't exist yet. Define the correct behavior and necessary changes so the API is RESTful and predictable.",
+          "task": "Specify the semantics (including 2xx/3xx/4xx codes), validation rules, and any changes to handler logic for POST and PUT. Justify your decisions with reference to idempotency and resource identity.",
+          "expected_answer": "POST creates a new server-assigned idempotency-unsafe resource: return 201 Created with a `Location: /products/{id}` header and the representation. PUT is idempotent and targets a specific URI: if the product with `{id}` exists, update and return 200 OK (or 204 No Content). If it does not exist, create it with that id and return 201 Created with `Location`.\n\nChanges:\n\n```java\n@PostMapping(\"/products\")\npublic ResponseEntity<Product> create(@RequestBody @Valid Product p) {\n  Product saved = repo.save(p);\n  URI loc = URI.create(\"/products/\" + saved.getId());\n  return ResponseEntity.created(loc).body(saved);\n}\n\n@PutMapping(\"/products/{id}\")\npublic ResponseEntity<Product> put(@PathVariable Long id, @RequestBody @Valid Product p) {\n  if (p.getId()!=null && !p.getId().equals(id)) {\n    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();\n  }\n  boolean exists = repo.existsById(id);\n  p.setId(id);\n  Product saved = repo.save(p);\n  if (!exists) {\n    return ResponseEntity.created(URI.create(\"/products/\"+id)).body(saved);\n  }\n  return ResponseEntity.ok(saved);\n}\n```\nJustification: PUT is idempotent (repeating the same PUT yields the same state). Returning 201 on create-with-PUT is acceptable per RFC 9110. Enforcing path/body id agreement prevents accidental misrouting. POST remains non-idempotent and server assigns id.",
+          "rubric": [
+            {
+              "criterion": "Correctly states POST vs PUT semantics including idempotency and appropriate status codes.",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides concrete handler changes (code or precise logic) including `Location` header behavior.",
+              "marks": 2
+            },
+            {
+              "criterion": "Validates id consistency between path and body with the correct error outcome.",
+              "marks": 1
+            },
+            {
+              "criterion": "Justifies choices with HTTP/RFC reasoning.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "REST API"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "In development, the app accidentally connects to the production DB. Config files and overrides:\n\n```yaml\n# application.yml\napp:\n  db:\n    url: jdbc:postgresql://prod:5432/app\n\n# application-dev.yml\nspring:\n  profiles: dev\napp:\n  db:\n    url: jdbc:postgresql://dev:5432/app\n```\nThe app is started locally with:\n\n```bash\njava -jar app.jar --spring.profiles.active=dev --app.db.url=jdbc:postgresql://staging:5432/app\n```\nThere is also an environment variable `APP_DB_URL=jdbc:postgresql://qa:5432/app`.\nWhich value should win, and what changes ensure the correct precedence and safety going forward?",
+          "task": "State the effective value for `app.db.url` at runtime, explain why, and propose concrete configuration hardening steps (annotations or file changes) to prevent accidental prod usage.",
+          "expected_answer": "Effective value: `jdbc:postgresql://staging:5432/app`. Spring Boot property sources precedence puts command-line args above environment variables and above profile-specific files, which in turn override application.yml. Therefore, staging wins.\n\nHardening:\n- Bind strongly-typed properties with `@ConfigurationProperties(prefix=\"app.db\")` + `@Validated` and a regex/`@NotBlank`.\n- Fail fast if `spring.profiles.active` is not set locally by adding `spring.config.activate.on-profile` blocks and removing the unconditional prod URL from `application.yml`. Instead, move prod URL into `application-prod.yml`; keep `application.yml` neutral or safe defaults.\n- Optionally assert expected profile at startup:\n\n```java\n@PostConstruct\nvoid guard(Environment env){\n  if (env.acceptsProfiles(Profiles.of(\"prod\"))) {\n    // log or enforce network allowlists, etc.\n  }\n}\n```\n- For devs, provide `.env` or `application-local.yml` that points to a safe DB and is gitignored.",
+          "rubric": [
+            {
+              "criterion": "Identifies the correct winning value based on Spring Boot property precedence.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains the precedence order (CLI > env > profile yml > base yml).",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes concrete changes to configuration files (move prod props to profile file, safe defaults).",
+              "marks": 1
+            },
+            {
+              "criterion": "Adds a code-level or validation safeguard to prevent prod usage by mistake.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A service saves an order and then emails the customer. Sometimes the DB transaction rolls back (e.g., constraint violation), but the email has already been sent.\n\n```java\n@Service\nclass CheckoutService {\n  @Transactional\n  public void checkout(Order o){\n    repo.save(o);\n    email.sendConfirmation(o); // should only run if commit succeeds\n  }\n}\n```\nYou cannot make the email operation transactional. Design a Spring-based solution so the email is sent only after a successful commit.",
+          "task": "Describe the change in terms of Spring infrastructure and provide code. Explain why it works with transaction boundaries and what happens if there is no active transaction.",
+          "expected_answer": "Publish a domain event inside the transaction and handle it `AFTER_COMMIT`.\n\n```java\nclass OrderPlacedEvent {\n  private final Long orderId;\n  OrderPlacedEvent(Long id){ this.orderId = id; }\n  public Long getOrderId(){ return orderId; }\n}\n\n@Service\nclass CheckoutService {\n  private final ApplicationEventPublisher publisher;\n  private final OrderRepository repo;\n  CheckoutService(ApplicationEventPublisher p, OrderRepository r){ this.publisher=p; this.repo=r; }\n\n  @Transactional\n  public void checkout(Order o){\n    repo.save(o);\n    publisher.publishEvent(new OrderPlacedEvent(o.getId()));\n  }\n}\n\n@Component\nclass EmailOnOrderPlaced {\n  private final Email email;\n  EmailOnOrderPlaced(Email email){ this.email=email; }\n\n  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)\n  public void on(OrderPlacedEvent e){\n    email.sendConfirmationByOrderId(e.getOrderId());\n  }\n}\n```\n`@TransactionalEventListener` defers invocation until the surrounding transaction successfully commits; if it rolls back, the handler does not run. If no transaction is active, the listener defaults to immediate execution, which you can change or guard against by setting `fallbackExecution=false` (default) and documenting that the event requires a transaction.",
+          "rubric": [
+            {
+              "criterion": "Proposes `@TransactionalEventListener` (or TransactionSynchronization) with AFTER_COMMIT semantics.",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides correct, compilable code showing event publication within the transaction and a listener.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains behavior on commit vs rollback and no-transaction cases.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Spring Boot",
+            "ORM"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Configurable Spring Boot service with profiles and type-safe configuration",
+          "brief": "Build a Spring Boot service that calculates final prices given a base price, a tax rate, and an optional discount. The service must be wired via dependency injection, use `@ConfigurationProperties` for settings, and switch strategies by profile (`dev` vs `prod`). No REST endpoints are required for this task; demonstrate via a `CommandLineRunner` or similar.",
+          "deliverable": "A Git repository (or zip) containing a runnable Spring Boot project. Include README with run commands for `dev` and `prod` profiles and example console output from the runner showing calculations.",
+          "acceptance_criteria": [
+            "Project builds with `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev` and `prod`.",
+            "`@ConfigurationProperties` class (e.g., `app.pricing`) binds `taxRate` and `discountPercent` from YAML; uses `@Validated` with sensible constraints.",
+            "Two beans implement a `PricingStrategy` interface: `DevPricingStrategy` (simple fixed math) and `ProdPricingStrategy` (reads an external multiplier from properties or a stub provider). Active profile selects the correct bean without qualifiers.",
+            "Constructor injection is used throughout; no field injection.",
+            "Demonstration via `CommandLineRunner` logs at least three computed totals given different inputs for each profile, clearly indicating which profile and strategy are active.",
+            "Profile-specific overrides exist in `application-dev.yml` and `application-prod.yml` and are actually applied (visible in output).",
+            "No use of `@Value` for the same properties that `@ConfigurationProperties` binds.",
+            "Configuration class or `@ConfigurationPropertiesScan` is present so binding works without manual bean registration."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct DI design (interfaces, constructor injection) and profile-based bean selection works.",
+              "marks": 6
+            },
+            {
+              "criterion": "Type-safe configuration with `@ConfigurationProperties` binds correctly; includes validation and profile-specific overrides.",
+              "marks": 6
+            },
+            {
+              "criterion": "Runnable demo (`CommandLineRunner`) clearly shows different outcomes per profile.",
+              "marks": 4
+            },
+            {
+              "criterion": "Code quality: clear package structure, no field injection, README with precise run instructions.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Spring Boot",
+            "Java",
+            "Object-Oriented Programming"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "CRUD REST API with JPA/Hibernate and safe serialization",
+          "brief": "Implement a CRUD REST API for managing books and their reviews. Use Spring MVC, Spring Data JPA (Hibernate), and an in-memory H2 database. Avoid `LazyInitializationException` and the N+1 select problem in your list and detail endpoints. Return appropriate HTTP status codes and support pagination and sorting on the list endpoint.",
+          "deliverable": "A Git repository (or zip) containing a runnable Spring Boot project exposing `/api/books` and `/api/books/{id}` plus `/api/books/{id}/reviews`. Include a README with curl examples to verify behavior.",
+          "acceptance_criteria": [
+            "Entity model: `Book(id, title, author, publishedAt, @Version version)` and `Review(id, book, rating:int, comment)` with `@OneToMany` from Book to Review and `mappedBy` on Review back to Book.",
+            "Repository includes a method using `@EntityGraph` or JPQL `join fetch` to load a book with its reviews for the detail endpoint.",
+            "Controllers:",
+            "- `POST /api/books` (201 Created + Location), `GET /api/books/{id}` (200), `PUT /api/books/{id}` (200/201 per upsert), `DELETE /api/books/{id}` (204).",
+            "- `GET /api/books` supports `page`, `size`, and multiple `sort` params; returns a Spring Data `Page` or a DTO with page metadata.",
+            "- `POST /api/books/{id}/reviews` adds a review (201).",
+            "Validation: `title` and `author` not blank; `rating` between 1 and 5. Invalid input returns 400 with a JSON error body.",
+            "Serialization safety: Do not return JPA entities with open lazy collections. Either use DTOs or controlled fetch joins to ensure predictable JSON, and avoid infinite recursion (e.g., use DTOs or `@JsonIgnore` appropriately).",
+            "Global error handling via `@ControllerAdvice` maps not-found to 404 and validation errors to 400 with clear messages.",
+            "No N+1 in `GET /api/books`: demonstrate via a fetch-optimized repository method or projection so that the list endpoint executes O(1) queries w.r.t. number of books.",
+            "App runs with `./mvnw spring-boot:run` and a README shows curl examples that succeed (create, list with paging/sort, get detail with reviews, add review, delete)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct REST semantics and status codes for CRUD and subresource creation; pagination and sorting implemented.",
+              "marks": 6
+            },
+            {
+              "criterion": "JPA mapping correctness including `@OneToMany` and use of `@EntityGraph`/fetch join to avoid lazy issues and N+1.",
+              "marks": 6
+            },
+            {
+              "criterion": "Serialization safety (DTOs or proper Jackson annotations) and absence of infinite recursion; predictable shapes.",
+              "marks": 4
+            },
+            {
+              "criterion": "Operational completeness: runnable app, H2 config, README with working curl commands.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "ORM",
+            "Spring Boot",
+            "Java"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-002-S04",
+      "skills_assessed": [
+        "Java",
+        "JavaScript",
+        "React",
+        "Spring Boot",
+        "REST API",
+        "JUnit",
+        "API Testing",
+        "Application Deployment",
+        "Authentication"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You add a custom API key filter and a minimal Spring Security chain:\n\n```java\n@Configuration\n@EnableWebSecurity\nclass SecurityConfig {\n  @Bean\n  SecurityFilterChain security(HttpSecurity http) throws Exception {\n    return http\n      .csrf(csrf -> csrf.disable())\n      .addFilterBefore(new ApiKeyFilter(), UsernamePasswordAuthenticationFilter.class)\n      .authorizeHttpRequests(auth -> auth\n        .requestMatchers(\"/api/public/**\").permitAll()\n        .anyRequest().authenticated()\n      )\n      .build();\n  }\n}\n\nclass ApiKeyFilter extends OncePerRequestFilter {\n  @Override\n  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)\n      throws ServletException, IOException {\n    if (req.getHeader(\"X-API-KEY\") == null) {\n      res.sendError(HttpServletResponse.SC_UNAUTHORIZED, \"Missing API key\");\n      return;\n    }\n    chain.doFilter(req, res);\n  }\n}\n```\n\nA client calls without headers:\n\n```http\nGET /api/public/ping HTTP/1.1\nHost: localhost:8080\n```\n\nWhat happens and why?",
+          "options": [
+            "200 OK, because `/api/public/**` is permitted before any authentication checks.",
+            "403 Forbidden, because the user is anonymous and lacks required roles.",
+            "302 Found redirect to `/login`, because Spring Security defaults to form login when authentication fails.",
+            "401 Unauthorized, because the custom filter runs before authorization and short-circuits the response when the header is absent."
+          ],
+          "correct_option": "D",
+          "explanation": "Filters in the chain run regardless of authorization rules. Because `ApiKeyFilter` is inserted before `UsernamePasswordAuthenticationFilter` and unconditionally rejects requests without `X-API-KEY`, it will return 401 even on a path later marked `permitAll`.",
+          "distractor_rationale": "A: `permitAll` skips authorization, not the filter chain itself. The custom filter still executes. C: A 403 would require an authenticated principal lacking authority; here there is no principal and the filter itself sends a 401. D: Form login isn't configured; also REST APIs typically return 401 without redirect by default when not using form login.",
+          "skills_covered": [
+            "Authentication",
+            "Spring Boot",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider the following DTOs and controller:\n\n```java\nclass LineDto {\n  @Min(1)\n  private int quantity;\n  // getters/setters\n}\n\nclass OrderDto {\n  private List<LineDto> lines; // no @Valid here\n  // getters/setters\n}\n\n@RestController\n@RequestMapping(\"/api/orders\")\nclass OrderController {\n  @PostMapping\n  public ResponseEntity<Void> create(@Valid @RequestBody OrderDto order) {\n    // assume service saves successfully and returns 201\n    return ResponseEntity.status(HttpStatus.CREATED).build();\n  }\n}\n```\n\nA client posts this payload:\n\n```json\n{\n  \"lines\": [ { \"quantity\": 0 } ]\n}\n```\n\nWhat HTTP status does the controller return?",
+          "options": [
+            "400 Bad Request with a validation message about `quantity` being >= 1.",
+            "201 Created, because nested `LineDto` constraints are not traversed without `@Valid` on `lines`.",
+            "500 Internal Server Error because `lines` is invalid.",
+            "422 Unprocessable Entity due to semantic validation failure."
+          ],
+          "correct_option": "B",
+          "explanation": "Without `@Valid` on the `lines` property, bean validation does not cascade into `LineDto`, so the controller sees the payload as valid and returns 201 as coded.",
+          "distractor_rationale": "B: This would be true only if `@Valid` were present on `lines`. C: 422 is sometimes used for semantic errors, but Bean Validation in Spring maps to 400 on binding/validation failure, not 422. D: Validation failures do not produce 500; and here, no validation failure is triggered.",
+          "skills_covered": [
+            "Java",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You add Spring Security with default settings (all endpoints require authentication). A web-slice test is written as:\n\n```java\n@WebMvcTest(GreetingController.class)\nclass GreetingControllerTest {\n  @Autowired MockMvc mvc;\n\n  @Test\n  void hello_returns_200() throws Exception {\n    mvc.perform(get(\"/api/hello\"))\n       .andExpect(status().isOk());\n  }\n}\n```\n\n`GreetingController` simply returns 200 OK. What is the actual test outcome?",
+          "options": [
+            "401 Unauthorized, because no authentication is provided and security filters are active.",
+            "403 Forbidden, because the anonymous user lacks the `USER` role.",
+            "200 OK, because `@WebMvcTest` disables security filters by default.",
+            "302 Found redirect to `/login`, because the default entry point redirects."
+          ],
+          "correct_option": "A",
+          "explanation": "`@WebMvcTest` does not disable security filters. With default security requiring authentication, the unauthenticated request results in 401. To get 200, add a user (e.g., `.with(user(\"test\"))`) or disable filters for the test.",
+          "distractor_rationale": "A: Security filters are included unless explicitly disabled. C: Redirects happen with form login; the default REST behavior with no form login is 401. D: 403 is for authenticated users lacking authority, not anonymous users.",
+          "skills_covered": [
+            "JUnit",
+            "Authentication",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Security is configured to require CSRF protection for state-changing requests. The following test authenticates but omits CSRF:\n\n```java\n@Test\nvoid create_item_without_csrf() throws Exception {\n  mvc.perform(post(\"/api/items\")\n        .with(user(\"alice\").roles(\"USER\"))\n        .contentType(MediaType.APPLICATION_JSON)\n        .content(\"{\\\"name\\\":\\\"A\\\"}\"))\n     .andExpect(status().isOk());\n}\n```\n\nWhat status will actually be returned?",
+          "options": [
+            "403 Forbidden, because CSRF protection fails for POST without a token.",
+            "200 OK, because CSRF is only enforced for browser form submissions.",
+            "422 Unprocessable Entity, because the body is rejected by CSRF.",
+            "401 Unauthorized, because no CSRF token acts like missing authentication."
+          ],
+          "correct_option": "A",
+          "explanation": "With CSRF enabled, POST without a CSRF token is rejected with 403 even if the user is authenticated. Add `.with(csrf())` or disable CSRF for stateless APIs.",
+          "distractor_rationale": "A: Spring Security enforces CSRF for any state-changing HTTP methods by default, not just forms. B: CSRF failure yields 403, not 401. D: CSRF failures are authorization errors (403), not semantic 422.",
+          "skills_covered": [
+            "JUnit",
+            "Authentication",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "CORS is configured as below, and the React app calls the API with credentials:\n\n```java\n@Bean\nCorsConfigurationSource corsSource() {\n  CorsConfiguration cfg = new CorsConfiguration();\n  cfg.setAllowedOrigins(List.of(\"*\"));\n  cfg.setAllowedMethods(List.of(\"GET\",\"POST\",\"PUT\",\"DELETE\"));\n  cfg.setAllowedHeaders(List.of(\"*\"));\n  cfg.setAllowCredentials(true);\n  UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();\n  src.registerCorsConfiguration(\"/**\", cfg);\n  return src;\n}\n```\n\n```javascript\nfetch(\"https://api.example.com/data\", {\n  method: \"GET\",\n  credentials: \"include\"\n});\n```\n\nWhat actually happens in the browser?",
+          "options": [
+            "The server rejects with 401 before CORS is processed, because no session cookie is sent.",
+            "The response includes `Access-Control-Allow-Origin: *` and `Access-Control-Allow-Credentials: true`, but the browser blocks it due to the invalid wildcard-with-credentials combination.",
+            "The browser logs a warning but proceeds to include the cookies.",
+            "The request succeeds and cookies are included, because `allowCredentials=true`."
+          ],
+          "correct_option": "B",
+          "explanation": "CORS forbids using `*` with `Access-Control-Allow-Credentials: true`. Spring will emit the headers, but the browser blocks the response. You must set explicit allowed origins when using credentials.",
+          "distractor_rationale": "A/D: Browsers do not allow wildcard origin when credentials are included; they block the response. B: The block happens at the browser after the response, independent of server-side auth handling.",
+          "skills_covered": [
+            "REST API",
+            "JavaScript",
+            "Authentication"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your Maven POM disables Spring Boot repackage:\n\n```xml\n<build>\n  <plugins>\n    <plugin>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-maven-plugin</artifactId>\n      <configuration>\n        <skip>true</skip>\n      </configuration>\n    </plugin>\n  </plugins>\n</build>\n```\n\nYou run:\n\n```bash\nmvn clean package\njava -jar target/demo-0.0.1-SNAPSHOT.jar\n```\n\nWhat happens?",
+          "options": [
+            "The app starts normally; `skip` only affects the Docker image task.",
+            "The app starts but all endpoints return 404 until repackaged.",
+            "The JVM fails with `no main manifest attribute`, because the JAR was not repackaged as executable.",
+            "The app starts but fails to find dependencies at runtime due to the `lib` directory missing."
+          ],
+          "correct_option": "C",
+          "explanation": "With `spring-boot-maven-plugin` skipped, the artifact is a plain WAR/JAR without a boot loader manifest. Running it with `java -jar` fails with `no main manifest attribute`. You must enable repackage or run the app via `mvn spring-boot:run`.",
+          "distractor_rationale": "A: `skip` disables the creation of an executable boot JAR, not just image building. C/D: Not applicable; the JAR never starts via `java -jar`.",
+          "skills_covered": [
+            "Application Deployment",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Method security is enabled and the controller requires a specific authority:\n\n```java\n@PreAuthorize(\"hasAuthority('SCOPE_write')\")\n@PostMapping(\"/api/things\")\nResponseEntity<Void> create(@RequestBody Thing t) { return ResponseEntity.status(201).build(); }\n```\n\nA test uses a mock user:\n\n```java\n@Test\nvoid create_with_mock_user() throws Exception {\n  mvc.perform(post(\"/api/things\")\n      .with(user(\"bob\").roles(\"write\")) // note roles\n      .contentType(MediaType.APPLICATION_JSON)\n      .content(\"{}\"))\n    .andExpect(status().isCreated());\n}\n```\n\nWhat actually happens?",
+          "options": [
+            "201 Created, because `roles(\"write\")` maps to the required authority.",
+            "403 Forbidden, because `roles(\"write\")` grants `ROLE_write`, not `SCOPE_write`.",
+            "400 Bad Request, because the empty body is rejected before authorization.",
+            "401 Unauthorized, because the mock user is not authenticated."
+          ],
+          "correct_option": "B",
+          "explanation": "`roles(\"write\")` produces `ROLE_write`. The expression checks for the authority `SCOPE_write`, so access is denied with 403. Use `.authorities(new SimpleGrantedAuthority(\"SCOPE_write\"))` or the Spring Security JWT test support to supply the correct scope authority.",
+          "distractor_rationale": "A: Roles and authorities are not interchangeable by name. C: `user()` creates an authenticated principal. D: Authorization runs before body validation; also the method doesn't validate the body here.",
+          "skills_covered": [
+            "JUnit",
+            "Authentication",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Actuator is configured as follows:\n\n```yaml\nmanagement:\n  endpoints:\n    web:\n      exposure:\n        include: health,info\n  endpoint:\n    health:\n      show-details: when_authorized\n      roles: ACTUATOR\n```\n\nA user `ops` has role `ACTUATOR` and authenticates with HTTP Basic. What are the responses to these requests?\n\n```http\nGET /actuator/health HTTP/1.1            # no Authorization header\n\nGET /actuator/health HTTP/1.1            # with Basic auth for ops\nAuthorization: Basic ...\n```",
+          "options": [
+            "First 403 Forbidden; second 200 with detailed component statuses.",
+            "First 200 with full details; second 200 with full details.",
+            "First 200 with `{ \"status\": \"UP\" }`; second 200 with detailed component statuses.",
+            "First 401 Unauthorized; second 200 with overall status only."
+          ],
+          "correct_option": "C",
+          "explanation": "With `show-details: when_authorized`, unauthenticated callers get the overall UP status only. Authenticated users with the configured role receive detailed health information.",
+          "distractor_rationale": "A: Unauthenticated health usually returns 200 with minimal info unless you set `show-details: never` and further restrict. B: Details are not shown to unauthenticated callers. D: 403 is not returned for health by default in this configuration.",
+          "skills_covered": [
+            "Application Deployment",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "The frontend performs a JSON parse on every response:\n\n```javascript\nfetch(\"/api/profile\", {\n  method: \"PUT\",\n  headers: { \"Content-Type\": \"application/json\" },\n  body: JSON.stringify({ displayName: \"Ada\" })\n})\n  .then(r => r.json())\n  .then(data => console.log(data));\n```\n\nThe backend correctly returns `204 No Content` on success. In production, what happens in the browser and why?",
+          "options": [
+            "The browser retries the request once, then logs an empty object.",
+            "It works and logs `{}` by convention for empty responses.",
+            "`PUT` with 204 is invalid and the browser converts it to 200 with an empty body.",
+            "It throws a JSON parse error, because `r.json()` on a 204 with no body rejects."
+          ],
+          "correct_option": "D",
+          "explanation": "`Response.json()` attempts to parse the body. A 204 has no body, so parsing fails. The client should check `r.status === 204` and skip parsing, or use `r.text()` and handle empty strings.",
+          "distractor_rationale": "B: The Fetch API does not invent `{}`. C: 204 is valid for `PUT`. D: Browsers do not auto-retry here.",
+          "skills_covered": [
+            "JavaScript",
+            "REST API"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A controller depends on a service:\n\n```java\n@RestController\nclass ReportController {\n  @Autowired ReportService service;\n\n  @GetMapping(\"/api/report\")\n  String title() { return service.title(); }\n}\n```\n\nA test uses a web slice without providing a mock for the service:\n\n```java\n@WebMvcTest(ReportController.class)\nclass ReportControllerTest {\n  @Autowired MockMvc mvc;\n\n  @Test\n  void returns_title() throws Exception {\n    mvc.perform(get(\"/api/report\")).andExpect(status().isOk());\n  }\n}\n```\n\nWhat is the most likely outcome when running the test?",
+          "options": [
+            "The test context fails to start because `ReportService` is missing; you must provide a `@MockBean`.",
+            "404 Not Found, because repositories are not loaded in a web slice.",
+            "500 Internal Server Error at request time due to `service` being null.",
+            "200 OK with a default title, because dependencies are stubbed automatically."
+          ],
+          "correct_option": "A",
+          "explanation": "`@WebMvcTest` tries to instantiate the controller and its required collaborators. Without a bean (or `@MockBean`) for `ReportService`, the test ApplicationContext fails to start.",
+          "distractor_rationale": "A: Spring does not auto-stub missing beans. B: The context fails earlier; you won't reach a 500 at request time. C: Endpoint mapping exists; the problem is dependency injection, not mapping.",
+          "skills_covered": [
+            "JUnit",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "After adding JWT-based security, your previously green integration test for listing orders now fails:\n\n```java\n// Security config (excerpt)\nhttp\n  .csrf(csrf -> csrf.disable())\n  .authorizeHttpRequests(auth -> auth\n    .requestMatchers(\"/actuator/**\").permitAll()\n    .anyRequest().authenticated())\n  .oauth2ResourceServer(oauth -> oauth.jwt());\n```\n\n```java\n// Test\n@SpringBootTest\n@AutoConfigureMockMvc\nclass OrderApiIT {\n  @Autowired MockMvc mvc;\n\n  @Test\n  void list_orders_returns_200() throws Exception {\n    mvc.perform(get(\"/api/orders\")) // no auth header\n       .andExpect(status().isOk());\n  }\n}\n```\n\nIn the browser with a valid bearer token, `GET /api/orders` returns 200. In the test, it returns 401.",
+          "task": "Decide how to make the test accurately represent a JWT-authenticated caller without weakening production security. Propose the exact test change(s) and, if needed, minimal config to support it. Justify your choice.",
+          "expected_answer": "Use Spring Security's test support to supply a mock JWT in the request, keeping security enabled. For example:\n\n```java\nimport static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;\nimport static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;\n\n@Test\nvoid list_orders_returns_200_with_jwt() throws Exception {\n  mvc.perform(get(\"/api/orders\")\n        .with(jwt().authorities(createAuthorityList(\"SCOPE_read\"))))\n     .andExpect(status().isOk());\n}\n```\n\nThis mirrors production where a resource server authenticates a bearer token and maps scopes to `SCOPE_*` authorities. No change to the main `SecurityFilterChain` is required. If the controller/method uses `@PreAuthorize(\"hasAuthority('SCOPE_read')\")`, ensure the mock JWT includes that authority or configure a `JwtAuthenticationConverter` bean used both in prod and tests:\n\n```java\n@Bean\nJwtAuthenticationConverter jwtAuthConverter() {\n  var c = new JwtGrantedAuthoritiesConverter();\n  c.setAuthorityPrefix(\"SCOPE_\");\n  c.setAuthoritiesClaimName(\"scope\");\n  var converter = new JwtAuthenticationConverter();\n  converter.setJwtGrantedAuthoritiesConverter(c);\n  return converter;\n}\n```\n\nDo not disable filters (e.g., `addFilters = false`) or permit the endpoint, because that would diverge from production behavior and hide authorization bugs.",
+          "rubric": [
+            {
+              "criterion": "Proposes using security test support (e.g., `jwt()` or equivalent) rather than disabling security or permitting endpoints",
+              "marks": 3
+            },
+            {
+              "criterion": "Supplies concrete test code that includes necessary authorities/scopes",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why this mirrors production JWT mapping and avoids weakening security",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses method security if present (e.g., `@PreAuthorize`) and authority mapping via converter or mock authorities",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "JUnit",
+            "Authentication",
+            "Spring Boot",
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your React form validates fields client-side. The backend also uses Bean Validation annotations. In production, some invalid submissions still reach the API (e.g., users bypass JS), and the server responds 400 with a default error body that the frontend doesn't understand. Product suggests removing backend validation to \"avoid confusing users\".",
+          "task": "Decide whether to keep backend validation. Propose concrete backend and frontend changes to provide a consistent UX and verifiable contract. Include test strategies to ensure regressions are caught.",
+          "expected_answer": "Keep backend validation. Client-side checks improve UX but are not a security/control boundary. Implement a stable error contract and map it on the frontend.\n\nBackend:\n- Keep Bean Validation on DTOs; ensure nested validation via `@Valid`.\n- Add a `@ControllerAdvice` to translate `MethodArgumentNotValidException` into RFC7807 Problem+JSON with machine-readable fields.\n\n```java\n@RestControllerAdvice\nclass ValidationAdvice {\n  @ExceptionHandler(MethodArgumentNotValidException.class)\n  @ResponseStatus(HttpStatus.BAD_REQUEST)\n  ProblemDetail handle(MethodArgumentNotValidException ex) {\n    var pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);\n    pd.setTitle(\"Validation failed\");\n    Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()\n      .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage, (a,b)->a, LinkedHashMap::new));\n    pd.setProperty(\"errors\", errors);\n    return pd;\n  }\n}\n```\n\nFrontend:\n- On 400, parse Problem+JSON and surface field messages next to controls.\n\n```javascript\nconst res = await fetch(\"/api/orders\", { method: \"POST\", body: JSON.stringify(dto), headers: {\"Content-Type\":\"application/json\"} });\nif (res.status === 400) {\n  const problem = await res.json();\n  const errors = problem.errors || {};\n  // map errors[field] to form state\n}\n```\n\nTests:\n- JUnit MVC test verifying 400 shape and specific fields when invalid (including nested objects).\n- A contract/integration test from the frontend (or API test via Postman/Newman) asserting the error payload shape.\n\nThis preserves data integrity, improves interop, and ensures even non-browser clients receive consistent error details.",
+          "rubric": [
+            {
+              "criterion": "Clear justification to keep backend validation as authoritative",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete backend implementation of a consistent error contract (e.g., Problem+JSON)",
+              "marks": 2
+            },
+            {
+              "criterion": "Frontend handling plan that maps server errors to fields with example code",
+              "marks": 2
+            },
+            {
+              "criterion": "Test strategy covering backend validation and contract shape",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "Java",
+            "JavaScript",
+            "JUnit"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your containerized app starts, but health checks time out. Logs show:\n\n```text\n... Tomcat initialized with port(s): 8080 (http)\n... Started DemoApplication in 4.123 seconds\n```\n\nDockerfile and run command:\n\n```dockerfile\nFROM eclipse-temurin:17-jre\nWORKDIR /app\nCOPY target/demo-0.0.1-SNAPSHOT.jar app.jar\nENV JAVA_TOOL_OPTIONS=\"-Dserver.port=8080\"\nENTRYPOINT [\"java\",\"-jar\",\"/app/app.jar\"]\n```\n\n```bash\ndocker run --rm -p 8080:9000 demo:latest\n```\n\n`application-prod.yml` contains `server.port: 9000` and you set `SPRING_PROFILES_ACTIVE=prod` in the environment.",
+          "task": "Explain precisely why the service is unreachable and propose two viable fixes. State which setting takes precedence here.",
+          "expected_answer": "The container maps host 8080 to container port 9000 (`-p 8080:9000`), but the app is listening on 8080 inside the container because `JAVA_TOOL_OPTIONS` sets the system property `server.port=8080`, which overrides `application-prod.yml` (system properties have higher precedence than profile properties). Therefore, the container is listening on 8080 while Docker forwards to 9000, causing timeouts.\n\nFixes (either):\n1) Align ports by running with `-p 8080:8080` (keep `JAVA_TOOL_OPTIONS` as-is), or remove `JAVA_TOOL_OPTIONS` and keep `-p 8080:9000` so the app listens on 9000 via profile property.\n2) Alternatively, set `SERVER_PORT=9000` or `JAVA_TOOL_OPTIONS=-Dserver.port=9000` to match the mapping, or pass `--server.port=9000` to `java -jar` and keep the mapping.\n\nPrecedence: system properties (including `JAVA_TOOL_OPTIONS`) override application properties, including those in activated profiles.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of port mismatch between Docker mapping and app listener",
+              "marks": 3
+            },
+            {
+              "criterion": "Accurate precedence explanation (system properties override profile properties)",
+              "marks": 2
+            },
+            {
+              "criterion": "Two concrete, viable remediation options with exact commands/changes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need the SPA on `https://app.example.com` to authenticate to the API at `https://api.example.com` using a secure, HttpOnly session cookie. Current config:\n\n```java\n@Bean\nCorsConfigurationSource cors() {\n  var c = new CorsConfiguration();\n  c.setAllowedOrigins(List.of(\"*\"));\n  c.setAllowedMethods(List.of(\"GET\",\"POST\"));\n  c.setAllowCredentials(true);\n  var s = new UrlBasedCorsConfigurationSource();\n  s.registerCorsConfiguration(\"/**\", c);\n  return s;\n}\n\nhttp\n  .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))\n  .authorizeHttpRequests(a -> a.anyRequest().authenticated())\n  .formLogin(AbstractHttpConfigurer::disable);\n```\n\nOn login, the browser shows a CORS error and the `Set-Cookie` is not honored.",
+          "task": "Propose the exact CORS and cookie attribute changes required to make credentialed cross-site requests work in modern browsers. Justify each setting. Do not switch to JWT; keep cookie-based auth.",
+          "expected_answer": "CORS must use explicit origins when sending credentials, and the cookie must be cross-site compatible. Update server CORS and cookie attributes:\n\nCORS configuration:\n```java\nc.setAllowedOrigins(List.of(\"https://app.example.com\")); // no wildcard with credentials\nc.setAllowedHeaders(List.of(\"Content-Type\", \"X-CSRF-TOKEN\"));\nc.setAllowedMethods(List.of(\"GET\",\"POST\",\"PUT\",\"DELETE\"));\nc.setAllowCredentials(true);\n```\n\nCSRF and session cookie attributes (server and proxy over HTTPS):\n- Mark cookies `Secure; SameSite=None` so browsers include them on cross-site requests.\n- Ensure domain is `.example.com` so both subdomains share the cookie.\n\nSpring Boot properties (Tomcat):\n```yaml\nserver:\n  servlet:\n    session:\n      cookie:\n        domain: \".example.com\"\n        secure: true\n        same-site: none\n```\n\nIf using `CookieCsrfTokenRepository`, ensure the CSRF cookie is readable by JS (HttpOnly=false) and sent with `SameSite=None; Secure` too if using CSRF.\n\nJustification:\n- Browsers block wildcard origins with credentials; a specific origin is required.\n- `SameSite=None; Secure` is mandatory for cross-site cookies over HTTPS.\n- Setting domain to the parent enables sharing across `app.` and `api.`.\n- Allowed headers must include the CSRF header if CSRF is enforced for state-changing requests.",
+          "rubric": [
+            {
+              "criterion": "Replaces wildcard with explicit allowed origin for credentialed requests",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct cookie attributes for cross-site (`SameSite=None; Secure`) and appropriate domain",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses CSRF header exposure and client readability where applicable",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear justification tying browser behavior to each setting",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "REST API",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Secured, tested service",
+          "brief": "Build a Spring Boot REST service that enforces JWT-based authentication and method-level authorization, validates input with Bean Validation (including nested objects), and is covered by unit and integration tests. Include API tests that exercise authenticated and unauthenticated flows.",
+          "deliverable": "A Git repository containing the Spring Boot project, test suite, and a README with commands to run tests. Provide a small Postman collection or HTTPie/curl scripts demonstrating the secured endpoints and validation behavior.",
+          "acceptance_criteria": [
+            "`POST /api/items` validates a DTO with nested fields; invalid payload (e.g., negative quantity) returns 400 with a field-by-field error body.",
+            "`GET /api/me` requires a valid bearer token and returns 200 with the principal name; no/invalid token returns 401.",
+            "Method security (e.g., `@PreAuthorize('hasAuthority('SCOPE_write')')`) enforced on a state-changing endpoint and returns 403 for tokens without the scope.",
+            "JUnit tests: at least one `@WebMvcTest` for controller validation errors and one `@SpringBootTest`/MockMvc test using `jwt()` to cover secured success and failure paths; tests pass with `mvn test`.",
+            "CSRF is disabled for stateless JWT endpoints, or tests include `.with(csrf())` where CSRF is required; no accidental reliance on session auth.",
+            "README includes commands to generate a sample JWT (or a custom authentication converter that accepts a known token in tests) and how to run the tests.",
+            "No hard-coded secrets in source control; secrets (if any) are read from environment variables."
+          ],
+          "rubric": [
+            {
+              "criterion": "JWT-based authentication correctly enforced on protected endpoints (401/403 semantics)",
+              "marks": 5
+            },
+            {
+              "criterion": "Bean Validation implemented, including cascading with `@Valid`, and returns structured error responses",
+              "marks": 5
+            },
+            {
+              "criterion": "Comprehensive tests: web-slice validation test and security-aware integration test using `jwt()` (or equivalent)",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear README and reproducible commands/scripts; no secrets committed",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct CSRF posture for the chosen auth scheme",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Authentication",
+            "REST API",
+            "JUnit",
+            "API Testing",
+            "Spring Boot",
+            "Java"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deployed capstone (integrated front/back)",
+          "brief": "Package and deploy a minimal full-stack app where a React SPA calls a secured Spring Boot API. Use Docker to run both parts locally with correct CORS/cookie/JWT configuration. Provide a one-command startup and verification steps.",
+          "deliverable": "A Git repository with a `backend/` Spring Boot app, `frontend/` React app, a `docker-compose.yml` that brings them up together, and a README with verification steps and expected outputs.",
+          "acceptance_criteria": [
+            "`docker-compose up --build` starts both services. Backend logs show the listening port and active profile; frontend is reachable in the browser.",
+            "Frontend can successfully call `GET /api/health` via the reverse proxy/base URL and display the status.",
+            "Authentication is wired end-to-end: either cookie-based (with `SameSite=None; Secure` when served over HTTPS in compose) or JWT stored in memory; a protected API route returns 200 when authenticated and 401/403 otherwise.",
+            "CORS is configured with explicit origin(s), `allowCredentials=true` when cookies are used, and verified with a browser devtools screenshot or `curl -I` showing `Access-Control-Allow-Origin` echoing the SPA origin.",
+            "Spring Boot image built either via Dockerfile or `spring-boot:build-image`; container runs with a single port mapping that matches the `server.port` actually used.",
+            "A healthcheck (`/actuator/health` or `/api/health`) passes from outside the containers using the documented URL.",
+            "README includes exact `curl` commands to verify 200/401/403 cases and explains any environment variables needed."
+          ],
+          "rubric": [
+            {
+              "criterion": "Working Dockerized deployment: compose builds and starts both services with clear instructions",
+              "marks": 5
+            },
+            {
+              "criterion": "Frontend-to-backend integration works (base URL, proxy, or relative paths) and is demonstrated",
+              "marks": 4
+            },
+            {
+              "criterion": "Authentication wired correctly across the boundary (JWT or cookies) with correct CORS configuration",
+              "marks": 5
+            },
+            {
+              "criterion": "Deployment correctness: port mapping/profile alignment; image build process sound",
+              "marks": 3
+            },
+            {
+              "criterion": "Verification artifacts (curl commands, screenshots/log excerpts) included and accurate",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Application Deployment",
+            "React",
+            "JavaScript",
+            "REST API",
+            "Authentication",
+            "Spring Boot"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -221,3 +221,93 @@ course skills now come from the vocabulary; the remainder are genuine gaps in it
 — ESCO does not name `Django REST Framework` or `Azure Key Vault` — which is why
 the vocabulary is a strong preference in the prompt rather than a hard
 constraint.
+
+
+---
+
+## Section question corpus
+
+`backend/scripts/generate_section_questions.py` writes one JSON per course to
+`backend/data/lms/questions/`, then `backend/scripts/load_section_questions.py`
+loads them into `course_section_questions`.
+
+Unlike the other pipelines here this is **not a parser** — the questions do not
+exist in the source PDFs. What the corpus does supply is the shape: every section
+already declares `assessment` as "10 concept MCQ (30 marks) + 4 code/design
+scenarios (30) + 2 practical tasks (40)", and the generator makes that concrete.
+
+### Running it
+
+```bash
+python scripts/generate_section_questions.py --dry-run
+python scripts/generate_section_questions.py --workers 16          # all pending courses
+python scripts/generate_section_questions.py --only NT-C-023       # one course
+python scripts/generate_section_questions.py --sections NT-C-023-S01   # one section: a cheap probe
+python scripts/load_section_questions.py --dry-run
+python scripts/load_section_questions.py
+```
+
+**Measured:** ~4.75 gpt-5 calls per course including validation retries (4 nominal,
+one per section), each returning 10–15k output tokens. 40 courses = 160 sections in
+~50 minutes at `--workers 16`, with no rate limiting at any point (the ceiling is
+500 RPM / 500K TPM). 16 workers did 4× the work of 8 for 11% more wall clock.
+
+`--sections` writes `NT-C-023-S01.section.json`, **not** a course file. A course
+JSON holding one of four sections looks complete to the loader and to anyone
+reading it; the gap only surfaces when a learner reaches the missing section.
+
+### Three things the model is not trusted with
+
+- **The answer key.** Left alone, gpt-5 put the correct option at B for nine of ten
+  MCQs in the first section generated — a student who always answers B scores
+  27/30. Asking for a spread in the prompt invites the bias back in a new shape, so
+  `balance_answer_key` deals positions from a balanced pool afterwards: ten
+  questions draw from A/B/C/D cycled, giving exactly 3/3/2/2 per section by
+  construction. Verified across all 160 section codes with worst-case all-B input.
+- **The arithmetic.** `validate` re-checks counts, the 30/30/40 marks split, each
+  rubric summing to its question's marks, and that no question cites a skill
+  outside `skills_assessed`. A rubric that sums to 9 out of 8 marks is invisible
+  until an assessor is halfway through marking with it.
+- **The skill names.** gpt-5 once produced a whole section whose skills read
+  `Tally Prime (course-level coverage 90/100, technical)` — it had copied the
+  annotation the prompt puts beside each name. Every internal consistency check
+  passed, because the corrupted names were used consistently. Only comparing
+  against the course's real skill list catches that class of error, which is why
+  `validate` takes a `vocabulary` argument and the loader re-checks against
+  `skills` independently.
+
+### Formatting is part of the contract
+
+1,495 of 1,600 MCQs carry a code or data artefact, and the prompt requires every
+one to be in a fenced block with a language tag. `check_formatting` fails a section
+for an unclosed fence, an untagged fence, stray headings or pipe tables, or code
+sitting outside any fence.
+
+Unknown language tags are **normalised, not rejected**: gpt-5 reached for
+` ```docker `, ` ```nginx ` and ` ```http ` on the first probe course and all three
+were the right instinct — the whitelist was what was wrong. Rejection cost a full
+regeneration (~150s, 15k tokens) for something cosmetic, and under the
+all-or-nothing write the third failure discarded three good sections with it.
+Aliases now resolve (`docker`→`dockerfile`, `PY`→`python`), anything unrecognised
+degrades to `text`, and only unclosed fences still fail — guessing where a block
+was meant to end would be inventing content.
+
+Control characters are rejected outright. gpt-5 produced three NUL bytes, all in
+questions *about* invisible characters, by corrupting its own `\u00A0` escapes into
+`\x00A` while writing a Power BI text-normalisation stem. Postgres text cannot hold
+`0x00` at all, so one of them aborted the entire 2,560-row load with a driver-level
+error naming no field.
+
+### The loader
+
+- Validates every file with the generator's own `validate` before a single row
+  moves. The generator validated what the model returned; this validates what is
+  actually being loaded, and those are the same thing only if nothing touched the
+  files in between.
+- **Canonicalises skill-name case** against `skills.skill_name` and stores the
+  canonical spelling — the extracted profiles and the skills table disagree on case
+  for a handful of entries (`design systems` vs `Design systems`), which an exact
+  join treats as two different skills. Names matching nothing at any casing are
+  loaded as written and reported loudly rather than silently dropped.
+- Upserts on `(section_code, question_type, question_number)`; one transaction, one
+  commit. `--prune` (off by default) removes rows for sections no longer on disk.

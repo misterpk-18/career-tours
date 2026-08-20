@@ -1,0 +1,1867 @@
+{
+  "course_code": "NT-C-037",
+  "course_name": "MS Office",
+  "sections": [
+    {
+      "section_code": "NT-C-037-S01",
+      "skills_assessed": [
+        "Microsoft Word",
+        "Data entry"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You set a file’s attribute to Read-only in File Explorer, then open it in Word, make changes, and press Ctrl+S.\n\n```text\ntext\nFile: Proposal.docx\nAttributes: R\nLocation: C:\\Work\\Reports\\\n```\nWhat happens when you try to save?",
+          "options": [
+            "Word shows a save error and refuses any save until you clear the attribute.",
+            "Word prompts you to choose a location/name (Save As) for your edited copy.",
+            "Word saves to a hidden autosave copy alongside the file and keeps the original unchanged.",
+            "Word silently clears the Read-only attribute and overwrites the file."
+          ],
+          "correct_option": "B",
+          "explanation": "When a document is marked Read-only at the file-system level, Word cannot overwrite it. On save, Word proposes Save As so you can create a writable copy (or save elsewhere).",
+          "distractor_rationale": "A: Feels plausible if thinking Read-only is a hard block, but Word gives a Save As path rather than only an error.\nB: Word will not change file attributes without you doing so; this would undermine OS-level intent.\nD: AutoRecover is separate from Save and writes ASD temp files during editing, not a final saved document replacing Save As.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A document has 8 pages. You open Print in Word and set:\n\n```text\ntext\nPrinter: Office Duplexer\nPages: 3,5-7\nCopies: 2  [x] Collate\nDuplex: Flip on long edge\n```\nYou click Print. What stack do you get?",
+          "options": [
+            "Only odd pages 3,5,7 (no page 6) because duplex prints odd pages by default.",
+            "One stack with pages 3 5 6 7 3 5 6 7 (uncollated).",
+            "Two collated sets: 3,5,6,7 then 3,5,6,7.",
+            "All pages 1–8 printed twice because duplex is on."
+          ],
+          "correct_option": "C",
+          "explanation": "The Pages box restricts output to 3,5,6,7. With Collate on and 2 copies, Word prints one complete set in order (3,5,6,7), then repeats. Duplex changes sheet usage, not page selection or collation.",
+          "distractor_rationale": "A: Uncollated would stack as 3,3,5,5,6,6,7,7; Word shows Collate checked.\nC: Duplex doesn’t override a custom page list.\nD: Duplex doesn’t imply odd-only; it just prints on both sides of sheets.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Consider the caret position and a single keystroke in Word:\n\n```text\ntext\nBefore:\nQ2: Budget and forecast for 2026 [|]draft\n\nAction: Press Ctrl+Backspace once.\n```\nWhat does the line become?",
+          "options": [
+            "Q2: Budget and forecast for draft",
+            "Q2: Budget and forecast for ",
+            "Q2: Budget and forecast for 2026draft",
+            "Q2: Budget and forecast for2026draft"
+          ],
+          "correct_option": "A",
+          "explanation": "Ctrl+Backspace deletes the word to the left of the caret and the space before it. The word left of the caret is “2026”, so you get “… for draft”.",
+          "distractor_rationale": "A: Would require deleting spaces around both words; Ctrl+Backspace won’t concatenate like this.\nC: This is closer to what plain Backspace (not Ctrl) would do from that caret position.\nD: Deletes the wrong side; Ctrl+Backspace never deletes the following word.",
+          "skills_covered": [
+            "Data entry"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You have a 3-column table set to fixed width.\n\n```text\ntext\nTable: AutoFit = Fixed column width\nCol1 = 3 cm | Col2 = 3 cm | Col3 = 3 cm\nAction in Col1 cell: Type “Supercalifragilisticexpialidocious”\n```\nWhat happens to the layout?",
+          "options": [
+            "The word wraps onto multiple lines, increasing the row height; column widths stay the same.",
+            "Column 1 widens automatically to fit the long word.",
+            "The entire table grows beyond page margins, clipping on the right.",
+            "Word reduces the font size automatically to make it fit on one line."
+          ],
+          "correct_option": "A",
+          "explanation": "With fixed column widths, Word doesn’t auto-expand the columns. Long content wraps and increases row height unless you manually change widths or settings.",
+          "distractor_rationale": "A: That’s AutoFit to Contents, not Fixed.\nB: Word doesn’t auto-reduce font to fit table cells.\nD: Table width remains fixed unless you change it; no default overflow/clipping occurs.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "An image is placed with:\n\n```text\ntext\nWrap: Square\nPositioned relative to paragraph (not inline)\nAnchor: Paragraph “Summary” on page 1\nOption “Move object with text”: Enabled\nAction: You insert a full page of new text above “Summary”.\n```\nWhere is the image after the edit?",
+          "options": [
+            "It converts to inline and shifts inside the “Summary” line.",
+            "It remains on page 1 in the same visual spot.",
+            "It jumps to the top of the document because the anchor floats to page 1.",
+            "It moves with the “Summary” paragraph onto page 2 and stays near that paragraph."
+          ],
+          "correct_option": "D",
+          "explanation": "With Square wrap and “Move object with text” enabled, the image follows its anchored paragraph. Adding a page above moves both to the next page.",
+          "distractor_rationale": "A: That’s what happens if you fix position relative to page and disable moving with text.\nC: Anchors stay with their paragraph unless you lock them; they don’t float to document start.\nD: Layout choice doesn’t auto-convert to inline.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Current header setup:\n\n```text\ntext\nHeader contains company logo\nDifferent First Page: Enabled\nNow:\n Page 1: Title page (no header)\n Page 2+: Logo in header\nAction: Insert a manual page break at the very top of Page 1 to create a new cover page.\n```\nAfter this, which pages show the logo?",
+          "options": [
+            "All pages lose the logo because the first page changed.",
+            "New Page 1 shows the logo; all other pages lose it.",
+            "Only odd pages show the logo due to default odd–even behavior.",
+            "New Page 1 has no header; Pages 2+ show the logo."
+          ],
+          "correct_option": "D",
+          "explanation": "Different First Page applies to the first page of the section, whichever page that is. The new cover becomes Page 1 (no header); subsequent pages keep the header with the logo.",
+          "distractor_rationale": "A: Inverts the behavior; first pages hide the header in this setting.\nC: The header content remains in the section; inserting a page break doesn’t clear it.\nD: Odd/even headers are a separate option and not implied here.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Printer configuration and Word settings:\n\n```text\ntext\nWindows Printers:\n  Default: HP-LaserJet (no duplex support)\n           Xerox-WorkCentre (duplex capable)\nWord Print dialog shows: HP-LaserJet selected; duplex control is unavailable.\nAction: Click Print without changing anything.\n```\nWhat occurs?",
+          "options": [
+            "It prints on the Xerox and double-sided because Word prefers duplex when available.",
+            "Word blocks printing and asks you to choose a duplex-capable printer.",
+            "It prints on the HP-LaserJet single-sided because that’s the default device selected.",
+            "It prints on the HP-LaserJet but double-sided because Word can force duplex in software."
+          ],
+          "correct_option": "C",
+          "explanation": "Word uses the currently selected (default) printer. If that device has no duplex, the print is single-sided and the duplex control is disabled.",
+          "distractor_rationale": "A: Word doesn’t auto-switch printers.\nC: Lack of duplex isn’t an error; printing proceeds single-sided.\nD: Duplex is a device capability; Word cannot emulate true duplex output.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You clean extra blank lines using Find and Replace in Word:\n\n```text\ntext\nFind what: ^p^p\nReplace with: ^p\nClick: Replace All\nResult shown: 12 replacements made\n```\nWhat is the actual effect on the document?",
+          "options": [
+            "Only the first 12 occurrences are changed due to a Word limit.",
+            "Every place with two consecutive paragraph marks becomes one; longer runs shrink by one per pass.",
+            "All blank lines are removed everywhere in one pass.",
+            "Only blank lines between headings are changed; body text is unaffected."
+          ],
+          "correct_option": "B",
+          "explanation": "The pattern collapses pairs of consecutive paragraph marks into singles. Runs of three become two after one pass; you’d need to run it again to fully normalize longer runs.",
+          "distractor_rationale": "A: A single pass won’t eliminate all multi-length runs.\nC: There is no such low fixed limit; 12 reflects matches found.\nD: Find/Replace doesn’t target headings specially unless specified.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Table pagination settings:\n\n```text\ntext\nTable Properties > Row:\n [ ] Allow row to break across pages  (unchecked)\nRow 10 contains a long paragraph that would span pages 2–3.\n```\nYou print the document. What happens to Row 10?",
+          "options": [
+            "It splits between pages 2 and 3 because content is too long.",
+            "It stays intact and moves to the next page where it first fits, leaving extra white space on page 2 if needed.",
+            "Word reduces the row’s font size to keep it on page 2.",
+            "Only the last line of the row moves; the rest stays on page 2."
+          ],
+          "correct_option": "B",
+          "explanation": "Disallowing row breaks forces the whole row to stay on one page. If it can’t fit in the remaining space on page 2, Word pushes it to the next page, leaving white space.",
+          "distractor_rationale": "A: That’s exactly what the unchecked option prevents.\nC: Word does not auto-shrink fonts to fit pagination.\nD: Partial moves contradict the setting; the entire row moves.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You paste a heading copied from the web into a normal paragraph in Word.\n\n```text\ntext\nCopied text: “LAUNCH PLAN”  (Arial, 26 pt, blue, bold)\nDestination paragraph formatting: Calibri, 11 pt, black\nAction: Ctrl+V, then choose Paste Options = Keep Text Only\n```\nHow does the pasted text appear?",
+          "options": [
+            "Plain text adopting the destination formatting: Calibri, 11 pt, black (still uppercase).",
+            "Becomes sentence case automatically: “Launch plan” in destination formatting.",
+            "Appears as an image because formatting can’t be converted.",
+            "Keeps Arial 26 pt blue bold because Word preserves source formatting."
+          ],
+          "correct_option": "A",
+          "explanation": "Keep Text Only strips source formatting and applies the destination paragraph’s formatting. Letter casing remains as typed; only formatting changes.",
+          "distractor_rationale": "B: That’s “Keep Source Formatting,” not “Keep Text Only.”\nC: Case conversion isn’t automatic.\nD: Paste as image is a different paste choice.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Printed drafts of a 6-page policy show headings at the bottom of pages with their paragraphs starting at the top of the next page. The author has been using multiple blank lines to push text to the next page. The document must print cleanly with no orphan headings and minimal wasted space.",
+          "task": "Decide exactly how to fix the layout and justify why your approach will be more robust than adding blank lines. Specify the Word settings you would apply and how you would verify the print result before sending to the printer.",
+          "expected_answer": "Use paragraph-level pagination controls instead of manual spacing. Select heading paragraphs and enable Keep with next (and optionally Keep lines together) via Paragraph > Line and Page Breaks. For major section starts, consider Page break before on the heading style/paragraph rather than manual page breaks. Remove extra blank lines using Find ^p^p -> ^p until no doubles remain. Use Print Preview (or Print > Settings > Preview) to confirm there are no orphaned headings and that page transitions occur exactly at headings. This approach binds headings to their following content regardless of edits, preventing layout drift that blank lines cause, and reduces wasted space.",
+          "rubric": [
+            {
+              "criterion": "Identifies and applies the correct paragraph pagination controls (Keep with next; optionally Keep lines together) to headings",
+              "marks": 3
+            },
+            {
+              "criterion": "Recommends Page break before for section starts (or a clean manual Page Break) instead of stacking blank lines",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes systematic removal of extra blank lines via Find/Replace using ^p tokens (not manual eyeballing)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains why this approach is robust to future edits vs manual spacing",
+              "marks": 1
+            },
+            {
+              "criterion": "Verifies via Print Preview and/or checking nonprinting characters to ensure no stray spacing remains",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You download a .docx template from a vendor site. In Word it opens in Protected View with a yellow bar. You need to customize it and send it to your manager this afternoon, but your organization is strict about security.",
+          "task": "Choose the safest workflow that still meets the deadline. State the exact steps in Word and any file-handling decisions. Explain why you are not changing global security settings.",
+          "expected_answer": "Do not disable Protected View globally. First, assess trust: check the source URL and File > Info > View permissions. If you trust the source, click Enable Editing. Immediately Save As to a known local work folder (not the Downloads folder) with a meaningful name and version. If the file contains macros (banner indicates), keep macros disabled unless strictly required; if required and the vendor is trusted, move the file into a trusted location defined by IT or sign-check the macro, then enable content for this file only. Optionally run File > Info > Check for Issues > Inspect Document to remove hidden data before sending. Rationale: keeps organization security posture (per-file trust), avoids weakening defenses, and preserves an auditable copy while meeting the deadline.",
+          "rubric": [
+            {
+              "criterion": "Keeps Protected View protections global; enables editing only for this trusted file (no global disable)",
+              "marks": 2
+            },
+            {
+              "criterion": "Saves an editable copy to a controlled local folder with clear naming/versioning",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses potential active content (macros) appropriately (disable unless necessary; enable only if trusted)",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions optional Document Inspector/cleanup or checking file origin for trust justification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A one-page flyer has a logo and caption near the bottom-right of page 1. As you add paragraphs earlier, the logo and caption drift to page 2 unpredictably.",
+          "task": "Explain how to place and anchor the image and caption so they reliably remain on page 1 regardless of edits above. Include specific Word layout settings and any grouping you would use, plus a brief reason for each setting.",
+          "expected_answer": "Use a floating image with Square (or Tight) wrap; set Position to an absolute position relative to Page (not to paragraph). Disable Move object with text and Lock anchor so the object stays on page 1. Add a text box (or caption) for the label and group it with the logo so they move together. Optionally set the text box to Keep lines together and avoid paragraph spacing that could push it. This combination pins the artwork to page coordinates while edits above don’t drag it along with anchored text.",
+          "rubric": [
+            {
+              "criterion": "Chooses floating wrap (Square/Tight) and explains why inline is unsuitable for fixed page placement",
+              "marks": 2
+            },
+            {
+              "criterion": "Sets position relative to Page and disables Move object with text (or locks anchor) to prevent drift",
+              "marks": 2
+            },
+            {
+              "criterion": "Groups logo with its caption (text box/caption) to maintain relative alignment",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a clear rationale tying settings to the observed drift and page 1 constraint",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You paste a product spec table that spans two pages. The first row is the header and must repeat on the next page. Some long rows are splitting awkwardly across pages, and column widths look inconsistent after pasting.",
+          "task": "Describe the exact table settings and steps to get a professional, print-ready table: header repeats on new pages, long rows don’t split, and widths are consistent within margins. Explain how you’d verify before printing.",
+          "expected_answer": "Clean the paste: use Paste Options = Keep Text Only and then Insert > Table > Convert Text to Table, or normalize the existing table. Select the header row and set Table Tools > Layout > Repeat Header Rows. Open Table Properties: on Row tab, uncheck Allow row to break across pages for important rows (or globally if needed). On Table tab, set Preferred width to fit within margins and choose AutoFit = Fixed to keep consistent widths; adjust column widths explicitly. Verify with nonprinting characters on, then check Print Preview and page boundaries to ensure the header repeats, no critical rows split, and the table fits the printable area.",
+          "rubric": [
+            {
+              "criterion": "Enables Repeat Header Rows correctly for the header",
+              "marks": 2
+            },
+            {
+              "criterion": "Prevents undesirable row splits by adjusting Allow row to break across pages",
+              "marks": 2
+            },
+            {
+              "criterion": "Normalizes column widths within margins (Preferred width/AutoFit settings and explicit adjustments)",
+              "marks": 2
+            },
+            {
+              "criterion": "Verifies via Print Preview and/or nonprinting characters; mentions clean paste/convert if needed",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Organised workspace setup for a Word project",
+          "brief": "Create a clean folder structure for a small Word-based project and demonstrate basic print and file hygiene so another person can take over without confusion. Do not include any confidential data.",
+          "deliverable": "A single zip file named Workspace_YourName.zip containing a top-level folder Workspace_YourName with subfolders and files as per acceptance criteria.",
+          "acceptance_criteria": [
+            "Folder structure exists exactly: Workspace_YourName/01_Drafts, 02_Assets, 03_Final, 04_Exports",
+            "At least one Word document in 01_Drafts with meaningful, date-stamped name, e.g., 2026-03-10_Memo_v01.docx",
+            "A refined copy of that document saved in 03_Final with an updated version tag (e.g., v02) and File > Info > Protect Document > Mark as Final applied (visible when the file is opened)",
+            "A PDF of the final document exported from Word in 04_Exports with matching filename (e.g., 2026-03-10_Memo_v02.pdf)",
+            "An image file (PNG or JPG) placed in 02_Assets and inserted in the Draft Word document (embedded, not linked)",
+            "A text file 00_ReadMe.txt at the top level describing the naming convention, what changed between v01 and v02, and which printer/PDF settings were used"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct folder tree and file placement exactly match the required structure",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear, consistent, date-stamped naming across draft/final/PDF with versioning",
+              "marks": 3
+            },
+            {
+              "criterion": "Final Word document has Mark as Final applied and opens showing that status",
+              "marks": 4
+            },
+            {
+              "criterion": "PDF export exists, opens, and matches the final document content and page count",
+              "marks": 3
+            },
+            {
+              "criterion": "Asset management: image present in 02_Assets and correctly embedded in the draft document",
+              "marks": 3
+            },
+            {
+              "criterion": "00_ReadMe.txt is present and clearly explains naming/version changes and export settings",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "Data entry"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Produce a professional 2–3 page document",
+          "brief": "Author a short professional document suitable for printing and sharing as PDF. Focus on clean pagination, readable formatting, correct use of tables and images, and predictable printing.",
+          "deliverable": "Two files: YourName_ProfessionalDoc.docx and YourName_ProfessionalDoc.pdf",
+          "acceptance_criteria": [
+            "Length 2–3 pages at A4 or Letter with 2.5 cm/1 in margins",
+            "Page numbers in the footer for all pages except the first page (use Different First Page)",
+            "At least one manual Page Break used to start a new section; no stacked empty paragraphs used for spacing",
+            "One table formatted to fit within margins; header row repeats if the table spans pages; no critical row splits across pages",
+            "One image inserted with Square wrapping and a visible caption beneath it; layout remains intact after adding/removing a paragraph above (i.e., image does not jump to another page)",
+            "No double spaces between words and no double blank lines (cleaned via Find/Replace)",
+            "Document properties Title and Author filled (File > Info)",
+            "PDF export matches the Word document (layout and pagination)"
+          ],
+          "rubric": [
+            {
+              "criterion": "Page layout and numbering: margins, footer numbers, Different First Page correctly applied",
+              "marks": 3
+            },
+            {
+              "criterion": "Use of Page Breaks instead of empty paragraphs for spacing; overall pagination is clean",
+              "marks": 3
+            },
+            {
+              "criterion": "Table fits within margins; header row repeats on continuation pages; no undesirable row breaks",
+              "marks": 4
+            },
+            {
+              "criterion": "Image with Square wrap and caption placed stably; remains on the intended page after minor edits",
+              "marks": 3
+            },
+            {
+              "criterion": "Text cleanliness: no double spaces or double blank lines remain",
+              "marks": 2
+            },
+            {
+              "criterion": "Document properties (Title and Author) completed; professional overall formatting",
+              "marks": 3
+            },
+            {
+              "criterion": "PDF faithfully matches the .docx layout and page count",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "Data entry"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-037-S02",
+      "skills_assessed": [
+        "Microsoft Word",
+        "Microsoft Excel",
+        "Data entry",
+        "formulas",
+        "charts",
+        "mail merge",
+        "Styles",
+        "references"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit a Word report where a custom paragraph style \"Note\" was created based on Normal, and its style settings show this:\n\n```text\nStyle: Note (Paragraph)\nBased on: Normal\nAutomatically update: Yes\nFont: Calibri 11, Blue, Not Bold\n```\n\nYou click inside one Note paragraph and press Ctrl+B to bold a single sentence. You do not open the Modify Style dialog or apply any other style.\n\nWhat happens to the rest of the document immediately after you press Ctrl+B?",
+          "options": [
+            "Nothing changes until you right‑click the Note style and choose \"Update Note to Match Selection\".",
+            "All paragraphs with the Note style become bold where their text is Note-styled, because the style auto-updates from your direct formatting.",
+            "Only the selected sentence in that one Note paragraph becomes bold; other Note paragraphs remain unchanged.",
+            "Only styles that are based on Note (child styles) change; paragraphs using Note directly do not."
+          ],
+          "correct_option": "B",
+          "explanation": "With \"Automatically update\" enabled, any direct formatting within a paragraph using that style is interpreted as a style change and applied to all paragraphs with that style. The bold attribute becomes part of the style definition instantly.",
+          "distractor_rationale": "A: Tempting if you assume direct formatting is local. It is normally, but auto-update overrides that.\nC: That's the manual way when auto-update is off; here it's on, so the update is automatic.\nD: Style inheritance isn't required here; the Note style itself updates and all paragraphs using it change, regardless of child styles.",
+          "skills_covered": [
+            "Microsoft Word",
+            "Styles"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A Word mail merge pulls an `Amount` field from Excel. In Word you toggle field codes and see:\n\n```text\n{ MERGEFIELD Amount }\n```\n\nIn the merged letters, values like 1234.5 appear without currency formatting, even though Excel shows them as $1,234.50. You must fix the formatting in Word without changing the Excel file or the data connection.\n\nWhat change guarantees the desired currency display in the merged output?",
+          "options": [
+            "Edit the field code to:\n```text\n{ MERGEFIELD Amount \\# \"$#,##0.00\" }\n```",
+            "Format the Excel column as Currency with two decimals; Word will inherit the cell format on next merge.",
+            "Enable \"Update automatic links at open\" in Word Options > Advanced.",
+            "Wrap the field in a formula field:\n```text\n{ = { MERGEFIELD Amount } * 1 }\n```\nso Word recalculates it as a number."
+          ],
+          "correct_option": "A",
+          "explanation": "Mail merge via OLE DB retrieves the underlying value, ignoring Excel’s cell display format. Adding a numeric picture switch in Word (`\\# \"$#,##0.00\"`) controls rendering in the merged document reliably without touching the source.",
+          "distractor_rationale": "B: Common belief, but Word ignores Excel cell formats through OLE DB.\nC: Link-updating does not change merge field rendering.\nD: Coercing to a number doesn’t add formatting; it still displays raw numerics unless you also use a picture switch.",
+          "skills_covered": [
+            "mail merge",
+            "Microsoft Word",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your report contains cross-references to captions. One sentence reads:\n\n```text\nSee Figure { REF _Ref90210 \\h } for details.\n```\n\nLater you delete the original captioned figure that `_Ref90210` pointed to and type a new plain paragraph \"Figure 3A – Revised\" without inserting a caption. After updating fields, the reference displays:\n\n```text\nError! Reference source not found.\n```\n\nWhat is the correct repair to fix all such broken references properly?",
+          "options": [
+            "Turn off Track Changes and accept all revisions, then update fields.",
+            "Select the whole document and press F9 to update fields; Word will remap references automatically.",
+            "Reinsert proper captions on the replacement items and recreate the cross-references to those captions.",
+            "Find and replace the error text with the correct figure numbers manually."
+          ],
+          "correct_option": "C",
+          "explanation": "Cross-references target bookmarks created by captioning. Deleting the caption removes the bookmark, so the REF field has no target. You must recreate valid caption targets and then repoint cross-references to them.",
+          "distractor_rationale": "A: Updating fields cannot resurrect a deleted bookmark.\nC: Review state is unrelated to missing bookmark targets.\nD: Manual text edits don’t restore dynamic links and will break on renumbering.",
+          "skills_covered": [
+            "references",
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You filter Track Changes to show only Alice’s changes:\n\n```text\nTracking: All Markup\nShow Markup: Comments, Insertions and Deletions (Reviewers: Alice only)\n```\n\nYou click Accept ▼ and choose \"Accept All Shown Changes\". Other reviewers’ changes are still hidden by the filter.\n\nImmediately after this, which state is correct?",
+          "options": [
+            "Only formatting changes are accepted; insertions/deletions always require manual review per change.\n",
+            "Nothing is accepted because Accept All works only in Simple Markup view.",
+            "All reviewers’ changes are accepted because \"All Markup\" is selected.\n",
+            "Only Alice’s visible changes are accepted; hidden reviewers’ changes remain pending.\n"
+          ],
+          "correct_option": "D",
+          "explanation": "\"Accept All Shown Changes\" operates on the currently visible subset. With the reviewer filter applied, it accepts Alice’s changes and leaves hidden reviewers’ changes intact.",
+          "distractor_rationale": "A: \"All Markup\" affects display richness, not the reviewer filter.\nC: Word can accept insertions and deletions in bulk; it is not limited to formatting.\nD: View mode doesn’t block Accept; the reviewer filter is the controlling factor here.",
+          "skills_covered": [
+            "Microsoft Word"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "In Excel, column A contains numbers, but A3 is stored as text (left-aligned, green triangle). You need a total in A6 without editing the source cells. Data:\n\n```csv\nA\n2\n5\n\"100\"\n3\n```\n\nWhich formula in A6 correctly totals 110 by coercing any numeric-looking text?",
+          "options": [
+            "```text\n=SUM(A2:A5)\n```",
+            "```text\n=SUMPRODUCT(A2:A5*1)\n```",
+            "```text\n=SUBTOTAL(9,A2:A5)\n```",
+            "```text\n=SUMIF(A2:A5,\">=0\")\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`SUMPRODUCT(A2:A5*1)` coerces text numerals to numbers, so 2+5+100+3=110. `SUM` and `SUBTOTAL` ignore text; `SUMIF` still ignores text for summation even if the criterion matches.",
+          "distractor_rationale": "A/B: Both ignore text values; total would be 10.\nC: The criterion may match, but `SUMIF` sums the range as numbers and ignores text, so 10 again.\nD is the reliable coercion approach without editing cells.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas",
+            "Data entry"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You have this dataset and a line chart based on B2:E5. Empty cells in row 4 create breaks in the line.\n\n```csv\n,Jan,Feb,Mar,Apr\nProduct A,10,12,14,16\nProduct B,8,9,11,13\nProduct C,5,, ,7\n```\n\nIn Select Data > Hidden and Empty Cells you change only one setting: check \"Connect data points with line\" (leave hidden rows unchecked). What happens to Product C’s line between Jan and Apr?",
+          "options": [
+            "Nothing changes until you convert blanks to NA() in the sheet.",
+            "The line connects Jan–Mar–Apr by treating a blank in Feb as zero and a blank in Mar as a gap.",
+            "The line still shows gaps at Feb and Mar because blanks can’t be connected without values.",
+            "The line connects Jan directly to Apr with a straight segment across the empty months."
+          ],
+          "correct_option": "D",
+          "explanation": "For line charts, enabling \"Connect data points with line\" draws a straight segment across empty cells, bridging gaps between existing points (Jan→Apr).",
+          "distractor_rationale": "A: True by default, but the setting explicitly connects across blanks.\nC: The setting doesn’t invent zeros; it bridges blanks uniformly.\nD: Using `NA()` affects how gaps render, but it isn’t required once you choose to connect points.",
+          "skills_covered": [
+            "charts",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You paste an Excel range `Sheet1!$A$1:$D$10` into Word using Paste Special > Paste link > Microsoft Excel Worksheet Object. After you sort the Excel table by a different column, the records in `A1:D10` change.\n\nWhen you update links in Word, what should you expect?",
+          "options": [
+            "Word shows the pre-sort snapshot; links don’t update after structural changes.",
+            "The Word table updates to show whatever is currently in `Sheet1!$A$1:$D$10`, even if the sorted records are different.",
+            "Word follows the original records wherever they moved, because the link tracks values not addresses.",
+            "The link breaks because sorting changes the workbook’s internal IDs."
+          ],
+          "correct_option": "B",
+          "explanation": "A link to a fixed address updates to the current contents of that address. Sorting changes which records occupy `A1:D10`, so Word shows the new records at that range, not the original rows.",
+          "distractor_rationale": "B: Sorting doesn’t break the link; the address still exists.\nC: Links track cell addresses, not specific records.\nD: Linked objects do update; they’re not static snapshots unless pasted as pictures.",
+          "skills_covered": [
+            "Microsoft Word",
+            "Microsoft Excel",
+            "Data entry"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "An Excel Table `Sales` has columns `[Item]`, `[Qty]`, `[Price]`. In `Sales`, you add a calculated column `Total` using:\n\n```text\n=[@Qty]*[@Price]\n```\n\nYou copy one cell `Sales[@Total]` and paste it into a normal range outside the Table (cell G10). What appears in G10?",
+          "options": [
+            "A #NAME? error, because `@` structured references only work inside Tables.",
+            "A fixed value from the copied row; Table references convert to constants when pasted outside.",
+            "A working formula with a structured reference like:\n```text\n=Sales[@Qty]*Sales[@Price]\n```\nthat updates if the source row changes.",
+            "A formula that converts to regular A1 references pointing to the same row that was copied."
+          ],
+          "correct_option": "C",
+          "explanation": "Pasting a Table formula cell outside the Table keeps structured references that continue to point to the source row. The `@` (implicit intersection) still resolves to that row in the Table context of the reference.",
+          "distractor_rationale": "A: Structured references are recognized workbook-wide; `@` resolves in the Table reference.\nB: Excel preserves formulas when pasting by default unless you paste values.\nD: Excel doesn’t automatically convert structured references to A1 in this paste scenario.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your Excel column A has product IDs, some duplicated. You set Data Validation on B2:B100 with Allow: List and Source:\n\n```text\n=Products[ProductID]\n```\n\nYou add new rows to the `Products` Table. Without touching the validation rule, what happens to the dropdown in B2:B100?",
+          "options": [
+            "It automatically includes the new IDs because the structured reference expands with the Table.",
+            "It excludes new IDs until you edit the Source to extend the range.",
+            "It breaks with a reference error until you convert the Table back to a range.",
+            "It includes new IDs only after you save/close/reopen the workbook."
+          ],
+          "correct_option": "A",
+          "explanation": "Validation lists that point to a Table column via structured reference expand automatically with the Table, so the dropdown reflects new items immediately.",
+          "distractor_rationale": "B: True for fixed A1 ranges, not for Table column references.\nC: No reopen is required; expansion is live.\nD: Tables are designed to support dynamic references; there’s no need to convert them.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data entry"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You build a Word TOC using the default dialog (Show levels: 3). Your document uses built‑in Heading 1–3 for most headings, but a few subheads are normal paragraphs whose Outline level was manually set to Level 2 without applying Heading 2.\n\nImmediately after inserting the TOC, what entries appear for those manual Level 2 paragraphs?",
+          "options": [
+            "They appear as level‑2 entries because TOC by default includes Outline levels 1–3.",
+            "They appear, but only after you check \"Use hyperlinks instead of page numbers.\"",
+            "They are omitted because only paragraphs with Heading 1–3 styles are included by default.",
+            "They appear at level 1 because manual Outline levels override style levels."
+          ],
+          "correct_option": "A",
+          "explanation": "The default TOC field uses the `\\o \"1-3\"` switch, which includes paragraphs with Outline levels 1–3 regardless of whether they use the built‑in Heading styles. Manually setting a paragraph’s Outline level to 2 makes it eligible as a level‑2 entry.",
+          "distractor_rationale": "B: Common misconception; Heading styles set outline levels, but the TOC field reads the level, not strictly the style name.\nC: Outline level 2 appears as level 2, not level 1.\nD: Hyperlink setting affects linking, not inclusion criteria.",
+          "skills_covered": [
+            "references",
+            "Microsoft Word",
+            "Styles"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must deliver a 12–15 page client report in Word that includes: hierarchical headings, a List of Figures, cross‑references between sections, and a pasted, linked Excel summary table that will update the morning of delivery after Finance refreshes the workbook. Two senior reviewers will simultaneously edit. On a dry‑run, you see these issues: (1) the List of Figures shows wrong numbers until you click into each caption, (2) several cross‑references display \"Error! Reference source not found.\", (3) the linked Excel table shows different rows after Finance sorts by margin, and (4) after \"Accept All Shown Changes\" some edits still remain.",
+          "task": "Propose a concrete, ordered workflow that prevents these four failures on delivery morning. Your answer must specify exact Word/Excel features to use (field update scope, link target method, cross‑reference repair, review filters) and why each step works under the stated conditions.",
+          "expected_answer": "A good answer proposes, in order: (a) Use real captions via References > Insert Caption (not typed text) and ensure they are part of a single multilevel list. Before finalizing, Ctrl+A then F9 to update all fields (TOC/LOF/cross‑refs) in one pass; if any remain stale, switch to Print Preview to force pagination then F9 again. (b) For cross‑reference errors, recreate missing caption targets and reinsert cross‑references; explain that deleting captions removes the underlying bookmarks, which a field update cannot recreate. (c) Change the Excel link to target a named range (or Table object) that always points to the intended rows; in Word use Links > Change Source or Edit Links to update to the named range so sorts don’t change the view. (d) Coordinate review by clearing reviewer filters before the final accept: set Show Markup to All Reviewers and use Accept All Changes and Stop Tracking, or explicitly choose Accept All Changes (not Accept All Shown Changes) to ensure hidden reviewers’ changes don’t remain. Justify each step by the behavior of field updates, bookmarks, address‑based links, and reviewer filters.",
+          "rubric": [
+            {
+              "criterion": "Explains full‑document field update process (Ctrl+A then F9) and forcing repagination before update for List of Figures/TOC accuracy",
+              "marks": 2
+            },
+            {
+              "criterion": "Diagnoses cross‑reference errors as deleted bookmark targets and prescribes recreating captions and re‑inserting cross‑references",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies using a named range or Table as the Excel link target and changing the Word link to that name to survive sorting",
+              "marks": 2
+            },
+            {
+              "criterion": "Distinguishes \"Accept All Shown\" vs accepting all reviewers’ changes and prescribes the correct accept workflow",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "references",
+            "Styles",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "An Excel workbook drives monthly KPIs. Input sheet has mixed data entry quality: some numeric amounts are stored as text, some blanks are truly empty, others are \"\" from formulas. The Dashboard uses a line chart on monthly amounts and a total row using simple SUM. Stakeholders complain that (a) the chart has gaps and (b) the total misses numbers visible in the grid.",
+          "task": "Specify formula changes and chart settings that fix both problems without cleaning the raw inputs manually. Include exact formulas and the relevant chart option names, and explain why they work for the given kinds of blanks and numeric‑as‑text.",
+          "expected_answer": "For totals, replace `=SUM(range)` with a coercing aggregation such as `=SUMPRODUCT(--range)` or `=SUMPRODUCT(range*1)` to include numeric text, or wrap `VALUE` in a helper column. For charts, in Select Data > Hidden and Empty Cells set \"Show empty cells as Gaps\" and, if the time series should bridge missing months, enable \"Connect data points with line\". To prevent zeros from `\"\"` formula outputs, either change the source formula to `=IF(condition, value, NA())` so blanks become `#N/A` (which charts skip) or use a plotted series that ignores zeroes by design. Explain that SUM ignores text and that chart gap behavior differs for empty cells, zeroes, and `NA()`.",
+          "rubric": [
+            {
+              "criterion": "Provides a coercing total formula that correctly sums numeric text (SUMPRODUCT/-- or *1)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains difference between true blanks, \"\" and NA() in chart rendering and prescribes NA() for hidden values",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies the Hidden and Empty Cells setting and the Connect data points with line option",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies why each change addresses the specific stakeholder complaints",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas",
+            "charts",
+            "Data entry"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are preparing a mail‑merged set of notices in Word pulling from an Excel list with columns: `Name`, `Balance`, `DueDate`. The merged output currently shows balances like 1234.5 and dates like 45123. Finance insists on $1,234.50 and 2023‑08‑31 formats without altering the Excel workbook’s cell formats or switching data connection methods.",
+          "task": "Describe the precise field code changes in the Word main document to guarantee Finance’s formats in the merged letters. Include the exact switches and an example of the full field code for each of `Balance` and `DueDate`, plus a note on how to reveal and apply the changes to all instances.",
+          "expected_answer": "In Word, toggle field codes (Alt+F9). Edit merge fields to add picture switches: for currency, `{ MERGEFIELD Balance \\# \"$#,##0.00\" }`; for ISO date, `{ MERGEFIELD DueDate \\@ \"yyyy-MM-dd\" }`. Ensure straight quotes. After editing one, use Find for `MERGEFIELD Balance`/`DueDate` or select all (Ctrl+A) then press F9 to update. Optionally lock fields (Ctrl+F11) after final check. Explain that OLE DB supplies raw values and that picture switches control rendering independent of Excel cell formats.",
+          "rubric": [
+            {
+              "criterion": "Correct currency picture switch with proper escaping and thousands separator",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct date picture switch for yyyy-MM-dd",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes toggling and updating fields across the document (Alt+F9, Ctrl+A then F9)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why switches are needed despite Excel’s formats (OLE DB raw values)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "mail merge",
+            "Microsoft Word",
+            "Microsoft Excel",
+            "references"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A 20‑page procedures document uses multilevel headings and many cross‑references like \"see 3.2.1\". Authors complain numbering drifts: some Heading 2 paragraphs restart at 1 unexpectedly, and cross‑references sometimes point to the wrong number after moving sections around.",
+          "task": "Diagnose the likely root causes and prescribe exact fixes in Word to stabilize numbering and cross‑references going forward. Your answer should cover list template linkage to styles, how to repair it, and safe editing practices when reorganizing sections.",
+          "expected_answer": "Root causes: (1) Multilevel list not properly linked to Heading styles; some headings were manually numbered or created with direct numbering, causing independent list templates and restarts. (2) Cross‑references were left stale after structural edits. Fix: Define one multilevel list from Home > Multilevel List > Define New Multilevel List, link Levels 1–9 explicitly to Heading 1–9, set Restart after Level n where appropriate, and store in the document’s template. Remove direct numbering by selecting the whole doc and choosing Clear Formatting or Set Numbering Value to continue as needed. Reapply linked Heading styles. For cross‑references, use References > Cross‑reference to the desired element and after reorders press Ctrl+A then F9 to update. Avoid manual typed numbers; move sections via Navigation Pane to preserve headings and bookmarks.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies broken multilevel list linkage / direct numbering as the restart cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies defining a single multilevel list linked to Heading 1–9 with proper restart settings",
+              "marks": 2
+            },
+            {
+              "criterion": "Prescribes clearing direct numbering and reapplying styles to bring paragraphs under the list template",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers cross‑reference maintenance (use real cross‑refs and update fields after moves) and safe reorg practice",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "Styles",
+            "references"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Structured report with styles, captions, cross‑references and review controls",
+          "brief": "Create a professional multi‑section Word report (8–12 pages) that demonstrates disciplined use of styles, references and review features. The report should read like a short whitepaper on a topic of your choice, but the focus is on structure and referencing, not content.",
+          "deliverable": "Structured report",
+          "acceptance_criteria": [
+            "Uses built‑in Heading 1–3 styles for the hierarchy (at least 2 Heading 1 sections, each with at least one Heading 2).",
+            "Table of Contents generated automatically from headings and updating correctly (Ctrl+A then F9 yields no stale entries).",
+            "At least two figures or tables inserted with References > Insert Caption, auto‑numbered, and a List of Figures or Tables that updates correctly.",
+            "At least three cross‑references (e.g., to a heading number and to a figure number); none display errors after an update.",
+            "Includes at least three in‑text citations and a Bibliography built with Word’s References > Manage Sources (any style).",
+            "Track Changes enabled during an edit pass; include at least five changes and two comments. Provide a second copy with all changes accepted for final submission."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, consistent use of Heading styles and a functioning TOC (no manual numbering)",
+              "marks": 5
+            },
+            {
+              "criterion": "Properly captioned figures/tables and an updating List of Figures/Tables",
+              "marks": 4
+            },
+            {
+              "criterion": "Working cross‑references (no errors after Ctrl+A then F9)",
+              "marks": 4
+            },
+            {
+              "criterion": "Citations and generated Bibliography present and correctly formatted via Word’s tools",
+              "marks": 3
+            },
+            {
+              "criterion": "Demonstrated review workflow (tracked changes and comments) and clean final copy",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "Styles",
+            "references"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Calculation workbook with robust formulas, clean formatting and charts",
+          "brief": "Build a small KPI workbook that can be handed to a non‑technical manager. Use clean data entry, resilient formulas, and clear charts.",
+          "deliverable": "Calculation workbook",
+          "acceptance_criteria": [
+            "Input sheet with at least 20 rows and 5 columns of realistic data; include intentional edge cases: one numeric cell stored as text, some true blanks, some \"\" from formulas.",
+            "Calculation sheet with: (a) at least three derived columns using relative/absolute references appropriately, (b) one coercing total using SUMPRODUCT or --, and (c) one lookup (e.g., XLOOKUP/VLOOKUP) with error handling.",
+            "Use an Excel Table for the main dataset; create a Data Validation dropdown driven by a Table column or named range to filter or select an item.",
+            "Two charts: (1) a line chart over time with Hidden and Empty Cells configured to connect points across empty cells or to use NA() to suppress plotting, and (2) a column or bar chart with formatted axes and labels.",
+            "Consistent number/date formats and thousand separators; no green triangles in the final calculation area. Named ranges or Table structured references used in formulas where appropriate."
+          ],
+          "rubric": [
+            {
+              "criterion": "Data entry quality: realistic dataset, edge cases included and identified",
+              "marks": 4
+            },
+            {
+              "criterion": "Formula quality: correct use of relative/absolute refs, coercing totals, and a robust lookup with error handling",
+              "marks": 6
+            },
+            {
+              "criterion": "Dynamic structures: Table use and validation list tied to a Table column or named range",
+              "marks": 4
+            },
+            {
+              "criterion": "Charts: correct configuration for gaps/NA() and clear labeling/formatting on both charts",
+              "marks": 4
+            },
+            {
+              "criterion": "Professional polish: consistent formats, readable layout, and absence of avoidable errors/warnings",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "Data entry",
+            "formulas",
+            "charts"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-037-S03",
+      "skills_assessed": [
+        "Microsoft Excel",
+        "PowerPoint",
+        "formulas",
+        "pivots basics"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You convert the range below to an Excel Table named `Sales` and apply a filter `Region = West`.\n\n```csv\nOrderID,Region,Amount\n1,West,100\n2,East,200\n3,West,150\n4,South,50\n5,West,-20\n```\n\nF2 contains `=SUBTOTAL(109,Sales[Amount])` and F3 contains `=SUM(Sales[Amount])`.\n\nWhat values display after the filter is applied?",
+          "options": [
+            "```text\nF2 = 480; F3 = 480\n```",
+            "```text\nF2 = 480; F3 = 230\n```",
+            "```text\nF2 = 230; F3 = 480\n```",
+            "```text\nF2 = 230; F3 = 230\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "`SUBTOTAL` with function 109 sums only visible cells in a filtered list, so it returns 230 (100+150-20). `SUM` ignores filters and adds all rows, returning 480.",
+          "distractor_rationale": "B: A common misconception is that `SUM` respects filters; it does not. C: Confuses `SUBTOTAL` with `SUM`. D: Reverses which function is filter-aware.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "The `Prices` table contains duplicate keys:\n\n```csv\nSKU,Price\nA001,10\nA001,12\nA002,9\n```\n\nCell E2 has:\n\n```text\n=VLOOKUP(\"A001\",Prices,2,FALSE)\n```\n\nWhat is returned?",
+          "options": [
+            "Both 10 and 12 concatenated",
+            "#N/A",
+            "10",
+            "12"
+          ],
+          "correct_option": "C",
+          "explanation": "`VLOOKUP` with exact match (`FALSE`) returns the first match from top to bottom, so it returns 10.",
+          "distractor_rationale": "B: Learners may think it returns the most recent or last; `VLOOKUP` returns the first. C: `#N/A` would occur only if no exact A001 existed. D: `VLOOKUP` never returns multiple matches.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You have a descending list of month-end rates in a table `Rates`:\n\n```csv\nDate,Rate\n2024-06-30,1.20\n2024-05-31,1.10\n2024-04-30,1.05\n```\n\nCell H1 contains the lookup date `2024-05-15`. In H2 you enter:\n\n```text\n=INDEX(Rates[Rate],MATCH(H1,Rates[Date],-1))\n```\n\nWhat does H2 return?",
+          "options": [
+            "#N/A",
+            "1.10",
+            "1.05",
+            "1.20"
+          ],
+          "correct_option": "B",
+          "explanation": "`MATCH(...,-1)` expects a range sorted in descending order and returns the smallest value greater than or equal to the lookup. For 2024-05-15 it returns 2024-05-31, i.e., 1.10.",
+          "distractor_rationale": "A: Chooses the first row, ignoring the lookup requirement. C: Assumes nearest earlier date; with `-1` it returns the next greater/equal in a descending list. D: `#N/A` would occur only if the array wasn't sorted descending or the date was out of range on the wrong side.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You insert a PivotTable from this source:\n\n```csv\nRegion,Amount\nNorth,'120\nNorth,80\nSouth,50\nSouth,90\n```\n\nNote the apostrophe before 120, making that cell text. In the Pivot, you put `Region` in Rows and `Amount` in Values. Without changing field settings, what does the Values field default to?",
+          "options": [
+            "Sum of Amount by Region",
+            "Count of Amount by Region",
+            "Sum for numeric rows and 0 for text rows",
+            "The Pivot shows an error until the text is fixed"
+          ],
+          "correct_option": "B",
+          "explanation": "If any value in the source field is text, the PivotTable defaults the Values field to `Count` rather than `Sum`.",
+          "distractor_rationale": "B: True only if the entire source column is numeric. C: Not how the default aggregation works; it doesn’t partially sum by default. D: Pivots do not error for mixed types; they change the aggregation.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "pivots basics"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You build two PivotTables on the same sheet:\n\n- `PT_Range` is based on `Sales!$A$1:$D$100`.\n- `PT_Table` is based on the Excel Table `Sales` (same columns).\n\nYou append 30 new rows at the bottom of the data (rows 101–130) and click Refresh on both Pivots. What happens?",
+          "options": [
+            "Only `PT_Table` includes the new rows; `PT_Range` ignores them.",
+            "Only `PT_Range` includes the new rows because the range expanded during paste.",
+            "Neither updates until you click Change Data Source on each Pivot.",
+            "Both Pivots include the new rows automatically."
+          ],
+          "correct_option": "A",
+          "explanation": "Pivots sourced from a Table expand automatically as the Table grows. Pivots on a fixed range do not expand on refresh.",
+          "distractor_rationale": "B: Assumes refresh expands fixed ranges; it does not. C: Fixed ranges do not auto-resize. D: `PT_Table` needs only Refresh; changing data source is unnecessary.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "pivots basics"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A slide has two rectangles:\n\n- Shape 1 fill: Theme color `Accent 1, Darker 25%`\n- Shape 2 fill: Explicit RGB `0,120,215`\n\nYou switch to a new theme where `Accent 1` is green. What happens to the shapes?",
+          "options": [
+            "Both shapes turn green because the theme overrides direct formatting.",
+            "Shape 1 turns green; Shape 2 stays the same blue.",
+            "Both shapes stay the same because fills are cached per shape.",
+            "Shape 1 stays blue; Shape 2 turns green."
+          ],
+          "correct_option": "B",
+          "explanation": "Theme-linked fills adapt when the theme changes; direct RGB overrides do not.",
+          "distractor_rationale": "B: Theme does not override explicit RGB values. C: Reverses which formatting is theme-linked. D: PowerPoint does not freeze theme-linked fills.",
+          "skills_covered": [
+            "PowerPoint"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "On Slide 7, bulleted text is inside a content placeholder. You had manually set those bullets to 18pt on the slide. You then edit the Slide Master to set body text to 24pt for that layout. Back on Slide 7 you click `Reset`. What size are the bullets now?",
+          "options": [
+            "18pt, because direct formatting cannot be overridden by Reset.",
+            "24pt on new slides only; existing slides never change.",
+            "Mixed sizes due to inheritance from the theme and slide.",
+            "24pt, because Reset reapplies the layout's placeholder formatting."
+          ],
+          "correct_option": "D",
+          "explanation": "Reset clears direct formatting from placeholders and reapplies the layout's styles, so the bullets become 24pt.",
+          "distractor_rationale": "B: Reset is designed to remove direct formatting from placeholders. C: Existing slides do update when you Reset them. D: Placeholder text after Reset is consistent, not mixed.",
+          "skills_covered": [
+            "PowerPoint"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You paste an Excel range into PowerPoint via Paste Special → `Paste link` → `Microsoft Excel Worksheet Object`. The source file is `C:\\Reports\\SummaryReport.xlsx`. Later you rename the workbook to `SummaryReport_v2.xlsx` in the same folder. Next time you open the deck, what happens?",
+          "options": [
+            "PowerPoint cannot update the link and prompts you to locate the source; the link is broken until you relink to the new filename.",
+            "PowerPoint converts the object to an embedded static copy to avoid a broken link.",
+            "The link updates if the Excel Table name is unchanged, because links follow named objects.",
+            "The link updates automatically because Office tracks the file regardless of name changes."
+          ],
+          "correct_option": "A",
+          "explanation": "OLE links store the file path/name. Renaming the source breaks the link until you edit links to point to the new file.",
+          "distractor_rationale": "B: Office does not track renamed files automatically. C: Links are path-based, not object-ID based. D: PowerPoint does not silently convert linked objects to embedded copies.",
+          "skills_covered": [
+            "PowerPoint",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Given the filtered `Sales` table below, cell H2 contains:\n\n```text\n=SUMIF(Sales[Region],\"West\",Sales[Amount])\n```\n\nYou apply a filter on the table to show only `Region = West`.\n\n```csv\nOrderID,Region,Amount\n1,West,100\n2,East,200\n3,West,150\n4,South,50\n5,West,-20\n```\n\nWhat does H2 return?",
+          "options": [
+            "The sum of all rows where Region is West (100+150-20), regardless of filter.",
+            "#VALUE!, because `SUMIF` cannot work with filtered tables.",
+            "0, because filtered-out rows are excluded from `SUMIF`.",
+            "The sum of only the visible West rows after filtering."
+          ],
+          "correct_option": "A",
+          "explanation": "`SUMIF` ignores filter state and sums all matching rows, visible or not. To respect filters, use `SUBTOTAL`/`AGGREGATE` on visible cells.",
+          "distractor_rationale": "B and C: Common misconceptions that `SUMIF` is filter-aware. D: `SUMIF` works fine on tables.",
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You turned on Insert → Slide Number → Apply to All. Numbers appear on most slides but not on slides using a custom layout named `Image Right`. `Don't show on title slide` is unchecked. In Slide Master view, that layout has no Footer/Slide Number placeholders.\n\nWhat action makes slide numbers appear on those slides consistently?",
+          "options": [
+            "Insert a text box with the page number field manually on each slide using `Insert → Header & Footer`.",
+            "Turn off `Hide Background Graphics` on those slides so numbers can render.",
+            "Change to a different theme; the current theme blocks slide numbers on custom layouts.",
+            "Enable the Footer and Slide Number placeholders on the `Image Right` layout in Slide Master, then Reset/reapply that layout to affected slides."
+          ],
+          "correct_option": "D",
+          "explanation": "Slide numbers render only where the layout includes the Slide Number placeholder. Add it on the layout and Reset/reapply to push it to slides.",
+          "distractor_rationale": "B: Manual text boxes are brittle and not connected to slide number fields. C: Background graphics are unrelated to placeholders. D: Themes don’t block numbers; missing placeholders do.",
+          "skills_covered": [
+            "PowerPoint"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a flat sales extract with columns Date (yyyy-mm-dd), Region, Product, Qty, UnitPrice, and some rows marked Customer = \"Internal\" for test orders. Management wants a one-page summary showing Net Sales (Qty*UnitPrice) by Region across months, excluding Internal customers. The data will grow weekly. The current Pivot shows wrong number formats after each refresh and sometimes includes Internal orders again.",
+          "task": "Describe precisely how you would structure the source, configure the Pivot, and format it so that: (a) Internal orders are always excluded; (b) month columns appear correctly; (c) adding new rows is picked up on Refresh without changing the data source; and (d) number formats persist after refresh. Justify each choice.",
+          "expected_answer": "- Convert the range to an Excel Table named `Sales` and add a calculated column `Amount = [@Qty]*[@UnitPrice]` using structured references. Table guarantees expansion for new rows.\n- Build a PivotTable from `Sales` (not a fixed A1:Dn range). Put Region in Rows. Derive a Month column in the table (e.g., `=TEXT([@Date],\"yyyy-mm\")`) and use Month in Columns; or, if Dates remain as true dates, add Date to Columns and use Pivot Group by Months/Years.\n- Exclude Internal orders in a way that persists: either add a table-level helper column `IsInternal` and filter it at the Pivot (Label Filter \"does not equal TRUE\"), or apply a Pivot Report Filter/Label Filter on `Customer` set to not equal \"Internal\" and keep it saved with the Pivot. Prefer a helper flag if \"Internal\" could vary (e.g., case/spacing), allowing a robust criterion.\n- For persistent number format, open Value Field Settings for `Sum of Amount` → Number Format → Currency/Accounting with 2 decimals. Field-level number format survives refresh; cell formatting does not.\n- Verify: append new data to the `Sales` table, Refresh, Internal stays excluded, months auto-extend, totals retain currency format.",
+          "rubric": [
+            {
+              "criterion": "Explains converting data to an Excel Table and why (auto-expanding source for Pivot)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct, justified method to exclude Internal orders that persists across refresh",
+              "marks": 2
+            },
+            {
+              "criterion": "Sets up months correctly (helper Month or Pivot Group on true dates) and places fields appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Applies number formatting via Value Field Settings (not cell format) and states persistence",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas",
+            "pivots basics"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Two tables: `Transactions` with columns SKU, Qty, and `PriceList` with columns SKU, Price. Issues: some `SKU` values in `Transactions` have trailing spaces and some SKUs are missing from `PriceList`. The current formula `=VLOOKUP([@SKU],PriceList,2,TRUE)` returns wrong prices and sometimes the previous SKU's price.",
+          "task": "Propose a robust lookup approach that returns the correct price for an exact match, treats trailing spaces, and returns a clear not-found indicator when missing. Explain your formula choice and any helper columns you would add.",
+          "expected_answer": "Use an exact-match approach and normalize keys. Option 1 (no 365): add helper columns `SKU_Clean` in both tables using `=TRIM(UPPER([@SKU]))`. In `Transactions`, use:\n\n`=IFERROR(INDEX(PriceList[Price],MATCH([@SKU_Clean],PriceList[SKU_Clean],0)),\"Not in price list\")`\n\nThis ensures exact match (0), handles case/space issues, and gives a friendly message when missing. Avoid `VLOOKUP(...,TRUE)` which needs sorted keys and does approximate matches, causing wrong prices.",
+          "rubric": [
+            {
+              "criterion": "Chooses exact-match lookup (MATCH 0 / equivalent) and rejects approximate match",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses data normalization (TRIM, case) via helper or inline functions",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete, correct formula (INDEX/MATCH or equivalent)",
+              "marks": 2
+            },
+            {
+              "criterion": "Handles missing keys gracefully with IFERROR (or similar) and explains outcome",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are given a rough 12‑slide deck built by three team members. Problems: fonts and colors vary by slide, bullet styles are inconsistent, and title positions drift. You must make the deck consistent, and future slides should inherit the same look automatically.",
+          "task": "Describe the specific changes you will make in Slide Master and on slides to enforce consistent slide structure, visuals, and theme application. Include how you will fix existing slides that have direct formatting and ensure future slides follow the standards without manual tweaks.",
+          "expected_answer": "- Create/modify a custom theme (Design → Colors/Fonts) to set brand colors and paired fonts (Title/Body). Apply to the deck.\n- In Slide Master, edit the main master and relevant layouts (Title, Title and Content, Section Header, etc.): set title and body placeholder positions, bullet levels, spacing, and default shapes using theme colors (no RGB overrides). Ensure Footer/Slide Number placeholders are present on needed layouts.\n- For existing slides: reapply the correct layout and click Reset on each to remove direct formatting from placeholders so they inherit the master styles. Replace ad-hoc text boxes with the proper placeholders when needed.\n- Lock consistency: avoid manual font/size/color on slides; use theme variants only. Ensure slide numbers and footers are enabled via Header & Footer and visible on layouts. Result: new slides inserted with those layouts automatically match the standards.",
+          "rubric": [
+            {
+              "criterion": "Uses theme Colors/Fonts and Slide Master layouts rather than slide-level fixes",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly sets placeholders (positions, bullet levels, slide numbers) on layouts",
+              "marks": 2
+            },
+            {
+              "criterion": "Process to clean existing slides (reapply layout and Reset; remove direct formatting)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how future slides inherit styles without manual overrides",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "PowerPoint"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You will present KPIs that refresh weekly from Excel. Stakeholders want the deck to open with up‑to‑date numbers, but you also need to email the deck to others. The KPI block comes from a range on `SummaryReport.xlsx`. Currently, someone pastes screenshots, which go stale.",
+          "task": "Recommend a method to place the Excel KPIs in PowerPoint so they update during rehearsal and on opening, explain how to make the link resilient, and state what to do when you must email the deck standalone. Include concrete steps and trade‑offs.",
+          "expected_answer": "- Use Paste Special → Paste Link → Microsoft Excel Worksheet Object for a named range (e.g., `KPI_Table`) in `SummaryReport.xlsx`. This updates when the workbook changes.\n- Save the PPTX in the same folder as the XLSX and link to the named range, keeping a stable relative path. Avoid renaming/moving the source; if required, update via File → Info → Edit Links to Files.\n- File hygiene: keep one authoritative workbook; ensure it is closed or saved before updating links; set deck to prompt for updates on open.\n- For emailing a standalone deck, either: (a) embed a copy (Paste → Embed) understanding it will stop auto‑updating; or (b) package both files together (zip the PPTX and XLSX) and instruct recipients to keep them together so links resolve. Trade‑off: embedding increases file size and freezes data; linking keeps it live but is path‑dependent.",
+          "rubric": [
+            {
+              "criterion": "Selects Paste Link to a named range and explains update behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains path management (same folder/relative path) and how to fix broken links",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes operational practices (save/close source; update on open)",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses distribution trade‑offs: embed vs link, with consequences",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "PowerPoint",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build an Excel summary report with tables, filters, lookups and a basic Pivot",
+          "brief": "Create an Excel workbook that produces a clean, refreshable summary of net sales by Region across months, excluding Internal orders. Use an Excel Table, formulas for calculated columns, and a PivotTable for the summary. Prepare a named range for downstream use.",
+          "deliverable": "Summary report",
+          "acceptance_criteria": [
+            "File name is `SummaryReport.xlsx`.",
+            "Sheet `SalesData` contains an Excel Table named `Sales` with columns: Date, Region, Product, Customer, Qty, UnitPrice, Amount, Month.",
+            "`Amount` column uses a structured-reference formula `=[@Qty]*[@UnitPrice]` (not hard‑typed numbers).",
+            "`Month` is created as `=TEXT([@Date],\"yyyy-mm\")` (or equivalent).",
+            "At least 100 data rows are present (can be dummy data).",
+            "A filter or helper flag is in place to exclude `Customer = Internal` from summaries.",
+            "Sheet `Summary` contains a PivotTable built from the `Sales` table (not a fixed range), with Region in Rows, Month in Columns, and Sum of Amount in Values.",
+            "The Pivot’s Value Field Number Format is set to a currency or accounting format (2 decimals) via Value Field Settings.",
+            "Create a named range `KPI_Table` on `Summary` that covers a compact 3xN block of KPIs (e.g., Regions by latest month) for linking into PowerPoint.",
+            "After adding 5 new rows to the `Sales` table and clicking Refresh, the Pivot updates without changing the data source."
+          ],
+          "rubric": [
+            {
+              "criterion": "Data structured as an Excel Table named correctly; required columns present",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct use of structured-reference formulas for Amount and Month",
+              "marks": 4
+            },
+            {
+              "criterion": "PivotTable configuration (Region rows, Month columns, Sum of Amount values) and exclusion of Internal orders",
+              "marks": 6
+            },
+            {
+              "criterion": "Field-level number formatting applied and persists after refresh",
+              "marks": 2
+            },
+            {
+              "criterion": "Named range `KPI_Table` defined appropriately on Summary",
+              "marks": 2
+            },
+            {
+              "criterion": "Pivot expands after new rows + refresh without changing data source",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "formulas",
+            "pivots basics"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Create a theme‑consistent presentation deck and link live Excel KPIs",
+          "brief": "Design a consistent 8–12 slide deck using Slide Master with branded colors and fonts. Ensure all slides inherit structure from layouts. Insert a live linked Excel KPI block from the summary report and make link behavior reliable.",
+          "deliverable": "Presentation deck",
+          "acceptance_criteria": [
+            "File name is `PresentationDeck.pptx`.",
+            "A custom theme (non‑default Colors and Fonts) is applied; verify via Design → Variants → Colors/Fonts shows a custom set.",
+            "Slide Master edited: title and body placeholders aligned consistently on key layouts (Title, Title and Content, Section Header).",
+            "Footer and Slide Number placeholders are enabled on layouts that should display them; slide numbers appear on content slides.",
+            "No ad‑hoc RGB overrides on placeholders; shapes/text in placeholders use theme colors and theme fonts.",
+            "At least one slide contains a linked Excel object created via Paste Special → Paste Link from `SummaryReport.xlsx` named range `KPI_Table`.",
+            "When `SummaryReport.xlsx` is present in the same folder and updated, opening the deck prompts to update links and the KPI slide reflects the changes after update.",
+            "All content slides use one of the edited layouts (Reset has been applied where needed to clear direct formatting)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Custom theme colors/fonts created and applied; layouts edited for structure",
+              "marks": 5
+            },
+            {
+              "criterion": "Placeholders configured correctly (titles, body, slide numbers/footers) and visible on slides",
+              "marks": 4
+            },
+            {
+              "criterion": "Consistent use of theme formatting (no direct RGB/font overrides on placeholders)",
+              "marks": 3
+            },
+            {
+              "criterion": "Linked Excel KPI object present and updates when source changes with files co‑located",
+              "marks": 6
+            },
+            {
+              "criterion": "Slides use the edited layouts and have been Reset where needed",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "PowerPoint",
+            "Microsoft Excel"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-037-S04",
+      "skills_assessed": [
+        "Microsoft Word",
+        "Microsoft Excel",
+        "PowerPoint",
+        "Outlook",
+        "OneDrive",
+        "Professional email",
+        "cloud files",
+        "sharing",
+        "charts"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You sent this message from Outlook using a OneDrive cloud attachment.\n\n```text\nFrom: Alex Rivera <alex@contoso.com>\nTo: Priya Shah <priya@contoso.com>; Lee Wong <lee@contoso.com>\nSubject: Q3 Proposal – please co‑edit\nAttachment: Proposal.docx (OneDrive – People in Contoso with the link can edit)\nBody: \"Please update Section 2 today.\"\n```\nAlex now wants to nudge Priya and Lee without breaking coauthoring on the same file. Alex considers two actions: Reply All to the same thread, or Forward the original message to the same two people. What actually happens to the attachment link under each action, and which action preserves coauthoring on the original file?",
+          "options": [
+            "Reply All keeps the same cloud attachment pointing to the original OneDrive file for the same recipients, preserving coauthoring.",
+            "Forward to the same two people keeps the same cloud attachment and guarantees coauthoring on the original file.",
+            "Forward with no changes duplicates the file in OneDrive and links the forward to the copy, which is safest for coauthoring.",
+            "Reply All converts the cloud attachment to a static copy in the message so coauthoring is lost."
+          ],
+          "correct_option": "A",
+          "explanation": "Reply All to the same recipients preserves the cloud attachment reference to the same OneDrive file with the same permission scope. Forwarding can re-evaluate recipients and may prompt to adjust permissions or send as a copy, risking a second file/version and breaking a single source of truth.",
+          "distractor_rationale": "B: Looks plausible if you confuse cloud attachments with classic attachments. Cloud attachments stay links unless you explicitly convert. C: Forwards often require regranting permissions and can end up as copies or blocked links for recipients. D: Duplicating creates version sprawl and breaks single-source coauthoring; not what is wanted here.",
+          "skills_covered": [
+            "Outlook",
+            "OneDrive",
+            "Professional email",
+            "sharing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Your PM scheduled a recurring status meeting targeting 9:00 AM Pacific time, but created it in UTC at 17:00 to match current offset.\n\n```text\nSeries: Weekly Status\nStart: 17:00 UTC (recurs weekly)\nIntended local time: 09:00 Pacific (currently PST, UTC-8)\nDST change: Next week starts PDT (UTC-7)\n```\nNext week, what will Pacific attendees see, and what change prevents this drift for future series?",
+          "options": [
+            "They will see 9:00 AM. No change is needed because Outlook auto-adjusts UTC meetings to target local time.",
+            "They will see 10:00 AM. Create the series in the Pacific Time zone so Outlook tracks DST and keeps 9:00 AM local.",
+            "They will see 10:00 AM. Move the meeting to a floating time with no time zone so it stays 9:00 AM everywhere.",
+            "They will see 8:00 AM. Create all meetings in UTC to avoid DST drift."
+          ],
+          "correct_option": "B",
+          "explanation": "When DST begins, 17:00 UTC becomes 10:00 AM Pacific. Scheduling the series explicitly in the Pacific Time zone keeps the local time at 9:00 across DST transitions.",
+          "distractor_rationale": "B: UTC avoids ambiguity but does not track a target locale’s wall-clock time. C: Outlook preserves the UTC time; local time changes with DST. D: Floating/no time zone causes inconsistent results across participants and devices; it won’t lock a target locale to 9:00.",
+          "skills_covered": [
+            "Outlook",
+            "Professional email"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You must share `Report.docx` with an external client so they can read it in the browser for 7 days but not download or edit it. The OneDrive share dialog shows:\n\n```text\nLink settings\nWho can use this link?\n- Anyone with the link\n- People in Contoso\n- Specific people\n\nOther settings\n[ ] Allow editing\n[ ] Block download (viewers only)\nExpiration date: __________\n```\nWhich configuration meets the requirement?",
+          "options": [
+            "Specific people; Allow editing off; Block download on; Set expiration to 7 days.",
+            "Anyone with the link; Allow editing off; Block download on; No expiration.",
+            "People in Contoso; Allow editing off; Block download on; Set expiration to 7 days.",
+            "Specific people; Allow editing on; Block download on; Set expiration to 7 days."
+          ],
+          "correct_option": "A",
+          "explanation": "Use a targeted link to the client’s address (Specific people), disable editing, enable Block download, and set a 7‑day expiration. This yields view-only in the browser with time-limited access.",
+          "distractor_rationale": "B: Broadest scope risks link leakage and has no expiry. C: Restricts to your org; an external client cannot open it. D: Allow editing would permit file changes, violating read-only.",
+          "skills_covered": [
+            "OneDrive",
+            "sharing",
+            "cloud files"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You linked an Excel chart into PowerPoint using Paste Special > Paste link. A colleague without permission to the source workbook opens the deck and clicks Update Links.\n\n```text\nPowerPoint message:\n\"PowerPoint can't update links to \\n https://contoso.sharepoint.com/.../KPI.xlsx \\n You might not have permission to access this file.\"\n```\nWhat will your colleague see and why?",
+          "options": [
+            "The chart is a static picture and never updates, so permissions do not matter.",
+            "The chart updates using your permissions because you created the deck.",
+            "The chart disappears entirely because linked objects are removed without permissions.",
+            "The last cached chart renders, but updates fail until permission to the source workbook is granted."
+          ],
+          "correct_option": "D",
+          "explanation": "Linked objects cache their last state in the deck. Without permission, updates fail and the cached rendering remains. Granting access to the source workbook resolves it.",
+          "distractor_rationale": "B: PowerPoint does not delete the object; it just fails to refresh. C: Updates do not flow under the author’s permissions; each viewer must have access. D: Only true if pasted as a picture, not as a link as stated.",
+          "skills_covered": [
+            "PowerPoint",
+            "Microsoft Excel",
+            "charts",
+            "OneDrive",
+            "sharing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Two authors co‑edit a OneDrive Word document with AutoSave on. They both changed the same sentence while one went offline and reconnected later.\n\n```text\nVersion history (OneDrive):\n10:12  Alex Rivera  \"Updated Methods section\"\n10:14  Priya Shah  \"Edits while offline – pending merge\"\n10:16  Alex Rivera  \"Fix typos in Methods\"\n10:18  Priya Shah  \"Reconnected\"\n```\nWhat happens to the conflicting sentence when Priya syncs?",
+          "options": [
+            "OneDrive blocks Priya’s save entirely until Alex closes the document.",
+            "Word prompts a conflict resolution where both changes are shown, and Priya/Alex choose which to keep.",
+            "Priya’s later save overwrites Alex’s change silently because she saved last.",
+            "OneDrive creates a separate \"conflicted copy\" file every time with modern coauthoring."
+          ],
+          "correct_option": "B",
+          "explanation": "Modern coauthoring surfaces a conflict resolution experience for same‑paragraph edits. Users choose which change to keep; the losing change is not silently lost.",
+          "distractor_rationale": "B: Last‑writer‑wins can occur with simple file syncers, but Office coauthoring detects merge conflicts. C: Saves are not blocked; conflicts are resolved interactively. D: Conflicted copies were common with older sync models; Office now resolves most conflicts in-app.",
+          "skills_covered": [
+            "OneDrive",
+            "Microsoft Word",
+            "sharing"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You send this from Outlook:\n\n```text\nTo: finance-team@contoso.com\nSubject: April Forecast\nAttachment: Forecast.xlsx (OneDrive link – People in Contoso can edit)\n```\nAfter sending, you change the OneDrive link’s permissions to view‑only. What happens when recipients reopen the email and select the attachment?",
+          "options": [
+            "Recipients get a \"file not found\" error because permissions were changed.",
+            "The attachment becomes a static copy in the email and remains editable offline.",
+            "The link in the already-sent email still grants edit rights because it captured original permissions.",
+            "They open the same OneDrive file but now with view‑only access; edit attempts are blocked."
+          ],
+          "correct_option": "D",
+          "explanation": "Cloud attachments resolve at click time. Changing permissions later affects subsequent access; recipients will open the same file with the new, stricter rights.",
+          "distractor_rationale": "B: The link points to the file, not a snapshot of permissions. C: Cloud attachments are not static copies. D: The file still exists; only rights changed.",
+          "skills_covered": [
+            "Outlook",
+            "OneDrive",
+            "sharing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You want a chart in your PowerPoint deck to match the slide’s theme colors and update automatically from Excel.\n\nWhich paste option in PowerPoint accomplishes this?",
+          "options": [
+            "Use Destination Theme (H) without linking, then re-embed later.",
+            "Use Destination Theme and Link Data.",
+            "Keep Source Formatting (K) without linking.",
+            "Paste Special > Picture (Enhanced Metafile)."
+          ],
+          "correct_option": "B",
+          "explanation": "\"Use Destination Theme and Link Data\" both applies the slide theme and maintains a live link to the Excel data for updates.",
+          "distractor_rationale": "B: Keeps original formatting and breaks the update link. C: Pastes a static picture; no updates. D: No link means no automatic updates; re-embedding later is manual and error‑prone.",
+          "skills_covered": [
+            "PowerPoint",
+            "Microsoft Excel",
+            "charts"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your manager wants an assistant to propose and accept meetings on the manager’s behalf via Outlook. Current permissions:\n\n```text\nCalendar permissions (Manager’s calendar): Reviewer\nDelegate Access: none\n\"Send on behalf\" rights: none\n```\nWhat is the minimal change that enables the assistant to create and respond to meeting requests on the manager’s behalf in a way recipients see is from the manager?",
+          "options": [
+            "Share the assistant’s calendar with the manager as Owner so responses come from the manager.",
+            "Keep Reviewer and add a mail rule to forward all invites to the assistant.",
+            "Grant Delegate Access with Editor on Calendar and enable \"Delegate receives meeting-related messages\" (send on behalf).",
+            "Grant Editor on Calendar only; delegate settings are unnecessary for meeting requests."
+          ],
+          "correct_option": "C",
+          "explanation": "Delegate Access with Editor permission and meeting-related messages to delegate enables creating/responding to meetings on behalf of the manager. This config uses \"send on behalf\" semantics.",
+          "distractor_rationale": "B: Forwarding invites does not give send-on-behalf nor edit rights on the manager’s calendar. C: Editor alone does not enable delegate meeting workflows or send-on-behalf. D: Sharing the wrong calendar does not address acting on the manager’s behalf.",
+          "skills_covered": [
+            "Outlook",
+            "sharing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You run Outlook’s Clean Up Conversation on this thread:\n\n```text\n1) 09:00 – Maria: \"Draft attached\" (Attachment: v1.docx)\n2) 09:12 – Ben: \"See inline fixes below\" (quotes full #1)\n3) 09:30 – Maria: \"Incorporated Ben’s edits; new draft attached\" (Attachment: v2.docx; includes all of #1 text)\n4) 09:45 – Alex: \"Added agenda\" (new content not quoted)\n```\nAfter Clean Up, which messages remain in the folder?",
+          "options": [
+            "Message 3 and 4. Message 1 is redundant (fully quoted in 3); 2 is redundant (quoted in 3).",
+            "Only message 4, because it is the last unique message.",
+            "Messages 1 and 4, because messages with attachments are never cleaned.",
+            "Messages 2, 3, and 4, because Clean Up never removes intermediate replies."
+          ],
+          "correct_option": "A",
+          "explanation": "Clean Up removes messages fully contained in later messages. The new draft (3) supersedes 1 and 2; 4 is unique content, so 3 and 4 remain.",
+          "distractor_rationale": "B: The latest message is not always sufficient; 3 contains the latest draft. C: Attachments aren’t a blanket exemption; if a later message contains the prior content, the earlier can be removed. D: Clean Up does remove intermediate replies that are fully quoted later.",
+          "skills_covered": [
+            "Outlook",
+            "Professional email"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your Word report and PowerPoint deck link to `KPI.xlsx` stored in OneDrive. You use OneDrive Version History to restore yesterday’s version of `KPI.xlsx`.\n\nWhat happens to the links in Word/PowerPoint?",
+          "options": [
+            "They break because the file path changes when restoring a version.",
+            "They update only for the original author due to tokenized links; others must relink.",
+            "They continue to point to the same file and now show yesterday’s restored data on update.",
+            "They point to a duplicate copy created by Version History, so updates stop until you relink."
+          ],
+          "correct_option": "C",
+          "explanation": "Restoring via Version History replaces file contents in place and preserves the item’s identity and URL. Linked Office files continue to reference the same file and, upon update, reflect the restored data.",
+          "distractor_rationale": "B: The path/ID is preserved on restore. C: No duplicate is created for an in-place restore. D: Links aren’t bound to the author; any viewer with permission updates against the same item.",
+          "skills_covered": [
+            "OneDrive",
+            "Microsoft Excel",
+            "PowerPoint",
+            "Microsoft Word",
+            "charts",
+            "cloud files"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You must deliver a client‑facing report built as an integrated set: a Word narrative that links a chart from an Excel workbook and a short PowerPoint summary slide that also links the same chart. The client is external. Your team will keep editing the Excel data up to the hand‑off day, but the client must have read‑only browser access for one week and must not be able to download editable files. The client sometimes forwards links to their legal team for review.",
+          "task": "Propose a concrete sharing and packaging plan that ensures the client always sees the final numbers in the linked chart across both Word and PowerPoint, while preventing downloads and edits. Include the exact OneDrive link settings, how you will organize files/folders, how you will place the links in the email, and what to do if legal needs access without a Contoso account.",
+          "expected_answer": "Store all three files in a single OneDrive/SharePoint folder. Ensure the Word and PowerPoint files link to the same Excel workbook. Before sending, update links and save so cached visuals are current. Share the folder as Specific people, disable Allow editing, enable Block download, set a 7‑day expiration. Send a professional email containing the folder link and also separate item links to the Word report and the one slide exported as PDF for convenient review. For external reviewers without Microsoft accounts, use Specific people links that add their email addresses; if guest access provisioning is slow, provide a PDF snapshot as a fallback while keeping the live links for those with access. Do not attach copies of the Office files to the email. Note that the client will see charts even without update permission, but will not be able to edit. If legal needs access, add them explicitly to the Specific people link rather than switching to Anyone with the link.",
+          "rubric": [
+            {
+              "criterion": "Specifies OneDrive/SharePoint folder structure and ensures both Word and PowerPoint link to the same Excel source",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct sharing settings: Specific people, view-only, Block download, time-limited (7 days)",
+              "marks": 2
+            },
+            {
+              "criterion": "Email packaging: includes live links (not file copies), and provides a PDF fallback without breaking single source",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses external reviewers (no Contoso account) via Specific people guest access or fallback, without broadening to Anyone with the link",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "OneDrive",
+            "sharing",
+            "cloud files",
+            "Microsoft Word",
+            "Microsoft Excel",
+            "PowerPoint",
+            "Professional email",
+            "charts"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your distributed project team meets weekly. The working files live in a shared OneDrive folder. Last month, the meeting slipped an hour for some attendees after daylight saving time changed, and people kept opening stale copies from old email attachments.",
+          "task": "Design a meeting and collaboration workflow that keeps everyone at the same local wall‑clock time across DST changes and ensures participants always open the current files. Include exact calendar settings and how files are referenced in the invite and follow‑ups.",
+          "expected_answer": "Create a recurring Outlook meeting set explicitly to the team’s anchor time zone (e.g., Pacific Time) so the series stays at the same wall‑clock time across DST. In the meeting body, include a single OneDrive folder link where the living documents reside; remove any file copies from the invite. Use cloud attachments for any referenced items (Word/Excel/PowerPoint) instead of file copies. In follow‑ups, Reply All to the thread to preserve cloud attachment links. Before each meeting, update links in Word/PowerPoint so cached visuals match the latest Excel, then save. Never attach local copies to emails; refer to the same cloud location only.",
+          "rubric": [
+            {
+              "criterion": "Meeting configured with a specific time zone to avoid DST drift",
+              "marks": 2
+            },
+            {
+              "criterion": "All references to files use OneDrive links or cloud attachments, not copies",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains how to keep cached linked visuals current before meetings",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses Reply All for continuity without creating duplicate file versions",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Outlook",
+            "Professional email",
+            "OneDrive",
+            "cloud files",
+            "sharing",
+            "Microsoft Word",
+            "Microsoft Excel",
+            "PowerPoint",
+            "charts"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your Word report shows a linked Excel chart that some teammates say is \"stuck\" on last week’s numbers. Others see the correct values. The files are stored in OneDrive in a shared folder. Yesterday someone renamed and moved the workbook into a subfolder. A screenshot from an affected user shows PowerPoint/Word message: \"Cannot update links\".",
+          "task": "Explain the most likely root causes and lay out a step‑by‑step diagnostic and fix that restores consistent updates for all collaborators without breaking permissions or creating copies.",
+          "expected_answer": "Likely causes: viewers lack permission to the moved workbook; their Office apps are opening from an old path cache; or the link is pointing to the old location if it was created against a local path instead of a cloud link. Steps: 1) Verify in OneDrive the workbook opens for affected users (test direct link). Grant access if missing. 2) In Word, check File > Info > Edit Links to Files: confirm the Source shows the cloud URL/item and status OK; if it shows a local/old path, use Change Source to the workbook in its new location in the shared folder. 3) Save so the cached chart reflects the latest numbers. 4) Communicate to the team via Reply All with the updated cloud links; avoid attachments. 5) If rename/move will be common, standardize linking from the cloud location (Insert > Chart > From File or Paste Link from a file opened from OneDrive) so the link uses the file’s cloud identity that survives renames/moves in the same library.",
+          "rubric": [
+            {
+              "criterion": "Identifies permission mismatch and moved/renamed source as primary causes",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes concrete diagnostics (direct OneDrive open; Edit Links to Files; check source path)",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a precise fix (Change Source to cloud location) without creating duplicate copies",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses communication and future prevention (standardize cloud-based linking; Reply All with correct links)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Word",
+            "Microsoft Excel",
+            "OneDrive",
+            "sharing",
+            "cloud files",
+            "charts",
+            "Professional email"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Leadership wants a Monday 8:00 AM summary email to executives with a one‑slide deck and a one‑page narrative. The numbers come from an Excel workbook that is updated late Sunday. Executives must see stable, final numbers in email even if they forward it externally. Internally, your team should preserve the live, linked workflow for future weeks.",
+          "task": "Choose a packaging approach for the Monday send and describe exactly how you will prepare, verify, and distribute both the internal live files and the external-ready artifacts, balancing update automation with distribution reliability.",
+          "expected_answer": "Maintain the live trio (Excel, Word, PowerPoint) linked in OneDrive for the internal team. On Sunday night: refresh data, open Word/PowerPoint, Update Links, verify charts and figures, and save so caches are current. Export the Word report to PDF and the one‑slide deck to PDF; attach or link those PDFs in the executive email so forwarded messages carry stable content without requiring permissions. Include links in the email to the live OneDrive folder for internal viewers. Avoid attaching editable Office files to the exec email. Retain OneDrive version history in case of last‑minute rollbacks.",
+          "rubric": [
+            {
+              "criterion": "Selects dual‑track output: internal live links in OneDrive, external PDFs for executives",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes a concrete verification step (Update Links + visual check) before exporting",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains distribution choices to avoid permission issues when emails are forwarded",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions version history/rollback safety",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Professional email",
+            "OneDrive",
+            "cloud files",
+            "sharing",
+            "Microsoft Word",
+            "PowerPoint",
+            "Microsoft Excel",
+            "charts"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Collaboration task: Share, schedule, and co‑author a cloud document",
+          "brief": "Set up a real collaboration workflow using Outlook and OneDrive. You will share a document for co‑editing, send a professional email invite, and schedule a short working session. Provide artefacts that prove correct permissions and co‑authoring occurred.",
+          "deliverable": "Submit a single ZIP archive named CollaborationTask_<YourName>.zip containing:\n- 1x .eml or .msg file of the sent invitation email to the collaborator with a OneDrive link (cloud attachment or hyperlink) and a clear ask.\n- 1x .ics meeting invite exported from Outlook for a 30‑minute co‑authoring session, with agenda and the same OneDrive link in the body.\n- 2–4 PNG screenshots showing OneDrive share settings for the folder and the document: Specific people, Can edit enabled for the collaborator, and the Sharing dialog details (recipient email visible).\n- The Word document (.docx) that was co‑authored, containing at least 4 tracked changes and 4 comments across two distinct author names, plus a PNG screenshot of File > Info > Version History showing two users and timestamps within the last 48 hours.\n- A short README.txt listing the collaborator’s email and the OneDrive item URL (for reference only).",
+          "acceptance_criteria": [
+            "Email shows a professional subject, greeting, concise ask, and a working OneDrive link/attachment reference (visible in the .eml/.msg).",
+            "ICS contains the correct time, 30‑minute duration, an agenda in the body, and the same OneDrive link.",
+            "OneDrive screenshots clearly show Specific people with the collaborator’s address, Can edit enabled for the doc, and the shared folder context.",
+            "The submitted Word document displays tracked changes and comments from two distinct authors and opens without protection prompts.",
+            "Version History screenshot shows at least two edits by different users within 48 hours."
+          ],
+          "rubric": [
+            {
+              "criterion": "Professional email content with correct cloud link/attachment (tone, clarity, and link presence)",
+              "marks": 4
+            },
+            {
+              "criterion": "Calendar invite correctness (time, agenda, link present)",
+              "marks": 4
+            },
+            {
+              "criterion": "OneDrive sharing proof (Specific people; Can edit; correct recipient shown)",
+              "marks": 6
+            },
+            {
+              "criterion": "Co‑authoring evidence in the Word document (tracked changes and comments from two authors)",
+              "marks": 4
+            },
+            {
+              "criterion": "Version History evidence (two users; recent timestamps)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Professional email",
+            "Outlook",
+            "OneDrive",
+            "sharing",
+            "Microsoft Word",
+            "cloud files"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Workplace portfolio: Integrated Word–Excel–PowerPoint pack with live links and distribution exports",
+          "brief": "Build an integrated mini‑portfolio showing you can link data across Office apps and prepare a distribution‑ready pack. Use a small but realistic data set and ensure linked visuals update correctly.",
+          "deliverable": "Submit a ZIP named Portfolio_<YourName>.zip containing:\n- Excel: Sales-Analysis.xlsx with a small table (at least 12 rows) and a clustered column chart titled \"Quarterly Sales\".\n- Word: Quarterly-Report.docx with a 1–2 page narrative and the chart linked from Excel (Paste Link). Include a figure caption and update fields.\n- PowerPoint: Quarterly-Briefing.pptx with 3–5 slides, including one slide with the same linked chart using \"Use Destination Theme and Link Data\".\n- Proof of linkage: PNG screenshots from Word and PowerPoint of File > Info > Edit Links to Files (showing Sales-Analysis.xlsx as Source and status OK) and of the Update Links prompt/status.\n- Change proof: a short before/after sequence (PNG or PDF) showing that after changing a number in Excel, you updated links and the values/axis labels changed in both Word and PowerPoint.\n- Exports: PDF of the Word report and PDF of the one‑slide summary from PowerPoint.",
+          "acceptance_criteria": [
+            "Excel workbook contains a labeled table and a properly titled chart.",
+            "Word report displays the linked chart (not a static picture) and opens with links resolvable (Edit Links shows a valid source).",
+            "PowerPoint deck displays the linked chart themed to the slide and Edit Links lists the Excel source.",
+            "Change proof clearly shows the data edit in Excel and the corresponding updated visuals in Word and PowerPoint after Update Links.",
+            "PDF exports open and match the latest visuals."
+          ],
+          "rubric": [
+            {
+              "criterion": "Excel dataset and chart quality (structure, labels, readable chart)",
+              "marks": 4
+            },
+            {
+              "criterion": "Word integration: chart correctly linked and documented (caption/fields)",
+              "marks": 5
+            },
+            {
+              "criterion": "PowerPoint integration: linked chart themed correctly and functional",
+              "marks": 5
+            },
+            {
+              "criterion": "Proof of linkage and update: screenshots and before/after evidence are clear and consistent",
+              "marks": 4
+            },
+            {
+              "criterion": "PDF exports present and match current visuals",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Excel",
+            "charts",
+            "Microsoft Word",
+            "PowerPoint",
+            "cloud files",
+            "OneDrive",
+            "sharing"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

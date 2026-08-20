@@ -1,0 +1,1820 @@
+{
+  "course_code": "NT-C-006",
+  "course_name": "AWS with DevOps",
+  "sections": [
+    {
+      "section_code": "NT-C-006-S01",
+      "skills_assessed": [
+        "AWS IAM",
+        "Amazon VPC",
+        "Amazon EC2",
+        "Amazon S3",
+        "Amazon RDS",
+        "Git",
+        "CI/CD"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You launched an EC2 instance without an instance profile. The S3 bucket has this policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"OnlyWebRole\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:role/WebRole\"},\n      \"Action\": [\"s3:GetObject\"],\n      \"Resource\": \"arn:aws:s3:::app-artifacts/*\"\n    }\n  ]\n}\n```\nOn the instance you run:\n```bash\naws s3 cp s3://app-artifacts/build.tar.gz /tmp/\n# An error occurs: AccessDenied\n```\nYou must enable access without storing long‑lived credentials on the instance. What change correctly fixes this and keeps the bucket restricted to the intended workload?",
+          "options": [
+            "Add your IAM user ARN to the bucket policy alongside `WebRole`, then run the copy using your user credentials.",
+            "Attach an instance profile containing role `WebRole` to the EC2 instance; keep the bucket policy as is.",
+            "Attach an inline S3 policy to the EC2 instance resource granting GetObject on the bucket.",
+            "Create access keys for `WebRole` and export them on the instance for the copy command."
+          ],
+          "correct_option": "B",
+          "explanation": "S3 access should come from a role via the EC2 instance profile so the instance obtains short‑lived credentials from the metadata service. The bucket policy already allows that role; attaching the instance profile completes the trust chain without broadening access.",
+          "distractor_rationale": "B: Roles don’t have long‑lived access keys; trying to create and place keys reintroduces the very risk we’re avoiding. C: Works but weakens security by allowing a user principal; also violates the intent to tie access to the workload identity. D: You cannot attach an IAM policy directly to an EC2 resource; permissions come from the instance profile/role, not the instance itself.",
+          "skills_covered": [
+            "AWS IAM",
+            "Amazon EC2",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A private subnet (10.0.2.0/24) routes through a NAT gateway. There is no S3 gateway endpoint. From an EC2 in that subnet:\n```bash\naws s3 cp /etc/hosts s3://corp-ingest/ --region us-east-1\n# Works, NAT data charges observed\n```\nCurrent route table excerpt:\n```text\nDestination        Target\n0.0.0.0/0          nat-0abc1234\n10.0.0.0/16        local\n```\nYou must keep S3 traffic off the internet and off the NAT. What change achieves this?",
+          "options": [
+            "Add a security group egress rule to the instance for TCP 443 to S3's public IP ranges.",
+            "Create a new NAT gateway in each AZ and add a route specific to S3 prefix list via NAT.",
+            "Create an S3 Gateway VPC Endpoint and associate it with the private subnet's route table.",
+            "Manually add a route to the S3 prefix list `pl-xxxx` without creating an endpoint."
+          ],
+          "correct_option": "C",
+          "explanation": "S3 Gateway Endpoints add routes to the S3 prefix list in associated route tables so traffic stays on the AWS backbone. Without an endpoint, you cannot route to the S3 prefix list.",
+          "distractor_rationale": "B: SG egress does not change the path; traffic still exits via NAT/internet. C: More NAT doesn’t avoid the internet path and adds cost. D: You cannot target the S3 prefix list without creating the gateway endpoint that owns it.",
+          "skills_covered": [
+            "Amazon VPC",
+            "Amazon EC2",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Given this commit graph:\n```text\nA - B - C (main)\n     \\\n      D - E (feature)\n```\nYou want `main` to incorporate `feature` as a linear history (no merge commit), then fast‑forward `main` to the rebased feature. Which command sequence achieves this?",
+          "options": [
+            "```bash\ngit checkout feature\ngit rebase main\ngit checkout main\ngit merge --ff-only feature\n```",
+            "```bash\ngit checkout main\ngit merge --no-ff feature\n```",
+            "```bash\ngit checkout feature\ngit rebase -i HEAD~2 && git reset --hard main\n```",
+            "```bash\ngit checkout main\ngit rebase feature\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Rebasing `feature` onto `main` rewrites D,E onto C, then a fast‑forward merge moves `main` to the new E'. No merge commit is created.",
+          "distractor_rationale": "B: Rebases the wrong way (tries to replay main onto feature) and doesn’t land feature on main. C: Explicitly creates a merge commit, the opposite of the requirement. D: Misuses interactive rebase and a hard reset that discards feature changes or history incorrectly.",
+          "skills_covered": [
+            "Git",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You write a new object and immediately try to read and list it:\n```bash\naws s3api put-object --bucket data-lake --key reports/2026-08.csv --body 2026-08.csv\naws s3api head-object --bucket data-lake --key reports/2026-08.csv\naws s3api list-objects-v2 --bucket data-lake --prefix reports/2026-08.csv\n```\nWhat should you expect and why?",
+          "options": [
+            "Both calls require waiting for S3 inventory to update before the object is visible.",
+            "Both head and list return the new object immediately because S3 provides strong read-after-write and strong list consistency for new puts.",
+            "List will be consistent but head can be stale without versioning enabled.",
+            "`head-object` may return 404 and List may lag due to eventual consistency for new objects."
+          ],
+          "correct_option": "B",
+          "explanation": "S3 now offers strong read-after-write consistency for PUT of new objects and strong consistency for LIST, so both head and list should reflect the new object immediately.",
+          "distractor_rationale": "A: Historic behavior; modern S3 is strongly consistent. C: Versioning is unrelated to read-after-write visibility. D: Inventory is an offline report and not used for object visibility.",
+          "skills_covered": [
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your RDS MySQL instance is Multi‑AZ. During a failover the app loses DB connectivity for minutes until the OS DNS cache expires. Connection config:\n```text\nDB_HOST=prod-db.c9xyzabc.us-east-1.rds.amazonaws.com\n# At startup, app resolves DB_HOST to 10.1.12.45 and caches the IP\n```\nCloudWatch events show a failover at 12:03:02. How do you avoid this outage without lowering system‑wide DNS caches?",
+          "options": [
+            "Increase TCP keepalive frequency to detect failover faster.",
+            "Switch to Single‑AZ to avoid failovers.",
+            "Create a Route 53 record pointing to the current writer IP and use that instead.",
+            "Make the app use the RDS endpoint DNS name at connection time (do not cache the resolved IP)."
+          ],
+          "correct_option": "D",
+          "explanation": "The RDS DNS endpoint updates during failover. If the app resolves the hostname per connection (and does not pin the IP), it will reconnect to the new writer with minimal interruption.",
+          "distractor_rationale": "B: Just recreates the same problem; you would still pin an IP that changes on failover. C: Keepalive changes detection but doesn’t redirect to the new writer. D: Removes HA and still won’t fix IP pinning issues.",
+          "skills_covered": [
+            "Amazon RDS"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "User data on an Amazon Linux 2 instance:\n```bash\n#cloud-config\nruncmd:\n  - [ bash, -lc, \"aws s3 cp s3://app-config/prod.env /etc/app/env\" ]\n  - [ bash, -lc, \"touch /opt/app/firstboot\" ]\n```\nAfter initial launch you stop the instance, then start it again. What happens regarding this user data?",
+          "options": [
+            "It runs only if the instance profile credentials have rotated.",
+            "It runs again on every start, re‑downloading the file and touching the marker.",
+            "It runs only on the first boot unless cloud‑init is configured to rerun per‑boot.",
+            "It never runs at all unless you pass `--user-data-replace-on-reboot` when starting."
+          ],
+          "correct_option": "C",
+          "explanation": "By default, cloud‑init processes user data at first boot. It won’t rerun on stop/start unless explicitly configured to do so (e.g., per‑boot scripts).",
+          "distractor_rationale": "A: Common misconception; default is first boot only. C: No such start flag; rerun behavior is a cloud‑init setting. D: Credential rotation is unrelated to user data execution.",
+          "skills_covered": [
+            "Amazon EC2",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your GitHub Actions deploy job sometimes deploys an older commit last when two pushes land rapidly on `main`.\nCurrent workflow:\n```yaml\non:\n  push:\n    branches: [ main ]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./deploy.sh $GITHUB_SHA\n```\nWhat change prevents overlapping in-flight deploys from clobbering the newer one?",
+          "options": [
+            "Split deploy into two jobs with `needs: build` so order is enforced.",
+            "Increase runner size to speed builds so overlaps are unlikely.",
+            "Fetch full history by setting `fetch-depth: 0` in checkout.",
+            "Add a `concurrency` group with `cancel-in-progress: true` so only the latest push deploys."
+          ],
+          "correct_option": "D",
+          "explanation": "Concurrency with cancellation ensures an older in‑flight deploy is canceled when a newer push arrives, preventing stale artifacts from deploying last.",
+          "distractor_rationale": "B: Performance tuning doesn’t prevent the race. C: History depth is unrelated to deployment overlap. D: Job dependencies order within a workflow, not across separate workflow runs for different commits.",
+          "skills_covered": [
+            "CI/CD",
+            "Git"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Bucket policy:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"DenyNotTLS\",\n      \"Effect\": \"Deny\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:*\",\n      \"Resource\": [\"arn:aws:s3:::corp-data\",\"arn:aws:s3:::corp-data/*\"],\n      \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}\n    },\n    {\n      \"Sid\": \"AllowAppRole\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\"AWS\": \"arn:aws:iam::111122223333:role/AppRole\"},\n      \"Action\": [\"s3:GetObject\"],\n      \"Resource\": \"arn:aws:s3:::corp-data/*\"\n    }\n  ]\n}\n```\nWho can successfully read objects and under what condition?",
+          "options": [
+            "Only `AppRole` can read, and only when using HTTPS.",
+            "No one can read because the explicit Deny overrides all Allows.",
+            "Any principal can read if they use HTTPS; `AppRole` can read over HTTP or HTTPS.",
+            "Any principal in account 111122223333 can read over HTTPS due to implicit account allow."
+          ],
+          "correct_option": "A",
+          "explanation": "The explicit Deny blocks all non‑TLS requests. The Allow grants `s3:GetObject` to `AppRole`. Therefore, only `AppRole` over HTTPS succeeds.",
+          "distractor_rationale": "A: DenyNotTLS forbids HTTP for everyone, including AppRole. C: There is an allow for AppRole over HTTPS. D: There is no blanket account allow; access is explicitly granted to the role only.",
+          "skills_covered": [
+            "AWS IAM",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "An EC2 in 10.0.1.0/24 connects to RDS MySQL in 10.0.2.0/24. Security groups allow 3306 from the EC2 SG. Network ACL on 10.0.2.0/24 is:\n```text\nInbound: 100 ALLOW 10.0.0.0/16:3306 -> * ; * DENY *\nOutbound: 100 ALLOW * -> 10.0.0.0/16:3306 ; * DENY *\n```\nConnections hang after SYN/ACK. What change fixes this without weakening SG least privilege?",
+          "options": [
+            "Allow ephemeral return ports (e.g., 1024-65535) inbound on the DB subnet NACL from 10.0.0.0/16 and allow the same outbound for the return traffic.",
+            "Add an egress SG rule on the DB to 0.0.0.0/0:1024-65535.",
+            "Add a route for 10.0.0.0/16 to the NAT gateway.",
+            "Open the DB SG to 0.0.0.0/0 on 3306 because NACLs are already restrictive."
+          ],
+          "correct_option": "A",
+          "explanation": "NACLs are stateless; you must explicitly allow return traffic on ephemeral ports. SGs are stateful and already correct; widening them isn’t needed.",
+          "distractor_rationale": "B: Overly permissive and unnecessary; SGs are not the issue. C: SGs are stateful and don’t require ephemeral egress in this direction; the block is at the NACL. D: Routing is not the problem inside the VPC CIDR.",
+          "skills_covered": [
+            "Amazon VPC",
+            "Amazon RDS",
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "An EC2 instance shows block devices:\n```text\n/dev/xvda  EBS   deleteOnTermination=true\n/dev/xvdb  instance-store (ephemeral)\n```\nWhat survives a Stop -> Start cycle, and what is lost?",
+          "options": [
+            "Both volumes persist on Stop/Start; only Terminate deletes data.",
+            "EBS volume persists; instance store data is lost on Stop/Start.",
+            "EBS with deleteOnTermination=true is deleted on Stop; instance store persists.",
+            "Both are lost on Stop because the VM is torn down."
+          ],
+          "correct_option": "B",
+          "explanation": "EBS persists across Stop/Start. Instance store is ephemeral and is lost on Stop/Start or Terminate.",
+          "distractor_rationale": "A: Instance store does not persist across Stop/Start. C: `deleteOnTermination` applies on Terminate, not Stop. D: Stop preserves EBS volumes.",
+          "skills_covered": [
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are asked to deploy a small production web app on AWS. Requirements:\n- Public HTTPS web server on EC2.\n- RDS PostgreSQL must not be publicly reachable.\n- EC2 must read objects from a private S3 bucket for configuration.\n- Internet egress from app for OS updates is allowed, but DB traffic must stay private.\n- Team will manage code in Git and run manual blue/green cutovers until CI/CD is introduced later.\nCurrent account is empty.",
+          "task": "Propose a minimal, secure architecture and justify each choice. Specify VPC CIDR, subnets, routing (IGW/NAT), security groups, NACL considerations, IAM role/policy for EC2 to access S3, and any S3 bucket policy constraints you would add. State how blue/green would be performed safely with Git branches and manual cutover.",
+          "expected_answer": "- VPC 10.0.0.0/16 with at least two subnets across AZs: public (10.0.1.0/24) and private (10.0.2.0/24). Attach an Internet Gateway. Public subnet route table: 0.0.0.0/0 -> IGW. Private subnet route table: 0.0.0.0/0 -> NAT gateway in public subnet.\n- Place EC2 ALB or single EC2 (if truly minimal) in the public subnet with SG allowing 443 from 0.0.0.0/0 and egress anywhere. Lock SSH (22) to admins’ public IPs. Place RDS in private subnet with SG allowing 5432 only from the EC2 SG.\n- NACLs left at default allow/ephemeral unless there’s a compliance need; if custom, allow ephemeral return ports for DB subnet.\n- Create an S3 Gateway Endpoint associated with the private route table if the app in private subnet needs S3; or if EC2 is public, still use HTTPS and bucket policy to restrict.\n- IAM: instance profile role `AppRole` with policy granting least‑privileged `s3:GetObject` on `arn:aws:s3:::config-bucket/prod/*` only. Bucket policy allows only that role and denies non‑TLS. Example deny:\n```json\n{\"Effect\":\"Deny\",\"Principal\":\"*\",\"Action\":\"s3:*\",\"Resource\":[\"arn:aws:s3:::config-bucket\",\"arn:aws:s3:::config-bucket/*\"],\"Condition\":{\"Bool\":{\"aws:SecureTransport\":\"false\"}}}\n```\n- RDS not public, parameter group defaults, Multi‑AZ optional per SLA, backup retention >0. No public accessibility, subnet group in private subnets.\n- Blue/green: Maintain `main` (current prod) and `green/*` branches; deploy `green` to a parallel EC2 or new ASG target group. Health‑check, then flip traffic (ALB target group switch or Route 53). Merge `green` to `main` after cut; tag release. Rollback by reverting to previous target group or DNS and revert commit.",
+          "rubric": [
+            {
+              "criterion": "Correct VPC/subnet design separating public web and private DB with valid CIDRs and AZ spread",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate routing with IGW for public, NAT for private, and explanation of why",
+              "marks": 2
+            },
+            {
+              "criterion": "Security groups leading to least privilege (443 from world to web; DB 5432 only from app SG); NACL stance and ephemeral port reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "IAM role and S3 bucket policy that enforces least privilege and TLS; endpoint mention where applicable",
+              "marks": 1
+            },
+            {
+              "criterion": "Coherent blue/green plan tied to Git branching and safe cutover/rollback",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon VPC",
+            "Amazon EC2",
+            "Amazon RDS",
+            "Amazon S3",
+            "AWS IAM",
+            "Git"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A team uses a mono‑repo on Git. They build and deploy on every push to `main`. They observe that two merges in quick succession sometimes deploy the older artifact last (race condition), and hotfixes occasionally skip tests because a maintainer pushes directly to `main`.",
+          "task": "Propose concrete Git and CI/CD controls to guarantee that only tested artifacts are deployed and that newer builds cannot be overwritten by older runs. Specify repo protections and CI workflow changes, including any metadata or settings required.",
+          "expected_answer": "- Protect `main`: require pull requests, mandatory code review, and required status checks for unit/integration tests before merge; disallow direct pushes; require linear history or squash merges.\n- CI outputs immutable, content‑addressed artifacts (file names include commit SHA) and deploys by SHA, not by branch name.\n- Add workflow `concurrency` with `group: deploy-main` and `cancel-in-progress: true` so a newer commit cancels older deploys.\n- Add an environment (e.g., `production`) with required reviewers and manual approval gates if needed.\n- Use `--only-sha` or explicit input to pick the artifact built in the build job; wire jobs with `needs` so deploy only runs after tests and build succeed on the same SHA.\n- Optionally add branch protections for hotfix branches merging via PR with the same checks, and tags for releases (`v*`) if desired.",
+          "rubric": [
+            {
+              "criterion": "Main branch protection rules preventing direct pushes and enforcing checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Artifact immutability tied to commit SHA and deploy-by-SHA explanation",
+              "marks": 2
+            },
+            {
+              "criterion": "Concurrency/cancellation mechanism preventing overlapping deploys",
+              "marks": 2
+            },
+            {
+              "criterion": "Gating/approval or workflow dependency that ensures only tested builds deploy",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "An application in a private subnet is charged for NAT data when interacting with S3, despite creating an S3 VPC endpoint. Evidence shows the endpoint exists but traffic still egresses via NAT.",
+          "task": "Diagnose the likely misconfigurations and prescribe exact fixes. Reference route tables, endpoint associations, and bucket policy adjustments needed to constrain access to the endpoint path only.",
+          "expected_answer": "- Likely cause: The gateway endpoint isn’t associated with the private subnet’s route table (or associated with the wrong table). As a result, there’s no route to the S3 prefix list and traffic goes to 0.0.0.0/0 via NAT.\n- Fix: Associate the S3 gateway endpoint with the route table used by the private subnet. Verify route table gains `pl-xxxx (com.amazonaws.<region>.s3)` entry.\n- If multiple private subnets/tables exist, associate all relevant tables.\n- Optional but recommended: Add an S3 bucket policy restricting access to the specific VPC endpoint(s) using `aws:SourceVpce` condition, and deny non‑TLS. Example:\n```json\n{\"Effect\":\"Deny\",\"Principal\":\"*\",\"Action\":\"s3:*\",\"Resource\":\"arn:aws:s3:::my-bucket/*\",\"Condition\":{\"StringNotEquals\":{\"aws:SourceVpce\":\"vpce-0123456789\"}}}\n```\n- Confirm instance DNS resolves to S3 and that no hardcoded IPs bypass the endpoint. Ensure the instance uses the private resolver (enable DNS hostnames/support in VPC).",
+          "rubric": [
+            {
+              "criterion": "Identifies missing/wrong route table association as the primary cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies associating the endpoint to the correct route tables and verifying the prefix list route",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes bucket policy hardening with aws:SourceVpce and TLS conditions",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions DNS/resolution prerequisites and avoidance of hardcoded public IPs",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon VPC",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "An EC2 app cannot read from a private S3 bucket. IAM role `AppRole` is attached to the instance profile. Policies:\nTrust policy for `AppRole`:\n```json\n{\n  \"Version\":\"2012-10-17\",\n  \"Statement\":[{\n    \"Effect\":\"Allow\",\n    \"Principal\":{\"AWS\":\"arn:aws:iam::111122223333:user/Deployer\"},\n    \"Action\":\"sts:AssumeRole\"\n  }]\n}\n```\nInline policy on `AppRole`:\n```json\n{\"Effect\":\"Allow\",\"Action\":[\"s3:GetObject\"],\"Resource\":\"arn:aws:s3:::cfg/*\"}\n```\nBucket policy:\n```json\n{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::111122223333:role/AppRole\"},\"Action\":[\"s3:GetObject\"],\"Resource\":\"arn:aws:s3:::cfg/*\"}\n```\nThe app on EC2 gets AccessDenied when calling S3.",
+          "task": "Find the misconfiguration and provide corrected JSON snippets for trust and, if needed, bucket policy to implement least privilege for the EC2 instance only. Explain why your fix works.",
+          "expected_answer": "- The trust policy allows a user (`Deployer`) to assume `AppRole` but does not trust EC2, so the EC2 instance profile cannot obtain role credentials.\n- Fix the trust to EC2 service:\n```json\n{\n  \"Version\":\"2012-10-17\",\n  \"Statement\":[{\n    \"Effect\":\"Allow\",\n    \"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\n    \"Action\":\"sts:AssumeRole\"\n  }]\n}\n```\n- Keep the inline policy least‑privileged for `s3:GetObject` on `arn:aws:s3:::cfg/*`.\n- Bucket policy already allows `AppRole`; optionally add TLS enforce and deny outside of the VPC endpoint if used:\n```json\n{\"Effect\":\"Deny\",\"Principal\":\"*\",\"Action\":\"s3:*\",\"Resource\":[\"arn:aws:s3:::cfg\",\"arn:aws:s3:::cfg/*\"],\"Condition\":{\"Bool\":{\"aws:SecureTransport\":\"false\"}}}\n```\n- With the corrected trust, the EC2 instance profile can assume `AppRole` automatically via the metadata service, and S3 allows access per the bucket policy.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies incorrect trust relationship as the root cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a correct EC2 trust policy JSON enabling sts:AssumeRole for EC2",
+              "marks": 2
+            },
+            {
+              "criterion": "Maintains least-privilege S3 permissions and aligns bucket policy with the role",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear explanation connecting instance profile -> role -> bucket allow",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "Amazon EC2",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Version-controlled lab: Git-driven workflow on Linux with reproducible steps",
+          "brief": "Create a small lab repository that demonstrates a disciplined delivery workflow on Linux. Capture commands and outputs that a teammate can replay to set up and verify a minimal artifact lifecycle: build a text artifact, version it, and publish it to S3 securely. Do not store any secrets; use environment variables or instance roles where appropriate.",
+          "deliverable": "A Git repository (public or zipped) containing: a README with exact commands, terminal transcripts, and reasoning; commit history that reflects the workflow; and artifact files. No credentials present.",
+          "acceptance_criteria": [
+            "Repository includes a README that a new engineer can follow end-to-end on Linux to: initialize the repo; create a feature branch; make at least two commits; open a pull-request-like change (simulated via branch), merge to main using a documented strategy (squash, merge, or rebase) and tag a release.",
+            "Commands to publish an artifact to S3 are documented and reproducible without embedding credentials (e.g., use instance role or a profile name; show `aws sts get-caller-identity` output redacted of account ID if needed).",
+            "S3 paths are least-privileged (e.g., bucket/prefix dedicated to the lab). README includes proof of upload via `aws s3 ls` or `head-object`.",
+            "Git history shows meaningful messages; a tag exists for the release; `.gitignore` is used for build artifacts; no secrets in history (checked via `git log`/`git grep`)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and completeness of README with step-by-step, replayable Linux commands and outputs",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct Git workflow: branching, merging/rebasing, tagging with clean, meaningful history",
+              "marks": 6
+            },
+            {
+              "criterion": "Secure S3 publication without hardcoded secrets; demonstrates least privilege and verification of upload",
+              "marks": 5
+            },
+            {
+              "criterion": "Repository hygiene: proper .gitignore, no credentials or sensitive data committed",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Git",
+            "CI/CD",
+            "Amazon S3"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Secure cloud environment: VPC + EC2 + S3 + RDS with evidence",
+          "brief": "Provision a minimal but secure environment: a VPC with public and private subnets, an EC2 instance reachable via SSH only from your IP, a private RDS instance reachable only from the EC2 instance, and a private S3 bucket accessible from EC2 via an IAM role. Capture configuration evidence as JSON outputs and command logs. You may use the AWS Console or CLI, but deliver verifiable artifacts; do not submit live credentials.",
+          "deliverable": "A folder (in the same Git repo or a separate zip) containing: architecture notes; CLI JSON outputs; SG/NACL screenshots or JSON; bucket and IAM policy JSON; and shell transcripts showing connectivity tests (S3 read from EC2 using role, DB connection from EC2).",
+          "acceptance_criteria": [
+            "VPC with two subnets in one region: public and private, with route tables showing IGW for public and NAT for private. Provide `aws ec2 describe-vpcs`, `describe-subnets`, and `describe-route-tables` filtered JSON.",
+            "EC2 in public subnet with security group allowing 22 only from your public IP and 443 (if you expose HTTPs) from 0.0.0.0/0; show `describe-instances` JSON including attached instance profile role.",
+            "RDS instance in private subnet group, not publicly accessible; SG allows DB port only from the EC2 SG; include `aws rds describe-db-instances` JSON and SG JSON.",
+            "S3 bucket private: bucket policy denies non-TLS and allows only the EC2 role (and optionally restricts to VPC endpoint). Include `get-bucket-policy` JSON and proof of `aws s3 cp` from the EC2 without access keys (show `aws sts get-caller-identity` and a successful copy/head)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct VPC topology and routing evidence (IGW/NAT, subnets, route tables) provided and consistent",
+              "marks": 6
+            },
+            {
+              "criterion": "EC2 access tightly controlled; instance profile role attached; evidence shows configuration",
+              "marks": 4
+            },
+            {
+              "criterion": "RDS not public; SG relationship enforces least privilege; evidence of configuration via JSON",
+              "marks": 5
+            },
+            {
+              "criterion": "S3 bucket locked down (TLS deny, principal restriction or VPCe); proof of role-based access from EC2",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Amazon VPC",
+            "Amazon EC2",
+            "Amazon RDS",
+            "Amazon S3",
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-006-S02",
+      "skills_assessed": [
+        "Amazon EC2",
+        "Load Balancing",
+        "Shell Scripting"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You attach instances to an ALB target group with the following health check. The app takes ~75 seconds to fully start and returns a 301 from /healthz to /healthz/ during warmup.\n\n```json\n{\n  \"TargetGroup\": {\n    \"Protocol\": \"HTTP\",\n    \"Port\": 80,\n    \"HealthCheckProtocol\": \"HTTP\",\n    \"HealthCheckPort\": \"traffic-port\",\n    \"HealthCheckPath\": \"/healthz\",\n    \"Matcher\": {\"HttpCode\": \"200\"},\n    \"HealthCheckIntervalSeconds\": 10,\n    \"HealthyThresholdCount\": 3,\n    \"UnhealthyThresholdCount\": 2\n  }\n}\n```\nWhat state will new targets most likely stay in during the first minute and why?",
+          "options": [
+            "They flap Healthy/Unhealthy because 301s count as success but occasional 500s during warmup do not.",
+            "They become Healthy immediately because ALB ignores response codes for health checks on HTTP.",
+            "They become Healthy after ~30s because 3 consecutive 301 responses satisfy the 200 matcher.",
+            "They remain Unhealthy because 301 redirects do not match the 200-only matcher and warmup exceeds the check cadence."
+          ],
+          "correct_option": "D",
+          "explanation": "The target group's matcher only accepts 200. During warmup, the app returns 301 and then takes ~75 seconds to return 200. With 10s intervals and 2 Unhealthy threshold, the checks will mark it Unhealthy until it starts returning 200 consistently.",
+          "distractor_rationale": "A: 301s do not satisfy a 200-only matcher, so they won't become healthy in ~30s. B: 301s are not counted as success; flapping here is unlikely without mixed codes. D: ALB HTTP health checks do consider status codes; they are not ignored.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You configured weighted records for `api.example.com` to shift traffic between two ALBs. Health checks are attached to each record. TTL is 300 seconds.\n\n```text\napi.example.com. 300 IN A    192.0.2.10 ; alias to ALB-Blue (health check HC1)\napi.example.com. 300 IN A    198.51.100.20 ; alias to ALB-Green (health check HC2)\n; Weights: Blue=90, Green=10\n```\nAt t=0, HC1 fails. What will some clients still experience between t=0 and t=5m?",
+          "options": [
+            "All clients are stuck with Blue forever until their OS DNS cache is manually flushed.",
+            "Some clients continue to resolve Blue due to cached answers until TTL expiry, sending traffic to a dead endpoint.",
+            "No traffic loss because ALB reroutes to Green automatically when Blue is unhealthy.",
+            "Immediate 100% traffic to Green for all clients because Route 53 stops serving the Blue record instantly."
+          ],
+          "correct_option": "B",
+          "explanation": "Route 53 health checks prevent returning unhealthy answers, but resolvers and clients may cache previous responses until TTL expires, so some clients continue using Blue for up to 300s.",
+          "distractor_rationale": "A: Health checks stop new answers, but cached answers remain until TTL expires. C: ALBs do not reroute across different ALBs; DNS makes the choice. D: Caches expire on TTL; no manual flush is required for all clients.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "An Auto Scaling group and target tracking policy are defined as follows. Instances take ~90s to report stable CPU and pass ALB health checks.\n\n```json\n{\n  \"AutoScalingGroup\": {\n    \"MinSize\": 2,\n    \"MaxSize\": 10,\n    \"DesiredCapacity\": 2,\n    \"HealthCheckType\": \"ELB\",\n    \"HealthCheckGracePeriod\": 30\n  },\n  \"TargetTrackingPolicy\": {\n    \"PredefinedMetricSpecification\": {\"PredefinedMetricType\": \"ASGAverageCPUUtilization\"},\n    \"TargetValue\": 50.0,\n    \"EstimatedInstanceWarmup\": 0\n  }\n}\n```\nUnder burst load, what behavior is most likely and why?",
+          "options": [
+            "Scale-out then immediate scale-in oscillation because new instances are counted with near-zero CPU due to zero warmup and short grace period.",
+            "Gradual scale-out with high latency because HealthCheckGracePeriod of 30s delays policy evaluation by 30 minutes.",
+            "No scale-out because ELB health checks block scaling actions until all targets are healthy.",
+            "Stable scale-out because target tracking ignores new instances until they are InService."
+          ],
+          "correct_option": "A",
+          "explanation": "With EstimatedInstanceWarmup=0, target tracking includes new instances in the average immediately. Their near-zero CPU drags the average below target, triggering scale-in too early, causing oscillations. A 30s grace period is too short for 90s warmup.",
+          "distractor_rationale": "A: Without warmup, new instances are not ignored; they skew metrics. C: Health checks do not block scaling decisions; they influence replacement and InService state. D: Grace period is 30 seconds, not minutes, and applies to health checks, not policy evaluation delay.",
+          "skills_covered": [
+            "Amazon EC2",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A bash smoke test picks one resolved address for `web.example.com` and curls it.\n\n```bash\nip=$(dig +short web.example.com | head -n1)\ncode=$(curl -s -o /dev/null -w \"%{http_code}\" http://$ip/healthz)\necho $code\n```\nThe name is a CNAME to an ALB. Occasionally the test fails while the site is healthy. Why?",
+          "options": [
+            "head -n1 truncates the TTL causing DNS failures.",
+            "curl cannot access ALB over HTTP; ALB only supports HTTPS.",
+            "dig returns private IPs for ALB which are unreachable from CI runners.",
+            "ALB returns multiple IPs and the picked IP can be removed during rotation; direct-IP curl may hit a retired node."
+          ],
+          "correct_option": "D",
+          "explanation": "ALB DNS resolves to multiple IPs that change over time. Curling a single resolved IP bypasses ALB name-based routing and can target a draining/retired node. Always curl the hostname, not a single resolved IP.",
+          "distractor_rationale": "B: ALB supports HTTP listeners if configured. C: Public ALBs resolve to public IPs; private ALBs return private IPs but that alone doesn't explain intermittent failures in public CI. D: TTL is not affected by `head -n1`; the bug is choosing and pinning one IP.",
+          "skills_covered": [
+            "Load Balancing",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider these ALB listener rules (lower numbers are evaluated first):\n\n```text\nRule 1 (prio 1): Host header: assets.example.com  -> TG-assets\nRule 2 (prio 2): Path: /static/*                 -> TG-assets\nRule 3 (prio 3): Path: /static/img/*            -> TG-img\nDefault:                                         -> TG-app\n```\nA request comes for `GET https://assets.example.com/static/img/logo.png`. Which target group receives it and why?",
+          "options": [
+            "TG-assets, because Rule 1 matches first and evaluation stops after a match.",
+            "TG-assets, but only if the client's IP is in the same AZ as TG-assets.",
+            "TG-app, because default catches all after host match is skipped.",
+            "TG-img, because the most specific path wins over host-only rules."
+          ],
+          "correct_option": "A",
+          "explanation": "ALB evaluates rules in priority order and stops at the first match. The host header rule (Rule 1) matches assets.example.com, so later path-specific rules do not get evaluated.",
+          "distractor_rationale": "A: Specificity does not override explicit priority. C: The host rule matches, so the default rule is never used. D: AZ locality does not affect which rule matches; only routing after matching may consider target AZs.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You run a rolling restart using this script against instances behind an ALB with deregistration delay set to 300 seconds.\n\n```bash\nfor id in $(cat instance_ids.txt); do\n  aws elbv2 deregister-targets --target-group-arn $TG --targets Id=$id\n  aws autoscaling terminate-instance-in-auto-scaling-group \\\n    --instance-id $id --should-decrement-desired-capacity false\n  # next instance immediately\ndone\n```\nUsers report 502s during the rollout. What is the primary flaw?",
+          "options": [
+            "Not waiting for target state to drain/unused before terminating, cutting active connections.",
+            "Using `terminate-instance-in-auto-scaling-group` instead of `stop-instances`.",
+            "Setting `--should-decrement-desired-capacity false` causes the ASG to never replace instances.",
+            "Deregistering from the ALB; you should only stop the instance without touching the ALB."
+          ],
+          "correct_option": "A",
+          "explanation": "The script does not wait for the target to finish deregistration and connection draining. Terminating immediately drops in-flight connections and yields 502s.",
+          "distractor_rationale": "A: Terminate vs stop isn't the core issue; graceful draining is. C: Deregistration is correct but must be followed by a wait. D: The flag ensures replacement, which is desired in a rolling replace.",
+          "skills_covered": [
+            "Amazon EC2",
+            "Load Balancing",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "An NLB target group for TCP:5432 (PostgreSQL) has this health check:\n\n```json\n{\n  \"Protocol\": \"TCP\",\n  \"Port\": 5432,\n  \"HealthCheckProtocol\": \"HTTP\",\n  \"HealthCheckPort\": \"traffic-port\",\n  \"HealthCheckPath\": \"/healthz\",\n  \"HealthyThresholdCount\": 3\n}\n```\nTargets never become healthy. Why?",
+          "options": [
+            "PostgreSQL only responds to HTTPS on 5432, so HTTP fails.",
+            "HTTP health checks do not work for TCP target groups; you must use TCP health checks.",
+            "The path is wrong; it must be `/` for all health checks.",
+            "`traffic-port` is invalid; you must use a numeric port for NLB health checks."
+          ],
+          "correct_option": "B",
+          "explanation": "NLB for TCP listeners does not support HTTP health checks. Use TCP health checks to validate that the database port is accepting connections.",
+          "distractor_rationale": "B: Path is irrelevant for TCP checks. C: `traffic-port` is valid, but the protocol is wrong. D: PostgreSQL is not an HTTPS service; the issue is protocol mismatch, not TLS.",
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You set `deregistration_delay.timeout_seconds = 5` on an ALB target group. Your app sets HTTP keep-alive to 120 seconds and does not close idle connections on SIGTERM. During a scale-in, what happens?",
+          "options": [
+            "Nothing changes; deregistration delay only affects NLBs.",
+            "Connections drain gracefully because ALB always overrides app keep-alive.",
+            "Clients may see resets/timeouts because ALB stops forwarding after 5s while clients keep idle connections open.",
+            "Scale-in is blocked until all keep-alive connections close or hit 120 seconds."
+          ],
+          "correct_option": "C",
+          "explanation": "With a 5-second deregistration delay, the ALB will stop routing after 5 seconds. Long-lived keep-alives on the app are not drained, so clients can see resets or timeouts. Increase deregistration delay or close connections on shutdown.",
+          "distractor_rationale": "A: ALB does not override client/app keep-alives. C: Deregistration delay applies to ALBs. D: Scale-in is not blocked indefinitely; the delay bounds it.",
+          "skills_covered": [
+            "Load Balancing",
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A simple Python health probe for instances behind an ALB ignores TLS validation.\n\n```python\nimport requests\nr = requests.get(\"https://app.example.com/healthz\", timeout=2, verify=False)\nprint(r.status_code)\n```\nIt reports 200 while users see browser TLS errors. What risk does this pose in a HA check pipeline?",
+          "options": [
+            "None; HA depends only on HTTP status, not TLS.",
+            "It speeds up the check but does not change correctness.",
+            "It can mask certificate/hostname errors, keeping bad targets in rotation.",
+            "It only affects proxies, not end users."
+          ],
+          "correct_option": "C",
+          "explanation": "Disabling certificate verification hides TLS errors that real clients would see, causing the pipeline to keep misconfigured endpoints in service.",
+          "distractor_rationale": "A/C/D: TLS correctness is part of end-user success. Ignoring it makes the health signal unrepresentative, risking routing traffic to broken endpoints.",
+          "skills_covered": [
+            "Shell Scripting",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "An ASG spans two AZs with this capacity and termination policy. There are 4 instances: 3 in us-east-1a, 1 in us-east-1b. A scale-in of 1 is triggered.\n\n```json\n{\n  \"AutoScalingGroup\": {\n    \"MinSize\": 2,\n    \"DesiredCapacity\": 4,\n    \"TerminationPolicies\": [\"OldestInstance\", \"Default\"],\n    \"AvailabilityZones\": [\"us-east-1a\",\"us-east-1b\"],\n    \"NewInstancesProtectedFromScaleIn\": false\n  }\n}\n```\nWhich instance is most likely terminated?",
+          "options": [
+            "The instance with the lowest CPU because target tracking prefers high CPU.",
+            "Any instance in us-east-1a to rebalance AZs before applying other policies.",
+            "The oldest instance in the group regardless of AZ.",
+            "The newest instance because `Default` overrides `OldestInstance`. "
+          ],
+          "correct_option": "B",
+          "explanation": "ASG first tries to maintain AZ balance. With 3 vs 1, it will pick an instance from us-east-1a to bring distribution closer to even before applying `OldestInstance`.",
+          "distractor_rationale": "B: Age is considered after AZ rebalancing. C: CPU is not part of termination policies. D: `Default` is used when earlier policies do not decide; here AZ rebalancing does.",
+          "skills_covered": [
+            "Amazon EC2"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your team runs a stateless web app on EC2 behind an ALB with an ASG across two AZs. Current settings: ALB deregistration delay 10s, target group HTTP health check on `/healthz` with matcher `200`, ASG HealthCheckType `ELB`, HealthCheckGracePeriod 30s, target tracking at 50% CPU with EstimatedInstanceWarmup 0. Users report spikes of 502 errors and session drops during scale-in events triggered by traffic dips after peak. Logs show instances are terminated within seconds of deregistration and new instances often enter and exit service quickly during peak transitions.",
+          "task": "Recommend concrete configuration changes and operational steps to eliminate 502s and session loss during scale-in and reduce scaling oscillations. Justify each change in terms of ALB/ASG behavior. Limit answer to items the team can implement within a day.",
+          "expected_answer": "Proposed set: increase ALB deregistration delay to match app shutdown/keep-alive (e.g., 120s) and implement app shutdown hook to close keep-alives and stop accepting new requests before exit. Add ASG lifecycle hook on scale-in to run drain script that deregisters target, waits until target state is draining/unused and connection count drops, then allows termination. Increase HealthCheckGracePeriod to exceed app warmup (e.g., 120s). Set EstimatedInstanceWarmup to 90–120s so target tracking ignores new instances until they produce representative metrics; optionally add a scale-in cooldown. Ensure health check path returns 200 (not 301) during warmup or add a dedicated fast health endpoint. If sticky sessions are used, switch to external session store (e.g., Redis) or enable ALB stickiness with sufficient duration if sessions are app-local and short-lived. Validate by running a rolling termination with curl load to verify no 5xx and stable capacity.",
+          "rubric": [
+            {
+              "criterion": "Identifies and justifies increasing deregistration delay and adding graceful app shutdown behavior",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses ASG lifecycle hooks (or equivalent wait) to ensure drain-before-terminate and explains why this prevents 502s",
+              "marks": 2
+            },
+            {
+              "criterion": "Sets appropriate HealthCheckGracePeriod and EstimatedInstanceWarmup (and/or cooldown) with reasoning tied to warmup time",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses health check endpoint behavior (200 vs 301) and/or session handling approach to avoid session drops",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon EC2",
+            "Load Balancing",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You manage `api.example.com` routed by Route 53 to `ALB-Blue` and `ALB-Green` using weighted records (90/10). Health checks are attached to both records with TTL=60. During a Blue outage, some enterprise customers continue to hit Blue for ~1 minute, causing errors in their integrations. They cannot lower their recursive resolvers' cache TTLs but will honor your TTLs.",
+          "task": "Propose a DNS and edge configuration plan that minimizes user impact during Blue outages while keeping the ability to shift traffic gradually. Include record types, health check placement, TTL choices, and any ALB-side mitigations. Justify the trade-offs.",
+          "expected_answer": "Keep weighted records with health checks directly on each weighted alias. Lower TTL to 20–30s to reduce negative cache duration while accepting slightly higher DNS QPS. For critical integrations, add a separate hostname (e.g., `api-stable.example.com`) using failover routing with primary=Blue, secondary=Green and tight health checks, TTL=20s, to provide faster automatic failover for customers who prefer stability over canarying. Optionally add latency routing for multi-region if available. On ALBs, enable sufficient idle timeout and ensure error pages are fast to fail, but do not rely on ALB to move traffic between ALBs. Communicate guidance for customers to use the stable hostname if they cannot tolerate brief failovers. Accept that resolvers will cache up to TTL; aggressive TTLs are the only DNS-level mitigation.",
+          "rubric": [
+            {
+              "criterion": "Selects appropriate Route 53 policies (weighted for canary, failover for stability) and places health checks correctly",
+              "marks": 3
+            },
+            {
+              "criterion": "Chooses and justifies lower TTLs with discussion of resolver caching impact and QPS trade-off",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains ALB limitations (no cross-ALB reroute) and any helpful ALB-side mitigations without overclaiming",
+              "marks": 1
+            },
+            {
+              "criterion": "Considers customer segmentation via separate hostname or documented behavior",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A new `/healthz` endpoint was added to your app. Unauthenticated requests return `302 /login` until a background migrator completes, then switch to `200 OK`. Your target group matcher is `200`. During deployments, new instances fail to enter service for several minutes, causing capacity shortages.",
+          "task": "Diagnose why targets fail health checks and propose two viable fixes that do not require giving the health check credentials. Include specific config changes or code behaviors.",
+          "expected_answer": "Diagnosis: the health check returns 302 during warmup, which the target group's `Matcher: 200` treats as unhealthy. Fix 1: make `/healthz` unauthenticated and return `200 OK` even during migrations, exposing only readiness (dependencies reachable, listener bound) separate from liveness; ensure it does not redirect. Fix 2: temporarily broaden the matcher to include `200-399` or switch to a dedicated readiness path (e.g., `/readyz`) that always returns 200 once the server is ready, updating the target group's `HealthCheckPath` and `Matcher`. Optionally increase HealthCheckGracePeriod to cover known warmup.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies 302 vs 200 matcher mismatch as the cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a code-level health endpoint behavior that returns 200 without auth/redirect during warmup",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes an AWS config change (matcher range and/or health check path) with concrete details",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions grace period or readiness/liveness separation as supportive measures",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You need to perform a zero-downtime rolling replacement of all instances in an ASG behind an ALB during business hours. The team has basic shell skills and can run scripts from a jump host. Current TG `deregistration_delay` is 120s. You want to avoid 5xx, keep capacity ≥ N-1, and finish within an hour.",
+          "task": "Outline a step-by-step shell-based runbook or script logic that safely drains and replaces instances. Include AWS calls, waits/conditions to check, concurrency, and safeguards against capacity dips. Justify key timings with ALB/ASG behavior.",
+          "expected_answer": "Runbook logic: fetch InService instance IDs; process in batches of 1 (or 2 if headroom) to maintain ≥ N-1. For each: set instance scale-in protection to prevent unintended termination; deregister target from TG; poll `describe-target-health` until state is `draining` then `unused`, and ALB `request_count` drops near zero or `TargetConnectionErrorCount` stops increasing; only then call `terminate-instance-in-auto-scaling-group --should-decrement-desired-capacity false` to trigger replacement. Wait for new instance to be `InService` at TG and ASG and pass health checks; clear protection on old instance; proceed to next. Respect `deregistration_delay=120` by sleeping/polling at ~10s intervals; abort on sustained 5xx in ALB metrics. Include a `--dry-run` flag and idempotent retries for eventual consistency.",
+          "rubric": [
+            {
+              "criterion": "Correct sequencing: deregister -> wait (draining/unused) -> controlled terminate -> wait for replacement InService",
+              "marks": 3
+            },
+            {
+              "criterion": "Maintains capacity (batching, scale-in protection, no decrement of desired) with reasoning",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses concrete AWS calls/conditions and aligns waits with deregistration delay and health checks",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes safeguards (dry-run, abort conditions, retries/idempotency)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Amazon EC2",
+            "Load Balancing",
+            "Shell Scripting"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design a highly available web tier on AWS (multi-AZ ALB + ASG)",
+          "brief": "Produce a concise design document for a public web application fronted by an ALB and powered by an Auto Scaling group across two Availability Zones. Assume a single AWS Region. Show exactly how requests flow, how health checks work, how scale-in/out happens safely, and how DNS is set up. Align settings with a realistic app that needs ~90s warmup and uses HTTP keep-alive 120s. Focus on the web tier; you may reference an external session store if needed.",
+          "deliverable": "One self-contained document (markdown or PDF) including: (1) an architecture diagram (ASCII allowed) showing ALB, target groups, ASG, subnets/AZs, and Route 53; (2) a written rationale of key choices; (3) concrete configs/snippets: target group JSON, ASG JSON, Route 53 record set JSON; (4) a failure-mode table (text) describing how the system behaves under instance, AZ, and ALB target failures.",
+          "acceptance_criteria": [
+            "Diagram shows ALB with at least two subnets/AZs, a target group, and an ASG spanning ≥2 AZs, with Route 53 alias to the ALB name.",
+            "Target group config includes protocol/port, HealthCheckPath, Matcher, Interval/Thresholds, and deregistration_delay with values justified for 90s warmup and 120s keep-alive.",
+            "ASG config includes Min/Max/Desired, HealthCheckType ELB, HealthCheckGracePeriod ≥90s, EstimatedInstanceWarmup ≥90s, and a target-tracking policy definition.",
+            "Route 53 config shows alias A/AAAA record to ALB with TTL and any weighted/failover policy if used, with justification for chosen TTL.",
+            "Rationale explains cross-zone considerations, capacity during scale-in, and how lifecycle hooks or drain scripts avoid 5xx.",
+            "Failure-mode table covers: instance crash, single-AZ loss, unhealthy target, and bad deployment, stating what fails over and where users are routed.",
+            "Document is internally consistent: all names/ARNs/ports align across diagram and snippets."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, complete multi-AZ architecture and clear diagram",
+              "marks": 4
+            },
+            {
+              "criterion": "Target group health check and deregistration settings appropriate and justified",
+              "marks": 4
+            },
+            {
+              "criterion": "ASG settings (grace period, warmup, scaling policy) appropriate and justified",
+              "marks": 4
+            },
+            {
+              "criterion": "DNS/Route 53 record choices with sound TTL and aliasing; consistency across artefacts",
+              "marks": 3
+            },
+            {
+              "criterion": "Failure-mode analysis shows accurate HA behavior and mitigations",
+              "marks": 3
+            },
+            {
+              "criterion": "Overall coherence and correctness (naming, ports, AZ mapping)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon EC2",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Automation scripts: generate HA-friendly configs and safe rollout plans",
+          "brief": "Write two small automation tools to support availability ops without calling AWS APIs directly.\n1) A bash script that reads a CSV inventory of backend servers with weights and emits an Nginx upstream block using weighted least_conn. It must actively probe each backend's `/healthz` over HTTP/HTTPS, exclude unhealthy backends, and write the config atomically with a backup and rollback on syntax check failure.\n2) A Python script that reads a JSON file describing two endpoints (Blue/Green) with current weights and a desired shift percentage, and outputs a Route 53 change-batch JSON to adjust weighted records accordingly. Include `--dry-run` and input validation.",
+          "deliverable": "A zipped folder containing: (a) `gen_upstream.sh`; (b) sample `backends.csv`; (c) generated `upstream.conf` and a `make test` log showing syntax check of Nginx; (d) `shift_weights.py`; (e) sample `weights.json`; (f) generated `change-batch.json`; (g) a README with usage, assumptions, and failure modes.",
+          "acceptance_criteria": [
+            "`gen_upstream.sh` accepts input CSV of `host,port,scheme,weight`, probes `/healthz` with curl using scheme, times out ≤2s, excludes unhealthy backends, and writes an upstream named `backend_pool` using `least_conn` with weights.",
+            "Script writes to a temp file, runs `nginx -t -c <temp>` (or `nginx -t` against included minimal config), rolls back on failure, and swaps atomically on success.",
+            "Includes `--dry-run` (no file changes) and returns non-zero exit on errors; idempotent when inputs unchanged.",
+            "`shift_weights.py` validates that weights sum to 100 and that shift keeps weights within [0,100], supports `--dry-run`, and prints a valid Route 53 change-batch JSON with UPSERT actions for two weighted A records for `api.example.com`.",
+            "Provided samples produce the included outputs when run; README documents usage and edge cases (e.g., all backends unhealthy, invalid weights)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Bash script correctness: probing logic, exclusion of unhealthy, least_conn with weights, and atomic write with rollback",
+              "marks": 6
+            },
+            {
+              "criterion": "Operational safety features: timeouts, dry-run, exit codes, idempotency, and backups",
+              "marks": 4
+            },
+            {
+              "criterion": "Python script correctness: input validation and accurate change-batch JSON generation",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality of samples, README clarity, and reproducibility of provided outputs",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Shell Scripting",
+            "Load Balancing"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-006-S03",
+      "skills_assessed": [
+        "Docker",
+        "Git",
+        "CI/CD",
+        "AWS IAM",
+        "cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You maintain this Dockerfile for a Node service:\n```dockerfile\nFROM node:18-alpine AS deps\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\n\nFROM node:18-alpine AS builder\nWORKDIR /app\nCOPY --from=deps /app/node_modules ./node_modules\nCOPY . .\nRUN npm run build\n\nFROM node:18-alpine\nWORKDIR /app\nCOPY --from=builder /app/dist ./dist\nCOPY package*.json ./\nRUN npm ci --omit=dev\nCMD [\"node\",\"dist/index.js\"]\n```\nNo `.dockerignore` is present. You change only `README.md`. On the next build, which steps will re-execute and why?",
+          "options": [
+            "Only the final `CMD` layer changes; all prior layers are cached because the base image is unchanged.",
+            "Nothing re-executes because Markdown files are ignored by Docker build context by default.",
+            "Only the `COPY . .` and `RUN npm run build` in the `builder` stage re-execute; the final stage fully reuses its cache because `package*.json` didn’t change.",
+            "The `builder` stage re-executes from `COPY . .`, and in the final stage both `COPY --from=builder /app/dist` and the subsequent `RUN npm ci --omit=dev` re-execute due to cache dependency on prior layers."
+          ],
+          "correct_option": "D",
+          "explanation": "Changing `README.md` invalidates the `builder` stage’s `COPY . .` layer, forcing `RUN npm run build` to re-run. In the final stage, `COPY --from=builder /app/dist` sees new content so it re-executes. Because Docker’s cache for a step depends on all previous layers, the subsequent `RUN npm ci --omit=dev` also re-executes even though `package*.json` is unchanged.",
+          "distractor_rationale": "A: Tempting, but ignores that cache validity for later steps depends on all prior layers; a changed `dist` invalidates following steps in the final stage. C: There is no default ignore for Markdown; `.dockerignore` would be needed. D: `CMD` doesn’t rebuild; cache invalidation cascades from changed layers above.",
+          "skills_covered": [
+            "Docker",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You try to push to ECR:\n```bash\naws ecr get-login-password --region us-east-1 | \\\n  docker login --username AWS --password-stdin \\\n  123456789012.dkr.ecr.eu-west-1.amazonaws.com\n\ndocker tag myapp:latest 123456789012.dkr.ecr.eu-west-1.amazonaws.com/app:latest\n\ndocker push 123456789012.dkr.ecr.eu-west-1.amazonaws.com/app:latest\n```\nPush fails with:\n```text\ndenied: User: arn:aws:sts::123456789012:assumed-role/CodeBuildRole is not authorized to perform: ecr:PutImage on resource ... in region eu-west-1\n```\nWhat is the most likely root cause?",
+          "options": [
+            "You logged in to ECR in `us-east-1` but pushed to a repo in `eu-west-1`, so the auth token is invalid for that registry endpoint.",
+            "You must enable image scanning on the repository before any push is allowed.",
+            "The Docker tag `latest` is immutable in ECR and cannot be overwritten.",
+            "The ECR repository policy is missing a statement allowing `ecr:PutImage` for your role ARN."
+          ],
+          "correct_option": "A",
+          "explanation": "ECR auth tokens are region-scoped. You authenticated against `us-east-1` but pushed to a `eu-west-1` registry. Login to the same region as the target ECR repo.",
+          "distractor_rationale": "A: Could be true in general, but the error also appears when region-scoped auth is wrong; the immediate mismatch here is the region in `get-login-password`. C: ECR allows overwriting `latest` unless immutable tags are explicitly enabled. D: Scanning is optional and not required for pushes.",
+          "skills_covered": [
+            "Docker",
+            "AWS IAM",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your deploy stage currently pulls `latest`. A buildspec creates and pushes the image like this:\n```yaml\nphases:\n  build:\n    commands:\n      - IMAGE_REPO=123456789012.dkr.ecr.us-east-1.amazonaws.com/app\n      - IMAGE_TAG=latest\n      - docker build -t $IMAGE_REPO:$IMAGE_TAG .\n      - docker push $IMAGE_REPO:$IMAGE_TAG\n      - DIGEST=$(aws ecr describe-images --repository-name app \\\n                 --image-ids imageTag=$IMAGE_TAG \\\n                 --query 'imageDetails[0].imageDigest' --output text)\n      - echo $DIGEST > image-digest.txt\nartifacts:\n  files:\n    - image-digest.txt\n```\nSometimes rollbacks redeploy the wrong image because `latest` moved. What change guarantees the deploy stage uses exactly the image built?",
+          "options": [
+            "Consume `image-digest.txt` in deploy and pull by digest (e.g., `app@sha256:...`) instead of by tag.",
+            "Enable Docker Content Trust (`DOCKER_CONTENT_TRUST=1`) during push.",
+            "Add a manual approval before deploy to freeze the version.",
+            "Replace `IMAGE_TAG=latest` with `IMAGE_TAG=$CODEBUILD_BUILD_NUMBER` and deploy by that tag."
+          ],
+          "correct_option": "A",
+          "explanation": "Pulling by digest makes the reference immutable. Tags can be retargeted, even unique-seeming ones; a digest exactly identifies the built image and cannot be changed by retagging.",
+          "distractor_rationale": "A: Unique tags reduce risk but are still mutable pointers and can be accidentally reused or retargeted. C: Approval gates process but doesn’t force the deploy to a specific artifact. D: Signing improves integrity but doesn’t stop a deploy from resolving a moving tag.",
+          "skills_covered": [
+            "Docker",
+            "CI/CD",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Builds are slow and upload a huge context. Current tree:\n```text\n.\n├── Dockerfile\n├── package.json\n├── package-lock.json\n├── node_modules/  # 245 MB\n├── src/\n└── tests/\n```\nCurrent Dockerfile:\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nCMD [\"npm\",\"start\"]\n```\nWhat one-line change most reduces context size while keeping `npm ci` working as intended?",
+          "options": [
+            "Remove `package-lock.json` so fewer files are copied.",
+            "Move `COPY . .` before `RUN npm ci`.",
+            "Add `node_modules` to `.dockerignore`.",
+            "Replace `npm ci` with `npm install`."
+          ],
+          "correct_option": "C",
+          "explanation": "Ignoring `node_modules` prevents sending 245MB to the daemon and avoids cache busts from local modules. `npm ci` will still install a clean set inside the image from `package-lock.json`.",
+          "distractor_rationale": "B: Reordering like that destroys cache efficiency and still sends the large context. C: `npm install` is slower and nondeterministic. D: Removing the lock file harms reproducibility and doesn’t shrink the context if `node_modules` is still included.",
+          "skills_covered": [
+            "Docker"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider this Dockerfile:\n```dockerfile\nFROM alpine\nENTRYPOINT [\"echo\"]\nCMD [\"hello\"]\n```\nYou run:\n```bash\ndocker run myimg world\n```\nWhat is printed?",
+          "options": [
+            "It errors: \"world not found\"",
+            "world",
+            "hello world",
+            "hello"
+          ],
+          "correct_option": "B",
+          "explanation": "With exec-form ENTRYPOINT, CMD supplies default arguments. Arguments provided at `docker run` replace CMD, not ENTRYPOINT. So the container runs `echo world`.",
+          "distractor_rationale": "A: Common misconception; CMD is replaced when args are provided. C: Would require ENTRYPOINT to include `hello` and CMD be appended, which isn’t how overrides work. D: `world` is not executed; `echo` is the binary; `world` is its argument.",
+          "skills_covered": [
+            "Docker"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A CodePipeline stage is defined as:\n```json\n{\n  \"name\": \"Deploy\",\n  \"actions\": [\n    {\n      \"name\": \"DeployToStaging\",\n      \"actionTypeId\": {\"category\": \"Deploy\", \"owner\": \"AWS\", \"provider\": \"CodeDeploy\", \"version\": \"1\"},\n      \"runOrder\": 1\n    },\n    {\n      \"name\": \"ManualApproval\",\n      \"actionTypeId\": {\"category\": \"Approval\", \"owner\": \"AWS\", \"provider\": \"Manual\", \"version\": \"1\"},\n      \"runOrder\": 1\n    }\n  ]\n}\n```\nWhat actually happens at execution time?",
+          "options": [
+            "Both actions run in parallel; the approval does not block `DeployToStaging`.",
+            "The ManualApproval always runs first because approvals have implicit priority.",
+            "ManualApproval runs only after deploy completes, even with the same `runOrder`. ",
+            "The pipeline definition is invalid; approvals must be in a separate stage."
+          ],
+          "correct_option": "A",
+          "explanation": "Actions with the same `runOrder` in a stage execute in parallel. An approval blocks only actions with a higher `runOrder` or actions in later stages.",
+          "distractor_rationale": "B: There’s no implicit priority. C: Approvals are allowed inside any stage. D: Same `runOrder` doesn’t enforce sequencing; it enables parallelism.",
+          "skills_covered": [
+            "CI/CD",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A CodeBuild project runs:\n```yaml\nphases:\n  build:\n    commands:\n      - docker build -t app:build .\n      - docker run --rm app:build npm test\n```\nIt fails with:\n```text\nCannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?\n```\nWhat change fixes this in CodeBuild?",
+          "options": [
+            "Log in to ECR before `docker build`.",
+            "Enable Privileged mode for the build environment so Docker can run within the build container.",
+            "Mount `/var/run/docker.sock` from the host into the build container.",
+            "Prefix Docker commands with `sudo`."
+          ],
+          "correct_option": "B",
+          "explanation": "CodeBuild runs inside a container. To use Docker-in-Docker, the environment must be set to Privileged mode, which provides the required daemon capabilities.",
+          "distractor_rationale": "B: `sudo` doesn’t start a daemon. C: ECR login affects push/pull auth, not daemon availability. D: You cannot mount host sockets in managed CodeBuild; privileged mode is the supported mechanism.",
+          "skills_covered": [
+            "CI/CD",
+            "Docker"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Which command sequence correctly pushes a locally built image to ECR repo `123456789012.dkr.ecr.us-east-1.amazonaws.com/app`?\nAssume the image was built locally as `app:build` and the repo already exists.",
+          "options": [
+            "```bash\naws ecr login --region us-east-1 123456789012\n\ndocker tag app:build 123456789012/app:release\n\ndocker push 123456789012/app:release\n```",
+            "```bash\naws ecr get-login-password --region us-east-1 | \\\n  docker login --username AWS --password-stdin \\\n  123456789012.dkr.ecr.us-east-1.amazonaws.com\n\ndocker tag app:build 123456789012.dkr.ecr.us-east-1.amazonaws.com/app:release\n\ndocker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/app:release\n```",
+            "```bash\ndocker tag app:build app:release\ndocker push app:release\n```",
+            "```bash\nexport DOCKER_REGISTRY=123456789012.dkr.ecr.us-east-1.amazonaws.com\n\ndocker push $DOCKER_REGISTRY\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "You must authenticate to the specific ECR registry endpoint, tag the image with the fully qualified ECR repository URI, and push that fully qualified reference.",
+          "distractor_rationale": "A: Pushes to Docker Hub (or fails) because the tag isn’t namespaced to ECR. C: `aws ecr login` is deprecated and the tag is not a valid ECR URI. D: Pushing a registry URL without repository and tag is invalid.",
+          "skills_covered": [
+            "Docker",
+            "CI/CD",
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "GitHub Actions workflow:\n```yaml\non:\n  push:\n    branches: [ main ]\n  pull_request:\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Push to ECR only on main\n        if: github.ref == 'main'\n        run: echo pushing\n```\nThe step still runs on some events unexpectedly. What condition ensures it only runs on direct pushes to `main`?",
+          "options": [
+            "Keep `if: github.ref == 'main'`; it already matches pushes to main only.",
+            "Use `if: startsWith(github.ref, 'heads/main')`.",
+            "Remove the condition; the `on.push.branches` will prevent it from running on PRs.",
+            "Use `if: github.ref == 'refs/heads/main'`."
+          ],
+          "correct_option": "D",
+          "explanation": "`github.ref` holds the full ref path, such as `refs/heads/main` for branch pushes and `refs/pull/...` for PR events. Comparing to the full ref correctly scopes to main pushes.",
+          "distractor_rationale": "A: Missing the `refs/heads/` prefix, so it never matches as intended. C: The path must include `refs/`; this string won’t match. D: The job also runs on PR events; without a condition, the step would run during PRs too.",
+          "skills_covered": [
+            "Git",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Which Dockerfile layout maximizes cache reuse when only application source files change (not dependencies) for a Node app?\nChoose the option that best avoids re-running `npm ci` and rebuilds only the app.\n",
+          "options": [
+            "```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY . .\nRUN npm ci && npm run build\nCMD [\"node\",\"dist/index.js\"]\n```",
+            "```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY src/ ./src\nCOPY package*.json ./\nRUN npm ci && npm run build\nCMD [\"node\",\"dist/index.js\"]\n```",
+            "```dockerfile\nFROM node:18-alpine AS deps\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\n\nFROM node:18-alpine AS build\nWORKDIR /app\nCOPY --from=deps /app/node_modules ./node_modules\nCOPY src/ ./src\nRUN npm run build\n\nFROM node:18-alpine\nWORKDIR /app\nCOPY --from=build /app/dist ./dist\nCOPY package*.json ./\nRUN npm ci --omit=dev\nCMD [\"node\",\"dist/index.js\"]\n```",
+            "```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm install -g npm@latest && npm ci\nCOPY . .\nRUN npm run build\nCMD [\"node\",\"dist/index.js\"]\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Separating dependency installation from source copy allows Docker to cache `npm ci` until `package*.json` change. With multi-stage, the final image stays slim and prod-only deps can be installed separately.",
+          "distractor_rationale": "A/D: Copying the whole context before installing deps causes `npm ci` to rerun on any source change. C: Copying `src` before installing deps still invalidates the cache for `npm ci` when source changes.",
+          "skills_covered": [
+            "Docker",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your organization builds in a shared Tools AWS account and wants to push images to a production ECR repository in a separate Prod account. The CodeBuild project in Tools assumes an execution role `Tools-CodeBuildRole`. The Prod account hosts `prod/app` ECR repo with tag immutability enabled. A recent pipeline run failed on push with:\n```text\ndenied: User: arn:aws:sts::111111111111:assumed-role/Tools-CodeBuildRole/... is not authorized to perform: ecr:PutImage on resource arn:aws:ecr:us-east-1:222222222222:repository/prod/app\n```\nSecurity requires: least-privilege, pushes allowed only from `main` branch builds after tests pass, and deployments must be by digest.",
+          "task": "Describe the exact cross-account setup to enable the push while meeting the constraints. Include: which role is assumed, trust relationships, the minimal IAM permissions on that role, the ECR repository policy in Prod, and any pipeline condition to restrict pushes to `main`. Explain how digest-based deployment is wired into later stages.",
+          "expected_answer": "- Create an IAM role in Prod (e.g., `Prod-ECRPushRole`) with a trust policy allowing the Tools account CodeBuild service role (`Tools-CodeBuildRole`) to assume it (sts:AssumeRole). Scope trust to that specific role principal.\n- Attach to `Prod-ECRPushRole` an inline policy that allows only the necessary ECR actions on only the target repo ARN, e.g., `ecr:BatchCheckLayerAvailability`, `ecr:InitiateLayerUpload`, `ecr:UploadLayerPart`, `ecr:CompleteLayerUpload`, `ecr:PutImage`, `ecr:DescribeRepositories`, `ecr:BatchGetImage`, `ecr:DescribeImages` on `arn:aws:ecr:us-east-1:222222222222:repository/prod/app`.\n- In Prod, set an ECR repository resource policy to allow `aws:PrincipalArn` of `Prod-ECRPushRole` to perform `ecr:BatchGetImage`/`ecr:DescribeImages` if needed by other stages; or rely purely on IAM if staying within the account (resource policies can be optional if assuming the role).\n- In the Tools pipeline, after tests pass, add a step to assume `Prod-ECRPushRole` (e.g., `aws sts assume-role`), export temporary credentials, login to the Prod registry in the same region, and push.\n- Add a branch condition at the pipeline level (e.g., CodePipeline source filter or CodeBuild `phases.build.commands` guard) to only execute the push step when `CODEBUILD_SOURCE_VERSION` resolves to `refs/heads/main`.\n- Capture the pushed image digest from `aws ecr describe-images --image-ids imageTag=$TAG` and publish it as an artifact (e.g., `image-digest.txt`). Later deploy stages consume the digest and pull by `repository@sha256:...`, not by tag, satisfying immutability. Manual approval can reference the digest in the approval summary for compliance.",
+          "rubric": [
+            {
+              "criterion": "Defines a cross-account role in Prod with correct trust relationship limited to the Tools CodeBuild role",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies least-privilege ECR permissions required to push (layer upload + PutImage) scoped to the single repo",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes the pipeline change to assume the Prod role, authenticate to the correct registry/region, and perform the push",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows how branch restriction is enforced so only `main` pushes occur after tests (e.g., filter/condition)",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains digest capture and later deploy by digest to guarantee immutability/compliance",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "AWS IAM",
+            "Docker",
+            "CI/CD",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Builds for a Node service are slow and sometimes include dev dependencies in the runtime image. Current artefacts:\n```dockerfile\n# current\nFROM node:18-alpine\nWORKDIR /app\nCOPY . .\nRUN npm ci && npm run build\nCMD [\"node\",\"dist/index.js\"]\n```\nNo `.dockerignore` is present. The pipeline runs `docker build` on every commit and then runs smoke tests by `docker run app:build node -e \"require('express')\"` which sometimes passes locally but fails in CI due to missing modules.",
+          "task": "Propose a corrected Dockerfile and `.dockerignore` that (a) maximizes cache reuse, (b) guarantees only production dependencies in the final image, and (c) makes the smoke test deterministic across local and CI. Justify each change briefly.",
+          "expected_answer": "- Use a multi-stage Dockerfile:\n```dockerfile\nFROM node:18-alpine AS deps\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\n\nFROM node:18-alpine AS build\nWORKDIR /app\nCOPY --from=deps /app/node_modules ./node_modules\nCOPY src/ ./src\nRUN npm run build\n\nFROM node:18-alpine\nWORKDIR /app\nCOPY --from=build /app/dist ./dist\nCOPY package*.json ./\nRUN npm ci --omit=dev\nCMD [\"node\",\"dist/index.js\"]\n```\n- Add `.dockerignore` to exclude `node_modules`, `tests`, `.git`, and local editor files so the context is small and cache keys are stable:\n```text\nnode_modules\n.git\n.tests\n**/*.log\nDockerfile\n.dockerignore\n```\n- Rationale: copying `package*.json` first and running `npm ci` lets dependency layers cache until manifest changes; copying source later means code-only edits don’t bust the deps layer. Installing with `--omit=dev` in the final stage ensures no dev deps leak. The smoke test should run against the built image by executing `node -e \"require('express')\"` within a container built from the final stage (or check `node -e` plus `dist` presence) to be identical in local and CI.",
+          "rubric": [
+            {
+              "criterion": "Provides a valid multi-stage Dockerfile that separates deps, build, and runtime",
+              "marks": 3
+            },
+            {
+              "criterion": "Ensures prod-only deps in the final image (e.g., `npm ci --omit=dev`)",
+              "marks": 1
+            },
+            {
+              "criterion": "Supplies a `.dockerignore` that excludes `node_modules` and other noisy paths",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains cache behavior improvements due to ordering and staging",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses deterministic smoke test and aligns it with the final image",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Docker",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A pipeline has stages: Source → Build → Deploy. In Deploy, the first action is a Manual Approval, followed by Integration Tests (in CodeBuild), then a retag-and-release step pushes `latest` to the same ECR repo. Auditors complain that approvers aren’t actually approving what is deployed, and rollbacks sometimes pull the wrong image.",
+          "task": "Redesign the Deploy stage order and artefact handoff to satisfy auditors. Specify action order, what each action consumes and produces, and how the exact image is frozen between approval and deployment. Keep the manual approval requirement.",
+          "expected_answer": "- Change order to: Integration Tests → Manual Approval → Deploy-by-digest → (optional) Retag/promotion.\n- Build must emit an artefact containing the image digest (e.g., `image-digest.txt`). Integration tests run pulling by that digest to ensure the tested image matches the built image. The Approval action references the digest in its summary and takes as input the same artefact. The Deploy action pulls `repo@sha256:<digest>` for staging/prod. Any retagging (e.g., to `release-YYYYMMDD` or `stable`) happens after a successful deploy and should use `BatchGetImage` on the digest and `PutImage` with that manifest so tags are purely labels. Never deploy `latest`.\n- Optionally, split Staging and Prod into separate stages, repeating Approval before Prod to keep gates environment-specific.",
+          "rubric": [
+            {
+              "criterion": "Proposes correct gate placement: tests before approval, approval before deploy",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies digest artefact produced in build, consumed by tests, approval, and deploy",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes deploy-by-digest and avoids using `latest`",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains tag promotion after deploy without changing content (labels over manifests)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "CI/CD",
+            "Docker",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A CodeBuild job runs a container for smoke tests. Logs:\n```text\n[Container] Running command docker build -t svc:test .\n[Container] Running command docker run -d -p 8080:8080 --name svc svc:test\n[Container] Running command curl -sf http://localhost:8080/health\ncurl: (7) Failed to connect to localhost port 8080: Connection refused\n[Container] Running command docker logs --tail=50 svc\n> node dist/index.js\nError: listen EADDRINUSE: address already in use 0.0.0.0:8080\n```\nDockerfile:\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY . .\nCMD [\"npm\",\"start\"]\n```\n`npm start` runs `node dist/index.js` which binds to `process.env.PORT || 8080` but also starts a child process that binds to 8080 for metrics.",
+          "task": "Diagnose the failure and propose concrete changes to make the smoke test reliable in CI. Include Dockerfile and buildspec/test command changes and how to fail fast on unhealthy containers.",
+          "expected_answer": "- Root cause: The container starts two listeners on the same port, causing `EADDRINUSE`. Locally it “worked” due to a different PORT setting or leftover process; in CI it fails reliably. Also, the test assumes 8080 implicitly and doesn’t wait for readiness.\n- Fixes:\n  - Set a single port via env and ensure the app uses only one listener; expose a different port for metrics or disable it in smoke tests via env.\n  - In Dockerfile, make the runtime explicit and simple (and avoid npm scripts masking args):\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY dist/ ./dist\nENV PORT=8080 METRICS_DISABLED=true\nENTRYPOINT [\"node\",\"dist/index.js\"]\n```\n  - In buildspec, run container with healthcheck and wait loop:\n```bash\ndocker run -d --name svc -e PORT=8080 -e METRICS_DISABLED=true \\\n  -p 8080:8080 --health-cmd='wget -qO- http://localhost:8080/health || exit 1' \\\n  --health-interval=5s --health-retries=12 svc:test\n\n# Wait for healthy\nfor i in {1..12}; do\n  if [ \"$(docker inspect -f '{{.State.Health.Status}}' svc)\" = \"healthy\" ]; then break; fi; sleep 5; done\n\n# Fail fast if not healthy\ntest \"$(docker inspect -f '{{.State.Health.Status}}' svc)\" = \"healthy\"\n```\n  - Alternatively parameterize the app to bind metrics to a different port during tests.\n- This ensures CI sets a single bind port, waits for readiness, and fails if the healthcheck never turns healthy.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies port collision/second listener as the root cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete Dockerfile change making runtime explicit and configurable via env",
+              "marks": 2
+            },
+            {
+              "criterion": "Supplies CI test commands that add a container healthcheck and a readiness wait",
+              "marks": 2
+            },
+            {
+              "criterion": "Includes a fail-fast check that fails the build on unhealthy state",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Docker",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Containerise a service and publish to ECR",
+          "brief": "Create a small HTTP service (any language/runtime) and containerise it with a production-grade Dockerfile. Optimize for reproducible builds and small runtime image. Push the image to an Amazon ECR repository. Provide verifiable artefacts and evidence.",
+          "deliverable": "A repository (zip or link) containing Dockerfile(s), `.dockerignore`, app source, a README with build/run steps, and evidence files (see acceptance criteria).",
+          "acceptance_criteria": [
+            "Dockerfile uses a multi-stage build (separate build and runtime) and installs only production dependencies in the final stage.",
+            "`.dockerignore` excludes build outputs and dependency directories (e.g., node_modules, target, bin).",
+            "`docker build` succeeds from a clean clone; `docker run -p 8080:8080 ...` responds HTTP 200 to `GET /health` (include `curl -i` output captured in a text file).",
+            "Pushed to ECR: include the ECR image URI and digest in a `IMAGE.txt` file and the output of `aws ecr describe-images --image-ids imageDigest=<digest>` saved as `ecr-describe.json`.",
+            "Runtime image size is shown via `docker images` with the built image highlighted; include the command output in `image-size.txt`.",
+            "README documents exact build, tag, push, and run commands, including the ECR login step and region."
+          ],
+          "rubric": [
+            {
+              "criterion": "Multi-stage Dockerfile present and correct; final image contains only runtime and prod deps",
+              "marks": 6
+            },
+            {
+              "criterion": "`.dockerignore` effectively reduces context (excludes deps/build artefacts)",
+              "marks": 3
+            },
+            {
+              "criterion": "Functional service: container runs locally and `/health` returns 200 (evidence provided)",
+              "marks": 5
+            },
+            {
+              "criterion": "ECR publish evidence with correct URI and digest, and repository describe output",
+              "marks": 4
+            },
+            {
+              "criterion": "Image size reported and is reasonable for the chosen stack; steps clearly documented in README",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Docker",
+            "CI/CD"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build, test, and approve-gated image pipeline to ECR",
+          "brief": "Implement a working CI/CD pipeline that builds your service image, runs tests, pushes to ECR, and uses a manual approval to promote a specific digest to a release tag. You may use AWS CodePipeline+CodeBuild or GitHub Actions + AWS CLI, but the outputs must prove the flow without relying on live access.",
+          "deliverable": "Pipeline definition files (e.g., CodePipeline/CodeBuild project JSON/YAML or GitHub Actions workflow), buildspec(s), and run evidence (logs/screenshots) captured into the repo.",
+          "acceptance_criteria": [
+            "Pipeline builds on commit and runs unit tests before any push; on success it logs in to ECR, tags the image with the commit SHA, pushes it, and writes the pushed image digest to `image-digest.txt` as an artefact.",
+            "A smoke test step runs the image in a container and waits for readiness via a healthcheck before passing (include log excerpts showing the healthcheck turning healthy).",
+            "A manual approval gate exists before promotion; after approval, a step retags the exact digest to a `release-<date>` or `stable` tag. Promotion must use the digest from `image-digest.txt` (not a moving tag).",
+            "Provide evidence of one successful run: logs showing commit SHA, ECR repository URI, image digest, smoke test success, approval, and the subsequent retag command output. Save these in `pipeline-run.txt` or screenshots.",
+            "Concurrency-safe: demonstrate that deploy/promotion uses the digest, or include a configuration note preventing parallel promotions to the same environment (e.g., CodePipeline stage sequencing or GitHub Actions `concurrency` block)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Build+test stages implemented and executed before any push (evidence in logs)",
+              "marks": 5
+            },
+            {
+              "criterion": "Image push to ECR with immutable identifier: commit SHA tag and recorded digest artefact",
+              "marks": 5
+            },
+            {
+              "criterion": "Smoke test with readiness/healthcheck and pass/fail reflected in pipeline result",
+              "marks": 4
+            },
+            {
+              "criterion": "Manual approval gate before promotion and promotion by digest (not tag)",
+              "marks": 4
+            },
+            {
+              "criterion": "Concurrency/promotion safety explained or configured",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "CI/CD",
+            "Docker",
+            "Git",
+            "cloud security and compliance",
+            "AWS IAM"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-006-S04",
+      "skills_assessed": [
+        "AWS IAM",
+        "Amazon S3",
+        "Amazon CloudWatch",
+        "Terraform",
+        "Infrastructure as Code",
+        "cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You switch a workspace from local state to an S3 backend with DynamoDB locking and run init.\n\n```terraform\nterraform {\n  backend \"s3\" {\n    bucket         = \"org-tf-state\"\n    key            = \"envs/prod/terraform.tfstate\"\n    region         = \"us-east-1\"\n    dynamodb_table = \"tf-locks\"\n    encrypt        = true\n  }\n}\n```\n\n```bash\n$ terraform init -reconfigure\nInitializing the backend...\nError: Failed to lock state\n\nError locking state: error acquiring DynamoDB lock: ResourceNotFoundException: Requested resource not found: Table: tf-locks not found\n```\n\nWhat actually happens next and why?",
+          "options": [
+            "Initialization aborts; Terraform refuses to use the S3 backend because the configured DynamoDB lock table does not exist.",
+            "Terraform migrates state to S3 without a lock and emits only a warning; you can safely apply.",
+            "Terraform auto-creates the DynamoDB table if the IAM role has permissions, then proceeds.",
+            "Initialization completes; the first concurrent apply will fail because the lock table is missing, but single-user applies will proceed."
+          ],
+          "correct_option": "A",
+          "explanation": "When a DynamoDB table is configured for S3 backend locking, Terraform validates it during backend initialization. If it doesn't exist, init fails and no migration occurs.",
+          "distractor_rationale": "B is tempting because locking issues surface under concurrency, but Terraform validates the lock table at init and fails fast. C reflects a misunderstanding: Terraform does not silently downgrade locking. D is false: Terraform does not create the DynamoDB table on your behalf.",
+          "skills_covered": [
+            "Terraform",
+            "Amazon S3",
+            "AWS IAM",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A bucket is protected against accidental deletion in Terraform.\n\n```terraform\nresource \"aws_s3_bucket\" \"data\" {\n  bucket = \"acme-data-prod\"\n  force_destroy = false\n\n  lifecycle {\n    prevent_destroy = true\n  }\n}\n```\nLater, a feature flag sets `count = 0` on the module that declares this bucket. The plan shows:\n\n```text\nPlan: 0 to add, 0 to change, 1 to destroy.\n```\nWhat will `terraform apply` do?",
+          "options": [
+            "Skip destroying the bucket but remove it from state silently.",
+            "Fail the apply with an error because `prevent_destroy` blocks destroying this bucket.",
+            "Destroy the bucket because `count=0` overrides `prevent_destroy`.",
+            "Mark the bucket as tainted and attempt to recreate it next run."
+          ],
+          "correct_option": "B",
+          "explanation": "`lifecycle.prevent_destroy=true` prevents any destroy, regardless of why the destruction is proposed (including `count=0`). Apply fails with an error.",
+          "distractor_rationale": "B is a common misconception: `count` changing does not bypass lifecycle rules. C is wrong: Terraform does not silently leave resources orphaned; it errors out. D misunderstands taint; taint forces recreation, not applicable to a destroy-only change due to `count=0`.",
+          "skills_covered": [
+            "Terraform",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A CloudFormation stack manages an S3 bucket that currently contains objects. You prepare an update that changes the bucket name (a replacement) using this template excerpt:\n\n```yaml\nResources:\n  AppBucket:\n    Type: AWS::S3::Bucket\n    DeletionPolicy: Retain\n    Properties:\n      BucketName: acme-app-assets-prod\n```\nYou do not set `UpdateReplacePolicy`. During the update, what happens to the old bucket resource?",
+          "options": [
+            "The update succeeds and leaves the old bucket orphaned without any policy controlling it.",
+            "CloudFormation empties the old bucket automatically and proceeds with the update.",
+            "The old bucket is retained due to `DeletionPolicy: Retain`, and the update succeeds.",
+            "The update fails and rolls back because CloudFormation attempts to delete the non-empty old bucket during replacement."
+          ],
+          "correct_option": "D",
+          "explanation": "`DeletionPolicy` applies to stack deletion, not to update-time replacement. Without `UpdateReplacePolicy: Retain`, CloudFormation attempts to delete the old resource when replacing it. For a non-empty S3 bucket, deletion fails and the update rolls back.",
+          "distractor_rationale": "B is a common confusion between DeletionPolicy and UpdateReplacePolicy. C is false; CloudFormation does not purge bucket contents for you. D is too optimistic; replacement attempts to delete the old resource unless UpdateReplacePolicy changes that behavior.",
+          "skills_covered": [
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You define a CloudWatch Logs metric filter on a JSON-formatted log group:\n\n```text\nLog events:\n1 {\"ts\":\"2026-04-01T12:00:00Z\",\"level\":\"ERROR\",\"msg\":\"db timeout\",\"code\":504}\n2 {\"ts\":\"2026-04-01T12:00:05Z\",\"level\":\"WARN\",\"msg\":\"slow\",\"code\":200}\n3 {\"ts\":\"2026-04-01T12:00:10Z\",\"level\":\"ERROR\",\"msg\":\"panic\",\"code\":500}\n```\n\nFilter pattern:\n\n```text\n{ $.level = \"ERROR\" && $.code >= 500 }\n```\nWhich events will increment the metric?",
+          "options": [
+            "Event 1 only",
+            "Events 1 and 3",
+            "Events 1, 2, and 3",
+            "Event 3 only"
+          ],
+          "correct_option": "B",
+          "explanation": "Both event 1 (ERROR, 504) and event 3 (ERROR, 500) satisfy `level==ERROR` and `code>=500`. Event 2 is WARN.",
+          "distractor_rationale": "B ignores that 500 also matches `>= 500`. C misses that 504 is also >= 500. D incorrectly includes the WARN event.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider this CloudWatch alarm JSON and a period where the metric reports no data (the instance was terminated by an Auto Scaling rollout):\n\n```json\n{\n  \"AlarmName\": \"CPUHigh\",\n  \"Namespace\": \"AWS/EC2\",\n  \"MetricName\": \"CPUUtilization\",\n  \"Statistic\": \"Average\",\n  \"Period\": 60,\n  \"EvaluationPeriods\": 3,\n  \"Threshold\": 80,\n  \"ComparisonOperator\": \"GreaterThanThreshold\",\n  \"TreatMissingData\": \"notBreaching\"\n}\n```\nDuring three consecutive periods with no datapoints, what alarm state is evaluated?",
+          "options": [
+            "OK for the first period then ALARM for the next two because the threshold can't be checked.",
+            "INSUFFICIENT_DATA, because no samples means no evaluation.",
+            "OK, because missing data is treated as not breaching.",
+            "ALARM, because the last state was ALARM and persists."
+          ],
+          "correct_option": "C",
+          "explanation": "With `TreatMissingData: notBreaching`, missing datapoints are treated as non-breaching. Across the evaluation window, the alarm evaluates to OK.",
+          "distractor_rationale": "B confuses state retention with missing data treatment. C would be true with `TreatMissingData: missing` or for composite ambiguity, not here. D invents phased behavior CloudWatch does not implement.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your Terraform user can read and write the S3 state object but fails when unlocking after apply:\n\n```bash\nError releasing state lock: AccessDeniedException: User: arn:aws:iam::111122223333:user/ci is not authorized to perform: dynamodb:DeleteItem on resource: arn:aws:dynamodb:us-east-1:111122223333:table/tf-locks\n```\nThe IAM policy attached is:\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\"Effect\":\"Allow\",\"Action\":[\"s3:GetObject\",\"s3:PutObject\",\"s3:ListBucket\"],\"Resource\":[\"arn:aws:s3:::org-tf-state\",\"arn:aws:s3:::org-tf-state/*\"]},\n    {\"Effect\":\"Allow\",\"Action\":[\"dynamodb:GetItem\",\"dynamodb:PutItem\",\"dynamodb:UpdateItem\"],\"Resource\":[\"arn:aws:dynamodb:us-east-1:111122223333:table/tf-locks\"]}\n  ]\n}\n```\nWhich missing permission causes the failure?",
+          "options": [
+            "dynamodb:DeleteItem",
+            "dynamodb:ConditionCheckItem",
+            "dynamodb:DescribeTable",
+            "dynamodb:Query"
+          ],
+          "correct_option": "A",
+          "explanation": "Terraform deletes the lock item on unlock; it needs `dynamodb:DeleteItem` on the lock table.",
+          "distractor_rationale": "B is often added but not required for basic lock/unlock. C is used in conditional writes but the error explicitly cites `DeleteItem`. D is irrelevant because the lock is addressed by its key, not via a query.",
+          "skills_covered": [
+            "AWS IAM",
+            "Terraform",
+            "Amazon S3",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You see this Terraform plan for an S3 bucket:\n\n```text\n-/+ resource \"aws_s3_bucket\" \"app\" {\n      ~ id     = \"acme-app-assets\" -> (known after apply)\n      ~ tags   = { \"env\" = \"prod\" } -> { \"env\" = \"prod\", \"team\" = \"web\" }\n      - bucket = \"acme-app-assets\" -> null # forces replacement\n      + bucket = \"acme-app-assets-v2\" # forces replacement\n        # (4 unchanged attributes hidden)\n    }\n```\nWhich configuration change most likely caused this replacement?",
+          "options": [
+            "Changing only tags to add `team=web`.",
+            "Enabling versioning on the bucket.",
+            "Changing ACL from `private` to `public-read`.",
+            "Changing the `bucket` name from `acme-app-assets` to `acme-app-assets-v2`."
+          ],
+          "correct_option": "D",
+          "explanation": "S3 bucket names are immutable; changing `bucket` forces replacement. Versioning, tags, and ACLs are in-place changes.",
+          "distractor_rationale": "B, C, and D are all in-place updates that do not require replacing the bucket.",
+          "skills_covered": [
+            "Terraform",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A CloudWatch dashboard widget is defined as:\n\n```json\n{\n  \"type\": \"metric\",\n  \"properties\": {\n    \"metrics\": [[\"AWS/Billing\",\"EstimatedCharges\",\"Currency\",\"USD\"]],\n    \"region\": \"eu-west-1\",\n    \"stat\": \"Maximum\",\n    \"period\": 21600\n  }\n}\n```\nThe graph shows \"No data\". Why?",
+          "options": [
+            "EstimatedCharges must use the Sum statistic, not Maximum.",
+            "Billing metrics require a custom namespace, not AWS/Billing.",
+            "Billing metrics are only available in us-east-1; using eu-west-1 yields no data.",
+            "EstimatedCharges requires a linked payer account and otherwise returns no data."
+          ],
+          "correct_option": "C",
+          "explanation": "`AWS/Billing` metrics are global and must be queried in us-east-1. Requesting them in another region shows no data.",
+          "distractor_rationale": "B sounds plausible but charges still appear per account. C is incorrect; both Maximum and SampleCount work, though Sum is common. D is false; the namespace is AWS/Billing.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You manage log retention via Terraform:\n\n```terraform\nresource \"aws_cloudwatch_log_group\" \"app\" {\n  name              = \"/app/prod\"\n  retention_in_days = 7\n}\n```\nPreviously, the group had `retention_in_days = 0` (never expire) and contains year-old logs. After apply, what happens to older events?",
+          "options": [
+            "Events older than 7 days become eligible for expiration and are purged by CloudWatch over the next hours; new retention applies retroactively.",
+            "Nothing changes for existing events; retention only affects new log entries.",
+            "CloudWatch immediately deletes all logs older than 7 days within the same second as the update.",
+            "Terraform deletes old events during apply."
+          ],
+          "correct_option": "A",
+          "explanation": "Changing retention applies retroactively. CloudWatch schedules deletion of events beyond the new retention window; purge completes asynchronously, typically within hours.",
+          "distractor_rationale": "B is a common misconception. C exaggerates timing; deletion is asynchronous. D is wrong; Terraform sets the retention policy, CloudWatch performs deletion.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You gate an error-rate alarm with a composite rule so it only pages when the service is actually running:\n\n```json\n{\n  \"AlarmName\": \"PageIfErrorsWhileRunning\",\n  \"AlarmRule\": \"ALARM(ErrorRateHigh) AND NOT(ALARM(ASGZeroDesired))\"\n}\n```\nAt a given moment, `ErrorRateHigh` is `INSUFFICIENT_DATA` and `ASGZeroDesired` is `ALARM`. What state does the composite evaluate to?",
+          "options": [
+            "ALARM, because one child is ALARM and the operator is AND.",
+            "INSUFFICIENT_DATA, because the rule cannot be fully evaluated when a child is in INSUFFICIENT_DATA.",
+            "OK, because NOT(ALARM(ASGZeroDesired)) is false.",
+            "OK, because composite alarms ignore INSUFFICIENT_DATA from children."
+          ],
+          "correct_option": "B",
+          "explanation": "Composite alarms evaluate to INSUFFICIENT_DATA when their rule cannot be resolved due to INSUFFICIENT_DATA in referenced alarms. Here, `ALARM(ErrorRateHigh)` is indeterminate.",
+          "distractor_rationale": "B describes the right-hand side only; the left side is indeterminate. C misunderstands AND; both sides must be true and the left is unknown. D is incorrect; composite alarms propagate INSUFFICIENT_DATA when the expression can't be resolved.",
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your team currently keeps Terraform state local in the repo. Multiple engineers now need to collaborate on the same environment. You must migrate to a remote state backend with locking and encryption without risking drift or duplicate resources. The account has an S3 bucket `org-tf-state` available, but no DynamoDB lock table yet. All environments are separated by Terraform workspaces.",
+          "task": "Describe an exact, low-risk migration plan to S3 remote state with DynamoDB locking and KMS encryption. Include: bucket/table prerequisites and policies, backend configuration including workspace-aware keys, the precise Terraform commands and flags to run, IAM least-privilege needed, how to pause concurrent work during migration, and how you will verify success and roll back safely if something fails.",
+          "expected_answer": "A strong answer proposes: 1) Create the lock table before touching Terraform: DynamoDB table `tf-locks` with primary key `LockID` (string), on-demand or RCU/WCU set, server-side encryption enabled. 2) Ensure the state bucket has versioning enabled, default SSE-KMS with a customer-managed CMK, and a bucket policy that requires TLS, denies unencrypted puts unless using the KMS key, and optional access conditions on source VPC endpoints. 3) Prepare least-privilege IAM for the CI/user principals: s3:GetObject/PutObject/ListBucket on the specific bucket/prefix; dynamodb:GetItem/PutItem/UpdateItem/DeleteItem on the lock table; kms:Encrypt/Decrypt/GenerateDataKey on the CMK with a key policy that trusts the same principals. 4) Update `terraform` backend block with `bucket`, `key` using a pattern like `envs/${terraform.workspace}/terraform.tfstate`, `region`, `dynamodb_table`, and `encrypt=true`; do not check any state file into VCS. 5) Freeze concurrent changes: communicate a maintenance window, ensure no `apply` running, and lock the repo (e.g., require PR holds). 6) Run `terraform init -reconfigure -migrate-state` locally in each workspace to move the existing state object; if migrating in CI, run per-workspace with explicit `TF_WORKSPACE`. 7) Verify: `terraform plan` should show no changes in each workspace; S3 should show a new object with versioning and KMS encryption; DynamoDB should show a lock item appear/disappear during a dry-run with `-lock-timeout`. 8) Rollback plan: if init fails, remove the partial backend block change and restore from the last local `terraform.tfstate` backup (`.backup` file); do not use `force-unlock` unless you have confirmed the lock is orphaned. Document how to recover from lock contention and how to rotate the KMS key if needed.",
+          "rubric": [
+            {
+              "criterion": "Creates secure S3 bucket requirements (versioning, SSE-KMS, bucket policy enforcing encryption/TLS) and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines DynamoDB lock table correctly (LockID key, encryption, capacity) and creates it prior to init",
+              "marks": 1
+            },
+            {
+              "criterion": "Specifies backend config with workspace-aware key and all fields (bucket, key, region, dynamodb_table, encrypt)",
+              "marks": 1
+            },
+            {
+              "criterion": "Outlines IAM least-privilege for S3, DynamoDB, and KMS, tied to principals that will run Terraform",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes safe migration procedure: freeze changes, run init with -migrate-state per workspace, avoid concurrent apply",
+              "marks": 1
+            },
+            {
+              "criterion": "Verification and rollback: zero-drift plan after migration; restore from .backup on failure; cautious use of force-unlock",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Terraform",
+            "Amazon S3",
+            "AWS IAM",
+            "Infrastructure as Code",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A CloudFormation stack defines an S3 bucket that now holds production assets. The business wants the bucket renamed to meet a new naming standard. The current resource has `DeletionPolicy: Retain` but not `UpdateReplacePolicy`. A naïve change set shows the bucket will be replaced. Deleting the old bucket would fail because it is non-empty.",
+          "task": "Propose a safe update strategy that avoids downtime and data loss while keeping the stack in control of both old and new buckets during transition. Address template changes (including the correct policy fields), data migration approach, sequencing with change sets, and how to cut over and clean up.",
+          "expected_answer": "A solid plan: 1) Stop treating rename as in-place; model two buckets: keep the existing `AppBucket` logical resource and add a new `AppBucketV2` with the desired name. 2) Add `UpdateReplacePolicy: Retain` to the old bucket (defensive) and keep `DeletionPolicy: Retain` to protect on stack deletion. 3) Attach a lifecycle or replication rule or plan a one-time copy (e.g., S3 Batch Operations or `aws s3 sync`) from old to new; if objects are public, ensure ACLs and bucket policies are mirrored. 4) Update any dependent resources (OriginAccessControl/CloudFront, IAM policies, app config) to reference the new bucket using parameters/exports to avoid hard-coding names. 5) Create a change set and execute while monitoring; verify both buckets exist and the app can read from the new location. 6) After validation, freeze writes to old, run a delta sync, then switch producers to write to the new bucket. 7) Only after a retention window, remove references to the old bucket from the stack or leave retained and document ownership; if you want the stack to delete it eventually, add an explicit custom resource/job to empty it first, then allow deletion. 8) Justify not relying on DeletionPolicy alone because it doesn’t control update-time replacement.",
+          "rubric": [
+            {
+              "criterion": "Introduces parallel-bucket pattern (two logical resources) rather than rename-in-place; explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Sets correct policies: uses UpdateReplacePolicy and DeletionPolicy appropriately",
+              "marks": 1
+            },
+            {
+              "criterion": "Describes robust data migration (sync/replication) including ACL/policy parity and write-freeze delta step",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains dependency updates and cutover sequencing using change sets and validation",
+              "marks": 1
+            },
+            {
+              "criterion": "Covers cleanup strategy with retention window and safe deletion (empty-before-delete or keep retained)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Infrastructure as Code",
+            "Amazon S3",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are onboarding an EKS-based service to basic operations monitoring. The team wants paging only when the service is up and erroring, not during scale-to-zero at night. Logs are structured JSON with fields `level`, `msg`, and `code`. Container Insights is enabled.",
+          "task": "Design an initial CloudWatch setup: which metrics and dimensions to chart on a dashboard, which alarms (with thresholds and missing data behavior), a metric filter for error logs, and how to gate paging using composite alarms. Explain choices briefly.",
+          "expected_answer": "Dashboard: Include `AWS/ContainerInsights` metrics per cluster and namespace: `pod_cpu_utilization` (Average), `pod_memory_utilization` (Average), and `service_request_count`/`service_error_count` if exposed via Prometheus/CloudWatch agent, else ApplicationELB `HTTPCode_Target_5XX_Count` with `TargetGroup` dimension if behind an ALB. Show p95 latency if available. Alarms: 1) Error rate alarm using metric math `errors / requests * 100` over 5-minute periods, `>= 2%` for 3 of 5 evaluations; `TreatMissingData: notBreaching`. 2) Latency p95 `>= 500 ms` for 3 of 5. 3) Health alarm on `HealthyHostCount` or `pod_count` below 1 for the service. Log metric filter: pattern `{ $.level = \"ERROR\" && $.code >= 500 }` to produce a `AppErrorCount` metric in a custom namespace. Composite alarm: `ALARM(ErrorRateHigh) AND NOT(ALARM(ServiceScaledToZero))`, where `ServiceScaledToZero` is an alarm on `DesiredCapacity==0` (Auto Scaling) or `pod_desired` metric equals 0. Choose `TreatMissingData: notBreaching` on child alarms to avoid flapping during rollouts. Justify dim choices so charts scope to the namespace/service and alarms reflect user-facing SLOs.",
+          "rubric": [
+            {
+              "criterion": "Selects appropriate Container Insights/ELB metrics with correct dimensions and includes latency and utilization on the dashboard",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines actionable error-rate and latency alarms with sensible thresholds and evaluation windows",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct JSON log metric filter and names the emitted metric and namespace",
+              "marks": 1
+            },
+            {
+              "criterion": "Uses composite alarm gating tied to service running state (e.g., DesiredCapacity or pod_desired) and explains TreatMissingData",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon CloudWatch",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Overnight cost savings turn an Auto Scaling group to zero desired capacity. Your CPU and error-rate alarms wake on-call because they flip between INSUFFICIENT_DATA and ALARM whenever instances vanish/reappear during deployments. Current alarms use default `TreatMissingData` and target single-instance dimensions.",
+          "task": "Propose concrete alarm and dashboard changes to eliminate false pages during scale-to-zero and rollout churn, while preserving real incident detection. Provide specific CloudWatch alarm settings, any composite rules, and dimensioning or metric-math changes. Briefly justify.",
+          "expected_answer": "Changes: 1) Set child alarms’ `TreatMissingData` to `notBreaching`. 2) Aggregate metrics across the Auto Scaling group (or TargetGroup) instead of single-instance dimensions using `SEARCH` or dimension wildcards, or sum per-TargetGroup for error counts and divide by requests for rate. 3) Add a `ServiceNotRunning` alarm keyed on `AWS/AutoScaling` metric `GroupDesiredCapacity == 0` (or ContainerInsights `pod_desired == 0`). 4) Create a composite alarm: `ALARM(ErrorRateHigh) AND NOT(ALARM(ServiceNotRunning))` and similarly gate CPU/latency alarms. 5) Optionally use anomaly detection for request rate to avoid pages when traffic is genuinely zero. 6) On the dashboard, prefer math metrics that normalize (errors/requests) and show a \"Service state\" single-value widget (DesiredCapacity) to make triage obvious. Rationale: gating avoids notifications when the service is intentionally off; aggregation prevents per-instance churn; missing data treated as non-breaching avoids transients during lifecycles.",
+          "rubric": [
+            {
+              "criterion": "Sets TreatMissingData appropriately and explains why it reduces flapping",
+              "marks": 2
+            },
+            {
+              "criterion": "Aggregates metrics at ASG/TargetGroup or service level, not per-instance, and uses rate math for errors",
+              "marks": 2
+            },
+            {
+              "criterion": "Introduces a running-state alarm and composes it in a NOT-gated composite rule for paging",
+              "marks": 2
+            },
+            {
+              "criterion": "Mentions optional anomaly detection or dashboard improvements that aid triage",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Amazon CloudWatch"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Provision a repeatable environment with Terraform using remote state and locking",
+          "brief": "Create a minimal but production-grade, repeatable environment via Terraform. Use an S3 backend with DynamoDB state locking. Provision: a VPC with one public subnet, an Internet Gateway and route, a security group, one EC2 instance (t2.micro or free tier) with a simple user data script, and an S3 bucket for app assets. Make the configuration parameterized by environment name and idempotent. Do not commit any local state files.",
+          "deliverable": "A repository (zip or link) containing: Terraform code (*.tf), variables and example tfvars, backend configuration using S3 + DynamoDB, a README with exact apply/destroy steps, and captured outputs: plan1.txt (first plan), apply.txt (apply output redacted of secrets), plan2.txt (plan immediately after apply showing no changes), and destroy-plan.txt. Do not include real credentials.",
+          "acceptance_criteria": [
+            "Backend block uses S3 bucket and DynamoDB table for locking; no local terraform.tfstate file is present in the repo.",
+            "S3 state key incorporates the environment name (e.g., envs/dev/terraform.tfstate).",
+            "VPC, subnet, route table, IGW, security group, EC2 instance, and an S3 bucket are defined; resources are tagged with environment name.",
+            "Second plan (plan2.txt) shows zero changes (idempotent after first apply).",
+            "README documents variables, init with -reconfigure, and workspace use (or tfvars per env)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct remote backend with S3 + DynamoDB lock configured; workspace-aware key; no local state tracked",
+              "marks": 5
+            },
+            {
+              "criterion": "VPC networking primitives (VPC, subnet, route table, route, IGW) correctly wired and tagged",
+              "marks": 5
+            },
+            {
+              "criterion": "EC2 instance and SG correctly defined; user_data present; outputs expose instance id/public IP",
+              "marks": 4
+            },
+            {
+              "criterion": "Idempotency evidence: plan2.txt shows no changes; destroy-plan present and sensible",
+              "marks": 3
+            },
+            {
+              "criterion": "Documentation and parameterization: variables, tfvars/workspaces, and clear README instructions",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Terraform",
+            "Infrastructure as Code",
+            "Amazon S3",
+            "AWS IAM",
+            "cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Deliver a CloudWatch monitoring pack for the capstone service",
+          "brief": "Package a minimal, actionable monitoring setup for your capstone deployment. Include a CloudWatch dashboard, alarms, and a log-based metric. Gate paging so that alarms do not fire when the service is intentionally scaled to zero. Use only CloudWatch-native constructs.",
+          "deliverable": "Artifacts to review without running them: 1) Dashboard JSON export (dashboard.json). 2) Alarm definitions as JSON or IaC (alarms.json, Terraform, or CloudFormation) including any composite alarms. 3) A log metric filter definition (filter.json or IaC) for JSON logs with {level, code}, plus a sample log file (sample-logs.jsonl) and a short note explaining which lines match. 4) A CloudWatch Logs Insights saved query JSON (or the query text) that returns error counts by service over 5 minutes. 5) A README explaining metric namespaces/dimensions used and paging logic.",
+          "acceptance_criteria": [
+            "Dashboard JSON contains at least two metric widgets with correct namespaces/dimensions (e.g., AWS/ContainerInsights or AWS/ApplicationELB) and one text widget summarizing the SLOs.",
+            "At least two actionable alarms (error rate and latency or CPU) with explicit EvaluationPeriods, DatapointsToAlarm, and TreatMissingData settings, plus one composite alarm gating on a running-state indicator.",
+            "Log metric filter pattern targets level==ERROR and code>=500 (JSON logs) and the deliverable explains which sample lines match.",
+            "Alarms reference the correct metric names/dimensions present on the dashboard or produced by the filter.",
+            "README explains how false pages during scale-to-zero are avoided and how to extend the pack."
+          ],
+          "rubric": [
+            {
+              "criterion": "Dashboard JSON correctness: valid metrics, appropriate dimensions, and clear layout for SLOs",
+              "marks": 5
+            },
+            {
+              "criterion": "Alarms well-defined (thresholds, evaluation, TreatMissingData) and include a correct composite gating rule",
+              "marks": 7
+            },
+            {
+              "criterion": "Accurate log metric filter and matching explanation against provided sample logs",
+              "marks": 4
+            },
+            {
+              "criterion": "Coherent namespace/dimension model across dashboard, alarms, and log metrics; README clarity",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Amazon CloudWatch",
+            "cloud security and compliance",
+            "Infrastructure as Code"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

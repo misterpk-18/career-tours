@@ -1,0 +1,1868 @@
+{
+  "course_code": "NT-C-039",
+  "course_name": "SAP FICO",
+  "sections": [
+    {
+      "section_code": "NT-C-039-S01",
+      "skills_assessed": [
+        "SAP FI",
+        "Master data",
+        "chart of accounts",
+        "Company code"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You see the following master-data state and a failed posting attempt in company code 1000.\n\n```text\nT001 (Company Codes)\nCompanyCode | ChartOfAccts\n----------- | ------------\n1000        | YCOA\n\nSKA1 (GL Accounts - Chart level)\nChart | GL | ShortText\n----- | ---| -----------------\nYCOA  | 140100 | Misc Expense\n\nSKB1 (GL Accounts - Company Code level)\nCompanyCode | GL | FieldStatusGrp | OpenItemMgmt\n----------- | ---| -------------- | ------------\n(no rows for 140100)\n\nFB50 (Post G/L Document) attempt in 1000:\nMessage no. F5 341: Account 140100 is not created in company code 1000\n```\nWhich single action resolves the error with the least change risk?",
+          "options": [
+            "Assign 140100 to a different account group so it becomes visible for postings.",
+            "Create the company code segment for account 140100 in 1000 (e.g., via FSS0/FS00) and retry the posting.",
+            "Delete 140100 and recreate it with a new number using FS00 so it regenerates all segments automatically.",
+            "Reassign company code 1000 from chart YCOA to a new chart that already contains 140100 at company level."
+          ],
+          "correct_option": "B",
+          "explanation": "The error arises because only the chart-of-accounts (SKA1) segment exists; the company-code (SKB1) segment is missing. Creating the SKB1 segment for 1000 is the minimal, correct fix.",
+          "distractor_rationale": "B is tempting if you think the issue is chart assignment, but the chart is correctly YCOA and the problem is the missing SKB1. C overcorrects; you can extend the existing account instead of deleting/recreating. D confuses visibility with organizational assignment; account group does not create the missing SKB1 segment.",
+          "skills_covered": [
+            "chart of accounts",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A vendor was created with only general data:\n\n```text\nLFA1 (Vendor - General Data)\nVendor | Name           | Country\n------ | -------------- | -------\nVND100 | Fast Parts Ltd | US\n\nLFB1 (Vendor - Company Code Data)\nVendor | CompanyCode | ReconAccount | PaymentTerms\n------ | ----------- | ------------ | ------------\n(no rows for VND100)\n```\nA user tries to post an invoice in company code 1000 with FB60 to VND100. What happens and why?",
+          "options": [
+            "An error stops posting: \"Vendor VND100 not created for company code 1000\" because LFB1 is missing.",
+            "Posting is allowed only for special G/L transactions until LFB1 exists.",
+            "The system auto-creates LFB1 from defaults, then posts the document.",
+            "The document posts but is parked for later completion of missing fields."
+          ],
+          "correct_option": "A",
+          "explanation": "Posting to a vendor requires the company-code segment (LFB1). Without it, FB60 raises an error and blocks the posting.",
+          "distractor_rationale": "B reflects confusion with parking; missing organizational segments are hard errors, not park-only. C suggests a non-existent auto-extend feature for FI vendor company-code data. D mixes special G/L behavior with master data completeness; LFB1 is mandatory for any FI posting.",
+          "skills_covered": [
+            "Master data",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You attempt to assign a reconciliation account to a vendor’s company code segment:\n\n```text\nSKA1 (GL master at chart level)\nChart | GL     | ShortText        | ReconType\n----- | ------ | ---------------- | ---------\nYCOA  | 160000 | Trade payables   | (blank)\n\nLFB1 (to be saved)\nVendor | CoCd | ReconAccount\n------ | ---- | ------------\nVND200 | 1000 | 160000\n```\nOn saving LFB1, what is the most likely system response?",
+          "options": [
+            "A warning appears but the save succeeds; the issue will surface at posting time.",
+            "Save succeeds if Open Item Management is active on 160000, otherwise fails.",
+            "An error prevents save: 160000 is not defined as a reconciliation account for vendors.",
+            "No message appears; the problem only appears when running F110 payment program."
+          ],
+          "correct_option": "C",
+          "explanation": "The vendor company-code segment’s reconciliation account must be a G/L marked as a vendor reconciliation account. Standard validation blocks the save if the account is not flagged accordingly.",
+          "distractor_rationale": "B and C assume delayed validation; SAP validates reconciliation account type at master-data save. D confuses open item management with reconciliation account type; they are unrelated checks.",
+          "skills_covered": [
+            "chart of accounts",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A clearing account was set up without Open Item Management. Users posted many entries to it. Now they need to clear items by match and request a change:\n\n```text\nSKB1 (G/L at company code level)\nCoCd | GL     | OpenItemMgmt | Balance\n---- | ------ | ------------ | -------\n1000 | 113000 | (blank)      | 12,500.00-\n```\nWhat happens if you try to switch Open Item Management to active on 113000 in production?",
+          "options": [
+            "System allows the change but forces an immediate balance carryforward to activate it.",
+            "System blocks the change because postings exist; OIM status cannot be switched when items already exist.",
+            "Change is allowed only at period end; the system reclassifies items during close.",
+            "Change is allowed; existing items are auto-split into open items based on document number."
+          ],
+          "correct_option": "B",
+          "explanation": "SAP prevents toggling Open Item Management if postings exist because historical items cannot be reliably reconstructed as open/cleared. A clean migration requires balance to be zero and specific procedures or a new account.",
+          "distractor_rationale": "B imagines an auto-derivation that does not exist. C confuses timing with feasibility; period end does not make the change valid. D invents a carryforward prerequisite; the block occurs regardless.",
+          "skills_covered": [
+            "chart of accounts",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Vendor account group ZVEN is configured for internal numbering with range 01. Range 02 is external 700000–709999.\n\n```text\nAccount Groups\nGroup | Description | NumberAssignment\n----- | ----------- | ----------------\nZVEN  | Vendors     | Internal (Range 01)\n\nNumber Ranges (Vendors)\nRange | From     | To       | Type\n----- | -------- | -------- | -----\n01    | 100000   | 199999   | Internal\n02    | 700000   | 709999   | External\n```\nA clerk starts XK01 with group ZVEN and enters vendor number 705123 manually. What is the outcome?",
+          "options": [
+            "A warning appears, but the vendor is created with 705123 if the number is unused.",
+            "The number is ignored and the next internal number in range 01 is assigned.",
+            "The vendor is created with 705123; external numbers override the group setting.",
+            "An error occurs because manual entry is not allowed for an internally-numbered account group."
+          ],
+          "correct_option": "D",
+          "explanation": "For an account group with internal numbering, manual entry is not permitted. The system issues an error and does not create the vendor with the manually entered number.",
+          "distractor_rationale": "B assumes external numbers can be forced regardless of group settings; they cannot. C is close but not precise to this interaction: the system does not silently ignore a manually entered number; it errors. D suggests a soft warning when it is a hard control.",
+          "skills_covered": [
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A vendor is blocked as follows:\n\n```text\nBlocking Indicators (XK05)\nVendor: VND300\nLevel             | 1000 | 2000 | General (all company codes)\n---------------- | ---- | ---- | -----------------------------\nBlocked for Post |  X   |      | \n```\nWhich posting outcome is correct?",
+          "options": [
+            "FB60 postings are allowed in both company codes because only purchasing blocks affect FI.",
+            "FB60 postings are allowed in 1000 if baseline date is in the future; otherwise blocked.",
+            "FB60 postings are blocked in both 1000 and 2000 because any block propagates globally.",
+            "FB60 postings are blocked in 1000 but allowed in 2000; a general block would block both."
+          ],
+          "correct_option": "D",
+          "explanation": "A company-code-level posting block restricts postings only in that company code. A general block would block postings across all company codes.",
+          "distractor_rationale": "B confuses general-block semantics with company-code blocks. C confuses MM purchasing blocks with FI posting blocks. D invents a timing condition unrelated to blocking indicators.",
+          "skills_covered": [
+            "Master data",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A user tries to post directly to the vendor reconciliation G/L:\n\n```text\nSKA1\nChart | GL     | ShortText        | ReconType\n----- | ------ | ---------------- | ---------\nYCOA  | 160000 | Trade payables   | Vendors\n\nFB50 Entry (no vendor specified)\nDr  160000  1,200.00  Text: Adjustment\nCr  110000  1,200.00  Bank\n```\nWhat happens?",
+          "options": [
+            "System blocks the posting: normal postings to reconciliation accounts require subledger control (vendor line).",
+            "System posts, but the line is excluded from balances carried forward.",
+            "Posting succeeds but creates a special G/L transaction automatically.",
+            "Posting succeeds; reconciliation is updated at period end by a batch job."
+          ],
+          "correct_option": "A",
+          "explanation": "Direct postings to reconciliation accounts without specifying the subledger are blocked in standard to preserve subledger-ledger integrity.",
+          "distractor_rationale": "B imagines a periodic sync; reconciliation is real-time. C confuses user-entered special G/L with an automatic fallback. D invents a carryforward exclusion mechanism.",
+          "skills_covered": [
+            "chart of accounts",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Consider customer CUS01:\n\n```text\nKNA1 (General) exists.\nKNB1 (Company code 1000): PaymentTerms=0001 (Net 30)\nSales area views are not maintained.\nTransaction: FB70 (Post customer invoice) in company code 1000.\n```\nWhich payment terms will the system use?",
+          "options": [
+            "No terms; FB70 requires sales area terms and will error.",
+            "The terms from the company-code segment (KNB1 = 0001).",
+            "Terms are pulled from the last invoice to this customer, ignoring master data.",
+            "The system defaults blank terms until SD billing occurs."
+          ],
+          "correct_option": "B",
+          "explanation": "FB70 uses the FI (company-code) segment of the customer master. Sales area views are irrelevant for FI postings.",
+          "distractor_rationale": "B and C overstate SD dependency; FI documents rely on KNB1. D confuses document defaults with master-data-driven terms.",
+          "skills_covered": [
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You try to switch company code 1000 to a different chart of accounts in customizing, but receive:\n\n```text\nMessage: \"Change not permitted. G/L accounts/postings exist for company code 1000.\"\n```\nWhat is the viable path forward with minimal risk?",
+          "options": [
+            "Wait until a new fiscal year; the chart change is allowed only at year start.",
+            "Proceed; the system will remap accounts to the new chart automatically during transport import.",
+            "Do not change the chart on an active company code. Create a new company code with the new chart and migrate balances/masters.",
+            "First regenerate number ranges and account groups, then the chart change is allowed."
+          ],
+          "correct_option": "C",
+          "explanation": "Changing the assigned chart on a live company code with existing data is not supported. The safe approach is to create a new company code with the desired chart and migrate data.",
+          "distractor_rationale": "B assumes auto-remapping that does not exist. C confuses number ranges with chart assignment constraints. D invents a time window; the restriction is structural, not temporal.",
+          "skills_covered": [
+            "chart of accounts",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A supplier was created in MM using MK01 (Purchasing view only). Later, MIRO fails with:\n\n```text\nMessage: Vendor 400123 not defined for company code 1000\n```\nWhat is the most direct fix to enable both MIRO and FB60 for 1000?",
+          "options": [
+            "Extend the vendor to company code 1000 using XK01/XD01 (create FI views) and assign the correct reconciliation account.",
+            "Post once in FB60; the system will auto-create the FI view on first use.",
+            "Recreate the vendor in MM with a finance reference; FI views will be generated automatically.",
+            "Assign the vendor to a purchasing organization that belongs to 1000; FI views are not required."
+          ],
+          "correct_option": "A",
+          "explanation": "MM-only vendors must be extended to FI (general + company code views) for postings in FI and for MIRO. Assign the reconciliation account in LFB1 for company code 1000.",
+          "distractor_rationale": "B overstates integration; FI views are not auto-generated. C confuses purchasing organization scope with FI master requirements. D imagines auto-extension on posting, which SAP does not do.",
+          "skills_covered": [
+            "Master data",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your group uses chart YCOA and company code 1000. You acquire a new legal entity that will become company code 2000. The CFO wants a shared operational chart for consolidated reporting, but local statutory needs differ slightly: a few local accounts exist only for 2000, and vendor numbering must not overlap between the two codes. Both will run in the same client.",
+          "task": "Design the organizational and master-data setup to meet these constraints. Specify: (a) whether to use a single operational chart or multiple charts and why, (b) how you will handle local-only accounts, (c) how you will ensure non-overlapping vendor numbers, and (d) any dependencies in the sequence of configuration and master-data creation so postings can start in 2000 without disrupting 1000.",
+          "expected_answer": "Use a single shared operational chart (YCOA) for both 1000 and 2000 to enable consistent posting keys and consolidated reporting. Extend only the local-only G/L accounts to 2000 by creating them in SKA1 within YCOA and then only creating SKB1 for 2000 as needed; do not add them to 1000 if not required. Assign both company codes to chart YCOA in T001. For vendor numbering separation, configure distinct vendor account groups or, at minimum, distinct number ranges per company code and map them to the same account groups via intervals split by company code (or duplicate groups if policy requires visual differentiation). Ensure both groups use internal or external as desired and do not overlap. Sequence: (1) Create/verify company code 2000 and assign chart YCOA; (2) Define/verify number ranges for vendors and assign to account groups; (3) Create any new G/Ls at chart level and extend SKB1 only to 2000; (4) Create/extend reconciliation accounts in SKB1 for 2000; (5) Create or extend vendor/customer masters to 2000 (general LFA1/KNA1 already shared, then LFB1/KNB1 for 2000) assigning correct reconciliation accounts; (6) Smoke-test postings in 2000. This preserves 1000’s stability and enables 2000 to go live independently.",
+          "rubric": [
+            {
+              "criterion": "Chooses a single operational chart and justifies it in terms of consolidation and shared postings",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains local-only accounts via SKA1 creation and selective SKB1 extension to 2000 (not to 1000)",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines a vendor numbering approach that ensures no overlap (ranges per group and/or per company code)",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines a safe, ordered sequence from org assignment through GL extension to master-data extension and test",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "chart of accounts",
+            "Company code",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Posting a vendor invoice in 1000 fails with two messages in the log: (1) \"Account 150000 is not a reconciliation account for account type K\" and (2) \"Account 150000 not created in company code 1000.\" You have the following extracts.",
+          "task": "Identify the root causes and propose a minimal-change remediation plan that can be executed same-day without risking historical data. Order the steps and justify each.",
+          "expected_answer": "Two issues: the G/L 150000 is not flagged as a vendor reconciliation account at chart level (SKA1), and it is not extended to company code 1000 (missing SKB1). Minimal fix: (1) If 150000 is intended to be the vendor recon account, change its account type in SKA1 to \"Recon. account for vendors\" (or select an existing, correctly flagged vendor recon account instead of 150000); (2) Create SKB1 for 1000 (FS00/FSS0), setting open item management and other required company-code controls; (3) Update the vendor LFB1 to reference the correct recon account; (4) Retest FB60. If 150000 is used elsewhere and cannot be changed to recon, create a new recon G/L properly flagged at SKA1 and extend it to 1000, then assign it in LFB1.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies both distinct root causes (wrong account type; missing SKB1)",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a minimal, safe remediation path that avoids retroactive data risk (prefer using/creating proper recon account)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies the correct sequence: fix/choose recon account type, extend to company code, then update vendor LFB1",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions key controls on SKB1 (e.g., Open Item Management) and verification by a test posting",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "chart of accounts",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "MM has onboarded new suppliers via MK01 for purchasing only. When AP tries MIRO and FB60 in 1000, they get \"Vendor not defined for company code 1000.\" Some records must be live today to book goods receipts and invoices.",
+          "task": "Propose a concrete plan to extend these vendors correctly and quickly, including exactly which views to create, which mandatory fields to confirm, and how to avoid reconciliation and number-range pitfalls. Include how you will validate success without creating financial postings.",
+          "expected_answer": "Plan: Use XK01 (or FLVN01 on S/4HANA) to extend each vendor from general (LFA1) to company code 1000 (LFB1). In LFB1, assign the correct vendor reconciliation account (a G/L flagged as vendor recon), confirm payment terms, payment methods, and dunning block settings as required. Ensure the vendor’s account group is mapped to the correct number range; do not attempt to force external numbers if the group is internal. If banking data is required for payments, complete it in general data. For rapid validation without postings, use FK03/XK03 display to verify that LFB1 exists for 1000 and run FBL1N with \"No items\" expected to ensure the account is accessible; also simulate MIRO with Check Only to ensure the vendor is selectable. Keep a checklist to ensure no vendor is left without LFB1 or with a non-recon G/L assigned.",
+          "rubric": [
+            {
+              "criterion": "Specifies using XK01 to extend to company code (LFB1) and lists the exact FI views/fields to complete",
+              "marks": 3
+            },
+            {
+              "criterion": "Correctly addresses reconciliation account requirements and number-range alignment",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a non-posting validation approach (displays, simulations, account analysis)",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses time-critical execution and common pitfalls (missing bank data/terms, unintended blocks)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Master data",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You receive a draft process map for master-data onboarding and first posting. It shows: \"Create vendor (MM: MK01) → Post invoice (FB60) → Define chart of accounts (OB13) → Assign company code to chart (OB62) → Extend G/L (FS00).\" AP is already live in 1000, and this map is intended for adding company code 2000 next month.",
+          "task": "Critique the map and propose a corrected, ordered process that reflects a realistic sequence for adding 2000 and onboarding vendors, highlighting integration points and where each activity belongs. Justify why the incorrect steps are risky at the shown time.",
+          "expected_answer": "The map is out of order and mixes foundational configuration after operational postings. For adding 2000, the correct sequence is: (1) Organizational setup: define company code 2000 and assign existing chart YCOA (OBY6/OB62) — OB13 should already be in place; do not redefine it midstream; (2) Extend required G/L accounts in YCOA to 2000 (FS00/FSS0) before any postings; (3) Define/verify vendor account groups and number ranges for 2000; (4) Onboard vendors: if created in MM via MK01, immediately extend to FI using XK01 to create LFB1 for 2000 and assign recon account; (5) Perform test postings (FB60/MIRO) only after steps 1–4 are complete. Posting before chart/company-code assignments is risky because documents would be blocked or inconsistent; redefining the chart (OB13) during operations can destabilize 1000. Integration point: MM vendor creation must be paired with FI extension prior to MIRO; FI relies on recon accounts present in 2000’s SKB1.",
+          "rubric": [
+            {
+              "criterion": "Identifies the sequencing flaw (foundational config placed after operational postings) and explains the risk",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a corrected end-to-end sequence covering org assignment, GL extension, number ranges, and vendor extension",
+              "marks": 3
+            },
+            {
+              "criterion": "Highlights integration between MM onboarding and FI extension before MIRO/FB60",
+              "marks": 2
+            },
+            {
+              "criterion": "Places configuration activities in the right systems/transactions and avoids redefining the chart midstream",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Company code",
+            "chart of accounts",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Process map: FI organizational structure and master-data integration",
+          "brief": "Produce a process map that shows how FI organizational objects and master data connect from creation through first posting. The map must be specific to your hypothetical environment with two company codes (1000 and 2000) assigned to a shared chart YCOA and must illustrate how vendor/customer masters and G/Ls are created/extended and used in postings. Include integration touchpoints to MM (vendor created in MK01 → extended to FI) and to SD (customer created in XD01/FD01 → FI invoice).",
+          "deliverable": "A single PDF/PNG/SVG diagram (BPMN or clearly labeled flowchart) named NT-C-039-S01_ProcessMap_<YourName>.<ext>.",
+          "acceptance_criteria": [
+            "Shows the relationship: Client → Chart of Accounts (YCOA) → Company Codes (1000, 2000).",
+            "Includes steps to create/extend G/L accounts at chart level (SKA1) and company-code level (SKB1) before postings.",
+            "Depicts vendor/customer master creation with separation of general vs company-code views and the extension path (e.g., MK01 → XK01, FD01/XD01).",
+            "Marks reconciliation accounts and indicates that subledger postings update them (no direct postings).",
+            "Shows at least one path to an FI posting (FB60 or FB70) that references the prepared master data.",
+            "Indicates integration boundaries with MM/SD (swimlanes or labels).",
+            "All nodes and flows are readable, unambiguous, and logically ordered; no orphan steps."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct depiction of core org structure (Client → Chart → CoCd 1000/2000) and their assignments",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate master-data flows for G/L, vendor, and customer with correct views and sequencing",
+              "marks": 6
+            },
+            {
+              "criterion": "Clear integration touchpoints (MM vendor creation to FI; SD customer to FI) and reconciliation behavior",
+              "marks": 4
+            },
+            {
+              "criterion": "Logical flow, readability, and labelling quality sufficient for another analyst to follow",
+              "marks": 3
+            },
+            {
+              "criterion": "Inclusion of at least one end-to-end posting path that consumes the prepared master data",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "SAP FI",
+            "chart of accounts",
+            "Company code",
+            "Master data"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Master-data exercise: Chart of accounts and vendor/customer templates",
+          "brief": "Prepare master-data templates that could be imported to SAP (no system access required). Populate them with a minimal but realistic set for two company codes (1000 and 2000) sharing chart YCOA. Define 5 new G/L accounts and 4 business partners (2 vendors, 2 customers), and show their extension to each company code as appropriate. Ensure correct use of reconciliation accounts and number ranges semantics. Provide your data as CSV files.",
+          "deliverable": "A zipped folder named NT-C-039-S01_MasterData_<YourName>.zip containing: 1) GL_SKA1.csv (chart-level), 2) GL_SKB1.csv (company-code-level), 3) VENDOR_LFA1.csv, 4) VENDOR_LFB1.csv, 5) CUSTOMER_KNA1.csv, 6) CUSTOMER_KNB1.csv. Column headers must match the field lists below.",
+          "acceptance_criteria": [
+            "GL_SKA1.csv columns: Chart, GL, ShortText, AccountType (e.g., BalanceSheet/PL), ReconType (blank/Vendors/Customers), LineItemDisplay (Y/N). Exactly 5 rows for YCOA.",
+            "GL_SKB1.csv columns: CompanyCode, GL, FieldStatusGroup, OpenItemMgmt (Y/N), SortKey. At least 5 rows for 1000 and 5 for 2000, covering all GLs you intend to use in each company code.",
+            "VENDOR_LFA1.csv columns: Vendor, Name, Country, AccountGroup. Exactly 2 vendors; vendor numbers consistent with your intended number-range logic (internal or external noted in a README.txt).",
+            "VENDOR_LFB1.csv columns: Vendor, CompanyCode, ReconAccount, PaymentTerms, PaymentMethod. Each vendor must have an entry for 1000 and/or 2000 as you decide; ReconAccount must reference a GL in GL_SKB1 with ReconType=Vendors in GL_SKA1.",
+            "CUSTOMER_KNA1.csv columns: Customer, Name, Country, AccountGroup. Exactly 2 customers; numbering logic consistent with your approach.",
+            "CUSTOMER_KNB1.csv columns: Customer, CompanyCode, ReconAccount, PaymentTerms, DunningProcedure. ReconAccount must reference a GL in GL_SKB1 with ReconType=Customers in GL_SKA1.",
+            "Provide a README.txt describing: (a) which GLs are recon for vendors/customers, (b) which masters are extended to which company code and why, (c) your number-range assumption (internal/external) for each account group."
+          ],
+          "rubric": [
+            {
+              "criterion": "GL templates: correct separation of SKA1 vs SKB1 data, valid attributes, and consistent coverage for 1000/2000",
+              "marks": 6
+            },
+            {
+              "criterion": "Vendor data: proper separation of general vs company-code views with valid reconciliation account references",
+              "marks": 5
+            },
+            {
+              "criterion": "Customer data: proper separation of general vs company-code views with valid reconciliation account references",
+              "marks": 4
+            },
+            {
+              "criterion": "Numbering consistency across all files and coherent account-group assumptions documented in README",
+              "marks": 3
+            },
+            {
+              "criterion": "Overall data integrity: cross-file referential consistency and absence of obvious errors (e.g., posting to non-recon)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Master data",
+            "chart of accounts",
+            "Company code",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-039-S02",
+      "skills_assessed": [
+        "SAP FI",
+        "Master data",
+        "General ledger",
+        "Accounts payable",
+        "chart of accounts",
+        "Company code"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You review a journal posted via FB50.\n\n```text\nCompany code: 1000\nDoc type: SA\nDocument date: 2026-04-10\nPosting date: 2026-04-10\n\nLine items\nPK  Account   Short text         Amount   Curr\n40  160000    Recon A/P (K)      10,000   EUR   (debit)\n50  510000    Office supplies    10,000   EUR   (credit)\n```\nAfter this post, the user runs FBL1N for vendor 100200 expecting to see a 10,000 EUR open item. What actually happens and why?",
+          "options": [
+            "The 10,000 EUR appears in FBL1N for vendor 100200 as an open invoice because the account 160000 is a reconciliation account.",
+            "The vendor shows a cleared item because the offsetting credit to 510000 auto-clears the vendor balance.",
+            "No vendor line item appears in FBL1N; the open item sits on G/L 160000. Vendor 100200’s balance is unchanged because no subledger item was created.",
+            "The 10,000 EUR shows in FBL1N under a special G/L indicator because 160000 is flagged as recon."
+          ],
+          "correct_option": "C",
+          "explanation": "Posting to the vendor reconciliation G/L directly in FB50 creates only G/L lines. No vendor subledger item is created, so FBL1N for vendor 100200 shows nothing. The open balance remains on the recon G/L (160000), creating a subledger-to-G/L mismatch.",
+          "distractor_rationale": "A: Tempting because 160000 is a recon account, but recon accounts collect totals from subledger items, not replace them. Direct G/L posting bypasses the subledger. C: Special G/L indicators apply when posting to the vendor account with an indicator, not when posting to the recon G/L itself. D: Clearing requires subledger items; an expense line cannot clear a vendor balance.",
+          "skills_covered": [
+            "General ledger",
+            "Accounts payable",
+            "SAP FI",
+            "chart of accounts"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A user parks a vendor invoice in FV60 and then runs an ageing report. Extracts below:\n\n```text\nParked document\nDoc no: 1900009876\nStatus: Parked (BSTAT = 'V')\nVendor: 100450\nAmount: 4,200 EUR\nBaseline date: 2026-05-01\n\nAgeing report (key date 2026-05-31)\nVendor 100450: No open items displayed\n```\nWhich specific change will make the item appear in FBL1N and ageing?",
+          "options": [
+            "Post the parked document (e.g., via FBV0) so it becomes an actual vendor line item.",
+            "Maintain a payment method on the vendor master so FBL1N can list it.",
+            "Assign a house bank so the proposal can pick the item up.",
+            "Remove the payment block on the parked document; ageing excludes blocked items."
+          ],
+          "correct_option": "A",
+          "explanation": "Parked items are not posted accounting documents and are excluded from subledger line item and ageing reports. Posting (FBV0) creates the vendor line item so it appears in FBL1N and ageing.",
+          "distractor_rationale": "B: Payment blocks affect payment selection, not whether a parked (unposted) item shows as an accounting line. C/D: Payment method and house bank influence payment runs, not whether a parked document appears in accounting reports.",
+          "skills_covered": [
+            "Accounts payable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You must reverse a G/L document originally posted on 2026-01-31 (period 001). January is now closed; February is open. In FB08 you see reasons:\n\n```text\n01  Reversal in current period\n02  Reversal in closed period (original posting date)\n03  Negative posting (if allowed)\n```\nYou need the reversal to post on 2026-02-15 without period errors. Which reason should you choose?",
+          "options": [
+            "02",
+            "01",
+            "None; you must reopen January to reverse",
+            "03"
+          ],
+          "correct_option": "B",
+          "explanation": "Reason 01 posts the reversal in the current open period (February), avoiding a closed-period error. Reason 02 attempts to reverse on the original posting date, which is in a closed period.",
+          "distractor_rationale": "B: Looks plausible to mirror the original, but it posts to a closed period. C: Negative postings still require an open period and appropriate config; it doesn’t solve the period issue. D: Reopening prior periods is not required here and is typically against controls.",
+          "skills_covered": [
+            "General ledger",
+            "SAP FI",
+            "Company code"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "An FV60 invoice shows:\n\n```text\nDocument date: 2026-03-05\nPosting date: 2026-03-31\nBaseline date: 2026-03-31\nPayment terms: 2% 10 Net 30\nPayment run date: 2026-04-08\n```\nAssuming no blocks, what discount handling will F110 take?",
+          "options": [
+            "No discount, because the system always calculates from document date, not baseline date.",
+            "Take 2% cash discount because 2026-04-08 is within 10 days of the baseline date 2026-03-31.",
+            "Take discount but calculate the 10 days from 2026-03-05.",
+            "No discount because discounts cannot span calendar months."
+          ],
+          "correct_option": "B",
+          "explanation": "Cash discount windows are calculated from the baseline date defined by the terms. With a baseline of 2026-03-31 and 2%/10, the window runs through 2026-04-10. A 2026-04-08 payment qualifies.",
+          "distractor_rationale": "B: In SAP, the baseline rule is defined in terms and can be posting date, document date, or entry date; the system uses the baseline date on the document, not always the document date. C: Misreads the baseline; the screen shows baseline as 2026-03-31. D: Month boundaries don’t invalidate discount windows.",
+          "skills_covered": [
+            "Accounts payable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "F110 proposal log excerpt:\n\n```text\nRun date: 2026-05-12  ID: MAY1  Company code: 1000\nVendor 100220  Document 1900007788  Amount 7,300.00 EUR\n--> Item excluded: Payment block 'A' set at document level\nHouse bank determined: HBNK1\nPayment method 'T' valid\n```\nWhich minimal change includes this item in the next proposal?",
+          "options": [
+            "Remove the document-level payment block 'A' (e.g., FB02) and rebuild the proposal.",
+            "Change the payment terms to immediate (net due today).",
+            "Maintain a payment method on the vendor master record.",
+            "Assign bank details to house bank HBNK1."
+          ],
+          "correct_option": "A",
+          "explanation": "The log shows the exclusion cause is a document-level payment block. Removing it and rebuilding the proposal brings the item in. Other settings are already valid per the log.",
+          "distractor_rationale": "B/C/D: These look relevant to payments in general, but the log explicitly shows method and house bank are fine; terms do not override a hard block.",
+          "skills_covered": [
+            "Accounts payable",
+            "SAP FI",
+            "Master data"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Vendor 100300 has the following open items:\n\n```text\nDoc    Type  Amount   Status\n1900008001  KR   10,000.00  Open (invoice)\n1400009001  KZ    9,998.00  Open (payment)\n\nTolerance group for vendors: payment difference write-off up to 5.00 EUR\nF110 run date: 2026-05-10\n```\nWhat is the most likely outcome when you execute payment clearing?",
+          "options": [
+            "The payment is reversed automatically and the full 10,000.00 is reproposed.",
+            "Both items remain open; the system never auto-clears a short payment difference.",
+            "Invoice and payment clear; 2.00 EUR is posted to a payment difference expense G/L via automatic write-off.",
+            "A 2.00 EUR residual item is posted on the vendor; the invoice remains open for 2.00 EUR."
+          ],
+          "correct_option": "C",
+          "explanation": "With tolerance configured, SAP clears the items and posts the small difference to the designated difference G/L. The 2.00 shortfall is within tolerance and will be written off.",
+          "distractor_rationale": "B: SAP can auto-clear within tolerance. C: Residual items are used in some processes, but with a payment difference tolerance the system writes off instead. D: Reversal/reproposal is not a standard response to a small difference within tolerance.",
+          "skills_covered": [
+            "Accounts payable",
+            "SAP FI",
+            "General ledger"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "GR/IR clearing account (open item managed) has the following items:\n\n```text\nAcct: 179100  Curr: EUR\nDoc     Amt        Dr/Cr  Assignment\n510001  2,500.00   Cr     PO4500001234\n620015  2,500.00   Dr     PO4500001234\n620099  1,000.00   Dr     PO4500009999\n```\nF.13 is run with options: Clear by Assignment = X, Only exact amount match = X. What clears?",
+          "options": [
+            "Nothing clears; GR/IR cannot be auto-cleared in F.13.",
+            "620015 and 620099 clear because both are debits.",
+            "All three items clear because they are in the same G/L account.",
+            "510001 and 620015 clear; 620099 remains open."
+          ],
+          "correct_option": "D",
+          "explanation": "F.13 matches debits and credits by the chosen key fields. The two 2,500.00 items with the same assignment and opposite signs clear. The 1,000.00 item doesn’t find an exact match.",
+          "distractor_rationale": "B: Same-account is necessary but not sufficient; amount and key fields must match. C: GR/IR is often cleared by F.13 in practice. D: Debits cannot clear with debits; you need opposing signs.",
+          "skills_covered": [
+            "General ledger",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Number ranges are configured as follows:\n\n```text\nDoc type SA: 1000000000 - 1999999999\nDoc type KR: 5000000000 - 5999999999\n```\nA vendor invoice posted in FB60 received number 5000001234. The user expected an SA-series number because \"FB60 is a general posting transaction.\" Why did it receive the 5xxxxxxxxx number?",
+          "options": [
+            "The system assigns a random number within any free interval.",
+            "Number range depends on the posting keys used on the lines.",
+            "Number range is derived from the fiscal year of the company code.",
+            "Number range assignment is driven by the document type (KR), not by the transaction code."
+          ],
+          "correct_option": "D",
+          "explanation": "SAP assigns numbers based on the document type’s number range. FB60 uses vendor invoice doc type KR by default, so it draws from KR’s interval.",
+          "distractor_rationale": "B: Posting keys do not control number range. C: Fiscal year may segment number ranges but does not choose SA vs KR. D: Number assignment is deterministic, not random.",
+          "skills_covered": [
+            "SAP FI",
+            "General ledger",
+            "Accounts payable",
+            "Company code"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "FBL1N selection parameters:\n\n```text\nOpen items only:    OFF\nCleared items:      ON\nOpen at key date:   ON\nKey date:           2026-04-30\nVendor:             100900\n```\nInvoice 1900011000 was cleared on 2026-05-03. How will it appear in the report?",
+          "options": [
+            "It appears as cleared, because the report shows current status.",
+            "It appears as open at key date 2026-04-30, since it was not cleared by then.",
+            "It appears twice: once open and once cleared.",
+            "It does not appear at all because it is currently cleared."
+          ],
+          "correct_option": "B",
+          "explanation": "With \"Open at key date\" checked, FBL1N shows items as of the key date, even if cleared later. The item is shown as open at 2026-04-30.",
+          "distractor_rationale": "B: Ignores the as-of reporting option. C: Misreads the selection; current status is not used when \"Open at key date\" is active. D: FBL1N does not duplicate the same item in two statuses for the same key date.",
+          "skills_covered": [
+            "Accounts payable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A USD vendor invoice and payment:\n\n```text\nInvoice (KR): 1,000.00 USD on 2026-06-01\nRate on 2026-06-01: 1 USD = 0.90 EUR\nPosted: Dr Expense 900 EUR / Cr Vendor 900 EUR\n\nPayment on 2026-06-20: 1,000.00 USD at 0.92 EUR/USD\n```\nWhat happens at clearing?",
+          "options": [
+            "Vendor clears; a 20 EUR foreign exchange loss is posted to the realized FX loss G/L.",
+            "Vendor clears; a 20 EUR foreign exchange gain is posted to the realized FX gain G/L.",
+            "Vendor remains open because the currency differs between documents.",
+            "The original invoice amount is adjusted to 920 EUR to match the payment."
+          ],
+          "correct_option": "A",
+          "explanation": "The liability was 900 EUR at invoice. Paying 1,000 USD at 0.92 requires 920 EUR, 20 EUR more than the recorded liability. That extra amount is a realized FX loss.",
+          "distractor_rationale": "B: The EUR outflow increased; that is a loss, not a gain. C: SAP clears by foreign currency and posts differences; currency mismatch does not prevent clearing. D: The original invoice remains at 900 EUR; differences are posted to FX accounts, not by changing historical amounts.",
+          "skills_covered": [
+            "Accounts payable",
+            "General ledger",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "At month-end, your trial balance shows the vendor reconciliation G/L 160000 with a credit balance of 1,250,000 EUR. A vendor balance report (by vendor) totals only 1,235,000 EUR. You extract FBL3N for 160000 and see two SA documents posted directly to 160000 with text \"Accrual\" and no vendor account on the line items. You also find several vendor invoices still in parked status.",
+          "task": "Diagnose the exact causes of the 15,000 EUR discrepancy and propose a corrective plan that restores subledger-to-G/L integrity for the current month’s reporting. Include which documents to reverse or post, how to prevent recurrence, and how you will evidence that the TB and vendor totals now tie.",
+          "expected_answer": "Root cause: Direct postings were made to the vendor reconciliation G/L (160000) via general journal (SA), bypassing the vendor subledger; parked vendor invoices are not yet posted and thus excluded from vendor totals. These create a difference where the recon G/L includes amounts unsupported by subledger items and excludes unposted parked items.\nCorrections: 1) Identify the SA documents in FBL3N/FAGLL03 and reverse them in the current open period (FB08 reason 01). 2) Repost the intended business events properly to the vendor subledger (e.g., FB60/F-43) using the actual vendor account so the recon G/L is hit only via subledger. 3) Post any legitimate parked invoices (FBV0) after validation so they impact both subledger and recon G/L. 4) Re-run vendor line items (FBL1N) and TB; reconcile balances.\nPrevention: Ensure the recon G/L 160000 is flagged as reconciliation for vendors and set to \"post automatically only\" (no manual postings); restrict posting keys and document types in user roles; train users to use FB60/F-43 for vendor invoices; optionally implement substitution/validation to block manual postings to recon accounts.\nEvidence of fix: Side-by-side before/after extracts: FBL3N for 160000 with the SA items reversed; list of reposted vendor documents (KR) referencing the original business case; FBL1N totals by vendor summing to TB balance 1,250,000 EUR; reconciliation worksheet showing zero variance.",
+          "rubric": [
+            {
+              "criterion": "Identifies both causes: (a) direct postings to recon G/L and (b) excluded parked invoices",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct corrective postings: reverse SA docs in open period and repost via vendor subledger",
+              "marks": 2
+            },
+            {
+              "criterion": "States controls to prevent recurrence (G/L master controls, validations/authorizations, process training)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes verifiable evidence to show TB and vendor totals now tie (reports/extracts)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "General ledger",
+            "Accounts payable",
+            "SAP FI",
+            "chart of accounts"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You run F110 with parameters to pay all due invoices for company code 1000. The proposal excludes 32 invoices across 10 vendors. The log shows mixed reasons: some items have payment block 'A' at document level, some vendors lack a valid payment method, and several invoices have a baseline date set 15 days in the future due to a data-entry error.",
+          "task": "Define the minimum-change sequence of actions to include as many of these invoices as possible in the next proposal without weakening payment controls. Specify the exact master/document edits, any re-building steps in F110, and how you will confirm only legitimately due items are paid.",
+          "expected_answer": "1) Remove document-level payment blocks only where business approval exists (FB02), leaving vendor-level blocks intact. 2) For vendors missing a valid payment method, update the vendor master (XK02/BP) with an allowed method and bank details; avoid changing global settings on the run. 3) Correct incorrect future baseline dates on invoices (FB02) to the intended date per terms; do not override terms to force due dates. 4) In F110, delete and rebuild the proposal (Edit -> Proposal -> Delete/Regenerate) to recalculate eligibility. 5) Keep company code, payment method, house bank, and next posting date unchanged to preserve controls.\nValidation: Use the F110 exception list after regeneration to ensure only items with due dates up to the run date and without blocks are included; spot-check due date computation against terms; reconcile the total to a vendor ageing due bucket; document approvals for any block removals.",
+          "rubric": [
+            {
+              "criterion": "Proposes targeted document-level unblocking with approval rather than disabling controls globally",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly updates vendor master/payment method and bank details only where missing",
+              "marks": 2
+            },
+            {
+              "criterion": "Fixes erroneous baseline dates on invoices instead of manipulating terms or run dates",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains proposal rebuild and due-date validation steps to ensure only due items are paid",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Accounts payable",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "At quarter-end, a manual accrual (SA) was posted on 2026-06-30 for 48,000 EUR (4,000 EUR/month for a 12-month service), but no reversal was set. In July, the actual vendor invoice for 4,000 EUR was posted and paid. Reporting shows July expense overstated by 4,000 EUR.",
+          "task": "Prescribe the document control and posting steps to correct July and restore the proper expense profile without reopening June. Include which reversal reason to use, what references to carry, and how to present reporting evidence that July is now correct.",
+          "expected_answer": "Reverse the June 30 accrual in the current open period using FB08 reason 01 (reversal in current period) to remove the 48,000 EUR accrual from July balances. Repost the correct July accrual (if applicable for remaining months) so only 4,000 EUR per month remains. Ensure the reversal carries the original reference and text to maintain audit trail (header reference, cross-document number). Do not reopen June. After postings, run a G/L line item report (FBL3N) on the expense account for June-July: show June accrual, July reversal (current period), and the posted vendor invoice, reconciling that July net expense equals 4,000 EUR. If accruals are monthly, set a recurring entry (FBD1/F.14) for 4,000 EUR with automatic reversals on the first of the next month.",
+          "rubric": [
+            {
+              "criterion": "Selects correct reversal approach (FB08 reason 01) to avoid closed period and explains why",
+              "marks": 2
+            },
+            {
+              "criterion": "Restates the target expense profile and prescribes reposting/recurring entries appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies audit trail details (references/texts) to link reversal and original",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines reporting evidence that July is corrected (FBL3N/expense account reconciliation)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "General ledger",
+            "SAP FI",
+            "Company code"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Your team posted a 20,000 EUR vendor down payment (F-48) with special G/L indicator A in May. In June, the 50,000 EUR invoice arrived and was posted (KR). The June payment run paid 50,000 EUR in full and did not apply the down payment. Both the down payment (A) and the full invoice remain open; the vendor is overpaid by 20,000 EUR relative to the intended settlement.",
+          "task": "Explain why the payment program did not apply the down payment and outline the correct end-to-end reconciliation to apply the advance against the invoice and settle the true payable. Include the exact transactions, key fields to check, and how you will demonstrate the vendor account is now correctly cleared.",
+          "expected_answer": "Down payments with special G/L indicator A sit on an alternative reconciliation and are not automatically netted with invoices unless cleared. The payment proposal paid the full invoice because the down payment was not cleared against it.\nFix: 1) Use F-54 (Down payment clearing) to clear the 20,000 EUR down payment against the 50,000 EUR invoice; ensure the same vendor, company code, and currency; verify special G/L indicator A and assignment/reference fields. 2) The clearing creates a clearing document, reducing the invoice’s open amount to 30,000 EUR. 3) Re-run F110 to pay the 30,000 EUR net. 4) Verify in FBL1N: the down payment shows as cleared with the clearing doc; the invoice shows partial clearing (20,000) and full clearing after payment; the vendor balance is zero.\nControls: Ensure vendor master allows the payment method for special G/L where needed and that proposal parameters include the relevant special G/L indicators only when appropriate; train AP to clear advances via F-54 prior to payment runs.",
+          "rubric": [
+            {
+              "criterion": "Explains why F110 did not net the down payment (special G/L handling/alternative recon)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct transaction flow (F-54 to apply A item, then F110 to pay residual)",
+              "marks": 3
+            },
+            {
+              "criterion": "Identifies key data checks (vendor/company code/currency, special G/L indicator, references)",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines clear evidence in FBL1N showing down payment and invoice correctly cleared",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Accounts payable",
+            "General ledger",
+            "SAP FI",
+            "Master data"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a complete GL cycle artefact for a month-end accrual and reversal",
+          "brief": "Create a self-contained GL cycle that demonstrates posting, document control, and reporting impact for a month-end accrual that reverses in the following period. Use a realistic mini-case and show how balances and reports move across the cycle.",
+          "deliverable": "One workbook or zip with: (a) GL_Postings.csv containing all line items (columns: DocNo, DocType, PostingDate, PstKey, Account, AccountName, Amount, Curr, Text, Reference, Assignment, ClearingDoc, ClearingDate); (b) TB_Before.csv and TB_After.csv showing trial balance by account before and after reversal; (c) Process_Note.txt explaining actions taken (post, reverse, references used) and key decisions (reversal reason, dates).",
+          "acceptance_criteria": [
+            "GL_Postings.csv contains at least three documents: original accrual, vendor invoice (or equivalent offset), and reversal; each document is balanced (sum debits = sum credits).",
+            "Reversal document references the original document number in a dedicated field (Reference or Text) and uses a later posting date than the original.",
+            "TB_Before.csv and TB_After.csv arithmetically tie to GL_Postings.csv and show the expected movement: accrual increases liability/expense at month-end; reversal removes it in the next period.",
+            "Process_Note.txt explains the choice of reversal timing and reason code, and how to evidence the effect in a line item report."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, balanced postings for accrual, invoice/offset, and reversal; arithmetic ties across files",
+              "marks": 6
+            },
+            {
+              "criterion": "Appropriate document control: reversal timing aligns with open period; clear cross-references",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and completeness of reporting evidence (before/after TB reflecting the cycle)",
+              "marks": 5
+            },
+            {
+              "criterion": "Process explanation demonstrates understanding of why/when to reverse and how to verify",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "General ledger",
+            "SAP FI",
+            "chart of accounts",
+            "Company code"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Model an AP process from invoice to payment and reconciliation",
+          "brief": "Construct a vendor transaction chain that runs from invoice through payment proposal to clearing, demonstrating how due dates, discounts, and clearing documents affect reporting.",
+          "deliverable": "One workbook \"AP_Process.xlsx\" with sheets: 1) Vendor_Master (key fields: Vendor, CompanyCode, PaymentMethod, BankDetails, Terms), 2) Invoices (DocNo, DocType, DocDate, PostingDate, BaselineDate, Amount, Curr, Text, BlockFlag), 3) Payment_Proposal (RunDate, IncludedDocs, ExcludedDocs with reasons), 4) Payments (DocNo, PostingDate, BankGL, Amount, Curr, Method), 5) Clearing (InvoiceDoc, PaymentDoc, ClearingDoc, ClearingDate, DifferenceHandling), 6) Ageing_Before_After (Ageing snapshots as of key dates). Include a short Process_Note.txt describing the sequence and any corrections (e.g., block removal, baseline fix).",
+          "acceptance_criteria": [
+            "At least two invoices for the same vendor: one eligible for discount within window and one with an initial issue (block or wrong baseline) that is corrected before proposal rebuild.",
+            "Payment_Proposal sheet lists included and excluded documents with concrete reasons matching master/document data; after corrections and rebuild, the corrected item is included.",
+            "Payments and Clearing sheets show one-to-one links via ClearingDoc; after clearing, the vendor net balance is zero or matches intended residual; any small differences are handled per tolerance and documented.",
+            "Ageing_Before_After shows the invoice status transition (open at key date, then cleared), and due/discount dates are consistent with BaselineDate and Terms."
+          ],
+          "rubric": [
+            {
+              "criterion": "Accurate master and document data driving payment selection (methods, terms, baseline, blocks)",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct proposal logic and documented corrections; rebuild shows intended inclusion/exclusion",
+              "marks": 5
+            },
+            {
+              "criterion": "Clear, consistent clearing chain with proper links and handling of differences/discounts",
+              "marks": 5
+            },
+            {
+              "criterion": "Ageing snapshots and narrative demonstrate understanding of reporting as-of vs current status",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Accounts payable",
+            "Master data",
+            "SAP FI",
+            "General ledger"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-039-S03",
+      "skills_assessed": [
+        "SAP FI",
+        "Master data",
+        "General ledger",
+        "Accounts receivable",
+        "Asset accounting",
+        "Period close",
+        "chart of accounts",
+        "Company code",
+        "dunning concepts"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run a dunning proposal with the following setup and open items for customer 110000.\n\nDunning parameters:\n```text\nRun date: 2026-02-15\nDunning procedure: DP1\nLevel 1 threshold: 10 days in arrears\nGrace days: 2\nMinimum dunning amount: 100\n\"Always dun credit memos\": No\n```\nOpen items snapshot on 2026-02-15:\n```text\nDoc     Type   Amount   Baseline date  Due date    Days overdue  Flags\n1900001 INV    300.00   2026-01-05     2026-01-20  26            -\n1900002 INV    250.00   2026-01-25     2026-02-09  6             -\n1901001 CRM   -250.00   2026-01-10     2026-01-10  n/a           -\n```\nWhich outcome does the proposal create?",
+          "options": [
+            "Both invoices are dunned; the credit memo is ignored because it is not cleared against an invoice.",
+            "1900001 is dunned at Level 1 for 50.00 (net of credit memo); 1900002 is excluded.",
+            "No dunning notice is created because the net overdue amount (300 - 250) is below the minimum.",
+            "1900001 is dunned at Level 1 for 300.00; 1900002 and 1901001 are excluded."
+          ],
+          "correct_option": "C",
+          "explanation": "With \"Always dun credit memos\" = No, SAP reduces the dunned amount by available credit memos when evaluating the account. Net overdue = 300 - 250 = 50, which is below the minimum dunning amount of 100, so no notice is created. 1900002 is only 6 days overdue (below the Level 1 threshold) and would not be dunned anyway.",
+          "distractor_rationale": "A: Tempting if you think credit memos only matter when cleared, but they reduce the dunning base unless the procedure says to always dun credit memos. C: SAP does not print a dunning notice for a partial (netted) amount below the minimum; it either duns or skips, not a selective net print. D: Credit memos are not ignored in this setup; they reduce the dunning base even if not matched to a specific invoice.",
+          "skills_covered": [
+            "Accounts receivable",
+            "dunning concepts",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You post an incoming payment in F-28 for customer 120000.\n\nOpen items before posting:\n```text\nDoc     Type   Amount  Status\n900010  INV    1,000   Open (Terms: 2%/10 Net 30; Baseline 2026-03-01)\n```\nPayment entered on 2026-03-12: 980. Clearing is set to Residual items.\nAfter posting, which open items remain and how are they represented?",
+          "options": [
+            "Two open items remain: residual 20 and an on-account 0; the invoice is cleared.",
+            "One residual item for 20 remains open; the original invoice 900010 is cleared.",
+            "Invoice 900010 remains partially open for 20; the 980 payment is posted as an on-account item.",
+            "Invoice 900010 remains fully open; the 980 is a special G/L noted item until final clearing."
+          ],
+          "correct_option": "B",
+          "explanation": "Residual item clearing clears the original invoice and creates a new open item for the remaining balance (20). This keeps the ageing and dunning continuing on the residual item while the original invoice is closed.",
+          "distractor_rationale": "B: That describes partial clearing, not residual. C: There is no separate on-account item in residual clearing; only the residual open item remains. D: Incoming payment is a normal posting in F-28; it is not a noted item and the invoice would not remain fully open under residual clearing.",
+          "skills_covered": [
+            "Accounts receivable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Asset 30000001 has the following master data and posting history.\n```text\nDepreciation key: STRAIGHT_LINE (period control: acquisitions start next month)\nUseful life: 3 years\nFiscal year variant: K4 (12 calendar periods)\nAcquisition: 2026-03-15, Amount: 12,000 (Area 01 book depreciation)\n```\nPlanned ordinary depreciation for 2026 should be:",
+          "options": [
+            "3,000",
+            "4,000",
+            "2,750",
+            "3,600"
+          ],
+          "correct_option": "A",
+          "explanation": "With period control that starts depreciation the month after capitalization, no depreciation is posted in March. For Apr–Dec (9 months): 12,000 / 36 months = 333.33 per month; 9 months = 3,000.",
+          "distractor_rationale": "A: Assumes full-year proration from March, ignoring the start-next-month control. C: Assumes 10 months of depreciation (Mar–Dec) or uses a wrong monthly rate. D: Arithmetic that neither matches months nor the straight-line method; a common slip when mixing conventions.",
+          "skills_covered": [
+            "Asset accounting",
+            "Period close",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Review the following asset values before retirement with revenue:\n```text\nAsset: 30000002 (Area 01)\nAcquisition cost (APC): 10,000\nAccumulated depreciation: 6,000\nNet book value (NBV): 4,000\nSale price (excl. tax): 3,500\n```\nWhen posting a retirement with revenue, what is the P/L impact (ignoring tax)?",
+          "options": [
+            "Loss 500",
+            "Gain 3,500",
+            "Gain 500",
+            "No P/L impact; NBV is reclassified to receivables"
+          ],
+          "correct_option": "A",
+          "explanation": "Sale proceeds 3,500 versus NBV 4,000 gives a loss of 500. The retirement posts clearing entries to remove APC and accumulated depreciation and a P/L line for the loss.",
+          "distractor_rationale": "A: Reverses NBV vs proceeds relationship. C: Treats proceeds as pure gain without considering NBV. D: There is always P/L impact unless proceeds equal NBV; reclassification alone would be incorrect.",
+          "skills_covered": [
+            "Asset accounting",
+            "General ledger",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A user claims an overdue invoice was dunned even though they blocked it. Check the artefacts:\n```text\nCustomer master 110500: No dunning block\nDocument 920045 (Invoice): Dunning block = 'A'\nDunning run: 2026-04-05, Procedure DP1\nProposal log excerpt: Item 920045 excluded. Reason: Dunning block at line item.\n```\nWhich explanation correctly fits SAP behaviour?",
+          "options": [
+            "The invoice is included at a reduced amount due to the block.",
+            "The invoice is included because only customer-level blocks are evaluated during a run.",
+            "The invoice is excluded from dunning because the item-level block overrides the customer master.",
+            "The invoice is excluded only if the account also has a block; otherwise it is included."
+          ],
+          "correct_option": "C",
+          "explanation": "An item-level dunning block explicitly prevents that line item from being dunned, regardless of the customer master. The proposal log confirms the exclusion.",
+          "distractor_rationale": "B: SAP evaluates both account- and item-level blocks; item-level blocks absolutely exclude the item. C: There is no concept of 'reduced' inclusion for a blocked item. D: Item-level blocks do not require an account-level block to take effect.",
+          "skills_covered": [
+            "Accounts receivable",
+            "dunning concepts"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A user tries to post a manual journal in FB50 to G/L 140000 and gets:\n```text\nMessage no. F5246: Posting not allowed to reconciliation account 140000 (Customers)\n```\nThey need to recognize revenue for a customer sale. What is the correct approach?",
+          "options": [
+            "Post an on-account payment in F-28; it will credit revenue and update 140000.",
+            "Temporarily remove the reconciliation flag from 140000, post the journal, then re-flag it.",
+            "Post in FB50 to 140000 and a revenue account; it will update the customer subledger.",
+            "Use a customer invoice posting (FB70/F-22) to the revenue account; SAP will update the customer reconciliation account automatically."
+          ],
+          "correct_option": "D",
+          "explanation": "Reconciliation accounts cannot be posted to directly. Customer postings (FB70/F-22) create the subledger entry and update the reconciliation account automatically via account determination.",
+          "distractor_rationale": "A: Direct postings to customer reconciliation accounts are blocked by design. C: Removing the reconciliation flag to force a posting violates controls and risks subledger mismatches. D: F-28 posts receipts, not revenue; it debits bank and credits the reconciliation account, not revenue.",
+          "skills_covered": [
+            "chart of accounts",
+            "Accounts receivable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "In May, you post an asset acquisition backdated to 2026-03-20 for 24,000. Depreciation key starts next month. AFAB run in May shows:\n```text\nAFAB Test Run (2026-05)\nAsset 30000005 Area 01: Catch-up ordinary depreciation posted for 2026-04 and 2026-05.\nAmount per month: 24,000 / 36 = 666.67\nTotal this run: 1,333.34\n```\nWhich G/L effect should you expect from the May posting?",
+          "options": [
+            "Two separate documents posted retroactively in April and May periods.",
+            "No depreciation until June because acquisition was backdated.",
+            "Only May depreciation 666.67 is posted; April will be posted in a repeat run for April.",
+            "A single posting in May for 1,333.34 to accumulated depreciation and expense."
+          ],
+          "correct_option": "D",
+          "explanation": "With a backdated acquisition and 'start next month', depreciation begins in April. Running AFAB in May posts a catch-up for April plus May in the current run if April was not previously posted, resulting in a single posting for the combined amount.",
+          "distractor_rationale": "A: AFAB catch-up posts missed periods in the current run; it does not require a separate April run. C: Standard runs do not retro-post into closed prior periods unless explicitly re-opened and run again. D: Start-next-month does not defer to June in this case; April and May are due.",
+          "skills_covered": [
+            "Asset accounting",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Consider an invoice that reached Dunning Level 2 last month. This month the customer makes a partial payment that reduces the open balance below the minimum dunning amount. Dunning settings do not \"calculate level by days in arrears\"; minimum amount is 100.\n\nDunning history extract:\n```text\nDoc 910777  Level: 2  Open amount before payment: 180\nPartial payment posted: 100\nOpen amount after payment: 80 (< minimum)\n```\nWhat happens in the next dunning run?",
+          "options": [
+            "A Level 1 notice is printed because the open amount is small.",
+            "No dunning notice will be printed, but the item retains Level 2 until cleared or reset.",
+            "The level resets to 0 automatically because the open amount is below the minimum.",
+            "A Level 3 notice is printed if days overdue exceed the threshold, regardless of minimum amount."
+          ],
+          "correct_option": "B",
+          "explanation": "The minimum amount suppresses printing, not the internal level. Without level-by-days recalculation, the dunning level does not drop due to a partial payment; it is retained until the item is cleared or manually adjusted.",
+          "distractor_rationale": "B: Levels do not auto-reset based on amount. C: Levels do not downgrade; printing is suppressed when below minimum. D: Higher levels are not issued when the minimum amount condition is not met.",
+          "skills_covered": [
+            "dunning concepts",
+            "Accounts receivable"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You create sub-asset 40000010-1 to split additional costs after the main asset 40000010 started depreciating in June. Master data:\n```text\nDepreciation key: STRAIGHT_LINE (start next month)\nMain asset 40000010 capitalization: 2026-06-05\nSub-asset 40000010-1 capitalization: 2026-09-18\nUseful life: same as main asset\n```\nWhen does depreciation for the sub-asset start and how is it calculated for 2026?",
+          "options": [
+            "Starts in July; 6 months (Jul–Dec) in 2026.",
+            "Starts in October; 3 months (Oct–Dec) in 2026.",
+            "Starts in September; 4 months (Sep–Dec) in 2026.",
+            "Starts in June like the main asset; 7 months in 2026."
+          ],
+          "correct_option": "B",
+          "explanation": "Each sub-asset has its own capitalization date. With start-next-month control, a 2026-09-18 capitalization starts depreciation in October, giving 3 months of depreciation in 2026.",
+          "distractor_rationale": "A: Sub-assets do not inherit the main asset's start month for depreciation. C: Ignores the start-next-month period control. D: Assumes start immediately after main asset, not after sub-asset’s own capitalization.",
+          "skills_covered": [
+            "Asset accounting",
+            "Period close"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "On 2026-07-01 you change customer 130000 payment terms in the master from \"Net 30\" to \"2%/10 Net 30\". Open items exist from June.\n\nChange log excerpt:\n```text\nBefore: Terms = ZN30 (Baseline = Posting date)\nAfter:  Terms = Z210 (Baseline = Posting date)\nChange date/time: 2026-07-01 10:15:02\n```\nHow are existing June invoices affected without further action?",
+          "options": [
+            "Their due dates remain as originally calculated; new terms apply only to future postings.",
+            "Their due dates are recalculated only if you run the dunning program again.",
+            "Their due dates are recalculated automatically to offer the 2% discount window.",
+            "They inherit the new terms if you change the baseline date at the account level."
+          ],
+          "correct_option": "A",
+          "explanation": "Changes to payment terms in the customer master do not retroactively change posted documents. Existing invoices keep their original terms and due dates unless you edit the line item’s terms/baseline directly.",
+          "distractor_rationale": "B: Master data changes do not back-post to existing documents. C: Dunning does not recalculate document due dates; it reads what is stored. D: There is no single account-level baseline change that cascades into posted items; changes must be per item.",
+          "skills_covered": [
+            "Master data",
+            "Accounts receivable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You inherited an AR ledger with multiple disputed items and partial payments. The CFO wants to run a dunning campaign next week that avoids customer escalations but maximizes collectability. Current state on key customers:\n```text\nCust 200010:\n  INV 980011  2,500  Due: 2026-05-10  Dispute flag: Yes\n  INV 980145  1,200  Due: 2026-06-05  Partial payment: 400 on 06-20 (Residual vs Partial unclear)\n  CRM 981100   -300  Dated: 2026-05-15  Unassigned\nCust 200022:\n  INV 975500  3,000  Due: 2026-04-25  Dunning Level: 1\n  INV 976200    450  Due: 2026-06-28  Open\nDunning procedure DP2:\n  Level 1: 10 days; Level 2: 25 days; Minimum amount: 500; Always dun credit memos: No\n```\nBank remittances continue to arrive ad hoc. You have control of clearing choices (partial vs residual), item blocks, and the dunning run parameters (within DP2).",
+          "task": "Propose a precise clearing and dunning preparation plan for the next run. Specify, per customer, whether to use partial or residual clearing where applicable, how to treat the credit memo, which items to block, and any run-parameter adjustments you would make. Justify each choice in terms of its impact on dunning level, minimum amount checks, and customer experience.",
+          "expected_answer": "A strong answer recommends, for Cust 200010, converting the ambiguous 400 settlement on INV 980145 to residual clearing so the original invoice is closed and a 800 residual item continues ageing cleanly; explains that residual items are eligible for dunning and avoid confusing the customer with mixed partials. It explicitly blocks INV 980011 due to the dispute flag so it is not escalated, and applies the -300 CRM to net against eligible overdue exposure (assuming 'Always dun credit memos' = No) to avoid dunning for small residuals below the 500 minimum. For Cust 200022, it keeps INV 975500 in scope and anticipates Level 2 (over 25 days overdue by run date), leaves 976200 out if it keeps the account above the minimum but not past Level 1 threshold, or groups them if netting is necessary to pass the minimum. It states the run should use the proposal first, with line-item blocks where needed, and retain current DP2 parameters; if the minimum would suppress legitimate escalations, it argues for a one-time lowering only with business approval, noting the trade-off. It notes that residual clearing helps dunning messaging and ageing, partial clearing can depress amounts below the minimum without resetting level, and credits will reduce the dunned amount given the current setting, so assignment of the credit memo should be considered to control netting. It confirms no master data term changes affect existing invoices.",
+          "rubric": [
+            {
+              "criterion": "Identifies correct clearing method (residual vs partial) for INV 980145 and explains dunning/ageing impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly handles disputed item 980011 (block and rationale)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correctly treats the credit memo’s effect on minimum amount and netting, with a clear recommendation",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes sensible run-parameter use (proposal first, thresholds) with business trade-offs articulated",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Accounts receivable",
+            "dunning concepts",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 2,
+          "scenario": "In July you discover an equipment asset was acquired in March but posted late on July 10 with capitalization date 2026-03-18 and depreciation key that starts next month. Periods March–June are closed. The AFAB July test run shows a large catch-up posting for Apr–Jul. Finance is worried about audit trail and period accuracy.",
+          "task": "Recommend the cleanest correction strategy to achieve accurate depreciation by period with an auditable trail, given the closed prior periods. Include which postings to reverse or adjust (if any), how to post the catch-up (periods Apr–Jun), and how to document the timing difference. Do not propose changes to closed periods without justification.",
+          "expected_answer": "An excellent answer proposes leaving the acquisition as posted (with correct capitalization date), accepting that prior periods are closed, and posting depreciation catch-up in July using AFAB (update run), which will book Apr–Jul together in July. If management requires period-accurate P/L by month, it proposes a manual true-up: post a manual depreciation (ABAA/ABZU depending on system) to allocate Apr–Jun depreciation to designated adjustment accounts in July with clear text referencing each period, or create separate adjustment documents per period if allowed by policy; it avoids reopening closed periods. It rejects changing capitalization date or useful life to bend the schedule. It details documentation: attach AFAB logs, controller sign-off, and a memo explaining the July recognition of prior-period expense and its impact on management vs statutory reporting.",
+          "rubric": [
+            {
+              "criterion": "Keeps the correct capitalization date and avoids data manipulation to fit periods",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains AFAB catch-up mechanics and proposes acceptable posting approach in July",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides an auditable method to allocate Apr–Jun via adjustments without reopening periods",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses documentation, approvals, and reporting implications",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Asset accounting",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your company sells a used machine to customer 210030 for 9,000 + tax. The machine is a fixed asset (APC 18,000; accumulated depreciation 12,500; NBV 5,500). Sales wants an AR invoice visible in the customer account and proper gain/loss on disposal in Asset Accounting without manual G/L workarounds.",
+          "task": "Choose the correct posting flow and justify it. Compare at least two plausible approaches and explain which one preserves subledger integrity: (a) post a retirement with revenue that creates a customer line item (e.g., F-92) versus (b) post a customer invoice (FB70) and a separate asset retirement (ABAVN) to clear the asset. State the expected postings and controls in your chosen flow and why the alternative is inferior here.",
+          "expected_answer": "The preferred approach is a retirement with revenue to customer (e.g., F-92 in classic FI or the equivalent in S/4), which creates the customer subledger item and posts the asset retirement in one integrated document: Dr Customer 9,000; Cr Revenue from asset sale 9,000 (plus tax line), and asset clearing lines that remove APC and accumulated depreciation and post gain/loss (expected gain 3,500). This preserves the link between AR and AA and ensures the customer reconciliation and asset subledger stay synchronized with a single document flow. The alternative (FB70 + ABAVN) risks double revenue or mismatched timing unless extra clearing steps are taken; it produces two separate documents with weaker control over matching the customer receivable to the asset disposal, and manual reconciliation is needed. Therefore, use retirement with revenue to customer for an integrated and auditable trail.",
+          "rubric": [
+            {
+              "criterion": "Selects retirement with revenue to customer and explains integrated subledger impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Quantifies expected gain/loss with given NBV and proceeds",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why the separate FB70 + ABAVN flow is inferior (control/reconciliation risks)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes key postings (AR, revenue/tax, asset clearing) in the chosen flow",
+              "marks": 1
+            },
+            {
+              "criterion": "Notes audit/document flow benefits (single document, traceability)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Asset accounting",
+            "Accounts receivable",
+            "SAP FI",
+            "General ledger"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "A dunning run missed several invoices you expected to escalate. Artefacts:\n```text\nDunning procedure DP3: Min amount 200; Always dun credit memos: No\nRun parameters: Run date 2026-08-05; Documents up to 2026-08-05\nCustomer 240040 open items:\n  INV 990010  350  Due 2026-07-20  Dispute: No  Dunning block: No\n  CRM 990200 -200  Dated 2026-07-25  Not assigned\n  INV 990050  180  Due 2026-07-22  Dunning block: 'A'\nProposal log says: Account below minimum after credit; 990050 excluded (blocked).\n```\nBusiness wants 990010 to be dunned regardless of the credit memo and 990050 kept excluded.",
+          "task": "Recommend exact, minimally invasive actions to ensure the next run duns 990010 without changing posted documents’ integrity. Specify whether to change procedure settings, assign credits, set item-level blocks, or adjust run parameters. Justify why your changes will produce the intended result and note any side effects.",
+          "expected_answer": "The clean plan is: keep 990050 excluded (retain its item-level block). For 990010, either assign the -200 credit memo to a different, not-yet-due invoice or block the credit memo from dunning consideration so the account net exceeds the 200 minimum and 990010 is included. The least invasive option is to place a dunning block on the credit memo line (or mark it as \"legal dunning\" excluded), not to change DP3 globally, then rerun the proposal. Alternatively, temporarily set DP3 to \"Always dun credit memos = Yes\" to stop netting, but that affects all customers and should be avoided unless approved. Do not lower the minimum amount globally. Document the temporary item-level block on the credit memo and remove it after the run if appropriate. No change to due dates or baseline dates is needed; run parameters are already correct.",
+          "rubric": [
+            {
+              "criterion": "Identifies and preserves the block on 990050 correctly",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes item-level treatment of the credit memo to avoid netting for 990010",
+              "marks": 2
+            },
+            {
+              "criterion": "Avoids risky global config changes or justifies them with side effects noted",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why this will cause inclusion of 990010 in the next run",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "dunning concepts",
+            "Accounts receivable",
+            "Master data"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design and evidence an end-to-end AR process: invoice → receipt → residual open item → dunning proposal",
+          "brief": "Using a training or sandbox client, execute and document a complete AR flow for a single customer: create or verify customer master data, post at least one invoice, post a non-exact receipt using Residual item clearing, and run a dunning proposal that includes or excludes items based on minimum amounts and blocks. Capture before/after states and the proposal log to prove the behaviour you claim.",
+          "deliverable": "A single zipped folder named AR_Process_<yourname>.zip containing: (1) a PDF walkthrough with timestamps and document numbers; (2) CSV or exported reports for the customer line items before and after receipt posting; (3) the dunning proposal log/output; (4) a short summary text file stating which items were dunned and why (min amount, blocks, levels).",
+          "acceptance_criteria": [
+            "PDF shows customer master key fields (recon account, payment terms, dunning procedure) with screenshots or exports.",
+            "Invoice document number and details are listed and visible in a line-item report prior to receipt posting.",
+            "Receipt posted using Residual items; evidence shows original invoice cleared and a new residual open item created (document numbers visible).",
+            "Dunning proposal run parameters are shown; proposal output clearly lists included/excluded items with reasons (e.g., below minimum, blocked, disputed).",
+            "Summary file correctly explains the inclusion/exclusion based on parameters and item flags; amounts reconcile to the reports."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and correctness of artefacts (master, invoice, receipt, proposal) with document numbers",
+              "marks": 4
+            },
+            {
+              "criterion": "Clear evidence of residual clearing effect (before/after open items)",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate dunning run setup and interpretation of inclusion/exclusion reasons",
+              "marks": 4
+            },
+            {
+              "criterion": "Reconciliation of amounts across reports and narrative consistency",
+              "marks": 4
+            },
+            {
+              "criterion": "Professional presentation (timestamps, readable exports, filenames)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Accounts receivable",
+            "dunning concepts",
+            "Master data",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Evidence a full fixed-asset lifecycle: master → acquisition → depreciation → retirement with revenue",
+          "brief": "In a sandbox, create a tangible fixed asset, post its acquisition, run or simulate depreciation to show the start-next-month control, and retire it with revenue to a customer to generate an AR document and a gain/loss posting. Provide Asset Explorer views and G/L postings that prove each lifecycle stage and the integration to AR.",
+          "deliverable": "A zipped folder named Asset_Lifecycle_<yourname>.zip containing: (1) a PDF with Asset master data (key fields and depreciation areas), (2) Asset Explorer (AW01N) screenshots showing APC, accumulated depreciation, planned/posted depreciation by period, (3) acquisition and depreciation posting documents (G/L view exports), (4) retirement-with-revenue document showing the customer line item and P/L (gain/loss) lines, and (5) a summary file calculating expected depreciation and gain/loss versus the system’s postings.",
+          "acceptance_criteria": [
+            "Asset master shows depreciation key and useful life; capitalization date is clear.",
+            "Acquisition posting is dated mid-month; depreciation evidence shows start in the following month.",
+            "AFAB run or plan shows correct monthly ordinary depreciation and any catch-up if posted late.",
+            "Retirement with revenue posting includes a customer line item in AR and G/L lines removing APC and accumulated depreciation, plus a gain/loss line; amounts reconcile to NBV and proceeds.",
+            "Summary file correctly computes expected depreciation and gain/loss and ties to system documents."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct setup and documentation of asset master and depreciation areas",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate acquisition and depreciation evidence (start-next-month, amounts)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct and reconciled retirement-with-revenue posting including AR integration",
+              "marks": 4
+            },
+            {
+              "criterion": "Numerical reconciliation of APC, accum dep, NBV, proceeds, and gain/loss",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and auditability of the submission (exports/screens with IDs, dates)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Asset accounting",
+            "Period close",
+            "General ledger",
+            "Accounts receivable",
+            "SAP FI"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-039-S04",
+      "skills_assessed": [
+        "SAP FI",
+        "SAP CO",
+        "General ledger",
+        "Period close",
+        "Cost centres",
+        "profit centres",
+        "internal orders"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "Your bank uses value dates. The EBS variant in SAP is currently set to post line items on the value date, not the statement date. You import the June 30 statement with this extract and try to auto-clear the bank clearing account:\n```text\nStatement date: 2026-06-30\nOpening balance: 10,000.00\nLines:\n  2026-06-28 POS Card Purchase           -150.00  (value date 2026-06-28)\n  2026-06-30 Monthly Bank Fee             -25.00  (value date 2026-06-30)\n  2026-06-30 Incoming Transfer           1,200.00 (value date 2026-07-01)\nClosing balance: 11,025.00\n```\nGL 113100 Bank Clearing has an open incoming item of 1,200 posted on 2026-06-30 awaiting clearing. After EBS posting, which outcome occurs and why?",
+          "options": [
+            "The 1,200 remains open because the EBS posts it on 2026-07-01, so it cannot clear the 2026-06-30 open item.",
+            "The 1,200 is posted as a new open item on 2026-06-30 but marked for future clearing automatically at rollover.",
+            "All three lines post on 2026-06-30 per statement date and fully clear the open item.",
+            "The 1,200 clears because the reference and amount match; value date does not affect clearing."
+          ],
+          "correct_option": "A",
+          "explanation": "With posting on value date, the incoming transfer is posted on 2026-07-01. It cannot clear an open item from 2026-06-30 in the June period. The fee and POS post and clear within June; the 1,200 remains open until July or until you change posting logic.",
+          "distractor_rationale": "A: Tempting because matching by amount/reference is typical, but the posting date/period must allow clearing. C: Would be true if variant posted on statement date, but it is set to value date. D: SAP does not auto-flag future clearing rollover like this; clearing occurs when both sides exist in the same account/clearing transaction.",
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You posted an accrual via FAGL\na03/Accrual Engine at month-end with this header:\n```text\nDoc: 190000123\nPosting date: 2026-06-30\nAmount: 85,000 expense accrual (Dr Expense, Cr Accrued Liability)\nReversal date: 2026-07-10\n```\nThe supplier invoice for 85,000 posts on 2026-07-02. What is the effect on July results until the reversal posts?",
+          "options": [
+            "June becomes overstated because the system backdates the reversal to 2026-06-30.",
+            "July is overstated by 85,000 until 2026-07-10, then corrected by the accrual reversal.",
+            "No impact; SAP auto-adjusts the reversal date to 2026-07-01 when the invoice posts.",
+            "July is understated until 2026-07-10 because the liability reverses late."
+          ],
+          "correct_option": "B",
+          "explanation": "The accrual remains on the books until the scheduled reversal on 2026-07-10. When the invoice posts on 2026-07-02, July temporarily has both the accrual and the invoice, overstating expense until the reversal entry on 07-10.",
+          "distractor_rationale": "B: SAP does not auto-shift reversal dates when related invoices post. C: Understatement would require an early reversal; here it's late. D: The reversal does not backdate to June.",
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "At period-end you need to accrue unbilled services. Local VAT rules: input tax can only be claimed upon valid tax invoice. You have this invoice and an additional unbilled service:\n```text\nPosted AP invoice (has tax invoice):\n  Base: 10,000 | VAT 18%: 1,800 | Total: 11,800\nUnbilled service (no invoice yet):\n  Estimated base: 5,000\n```\nHow should you post the period-end accrual for the unbilled service?",
+          "options": [
+            "Dr Expense 5,000; Cr Accrued Liability 5,000; reverse next period; book input VAT only when invoice arrives.",
+            "Dr GR/IR 5,000; Cr Accrued Liability 5,000 so VAT derives automatically.",
+            "Dr Expense 5,000; Dr Input VAT 900; Cr Accrued Liab 5,900; reverse next period.",
+            "Dr Suspense 5,000; Cr Accrued Liability 5,000; record VAT when accrual is cleared."
+          ],
+          "correct_option": "A",
+          "explanation": "Without a tax invoice you generally cannot claim input VAT. Accrue the net expense only and reverse it next period. Recognize input VAT when the supplier tax invoice arrives.",
+          "distractor_rationale": "A: Tempting because it mirrors the invoiced case, but it violates the tax point rule. C: GR/IR is for goods receipts/invoice receipts matching, not generic service accruals. D: Using a suspense account does not address tax compliance; the correct issue is not posting VAT until invoiced.",
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your month-end run left several internal orders with non-zero balances although all costs should be fully moved to final cost centers. The run log was:\n```text\n21:00 KO88 Settlement of internal orders (status: green)\n22:00 KSU5 Assessment: Overhead from CC-OVH to receiver internal orders (status: green)\n23:00 Checks: 6 orders show residual balances exactly equal to the assessed overhead\n```\nWhich one action will clear the residuals without any reposting of primary costs?",
+          "options": [
+            "Re-run assessment before settlement next month only; residuals will self-correct.",
+            "Re-open the period and run CO-FI reconciliation (RFUMSV00) first, then close again.",
+            "Run a distribution (KSV5) from final cost centers back to orders to net the balances, then settle again.",
+            "Re-run KO88 settlement after the KSU5 assessment so the assessed overhead on orders settles to the final receivers."
+          ],
+          "correct_option": "D",
+          "explanation": "You assessed overhead to the orders after settling them, creating new order debits. Re-running settlement after assessment moves those secondary costs from the orders to their final receivers as per the settlement rules.",
+          "distractor_rationale": "A: Waiting does not fix the sequencing error. B: Reconciliation does not move costs between CO objects. D: Back-distributing from final receivers is the wrong direction and adds noise; simply settle the new debits.",
+          "skills_covered": [
+            "SAP CO",
+            "Period close",
+            "internal orders",
+            "Cost centres"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider this master-data change mid-month:\n```text\nCost center: CC100\nProfit center assignment:\n  2026-01-01 to 2026-06-14 -> PC-A\n  From 2026-06-15          -> PC-B\nPostings in June:\n  2026-06-01 Primary expense 10,000 to CC100\n  2026-06-20 Primary expense 5,000 to CC100\n```\nAssuming no profit center realignment or repostings are executed, how will June profit center P&L reflect these postings?",
+          "options": [
+            "All 15,000 on PC-B because the latest assignment overrides within the month.",
+            "10,000 on PC-A and 5,000 on PC-B.",
+            "Split between PC-A and PC-B pro-rata by days in month.",
+            "All 15,000 on PC-A because the initial assignment dominates the month."
+          ],
+          "correct_option": "B",
+          "explanation": "Profit center is derived at posting time. Historical line items retain their derived profit center. Without realignment/repostings, the 06-01 posting remains on PC-A and the 06-20 posting goes to PC-B.",
+          "distractor_rationale": "B: Tempting if one believes master data is retroactive; it is not for existing line items. C: Also assumes retroactivity in the other direction. D: Day-weighting does not occur; derivation is per line item at its posting time.",
+          "skills_covered": [
+            "profit centres",
+            "General ledger",
+            "SAP CO"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "During KO88 you get residual cost of 8,400 on order IO-7001. The allocation structure is defined as:\n```text\nAllocation structure AS01\n  Assignments:\n    Group CE_PRIM -> receiver CC (includes CE 600000-699999)\nSettlement rule: 100% to CC200\nOrder actuals this period:\n  620100: 12,000\n  741500: 8,400\n```\nWhy does 8,400 remain on the order?",
+          "options": [
+            "741500 is a secondary cost element; secondary costs never settle on expense orders.",
+            "Settlement profile lacks \"Full settlement\" and only settles to zero at year-end.",
+            "Receiver CC200 is locked; settlement skipped for that portion.",
+            "741500 is not covered by the allocation structure range; extend the assignment to include it."
+          ],
+          "correct_option": "D",
+          "explanation": "Only 600000-699999 are assigned to settle. Cost element 741500 sits outside the assignment and is therefore not picked up by settlement. Extend the allocation structure to include it (or map to a different receiver).",
+          "distractor_rationale": "A: Sounds plausible but depends on config; the real blocker shown is the missing mapping. C: Profile controls timing/requirements, not element selection here. D: A locked receiver would error out, not leave an unflagged residual matching an unmapped element.",
+          "skills_covered": [
+            "internal orders",
+            "SAP CO",
+            "Cost centres"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You review a CO document created by assessment:\n```text\nCO Doc 500045\n  Line 10: Sender CC-ADM, CE 930000 (Assessment)   +20,000\n  Line 20: Receiver CC-OPS, CE 930000 (Assessment) -20,000\n```\nWhich statement about its visibility in external financial statements is correct (classic ECC without Universal Journal)?",
+          "options": [
+            "It appears in FI only at period close after CO-FI reconciliation.",
+            "It appears in FI as an expense in P&L because all CO postings update FI.",
+            "It does not appear in the FI trial balance because CE 930000 is a secondary cost element posted only in CO.",
+            "It updates FI balance sheet only, not P&L, because it is an internal reclassification."
+          ],
+          "correct_option": "C",
+          "explanation": "In classic ECC, assessments post with secondary cost elements in CO and do not create FI postings. They affect CO reports but not the FI trial balance or P&L.",
+          "distractor_rationale": "B: True only in S/4 with Universal Journal where secondary cost elements are GL accounts. C: Assessments affect costs, not BS-only reclassifications. D: CO-FI reconciliation is a report/control, not a posting step that brings CO documents into FI.",
+          "skills_covered": [
+            "SAP CO",
+            "General ledger",
+            "profit centres"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You run an assessment from CC-S (PC=PC1) to CC-R (PC=PC2) using secondary CE 930000. After the run, profit center reporting shows different PCs on sender and receiver. What shifts in reporting should you expect?",
+          "options": [
+            "Costs move from PC1 to PC2 in CO profit center reports; external FI P&L totals remain unchanged.",
+            "External FI P&L moves from PC1 to PC2 because assessment reposts primary costs.",
+            "Costs stay on PC1 because assessment does not change profit center attribution.",
+            "Both CO and FI totals reduce because assessment eliminates internal costs."
+          ],
+          "correct_option": "A",
+          "explanation": "Assessment reposts costs with secondary elements to the receivers. CO profit center actuals shift from PC1 to PC2. External FI P&L totals are unchanged because no new primary postings are created.",
+          "distractor_rationale": "B: Assessment specifically moves attribution to receivers. C: It does not create/alter primary FI postings in classic ECC. D: Internal allocations do not eliminate costs; they reassign them within the entity.",
+          "skills_covered": [
+            "profit centres",
+            "SAP CO",
+            "Cost centres"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your EBS posting rules include these mappings:\n```yaml\nposting_rules:\n  NCHK: bank_check\n  FEE:  bank_charges\n  POS:  card_sales\n# No rule maintained for NTRF (incoming transfer)\n```\nThe imported bank statement has a line with code NTRF and a customer reference. What is the likely system outcome for that line?",
+          "options": [
+            "It is ignored during import; you must manually key the bank line before you can clear.",
+            "It is routed to the post-processing list as an exception; no clearing occurs until a rule is added or it is handled manually.",
+            "It posts as a memo item and auto-clears based on amount matching only.",
+            "It posts using the NCHK rule because both are incoming codes."
+          ],
+          "correct_option": "B",
+          "explanation": "Without a mapping rule, SAP cannot determine postings for NTRF. The item goes to post-processing (FEBAN) for manual assignment, and no clearing happens automatically.",
+          "distractor_rationale": "B: SAP does not guess by similarity of codes. C: Memo items do not auto-clear based on amount without a rule. D: The line is imported but parked for manual action; it is not dropped.",
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "An internal order IO-9001 belongs to company code 100. Its settlement rule points 100% to cost center CC-200 in company code 200. Both company codes share controlling area CA01, but intercompany cost accounting is NOT configured. What happens when you run KO88?",
+          "options": [
+            "The system posts within company code 100 only and ignores the receiver in 200.",
+            "The system settles statistical values only; the primary costs remain on the order.",
+            "The system errors and does not post; you must enable intercompany cost accounting and maintain intercompany clearing accounts to allow cross-company settlement.",
+            "The system posts intercompany FI documents automatically even without configuration because the controlling area is the same."
+          ],
+          "correct_option": "C",
+          "explanation": "Cross-company settlement requires intercompany cost accounting settings and clearing accounts. Without them, settlement raises an error and does not post.",
+          "distractor_rationale": "B: SAP does not silently ignore an invalid receiver; it blocks posting. C: Intercompany postings are never automatic without configuration. D: There is no \"statistical-only\" fallback in KO88 for this case; it simply errors.",
+          "skills_covered": [
+            "SAP CO",
+            "internal orders",
+            "Cost centres"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are closing June. The bank statement shows end-of-month items that do not fully match the GL. Here are the artefacts:\n```text\nBank statement (statement date 2026-06-30):\n  06/28 POS Purchase                   -150.00 (value date 06/28)\n  06/30 Monthly Bank Fee                -25.00 (value date 06/30)\n  06/30 Incoming Customer Transfer    1,200.00 (value date 07/01)\nGL 113100 Bank Clearing (as of 2026-06-30):\n  Open item: +1,200.00 from customer payment (posted 06/30)\n  No posting yet for bank fee\n  POS Purchase of 150.00 posted 06/28, open for clearing\nBank main account 111000 shows 11,025.00 closing per statement.\nEBS variant currently posts on value date.\n```\nManagement wants June closed without misstating cash or AR. You can change June postings, but you cannot change the bank statement or reissue it.",
+          "task": "Decide the specific steps you will execute to reconcile and close June. Identify which items will auto-clear, which require manual postings or timing adjustments, the exact journal entries you will book (accounts and dates), and any configuration change (if any) you would propose for future months. Justify each decision against the artefacts and the restriction that EBS posts on value date.",
+          "expected_answer": "- Auto-clear POS 150.00 in June: EBS posts and clears the existing 150.00 open item in clearing account because both sides are in June.\n- Post bank fee 25.00 as Dr Bank Charges (P&L) Cr Bank Main 111000 dated 2026-06-30 (if EBS did not create it automatically) or accept the EBS posting if configured. Evidence: fee has value date 06/30; it is a June cash movement.\n- Do not attempt to clear the 1,200.00 in June because EBS posts it on 07/01 (value date) creating a July-side item. Leave the 06/30 +1,200 clearing open item uncleared at June close; AR is not misstated because the customer subledger is already cleared; cash is correctly not increased in June.\n- Optional: temporarily park a June 30 bank-in-transit if policy requires zeroing clearing at month-end, with reversing entry on 07/01. Many organizations avoid this and accept the timing difference; provide policy rationale.\n- For future months: recommend switching EBS to post on statement date if policy is to minimize timing differences, or keep value-date posting but update the close checklist to tolerate this reconciling item.\n- Document reconciled bank balance: GL 111000 + uncleared 1,200.00 equals statement 11,025.00.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies which items clear in June vs remain open given value-date posting",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes correct journals (accounts, dates) for bank fee and any necessary in-transit policy entry (or argues no entry with sound rationale)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains impact on AR/cash and why leaving the 1,200 open does not misstate June",
+              "marks": 2
+            },
+            {
+              "criterion": "Future control/design recommendation on EBS posting date and/or checklist treatment, tied to the scenario",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your entity accrues month-end expenses for services received without invoices. VAT is 18% and can only be claimed on receipt of a valid invoice. Closing data:\n```text\nItem A: Consulting completed 06/29, PO exists, no invoice. Estimated 40,000.\nItem B: Freight delivered 06/30, carrier invoice confirmed will be dated 07/05. Est. 12,000.\nItem C: Software subscription July-Aug (prepaid), invoice dated 06/28 total 6,000 + VAT.\n```\nFinance wants to minimize July corrections and remain VAT-compliant.",
+          "task": "For A, B, and C, state the precise postings on 2026-06-30 and any reversals in July. Specify whether input VAT is posted on each and why. Include accounts, dates, and reversal dates. Briefly justify each choice.",
+          "expected_answer": "- Item A (unbilled consulting): 06/30 Dr Expense 40,000; Cr Accrued Liability 40,000. No input VAT because no tax invoice. Reverse 07/01.\n- Item B (freight unbilled): 06/30 Dr Expense 12,000; Cr Accrued Liability 12,000. No input VAT. Reverse 07/01. When invoice dated 07/05 arrives, post 12,000 + 2,160 VAT and clear the reversal/expense accordingly.\n- Item C (prepaid for July-Aug with invoice 06/28): On 06/28 initial AP posting Dr Prepaid (BS) 6,000; Dr Input VAT 1,080; Cr Vendor 7,080. On 06/30, defer nothing further (already prepaid). On 07/01 start monthly release: Dr Expense 3,000; Cr Prepaid 3,000 (repeat 08/01 for balance). VAT stays recognized in June based on the tax invoice date; no VAT reversals. Rationale: VAT only on valid invoice; accruals for unbilled exclude input tax; prepayments recognize VAT when invoiced and amortize the net over service period.",
+          "rubric": [
+            {
+              "criterion": "Correct accrual/deferral postings per item with appropriate accounts and dates",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct VAT treatment and justification per local rule for each item",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct reversal/release timing (07/01 for accruals; monthly deferral for prepaid)",
+              "marks": 1
+            },
+            {
+              "criterion": "Clarity connecting postings to compliance and minimization of July corrections",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SAP FI",
+            "Period close",
+            "General ledger"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Marketing runs an internal order IO-MKTG to collect campaign costs, then settle to CC-SALES monthly. Data:\n```text\nOrder type: ZEXP (expense), Settlement profile allows periodic full settlement\nAllocation structure AS01 maps 600000-699999 to receiver CC\nActuals on IO-MKTG (June):\n  610100 Media spend           90,000\n  741200 Internal services     15,000\n  650500 Agency fees           30,000\nSettlement rule: 100% to CC-SALES (receiver OK)\nKO88 run shows: Settled 120,000; Residual 15,000\n```\nController asks why a residual remains and how to fix it before close.",
+          "task": "Diagnose the root cause from the artefact and propose concrete corrective steps to achieve zero balance on IO-MKTG for June, without changing the business intent. Include any config/data changes and the sequence of reruns required.",
+          "expected_answer": "Root cause: Cost element 741200 (internal services) is outside the allocation structure mapping (600000-699999). Those secondary/other cost elements are not assigned for settlement, so they remain as residuals.\nFix: Extend AS01 to include 741200 (either by widening the range or adding a group) and assign it to receiver CC-SALES. If 741200 is a secondary CE and policy is not to settle secondary costs, repost it first to a mapped primary CE on the order using reposting (KB11N) or assess from the cost center rather than book to the order. Then re-run KO88 for June. Verify IO actual balance = 0 and receiver CC reflects the full 135,000 if policy allows settling that element, or 120,000 with the 15,000 handled via CO allocation if not.",
+          "rubric": [
+            {
+              "criterion": "Identifies unmapped cost element 741200 as the driver of the residual",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes a correct configuration/data remedy (extend allocation structure and/or repost/assess)",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies an execution sequence (adjust mapping/repost, then re-run KO88)",
+              "marks": 1
+            },
+            {
+              "criterion": "States the expected zero-balance outcome on the order and impact on receiver",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "internal orders",
+            "SAP CO",
+            "Cost centres"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "In June, CC100 was reassigned from PC-A to PC-B on 06/15. Actuals:\n```text\n06/01 640100 Utilities   10,000  (posted to CC100 -> PC-A)\n06/20 640100 Utilities    5,000  (posted to CC100 -> PC-B)\nAssessment KSU5 (CE 930000) from CC-ADM (PC-A) to CC100 ran on 06/30 for 8,000.\nProfit center P&L shows 18,000 on PC-A and 5,000 on PC-B, which management disputes.\n```\nThey want all June utilities for CC100 on PC-B for reporting, with a clean audit trail.",
+          "task": "Recommend and justify a correction approach to achieve management’s reporting aim without violating accounting principles. Choose between profit center realignment, repostings, or leaving as-is with explanatory schedules. Detail the steps, impacts on FI vs CO, and controls you would apply.",
+          "expected_answer": "Two compliant approaches:\n1) Profit center realignment (PCA/realignment tool) for FI primary postings dated 06/01 on CC100 from PC-A to PC-B. This preserves original documents and creates realignment records moving profit center attribution without changing amounts, supporting reporting on PC-B. Assessments (secondary costs) should also be realigned to PC-B for CC100 to keep CO/FI views consistent if tooling supports it.\n2) Manual FI reposting (FB50/FB01 with document splitting/profit center in line items) to move the 10,000 from PC-A to PC-B with clear reference to the original document; then reverse the assessment or re-assess so secondary costs align with the new PC. This changes FI balances and requires strict documentation and approvals.\nJustification: Master data is not retroactive; adjustments must be explicit. Controls: approval workflow, cross-check CO/FI tie-out post-adjustment, lock further postings, and maintain an audit trail mapping original doc numbers to adjustments. If policy forbids moving posted profit center on primary costs, leave as-is but add a management reporting adjustment schedule; document the variance and root cause.",
+          "rubric": [
+            {
+              "criterion": "Selects a valid method (realignment or reposting) and rejects retroactive master-data-only fixes",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes concrete steps and how they impact FI vs CO (primary vs secondary costs)",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses controls/audit trail to keep the adjustment compliant and traceable",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "profit centres",
+            "General ledger",
+            "SAP CO"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Author a production-grade month-end Close Checklist (Bank, Tax, Accruals, Closing Tasks)",
+          "brief": "Design the actionable checklist your team will use to close a period covering bank reconciliation/EBS, tax awareness steps, accruals, and closing tasks. It must be execution-ready (owners, T-codes/reports, inputs/outputs, dependencies, evidence required) and sequenced to avoid rework.",
+          "deliverable": "Close checklist",
+          "acceptance_criteria": [
+            "Submitted as a single file (CSV/XLSX/PDF) with at least these columns: ID, Task name, Module (Bank/Tax/Accrual/Close), SAP T-code/Report, Prerequisites, Inputs, Steps, Outputs, Owner/Role, Due day (relative to WD), Frequency, Controls, Evidence artifact filename, Completion check.",
+            "Includes concrete SAP artefacts for each task (e.g., FEBAN for EBS exceptions, FBL3N/BSI for GL, FAGL_FCV or valuation steps if used, FAGL\na03/Accrual Engine or FB50 accrual JV, KSU5/KSII/KO88 for CO period end checks).",
+            "Sequenced dependencies are explicit (e.g., run EBS import before GL reconciliation; run assessments before settlement where receivers are orders; run reconciliations after allocations and settlements).",
+            "Bank section covers: EBS import, unmatched items handling, bank fee posting, value-date policy, bank-to-GL reconciliation with tie-out math.",
+            "Tax section covers: rule on input VAT for unbilled, tax code review for period, tax report extraction (e.g., RFUMSV00) and review timing.",
+            "Accruals section covers: criteria for accrual vs deferral, reversal dates, sample entries, and sign-off.",
+            "Closing tasks section covers: CO allocations/settlements, CO-FI reconciliation review, open-item reviews (GR/IR, bank clearing), error handling, and period close steps (OB52/period variant referencing without config screenshots).",
+            "Each task row lists a concrete evidence artifact (report export/screenshot name) that an assessor can open to verify completion.",
+            "Checklist includes at least 20 tasks spanning all four areas and clearly marks the critical path."
+          ],
+          "rubric": [
+            {
+              "criterion": "Coverage and correctness across Bank, Tax, Accruals, and Closing Tasks (minimum 20 tasks)",
+              "marks": 6
+            },
+            {
+              "criterion": "Accurate sequencing and dependencies that prevent rework or residuals",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and actionability (owners, T-codes/reports, inputs/outputs)",
+              "marks": 4
+            },
+            {
+              "criterion": "Evidence-driven controls (named artifacts per task; tie-out math where applicable)",
+              "marks": 3
+            },
+            {
+              "criterion": "Professional presentation and completeness (one coherent document)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Period close",
+            "SAP FI",
+            "General ledger",
+            "SAP CO"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build an end-to-end FI–CO integration case with cost centers, profit centers, and an internal order",
+          "brief": "In a sandbox or as a documented dry-run, execute an end-to-end flow showing how costs move from vendor invoice to internal order, get allocated/settled to a final cost center, and appear in profit center reporting. Include a period-end accrual and show that tax handling and FI–CO views reconcile.",
+          "deliverable": "End-to-end finance case",
+          "acceptance_criteria": [
+            "Submit a single zipped folder or PDF containing: (1) scenario narrative with org data, (2) master data sheet (CC, PC, IO with assignments and dates), (3) posting log with document numbers/dates/amounts, (4) period-end run log (allocations/settlements), (5) report exports.",
+            "Transactions included: one AP vendor invoice with tax posted to IO (primary CE), one manual month-end accrual reversed next month, one CO allocation (assessment or reposting) that touches the IO or the sending CC, and KO88 settlement of the IO to a final CC.",
+            "Provide four exhibits that tie numerically: (A) FI document for vendor invoice showing base and tax, (B) IO actuals report before and after settlement with zero residual, (C) receiver cost center actuals reflecting the settled amount, (D) profit center P&L showing where the cost ultimately resides.",
+            "Demonstrate VAT handling: show that input VAT from the invoice does not flow into CO cost totals and that the unbilled accrual (if any) excludes VAT and reverses on day 1 of the next period.",
+            "Include a reconciliation table that proves: Invoice base amount = IO actuals pre-settlement = Amount settled to CC = Profit center final cost (within rounding). Residual on IO at period-end must be 0.00.",
+            "All artefacts are legible exports or screenshots with dates; calculations are reproducible by an assessor using only the submission."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of the end-to-end flow (AP with tax, accrual with reversal, CO allocation/settlement)",
+              "marks": 6
+            },
+            {
+              "criterion": "Numerical tie-out across FI and CO with zero residual on the order and consistent PC reporting",
+              "marks": 6
+            },
+            {
+              "criterion": "Correct handling and documentation of VAT and its exclusion from CO cost flow",
+              "marks": 3
+            },
+            {
+              "criterion": "Quality and clarity of artefacts (master data, logs, reports) enabling independent verification",
+              "marks": 3
+            },
+            {
+              "criterion": "Cohesive narrative linking steps, controls, and outcomes",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "SAP FI",
+            "SAP CO",
+            "internal orders",
+            "Cost centres",
+            "profit centres",
+            "General ledger",
+            "Period close"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

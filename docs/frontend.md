@@ -62,26 +62,27 @@ Production does not use this proxy at all: CloudFront serves `dist/` from S3 and
 
 ```text
 frontend/
-├── index.html              # app shell; pre-paint theme script + Google Fonts
+├── index.html              # app shell; Google Fonts (no theme script — one theme)
 ├── vite.config.js          # dev server port + /api proxy
 ├── tailwind.config.js      # semantic colour aliases, type scale, two radii
 ├── postcss.config.js
 ├── dist/                   # build output (synced to S3, served by CloudFront)
 └── src/
     ├── main.jsx            # ReactDOM.createRoot -> <App />, imports index.css
-    ├── App.jsx             # ALL routes + ProtectedRoute / PublicRoute wrappers
+    ├── App.jsx             # ALL routes + ProtectedRoute / PublicRoute / ExamRoute wrappers
     ├── index.css           # design tokens, the colour contract, shared component classes
     ├── context/
-    │   ├── AuthContext.jsx
-    │   └── ThemeContext.jsx               # light | dark | system
+    │   └── AuthContext.jsx
     ├── components/
     │   ├── ui/                            # the design system (~25 primitives)
+    │   ├── motion/                         # CountUp, ProgressRing, Reveal,
+    │   │                                   # Celebration, XpBar, BadgeShelf, Leaderboard
+    │   ├── QuestionContent.jsx             # restricted markdown + lowlight for question text
     │   ├── Navbar.jsx
-    │   ├── ThemeToggle.jsx
     │   ├── CreateProjectModal.jsx
     │   ├── ResumeUploadModal.jsx
     │   └── ResumeViewerModal.jsx
-    ├── hooks/              # useSubmit, useFocusTrap, useBodyScrollLock
+    ├── hooks/              # useSubmit, useFocusTrap, useBodyScrollLock, useReducedMotion
     ├── lib/                # cn, storage, format, apiError
     ├── pages/
     │   ├── LoginPage.jsx
@@ -128,6 +129,22 @@ Two wrappers, both defined in `App.jsx`:
 
 - **`ProtectedRoute`** — renders a loading screen while the auth context rehydrates, redirects to `/login` when unauthenticated, otherwise renders `<Navbar />` plus the page inside `<main>`. Note the Navbar is rendered per route rather than as a layout route.
 - **`PublicRoute`** — redirects an already-authenticated visitor to `/`.
+
+### The exam route has no shell
+
+`ProtectedRoute` wraps every page in `AppLayout` — a fixed nav rail and a sticky
+top bar. **`ExamRoute` does not.** A sitting renders full-bleed: header, footer and
+divider rules run edge to edge, with a question palette rail on the right and no
+app navigation at all. Authentication is identical; only the chrome differs.
+
+Two reasons, both about the test rather than the layout: a sidebar full of links is
+an invitation to wander off mid-question on a clock that only grades once, and the
+stems here are frequently 30+ lines of SQL or Java that read far better with the
+whole viewport than in a column beside a 15rem rail. The exam header carries an
+explicit **Exit** that confirms first, because the clock keeps running.
+
+The question itself is not a card — no border, no radius, no panel background. The
+options keep their borders because they are controls; the question is content.
 
 ### Adding a page
 
@@ -220,29 +237,98 @@ rather than a redirect to login.
 
 ## Styling Conventions
 
-Light and dark, driven by `data-theme` on `<html>` (see `ThemeContext` + the
-pre-paint script in `index.html`). All colour, elevation and radius comes from CSS
-custom properties defined once in `src/index.css` and exposed to Tailwind through
-`tailwind.config.js`. `index.html` loads Plus Jakarta Sans only.
+**One theme: Solarized Dark.** There is no light mode, no toggle, no
+`ThemeContext` and no pre-paint script — tokens sit on a bare `:root` in
+`src/index.css` and `color-scheme: dark` is declared once. A colour choice is
+therefore never "which theme is this legible in". `index.html` loads Plus Jakarta
+Sans only.
 
 ### The colour contract
 
 This is the rule that keeps the UI from drifting back into a template, and it is
-repeated at the top of both `src/index.css` and `src/lib/cn.js`:
+stated in full at the top of `src/index.css`:
 
-> `brand` (indigo) is the **only** decorative colour — identity, selection, primary
-> action, links, model-generated content. `success` / `warning` / `danger` are
+> `brand` (blue) is identity, selection, primary action, links, model-generated
+> content. `accent` (yellow) is **achievement only** — XP, levels, streaks,
+> badges, the celebration on a good score. `success` / `warning` / `danger` are
 > **state only**: legal iff the thing they label can be good, at-risk, or failed.
 > A category, a rank, a difficulty and a percentage are none of those.
 
-Concretely, this is why a match percentage renders in `text-fg` rather than green, why
-course difficulty is a neutral chip rather than a purple/amber/green traffic light, and
-why the three dashboard counters share one colour.
+Concretely: a match percentage renders in `text-fg` rather than green, course
+difficulty is a neutral chip rather than a traffic light, the dashboard counters
+share one colour — and an XP bar is yellow while a section-progress ring is blue,
+because one is earned and the other is just a number.
 
-Two structural radii: **`rounded-xl`** for any box, **`rounded-lg`** for a box nested
-inside a box, `rounded-full` for pills. `md`, `2xl` and `3xl` are deliberately absent
-from the `borderRadius` config, so `rounded-2xl` compiles to nothing rather than
-creeping back in.
+**The accent ramp is adapted, and this is the part to understand before adding a
+colour.** Solarized's hues sit at mid-luminance by design, so on `base03` they
+measure: blue 4.08, yellow 4.68, green 4.69, orange 3.26, red 3.25 — and `base01`,
+the palette's own "secondary content" colour, is 2.79. Every one of those is below
+4.5:1 for small text. So:
+
+- `*-solid` is the true Solarized hue, used for **fills and strokes** (3:1 bar).
+- `*-fg` is the hue **lifted toward `base2`** until it clears 4.5:1 on the darkest
+  *and* lightest surface it can sit on.
+- `--brand-solid` is blue lifted 12%, so `base03` text on a filled button reaches
+  4.65:1 — dark-on-blue, the Solarized way round for a filled control.
+- Subtle chip backgrounds are **one neutral for every hue**. Blending yellow or red
+  into a teal ground makes mud (warning came out `rgb(46,58,57)`, indistinguishable
+  from grey), so the hue is carried by text and border instead.
+
+Gradients are permitted on **earned surfaces only** — a result hero, an XP bar, a
+level ring. Not on cards, not on nav, not behind body copy.
+
+Three structural radii: **`rounded-xl`** for any box, **`rounded-lg`** for a box
+nested inside a box, **`rounded-2xl`** for the large presentation surfaces the
+celebration lives on, `rounded-full` for pills. `md` and `3xl` are deliberately
+absent from the `borderRadius` config, so `rounded-md` compiles to nothing rather
+than creeping back in — which is exactly how two square-cornered controls shipped
+before being caught.
+
+### Motion
+
+Nine animations and two easing curves (`ease-enter` for anything entering,
+`ease-spring` for anything confirming), all defined in `tailwind.config.js` and all
+covered by the `prefers-reduced-motion` block in `src/index.css`, which flattens
+animation and transition durations globally.
+
+**Anything driven by JavaScript has to ask separately** — that media query cannot
+reach a `requestAnimationFrame` tween. `useReducedMotion` is how `CountUp` and
+`Celebration` ask; both render their end state instantly when it returns true.
+
+`Celebration` is a dependency-free canvas confetti burst. Its velocities are a
+**fraction of the container**, not a pixel count: fixed pixel speeds work in a
+full-window burst and fail completely in a 219px result card, where every piece
+cleared the top edge inside 0.3s and the remaining 2.3s animated an empty canvas.
+
+### Question text: `QuestionContent`
+
+1,495 of the corpus's 1,600 MCQs carry a fenced code or data artefact, so question
+text is restricted markdown: fenced blocks with a language label, single-backtick
+identifiers, plain paragraphs. Nothing else is expected — the generator is held to
+that contract — but anything outside it still renders rather than being dropped.
+
+Highlighting is **lowlight directly, not `rehype-highlight`**, and the reason is
+measured: `rehype-highlight` statically imports lowlight's `common` bundle (~35
+grammars) whether you pass it a language list or not, so a list can only add.
+
+| | bundle |
+|---|---|
+| baseline, no markdown | 353 KB |
+| + react-markdown / remark-gfm | 530 KB |
+| + rehype-highlight | 708 KB |
+| + an 18-language list on top | 779 KB |
+| **lowlight, 18 grammars registered** | **625 KB** |
+
+The corpus uses 29 fence languages; 18 have grammars here. The other eleven —
+`text` (1,249 blocks of ledger extracts and report output), `dax`, `powerquery`,
+`csv`, `vba`, `terraform` — render as plain monospace with indentation intact.
+
+A hand-written 10-line hast→React walk renders the tokens rather than
+`dangerouslySetInnerHTML`, so escape correctness on 2,560 generated strings is not
+a highlighter's responsibility. Verified: all 20,225 strings in the corpus render
+without a throw, and 22 hostile inputs (unclosed fences, a 200,000-character line,
+a 1.8MB document, NUL bytes, `<script>`, `javascript:` URLs) neither throw nor
+inject.
 
 ### Shared classes in `src/index.css`
 

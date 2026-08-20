@@ -26,6 +26,17 @@ Authorization: Bearer <token>
 
 The token comes from `register` or `login`. Missing or malformed → `401 {"error": "authorization token required"}`; expired → `401 {"error": "token expired"}`; invalid signature → `401 {"error": "invalid token"}`.
 
+### Database pressure is a 503, not a 500
+
+Two failures are reported as `503` with a `Retry-After` header and `"retryable": true` in the body, because both are transient and the request itself was fine:
+
+| Cause | Body | Retry-After |
+|---|---|---|
+| Connection pool exhausted under load | `The server is busy. Your request was not lost — try again in a moment.` | `2` |
+| Neon compute waking, or the connection dropped | `The database is waking up. Your request was not lost — try again in a moment.` | `3` |
+
+This matters to any client: a `500` means "this request is broken, do not retry", so a caller that believed it would discard work that nothing was wrong with. Measured at 64 concurrent sittings, the pool (`pool_size: 1, max_overflow: 2` — correct for Lambda, where concurrency comes from more invocations) produced 40 of these. Only `POST .../answers` retries automatically, because it is the one request where giving up costs a student a graded answer.
+
 Authentication alone is not the whole check. Every id in this API is a UUID in a URL, and UUIDs travel — they show up in the UI, in logs and in shared links — so each route also verifies that the row belongs to the caller (`backend/api/guards.py`):
 
 - A project, resume, student or recommendation belonging to **another** student returns **`404`, not `403`**. A 403 would confirm the id exists, which is the one thing an enumerating caller wants.
@@ -40,6 +51,8 @@ Authentication alone is not the whole check. Every id in this API is a UUID in a
 4. [Project Management API (`/api/projects`)](#4-project-management-api-apiprojects)
 5. [Resume Parsing & Skill Extraction API (`/api/resumes`)](#5-resume-parsing--skill-extraction-api-apiresumes)
 6. [Recommendation Engine API (`/api/recommendations`)](#6-recommendation-engine-api-apirecommendations)
+7. [Assessment API — sittings (`/api/projects/.../sittings`)](#7-assessment-api--sittings)
+8. [Achievements API (`/api/achievements`)](#8-achievements-api-apiachievements)
 
 ---
 
@@ -628,3 +641,146 @@ Retrieves the list of recommended courses targeting the skill gaps for a specifi
     ]
   }
   ```
+
+
+---
+
+## 7. Assessment API — sittings
+
+A **sitting** is one run at a section's questions, from Start to Submit. Every route is scoped to a project the caller owns; a sitting id belonging to another project returns `404`.
+
+**Only MCQs are served.** A section's 4 scenarios and 2 practical tasks exist in `course_section_questions` and are worth 70 of its 100 marks, but they need a human to mark and the system has no assessor role — so a sitting is scored out of the MCQ total (30) and `marks_available` states that on the row.
+
+### **POST /api/projects/<project_id>/sections/<section_code>/sittings**
+Start a sitting, or hand back the one already open.
+- **Body**: `{"mode": "graded" | "practice", "restart": false}` — `mode` defaults to `graded`.
+- **Response (201 Created)** — a new sitting:
+  ```json
+  {
+    "sitting": {
+      "sitting_id": "8fd8a924-af1e-473e-af3b-8608d7abe794",
+      "project_id": "15f70153-ab03-4fba-8518-0bff41ae1053",
+      "section_code": "NT-C-023-S01",
+      "mode": "graded",
+      "status": "in_progress",
+      "time_limit_seconds": 1200,
+      "seconds_remaining": 1200,
+      "marks_awarded": null,
+      "marks_available": 30,
+      "started_at": "2026-08-20T02:18:14.221031",
+      "submitted_at": null
+    },
+    "resumed": false
+  }
+  ```
+- **Response (200 OK)** — a graded sitting was already open, so this is *continue previous attempt*. Identical shape with `"resumed": true`.
+- **`"restart": true`** DELETES the unsubmitted sitting and its answers and starts fresh — this is *start new*, and it cannot be undone.
+- **409** if the section's graded sitting is already submitted (`start a practice sitting instead`) or if the previous attempt expired and was auto-submitted. The response includes the existing `sitting`.
+- **404** if the section code has no questions.
+
+**One graded sitting per section, ever.** A unique index enforces it, which is what makes the score final: a second graded row cannot be inserted, so nothing can overwrite the first. At most one *open* practice sitting exists at a time; submitted practice runs accumulate as history.
+
+### **GET /api/projects/<project_id>/sittings/<sitting_id>**
+The paper as this sitting presents it, plus whatever has been answered.
+- **Response (200 OK)**:
+  ```json
+  {
+    "sitting": { "...": "as above" },
+    "questions": [
+      {
+        "position": 1,
+        "question_id": "c1bfdf84-73be-40a0-ae20-0764b79ddc7e",
+        "stem": "Given a table:\n\n```sql\nCREATE TABLE person(...)\n```\nWhich rows are returned?",
+        "options": ["...", "...", "...", "..."],
+        "marks": 3,
+        "answered_option": "B"
+      }
+    ]
+  }
+  ```
+- **Question and option order are shuffled per sitting**, and nothing about the ordering is stored: both are a deterministic SHA-256 permutation of `sitting_id`, so a reload, another device and a later review all recompute the identical layout. The correct option is dealt from a balanced pool, so every sitting still gets exactly 3/3/2/2 across its ten questions.
+- **`correct_option` and `explanation` are absent** for a graded sitting in progress — the server withholds them, so the client has nothing to leak. They appear once the sitting is `submitted`, and immediately per answered question in `practice` mode.
+
+### **POST /api/projects/<project_id>/sittings/<sitting_id>/answers**
+Record or revise answers. Accepts a batch; the whole batch commits once.
+- **Body**: `{"answers": [{"question_id": "...", "selected_option": "A"}]}` — max 50 per request.
+- **`selected_option` is the letter the student SAW.** The server maps it back through the sitting's shuffle; a client-supplied mapping is never accepted, because a client that could send one could mark itself correct.
+- **Response (200 OK)**: `{"sitting": {...}, "saved": 1}`. In `practice` mode a `results` array is also returned, carrying `is_correct`, the displayed `correct_option`, `explanation` and `distractor_rationale`. A graded sitting returns no verdict at all.
+- **409** if the sitting is `submitted` (cannot be changed) or `paused` (resume first).
+- **400** for a repeated `question_id` in one batch, an option outside `A–D`, or a malformed body. **404** if the question is not in this sitting.
+- **This is the only endpoint the frontend retries** — twice, on `503`/`429`/no-response. Safe by construction: a save is an upsert on `(sitting_id, question_id)`.
+
+### **POST /api/projects/<project_id>/sittings/<sitting_id>/pause**
+Stops the clock and banks the remaining seconds. `409` unless the sitting is `in_progress`.
+
+### **POST /api/projects/<project_id>/sittings/<sitting_id>/resume**
+Restarts the clock. `409` if the sitting is not `paused`, or if no time remains (the message distinguishes the two).
+
+### **POST /api/projects/<project_id>/sittings/<sitting_id>/submit**
+Closes the sitting and locks its score.
+- **Response (200 OK)**: `{"sitting": {...}, "answered": 6, "total_questions": 10}` — the sitting now has `status: "submitted"`, a `submitted_at`, and a `marks_awarded` that will never change.
+- Unanswered questions score nothing rather than blocking the submit.
+- **409** if already submitted.
+
+**The clock is enforced server-side, lazily.** `seconds_remaining` is only current as of the last pause; while a sitting runs, the elapsed time is subtracted by the database in the same query that reads the row. Every route resolves the clock first and **auto-submits an expired sitting**, so expiry applies the moment anyone asks and no sweeper process is needed.
+
+### **GET /api/projects/<project_id>/progress**
+Per-section state — what the syllabus button should say.
+- **Response (200 OK)**:
+  ```json
+  [
+    {
+      "section_code": "NT-C-023-S01",
+      "graded_status": "submitted",
+      "marks_awarded": 27,
+      "marks_available": 30,
+      "submitted_at": "2026-08-20T02:10:02.114900",
+      "open_practice_sitting_id": null,
+      "practice_runs": 2
+    }
+  ]
+  ```
+- **Sections the student has not touched are absent**, not returned with zeros. The syllabus already knows every section, and inventing rows would make "not started" indistinguishable from "scored nothing". Absent → **Start**, `in_progress`/`paused` → **Continue or start new**, `submitted` → **Practice**.
+
+---
+
+## 8. Achievements API (`/api/achievements`)
+
+XP, levels, streaks, badges and the leaderboard. **Everything is derived from submitted sittings on request** — there are no achievement tables and nothing to backfill, so a section submitted a second ago already counts.
+
+**The XP rule**, stated once: a submitted **graded** sitting earns its marks (0–30) plus a flat **20** for clearing the section; a submitted **practice** sitting earns **5**, once per section however many times it is run. Practice is unlimited by design, so XP that scaled with it would be farmable. Graded sittings are capped at one per section, so the total is bounded by construction — 8,000 XP for the whole 160-section corpus, reaching level 13.
+
+Levels lengthen: level *n* needs `100 × n` XP, so 100 / 300 / 600 / 1000 cumulative.
+
+### **GET /api/achievements**
+Always the caller's own, taken from the token. There is deliberately no id in the path.
+- **Response (200 OK)**:
+  ```json
+  {
+    "xp": 175,
+    "level": 2,
+    "xp_into_level": 75,
+    "xp_for_level": 200,
+    "streak": 4,
+    "longest_streak": 4,
+    "sections_submitted": 4,
+    "courses_completed": 1,
+    "marks_total": 90,
+    "badges": [
+      {
+        "code": "perfect_section",
+        "name": "Perfect 30",
+        "icon": "💯",
+        "criterion": "Score 30/30 in one section",
+        "earned": true
+      }
+    ]
+  }
+  ```
+- **Streaks count active days**, practice included, computed with a gaps-and-islands query over `DATE(submitted_at)`. A run counts as *current* if it reaches yesterday — a student mid-streak who has not opened the app today has not broken it.
+- Eight badges, each carrying its own `criterion` text so the rule a student reads and the condition that awards it cannot drift.
+
+### **GET /api/achievements/leaderboard?limit=10**
+- **Response (200 OK)**: `{"entries": [{"position": 1, "xp": 175, "is_me": true}], "total_ranked": 1}`
+- **Ranks and numbers only — never names.** A named board publishes one student's academic standing to another, which cannot be unseen. The caller's own row is always included even when it falls outside the top *n*.
+- `limit` is clamped to 3–25.

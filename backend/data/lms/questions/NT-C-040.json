@@ -1,0 +1,1790 @@
+{
+  "course_code": "NT-C-040",
+  "course_name": "ServiceNow",
+  "sections": [
+    {
+      "section_code": "NT-C-040-S01",
+      "skills_assessed": [
+        "ServiceNow",
+        "User Management",
+        "Data Security"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are filtering Incidents directly via URL to show Acme Corp caller records that are not Resolved or Closed.\n\nPick the encoded query that correctly returns only Incidents whose `Caller > Company` is exactly \"Acme Corp\" and `State` is neither Resolved (6) nor Closed (7).\n\n```text\nTable: incident\nNeed: caller's company name equals \"Acme Corp\" AND state NOT IN 6,7\n```",
+          "options": [
+            "```text\ncaller_id.company.nameLIKEAcme Corp^stateIN1,2,3,4,5\n```",
+            "```text\ncaller_id.company=Acme Corp^state!=6^state!=7\n```",
+            "```text\ncompany.name=Acme Corp^stateNOT IN6,7\n```",
+            "```text\ncaller_id.company.name=Acme Corp^stateNOT IN6,7\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Dot-walking in encoded queries supports matching on a referenced field's display field (company.name). Using NOT IN excludes 6 and 7 in a single clause. A is precise and matches the requirement.",
+          "distractor_rationale": "B is tempting because it looks simpler, but `caller_id.company` expects a sys_id, not the display value; splitting into two `!=` clauses is also brittle if other states exist. C uses LIKE, which can include similar company names and changes the logic to an inclusion list of specific states rather than a true NOT IN. D drops the `caller_id.` dot-walk; `company` is not a field on incident, it is on the referenced user record.",
+          "skills_covered": [
+            "ServiceNow",
+            "Data Security"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A custom table `x_acme_case` extends `task`. One record exists on each table:\n\n```json\n{\n  \"task_list_query\": \"/task_list.do?sysparm_query=sys_idIN11111111aaaaaaaa,22222222bbbbbbbb\",\n  \"records\": [\n    {\"sys_id\": \"11111111aaaaaaaa\", \"table\": \"x_acme_case\", \"number\": \"CASE000123\"},\n    {\"sys_id\": \"22222222bbbbbbbb\", \"table\": \"change_request\", \"number\": \"CHG0034567\"}\n  ]\n}\n```\n\nWhen you open the Task list URL above, what appears and why?",
+          "options": [
+            "Both appear, but the `x_acme_case` record shows a blank number because numbering is local to the child table.",
+            "Both records appear with their own numbers, because Task lists include records from child tables in the hierarchy.",
+            "Only the `x_acme_case` appears, because extended tables shadow parent listings.",
+            "Only the `change_request` appears, because Task only shows rows directly in `task`."
+          ],
+          "correct_option": "B",
+          "explanation": "ServiceNow’s table-per-hierarchy stores a row in each table with the same sys_id. A Task list includes all descendants, so both the change request and the case records appear with their respective numbers.",
+          "distractor_rationale": "B confuses parent-table listing with physical storage; descendants are included in parent lists. C imagines a shadowing behavior that ServiceNow does not implement. D is tempting because numbers are local to children, but they still display correctly on parent lists via dot-walk to the child’s display field.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A navigation module is configured as follows and the table has a read ACL as shown.\n\n```yaml\nmodule:\n  title: My Cases\n  table: x_acme_case\n  link_type: list\n  filter: assigned_toDYNAMICMe\n  roles: [case_user]\n\nuser_Ria_roles: [itil, case_user]\n\ntable_acl:\n  x_acme_case.read:\n    requires_roles: [case_agent]\n    condition: none\n    script: none\n```\n\nWhen Ria clicks My Cases, what happens?",
+          "options": [
+            "She sees the module and the list loads with her cases.",
+            "She sees the module and an empty list (no error).",
+            "She sees the module but gets a security error instead of a list.",
+            "She does not see the module at all, but can load the list by URL."
+          ],
+          "correct_option": "C",
+          "explanation": "Module visibility uses the module’s role list (`case_user`), which Ria has. But the table read ACL requires `case_agent`, which she lacks. The list will not load and a security constraint message is shown.",
+          "distractor_rationale": "A ignores ACL enforcement on the list itself. C reverses module visibility and ACL effects; Ria can see the module, not the other way around. D is tempting if one assumes filters silently hide all data; ServiceNow denies access with a security message when read ACLs fail.",
+          "skills_covered": [
+            "ServiceNow",
+            "Data Security",
+            "User Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Consider these ACLs and a record where `active = false`.\n\n```yaml\nacls:\n  - name: x_acme_case.read\n    type: table\n    operation: read\n    requires_roles: [itil]\n    condition: none\n    script: return true;  # grants if role present\n\n  - name: x_acme_case.phone.read\n    type: field\n    field: phone\n    operation: read\n    requires_roles: []\n    condition: active=true\n    script: none\n\nuser_roles: [itil]\nrecord: {active: false}\n```\n\nCan the user read the `phone` field on this record?",
+          "options": [
+            "No. Field ACL fails, and both table and field must pass for field access.",
+            "No, unless the user also has admin.",
+            "Yes, but only via the form (not the list).",
+            "Yes. The table read ACL passes and overrides the field ACL."
+          ],
+          "correct_option": "A",
+          "explanation": "Field access requires the table read ACL and the field read ACL both to grant. The field ACL’s condition fails on `active=false`, so the field is not readable.",
+          "distractor_rationale": "B assumes table ACLs override field ACLs; they do not. C imagines different enforcement between form and list; ACLs apply to both. D adds an extra requirement not present; `admin` is irrelevant unless elevated bypass is enabled, which isn’t stated.",
+          "skills_covered": [
+            "Data Security",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Two admins changed how a list looks. The History shows:\n\n```text\n12:05 Updated sys_ui_list on x_acme_case (Default view) by admin.alex\n11:58 Inserted sys_user_preference (name=list.columns.x_acme_case) by admin.sam\n```\n\nOther users report different list columns after these changes. Whose change affected all users by default?",
+          "options": [
+            "Neither change affected all users",
+            "admin.alex only",
+            "admin.sam only",
+            "Both changes affected all users"
+          ],
+          "correct_option": "B",
+          "explanation": "Updating `sys_ui_list` changes the configured list layout for that table/view for all users (unless a personal override exists). A `sys_user_preference` affects only the admin who set it (a personal list column choice).",
+          "distractor_rationale": "B confuses personal preference with global config. C overstates impact; personal preferences don’t affect others. D ignores that `sys_ui_list` is global.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A table and field ACL interact as below.\n\n```yaml\nx_acme_case.read (table)\n  requires_roles: [case_user]\n  script: return true;\n\nx_acme_case.internal_notes.read (field)\n  requires_roles: []\n  script: (function(){ return current.sensitive != true; })();\n\nuser_roles: [case_user]\nrecord.sensitive: true\n```\n\nWhat is the visibility of `internal_notes` for this user on this record?",
+          "options": [
+            "Hidden; field ACL denies even though table ACL grants.",
+            "Visible only on the form, hidden on the list.",
+            "Visible; table ACL grant is sufficient.",
+            "Visible but read-only."
+          ],
+          "correct_option": "A",
+          "explanation": "For field access, both the table ACL and the specific field ACL must grant. The field ACL script returns false when `sensitive` is true, so the field is hidden.",
+          "distractor_rationale": "B adds a read-only state that’s not supported by the shown ACLs. C repeats the misconception that table grants override field checks. D invents a difference between list and form; ACL behavior is consistent.",
+          "skills_covered": [
+            "Data Security"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "On the Incident list you added column `Caller > Company`. You right‑click a value in that column and choose \"Show Matching\". The chosen row has `Caller.Company` with sys_id `9f9f...c0f` and name \"Acme Corp\".\n\nWhich encoded clause is added to the filter?",
+          "options": [
+            "```text\ncompany=9f9f...c0f\n```",
+            "```text\ncaller_id.company=9f9f...c0f\n```",
+            "```text\ncaller_id.company.name=Acme Corp\n```",
+            "```text\ncaller.company=Acme Corp\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Show Matching on a dot‑walked column filters by the referenced field’s sys_id. The correct dot‑walk root is `caller_id.company` and the value is the company’s sys_id.",
+          "distractor_rationale": "B is close but uses the display value; Show Matching uses sys_id for precision. C drops the root `caller_id.`; Incident has no direct `company` field. D uses an incorrect field name (`caller` vs `caller_id`) and a display value.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You start with this Incident list filter and then Ctrl+click a row’s Priority=2 to OR it with Priority=1.\n\n```text\nInitial breadcrumbs: State=In Progress ^ Priority=1\nResulting breadcrumbs: ?\n```\n\nWhich encoded query matches the resulting breadcrumbs?",
+          "options": [
+            "```text\nstate=2^NQpriority=1^priority=2\n```",
+            "```text\nstate=2^priority=1,2\n```",
+            "```text\nstate=2^priority=1^ORpriority=2\n```",
+            "```text\nstate=2^priority=1^priority=2\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Ctrl+clicking a value adds an OR clause for that same field. ServiceNow encodes this as `priority=1^ORpriority=2` alongside the existing `state=2`.",
+          "distractor_rationale": "B is invalid encoding; you must use OR to combine values for the same field. C is an AND of two mutually exclusive values. D uses `NQ`, which starts a new query (OR across groups), not a same-field OR.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You impersonate user `itil.user` and update a record. After saving, what does the `sys_updated_by` on that record contain?\n\n```text\nBefore: you are logged in as admin\nAction: Impersonate 'itil.user' and change Short description\nAfter: check sys_updated_by\n```",
+          "options": [
+            "admin",
+            "system",
+            "admin (impersonating itil.user)",
+            "itil.user"
+          ],
+          "correct_option": "D",
+          "explanation": "Impersonation switches the user context. The update is attributed to the impersonated user, so `sys_updated_by` is `itil.user`.",
+          "distractor_rationale": "B looks plausible from the UI message but is not how `sys_updated_by` is stored. C assumes admin identity persists through impersonation. D confuses background/system updates with user updates.",
+          "skills_covered": [
+            "ServiceNow",
+            "User Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A module requires role `case_user`, but the table `x_acme_case` has a read ACL that allows role `itil`. A user has `itil` but not `case_user`.\n\nWhat happens if the user opens the list directly by URL?\n\n```text\n/x_acme_case_list.do\n```",
+          "options": [
+            "The list loads because ACLs allow it; module roles only control navigator visibility.",
+            "Access is denied because the module requires `case_user`.",
+            "The list redirects to the homepage.",
+            "The list loads but shows zero records due to missing module role."
+          ],
+          "correct_option": "A",
+          "explanation": "Module role restrictions govern navigator visibility. Direct URL access is controlled by table/list ACLs, which allow read for `itil` in this case.",
+          "distractor_rationale": "B conflates module visibility with data access. C imagines a silent deny; ACLs control loading, not the module role. D is not ServiceNow behavior for ACL-permitted access.",
+          "skills_covered": [
+            "ServiceNow",
+            "Data Security"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are designing access for a new custom table `x_ntp_case` (extends `task`). Requirements:\n\n- Any logged-in user can create a case.\n- Only members of group `Case Agents` can edit cases after creation.\n- All users can read their own cases; `Case Agents` can read all cases.\n- Field `internal_notes` must be visible/editable only to `Case Agents`.\n- Navigation module \"My Cases\" should be visible to any user who can at least read their own cases, and \"Agent Console\" only to `Case Agents`.\n\nCurrent org objects:\n\n```yaml\nroles:\n  - case_agent\n  - case_user\n\ngroups:\n  - Case Agents -> roles: [case_agent]\n\nusers:\n  - alice.agent -> member_of: [Case Agents]\n  - jules.user  -> member_of: []\n```\n",
+          "task": "Propose a minimal, least‑privilege ACL and role design that satisfies the requirements, including:\n- Which table and field ACLs to create (operations, roles/conditions) and how “read own” should be enforced.\n- How to configure module roles for \"My Cases\" and \"Agent Console\" without relying on them for security enforcement.\n- Any edge cases (e.g., list vs form, dot‑walked fields) that must be addressed.\nProvide clear justification for each decision.",
+          "expected_answer": "A strong answer will specify:\n- x_ntp_case.create: allow without roles (no requires_roles), no failing script/condition, so any authenticated user can create from the platform UI; security remains on read/write. Optionally add a condition like Active=true if business‑relevant.\n- x_ntp_case.read (table): grant if user has role case_agent OR user is the record creator (owner). Implement with two ACLs: one role‑based (requires_roles: [case_agent]) returning true, and one advanced script ACL with no roles that returns current.opened_by == gs.getUserID() (or matches a dedicated caller/requested_for field used by the app). Both must pass? No: within the same operation, any single granting ACL that evaluates to true is sufficient, so either path works. Justify using two separate ACLs to keep role logic independent from ownership logic.\n- x_ntp_case.write (table): requires_roles: [case_agent]; no script/condition, ensuring only agents can edit after creation.\n- x_ntp_case.internal_notes.read and .write (field): requires_roles: [case_agent]; no script/condition. Because field access requires both table and field grants, non‑agents cannot see or edit the field even on records they can read.\n- Confirm that list and form behave consistently under these ACLs; dot‑walked exposure of internal_notes is prevented by the field ACL.\n- Modules: set roles on \"My Cases\" to [case_user] and on \"Agent Console\" to [case_agent], then give users who should see My Cases the simple role case_user via their profile or a general group. Emphasize that module roles only affect navigator visibility; the x_ntp_case.read ACLs enforce security regardless of module access.\n- Optional: add a read ACL for reference tables used on list (e.g., Company) for case_agent if they need visibility to dot‑walked fields; otherwise users might see blanks due to reference table ACLs.\n- Edge cases: prevent list‑edit for fields that non‑agents should not change by either relying on the write table ACL (which blocks all writes) and adding field‑level write ACLs where needed; hide internal_notes in all views for non‑agents automatically due to ACLs, not just UI Policies.",
+          "rubric": [
+            {
+              "criterion": "Defines correct table ACLs for create, read (agent or owner), and write (agent only) with justification of evaluation semantics (any one read ACL can grant).",
+              "marks": 3
+            },
+            {
+              "criterion": "Defines correct field ACLs for internal_notes (read/write restricted to case_agent) and explains field+table grant requirement.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains module role configuration for visibility and states clearly that ACLs, not module roles, enforce security.",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses at least one edge case (e.g., dot-walked field visibility or list-edit behavior) and provides a safe handling.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Security",
+            "User Management",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "After launching your practice app, testers report that non‑agent users cannot see values under the list column `Caller > Company` on `x_ntp_case`, while agents can. The list has these columns:\n\n```text\nNumber | Short description | Caller | Caller > Company | State | Assignment group\n```\n\nExisting ACLs:\n\n```yaml\nx_ntp_case.read: grants case_agent or record owner\ncore_company.read: requires role 'sn_company_reader'\n```\n\nUsers:\n\n```yaml\nmike.user: roles: [case_user]\nalice.agent: roles: [case_agent]\n```\n",
+          "task": "Diagnose precisely why `Caller > Company` is blank for mike.user and propose a least‑privilege change so mike.user can see that column on case lists without broadly exposing Company data in other apps. Justify your recommendation, including trade‑offs.",
+          "expected_answer": "Root cause: Dot‑walked columns pull data from the referenced table (`core_company`). Field rendering honors ACLs on the referenced table. mike.user passes x_ntp_case.read but lacks read on core_company, so dot‑walked values render blank.\n\nRecommendation: Grant the minimal read permission on `core_company` to the audience who must see Company on case lists. Options:\n- Create a new role `case_company_read` and a `core_company.read` ACL that grants when the user has `case_company_read`. Assign this role only to users who need it (e.g., members given `case_user`). This avoids giving them broader roles used elsewhere.\n- If visibility should be restricted to companies actually referenced by cases, that granularity is not natively expressible without scripted ACLs. Prefer the role‑based approach and, if needed, add a condition like `active=true` on `core_company.read` to limit exposure.\n- Do not try to secure via UI Policies or list layout; they do not enforce security. Also avoid weakening `core_company.read` globally (e.g., granting to `public`).\n\nTrade‑offs: Adding a new role increases admin overhead but keeps least privilege. A scripted ACL could check referrer table context but adds complexity not yet required.",
+          "rubric": [
+            {
+              "criterion": "Accurately identifies ACL enforcement on the referenced table as the cause of blank dot‑walked values.",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a minimal role/ACL change on core_company that enables list visibility without broad exposure.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why UI tweaks are insufficient and why not to loosen global company ACLs; mentions at least one trade‑off.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Security",
+            "ServiceNow",
+            "User Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Product wants to remove Task‑specific fields (State, Assignment group) from your `x_ntp_case` app and asks you to \"detach it from Task\". Your table currently extends `task` and has hundreds of records and automation relying on `number`, `opened_by`, and timelines.",
+          "task": "Decide whether to change the parent table and explain the safest approach to meet the requirement with minimal disruption. Be explicit about what breaks if you attempt to change the parent and how to achieve the goal without changing inheritance.",
+          "expected_answer": "Do not change the parent once data and dependencies exist. Changing the parent of a table with records is unsupported/risky: it breaks sys_id continuity, inherited field data, reporting on task hierarchy, and existing references/automation that assume Task behavior (activity, SLA, assignment). Instead, keep extending Task and remove Task fields from the user experience: use Configure List/Form to drop `state` and `assignment_group` from views; add Dictionary Overrides to set default values or behavior per child; optionally make fields non‑list‑editable via dictionary attributes. This satisfies \"hide Task fields\" without altering storage or breaking downstream features that rely on Task inheritance.",
+          "rubric": [
+            {
+              "criterion": "States clearly that changing the parent is unsafe/unsupported once populated and lists at least two concrete breakages.",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes a safe alternative using views/configuration (e.g., list/form configuration, dictionary overrides) to hide/unuse Task fields.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why keeping Task inheritance preserves numbering, activity, and reporting.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Security review flags that your \"Agent Console\" module is hidden from non‑agents, but non‑agents can still reach certain lists by bookmarking URLs. Current setup:\n\n```yaml\nmodule 'Agent Console': roles [case_agent]\nx_ntp_case.read ACL: grants case_agent OR record owner\n```\n\nSome non‑agents reported they can open `/x_ntp_case_list.do` but only see their own records.",
+          "task": "Judge whether this is a defect. Explain how module roles relate to ACLs and whether any changes are needed. If you recommend a change, specify it and justify it.",
+          "expected_answer": "Not a defect. Module roles govern navigator visibility; ACLs enforce data access. Non‑agents opening the list URL but seeing only their own records is expected based on the read ACL (agent or owner). If the intent is to prevent non‑agents from browsing the list UI entirely, add a stricter list/UI access control (e.g., create a UI page or module for owners, keep the generic list module agent‑only) or move owner access to a dedicated \"My Cases\" module with a filter. Do not weaken ACLs; rely on them to enforce record‑level security. Document that bookmarks do not bypass data security, only navigation visibility.",
+          "rubric": [
+            {
+              "criterion": "Correctly explains module role behavior vs ACL enforcement and concludes this is not a data security defect.",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes the observed behavior (owners can access list by URL but see only own records) as consistent with ACLs.",
+              "marks": 2
+            },
+            {
+              "criterion": "If recommending change, proposes a UI/navigation adjustment without weakening ACLs.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "Data Security"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Configure the Practice App (tables, navigation, layouts, sample data)",
+          "brief": "Build a minimal practice application focused on navigation, instances, tables, and records. Use a personal dev instance. Create a custom scoped app with one table `x_<yourns>_case` that extends Task, configure navigation, and populate sample data and views so an assessor can verify behaviors taught in Module 1.",
+          "deliverable": "Configured practice app",
+          "acceptance_criteria": [
+            "Application exists with a custom table `x_<ns>_case` extending `task` and an auto‑number field with prefix (e.g., CASE).",
+            "Navigation modules under the app: New Case (form), All Cases (list), My Cases (list with filter `assigned_toDYNAMICMe`).",
+            "List layout for All Cases shows exactly: Number, Short description, Caller, Caller > Company, State, Assignment group (in that order).",
+            "Two form views exist: Default (no Internal notes) and Agent (includes a Journal field named Internal notes).",
+            "At least 5 sample records exist with mixed States and Companies; at least one record assigned to you for My Cases to return results.",
+            "Encoded query hyperlink for All Cases includes no user‑specific sys_ids except dynamic Me; My Cases resolves correctly to your user when clicked.",
+            "Submission includes importable app/update set and a README with app scope, table name, module names, and two test URLs that reproduce the list filters."
+          ],
+          "rubric": [
+            {
+              "criterion": "Table and app structure correct (child of Task, numbering, fields present).",
+              "marks": 6
+            },
+            {
+              "criterion": "Navigation modules implemented with correct targets and dynamic filter for My Cases.",
+              "marks": 5
+            },
+            {
+              "criterion": "List and form configurations match acceptance order/content, including dot‑walked Caller > Company and Agent view.",
+              "marks": 5
+            },
+            {
+              "criterion": "Sample data completeness and README with verifiable URLs and scope details.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Implement and Evidence an Access Model for the Practice App",
+          "brief": "Design and implement a role/group/ACL model for your case table that enforces who can read, write, and see sensitive fields. Create at least three test users and groups and prove the model via impersonation and artefacts the assessor can import and inspect.",
+          "deliverable": "Access model",
+          "acceptance_criteria": [
+            "Roles created: case_user, case_agent (and optionally case_admin). Group 'Case Agents' has role case_agent; assign one user to this group.",
+            "ACLs on `x_<ns>_case`: read grants case_agent OR record owner; write grants case_agent; create is open (no role).",
+            "Field ACLs on `x_<ns>_case.internal_notes`: read/write require case_agent (non‑agents cannot see the field).",
+            "A minimal approach to allow `Caller > Company` visibility for agents (and optionally case users) is implemented, e.g., a dedicated role on core_company.read, demonstrated in the access matrix.",
+            "Provide an access matrix (CSV/JSON) for three users (agent, basic user, admin) covering: can open list, can read someone else’s record, can edit own record after save, sees Internal notes (Y/N).",
+            "Submission includes an XML export of ACLs (sys_security_acl), groups, roles, and role assignments, plus the access matrix file and a README with impersonation steps to reproduce checks."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct creation and assignment of roles/groups per acceptance (including Case Agents mapping).",
+              "marks": 5
+            },
+            {
+              "criterion": "Table ACLs enforce create, read (agent or owner), and write (agent only) correctly; reasoning evident in configuration.",
+              "marks": 6
+            },
+            {
+              "criterion": "Field ACLs on internal_notes correctly restrict visibility/editing; demonstrated via matrix or screenshots.",
+              "marks": 5
+            },
+            {
+              "criterion": "Referenced data visibility handled minimally and safely (e.g., company read role) and evidenced in the matrix/README.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Data Security",
+            "User Management",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-040-S02",
+      "skills_assessed": [
+        "ServiceNow",
+        "Data Quality",
+        "apply operations for an ITIL-based environment"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "An admin set a custom incident field `u_outage_cause` to read‑only at the dictionary level, then added a UI Policy to make it editable when the incident `state` is In Progress.\n\nDictionary excerpt:\n```text\nTable: incident\nField: u_outage_cause\nDictionary: Read-only = true\n```\nUI Policy (incident):\n```text\nOrder: 200\nCondition: state = In Progress\nActions:\n  - u_outage_cause: Read-only = false\n```\nAn ITIL agent opens an incident, changes state to In Progress, and tries to type in `u_outage_cause`. What happens and why?",
+          "options": [
+            "The field is editable in the Default view but not in Self Service view because view context decides precedence.",
+            "The field stays read-only; a UI Policy cannot override a dictionary-level read-only setting.",
+            "The field becomes editable immediately because the UI Policy runs client-side and overrides server defaults.",
+            "The field becomes editable only after saving once because the server re-evaluates policies on save."
+          ],
+          "correct_option": "B",
+          "explanation": "Dictionary-level read-only is enforced regardless of client-side UI Policies. UI Policies cannot make a dictionary read-only field editable.",
+          "distractor_rationale": "A: Tempting because UI Policies do run client-side, but they cannot bypass dictionary constraints. C: Sounds plausible if you think save re-evaluates, but server-side enforcement keeps it read-only both before and after save. D: View affects visibility/layout, not the authority of dictionary vs UI Policy.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider the encoded query applied to the Incident list and the sample data below.\n\nQuery:\n```text\nactive=true^priority=1^ORpriority=2^state!=7\n```\nSample data:\n```csv\nnumber,active,priority,state\nINC001,true,1,2\nINC002,true,2,2\nINC003,true,2,7\nINC004,false,1,2\n```\nWhich incidents will the list return?",
+          "options": [
+            "INC001 and INC002",
+            "INC001 only",
+            "INC001, INC002, and INC003",
+            "INC002 and INC004"
+          ],
+          "correct_option": "A",
+          "explanation": "Encoded queries split on OR into groups: (active=true AND priority=1) OR (priority=2 AND state!=7). That matches INC001 from the first group and INC002 from the second. INC003 fails state!=7, INC004 fails active=true.",
+          "distractor_rationale": "B: Assumes OR is global and ignores state!=7, wrongly including INC003. C: Includes INC004 by assuming priority=2 alone is enough and ignoring active=true. D: Treats OR as ignored, effectively requiring all AND conditions and missing the second group.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Two View Rules exist for the Incident form. User Alex has roles `itil, sn_kb_write` and opens an Incident.\n\nView Rules (sysrule_view):\n```text\nOrder: 50   | Table: incident | View: ITIL         | Condition: user has role itil = true\nOrder: 100  | Table: incident | View: Self Service | Condition: user has role itil = false\n```\nWhich view loads for Alex and why?",
+          "options": [
+            "ITIL view, because the lower order rule that matches runs first and stops evaluation.",
+            "ITIL view, but only if Alex is in the assignment group of the record.",
+            "Default view, because multiple rules cause a fallback.",
+            "Self Service view, because it is more specific to the incident table."
+          ],
+          "correct_option": "A",
+          "explanation": "View Rules are evaluated by ascending Order; the first matching rule wins. The Order 50 rule matches Alex (has itil), so the ITIL view loads.",
+          "distractor_rationale": "B: Specificity of table is the same; order decides. C: There is no fallback to Default when a matching View Rule exists. D: Assignment group does not control view selection; role and rule order do.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A team added a Data Policy and a UI Policy on Incident:\n\nData Policy (Enforce on server):\n```text\nCondition: category = Network\nField: u_affected_site -> Mandatory = true\nApplies on: Insert, Update, Import set (Run on import = true)\n```\nUI Policy (applies to Self Service view):\n```text\nOrder: 150\nCondition: category = Network\nActions: u_affected_site -> Visible = false, Mandatory = false (Reverse if false = true)\n```\nAn incident is created by inbound email with `category=Network` and no `u_affected_site`. What happens on insert?",
+          "options": [
+            "Insert succeeds but sets `u_affected_site` to null and flags a warning.",
+            "Insert is rejected; the Data Policy enforces mandatory server-side on inbound email.",
+            "Insert creates the record but immediately puts it On Hold pending user input.",
+            "Insert succeeds; UI Policy turns off mandatory before insert."
+          ],
+          "correct_option": "B",
+          "explanation": "UI Policies are client-side. The Data Policy with enforcement and Run on import set true validates server-side for email/import; missing mandatory fields reject the insert.",
+          "distractor_rationale": "A: Assumes UI Policy affects server operations; it does not. C: There is no warning-only path for enforced server-side Data Policies. D: On Hold is a process choice, not an automatic server enforcement outcome.",
+          "skills_covered": [
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A user asks for a licensed Visio install on their laptop. It needs manager approval and fulfillment by Desktop Support. Which record should you create to follow the out-of-box workflow that drives approvals and fulfillment tasks?",
+          "options": [
+            "Change (`change_request`)",
+            "Incident (`incident`)",
+            "Problem (`problem`)",
+            "Request (`sc_request` leading to `sc_req_item` and catalog tasks)"
+          ],
+          "correct_option": "D",
+          "explanation": "A software install is a service request. The correct flow is a Request (with RITM and catalog tasks), which handles approval and fulfillment appropriately.",
+          "distractor_rationale": "A: Incidents handle unplanned interruptions, not planned fulfillment. C: Problems handle root cause of recurring incidents, not individual fulfillment. D: A Change may be needed for infrastructure modifications, but not for a standard end-user software request.",
+          "skills_covered": [
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A critical database outage requires an immediate parameter change to restore service. The change model definitions are:\n```text\nStandard: Pre-approved, low risk, no CAB.\nNormal: CAB approval required before implementation.\nEmergency: Implement immediately with ECAB/manager approval and retrospective CAB/PIR.\n```\nWhich approach aligns with ITIL and OOTB workflows?",
+          "options": [
+            "Skip a change; add a task under the Incident to unblock quickly.",
+            "Use a Standard change template because the step is known and repeatable.",
+            "Raise a Normal change and wait for the next CAB.",
+            "Raise an Emergency change, obtain ECAB/manager approval quickly, implement, then hold a post-implementation review."
+          ],
+          "correct_option": "D",
+          "explanation": "Emergency changes exist for urgent fixes to restore service. They allow expedited approval and retrospective governance.",
+          "distractor_rationale": "A: Waiting for CAB prolongs outage. C: Standard changes are pre-authorized only for low-risk, well-proven activities. D: Skipping the change record violates change control and auditability.",
+          "skills_covered": [
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A UI Policy on Incident uses a dot-walked condition:\n```text\nCondition: caller_id.company = \"Acme Corp\" AND category = \"Hardware\"\nAction: location -> Mandatory = true\n```\nTwo records are opened:\n```csv\nnumber,caller (company),category,location\nINC101,John Smith (Acme Corp),Hardware,<empty>\nINC102,Ana Patel (Globex),Hardware,<empty>\n```\nOn form load, where does `location` become mandatory?",
+          "options": [
+            "Neither record",
+            "INC102 only",
+            "INC101 only",
+            "Both INC101 and INC102"
+          ],
+          "correct_option": "C",
+          "explanation": "The condition requires both company=Acme Corp and category=Hardware. Only INC101 meets both; INC102 fails the company check.",
+          "distractor_rationale": "B/C: Misread dot-walked condition as checking either attribute or only category. D: Ignores that INC101 clearly meets both conditions.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "An admin adds `Assignment group` to the global Incident list layout. Agent Mia had previously personalized her Incident list to hide `Assignment group`.\n\nAction log:\n```text\nT0: Mia personalizes list to hide Assignment group.\nT1: Admin updates global List Layout to add Assignment group.\nT2: Mia reloads the list.\n```\nWhat does Mia see at T2?",
+          "options": [
+            "She still doesn't see Assignment group because her personal layout overrides the global layout.",
+            "She sees duplicate Assignment group columns until she resets personalizations.",
+            "She now sees Assignment group because global layout overwrites personalizations on reload.",
+            "She gets an error and her list reverts to the global default."
+          ],
+          "correct_option": "A",
+          "explanation": "User personalizations override global list layout. Mia will not see the column until she reset/personalizes to include it.",
+          "distractor_rationale": "B: Global layouts don't overwrite user personalizations. C: Duplicates don't occur because the personalized layout hides the column entirely. D: No error occurs; list rendering honors the user's config.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A Request Item (RITM) has one open Catalog Task. The approver rejects the RITM. OOTB behavior is:\n```text\nApproval: Rejected\nOpen catalog task(s): 1\n```\nWhat happens next to the RITM and its task?",
+          "options": [
+            "RITM stays Open; task auto-cancels.",
+            "RITM moves to Closed Incomplete; open catalog task is canceled.",
+            "RITM moves to Closed Complete; task remains open for audit.",
+            "Both RITM and task remain open until an agent manually closes them."
+          ],
+          "correct_option": "B",
+          "explanation": "Out of box, a rejected RITM is Closed Incomplete and any open catalog tasks are canceled to stop fulfillment.",
+          "distractor_rationale": "A: Closed Complete implies successful fulfillment. B: Leaving the RITM open after rejection conflicts with the approval decision. D: Manual closure is not required for this path OOTB.",
+          "skills_covered": [
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two Incident UI Policies interact on the `close_code` field:\n```text\nPolicy A\nOrder: 50\nCondition: always true for users without itil\nAction: close_code -> Visible = false, Mandatory = false\n\nPolicy B\nOrder: 100\nCondition: state = Resolved\nAction: close_code -> Visible = true, Mandatory = true (Reverse if false = true)\n```\nAn ITIL agent sets state to Resolved while using the Self Service view (impersonation). What happens on submit?",
+          "options": [
+            "Save succeeds even if `close_code` is empty because Policy A hides it.",
+            "The field becomes visible but not mandatory due to Reverse if false.",
+            "Save is blocked until `close_code` is filled; Policy B runs later and makes it visible and mandatory.",
+            "The form shows a hidden-mandatory error because policies conflict."
+          ],
+          "correct_option": "C",
+          "explanation": "UI Policies run by ascending order; later rules can override earlier ones. With state=Resolved, Policy B sets the field visible and mandatory, so save is blocked until it's filled.",
+          "distractor_rationale": "A: Ignores policy order and the later mandatory action. C: Hidden-mandatory occurs when a field is mandatory and hidden; here it's made visible. D: Reverse if false simply reverts the action when the condition is false; it doesn't remove mandatory when true.",
+          "skills_covered": [
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Self-Service users report: \"The following mandatory fields are empty: Close notes\" when submitting an Incident form. Current config:\n```text\nData Policy (server-enforced): when state = Closed -> close_notes Mandatory = true (Run on import = true)\nUI Policy (Self Service view): always hide close_notes (Visible = false; Reverse if false = true)\nUI Policy (all views): when state = Closed -> close_notes Visible = true, Mandatory = true (Order = 200)\n```\nSome users still see the error and cannot submit; others can. You must stop the error while keeping data quality at closure.",
+          "task": "Diagnose the root cause and propose a configuration-only fix that works across Default and Self Service views. Specify the exact changes (policy orders, conditions, and any state transitions or view rules) and justify why they prevent hidden-mandatory errors without weakening closure data quality.",
+          "expected_answer": "Hidden-mandatory errors arise when a server- or client-side rule makes a field mandatory while another policy hides it. Here, the Data Policy mandates close_notes at state Closed for any insert/update (including Self Service). The Self Service UI Policy hides close_notes unconditionally, so when a user changes state to Closed in Self Service, the server requires a value that the client hides. Fixes: 1) Ensure users without itil cannot set incidents directly to Closed in Self Service. Implement a View Rule to load Self Service for roleless users and remove Closed from the State choice list for that view via a UI Policy (or UI action restriction). 2) Modify the Self Service UI Policy to conditionally hide close_notes only when state != Closed, and set Order lower than the closure policy (e.g., hide policy at 100; closure policy at 200) so the closure policy wins when state=Closed, making close_notes visible and mandatory. 3) Keep the Data Policy as-is to enforce server-side quality. Outcome: In Default view (agents), close_notes is shown and mandatory at Closed. In Self Service, users cannot choose Closed; if they reach Resolved -> Closed via agent, the field is visible/mandatory so no hidden-mandatory occurs.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies hidden-mandatory conflict between Data Policy and Self Service UI Policy",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes conditional visibility for close_notes tied to state and correct UI Policy ordering",
+              "marks": 2
+            },
+            {
+              "criterion": "Prevents end users from setting state=Closed in Self Service (e.g., remove choice or restrict action)",
+              "marks": 2
+            },
+            {
+              "criterion": "Preserves server-side Data Policy enforcement and explains why this keeps data quality intact",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Operations complain a saved list filter returns too many incidents. Current filter breadcrumb shows:\n```text\nactive=true > priority=1 OR priority=2 > state!=7\n```\nSample data indicates priority 2 incidents in Closed state are appearing in the list.",
+          "task": "Rewrite the encoded query to return only (active=true AND priority=1) OR (priority=2 AND state!=7). Explain the grouping, and outline how you would validate the correction on the list.",
+          "expected_answer": "Use explicit OR grouping by placing ANDed terms on each side of OR: `active=true^priority=1^ORpriority=2^state!=7`. In the filter builder, ensure priority=1 is grouped with active=true, then add an OR group containing priority=2 AND state!=Closed. Validation: 1) Apply the query; 2) Spot-check a known closed P2 record to confirm it is excluded; 3) Confirm an active P1 record appears; 4) Save as a new filter and compare counts before/after. If needed, use the \"Show Matching\" feature on a P2 non-closed record to confirm inclusion.",
+          "rubric": [
+            {
+              "criterion": "Provides a correctly grouped encoded query or equivalent grouped breadcrumb",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains OR grouping vs AND precedence in ServiceNow encoded queries",
+              "marks": 2
+            },
+            {
+              "criterion": "Lists concrete validation steps on the list (apply, spot-check include/exclude)",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses the closed P2 false-positive explicitly",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Multiple incidents report \"SSL certificate expired on customer portal\". Restoring service requires cert replacement on a production load balancer. Business pressure is high to fix now, but audit requires governance.",
+          "task": "Choose the correct process path and justify it. Specify which records you would create/link (Incident/Problem/Change), the appropriate change type, expected approvals, and how you would close linked items after implementation.",
+          "expected_answer": "Open/maintain the Incident as the service outage record. Raise a Normal or Emergency Change depending on risk and urgency: if the site is down and immediate fix is required, use Emergency change with ECAB/manager approval and retrospective CAB/PIR; if there is a short window to plan/assess, use Normal with CAB. Link the Change to the primary Incident via the Caused by Change/Related Records. If this is recurring or systemic, create a Problem to analyze root cause (renewal process, monitoring gaps) and capture a Known Error/workaround. After implementation: verify restoration in the Incident, enter Resolution code/notes, resolve and close. For the Change: move through Implement -> Review -> Closed, ensuring approvals are recorded. If a Problem was raised, document root cause and close after corrective actions are tracked.",
+          "rubric": [
+            {
+              "criterion": "Selects appropriate change type (Emergency under time-critical outage or Normal with justification)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies correct record linking between Incident and Change (and Problem if needed)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains required approvals (ECAB/manager for Emergency or CAB for Normal) and retrospective review/PIR",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes proper closure steps and documentation across all records",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 4,
+          "scenario": "Reporting shows inconsistent Incident categorization: subcategories don't match categories; some records miss `caller`, `configuration item`, or `assignment group`. Agents complain about too many mandatory fields slowing them down.",
+          "task": "Design a configuration-only approach to lift data quality without hurting agent throughput. Specify dictionary attributes, reference qualifiers, UI/Data Policies, and any view-specific choices you would use. Include how you'd measure the improvement.",
+          "expected_answer": "Dictionary: enforce choice normalization by deactivating unused Category/Subcategory values; add a unique, concise set. Add a dependent reference qualifier on Subcategory filtered by Category (dynamic filter option). Set max length and regex if needed for structured fields. Data Policies (server-enforced): make `caller`, `category`, and `assignment_group` mandatory on insert; make `configuration_item` mandatory when Category in {Network, Server, Application}. UI Policies: progressive disclosure—show and make Subcategory mandatory only after Category is chosen; make CI mandatory/visible only for relevant categories; use order to ensure mandatory fields are visible. Views: keep Self Service minimal (caller auto-populated, fewer mandatory fields) and default agent view fully instrumented. Measurement: track missing/invalid value rates before/after via a list report or Dashboard showing % incidents with required fields populated and Category/Subcategory consistency, plus average handle time to ensure throughput isn't harmed.",
+          "rubric": [
+            {
+              "criterion": "Uses dictionary and reference qualifiers to constrain valid values (e.g., dependent Subcategory)",
+              "marks": 2
+            },
+            {
+              "criterion": "Applies Data Policies for server-side mandatory on core quality fields with conditional logic",
+              "marks": 2
+            },
+            {
+              "criterion": "Applies UI Policies for progressive disclosure and visibility/mandatory alignment",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines measurable QA/ops metrics to verify improvement (e.g., completeness rate, AHT)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Configure Incident forms, views, and UI policies to enforce closure quality without blocking Self Service",
+          "brief": "Build a Self Service experience and an agent experience that prevent hidden-mandatory errors while ensuring closure data quality. Implement view selection, UI Policies for state-based fields, and a list layout for agents.",
+          "deliverable": "Configured interface: one update set XML named \"S02-Forms-UIPolicies\" containing the view rules, Self Service view, UI Policies, and list layout changes; plus a screenshot pack (PDF or folder) showing: (1) Self Service user opening an incident with no Closed option, (2) agent view resolving/closing with visible mandatory closure fields, (3) Network category making Affected site mandatory, and (4) the ITIL list with required columns. Include a 1-page test script with steps and expected outcomes.",
+          "acceptance_criteria": [
+            "A View Rule selects the Self Service view for users without the itil role; ITIL users see an agent view (ITIL or Default).",
+            "In Self Service, users cannot set state=Closed (either the choice is removed or blocked via UI action logic).",
+            "In agent view, when state transitions to Resolved/Closed, closure fields (e.g., close_code, close_notes) are visible and mandatory; no hidden-mandatory errors occur.",
+            "When category=Network, field `u_affected_site` is visible and mandatory in all relevant views; server-side enforcement via a Data Policy is present.",
+            "Incident list layout for ITIL shows columns at minimum: Number, Priority, State, Caller, Assignment group, Short description.",
+            "Update set installs cleanly; screenshots clearly prove each acceptance step; test script steps pass as written."
+          ],
+          "rubric": [
+            {
+              "criterion": "Update set completeness and clean install (records present: view rule, views, UI policies, list layout)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct view selection based on role; Self Service lacks Closed option as required",
+              "marks": 4
+            },
+            {
+              "criterion": "Closure UI Policy behavior correct for agents: fields visible+mandatory at Resolved/Closed; no hidden-mandatory",
+              "marks": 5
+            },
+            {
+              "criterion": "Network category drives `u_affected_site` mandatory with server-side enforcement (Data Policy)",
+              "marks": 3
+            },
+            {
+              "criterion": "ITIL list layout shows specified columns",
+              "marks": 2
+            },
+            {
+              "criterion": "Evidence pack (screens + test script) proves outcomes and is reproducible",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Execute an end-to-end ITSM case across Incident, Change, and (optionally) Problem",
+          "brief": "Run a realistic case from outage to resolution, using correct record types and workflows. Demonstrate proper state transitions, approvals, and closure data quality.",
+          "deliverable": "ITSM case: export or screenshots of the Incident, linked Change (Emergency or Normal, justified), and (optional) Problem records; include activity/audit histories, approval records, and relationship tabs. Provide a 1–2 page runbook describing steps taken and decisions (e.g., why Emergency vs Normal).",
+          "acceptance_criteria": [
+            "Incident created for a realistic outage (e.g., VPN down) with appropriate categorization, priority, and work notes; resolution code/notes completed at closure.",
+            "A Change is raised and linked to the Incident; type chosen fits urgency/risk (Emergency for immediate restore or Normal for planned window) with approvals evidenced (ECAB/manager or CAB).",
+            "If recurring/systemic, a Problem is created and linked; root cause or workaround documented (Known Error optional).",
+            "State transitions follow OOTB sequences (Incident: New/In Progress/Resolved/Closed; Change: New/Assess/Authorize/Implement/Review/Closed or Emergency path).",
+            "All relationships visible on Related Records; timeline shows sequence of events; no open fulfillment/approval tasks remain at final closure."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct selection and creation of record types; proper linking between Incident-Change-(Problem)",
+              "marks": 5
+            },
+            {
+              "criterion": "Appropriate change type with approvals recorded (ECAB/manager for Emergency or CAB for Normal)",
+              "marks": 4
+            },
+            {
+              "criterion": "Accurate, auditable state progressions and activity/audit history evidence",
+              "marks": 5
+            },
+            {
+              "criterion": "Incident closure quality (resolution notes/code); Problem root cause/workaround documented if created",
+              "marks": 4
+            },
+            {
+              "criterion": "Submission pack clarity and traceability (screens/exports + runbook)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "apply operations for an ITIL-based environment",
+            "ServiceNow",
+            "Data Quality"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-040-S03",
+      "skills_assessed": [
+        "ServiceNow",
+        "SLAs",
+        "Flow Designer",
+        "No-code Automation",
+        "Dashboard Design",
+        "Data Quality",
+        "apply operations for an ITIL-based environment"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You build a Flow Designer flow to create a follow-up task for every new P2 incident and link it back to the incident. The flow steps are exported below.\n\n```json\n{\n  \"trigger\": {\n    \"table\": \"incident\",\n    \"when\": \"record_created\",\n    \"conditions\": [\n      {\"field\": \"priority\", \"operator\": \"=\", \"value\": \"2\"}\n    ]\n  },\n  \"steps\": [\n    {\n      \"action\": \"Create Record\",\n      \"table\": \"sc_task\",\n      \"fields\": {\n        \"parent\": \"${Trigger -> Record}\",\n        \"short_description\": \"Follow-up on P2 incident\",\n        \"assignment_group\": \"Service Desk\"\n      },\n      \"outputs_alias\": \"CreatedTask\"\n    },\n    {\n      \"action\": \"Update Record\",\n      \"record\": \"${Trigger -> Record}\",\n      \"fields\": {\n        \"u_followup_task\": \"${CreatedTask -> Record.sys_id}\"\n      }\n    }\n  ]\n}\n```\nAfter the flow runs on INC0010001, which record has `u_followup_task` populated and with what value?",
+          "options": [
+            "The incident has `u_followup_task` set to the created sc_task's sys_id.",
+            "The incident has `u_followup_task` set to the incident's own sys_id due to missing dot-walk.",
+            "The sc_task created in Step 1 has `u_followup_task` set to its own sys_id.",
+            "The sc_task created in Step 1 has `u_followup_task` set to the incident's sys_id."
+          ],
+          "correct_option": "A",
+          "explanation": "The Update Record step targets the trigger record (the incident) and writes `${CreatedTask -> Record.sys_id}` into `u_followup_task`. That populates the incident with the new sc_task’s sys_id.",
+          "distractor_rationale": "A: Tempting if you assume Field Mapping is symmetric, but Step 2 updates the incident, not the sc_task. B: Misreads which table contains the field; the flow never updates the sc_task’s `u_followup_task`. D: Misunderstands data pills; `${CreatedTask -> Record.sys_id}` correctly resolves to the task’s sys_id, not the incident’s.",
+          "skills_covered": [
+            "Flow Designer",
+            "No-code Automation",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider this SLA definition and incident timeline.\n\nSLA definition (business schedule 08:00–17:00 Mon–Fri):\n```text\nName: Incident - Response (P2)\nDuration: 8 hours\nStart: Priority = 2\nPause: State = On Hold\nStop: State = Resolved OR Closed\n```\nIncident timeline:\n```text\nCreated: Fri 16:30\nFri 16:30–17:00: Active (not On Hold)\nWeekend: no schedule\nMon 08:00–09:15: Active\nMon 09:15: set to On Hold\nTue 10:00: taken Off Hold (Active again)\n```\nAssuming the incident remains unresolved past Tuesday, when is the SLA due time (breach point)?",
+          "options": [
+            "Tue 16:15",
+            "Mon 15:30",
+            "Tue 17:30",
+            "Tue 14:45"
+          ],
+          "correct_option": "A",
+          "explanation": "Count only scheduled, unpaused time. Fri 16:30–17:00 = 0.5h. Mon 08:00–09:15 = 1.25h. Remaining = 6.25h. Resumes Tue 10:00; 6.25h later is Tue 16:15.",
+          "distractor_rationale": "A: Under-counts remaining time by 1.5 hours. B: Ignores the pause and weekend, assuming continuous schedule. D: Adds after-hours time (post-17:00), which the business schedule excludes.",
+          "skills_covered": [
+            "SLAs",
+            "apply operations for an ITIL-based environment",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A dashboard has an interactive filter `Assignment group = Service Desk`. Two widgets are configured as follows.\n\nWidget A (Report properties):\n```json\n{\n  \"table\": \"incident\",\n  \"type\": \"bar\",\n  \"filter\": \"active=true^priority=2\",\n  \"use_interactive_filters\": true\n}\n```\nWidget B (Report properties):\n```json\n{\n  \"table\": \"incident\",\n  \"type\": \"time_series\",\n  \"filter\": \"active=true\",\n  \"use_interactive_filters\": false\n}\n```\nAfter applying the interactive filter, which outcome occurs and why?",
+          "options": [
+            "Widget B reflects the filter and Widget A does not, because time series always honor filters.",
+            "Only Widget A reflects Service Desk incidents; Widget B ignores the filter by configuration.",
+            "Neither widget changes because interactive filters apply only to Performance Analytics widgets, not reports.",
+            "Both widgets reflect only Service Desk incidents because dashboard filters apply globally to all widgets."
+          ],
+          "correct_option": "B",
+          "explanation": "Report widgets opt-in to interactive filters. Widget A has `use_interactive_filters: true` and is affected; Widget B explicitly ignores them.",
+          "distractor_rationale": "A: Sounds plausible but ignores the per-widget opt-in. C: Confuses PA with standard reporting; standard reports can honor interactive filters if enabled. D: Inverts behavior; time series do not automatically honor filters.",
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Quality",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Two dashboard widgets disagree on the count of P1 incidents with breached resolution SLAs.\n\nWidget X (current count 12):\n```json\n{\n  \"table\": \"task_sla\",\n  \"type\": \"bar\",\n  \"filter\": \"stage=breached^ORstage=in_progress^sla.definition=Incident - Resolution^task.active=true\",\n  \"group_by\": \"task.assignment_group\"\n}\n```\nWidget Y (current count 8):\n```json\n{\n  \"table\": \"incident\",\n  \"type\": \"bar\",\n  \"filter\": \"priority=1^active=true\",\n  \"group_by\": \"assignment_group\"\n}\n```\nYou need both to show counts of distinct P1 incidents currently with a Resolution SLA attached (any stage). Which change best aligns X to Y?",
+          "options": [
+            "Keep Widget X but add `distinct` aggregation on `task` to avoid double-counting incidents with multiple SLAs.",
+            "Change Widget Y to run on `task` with a join to `task_sla` so both use the same table.",
+            "Filter Widget X to `sla.definition=Incident - Response` instead of `Incident - Resolution`.",
+            "Rebuild Widget X on `incident` with condition `has SLA where definition is Incident - Resolution` and `priority=1`."
+          ],
+          "correct_option": "D",
+          "explanation": "Counting distinct incidents is most reliable when the source is `incident`. Using the `has SLA` condition (SLA filter on incident) avoids duplicates inherent in `task_sla` and aligns logic with Widget Y’s grain (incident).",
+          "distractor_rationale": "A: ServiceNow report UI does not provide a general-purpose `count distinct` on related `task` from `task_sla`; duplicates can still occur. B: Switching to Response SLAs changes the meaning and won’t reconcile counts. D: Moving Y to `task` replicates the duplicate problem rather than solving it.",
+          "skills_covered": [
+            "Dashboard Design",
+            "SLAs",
+            "Data Quality",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A Flow Designer step uses Ask for Approval with the following configuration and results.\n\nConfiguration:\n```yaml\nApprovers: [user.alpha, user.bravo]\nRequirement: All must approve\nTimeout: 24 hours\n```\nApproval records observed:\n```csv\napprover,state,updated\nuser.alpha,rejected,2026-05-01 10:03\nuser.bravo,requested,\n```\nHow does the flow proceed at 10:03?",
+          "options": [
+            "Waits until timeout before taking any path because not all approvers responded.",
+            "Immediately follows the Rejected path because unanimity is required and one rejection finalizes outcome.",
+            "Closes both approvals and loops back to create a new approval set.",
+            "Continues on the Approved path because at least one approver will approve later."
+          ],
+          "correct_option": "B",
+          "explanation": "With requirement set to All, a single rejection determines the outcome and the action completes on the Rejected path immediately.",
+          "distractor_rationale": "A: Misreads requirement; that applies to Any-one, not All. B: Timeout is used when no decisive outcome occurs; a rejection is decisive. D: Flow Designer does not auto-loop or recreate approvals without explicit design.",
+          "skills_covered": [
+            "Flow Designer",
+            "apply operations for an ITIL-based environment",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Two SLA definitions can match an incident simultaneously.\n\n```text\nA) Incident - P1 Response\n   Start: priority=1; Stop: resolved/closed; Duration: 1h; Order: 200\nB) Major Incident - Response\n   Start: u_major_incident=true; Stop: resolved/closed; Duration: 30m; Order: 100\n```\nAn incident is priority=1 and marked as a major incident at creation. What Task SLAs attach?",
+          "options": [
+            "Only B attaches because it has a lower Order (higher precedence).",
+            "Neither attaches until the major flag is cleared, then both attach retroactively.",
+            "Only A attaches because priority conditions evaluate first.",
+            "Both A and B attach and run concurrently unless prevented by additional logic."
+          ],
+          "correct_option": "D",
+          "explanation": "By default, the SLA engine can attach multiple matching SLA definitions to a task. Order influences evaluation and tie-breaking in some contexts but does not prevent multiple attachments.",
+          "distractor_rationale": "A: Order does not inherently enforce exclusivity. B: Priority does not preclude other matching conditions. D: Retroactive start requires explicit configuration; the presented definitions do not delay start.",
+          "skills_covered": [
+            "SLAs",
+            "ServiceNow",
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A flow waits for resolution but should escalate if it takes too long.\n\n```yaml\nStep: Wait for Condition\nRecord: ${Trigger -> Record}\nCondition: State changes to Resolved\nTimeout: 2 hours\nOn timeout: path = Escalate\n```\nThe incident is not resolved within two hours. What happens next?",
+          "options": [
+            "Flow errors out and stops because the condition was never met.",
+            "The wait silently extends until the condition is met; timeout is ignored.",
+            "The flow follows the Escalate path at timeout and continues execution.",
+            "The flow cancels itself and removes the context."
+          ],
+          "correct_option": "C",
+          "explanation": "Wait for Condition completes on the timeout branch if the condition isn’t met in time, allowing the flow to continue down the Escalate path.",
+          "distractor_rationale": "A: Timeouts are handled, not treated as fatal errors. C: Contradicts the explicit timeout behavior. D: Cancellation would require explicit logic; timeouts don’t auto-cancel the flow.",
+          "skills_covered": [
+            "Flow Designer",
+            "No-code Automation",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A report computes average resolution time. The dataset is:\n\n```csv\nnumber,calendar_duration_seconds,business_duration_seconds\nINC001,14400,7200\nINC002,7200,7200\nINC003,10800,3600\n```\nThe report is configured as:\n```json\n{\n  \"table\": \"incident\",\n  \"type\": \"single_score\",\n  \"aggregation\": \"average\",\n  \"field\": \"business_duration\"\n}\n```\nWhat value (in hours) should the widget show, assuming the field stores seconds and the platform converts units correctly?",
+          "options": [
+            "1.67",
+            "3.0",
+            "2.5",
+            "2.0"
+          ],
+          "correct_option": "A",
+          "explanation": "Average of business durations: (7200 + 7200 + 3600) / 3 = 6000 seconds = 1.666... hours ≈ 1.67.",
+          "distractor_rationale": "A: That’s the calendar-duration average (9h/3). C and D: Midpoints that don’t match any correct aggregation of the provided data.",
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Quality",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A flow step maps the `Record` input of Update Record to a sys_id string from a previous step, as shown below.\n\n```yaml\nStep: Update Record\nRecord: ${CreatedTask -> Record.sys_id}   # type: String (sys_id)\nFields: { short_description: \"Updated by flow\" }\n```\nAt runtime the execution log shows: `TypeError: expected Record, got String`. What is the minimal, correct fix?",
+          "options": [
+            "Wrap the sys_id with `${record(${sys_id})}` syntax; Flow Designer will coerce it to a Record automatically.",
+            "Map the Trigger -> Record instead; the platform will infer you meant the created record.",
+            "Insert a Look Up Record (or Get Record) step using the sys_id to fetch the Record, then feed that Record to Update Record.",
+            "Change Update Record to a Script step and call `GlideRecord` manually to avoid type checks."
+          ],
+          "correct_option": "C",
+          "explanation": "Update Record expects a Record-type pill. The correct no-code fix is to look up the record by sys_id to produce a Record-type output, then use that.",
+          "distractor_rationale": "A: No such coercion syntax exists in Flow Designer mapping. C: Overkill and contrary to no-code design for this module. D: Changes semantics to update the wrong record.",
+          "skills_covered": [
+            "Flow Designer",
+            "No-code Automation",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two incident trend reports appear misaligned. Their filters differ only in the relative date operator.\n\nReport A:\n```text\nCreated on is ON last month\n```\nReport B:\n```text\nCreated on is LAST 1 months\n```\nAssuming today is 2026-08-19, which statement explains the discrepancy?",
+          "options": [
+            "B includes future-dated records because it spans a full month window forward.",
+            "A selects the previous calendar month (2026-07-01..2026-07-31); B selects the last 30 days rolling (2026-07-20..2026-08-19).",
+            "Both select incidents from 2026-07-01 to 2026-07-31 inclusive; there should be no discrepancy.",
+            "A selects the last 30 days rolling; B selects the previous calendar month."
+          ],
+          "correct_option": "B",
+          "explanation": "“ON last month” is the previous calendar month. “LAST 1 months” is a rolling window counting back one month from now. On 2026-08-19, those windows differ, causing different counts.",
+          "distractor_rationale": "A: Assumes the operators are equivalent; they are not. C: Reverses the operators’ meanings. D: Relative filters do not include future dates.",
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Quality",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your service desk wants an automated triage flow for high-priority incidents. Requirements:\n- Trigger when an incident is created or updated to priority 1 or 2 and category is Network.\n- Immediately request approval from the assignment group’s manager. While waiting, state must be Awaiting Approval and resolution-related SLAs must pause.\n- If no response in 2 business hours, auto-escalate: notify the duty manager, set priority to 1, and add an Urgent tag.\n- On approval, assign to the Network Ops group and resume SLAs. On rejection, set On Hold with a work note and notify the requester.\nConstraints: Use Flow Designer and native approvals/notifications; no custom script actions.",
+          "task": "Design the flow: triggers, branching, approvals, SLA handling, timeouts, and notifications. Justify any record updates and where you pause/resume SLAs. Mention any edge cases you must guard against (e.g., missing manager, reassignment while waiting).",
+          "expected_answer": "A strong answer specifies:\n- Trigger: Incident table, Created or Updated. Condition: (priority in [1,2]) AND category=Network. Add a guard that the flow only runs when these fields change to avoid loops.\n- Capture initial context: store current assignment_group and its manager via a Look Up Record (Group -> manager). If manager is empty, fall back to a distribution list group or the duty manager and record a work note.\n- Step order: Update Record to set state=Awaiting Approval; optionally set an approval-related field for audit; this change should satisfy pause conditions on relevant SLA definitions (resolution). If not already configured, include a field change that the SLA pause condition uses (e.g., State=On Hold / Awaiting Approval).\n- Ask for Approval: Approvers = [assignment_group.manager], Requirement = Any-one (if using backups) or All for multiple managers. Timeout = 2 business hours. Use the Approved/Rejected/Timeout paths.\n- Timeout path (2 business hours): Escalate. Actions: Update Record priority=1, add Urgent tag, notify duty manager (event or notification). Resume SLAs by moving state out of On Hold. Optionally re-request approval post-escalation if policy requires.\n- Approved path: Assign to Network Ops group, resume SLAs by setting an active state (e.g., In Progress), add work note, and send an assignment notification to the group.\n- Rejected path: Set state=On Hold (reason = Awaiting Change), add a templated work note explaining who rejected and when, notify requester. Ensure SLAs remain paused while On Hold.\n- Concurrency/edge cases: If the assignment_group changes during approval, cancel pending approvals and re-evaluate approver (use a Wait for Condition or If block comparing saved group to current before acting on approval). Handle missing manager by using a fallback approver. Prevent re-trigger loops by scoping trigger to field changes and by not re-enqueueing upon the flow’s own updates (e.g., add a control field or condition ‘state changes to’).",
+          "rubric": [
+            {
+              "criterion": "Trigger and guard conditions correctly restrict execution to P1/P2 Network incidents and avoid retrigger loops",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct use of approval action with timeout and rationale for approver resolution and fallbacks",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate SLA pause/resume strategy tied to state changes and resolution SLA definitions",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, actionable paths for Approved, Rejected, and Timeout including notifications and assignments",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Flow Designer",
+            "SLAs",
+            "apply operations for an ITIL-based environment",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A leadership dashboard shows conflicting numbers for high-priority incidents. Widget 1 (bar chart) is built on `incident` with filter `priority=1^active=true` and is configured to use interactive filters. Widget 2 (time series of breaches) is built on `task_sla` with filter `sla.definition=Incident - Resolution^stage=breached^task.active=true`. Leaders want both to reflect the same groups and date ranges chosen via interactive filters (Assignment group and Created on).",
+          "task": "Propose a dashboard redesign that ensures consistent counts under interactive filters while preserving the breach trend insight. Explain table choice, filters, and how to avoid double-counting. Include how you will configure interactive filters and widget-level settings.",
+          "expected_answer": "Proposed approach:\n- Unify grain to the `incident` table wherever possible. Replace Widget 2 with an `incident`-based report that uses the SLA condition builder: ‘has an SLA where definition = Incident - Resolution’ and, optionally, ‘stage in (in_progress, breached)’ to scope to active/breached SLAs. This counts distinct incidents instead of rows in `task_sla`.\n- Configure both widgets to honor interactive filters and ensure those filters are compatible with `incident` (Assignment group, Created on). For the breach trend, use a time series grouped by Created on or Resolved on depending on the KPI definition; document which date you choose.\n- If a direct breach trend over time is needed, create a backstage helper report on `task_sla` solely to extract breach events, but pipe the visible widget through an incident-based rollup (e.g., distinct task count via has-SLA condition by month). Avoid double-counting by filtering to a single SLA definition (Resolution) and grouping by incident fields, not `task_sla` rows.\n- Enable ‘use interactive filters’ on both widgets. Ensure the interactive filter set includes Assignment group and Created on, and validate that the time field used in the time series matches the filter (e.g., Created on if that is the filter).\n- Validate with a cross-check widget: a single-score of distinct incident count under the same filters to spot drift quickly.",
+          "rubric": [
+            {
+              "criterion": "Chooses incident as the primary source and justifies avoiding duplicates from task_sla",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct configuration of interactive filters and widget settings to honor them",
+              "marks": 2
+            },
+            {
+              "criterion": "Sound method to display breach trends without double-counting and with a clear date basis",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses validation and consistency checks (e.g., single-score cross-check)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Dashboard Design",
+            "SLAs",
+            "Data Quality",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your incident process has overlapping SLA definitions that attach simultaneously (P1 Response and Major Incident Response). Operations teams are confused by multiple SLAs with different due times on the same record, and reports over-count breaches.",
+          "task": "Recommend a configuration strategy to resolve operational confusion without losing necessary tracking. Cover SLA definition changes (conditions, order, cancellation/prevention), pause/resume alignment with states, and reporting implications.",
+          "expected_answer": "Strategy:\n- Decide which SLA definitions should be mutually exclusive. For Response timings, keep one active per incident. Implement exclusivity by tightening start conditions or by adding a ‘Stop’ or ‘Cancel’ condition that deactivates the less-relevant SLA when the other applies (e.g., if `u_major_incident=true`, do not start the P1 Response or cancel it immediately via a Cancel condition).\n- Use the Order field and condition granularity: let the Major Incident Response (shorter duration) evaluate earlier, but rely on explicit conditional logic rather than Order alone.\n- Align pause/resume to states (‘On Hold’/‘Awaiting Approval’ pauses both) to avoid divergence. Ensure both definitions share the same schedule and pause logic to keep timing consistent.\n- For reporting, shift breach KPIs to the incident grain using ‘has SLA’ filters with a single, authoritative SLA (e.g., Resolution) or a derived indicator that maps multiple definitions into a single ‘Response’ KPI. Document the mapping so dashboards don’t double-count.\n- Migrate historical duplicates by closing/cancelling redundant SLAs where appropriate to clean up active noise.",
+          "rubric": [
+            {
+              "criterion": "Provides a concrete method to enforce exclusivity/cancellation between overlapping SLAs",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains role of Order versus explicit conditions and chooses the right control point",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes consistent pause/resume with state alignment and schedules",
+              "marks": 2
+            },
+            {
+              "criterion": "Connects config changes to reporting at incident grain to prevent double-counting",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SLAs",
+            "apply operations for an ITIL-based environment",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Assignment group changes during triage are spamming users with multiple notifications within minutes. Policy change: send a single notification after 5 minutes of stability in assignment group, but do not delay alerts for P1 incidents beyond 1 minute. You must use Flow Designer and native notifications.",
+          "task": "Design a debounce/throttle pattern. Explain how you will detect stability, prevent duplicate messages, and handle the P1 exception. Include which actions fire events versus direct notifications, and how you avoid race conditions.",
+          "expected_answer": "Design:\n- Trigger: Incident Updated where assignment_group changes. Capture the new group and priority in variables.\n- For non-P1: Use a timer-based debounce. Approach 1 (no-code): Wait for Condition with timeout = 5 minutes and condition ‘assignment_group is still [captured value]’. If condition is met before timeout (stability), proceed to notify; if the field changes again, the wait cancels due to condition failure and the flow instance can exit or re-evaluate via a small subflow invoked by the new update. To prevent duplicates, write a correlation key (e.g., `u_last_assignment_notify_group=sys_id` + timestamp) and check it before sending.\n- For P1: Use a shortened path. Either a separate flow or a priority branch: wait 1 minute for stability with the same condition, then notify. If it changes within that minute, the instance exits and the new update creates a new 1-minute window.\n- Send notifications via events (Create Event like `incident.assignment.stable`) so the notification rule centralizes recipients (e.g., users in Assignment group). The event parm1 can carry the group sys_id as a dedupe key.\n- Guard against race conditions: Store the captured group in a temporary field or flow variable. Immediately before sending, re-check the assignment_group equals the captured value. If not, skip sending. Use flow logic to ensure only one active debounce instance per incident (e.g., by checking a marker field or using Kill Existing option if available).",
+          "rubric": [
+            {
+              "criterion": "Clear debounce logic using Wait for Condition/timer with stability check and re-validation",
+              "marks": 2
+            },
+            {
+              "criterion": "Priority-based exception path for P1 incidents with justified shorter wait",
+              "marks": 2
+            },
+            {
+              "criterion": "Dedupe/anti-duplicate strategy (correlation key or marker field) and event-driven notification mapping",
+              "marks": 2
+            },
+            {
+              "criterion": "Race-condition handling via last-moment re-checks and single-active-instance control",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Flow Designer",
+            "ServiceNow",
+            "apply operations for an ITIL-based environment",
+            "No-code Automation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Automated Incident Approval and Escalation Flow",
+          "brief": "Build a Flow Designer automation for incident triage and approval.\nRequirements:\n- Trigger on Incident when created or when Priority changes to 1 or 2 and Category is Network.\n- Set State to Awaiting Approval, pause Resolution SLAs, and request approval from the Assignment group’s manager.\n- If no approval in 2 business hours, escalate: set Priority to 1, add an Urgent tag or equivalent, notify the duty manager, and resume SLAs.\n- On approval: assign to Network Ops, resume SLAs, and notify assignees. On rejection: set On Hold with a templated work note and notify the requester.\n- Avoid duplicate runs if the flow’s own updates retrigger it.",
+          "deliverable": "Automated workflow: export of the Flow (XML or JSON from Flow Designer) plus a short test log (screenshots of execution details and the affected incident, including Approval, Task SLA, and Notifications tabs).",
+          "acceptance_criteria": [
+            "Flow export imports without errors and shows trigger conditions as specified.",
+            "Executing a test incident meeting conditions creates exactly one Approval record for the correct approver (group manager) and sets State to Awaiting Approval.",
+            "While awaiting approval, the Resolution Task SLA shows Paused; on approval or escalation, it resumes.",
+            "Timeout path (2 business hours simulated by temporarily reducing timeout) sets Priority to 1, adds Urgent marker, and sends a notification to the duty manager (evidence in Sent Emails or Event log).",
+            "Approved path assigns to Network Ops and sends an assignment notification; Rejected path sets On Hold with the provided work note and notifies the requester.",
+            "Execution Details show no errors; the flow does not re-trigger due to its own updates (evidence: a single execution context for the test)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Trigger logic and retrigger guards implemented correctly",
+              "marks": 4
+            },
+            {
+              "criterion": "Approval creation, correct approver resolution, and state change to pause SLAs",
+              "marks": 5
+            },
+            {
+              "criterion": "Timeout escalation behavior (priority change, urgent marker, notification) and SLA resume",
+              "marks": 5
+            },
+            {
+              "criterion": "Approved/Rejected branches correctly assign/state/notify with evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Submission quality: runnable export and clear execution screenshots/logs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Flow Designer",
+            "SLAs",
+            "ServiceNow",
+            "No-code Automation",
+            "apply operations for an ITIL-based environment"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Service Operations Dashboard for Incident Health",
+          "brief": "Create a dashboard that gives real-time visibility into incident load and SLA risk.\nRequired widgets (reports or equivalent):\n- Open Incidents by Assignment Group (bar), filter `active=true`, honors interactive filters.\n- P1 Incidents with Resolution SLA attached (bar), built on Incident using ‘has SLA’ condition to avoid duplicates.\n- SLA Breach Rate last 30 days (line or area), built so counts represent distinct incidents per day/week; clearly state whether you use Created on or Resolved on.\n- Average Business Resolution Time by Assignment Group (bar) using `business_duration`.\nDashboard must have interactive filters for Assignment group and a relative Created on period, and all widgets must respect them.",
+          "deliverable": "Service dashboard: exported dashboard XML and the underlying report definitions, plus screenshots showing the dashboard before and after applying interactive filters (with visible counts).",
+          "acceptance_criteria": [
+            "All widgets are present, named clearly, and render without errors.",
+            "Reports use the Incident table where feasible; the SLA widget uses ‘has SLA (Incident - Resolution)’ rather than counting task_sla rows.",
+            "All widgets honor the dashboard’s interactive filters (Assignment group and Created on).",
+            "The breach trend uses a consistent date basis (declared in the report title or description) and shows a rolling last-30-days view.",
+            "Average Business Resolution Time uses the business_duration field and displays plausible units (hours).",
+            "Before/after screenshots demonstrate that counts change consistently when filters are applied."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct report sources and filters to avoid double-counting (incident grain, has-SLA)",
+              "marks": 6
+            },
+            {
+              "criterion": "Interactive filters implemented and honored by all widgets",
+              "marks": 5
+            },
+            {
+              "criterion": "Breach trend is time-based, coherent, and documents the chosen date basis",
+              "marks": 4
+            },
+            {
+              "criterion": "Average business duration correctly configured with appropriate units",
+              "marks": 3
+            },
+            {
+              "criterion": "Submission quality: exports and clear before/after screenshots",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Quality",
+            "SLAs",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-040-S04",
+      "skills_assessed": [
+        "ServiceNow",
+        "REST API",
+        "Data Security",
+        "Manual Testing",
+        "Application Deployment",
+        "Update discipline",
+        "provide technical documentation"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "A developer adds this onSubmit Client Script to the Incident form:\n\n```javascript\nfunction onSubmit() {\n  var gr = new GlideRecord('incident');\n  gr.addQuery('number', g_form.getValue('number'));\n  gr.query();\n  if (!gr.next()) {\n    alert('Record not found');\n    return false;\n  }\n}\n```\nWhen a user submits the form in the classic UI, what actually happens in the browser and to the submit action?",
+          "options": [
+            "The alert shows and the submission is cancelled because the query finds no record.",
+            "This works only on Service Portal; in classic UI the submit is always cancelled.",
+            "A JavaScript error is thrown in the browser console and the submission proceeds unless blocked elsewhere.",
+            "The platform auto-proxies GlideRecord to the server, the query runs, and the submission is cancelled if no record."
+          ],
+          "correct_option": "C",
+          "explanation": "GlideRecord is not available on the client. The code throws a ReferenceError before reaching the return statement, so the client-side script does not cancel the submission. The form submits unless some other client/server logic prevents it.",
+          "distractor_rationale": "A: Tempting because the code appears to cancel on missing record, but it never reaches that point due to client-side error. C: Confuses GlideAjax with GlideRecord; there is no auto-proxy for GlideRecord in client scripts. D: Portal vs classic is irrelevant; the issue is client scope, not UI flavor.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "An onChange Client Script tries to derive a department from the selected caller using a synchronous GlideAjax call:\n\n```javascript\nfunction onChange(control, oldValue, newValue, isLoading) {\n  if (isLoading || newValue === '') return;\n  var ga = new GlideAjax('UserInfo');\n  ga.addParam('sysparm_name', 'getDept');\n  ga.addParam('sysparm_user', newValue);\n  var response = ga.getXMLWait();\n  var dept = response.responseXML.documentElement.getAttribute('dept');\n  g_form.setValue('u_department_name', dept);\n}\n```\nUsers rapidly change the Caller field several times. What impact will this pattern have?",
+          "options": [
+            "The UI thread blocks on each change, stacking synchronous server calls and freezing the form until the last completes.",
+            "Synchronous GlideAjax in onChange is converted to async by the platform at runtime, so the form remains responsive.",
+            "No impact; GlideAjax responses are cached per user so later calls are instantaneous.",
+            "Only the first call blocks; subsequent calls are coalesced by the platform into one request."
+          ],
+          "correct_option": "A",
+          "explanation": "getXMLWait blocks the browser thread until the server responds. Rapid changes trigger multiple sequential round-trips, freezing the UI and increasing server load as requests queue.",
+          "distractor_rationale": "A: GlideAjax does not generally cache arbitrary Script Include responses. C: There is no coalescing of GlideAjax calls; each is its own HTTP request. D: The platform does not auto-convert getXMLWait to async.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "An outbound REST integration uses this Scripted RESTMessageV2 call:\n\n```javascript\nvar r = new sn_ws.RESTMessageV2('x_acme_ext', 'create');\nr.setRequestBody(JSON.stringify({ name: 'Alpha' }));\n// no Content-Type header set\nvar resp = r.execute();\ngs.info('Status: ' + resp.getStatusCode());\n```\nThe external API requires JSON with Content-Type application/json. What response is most likely from the external server?",
+          "options": [
+            "400 Bad Request due to missing required fields",
+            "302 Found because the API redirects to a JSON endpoint",
+            "415 Unsupported Media Type due to missing Content-Type header",
+            "200 OK because the body is valid JSON"
+          ],
+          "correct_option": "C",
+          "explanation": "Without a Content-Type header, servers that enforce media types will reject the payload with 415 Unsupported Media Type even if the body is valid JSON.",
+          "distractor_rationale": "A: Some servers are lenient, but the stem states Content-Type is required. B: Field-level validation is not implicated; the media type is. D: Redirection is unrelated to content negotiation here.",
+          "skills_covered": [
+            "REST API"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A Client Script calls a Script Include via GlideAjax:\n\n```javascript\n// Client\nvar ga = new GlideAjax('UserInfo');\nga.addParam('sysparm_name','getDept');\nga.getXMLAnswer(function(ans){ g_form.setValue('u_dept', ans); });\n```\nThe Script Include is defined as:\n\n```javascript\nvar UserInfo = Class.create();\nUserInfo.prototype = {\n  initialize: function() {},\n  getDept: function() { return 'Finance'; },\n  type: 'UserInfo'\n};\n```\nThe Script Include is not marked \"Client callable\" and does not extend AbstractAjaxProcessor. What happens when the client calls it?",
+          "options": [
+            "It returns 200 OK but with an empty response body.",
+            "It works because any Script Include can be called via GlideAjax.",
+            "It is blocked by ACL evaluation and returns 403.",
+            "The call fails server-side with a 500 and an error that the processor is not an AbstractAjaxProcessor."
+          ],
+          "correct_option": "D",
+          "explanation": "GlideAjax requires a Script Include that is client-callable and extends AbstractAjaxProcessor (or uses the Script Include Ajax pattern). Without that, the platform cannot dispatch the request and returns a server error.",
+          "distractor_rationale": "A: Confuses server-side include usage with Ajax processors. B: A 200 empty response would imply a valid dispatch path. D: ACLs are evaluated after routing; this fails earlier at dispatch.",
+          "skills_covered": [
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider these ACLs and user context:\n\n```text\nACL 1: table=incident, field=*, operation=read, requires role=itil\nACL 2: table=incident, field=u_sensitive, operation=read, script: return current.u_sensitive == false;\nUser roles: itil\nRecord state: u_sensitive=false\n```\nA REST API client authenticates as this user and requests the record. What is the visibility of field u_sensitive in the response?",
+          "options": [
+            "Visible because the table-level ACL passes; field ACLs are ignored for REST.",
+            "Visible when u_sensitive is false, hidden when true.",
+            "Always hidden because a field-level ACL exists, regardless of its script result.",
+            "Hidden unless the user has admin or security_admin."
+          ],
+          "correct_option": "B",
+          "explanation": "ACL evaluation for a field requires both table and field ACLs to pass. With u_sensitive=false, the field-level script returns true and the field is readable; when true, it is denied.",
+          "distractor_rationale": "A: Field ACL existence does not imply denial; its script decides. C: REST uses the same ACL engine as UI. D: Admin roles are not required given the explicit passing condition.",
+          "skills_covered": [
+            "Data Security",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A QA preview of an Update Set shows:\n\n```text\nPreview Problems\n- Collision: Script Include \"Utils\" (sys_id=abc123): Local update is newer than incoming.\n- Missing dependency: ACL \"task.read\" references Script Include \"Utils\" not present on target.\n```\nWhat sequence best resolves these with least risk?",
+          "options": [
+            "Commit the incoming Update Set immediately; collisions are auto-merged at commit time.",
+            "Resolve the collision by comparing versions and choosing the correct one, commit the Update Set that delivers \"Utils\" first, then commit the dependent ACL Update Set.",
+            "Activate both Update Sets at once so dependencies resolve in parallel.",
+            "Switch the target's current update set to Default and re-apply to clear collisions."
+          ],
+          "correct_option": "B",
+          "explanation": "First resolve collisions during preview to avoid overwriting the correct version. Then ensure dependencies are satisfied by committing the Update Set that delivers the \"Utils\" Script Include before committing the dependent ACL set.",
+          "distractor_rationale": "A: Collisions are not auto-merged safely; they require explicit resolution. C: Current update set selection does not influence preview conflicts. D: Parallel commits can exacerbate dependency issues.",
+          "skills_covered": [
+            "Update discipline",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "An ATF test fails when asserting a derived field. Steps:\n\n```text\n2. Set field caller_id = Abel Tuter (Passed)\n3. Click UI Action \"Calculate Dept\" (Passed)\n4. Assert field u_department_name equals \"Finance\" (Failed: value empty)\n```\nThe UI Action triggers a GlideAjax call that sets u_department_name in the callback. How should you make this test reliable?",
+          "options": [
+            "Insert a \"Wait for condition\" step that polls until u_department_name is not empty before asserting.",
+            "Change the code to use getXMLWait so the callback is synchronous.",
+            "Increase the global ATF step timeout to 120 seconds.",
+            "Move the logic to an after insert Business Rule so ATF can assert on list view."
+          ],
+          "correct_option": "A",
+          "explanation": "ATF needs to wait for the async callback before asserting. Adding a wait-for-condition step synchronizes the test with the UI state without compromising user experience.",
+          "distractor_rationale": "A: Synchronous calls harm UX and can cause timeouts. C: Blindly increasing timeout does not guarantee sequencing. D: Moving logic server-side changes behavior and may not meet requirements.",
+          "skills_covered": [
+            "Manual Testing",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Outbound REST calls to a partner fail with:\n\n```text\njavax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure\n```\nDirect egress from the instance is blocked by a firewall, but a MID Server on a whitelisted network has the correct trust store. The REST message currently executes from the instance. What change addresses this most directly?",
+          "options": [
+            "Add header \"Accept: */*\" to broaden content negotiation.",
+            "Enable mutual authentication on the instance.",
+            "Force HTTP/1.0 to simplify TLS negotiation.",
+            "Configure the REST message to \"Use MID Server\" and select the whitelisted MID."
+          ],
+          "correct_option": "D",
+          "explanation": "Routing the outbound call through the MID Server places the request on the whitelisted network with the correct certificates, resolving the handshake and egress restrictions.",
+          "distractor_rationale": "B: Accept headers do not affect TLS handshake. C: Mutual auth is unrelated and can complicate setup. D: HTTP version does not bypass TLS issues.",
+          "skills_covered": [
+            "REST API",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You deploy a new system property and immediately call it from a Scripted REST API:\n\n```javascript\nvar limit = parseInt(gs.getProperty('x.acme.max_records', '50'), 10);\n```\nRight after committing the Update Set that created the property with value 200, the first API call returns 50; subsequent calls return 200. Why did the first call read 50?",
+          "options": [
+            "ATF temporarily disables property reads until post-commit.",
+            "The property cache had not refreshed on that app node yet; a later cache refresh exposed the new value.",
+            "System properties require an instance restart to take effect.",
+            "HTTP Keep-Alive reused a stale property value from a prior request context."
+          ],
+          "correct_option": "B",
+          "explanation": "Property values are cached per node. Immediately after commit, the cache may still hold the default and refresh shortly after or on explicit cache flush, leading to the observed first-call default.",
+          "distractor_rationale": "A: Most properties take effect immediately without restart. C: Keep-Alive does not cache application properties. D: ATF is unrelated to runtime property access.",
+          "skills_covered": [
+            "Application Deployment",
+            "ServiceNow"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Your OpenAPI doc for an inbound endpoint states:\n\n```yaml\ncomponents:\n  schemas:\n    IncidentCreate:\n      type: object\n      properties:\n        priority:\n          type: integer\n          enum: [1,2,3,4,5]\n```\nBut the implementation expects values like \"1 - Critical\", \"2 - High\", etc. Partners send \"High\" and receive 400 errors. What change to the documentation most prevents future integration errors?",
+          "options": [
+            "Change priority to type: string with an enum of the exact accepted values.",
+            "Mark priority as optional so partners can omit it.",
+            "Keep it as integer and note in prose that strings are also accepted.",
+            "Remove priority from the contract to avoid confusion."
+          ],
+          "correct_option": "A",
+          "explanation": "The contract must reflect the truth of the implementation. Declaring priority as a string with an explicit enum of allowed values prevents mismatches and enables validation.",
+          "distractor_rationale": "B: Contradictory type declarations create more confusion. C and D: Avoid documenting reality rather than fixing it; they push errors into runtime.",
+          "skills_covered": [
+            "provide technical documentation"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A team added an outbound integration that posts updates to a third-party system whenever an Incident’s state changes. They implemented it in a synchronous before update Business Rule on incident:\n\n```javascript\n(function executeRule(current, previous /*null when async*/ ) {\n  if (!current.state.changes()) return;\n  var r = new sn_ws.RESTMessageV2('x_acme_thirdparty','post_update');\n  r.setRequestBody(JSON.stringify({\n    number: current.number.toString(),\n    state: current.state.getDisplayValue(),\n    updated_by: gs.getUserName()\n  }));\n  var resp = r.execute();\n  if (resp.getStatusCode() == 200) {\n    current.u_synced = true;\n    current.update(); // ensure flag persists\n  }\n})(current, previous);\n```\nShortly after deployment, users report intermittent duplicate updates being posted and occasional errors: \"Rule recursion detected\" and slowness on form save.",
+          "task": "Diagnose the failure mode and propose a safer design that preserves data integrity and user experience. Justify your design and outline how you would validate it before redeploying.",
+          "expected_answer": "The rule updates the same record it runs on (current.update()) inside an update-triggered rule, causing re-entry/recursion and duplicate outbound posts. It also adds synchronous network latency to the user’s save path. Replace with an after update async pattern: remove current.update(), set u_synced directly (it will persist with the main transaction), and move the outbound call to an async Business Rule or an Event + Script Action/Flow triggered after the commit (gs.eventQueue). Optionally use a retry/backoff queue table for reliability. Add idempotency (e.g., include sys_id + update sequence in payload) to avoid duplicates on retries. Validate via: unit tests of BR logic, ATF test that saves an Incident and asserts only one event enqueued; a mocked REST endpoint to assert a single POST per state change; performance check showing no added time to the save; and security review to ensure only necessary fields are sent.",
+          "rubric": [
+            {
+              "criterion": "Identifies recursion risk from calling current.update() within an update-triggered rule and links it to duplicates/errors",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposes an asynchronous, after-commit design (async BR or Event + Script Action/queue) and removal of current.update()",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses idempotency/retry behavior and user experience (no blocking on network)",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines concrete validation steps (ATF/unit tests, mock endpoint verification, performance check)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "REST API"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must allow a partner integration user to update Incident assignment via a Scripted REST API. Current ACLs include:\n\n```text\nTable ACL: incident, write, role=itil\nField ACL: incident.assigned_to, write, script: deny when current.u_sensitive==true unless user has role=security_admin\n```\nThe integration user has roles: rest_service, itil. The partner reports 403 when updating assigned_to on some incidents.",
+          "task": "Decide whether to grant additional roles or adjust ACLs for the integration, ensuring least privilege and auditability. Explain your decision and how you would test it safely.",
+          "expected_answer": "Keep least privilege: do not grant security_admin. Instead, create a dedicated role (e.g., x_acme.integration_assign) and modify the assigned_to write ACL to allow when user has that role AND the record is not sensitive. For sensitive records, enforce denial or require an approved workflow. Alternatively, add a separate Scripted REST resource that performs a privileged update via an Application Access-checking Script Include, but only when a server-side approval check passes. Testing: impersonate the integration user in a sub-prod instance; write ATF API tests that attempt updates on both sensitive and non-sensitive incidents, asserting 200 for non-sensitive and 403 for sensitive; verify audit records capture the integration user and request payload.",
+          "rubric": [
+            {
+              "criterion": "Applies least-privilege principle (avoids broad roles like security_admin)",
+              "marks": 2
+            },
+            {
+              "criterion": "Presents a concrete ACL change or controlled server-side elevation pattern tied to conditions (sensitive vs non-sensitive)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains how to test with impersonation and ATF API tests across allowed/denied cases",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses auditability/logging of integration updates",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Security",
+            "REST API"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Two features were developed in parallel in separate Update Sets A and B. Both touched Script Include \"Utils\" and different Client Scripts. In QA, Preview of A shows a collision on \"Utils\" with the local version from B already committed. The incoming A’s Client Script depends on a method only present in A’s version of \"Utils\".",
+          "task": "Define a safe promotion plan to merge and deploy these changes to QA and then Prod without breaking dependencies. Include how to back out if needed.",
+          "expected_answer": "First, compare the two \"Utils\" versions to create a merged, reviewed version that satisfies both features. Put the merged Script Include into a new dependency Update Set C. In QA: preview C, resolve collisions by choosing the merged version, commit C first. Then preview and commit A and B ensuring their Client Scripts reference the merged API. Lock A and B to prevent further edits. For Prod: schedule a deployment window, commit C first, then A and B. Capture a backout plan: export the prior Prod version of \"Utils\" and related scripts, or create a backout Update Set containing the previous versions; verify commits with Preview Problems showing no missing dependencies. Validate with smoke/ATF tests for both features before and after commit. If an issue occurs, back out by applying the backout Update Set that restores prior versions.",
+          "rubric": [
+            {
+              "criterion": "Proposes creating a merged canonical version in a dedicated dependency Update Set committed first",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains preview/commit order to satisfy dependencies and prevent breakage",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a concrete backout strategy (captured prior versions or backout Update Set)",
+              "marks": 1
+            },
+            {
+              "criterion": "Includes validation steps (smoke/ATF tests) pre and post commit",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Update discipline",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A Scripted REST API intermittently fails consumers due to missing or wrong headers and inconsistent response bodies. Current behavior:\n\n```http\nHTTP/1.1 200 OK\nContent-Type: text/plain\n\n{\"result\":\"ok\"}\n```\nError cases return 200 with an error string in the body. The runbook instructs consumers to parse the body for errors. ATF covers only the happy path UI flow that triggers the API, not direct API behavior.",
+          "task": "Redesign the API contract and test coverage to make integrations reliable. Specify the exact response patterns, headers, and tests you will add, and how you will deploy without breaking existing consumers.",
+          "expected_answer": "Adopt a consistent REST contract: set Content-Type: application/json; for success return 200 with a JSON body like {\"result\": { ... }}; for client errors return 400 (or 422) with {\"error\":{\"code\":\"VALIDATION\",\"message\":\"...\"}}, for auth/ACL failures 403, for server errors 500. Include correlation-id header and version the endpoint (e.g., /v2) to avoid breaking existing /v1 consumers. Add ATF API tests that call the endpoint directly (positive and negative cases), asserting status codes, headers, and JSON schema. Document the new contract in OpenAPI and provide a migration guide. Deploy by introducing /v2 alongside /v1, update internal clients first, monitor, then deprecate /v1. Add automated lint/schema validation in CI before Update Set promotion.",
+          "rubric": [
+            {
+              "criterion": "Defines clear status-code semantics and JSON structure with application/json Content-Type",
+              "marks": 3
+            },
+            {
+              "criterion": "Introduces non-breaking versioning (e.g., /v2) and migration approach",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies concrete ATF/API tests covering positive and negative cases incl. headers",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses deployment/monitoring steps to reduce risk",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Manual Testing",
+            "provide technical documentation",
+            "Application Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Scripted feature: Caller-to-Department autofill via GlideAjax (non-blocking)",
+          "brief": "Build a feature that, when the Incident caller changes, asynchronously fetches the caller’s department and sets u_department_name without freezing the UI. Use a client-callable Script Include extending AbstractAjaxProcessor. Ensure update discipline: deliver as a single Update Set with clear naming and scoped changes.",
+          "deliverable": "Scripted feature (Update Set XML export) containing: Client Script (onChange), Script Include (client-callable), and any dictionary changes for u_department_name; plus a short test note (text file) listing the form and steps to verify.",
+          "acceptance_criteria": [
+            "Client Script uses GlideAjax.getXML or getXMLAnswer with a callback (no getXMLWait).",
+            "Script Include is marked Client callable, extends AbstractAjaxProcessor, and returns the department for a given user sys_id.",
+            "Changing Caller on incident form fills u_department_name within 2 seconds in classic UI.",
+            "No client errors appear in the browser console during the operation.",
+            "Update Set applies cleanly with zero Preview Problems on a vanilla Madrid+ instance (or specify family used).",
+            "Test note includes exact steps to reproduce and expected result."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct client/server split (AbstractAjaxProcessor, client-callable) and non-blocking Client Script",
+              "marks": 6
+            },
+            {
+              "criterion": "Functional correctness: department resolved and set reliably on change",
+              "marks": 6
+            },
+            {
+              "criterion": "Clean Update Set composition and naming; preview with no problems",
+              "marks": 4
+            },
+            {
+              "criterion": "Verifiable test note with clear reproduction steps and no console errors",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "ServiceNow",
+            "Update discipline"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Mini ServiceNow solution: Secure Incident Escalation API with tests and docs",
+          "brief": "Create a Scripted REST API endpoint POST /x_acme/escalate that, given an incident sys_id and justification, sets priority to 2 - High, adds a work note, and assigns to an Escalation group. Enforce security: only users with role x_acme.api can call it, and block when incident.u_sensitive=true unless caller also has x_acme.sensitive_override. Provide ATF API tests (success and forbidden cases). Deliver deployment and API documentation.",
+          "deliverable": "ServiceNow solution (Update Set XML export) including: Scripted REST API, ACLs/roles, Script Include(s) used, ATF tests; plus a Postman (or REST Client) collection and a README.md with deployment steps, role mapping, and API contract.",
+          "acceptance_criteria": [
+            "Scripted REST API resource exists with path /x_acme/escalate and validates inputs (incident sys_id and non-empty justification).",
+            "Security enforcement: requires role x_acme.api; returns 403 when u_sensitive=true and caller lacks x_acme.sensitive_override.",
+            "On success, returns 200 application/json with a body including {\"number\":\"INC...\",\"escalated\":true}. Error cases return appropriate status (400/403/404) with JSON error object.",
+            "ATF API tests: one passes (valid inputs, authorized) and two fail as expected (403 sensitive, 404 bad sys_id). Tests are included in the Update Set and pass on assessor import.",
+            "Update Set previews with zero collisions or missing dependencies and contains only records for this feature (no unrelated changes).",
+            "README.md includes OpenAPI snippet or equivalent describing request/response, roles required, and step-by-step deployment (including role creation and cache flush).",
+            "Postman collection contains at least three requests: success, forbidden, not found, with example responses."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct and secure implementation of the Scripted REST API and role-based access (including sensitive override)",
+              "marks": 8
+            },
+            {
+              "criterion": "Accurate HTTP semantics and JSON responses across success and error paths",
+              "marks": 4
+            },
+            {
+              "criterion": "Comprehensive ATF API tests included and passing",
+              "marks": 4
+            },
+            {
+              "criterion": "Clean Update Set (scoped to feature), documentation (README/OpenAPI), and Postman collection",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "REST API",
+            "Data Security",
+            "Manual Testing",
+            "Application Deployment",
+            "provide technical documentation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

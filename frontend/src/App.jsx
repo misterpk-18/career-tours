@@ -1,9 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
 import AppLayout from './components/AppLayout';
-import ThemeToggle from './components/ThemeToggle';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import FullPageLoader from './components/ui/FullPageLoader';
 import LoginPage from './pages/LoginPage';
@@ -16,6 +14,8 @@ import ProfilePage from './pages/ProfilePage';
 import ProjectDetailsPage from './pages/ProjectDetailsPage';
 import CareerRecommendationsPage from './pages/CareerRecommendationsPage';
 import CourseRecommendationsPage from './pages/CourseRecommendationsPage';
+import ProjectCoursePage from './pages/ProjectCoursePage';
+import SittingPage from './pages/SittingPage';
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }) => {
@@ -30,6 +30,34 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return <AppLayout>{children}</AppLayout>;
+};
+
+/**
+ * Authenticated, but with NO application shell.
+ *
+ * A test is not a page of the app with a nav rail beside it. Two reasons this is
+ * its own wrapper rather than a prop on ProtectedRoute:
+ *
+ * - **Focus.** A sidebar full of links is an invitation to wander off
+ *   mid-question, on a clock, in a sitting that can only be graded once.
+ * - **Width.** The stems in this corpus are frequently 30+ lines of SQL or Java.
+ *   Handing them the whole viewport instead of a column beside a 15rem rail is
+ *   the difference between reading code and scrolling it.
+ *
+ * Authentication is identical — only the chrome differs.
+ */
+const ExamRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <FullPageLoader />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
 // Public Route wrapper component (redirects to dashboard if already logged in)
@@ -50,7 +78,6 @@ const PublicRoute = ({ children }) => {
   return (
     <>
       <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
       </div>
       {children}
     </>
@@ -59,9 +86,10 @@ const PublicRoute = ({ children }) => {
 
 export const App = () => {
   return (
-    // ThemeProvider sits outside AuthProvider: the loading splash and the login
+    // AuthProvider is the outermost provider now: with a single Solarized Dark
+    // palette there is no theme to resolve, so nothing has to wrap it. The
+    // loading splash and the login
     // page render before any session exists and must already be themed.
-    <ThemeProvider>
       <ErrorBoundary>
         <AuthProvider>
           <Router>
@@ -169,6 +197,32 @@ export const App = () => {
                     }
                   />
 
+                  {/* One course inside one project: the syllabus, plus the test
+                      for each section. Project-scoped because a score belongs to
+                      a project, and a page that guessed which project was
+                      "active" would eventually lock a score onto the wrong one. */}
+                  <Route
+                    path="/projects/:projectId/courses/:courseId"
+                    element={
+                      <ProtectedRoute>
+                        <ProjectCoursePage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* The test itself — full-bleed, no rail, no top bar. The
+                      clock still runs server-side, so leaving costs time rather
+                      than being prevented; the exam header carries an explicit
+                      Exit that says so. */}
+                  <Route
+                    path="/projects/:projectId/sittings/:sittingId"
+                    element={
+                      <ExamRoute>
+                        <SittingPage />
+                      </ExamRoute>
+                    }
+                  />
+
                   {/* Catch-all fallback */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
@@ -177,7 +231,6 @@ export const App = () => {
           </Router>
         </AuthProvider>
       </ErrorBoundary>
-    </ThemeProvider>
   );
 };
 

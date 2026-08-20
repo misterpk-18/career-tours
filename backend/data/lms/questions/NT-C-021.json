@@ -1,0 +1,1870 @@
+{
+  "course_code": "NT-C-021",
+  "course_name": "Business Analysis",
+  "sections": [
+    {
+      "section_code": "NT-C-021-S01",
+      "skills_assessed": [
+        "Business Analysis",
+        "Requirement Gathering",
+        "Stakeholder Management",
+        "business requirements techniques",
+        "Interview Skills",
+        "Communication"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit this draft charter excerpt:\n```text\nProject: Returns Portal Improvement\nProblem statement: Customers sometimes face issues returning items.\nObjectives: Make returns easier.\nScope: TBD after we talk to users.\nAssumptions: None documented.\nConstraints: Must reuse existing payment gateway contract (no new providers in FY).\nStakeholders: CX Lead, Warehouse Ops Manager, Finance Controller.\n```\nYour elicitation start date is next week. To reduce rework and scope creep downstream, what is the most effective next step before you begin technique-specific sessions?",
+          "options": [
+            "Send a company-wide survey to collect all potential improvements first, then scope later.",
+            "Start interviews with end users only and let the scope emerge over time.",
+            "Schedule a cross-functional scoping workshop to draft explicit in-scope and out-of-scope lists tied to objectives.",
+            "Proceed directly to observation so “the work speaks for itself,” deferring scope until after shadowing."
+          ],
+          "correct_option": "C",
+          "explanation": "With a vague problem statement and no scope boundaries, starting elicitation will surface solution ideas that collide with hidden constraints. A short, cross-functional scoping workshop to write explicit in-scope/out-of-scope items anchored to objectives reduces churn and frames subsequent interviews, observations, and surveys.",
+          "distractor_rationale": "B is tempting because interviews feel foundational, but without boundaries they create divergent inputs and rework. C sounds efficient but will explode idea volume without a frame, worsening scope ambiguity. D overvalues observation; while useful, it still needs scope anchors to decide what to watch and why.",
+          "skills_covered": [
+            "Business Analysis",
+            "Requirement Gathering",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "During a sponsor interview, you capture this exchange:\n```text\nBA: What impact are the current return steps having on our Q4 targets?\nSponsor: We just need a one-click refund button. That will fix it.\nBA: If we had that, what changes would you expect to see?\nSponsor: Fewer calls. Faster close.\n```\nYou need to prevent solution bias and still progress. What should you do next in the interview?",
+          "options": [
+            "Refocus on outcomes and metrics by probing measurable impacts (e.g., call handle time, first contact resolution) and conditions where they occur.",
+            "Switch to closed yes/no questions to stay on schedule and avoid debate.",
+            "State the button idea is out of scope per charter and move on to another topic.",
+            "Accept the solution and mark a high-priority requirement to maintain executive alignment."
+          ],
+          "correct_option": "A",
+          "explanation": "Reframing to outcomes and measurable impacts keeps the sponsor engaged while de-biasing the discussion. It anchors later elicitation (across techniques) on the problem effects instead of a preselected solution.",
+          "distractor_rationale": "B may be necessary later if scope truly conflicts, but early hard rejection harms rapport and may be premature. C preserves relationship but bakes in solution bias that distorts the rest of elicitation. D speeds the meeting but further reduces learning and invites confirmation bias.",
+          "skills_covered": [
+            "Interview Skills",
+            "Communication",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Here is a draft survey question set meant to prioritise pain points:\n```text\nQ1. How satisfied are you with the speed and accuracy of the returns portal?\n    Scale: Very dissatisfied / Dissatisfied / Neutral / Satisfied / Very satisfied\nQ2. What would you change to improve it? (optional)\n```\nYour goal is to produce data that indicates which aspect to fix first without conflating issues. What is the best change?",
+          "options": [
+            "Reduce the sample to known power users so the responses come from experts who can articulate trade-offs.",
+            "Make the free-text Q2 mandatory so you always know the specific issue per respondent.",
+            "Add an NPS question to benchmark overall sentiment; leave Q1 as is for comparability.",
+            "Split Q1 into two separate items (speed, accuracy) and use a task-frequency or time-based scale for speed rather than general satisfaction."
+          ],
+          "correct_option": "D",
+          "explanation": "The current Q1 is double-barrelled and uses a vague satisfaction scale. Separating speed and accuracy and measuring speed with a frequency/time proxy yields actionable, non-conflated signals for prioritisation.",
+          "distractor_rationale": "B adds a metric but not the diagnostic separation needed. C increases response burden and noise, and mandated text still won’t deconfound speed vs accuracy. D narrows to a biased subpopulation and undermines generalisability.",
+          "skills_covered": [
+            "business requirements techniques",
+            "Requirement Gathering",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your observation log shows this pattern:\n```text\n2026-02-12 10:05  Agent A processes refund in 4 steps when supervisor at desk\n2026-02-12 14:40  Agent A uses 7-step workaround when supervisor away\n2026-02-13 09:15  Agent B states “we always follow SOP” but uses keyboard macro unseen in SOP when supervisor passes by\n```\nTo reduce bias in the data you collect next week, what change to your elicitation plan is most appropriate?",
+          "options": [
+            "Ask agents to self-record their screens only when they solve unusual cases to reduce observer effects.",
+            "Add unobtrusive shadowing sessions across shifts without supervisor presence, with prior consent and clear purpose, to observe natural behaviour.",
+            "Replace observation with a larger survey so participants feel anonymous.",
+            "Invite supervisors into a workshop to clarify the SOP so everyone aligns on the official process."
+          ],
+          "correct_option": "B",
+          "explanation": "The pattern suggests observer or authority-proximity effects. Scheduling consented, low-intrusion shadowing across contexts without supervisor presence reduces this bias and triangulates with prior logs.",
+          "distractor_rationale": "B anonymity helps honesty but loses behavioural evidence. C may clarify rules but not actual practice under conditions that trigger workarounds. D selectively samples unusual cases and increases self-selection and novelty bias.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Interview Skills"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your charter currently says:\n```text\nScope (In): Returns portal UI changes, warehouse disposition codes\nScope (Out): Payment provider integrations and any refund automation touching payment rails\nConstraints: Existing gateway contract through FY\n```\nIn a workshop, participants propose \"automated refunds for low-value items\". What should you do next to preserve governance and momentum?",
+          "options": [
+            "Log it as a risk so it remains visible while you continue as planned.",
+            "Escalate the idea through the charter’s change authority for impact assessment and, if approved, update scope before carrying it into the backlog.",
+            "Drop the idea from notes to avoid distracting the group from in-scope work.",
+            "Include it as a stretch goal in the charter to keep teams motivated without formal change."
+          ],
+          "correct_option": "B",
+          "explanation": "The proposal directly conflicts with explicit out-of-scope items and a contract constraint. Routing via change control ensures traceability and prevents illegitimate scope expansion.",
+          "distractor_rationale": "B mislabels a scope addition as a risk, weakening control. C creates a backdoor scope creep without authority. D hides stakeholder input and erodes trust.",
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You drafted this 90-minute workshop agenda for mixed seniority participants:\n```text\n0–15  Sponsor context (slides)\n15–25 Clarifying Q&A (plenary)\n25–55 Open brainstorming (plenary)\n55–80 Group discussion and clustering (plenary)\n80–90 Next steps\n```\nSenior leaders tend to speak first and set direction. What is the single most effective facilitation change to reduce anchoring and groupthink while preserving the 90-minute slot?",
+          "options": [
+            "Replace the open brainstorm with two silent brainwriting rounds followed by clustering before any plenary sharing.",
+            "Extend the sponsor’s context to 30 minutes so everyone agrees on goals first.",
+            "Replace the workshop with an anonymous survey to eliminate social pressure entirely.",
+            "Use cold-calling during the plenary brainstorm to ensure junior voices are heard."
+          ],
+          "correct_option": "A",
+          "explanation": "Silent brainwriting ensures idea generation before exposure to dominant voices, reducing anchoring and groupthink while keeping the timebox.",
+          "distractor_rationale": "B increases anchoring. C can help distribution but ideas are still shaped by early speakers. D throws away collaborative synthesis and doesn’t resolve ambiguity inherent in brainstorming.",
+          "skills_covered": [
+            "business requirements techniques",
+            "Stakeholder Management",
+            "Communication"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Availability before a regulatory deadline is tight:\n```csv\nRole,Name,Available\nEnd-user agents,5 people,Wednesday 10:00–12:00 only\nOps leads,2 people,Next Monday 14:00–15:00 only\nSponsor,1 person,Friday 09:00–09:30 only\nCustomers,Panel of 6,Asynchronous email within 5 days\n```\nYou must start next Wednesday. Which sequencing maximises learning quality under these constraints?",
+          "options": [
+            "Cancel observation and do a single joint workshop next Monday with whoever can join to accelerate alignment.",
+            "Start with contextual observation of end-user agents on Wednesday, prepare targeted follow-ups for Ops leads on Monday, then brief the sponsor on Friday.",
+            "Use the sponsor’s Friday slot first to get direction, then interview Ops leads Monday, and observe agents later via recordings.",
+            "Send a survey to all parties to capture inputs quickly, then observe agents if time permits."
+          ],
+          "correct_option": "B",
+          "explanation": "Observing real work first yields grounded questions for Ops leads. You can then brief the sponsor with evidence-backed insights, making the short slot effective. This ordering respects availability and data quality.",
+          "distractor_rationale": "B risks solution bias from the sponsor shaping questions. C trades depth and validity for speed. D compresses diverse roles into a rushed session that invites dominance and shallow outputs.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Elicitation plan extract:\n```text\nInterviews: 8 Customer Service reps from Site A, Day Shift only\nObservation: 2 hours on Site A returns desk, Tuesday morning\nWorkshops: Cross-functional group (Site A personnel)\nSurveys: None\n```\nGiven the problem spans three sites and all shifts, what is the most critical fix to reduce sampling bias without exploding scope?",
+          "options": [
+            "Stratify the sample to include reps across sites and shifts (e.g., add Site B/C and at least one night shift) and proportionally extend observation.",
+            "Rely on the cross-functional workshop to surface cross-site issues rather than expanding interviews.",
+            "Add a broad customer survey instead of changing the staff sample.",
+            "Double interview count at Site A to 16 to improve confidence."
+          ],
+          "correct_option": "A",
+          "explanation": "The plan is site- and shift-biased. Stratified sampling across sites/shifts plus proportional observation yields more representative data with controlled expansion.",
+          "distractor_rationale": "B increases quantity without fixing bias. C surveys a different population and does not correct staff operational bias. D workshops risk hearsay and dominance, not representative operational evidence.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Legal sends this note before interviews and observation:\n```text\nSubject: Recording and PII\nIf you plan to record sessions, ensure explicit consent is captured. Retain recordings max 30 days. Mask PII where practicable.\n```\nWhat change should you make to your plan to remain compliant while preserving data quality?",
+          "options": [
+            "Proceed with recording as planned but add a blanket NDA for all participants.",
+            "Skip recording entirely and rely on handwritten notes to avoid privacy issues.",
+            "Integrate a recorded-consent script and tracking, document retention/deletion dates, and define a masking process for any PII captured.",
+            "Record only audio, not screens, so PII won’t be captured."
+          ],
+          "correct_option": "C",
+          "explanation": "Explicit consent with tracked retention and a masking workflow meets legal guidance while keeping high-fidelity data. The plan change is concrete and auditable.",
+          "distractor_rationale": "B throws away fidelity and may still capture PII in notes. C NDAs don’t replace consent and retention controls. D audio alone can still include PII and removes critical behavioural context.",
+          "skills_covered": [
+            "business requirements techniques",
+            "Communication",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Two competing draft problem statements appear in the charter:\n```text\nVersion 1: We must implement automated refunds so customers don’t call support.\nVersion 2: High call volume related to returns increases handling costs and delays refunds, risking SLA breaches in Q4.\n```\nWhich rewrite will best guide elicitation by focusing on the underlying problem and measurable impacts without prescribing a solution?",
+          "options": [
+            "Returns are too slow; the team must speed them up as quickly as possible to hit targets.",
+            "Customers dislike the portal, so we should redesign it to be more user friendly and modern.",
+            "Employees are using too many workarounds, so we should enforce the SOP more strictly.",
+            "High return-related call volume increases handling cost by 18% and delays refunds beyond 48 hours for 22% of cases; we need to understand causes across portal, policy, and operations before Q4."
+          ],
+          "correct_option": "D",
+          "explanation": "Option A names the effect and magnitude, sets measurable targets, and keeps solution space open, which steers elicitation toward causes across people, process, and technology.",
+          "distractor_rationale": "B is solution-prescriptive and vague. C states a desire without diagnostics or measures. D narrows prematurely to enforcement and assumes the SOP is correct, stifling discovery.",
+          "skills_covered": [
+            "Business Analysis",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a messy intake with fragments from three emails and a whiteboard photo after a hurried kickoff:\n```text\nEmail 1 (Sponsor): \"Need fewer return calls. Quick win pls.\"\nEmail 2 (Ops Lead): \"Warehouse rework up 12%. Suspect wrong disposition codes from portal.\"\nEmail 3 (Finance): \"Refunds breaching 48h SLA up from 5% to 22% in Q3. Gateway contract fixed till FY end.\"\nWhiteboard photo transcription: IN: portal screens; OUT: payments? (unclear). Assumptions: agents follow SOP. Stakeholders: CX, Ops, Finance. TBD: Customers, Legal.\n```\nThe current charter draft reflects this confusion. You must sharpen the problem definition and scope before elicitation starts.",
+          "task": "Write a crisp problem statement, a first-pass success metric set, and explicit scope boundaries (in-scope and out-of-scope) that reconcile the evidence. List at least four stakeholders to engage early and justify each choice based on the artefacts.",
+          "expected_answer": "A strong answer articulates an outcome-focused, measurable problem such as: \"Return-related contacts increased 28% and refunds breaching 48h rose to 22% in Q3, driving handling cost and SLA risk. Causes may span portal data capture, agent workflow, and policy; payment provider changes are constrained by the FY contract.\" Success metrics include reduced return-related call volume by a defined target, <5% refunds breaching 48h, and reduced warehouse rework. Scope in includes portal return flows, agent handoffs, and disposition code mapping; scope out includes new payment provider integrations while the contract stands. Stakeholders include Sponsor (decision rights), Ops Lead (process owner), Finance (SLA and cost), Warehouse (rework impact), Legal/Compliance (recording, PII), Customer Support Agents (frontline behaviour), and potentially a Customer Panel (external perspective). Justifications tie each stakeholder to specific lines in the artefacts (e.g., Finance’s SLA data, Ops’ rework claim).",
+          "rubric": [
+            {
+              "criterion": "Problem statement is outcome-focused, non-prescriptive, and reconciles conflicting fragments with appropriate qualifiers (e.g., constraints).",
+              "marks": 2
+            },
+            {
+              "criterion": "Success metrics are specific, measurable, and traceable to the stated problem (at least two, with directional targets).",
+              "marks": 2
+            },
+            {
+              "criterion": "Scope boundaries clearly list in-scope and out-of-scope items with rationale tied to evidence (e.g., payment provider constraint).",
+              "marks": 2
+            },
+            {
+              "criterion": "Stakeholder list includes at least four roles with clear justification linked to the artefacts’ concerns.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Requirement Gathering",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Your organisation is distributed across three sites with mixed shifts. Time windows are constrained as in the earlier MCQ. Legal requires explicit recording consent and 30-day retention. Supervisors tend to influence agent behaviour when present. The sponsor can only spare 30 minutes on Friday morning during week 1.",
+          "task": "Propose a one-week elicitation plan that sequences interviews, observation, workshops, and surveys to maximise validity under these constraints. Specify who, what method, duration, consent/recording approach, and expected artefacts per session. Include two concrete bias/risks you will mitigate and how.",
+          "expected_answer": "An effective plan opens with contextual observation of end-user agents across at least two sites and shifts (no supervisors present; consent captured via a standard script; 30-day retention logged). Follow with targeted 30–45 minute Ops lead interviews informed by observed pain points. Schedule a 60–90 minute cross-functional workshop with silent brainwriting to synthesise findings and map causes to data points, ensuring legal/PII constraints are addressed. Use a short, split-question survey to validate specific hypotheses about speed vs accuracy for a broader audience. Close with a 30-minute sponsor brief on Friday presenting evidence-backed impacts and options. Artefacts include observation logs and timing data, interview notes, consent records, workshop outputs (clusters, prioritised themes), and survey results. Bias mitigations include stratified sampling across sites/shifts to reduce sampling bias and brainwriting to reduce anchoring; privacy risks mitigated by consent tracking and data deletion scheduling.",
+          "rubric": [
+            {
+              "criterion": "Clear, feasible sequence mapping each method to specific stakeholder groups with durations and outputs.",
+              "marks": 3
+            },
+            {
+              "criterion": "Consent and retention controls specified and workable within policy (script, tracking, deletion date).",
+              "marks": 2
+            },
+            {
+              "criterion": "At least two concrete biases/risks identified with method-specific mitigations tied to the scenario (e.g., supervisor effect, sampling bias).",
+              "marks": 2
+            },
+            {
+              "criterion": "Plan leverages early evidence to inform later sessions (e.g., observation informs interview guides; workshop synthesises).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Stakeholder Management",
+            "Communication"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "After initial rounds, you have conflicting signals:\n```text\nInterviews (Agents): \"Portal slow; we follow SOP.\"\nObservation timing: Median refund path 2m 10s with supervisor away; 1m 20s when supervisor present (fewer validation steps used).\nWarehouse rework: Up 12% after agents use code R-07 more often on busy mornings.\n```\nOps insists the SOP is sufficient. Sponsor wants a quick UI fix.",
+          "task": "Formulate a testable hypothesis explaining the discrepancy and propose a targeted follow-up elicitation plan (two or more activities) to confirm or refute it. State what evidence would change your scope or priorities.",
+          "expected_answer": "A good hypothesis is that time pressure and oversight change agent behaviour, leading to inconsistent code selection (R-07) and downstream rework; the UI may enable skipping validations under social pressure. Follow-ups could include unobtrusive time-sampled shadowing across peak/off-peak and with/without supervisor presence, plus think-aloud task-based interviews using realistic scenarios to see where validation steps are bypassed. Optionally extract system logs to correlate timestamps with code usage by shift. Evidence that code misuse correlates with peak times and reduced validation would shift scope toward workflow/policy and UI guardrails rather than pure performance tuning. If logs show consistent misuse regardless of conditions, UI affordances and training might dominate.",
+          "rubric": [
+            {
+              "criterion": "Hypothesis connects observed behaviour, context (supervisor/peak times), and downstream effects (rework) coherently.",
+              "marks": 2
+            },
+            {
+              "criterion": "Follow-up plan includes at least two appropriate techniques and explains how each will confirm/refute aspects of the hypothesis.",
+              "marks": 3
+            },
+            {
+              "criterion": "Decision criteria: states what specific evidence would shift scope or priority and in which direction.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Requirement Gathering",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Participants for a cross-functional workshop include a vocal sponsor, two Ops leads, four agents, one Finance analyst, and Legal. Past sessions derailed into solutioning and status updates. Remote participants join from Sites B and C with variable bandwidth.",
+          "task": "Design a 75–90 minute workshop plan that keeps focus on the problem and evidence, minimises anchoring, and produces a prioritised set of causes to investigate. Specify activities, timings, roles, materials, and how you’ll handle remote participation and Legal’s constraints.",
+          "expected_answer": "A strong plan includes a 5-minute framing with the chartered problem and metrics; 10 minutes of silent brainwriting on observed pain points and evidence; 15 minutes of small breakout clustering (mixed roles) with remote-friendly boards; 15 minutes dot-voting on cause clusters using criteria (impact, evidence strength); 20 minutes to map top clusters to data/evidence and identify knowledge gaps; 10 minutes to agree next steps. Roles: facilitator, timekeeper, scribe, sponsor as participant not presenter. Materials: virtual whiteboard with templates, consent reminder for any shared screenshots, and pre-read of observation snippets. Remote handling: short activities, explicit turn-taking, chat-based inputs as backup; record only with consent and assure retention limits. Legal is consulted on PII masking in shared artefacts.",
+          "rubric": [
+            {
+              "criterion": "Structure prioritises de-biasing (e.g., silent ideation) and problem focus before any solutioning.",
+              "marks": 2
+            },
+            {
+              "criterion": "Activities, timings, and roles are clear, feasible, and sum to 75–90 minutes.",
+              "marks": 2
+            },
+            {
+              "criterion": "Remote participation constraints addressed with specific tools/practices; Legal/PII considerations integrated.",
+              "marks": 2
+            },
+            {
+              "criterion": "Outputs lead to a prioritised, evidence-linked set of causes and explicit next steps.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "business requirements techniques",
+            "Stakeholder Management",
+            "Communication"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a Project Charter for the Returns Improvement Initiative",
+          "brief": "Create a 2–4 page project charter that defines the problem, objectives, scope boundaries, stakeholders, assumptions, constraints, risks, and governance for the returns improvement effort. Use only information that could reasonably be known at this stage; make assumptions explicit and traceable.",
+          "deliverable": "A single PDF or DOCX named \"Project_Charter_Returns_<YourName>.pdf|docx\"",
+          "acceptance_criteria": [
+            "Includes a problem statement that is measurable and non-prescriptive.",
+            "States 2–4 success metrics with current baseline (or how baseline will be obtained) and target direction.",
+            "Provides explicit in-scope and out-of-scope lists with rationale tied to constraints (e.g., vendor contract).",
+            "Lists key stakeholders with role and a power–interest or RACI view.",
+            "Documents assumptions and constraints relevant to scope and scheduling.",
+            "Identifies 3–5 initial risks with owners and mitigation direction.",
+            "Specifies decision rights/change control for scope changes.",
+            "Contains version/date, author, and required approvals/sign-offs.",
+            "No placeholders like \"TBD\" without an accompanying plan to resolve; consistent terminology throughout."
+          ],
+          "rubric": [
+            {
+              "criterion": "Problem statement and success metrics are specific, measurable, and avoid prescribing solutions.",
+              "marks": 5
+            },
+            {
+              "criterion": "Scope boundaries (in/out) are clear, justified, and aligned to constraints; governance for changes is defined.",
+              "marks": 5
+            },
+            {
+              "criterion": "Stakeholder analysis (roles plus power–interest/RACI) is complete and actionable.",
+              "marks": 4
+            },
+            {
+              "criterion": "Assumptions, constraints, and initial risks are identified with owners/mitigations; document quality (clarity, consistency, versioning, approvals).",
+              "marks": 6
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Develop an Elicitation Plan for Week 1",
+          "brief": "Plan a one-week elicitation effort that selects and sequences interviews, workshops, observation, and surveys to investigate the returns problem. Address logistics, participants, consent/privacy, instruments, and risks.",
+          "deliverable": "A single PDF or DOCX named \"Elicitation_Plan_Week1_<YourName>.pdf|docx\" including schedule, participant list, and instrument outlines (interview guide, workshop agenda, survey draft).",
+          "acceptance_criteria": [
+            "Includes a day-by-day schedule with session types, durations, participants, and expected artefacts.",
+            "Maps each elicitation method to specific objectives or hypotheses from the charter.",
+            "Provides an interview guide outline (topics and 6–10 non-leading questions) and a workshop agenda with de-biasing activities.",
+            "Provides a survey draft with deconfounded questions if a survey is used, or justification if not used.",
+            "Details consent/recording scripts, retention period, and PII masking approach per policy.",
+            "Addresses sampling strategy (e.g., sites/shifts) and logistical constraints.",
+            "Includes a risk/mitigation section for at least three risks (e.g., supervisor effect, sampling bias, low attendance).",
+            "Specifies how findings will be captured and stored (templates, repositories) and how traceability to objectives will be maintained."
+          ],
+          "rubric": [
+            {
+              "criterion": "Schedule and sequencing are feasible and aligned to objectives/hypotheses; participants and outputs are clear.",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality of instruments: interview guide is non-leading; workshop agenda includes de-biasing; survey (if used) avoids double-barrel/leading scales.",
+              "marks": 6
+            },
+            {
+              "criterion": "Compliance and ethics: consent, retention, and PII masking are concrete and auditable.",
+              "marks": 4
+            },
+            {
+              "criterion": "Sampling strategy and risk mitigations address bias and logistical constraints; capture/traceability approach is defined.",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Communication",
+            "Stakeholder Management"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-021-S02",
+      "skills_assessed": [
+        "Business Analysis",
+        "Requirement Gathering",
+        "business requirements techniques",
+        "business process modelling",
+        "Microsoft Visio"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You mapped the as-is order verification process and collected time data:\n\n```csv\nStep,Avg Wait (min),Avg Work (min),Defects per 100\nIntake,12,4,1\nPre-Check,25,3,2\nApprove,5,6,0.5\nFulfil,8,10,3\n```\nThe business target is to cut total cycle time by 20% without adding headcount. Which to-be change is most likely to achieve the target by addressing the dominant root cause evident in the data?",
+          "options": [
+            "Move data validation from Pre-Check into Intake with a form-level validator and required fields; demote Pre-Check to exception handling.",
+            "Add a second approver in parallel to reduce the Approve work time from 6 to 3 minutes.",
+            "Add WIP limits to Fulfil to keep no more than 2 orders being worked at once.",
+            "Automate label printing in Fulfil to shave 2 minutes of work time per order."
+          ],
+          "correct_option": "A",
+          "explanation": "Wait time at Pre-Check (25 min) dwarfs other waits and work times, so front-loading validation to prevent queuing at Pre-Check removes the bottleneck. This attacks the largest contributor to total cycle time without adding people.",
+          "distractor_rationale": "B is tempting because it reduces a visible work time, but Approve’s work time (6) is small compared to the 25-minute Pre-Check wait. C improves Fulfil work time but addresses a smaller contributor. D may improve flow but does not remove the main root cause: the large queue created by late validation.",
+          "skills_covered": [
+            "business process modelling",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A 5 Whys on order delays produced this:\n\n```text\nProblem: Late shipments up 15%\nWhy1: Pick tickets queued ~2h\nWhy2: Queue because wave release at 10:00 only\nWhy3: Single daily batch configured\nWhy4: Batch due to fear of printer jams\nWhy5: No auto-retry policy defined\n```\nWhich to-be change best addresses the root cause while maintaining control?",
+          "options": [
+            "Add two additional pickers to drain the queue faster after 10:00.",
+            "Keep a single daily batch but add two more printers to avoid jams.",
+            "Allow ad-hoc manual waves when supervisors notice a queue.",
+            "Introduce hourly wave releases with an automatic print retry/backoff policy and alerting."
+          ],
+          "correct_option": "D",
+          "explanation": "The root cause is the batching choice driven by printer-jam risk. Moving to frequent waves plus auto-retry and alerting addresses both flow and the original risk.",
+          "distractor_rationale": "B treats the symptom (printer jams) but keeps the batch cadence that creates the queue. C adds capacity but leaves the batching constraint and creates cost. D relies on human detection and is inconsistent; it doesn’t fix the systemic batching root cause.",
+          "skills_covered": [
+            "Business Analysis",
+            "business process modelling"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "QA cannot design a performance test for one of your current non-functional requirements. From the requirements register below, pick the best rewrite of NFR-07 so it becomes testable and traceable.\n\n```csv\nID,Statement,Type\nFR-12,When customer submits return, system creates RMA and emails label within 2 minutes,Functional\nNFR-04,System must process 200 return requests/minute at p95 < 1.5s,Non-Functional\nFR-27,Supervisor can override restocking fee,Functional\nNFR-07,The UI should be intuitive,Non-Functional\n```\n",
+          "options": [
+            "\"The UI must follow brand guidelines in the latest style guide.\"",
+            "\"90% of first-time users shall complete the return flow without help within 3 minutes on a 4G connection.\"",
+            "\"The UI should be delightful across devices.\"",
+            "\"The UI should be less complex than the competitor’s site.\""
+          ],
+          "correct_option": "B",
+          "explanation": "B introduces a measurable success criterion (90% of first-time users complete within 3 minutes under defined conditions), making the NFR testable and traceable to usability tests.",
+          "distractor_rationale": "A is aspirational but non-measurable. C is specific but belongs to branding/compliance, not usability efficiency. D is comparative and untestable without a moving external benchmark.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You maintain this traceability snapshot:\n\n```csv\nReqID,ProcessStep,TestCaseIDs,DesignArtifact\nFR-12,S4: Create RMA,TC-101|TC-102,Design-UI-4\nFR-18,S6: Inspect Item,TC-201,Design-WF-2\nBR-05,S3: Validate Receipt,TC-090,Design-Rules-1\nFR-27,S7: Apply Fee Override,TC-301|TC-302,Design-UI-7\n```\nA regulatory change eliminates restocking fees, removing `S7: Apply Fee Override`. What is the correct immediate action to preserve traceability and avoid orphan artefacts?",
+          "options": [
+            "Delete FR-27 and associated test cases from all tools to keep the system clean.",
+            "Update Design-UI-4 to absorb fee logic and leave trace links as-is to preserve history.",
+            "Mark FR-27 as deprecated with a change record, retire S7, close TC-301/302 with linkage to the change, and archive Design-UI-7.",
+            "Keep FR-27 but hide the override button; do not change tests until next release to minimize churn."
+          ],
+          "correct_option": "C",
+          "explanation": "Deprecating the requirement with a formal change record, retiring the step, and closing linked tests and design with preserved links maintains trace history and prevents orphans.",
+          "distractor_rationale": "A destroys trace history. C leaves invalid test coverage and a dead feature. D silently moves logic and breaks the accuracy of existing links, confusing impact analysis.",
+          "skills_covered": [
+            "business requirements techniques",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A refund flow is producing occasional double refunds. The BPMN fragment is below:\n\n```xml\n<process id=\"refund\">\n  <parallelGateway id=\"gw1\"/>\n  <sequenceFlow id=\"f1\" sourceRef=\"gw1\" targetRef=\"AutoRefund\"/>\n  <sequenceFlow id=\"f2\" sourceRef=\"gw1\" targetRef=\"ManualReview\"/>\n  <sequenceFlow id=\"to_pay\" sourceRef=\"AutoRefund\" targetRef=\"IssuePayment\"/>\n  <sequenceFlow id=\"to_pay2\" sourceRef=\"ManualReview\" targetRef=\"IssuePayment\"/>\n</process>\n```\nWhich to-be correction prevents the defect while preserving intent that only one path should lead to payment?",
+          "options": [
+            "Keep the model but guard IssuePayment with an idempotency check only.",
+            "Replace the parallel gateway with an exclusive gateway and define clear routing rules.",
+            "Add a non-interrupting boundary timer on AutoRefund to throttle duplicate payments.",
+            "Merge the two flows with another parallel gateway before IssuePayment to synchronize."
+          ],
+          "correct_option": "B",
+          "explanation": "A parallel gateway forks both paths, enabling two payments. Using an exclusive gateway enforces a single route based on conditions, matching the business rule.",
+          "distractor_rationale": "B treats a symptom (timing) but not the modeling error. C synchronizes two active paths and still risks double payment. D relies on implementation controls while leaving a logically incorrect process model.",
+          "skills_covered": [
+            "business process modelling",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A Visio as-is map duplicated a task in two lanes:\n\n```text\nShapes used:\n- Rectangle: \"Check Inventory\" (Lane A)\n- Rectangle: \"Check Inventory\" (Lane B)\n- Subprocess: \"Ship Order\" (non-collapsed)\n- Decision connectors lack labels\n```\nLater, analysts struggled to trace defects tied to \"Check Inventory\" because two shapes existed with no unique identity. What to-be modeling change most directly improves traceability and reuse?",
+          "options": [
+            "Replace the duplicate rectangles with a single call activity (reusable subprocess) \"Check Inventory\" referenced from both lanes, with a unique ID.",
+            "Leave shapes as-is but add a footnote explaining they are the same logical step.",
+            "Convert both rectangles into separate subprocesses with the same name and different colors.",
+            "Keep both rectangles but add a bold border to the more important one."
+          ],
+          "correct_option": "A",
+          "explanation": "A call activity (reusable subprocess) with a unique identifier provides a single traceable definition referenced from multiple contexts, fixing duplication and traceability gaps.",
+          "distractor_rationale": "A/Bold border adds emphasis, not identity. C creates two different definitions, worsening traceability. D relies on documentation rather than model semantics and is brittle.",
+          "skills_covered": [
+            "Microsoft Visio",
+            "business process modelling"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You evaluated to-be options against constraints: cycle time <= 38 min, error rate < 3%, no headcount increase.\n\n```csv\nOption,Average Cycle (min),FTE Change,Error Rate (%)\nA,38,-1,3.2\nB,44,0,1.1\nC,30,+2,3.5\nD,36,0,2.8\n```\nWhich option satisfies all constraints?",
+          "options": [
+            "Option C",
+            "Option B",
+            "Option D",
+            "Option A"
+          ],
+          "correct_option": "C",
+          "explanation": "Only D meets cycle time (36 <= 38), holds headcount (0), and stays under the error threshold (2.8% < 3%).",
+          "distractor_rationale": "A meets cycle and improves FTE but exceeds error rate. B meets error but misses cycle time. C meets cycle but violates the no headcount increase constraint.",
+          "skills_covered": [
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Upstream changes merge two statuses into one. Current mapping:\n\n```csv\nUpstreamStatus,OurProcessStep\nAPPROVED,S5: Pack\nAPPROVED_MANUAL,S5: Pack\nREJECTED,S3: Cancel\n```\nA branching business rule `BR-12` currently applies a different SLA if `APPROVED_MANUAL`. After the upstream merge (only `APPROVED` and `REJECTED` remain), what is the correct requirements/process update?",
+          "options": [
+            "Keep BR-12 but infer manual approvals from user role at runtime, no change to process.",
+            "Add a new pseudo-status `APPROVED_LEGACY` to preserve the branch; document mapping in the interface spec only.",
+            "Leave the process intact; add a test note to check SLA on random samples.",
+            "Retire BR-12, update requirements to a single SLA for APPROVED, and remove the branch in the process."
+          ],
+          "correct_option": "D",
+          "explanation": "With the source distinction gone, the branch is unsupported by data. Retiring the rule, simplifying the process, and updating the requirement aligns with the new upstream contract and preserves traceability.",
+          "distractor_rationale": "B invents hidden logic and weakens traceability. C creates a status not provided by the source, breaking interface alignment. D leaves an invalid branch and offloads control to testing notes.",
+          "skills_covered": [
+            "business requirements techniques",
+            "business process modelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Two drafted requirements conflict:\n\n```text\nFR-41: Auto-approve refunds <= $50 instantly.\nNFR-12: All approvals must complete a fraud check taking 90–120 seconds.\n```\nWhat is the most robust resolution that preserves traceability and intent?",
+          "options": [
+            "Drop FR-41 since NFRs are always higher priority than FRs.",
+            "Split FR-41 into FR-41a (queue for fraud check if flagged) and FR-41b (auto-approve if not flagged), add a derived NFR-12a specifying a p95 time for low-risk auto-approvals, and link both to the fraud check decision.",
+            "Change NFR-12 to \"most approvals\" to allow FR-41 in some cases without updating links.",
+            "Keep both as-is and let operations decide case by case; document the exception in a SOP."
+          ],
+          "correct_option": "B",
+          "explanation": "Decomposing the FR and deriving a clarifying NFR preserves both intents, makes conditions explicit, and maintains clear trace links for both paths and performance expectations.",
+          "distractor_rationale": "A assumes a blanket priority rule and deletes value. C offloads a design-time conflict to operations without traceable rules. D weakens an NFR ambiguously and breaks verifiability.",
+          "skills_covered": [
+            "business requirements techniques",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Incident logs show frequent rework after payment settlement:\n\n```text\nINC-2331: Chargeback due to address mismatch; manual rework added 2 days.\nINC-2359: Duplicate shipment; second label voided post-settlement.\nINC-2362: Payment captured before hold released; reversal required.\n```\nAs-is process excerpt:\n\n```text\nS7: Capture Payment -> S8: Ship -> S9: Address Validate (exception flow)\n```\nWhich to-be and requirements update best reduces rework while preserving compliance?",
+          "options": [
+            "Move S9 Address Validate to precede S7 Capture Payment and add FR to block capture on validation failure; define NFR for validation response p95 < 800ms.",
+            "Add a post-settlement reconciliation requirement; accept occasional reversals as cost of speed.",
+            "Keep the flow but add a monitoring requirement to alert on address mismatches after shipment.",
+            "Insert a manual approval step before S7 to catch exceptions with a checklist."
+          ],
+          "correct_option": "A",
+          "explanation": "Placing validation before payment prevents downstream rework and aligns with incidents. Adding a functional requirement to block capture on failure and a performance NFR ensures feasibility and testability.",
+          "distractor_rationale": "B detects after the fact, not preventing rework. C adds manual latency and variability instead of fixing sequencing. D institutionalizes waste rather than removing the cause.",
+          "skills_covered": [
+            "business process modelling",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A regional retailer’s returns process misses its 5-day refund SLA. Your discovery artefacts include:\n\n- As-is swimlane (Ops, Finance, Customer Support) showing 4 handoffs and two approval loops.\n- Data extract: average wait times (Ops intake 8h, Support validation queue 26h, Finance refund 6h), work times all under 30 minutes.\n- Defect log concentrated on mismatched order IDs at Support validation.\n- Current requirements: FR-12 (create RMA on submit), FR-27 (supervisor fee override), NFR-04 (throughput 200 req/min at p95 < 1.5s).\n",
+          "task": "Propose a to-be process that hits the SLA without adding headcount. Specify at least three concrete model changes tied to root causes and list the precise requirement updates you would raise (new, changed, or retired) including any non-functional constraints needed to make the to-be viable. Justify your choices using the artefacts.",
+          "expected_answer": "A strong answer identifies queueing at Support validation as the dominant delay, proposes moving validation upfront with form-level checks and system joins at Intake (pre-validating order ID), collapsing an approval loop with clear business rules, and introducing an automated refund trigger with exception handling. It retires or amends any fee-override step if policy allows and introduces new FRs such as blocking submission on failed validation and auto-routing exceptions. It adds NFRs for validation service latency (e.g., p95 < 800 ms) and reliability (e.g., 99.9%), and performance for the auto-trigger. It keeps or updates trace links (e.g., FR-12 now depends on Validation Service). It justifies each change by tying to the wait-time data and defect log, arguing reduced handoffs and earlier defect discovery.",
+          "rubric": [
+            {
+              "criterion": "Identifies dominant root cause(s) from artefacts (queues at Support validation; unnecessary approval loop)",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes at least three concrete to-be model changes addressing those causes (e.g., shift-left validation, remove/streamline approval loop, auto-trigger with exception path)",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies precise requirement changes (new/changed/retired FRs) with clear wording and rationale",
+              "marks": 1
+            },
+            {
+              "criterion": "Specifies necessary NFRs (latency, reliability) to make to-be feasible and testable",
+              "marks": 1
+            },
+            {
+              "criterion": "Explains traceability impacts/updates clearly (dependencies, links)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "business process modelling",
+            "Business Analysis",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherited a partially written requirements document for a claims portal. Excerpts:\n\n- FR-21: \"Users can upload claim evidence.\"\n- FR-22: \"Evidence upload must support PDF and JPEG.\"\n- NFR-08: \"Uploads should be fast.\"\n- BR-03: \"Manual review required for claims > $1,000.\"\n- Trace matrix shows FR-21 -> S5: Upload Evidence; NFR-08 has no links; BR-03 -> S7: Manual Review.\n- Current defect: timeouts for large uploads on mobile.\n",
+          "task": "Refactor the requirements to make them testable and traceable, resolve any hidden ambiguity, and update traceability. State the rewritten requirements (with measurable criteria), the process impacts, and how you will structure the traceability so a future change to file types or size limits is contained. Justify choices.",
+          "expected_answer": "Good solutions rewrite NFR-08 into measurable constraints (e.g., \"95th percentile upload completion < 6s for 5 MB files on 4G; max file size 25 MB\"), consolidate FR-21/22 into a single FR with acceptance criteria for supported types and size, and add an FR for resumable uploads on unstable networks. They link NFRs to S5 and to tests/components. They note process impact (no change to steps, but add an exception path for failed upload and a retry mechanism). They structure traceability by introducing a file-handling capability requirement parent with child FRs (types, sizes, resumable), making future file-type changes local to that node; all link to S5 and relevant test cases.",
+          "rubric": [
+            {
+              "criterion": "Produces measurable, testable NFRs addressing the defect and realistic conditions",
+              "marks": 2
+            },
+            {
+              "criterion": "Consolidates and clarifies FRs with concrete acceptance criteria (types, sizes, behavior)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains process impacts and exception handling clearly",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines a sensible traceability structure (parent/child, capability-level) and updates links",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies choices with reference to scenario evidence",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A new compliance rule mandates storing customer consent for data processing at the time of RMA creation. Current artefacts:\n\n- As-is step S4: Create RMA; no consent capture.\n- Requirements: FR-12 (create RMA), NFR-10 (audit log retention 7 years), BR-10 (consent required before marketing emails).\n- Trace matrix lacks any consent link to S4.\n",
+          "task": "Describe the impact analysis and design the minimal change set. Specify to-be process updates, new/changed requirements (with testable criteria), and traceability updates. Include risks if consent is captured later in the flow.",
+          "expected_answer": "Minimal change is to add consent capture at S4 with FR-45 \"Capture and persist consent status and timestamp at RMA creation; block continuation if consent not recorded.\" Define data elements (customer ID, consent flag, timestamp, policy version). Add NFRs for auditability (immutable log entry; tamper-evident; 7-year retention already covered by NFR-10, link it) and performance (consent service p95 < 500 ms). Update the matrix (FR-45 -> S4, tests TC-new). Note risks of later capture (non-compliance, incomplete coverage if abandonment occurs).",
+          "rubric": [
+            {
+              "criterion": "Clear impact analysis across process, requirements, and tests",
+              "marks": 2
+            },
+            {
+              "criterion": "Well-specified new FR(s) with blocking behavior and data elements",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate NFRs for audit/performance with measurable criteria",
+              "marks": 1
+            },
+            {
+              "criterion": "Accurate and complete traceability updates",
+              "marks": 1
+            },
+            {
+              "criterion": "Risk articulation for alternative (later) capture",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Requirement Gathering",
+            "business process modelling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Mid-project, Finance requests removing the \"Apply Fee Override\" step, claiming fee overrides are obsolete. Artefacts show S7: Apply Fee Override with FR-27 and tests TC-301/302. Product worries this may hide an edge case involving partial shipments.",
+          "task": "Decide whether to retire S7 now. Outline the decision criteria, the change plan if you proceed, and the safeguards you will put in place in both the process and requirements to ensure partial-shipment edge cases remain handled. Include traceability actions.",
+          "expected_answer": "A solid answer sets decision criteria (regulatory confirmation, volume of overrides, error history, revenue impact analysis). If retiring S7, plan to deprecate FR-27 with a change record, update the to-be to remove S7 and adjust gateways so fee logic is not dangling. Add a new BR to auto-handle partial shipments fee policy and FR acceptance criteria covering partials. Close TC-301/302 and add/modify tests for partials. Update design links. Add a rollback plan and monitoring KPIs post-change.",
+          "rubric": [
+            {
+              "criterion": "Clear decision criteria grounded in evidence and risk",
+              "marks": 2
+            },
+            {
+              "criterion": "Coherent change plan across process, requirements, and tests",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific safeguards for partial-shipment edge cases (BR/FR and tests)",
+              "marks": 2
+            },
+            {
+              "criterion": "Traceability actions (deprecations, updates, new links)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce an As-Is and To-Be Process Model for the Returns Flow",
+          "brief": "Using a realistic retail returns scenario of your choosing (e.g., online order return with label issuance and refund), map the current as-is process and a proposed to-be that meets a clearly stated business target (for example, reduce cycle time by 20% without adding headcount). Annotate both with swimlanes, gateways, exception paths, data objects, and measurable step-level metrics (wait/work times where known or hypothesized). Highlight gaps and root causes discovered, and show how the to-be addresses them. Provide a short narrative (max 500 words) justifying key design decisions.",
+          "deliverable": "A process model package containing: (1) As-is BPMN (or Visio) diagram file plus exported PDF/PNG, (2) To-be BPMN (or Visio) diagram file plus exported PDF/PNG, (3) a 1–2 page gap/root-cause summary and rationale.",
+          "acceptance_criteria": [
+            "Two complete diagrams: as-is and to-be, each with at least three lanes, decisions/gateways, start/end events, and at least one exception path.",
+            "Each diagram contains unique step identifiers and, where applicable, data objects/annotations; no duplicate unlabeled tasks representing the same logical step.",
+            "Explicitly marked changes between as-is and to-be (e.g., color coding or change list) tied to named gaps/root causes.",
+            "Cycle-time impact estimation shown (e.g., table of step wait/work times and expected to-be changes).",
+            "Files open without proprietary add-ons (PDF/PNG exports) and are legible at A4/Letter size."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and correctness of as-is model (lanes, events, gateways, exception paths)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and feasibility of to-be design addressing identified root causes",
+              "marks": 6
+            },
+            {
+              "criterion": "Clarity of annotations, IDs, and avoidance of duplicate ambiguous steps",
+              "marks": 3
+            },
+            {
+              "criterion": "Quality of gap/root-cause analysis and explicit linkage to to-be changes",
+              "marks": 4
+            },
+            {
+              "criterion": "Cycle-time impact estimation plausibility and presentation",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "business process modelling",
+            "Business Analysis",
+            "Microsoft Visio"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Requirements Document with Functional/Non-Functional Specs and Traceability",
+          "brief": "Based on your to-be process from Task 1, produce a requirements document that specifies the functionality and quality constraints needed to implement it. Include clear Functional Requirements (FRs), Business Rules (BRs) if applicable, and Non-Functional Requirements (NFRs) with measurable criteria. Provide a traceability matrix linking each requirement to to-be process step IDs, related tests (placeholder IDs acceptable), and any parent/child relationships that localize change impact (e.g., a capability grouping).",
+          "deliverable": "A requirements document (PDF/Docx/Markdown) plus a traceability matrix (CSV or embedded table) linking FRs/BRs/NFRs to process steps and tests.",
+          "acceptance_criteria": [
+            "At least 8 FRs and 3 NFRs, all phrased with verifiable acceptance criteria (e.g., thresholds, timing, conditions).",
+            "Each requirement has a unique ID and, where appropriate, parent/child grouping that reflects capabilities (e.g., File Handling).",
+            "Traceability matrix includes: Requirement ID, To-be Step ID(s), Test Case ID(s) or placeholders, and Design/Interface artefact references (if used).",
+            "Explicit handling of at least one retired or deprecated requirement from the as-is, with change record noted in the document.",
+            "No ambiguous terms (e.g., \"fast\", \"intuitive\") without quantification; any such terms must be rewritten or justified with metrics."
+          ],
+          "rubric": [
+            {
+              "criterion": "Clarity and testability of FRs (scope, conditions, acceptance criteria)",
+              "marks": 6
+            },
+            {
+              "criterion": "Appropriateness and measurability of NFRs (performance, reliability, compliance)",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and completeness of traceability matrix (links to steps/tests/artefacts)",
+              "marks": 5
+            },
+            {
+              "criterion": "Sound structuring of requirements (parent/child, capabilities) enabling impact analysis",
+              "marks": 2
+            },
+            {
+              "criterion": "Change control handling (retired/deprecated items and rationale)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "business requirements techniques",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            4,
+            3
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-021-S03",
+      "skills_assessed": [
+        "Business Analysis",
+        "Requirement Gathering",
+        "business requirements techniques",
+        "User Stories",
+        "Agile",
+        "track key performance indicators",
+        "SQL"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are planning Sprint 7. The KPI dashboard defines Checkout Completion Rate as count of `checkout_completed` events divided by count of `checkout_started` events per day. Today's backlog extract:\n```text\nID     Title                                                DependsOn   Est(pts)   Notes\nS-101  Emit 'checkout_completed' event with fields          -           2          order_id, user_id, amount, currency, ts\nS-102  Prevent double-submit on 'Pay' button                -           3          disable button after first click\nS-103  Add postcode auto-complete to shipping address form  -           5          UX improvement\nS-104  Mask card number after entry                         -           2          PCI hygiene\n```\nWhich single item should be top of the sprint backlog if the goal is to have a valid, measurable completion rate visible on the KPI dashboard by the end of the sprint, even if no UX changes are delivered?",
+          "options": [
+            "S-101 Emit 'checkout_completed' event",
+            "S-104 Mask card number after entry",
+            "S-102 Prevent double-submit on 'Pay' button",
+            "S-103 Add postcode auto-complete"
+          ],
+          "correct_option": "A",
+          "explanation": "Without emitting the `checkout_completed` event, the KPI numerator is zero or missing. Implementing S-101 enables the metric to be calculated at all. UX changes may or may not change the rate, but cannot be measured without instrumentation.",
+          "distractor_rationale": "B: Preventing double submit may improve completion but cannot be measured if the numerator event is missing.\nC: UX polish can affect conversion, but again, no numerator event means no measurable change.\nD: Masking card number is security hygiene with negligible effect on the KPI and still leaves the numerator untracked.",
+          "skills_covered": [
+            "User Stories",
+            "Agile",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "The dashboard shows 0 for completion rate on 2026-07-01, but you expected about 0.42. The current query is:\n```sql\nSELECT\n  COUNT(CASE WHEN type = 'checkout_completed' THEN 1 END)\n  /\n  COUNT(CASE WHEN type = 'checkout_started' THEN 1 END) AS completion_rate\nFROM events\nWHERE event_date = '2026-07-01';\n```\nWhich minimal change fixes the issue across engines that do integer division by default?",
+          "options": [
+            "```sql\nSELECT\n  1.0 * COUNT(CASE WHEN type='checkout_completed' THEN 1 END)\n  /\n  NULLIF(COUNT(CASE WHEN type='checkout_started' THEN 1 END),0) AS completion_rate\nFROM events\nWHERE event_date = '2026-07-01';\n```",
+            "```sql\nSELECT\n  ROUND(COUNT(CASE WHEN type='checkout_completed' THEN 1 END)\n  /\n  COUNT(CASE WHEN type='checkout_started' THEN 1 END), 2) AS completion_rate\nFROM events\nWHERE event_date = '2026-07-01';\n```",
+            "```sql\nSELECT\n  COUNT(*)\nFROM events\nWHERE event_date = '2026-07-01' AND type='checkout_completed';\n```",
+            "```sql\nSELECT\n  COUNT(DISTINCT CASE WHEN type='checkout_completed' THEN user_id END)\n  /\n  COUNT(DISTINCT CASE WHEN type='checkout_started' THEN user_id END) AS completion_rate\nFROM events\nWHERE event_date = '2026-07-01';\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Casting one side to a non-integer (via 1.0 *) and guarding the denominator with NULLIF avoids integer division truncation and divide-by-zero. This yields the expected decimal rate.",
+          "distractor_rationale": "B: ROUND still rounds an integer result; if the division is 0 due to integer arithmetic, rounding keeps it 0.\nC: DISTINCT may or may not be the correct business definition and also suffers integer division in some engines; it doesn't address the truncation root cause.\nD: Counting completions alone is not a rate and ignores the denominator entirely.",
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A story aims to speed up payment processing and make the improvement measurable. Current acceptance criteria are:\n```text\n- Then the payment is fast.\n```\nWhich rewrite makes the criterion both testable and supports the KPI definition without changing scope?",
+          "options": [
+            "```text\nThen average payment time is improved.\n```",
+            "```text\nThen the 95th percentile of end-to-end payment time is < 1.2s, and an event 'payment_latency' is emitted with fields: user_id, order_id, latency_ms, ts.\n```",
+            "```text\nThen QA confirms the payment feels fast on staging.\n```",
+            "```text\nThen the payment is fast for most users.\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "This version sets a measurable threshold (p95 < 1.2s) and requires an event with fields needed for reporting, making it testable and reportable.",
+          "distractor_rationale": "A: \"Most users\" is vague and untestable.\nC: Subjective and environment-specific; not suitable for a KPI.\nD: \"Average improved\" lacks baseline, threshold, and instrumentation details.",
+          "skills_covered": [
+            "User Stories",
+            "business requirements techniques",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You estimate starters and completers by joining sessions to orders. The query undercounts starters:\n```sql\nSELECT\n  COUNT(DISTINCT s.session_id) AS starters,\n  COUNT(DISTINCT o.order_id)   AS completers\nFROM sessions s\nLEFT JOIN orders o\n  ON s.user_id = o.user_id\n  AND CAST(o.created_at AS date) = s.session_date\nWHERE s.session_date = '2026-07-01'\n  AND o.status = 'paid';\n```\nWhy are starters undercounted, and what change fixes it without inflating completers?",
+          "options": [
+            "Use COUNT(*) instead of COUNT(DISTINCT ...) to include all sessions",
+            "The filter on o.status in WHERE turns the LEFT JOIN into an INNER; move that filter into the JOIN condition",
+            "GROUP BY session_date to avoid cross joins",
+            "The LEFT JOIN should be INNER to ensure valid matches"
+          ],
+          "correct_option": "B",
+          "explanation": "A LEFT JOIN with a WHERE filter on the right table eliminates NULL-extended rows, effectively making it an INNER JOIN. Move the `o.status = 'paid'` predicate into the JOIN to preserve all sessions while still filtering orders.",
+          "distractor_rationale": "A: Makes it worse by definitively excluding sessions without orders.\nC: COUNT(*) would further inflate counts by multiplying joins.\nD: GROUP BY doesn't address the filtering problem; starters are still lost.",
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Merchandising needs daily revenue by store in local time. Events are stored UTC in `events.ts_utc`. The query is:\n```sql\nSELECT store_id, CAST(ts_utc AS date) AS d, SUM(amount) revenue\nFROM events\nWHERE ts_utc >= '2026-08-01' AND ts_utc < '2026-08-02'\nGROUP BY store_id, CAST(ts_utc AS date);\n```\nIn Sydney (UTC+10), revenue for local 2026-08-01 looks too low and 2026-08-02 too high. What should you do?",
+          "options": [
+            "Filter by `created_date_local` column and keep the existing grouping",
+            "Convert `ts_utc` to the store's timezone both in the filter and the grouping and then cast to date",
+            "Shift the date filter to '2026-07-31'..'2026-08-02' to catch the timezone overlap",
+            "Use `DATE_TRUNC('day', ts_utc)` which handles timezones implicitly"
+          ],
+          "correct_option": "B",
+          "explanation": "The data is UTC; you must apply an explicit timezone conversion for both filtering and grouping to align to local days, e.g., `AT TIME ZONE` or equivalent per store.",
+          "distractor_rationale": "A: Shifting ranges blindly can double-count or still misalign the boundary.\nC: DATE_TRUNC on a UTC timestamp truncates in UTC; it doesn't apply a timezone.\nD: Assumes a column that may not exist and leaves grouping misaligned if it does not derive from the same conversion.",
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "You are defining acceptance criteria for attribution. The report below shows many null sources:\n```csv\norder_id,user_id,utm_source\n1001,501,null\n1002,502,search\n1003,503,null\n```\nWhich acceptance criterion best prevents future null `utm_source` at order completion without relying on analyst-side fixes?",
+          "options": [
+            "```text\nThen the 'checkout_completed' event includes utm_source if available.\n```",
+            "```text\nThen analysts will COALESCE(utm_source,'unknown') in the dashboard.\n```",
+            "```text\nThen the UI requires users to pick a source from a dropdown before paying.\n```",
+            "```text\nThen utm_source is captured at session start and persisted server-side through to order creation; 'checkout_completed' must include the persisted utm_source.\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Capturing attribution at session start and persisting it server-side ensures the value is available reliably at completion time; including it in the completion event closes the loop.",
+          "distractor_rationale": "A: \"if available\" does not change availability; it propagates the null.\nC: Pushes the problem to reporting, masking data quality rather than fixing it.\nD: Nonsensical UX and not how attribution works.",
+          "skills_covered": [
+            "User Stories",
+            "business requirements techniques",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your revenue report is double-counting after joining `orders` to `order_items`:\n```sql\nSELECT SUM(o.total_amount) AS revenue\nFROM orders o\nJOIN order_items i ON o.order_id = i.order_id\nWHERE o.status = 'paid' AND o.order_date = '2026-08-01';\n```\nHow do you fix it while keeping item-level joins available?",
+          "options": [
+            "```sql\nSELECT SUM(o.total_amount) AS revenue\nFROM orders o\nLEFT JOIN order_items i ON o.order_id = i.order_id\nWHERE o.status='paid' AND o.order_date='2026-08-01';\n```",
+            "```sql\nSELECT SUM(DISTINCT o.total_amount) AS revenue\nFROM orders o\nJOIN order_items i ON o.order_id = i.order_id\nWHERE o.status='paid' AND o.order_date='2026-08-01';\n```",
+            "```sql\nWITH order_totals AS (\n  SELECT order_id, SUM(extended_price) AS order_amount\n  FROM order_items\n  GROUP BY order_id\n)\nSELECT SUM(ot.order_amount) AS revenue\nFROM order_totals ot\nJOIN orders o ON o.order_id = ot.order_id\nWHERE o.status='paid' AND o.order_date='2026-08-01';\n```",
+            "```sql\nSELECT COUNT(*) AS revenue\nFROM order_items i\nWHERE i.order_date='2026-08-01';\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Aggregate at the item level first to one row per order, then sum. This avoids multiplying `o.total_amount` by the item count while keeping item-level detail usable.",
+          "distractor_rationale": "A: DISTINCT on SUM doesn't de-duplicate per-order repeats correctly if amounts can repeat across orders.\nC: LEFT JOIN still multiplies totals when items exist.\nD: COUNT of items is not revenue.",
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A story states \"As a PM, I want to know if disabling guest checkout reduces fraud reports next week.\" You can only ship one of these slices in the next sprint. Which slice maximizes learning about the KPI with the least scope?",
+          "options": [
+            "Disable guest checkout for all users and monitor fraud reports manually",
+            "Build a fraud model while keeping checkout unchanged",
+            "Add a fraud reason field to the report without changing checkout",
+            "Disable guest checkout for 10% of traffic, emit an event `guest_checkout_exposed` with cohort flag, and define a report comparing fraud rate by cohort next week"
+          ],
+          "correct_option": "D",
+          "explanation": "A limited rollout with explicit cohort flags plus instrumentation enables a clean comparison on the KPI with minimal scope, aligning with agile, hypothesis-driven learning.",
+          "distractor_rationale": "A: Global change maximizes risk and confounds attribution without cohorting.\nC: A model doesn't answer the causality of disabling guest checkout.\nD: Adding a field to a report doesn't create a controlled comparison or change behavior.",
+          "skills_covered": [
+            "Agile",
+            "User Stories",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Current KPI query includes cancelled orders in the numerator:\n```sql\nSELECT\n  COUNT(*)::decimal / NULLIF((SELECT COUNT(*) FROM sessions s WHERE s.event_date='2026-08-05'),0) AS purchase_rate\nFROM orders o\nWHERE o.event_date='2026-08-05' AND o.status IN ('paid','cancelled');\n```\nThe story says \"Exclude cancellations from purchases.\" Which change aligns the query with the story without altering the denominator logic?",
+          "options": [
+            "```sql\n... WHERE o.event_date='2026-08-05' AND o.status IN ('paid','refunded')\n```",
+            "```sql\n... WHERE o.event_date='2026-08-05' AND o.status NOT IN ('cancelled')\n```",
+            "```sql\n... WHERE o.event_date='2026-08-05' AND o.status = 'paid'\n```",
+            "```sql\n... WHERE o.status = 'paid' AND o.event_date BETWEEN '2026-08-05' AND '2026-08-06'\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "The story is explicit: purchases are paid orders. Restrict the numerator to `status = 'paid'` and keep the existing denominator and date logic unchanged.",
+          "distractor_rationale": "B: Equivalent today, but invites inclusion of other non-paid end states later; explicit inclusion is safer and clearer.\nC: Changes the date logic unnecessarily.\nD: Includes refunded orders as purchases, which contradicts the story.",
+          "skills_covered": [
+            "SQL",
+            "User Stories",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A performance story has this acceptance criterion:\n```text\nThen the API responds quickly.\n```\nYou need the release to affect the \"API p95 latency\" KPI unambiguously. Choose the best replacement criterion.",
+          "options": [
+            "```text\nThen the API p95 latency for GET /search with valid cache is < 300ms, measured over 10k requests in production, and 'api_latency' events record route, pctl=95, latency_ms, ts.\n```",
+            "```text\nThen the API response time is acceptable.\n```",
+            "```text\nThen the average API response time is better than before.\n```",
+            "```text\nThen QA signs off response time in UAT.\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "It defines a specific percentile, route, environment, threshold, sample size, and instrumentation fields, making the KPI movement attributable to this change.",
+          "distractor_rationale": "A: Relative and baseline-free; averages can hide tail regressions.\nC: UAT is not representative and subjective.\nD: \"Acceptable\" is undefined and unmeasurable.",
+          "skills_covered": [
+            "User Stories",
+            "track key performance indicators",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You join a team mid-release. The North Star KPI is Checkout Completion Rate. Current situation:\n- Only `checkout_started` is emitted; `checkout_completed` is not.\n- Fraud rate spiked last week; legal insists on masking PII in logs.\n- UX has three improvements queued: disable double-submit, address auto-complete, and one-click wallet.\nCapacity: 8 points next sprint. Estimates: emit `checkout_completed` (2), disable double-submit (3), address auto-complete (5), one-click wallet (8), PII masking in logs (2).\nConstraints: PII masking must be done before any new events can be approved by legal. Data team needs `order_id,user_id,amount,currency,ts,utm_source` on completion to compute KPIs and attribution.",
+          "task": "Recommend a sprint plan (which stories to take and in what order) that yields a trustworthy completion-rate trend by the end of the sprint. Justify your choices, specify critical acceptance criteria changes, and call out any risks and mitigations.",
+          "expected_answer": "A strong answer prioritizes PII masking (2) first to unblock instrumentation approval, then ships `checkout_completed` (2) with acceptance criteria that include required fields and server-side persisted `utm_source`. With remaining capacity (4 points), include disable double-submit (3) to plausibly affect the numerator and avoid duplicate payments; leave address auto-complete (5) and one-click wallet (8) out. Order: PII masking -> completion event -> double-submit guard. Acceptance criteria: completion event schema with listed fields; event emission only on confirmed payment; idempotency key to avoid duplicates; cohort/experiment flag if partial rollout; persistence of attribution captured at session start; data quality checks (no null order_id/user_id, event-time in store local time). Risks: legal review delays; mitigate by pre-approving schema. Risk of no KPI move if UX change not impactful; mitigate with cohorting and alert thresholds. Outcome: by end of sprint, dashboard shows a non-zero, trustworthy rate and can segment by cohort, enabling trend observation.",
+          "rubric": [
+            {
+              "criterion": "Prioritization rationale aligns to KPI measurability (instrumentation before UX) and respects capacity",
+              "marks": 3
+            },
+            {
+              "criterion": "Specific acceptance criteria that ensure data fields and quality for reporting (ids, currency, ts, utm_source, idempotency)",
+              "marks": 2
+            },
+            {
+              "criterion": "Order/dependencies clearly articulated (legal/PII before events; events before measuring)",
+              "marks": 2
+            },
+            {
+              "criterion": "Risks identified with concrete mitigations tied to the plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Agile",
+            "User Stories",
+            "track key performance indicators",
+            "Business Analysis",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A weekly Active Users KPI dropped 18% after a warehouse table rename and ETL tweak. Before: `events.user_id` bigint, `events.event_ts` UTC. After: ETL populates `active_users_wk` as users with any event where `DATE_TRUNC('week', event_ts)` equals the report week. Incidentally, the ETL now filters events with `event_ts >= CURRENT_DATE - INTERVAL '7 days'`. The business defines a week as Mon–Sun in the account's local time (Europe/Berlin).",
+          "task": "Diagnose the most likely cause(s) of the drop and propose a fix that aligns the implementation with the business definition. Include any acceptance criteria you would add to the reporting spec to prevent regressions.",
+          "expected_answer": "Likely causes: (1) The ETL filter `CURRENT_DATE - 7 days` in UTC truncates the window and mismatches the Mon–Sun definition; (2) Missing timezone conversion to Europe/Berlin both in filtering and grouping; (3) Using event ingestion time instead of event time if ETL changed source. Fix: Define the week window explicitly as `ts_local = event_ts AT TIME ZONE 'Europe/Berlin'`; compute `week_start = DATE_TRUNC('week', ts_local)::date` with week starting Monday per locale; filter `ts_local >= week_start AND ts_local < week_start + INTERVAL '7 days'`. Update the ETL to parameterize the report week and avoid `CURRENT_DATE` for historical runs. Add acceptance criteria to the reporting spec: Week definition is Mon–Sun in Europe/Berlin; all time grouping uses converted local timestamps; windowing is closed-open; backfills must be idempotent; unit tests cover boundary events at 00:00 Monday and 23:59:59 Sunday.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of timezone and window-definition mismatch as primary cause",
+              "marks": 3
+            },
+            {
+              "criterion": "Proposed SQL/logic that correctly computes Mon–Sun weeks in local time",
+              "marks": 2
+            },
+            {
+              "criterion": "Actionable changes to ETL (parameterization, avoid CURRENT_DATE, backfill)",
+              "marks": 1
+            },
+            {
+              "criterion": "Preventive acceptance criteria added to the reporting spec",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Story: \"As a logged-in user, I can save my cart to return later.\" Analytics needs to report monthly on Saved-Cart Activation Rate = users who saved a cart and later purchased within 30 days divided by users who saved a cart.\nCurrent schema has tables `carts(cart_id,user_id,created_at,status)` and `orders(order_id,user_id,created_at,status)`. No events are emitted yet.",
+          "task": "Write acceptance criteria for this story that ensure the KPI can be computed unambiguously. Include any event payload fields or data model changes you need.",
+          "expected_answer": "Acceptance criteria should include: Emit `cart_saved` event with fields `cart_id,user_id,ts,cart_value,item_count,channel`; emit `cart_activated` when an order is placed that references a saved cart, with `cart_id,order_id,user_id,ts`; persist a `saved_from_cart_id` foreign key on `orders` when applicable; ensure idempotency and no duplicate `cart_activated` for retries; define the 30-day window using event time in store local time; ensure `cart_saved` events are only for logged-in users; add data quality checks (no null ids, ts not in future). Clarify cancellation/refund exclusions from activation (only paid orders). With these, the KPI is `COUNT(DISTINCT user_id with cart_activated in 30d) / COUNT(DISTINCT user_id with cart_saved)` per month.",
+          "rubric": [
+            {
+              "criterion": "Crisp, testable acceptance criteria for events (`cart_saved`, `cart_activated`) with required fields",
+              "marks": 3
+            },
+            {
+              "criterion": "Data model linkage (orders.saved_from_cart_id) and idempotency/no-duplicate rules",
+              "marks": 2
+            },
+            {
+              "criterion": "Windowing and business rules (30 days, paid-only, local time) clearly stated",
+              "marks": 1
+            },
+            {
+              "criterion": "Attention to data quality (non-null ids/timestamps) and logged-in constraint",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "User Stories",
+            "business requirements techniques",
+            "track key performance indicators",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Two versions of a KPI for Repeat Purchase Rate (users who place a second paid order within 30 days of their first) are under review. Tables: `orders(order_id,user_id,status,created_at)`.\nQuery A:\n```sql\nWITH firsts AS (\n  SELECT user_id, MIN(created_at) AS first_order_ts\n  FROM orders WHERE status='paid' GROUP BY user_id\n), seconds AS (\n  SELECT o.user_id, MIN(o.created_at) AS second_order_ts\n  FROM orders o JOIN firsts f ON o.user_id=f.user_id\n  WHERE o.status='paid' AND o.created_at>f.first_order_ts\n  GROUP BY o.user_id\n)\nSELECT COUNT(*)::decimal / NULLIF((SELECT COUNT(*) FROM firsts),0)\nFROM seconds s JOIN firsts f ON s.user_id=f.user_id\nWHERE s.second_order_ts < f.first_order_ts + INTERVAL '30 days';\n```\nQuery B:\n```sql\nSELECT COUNT(DISTINCT user_id)::decimal / NULLIF(COUNT(DISTINCT user_id),0)\nFROM orders WHERE status='paid' AND created_at >= CURRENT_DATE - INTERVAL '30 days';\n```\nPM asks which to use for the KPI and why.",
+          "task": "Choose A or B and justify in terms of the business definition. Identify any edge cases and propose acceptance criteria for the reporting specification to fix ambiguity (e.g., timezone, refunds).",
+          "expected_answer": "Choose Query A. It explicitly finds each user's first paid order and checks if a subsequent paid order occurred within 30 days, matching the definition. Query B counts users with any paid order in the last 30 days as both numerator and denominator, which does not measure \"within 30 days of first\". Edge cases: timezone boundaries, refunds/voids (exclude), partial payments, test accounts, and users with multiple orders on the same day. Acceptance criteria: timestamps evaluated in business local time; exclude test/sandbox users; only `status='paid'` counts; 30-day window is closed-open; orders with the same timestamp: second must be strictly greater than first; define how to handle merged accounts.",
+          "rubric": [
+            {
+              "criterion": "Correct selection of Query A with accurate reasoning vs Query B",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear mapping from business definition to query steps (firsts, seconds, 30-day window)",
+              "marks": 2
+            },
+            {
+              "criterion": "Identification of key edge cases (timezone, refunds/test users/same-day)",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete acceptance criteria additions to the reporting spec",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators",
+            "Business Analysis",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a prioritised backlog that enables KPI measurement and movement",
+          "brief": "For a checkout flow, create a backlog that will both instrument the flow and deliver at least one change likely to move Checkout Completion Rate. Define 1–2 epics, break them into user stories, and write testable acceptance criteria that include any data capture required for reporting. Prioritise the backlog with rationale and dependencies such that the first sprint yields a trustworthy KPI on the dashboard and a plausible improvement. Assume a two-week sprint capacity of 13 points and include effort estimates.",
+          "deliverable": "A prioritised backlog (CSV or spreadsheet) with columns: Epic, Story ID, Story Title, Acceptance Criteria (Gherkin allowed), Priority (P1..Pn), Estimate (points), Dependencies, KPI Impact (which KPI and how), Data Fields Required (event/table/fields).",
+          "acceptance_criteria": [
+            "At least 1 epic focused on instrumentation and 1 epic focused on UX/flow improvement",
+            "Minimum 10 user stories total with unique IDs",
+            "Every story has acceptance criteria that are specific, testable, and include any required event payloads or data model changes",
+            "Backlog is explicitly prioritised (no ties in top 8) with a brief rationale per item",
+            "Dependencies are declared where relevant and coherent (instrumentation before measurement, measurement before optimisation)",
+            "Effort estimates included for all stories; top-of-backlog stories fit within a 13-point sprint",
+            "KPI Impact column maps each story to a defined KPI and indicates numerator/denominator or data quality effect",
+            "Data Fields Required column lists concrete fields (e.g., order_id, user_id, amount, ts, utm_source) or table changes"
+          ],
+          "rubric": [
+            {
+              "criterion": "Quality and testability of acceptance criteria, including data capture requirements",
+              "marks": 6
+            },
+            {
+              "criterion": "Sound prioritisation and dependency management aligned to KPI goals",
+              "marks": 6
+            },
+            {
+              "criterion": "Completeness and coherence of backlog structure (epics, 10+ stories, estimates, rationales)",
+              "marks": 4
+            },
+            {
+              "criterion": "Clarity and correctness of KPI impact mapping and data field specification",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "User Stories",
+            "Agile",
+            "Business Analysis",
+            "Requirement Gathering",
+            "business requirements techniques",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Write a reporting specification for KPI definitions with SQL prototypes",
+          "brief": "Create a reporting specification for three KPIs for the same checkout product: Checkout Completion Rate, Average Order Value, and 7-day Active Users. Define the business meaning of each KPI, the exact calculation rules, grain, filters, time windows, and data sources. Provide prototype SQL for each KPI against a hypothetical schema you design (include table/column definitions). Include assumptions, timezone handling, and data quality checks. Provide a simple mock of the report layout showing fields and segments (e.g., by channel).",
+          "deliverable": "A reporting specification document (markdown or PDF) containing: (1) KPI definitions with business rules, (2) source-to-metric mapping and data dictionary, (3) SQL prototypes for each KPI, (4) time and timezone handling rules, (5) data quality checks and edge cases, (6) a mock report layout with sample columns/filters, and (7) traceability back to backlog stories where relevant.",
+          "acceptance_criteria": [
+            "Each KPI has a precise formula including numerator, denominator, filters, and time window",
+            "Prototype SQL provided for all three KPIs, runnable in a standard SQL dialect and consistent with the schema provided",
+            "Schema (tables/columns, datatypes) is documented and consistent with the SQL",
+            "Timezone conversion rules are stated and applied in SQL where relevant (e.g., local day vs UTC)",
+            "Data quality checks include at least: non-null ids, event/order status filters, deduplication/idempotency considerations",
+            "Assumptions and exclusions are listed (e.g., test users, refunds, partial authorisations)",
+            "Report mock includes grouping by at least one segment (e.g., channel) and shows date grain",
+            "Traceability notes link KPI definitions back to enabling user stories or acceptance criteria from Task 1"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correctness and business clarity of KPI definitions and rules",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality and executability of SQL prototypes and schema documentation",
+              "marks": 6
+            },
+            {
+              "criterion": "Robust handling of timezones, windows, and data quality/edge cases",
+              "marks": 5
+            },
+            {
+              "criterion": "Report layout clarity and traceability to backlog/user stories",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "track key performance indicators",
+            "Business Analysis",
+            "Requirement Gathering",
+            "business requirements techniques"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-021-S04",
+      "skills_assessed": [
+        "Business Analysis",
+        "Stakeholder Management",
+        "plan software testing",
+        "Test Case Writing",
+        "track key performance indicators",
+        "JIRA",
+        "Communication"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You receive a late change request that modifies requirement R2 logic only. The current traceability looks like this:\n```text\nTest ID  | Covers Reqs | Priority\nT-01     | R1          | Critical\nT-02     | R2          | High\nT-03     | R2, R3      | Critical\nT-04     | R4          | Medium\nT-05     | R3          | High\nT-06     | R5          | Low\n```\nDesign note: R3 consumes a value calculated by R2 only in the \"Express\" checkout flow; other R3 paths are unaffected.\nWhich set of tests must be rerun as part of targeted regression before UAT exit to contain risk while avoiding unnecessary retest?",
+          "options": [
+            "T-02 and T-03 only",
+            "T-02, T-03 and T-05",
+            "T-02, T-03, T-05 and T-01",
+            "T-02 only"
+          ],
+          "correct_option": "B",
+          "explanation": "R2 is directly exercised by T-02 and T-03. Because T-03 also hits the R3 path that depends on R2 in Express checkout, it must be rerun. T-05 covers R3 independently; given R3 consumes R2 only in Express, you need to verify whether T-05’s path is independent. With no evidence that T-05 avoids Express, it's safer to include it in the targeted regression set. T-01 does not touch R2/R3 so rerunning it adds little assurance for the change risk.",
+          "distractor_rationale": "A: Misses T-05, which may be indirectly impacted because R3 sometimes consumes R2. C: Assumes no indirect impact on R3, which is unsafe given the dependency note. D: Adds T-01 (R1) which is unrelated to the change and increases cycle time without risk reduction.",
+          "skills_covered": [
+            "plan software testing",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A transition from `In Test` to `Ready for UAT` fails in JIRA. Workflow and issue fields are:\n```yaml\ntransitions:\n  In Test -> Ready for UAT:\n    conditions:\n      - field: Fix Version\n        must_be_set: true\n      - field: Resolution\n        must_be_empty: true\n  Ready for UAT -> In UAT:\n    validators:\n      - field: Affected Version\n        must_be_set: true\n```\n```json\n{\n  \"status\": \"In Test\",\n  \"fixVersions\": [],\n  \"resolution\": null,\n  \"affectedVersions\": [\"1.9\"],\n  \"labels\": [\"uat_candidate\"]\n}\n```\nWhat is the minimal field update to enable the transition?",
+          "options": [
+            "Set Resolution to \"Unresolved\"",
+            "Add label \"ready_for_uat\"",
+            "Set Fix Version to 2.0",
+            "Set Affected Version to 2.0"
+          ],
+          "correct_option": "C",
+          "explanation": "The transition condition requires Fix Version to be set and Resolution to be empty. Resolution is already null (empty). Affected Version is required only for the next transition. Therefore, setting Fix Version satisfies the failing condition.",
+          "distractor_rationale": "B: Setting Resolution is unnecessary and could even block if it becomes non-empty. C: Labels are not checked by the workflow conditions. D: Affected Version is not validated until the next transition and is already set anyway.",
+          "skills_covered": [
+            "JIRA",
+            "plan software testing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Review the UAT exit snapshot:\n```text\nExit criteria:\n- No open S1\n- <= 2 open S2\n- Critical test pass rate >= 95%\n- Overall pass rate >= 90%\n- 100% critical scenarios executed\n\nReport at Day 14:\n- Defects open: S1=0, S2=3, S3=7\n- Test pass rates: Critical=96%, Overall=91%\n- Critical scenarios executed: 100%\n```\nWhat should you declare at the exit review?",
+          "options": [
+            "Exit criteria met; proceed with sign-off because overall pass >= 90%",
+            "Exit criteria not met due to S2 count; remediate or formally reclassify one S2 before sign-off",
+            "Exit criteria met if business accepts risk informally in the meeting minutes",
+            "Exit criteria not met due to overall pass rate; require more testing time"
+          ],
+          "correct_option": "B",
+          "explanation": "All criteria are met except the S2 threshold. You cannot sign off until S2 count is reduced to 2 or a formal change/reclassification is approved. Overall pass rate and critical execution are sufficient.",
+          "distractor_rationale": "B: Ignores the explicit S2 threshold. C: \"Informal\" risk acceptance does not satisfy formal exit criteria. D: Overall pass rate is already >= 90%; the blocker is S2 count, not pass rate.",
+          "skills_covered": [
+            "plan software testing",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A UAT scenario that sends confirmation emails fails with a duplicate email constraint in masked data. Logs show:\n```text\nERROR: unique constraint violated on customer.email\nSample data row -> email: masked_user@example.com (repeated 1,247 times)\n```\nWhich fix preserves privacy policy and test validity with minimal disruption?",
+          "options": [
+            "Generate deterministic, unique synthetic emails per record during data provisioning",
+            "Update the test to ignore email-related failures and focus on order IDs",
+            "Change the test to use a single shared email for all records to simplify verification",
+            "Request a one-time exception to use unmasked production emails for UAT"
+          ],
+          "correct_option": "A",
+          "explanation": "Unique, synthetic emails maintain privacy while satisfying uniqueness constraints and allowing email-dependent scenarios to execute meaningfully.",
+          "distractor_rationale": "B: Violates or risks privacy policy. C: Ignores a real data integrity issue that affects flows reliant on email. D: Reintroduces the uniqueness problem and reduces test realism.",
+          "skills_covered": [
+            "plan software testing",
+            "Test Case Writing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Two regions, A (pilot) and B (control), ran for 6 weeks. Release went only to A. Metrics per week (avg) below:\n```csv\nmetric,region,pre,post\nAHT_seconds,A,410,355\nAHT_seconds,B,405,402\nFCR_pct,A,71,76\nFCR_pct,B,72,71\nTickets_opened,A,980,1105\nTickets_opened,B,975,1110\n```\nWhich conclusion is best supported for benefits tracking?",
+          "options": [
+            "AHT improvement in A vs B indicates a real efficiency gain attributable to the release",
+            "Higher tickets in A post-release mean the change increased workload, negating benefits",
+            "FCR change is inconclusive because both regions moved in the same direction",
+            "No attribution is possible without another month of data"
+          ],
+          "correct_option": "A",
+          "explanation": "AHT dropped by 55s in A while remaining flat in B (3s). With a control region, the difference-in-differences supports attribution of efficiency gains to the release despite ticket volume seasonality affecting both regions.",
+          "distractor_rationale": "B: Ticket increases also occurred in B, suggesting seasonality, not a release effect. C: FCR improved in A and decreased in B, actually supporting an effect; calling it inconclusive overlooks the control. D: More data can help, but current controlled comparison already supports attribution.",
+          "skills_covered": [
+            "track key performance indicators",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Extract from your communication plan after a late scope cut removing feature F2 from go-live:\n```text\nAudience        | Channel     | Cadence | Content\nStore Managers  | Email       | W-2/W   | New features, actions, training links\nReg. Ops Leads  | Weekly call | Weekly  | Rollout status, risks\nCustomers       | In-app msg  | One-off | Feature highlights at launch\nCompliance      | Email       | 48h pre | Regulatory notice of customer impact\n```\nWhat is the best targeted change?",
+          "options": [
+            "Email Store Managers about F2 removal but keep customer message unchanged to maintain marketing momentum",
+            "Keep messages as-is to avoid confusion; address F2 in post-launch FAQ only",
+            "Remove the Compliance notice since F2 was removed and risk is lower",
+            "Update customer in-app message to exclude F2 and add a link to planned timeline; notify Compliance of content change"
+          ],
+          "correct_option": "D",
+          "explanation": "Customer-facing content must reflect actual scope; Compliance must be informed of any change that alters customer impact wording. Store Managers will get updated content through their regular channel, but the customer message is the most urgent fix.",
+          "distractor_rationale": "B: Leaves inaccurate customer messaging at launch. C: Prioritizes internal alignment over correcting external messaging. D: Compliance notice is still required because customer impact content changed.",
+          "skills_covered": [
+            "Communication",
+            "Stakeholder Management",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A defect is reported in UAT: \"Payment fails on first attempt, succeeds on retry.\" Environment flags:\n```yaml\nfeature_flags:\n  payment_retry_backoff_ms: 0\n  use_new_gateway: false\n  uat_payment_sandbox_mode: true\n```\nProd is `use_new_gateway: true`. Which is the most likely root cause and next step?",
+          "options": [
+            "Intermittent network issue; close as \"Cannot Reproduce\" after one pass",
+            "Environment config mismatch; align UAT gateway flag to prod-like and retest",
+            "Bug in retry logic; raise Sev 1 and block UAT exit immediately",
+            "Test data issue; replace credit cards with real BINs from prod"
+          ],
+          "correct_option": "B",
+          "explanation": "UAT is using the old gateway while prod will use the new one. Flakiness in UAT likely stems from the non-prod-like config. Align flags to prod-like first, then retest.",
+          "distractor_rationale": "B: Flakiness has a plausible config cause; dismissing it is premature. C: Using real cards is inappropriate; sandboxing is expected. D: Escalation to Sev 1 before eliminating config differences is premature.",
+          "skills_covered": [
+            "plan software testing",
+            "JIRA"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A UAT step is failing due to ambiguity in the test case. Current Gherkin:\n```text\nScenario: Apply discount at checkout\n  When I add an eligible item to cart\n  And I proceed to checkout\n  Then the discount is applied\n```\nWhich rewrite removes ambiguity and is objectively verifiable?",
+          "options": [
+            "```text\nScenario: Apply 10% discount at checkout for SKU 12345\n  Given I am a logged-in customer in region US-E\n  And my account has no existing promotions\n  And the catalog contains SKU 12345 priced $100.00\n  When I add SKU 12345 to the cart and proceed to checkout\n  Then the order summary shows a line item \"Promotion: 10% OFF\" of -$10.00\n  And the total is $90.00 before taxes and shipping\n```",
+            "```text\nScenario: Discount should work\n  When I try to buy something\n  Then I see some discount\n```",
+            "```text\nScenario: Apply discount\n  Given I have an item\n  When I checkout fast\n  Then discount is fine\n```",
+            "```text\nScenario: Apply discount with approximate values\n  When I add any eligible product\n  Then I see about 10% off the total\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Option A specifies preconditions, data, deterministic values, and observable outcomes, making the scenario testable and unambiguous.",
+          "distractor_rationale": "B/D: Vague steps without data or measurable outcomes. C: \"About 10%\" is not objectively verifiable and invites rounding disputes.",
+          "skills_covered": [
+            "Test Case Writing"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your RACI shows two Accountables for UAT sign-off:\n```text\nActivity        | R | A | C | I\nUAT sign-off    | QA Lead, BA | BA, Product Owner | SM | Exec Sponsor\n```\nWhat is the most likely outcome and the best correction?",
+          "options": [
+            "Move QA Lead to Accountable and remove BA from all roles to avoid conflict",
+            "No impact; RACI is advisory only and has no effect on governance",
+            "Faster sign-off because two Accountables can cover for each other; keep as-is",
+            "Decision gridlock at sign-off; assign a single Accountable (e.g., Product Owner) and keep others Consulted/Informed"
+          ],
+          "correct_option": "D",
+          "explanation": "Having two Accountables creates ambiguity and delays. RACI best practice is a single Accountable per decision; others can be Responsible or Consulted.",
+          "distractor_rationale": "B: Misunderstands RACI; dual Accountable slows decisions. C: RACI informs governance assignments used in gates. D: Over-corrects and strips BA of needed roles rather than clarifying accountability.",
+          "skills_covered": [
+            "Stakeholder Management",
+            "Business Analysis",
+            "Communication"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A defect fix touched the `pricing-service` used by multiple requirements. Traceability:\n```text\nService/Req    | Tests\nR1 (list price)| TP-01, TP-02\nR2 (promo calc)| TP-03, TP-04\nR3 (tax)       | TX-01\nShared svc: pricing-service -> affects R1 and R2 only\n```\nWhich regression subset is most appropriate post-fix before resuming UAT?",
+          "options": [
+            "Run TP-03 and TX-01 because promotions are risky",
+            "Run all tests including TX-01 to be safe",
+            "Run TP-01, TP-02, TP-03, TP-04; skip TX-01",
+            "Run TP-01 only to smoke the service"
+          ],
+          "correct_option": "C",
+          "explanation": "The shared service impacts R1 and R2. Execute the tests covering those areas. R3 (tax) is not affected by the change and can be excluded from the targeted regression.",
+          "distractor_rationale": "B: Too narrow; misses promo scenarios also affected. C: Unnecessarily broad given known impact, costing time with little risk reduction. D: Includes tax, which is out of scope for the change.",
+          "skills_covered": [
+            "plan software testing",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Four days before UAT start, your upstream identity provider announces a two-week delay in releasing SSO changes needed for end-to-end authentication. Your UAT entry criteria include \"stable SSO available in UAT\". Dependencies and scope items are:\n```text\nScope items: Account mgmt, Catalog, Checkout, Reporting\nDependencies: SSO (Account mgmt, Checkout), Payments (Checkout), Data warehouse (Reporting)\nCurrent plan: Single-wave UAT across all scope for 10 business days, 40 business testers, go-live two weeks after UAT exit.\n```",
+          "task": "Propose a concrete revision to the UAT plan that preserves the overall release date if possible. Address phasing, test design (stubs/mocks), which scenarios become blocked, changes to entry/exit criteria, and how you will communicate and secure agreement from stakeholders.",
+          "expected_answer": "Split UAT into two waves: Wave 1 focuses on Catalog and Reporting plus Account mgmt non-SSO functions using an SSO stub or test accounts; Wave 2 executes SSO-dependent end-to-end scenarios once the provider is available. Introduce an SSO stub that issues JWTs with representative claims to enable downstream flows without real SSO, documenting limitations. Mark all end-to-end authentication scenarios as blocked in Wave 1; define specific acceptance for stubbed flows (e.g., session token handling, role-based access) and exclude negative auth cases until Wave 2. Update entry criteria to allow \"SSO stub validated\" for Wave 1 and retain \"stable SSO available\" for Wave 2. Adjust exit criteria to require 100% pass on non-SSO critical scenarios in Wave 1 and defer auth-critical sign-off to Wave 2, with a no-go rule if Wave 2 reveals Sev 1 auth defects. Re-baseline schedule with parallel activities (training, data provisioning) to keep the original go-live, adding a contingency buffer. Communicate via a targeted change note to business testers, Product Owner, Compliance, and Exec Sponsor; capture formal approval through a change control request with updated plan, risks, and sign-off RACI.",
+          "rubric": [
+            {
+              "criterion": "Phasing proposal that logically decouples SSO-dependent and independent scope",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of stubs/mocks with clear limitations and impact on test design",
+              "marks": 2
+            },
+            {
+              "criterion": "Updated entry/exit criteria aligned to the two waves",
+              "marks": 2
+            },
+            {
+              "criterion": "Stakeholder communication and formal agreement/change control approach",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "plan software testing",
+            "Communication",
+            "Stakeholder Management",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Mid-UAT dashboard shows these trends over 10 days:\n```text\nDay:        1  2  3  4  5  6  7  8  9  10\nNew defects 18 15 12 11  9  8  7  6  5   5\nClosed      2   4  5  6  7  8  8  8  7   6\nReopens     0   0  1  1  2  3  3  4  5   5\nPass% crit 72  78 82 85 88 90 91 92 92  92\nPass% all  60  66 70 74 78 81 83 85 87  88\nOpen by Sev: S1=0, S2=5, S3=22 (Day 10)\n```",
+          "task": "Decide whether to extend UAT or hold the current end date, and recommend two concrete actions. Justify your decision using the metrics provided, noting any specific risks you see.",
+          "expected_answer": "Hold the current UAT end date but introduce targeted actions. The defect arrival rate has fallen and critical pass rate has stabilized above 90% with no S1 open; S2 count is at 5, indicating risk against likely exit thresholds but manageable within remaining days by focusing on S2 burn-down. However, reopens are trending up, signaling fix quality issues. Actions: (1) Add a fix-quality gate requiring peer review and unit test evidence for any Sev 1/2 fixes, and route S2 defects through a focused triage with dev/test pairing to reduce reopens. (2) Freeze new scope and tighten regression selection using traceability to accelerate S2 closure while protecting critical areas. If exit criteria demand <=2 S2, pre-plan a contingency day or formal risk acceptance path for any residual, with CAB involvement. Document these in the daily comms to stakeholders.",
+          "rubric": [
+            {
+              "criterion": "Clear decision (extend or hold) with rationale grounded in trend data (arrival rate, pass rates, severities)",
+              "marks": 2
+            },
+            {
+              "criterion": "Identification of the reopen trend as a specific quality risk",
+              "marks": 2
+            },
+            {
+              "criterion": "Two concrete, actionable recommendations targeting the observed risks",
+              "marks": 2
+            },
+            {
+              "criterion": "Consideration of exit criteria and governance (risk acceptance/contingency)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "plan software testing",
+            "Business Analysis",
+            "Communication"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "The business case claims a 15% reduction in onboarding time and a 3-point CSAT increase within 60 days of launch. Data sources available: CRM timestamps, support tickets, NPS/CSAT surveys, website analytics. Region South launches in Month 1; Region North launches in Month 3.",
+          "task": "Design a benefits tracking approach that attributes impacts to the change rather than noise. Specify KPIs, baselines, control/comparison strategy, cadence, and acceptance thresholds. Include how you will handle seasonality and mix effects.",
+          "expected_answer": "KPIs: (1) Median time from `account_created_at` to `first_successful_use_at` (onboarding time), (2) CSAT post-interaction score for onboarding-related tickets, (3) Leading indicators: task completion rate on key onboarding steps. Baselines: 8-week pre-launch medians for South and North separately. Control strategy: use North as a contemporaneous control for South’s Month 1–2, then switch to South-as-control when North launches (difference-in-differences). Cadence: weekly for leading indicators, biweekly for primary KPIs, 60-day formal review. Acceptance thresholds: onboarding time reduction ≥15% in South vs North (DiD) by Day 60; CSAT +3 points vs control with 95% CI non-overlap or standardized effect size threshold. Adjust for seasonality by including week fixed effects and product mix controls (e.g., segment by customer tier) in the analysis; publish segment cuts to ensure improvements are not due to favorable mix. Back-test with pre-period to validate methodology, and define a de-scope rule if data quality falls below set thresholds.",
+          "rubric": [
+            {
+              "criterion": "KPIs selected with clear operational definitions and data sources",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of a control/comparison design to support attribution",
+              "marks": 2
+            },
+            {
+              "criterion": "Cadence and acceptance thresholds that align to the stated business case",
+              "marks": 2
+            },
+            {
+              "criterion": "Handling of seasonality/mix effects in the analysis plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "track key performance indicators",
+            "Business Analysis",
+            "Communication"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "During UAT week 2, Legal mandates a new consent clause for data sharing that must be visible and accepted before checkout. Go-live date is contractually fixed in 9 days. UAT currently shows 0 S1, 4 S2, 18 S3 open; 93% critical pass. The consent change will touch UI, APIs, and reporting extracts.",
+          "task": "Propose a triage and change control plan that integrates this requirement without derailing go-live. Specify impact on scope and tests, risk controls, communication, and sign-off strategy.",
+          "expected_answer": "Raise a controlled change (CR) classed as regulatory-mandated, with expedited path. Impact: update UI (consent modal), API (persist consent with `consent_version`), reporting (daily consent extract). Testing: create new critical UAT scenarios for positive/negative consent, persistence across sessions, and audit logging; isolate regression to payment flows not touching consent except where gating occurs. Risk controls: feature flagging of the consent gate; dark launch in UAT with flag on for all; contract tests for API; add logging/alerting for missing consent. Freeze non-essential scope; reassign testers to consent scenarios; create a mini-cycle with entry criteria (build with flag, updated copy approved by Legal). Communication: immediate stakeholder bulletin to Product, Legal, Compliance, Ops, and Exec Sponsor; customer comms plan updated to include consent text change; publish revised release notes. Sign-off: conditional go/no-go requiring (a) all consent scenarios pass, (b) zero S1 and <= current S2 threshold, and (c) Legal sign-off on exact copy/screenshots; obtain CAB waiver for any deferred non-critical defects unrelated to consent.",
+          "rubric": [
+            {
+              "criterion": "Structured change control plan with regulatory prioritization and scope impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Targeted UAT test adjustments (new scenarios, regression focus) and risk controls (feature flag, logging)",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear stakeholder and customer communication updates tied to the change",
+              "marks": 2
+            },
+            {
+              "criterion": "Defined, auditable sign-off conditions incorporating Legal approval",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "plan software testing",
+            "Stakeholder Management",
+            "Communication",
+            "Business Analysis"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Compile a complete UAT Pack for the release",
+          "brief": "Produce a UAT pack that an external team could run without your help. It must include plan, scope, scenarios, data strategy, defect process, schedule, and sign-off artefacts aligned to this section's practices.",
+          "deliverable": "A UAT pack as a single PDF or a folder containing: UAT Test Plan, Entry/Exit Criteria, Traceability Matrix (requirements-to-tests), Prioritized Test Scenarios/Cases, Test Data Provisioning and Masking Plan, Defect Triage Process (including JIRA workflow and severity/priority definitions), UAT Schedule with resource plan, Daily Status/Reporting templates, Risk/Issue log template, Sign-off form with RACI. If a folder, include a README describing file structure.",
+          "acceptance_criteria": [
+            "UAT Test Plan states objectives, scope in/out, environment prerequisites, and assumptions",
+            "Entry and Exit criteria are explicit, measurable, and aligned to severity/pass-rate thresholds",
+            "Traceability matrix links each in-scope requirement to at least one test; gaps are identified or justified",
+            "At least 12 test cases provided, using a consistent template with preconditions, steps, expected results, and data; 4+ marked Critical",
+            "Test data plan explains masking/synthetic data generation and uniqueness constraints handling",
+            "Defect process includes a JIRA workflow diagram or configuration extract and a triage SLA with roles",
+            "Schedule shows activities, milestones, and tester allocation; includes a contingency buffer",
+            "Templates for daily status and risk/issue log provided; sign-off form shows single Accountable and approvers"
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of artefacts against acceptance criteria (plan, criteria, traceability, cases)",
+              "marks": 6
+            },
+            {
+              "criterion": "Quality and testability of test cases (clarity, measurability, criticality tagging)",
+              "marks": 5
+            },
+            {
+              "criterion": "Soundness of data strategy and privacy-compliant masking/synthetic approach",
+              "marks": 3
+            },
+            {
+              "criterion": "Defect triage process and JIRA workflow suitability and clarity",
+              "marks": 3
+            },
+            {
+              "criterion": "Schedule/resource plan realism and inclusion of governance templates (status, R/A/C/I, sign-off)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "plan software testing",
+            "Test Case Writing",
+            "JIRA",
+            "Business Analysis",
+            "Communication"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Complete BA Case: Change, Communication, and Benefits Tracking",
+          "brief": "Build a concise but complete BA case that would support go/no-go and post-launch monitoring for a scoped release that removes one feature and adds another.",
+          "deliverable": "A single document (or folder with a compiled PDF) containing: Change Impact Assessment, Stakeholder Map with RACI for key decisions, Communication Plan with audience/channel/cadence/content and draft artifacts (e.g., email/in-app copy), Training/Readiness plan outline, Benefits Register with KPIs, baselines, targets, data sources, attribution method (e.g., control region), and a 1–2 page KPI dashboard mockup using sample data.",
+          "acceptance_criteria": [
+            "Change Impact Assessment identifies process, system, data, and policy impacts and classifies them (high/med/low)",
+            "Stakeholder Map lists roles, interests, influence; RACI has a single Accountable per decision",
+            "Communication Plan aligns messages to audiences, includes Compliance/regulatory notifications where appropriate, and has a timeline",
+            "Draft comms artifacts are included (at least one internal and one customer-facing) with scope-accurate content",
+            "Benefits Register defines at least three KPIs with baseline, target, measurement cadence, and attribution approach (e.g., difference-in-differences)",
+            "Dashboard mockup visualizes baselines vs targets and shows leading and lagging indicators with clear labels and definitions"
+          ],
+          "rubric": [
+            {
+              "criterion": "Depth and accuracy of Change Impact Assessment (coverage of process/system/data/policy)",
+              "marks": 5
+            },
+            {
+              "criterion": "Stakeholder analysis quality and governance clarity (RACI with single Accountable)",
+              "marks": 4
+            },
+            {
+              "criterion": "Communication plan quality plus inclusion and appropriateness of draft artifacts",
+              "marks": 4
+            },
+            {
+              "criterion": "Benefits Register quality (KPIs, baselines, targets, cadence, attribution)",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity and usefulness of KPI dashboard mockup",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Business Analysis",
+            "Stakeholder Management",
+            "Communication",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

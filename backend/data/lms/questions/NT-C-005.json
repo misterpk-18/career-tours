@@ -1,0 +1,1892 @@
+{
+  "course_code": "NT-C-005",
+  "course_name": "Power BI",
+  "sections": [
+    {
+      "section_code": "NT-C-005-S01",
+      "skills_assessed": [
+        "Power BI",
+        "Power Query",
+        "Data Cleaning",
+        "Requirement Gathering",
+        "track key performance indicators",
+        "Business Intelligence"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit a query meant to push the date filter to SQL Server, but performance is poor. Current M steps:\n\n```powerquery\nlet\n    Source = Sql.Database(\"bi-sql\", \"Sales\"),\n    dbo_FactSales = Source{[Schema=\"dbo\", Item=\"FactSales\"]}[Data],\n    Buffered = Table.Buffer(dbo_FactSales),\n    Filtered = Table.SelectRows(Buffered, each [OrderDate] >= #date(2026, 1, 1)),\n    KeptCols = Table.SelectColumns(Filtered, {\"OrderDate\",\"ProductID\",\"Qty\"})\nin\n    KeptCols\n```\nOn refresh, which change ensures the date filter is executed by SQL Server (query folding preserved for the filter)?",
+          "options": [
+            "Replace `Table.Buffer` with `Table.FromRows` to force a new table that folds.\n",
+            "Keep `Buffered` but move it after `KeptCols` so fewer rows are buffered before filtering.",
+            "Add `Table.AddIndexColumn` before the filter so the engine can track row order before pushing predicates down.",
+            "Remove the `Buffered` step and filter directly on `dbo_FactSales` before any non-folding operation."
+          ],
+          "correct_option": "D",
+          "explanation": "`Table.Buffer` materializes data and blocks folding for subsequent steps. Removing it allows the filter on `OrderDate` to fold back to SQL. Folding occurs up to the first non-folding step. Filtering early on the native source preserves predicate pushdown.",
+          "distractor_rationale": "B is tempting because buffering fewer columns feels cheaper, but any `Table.Buffer` prior to the filter still prevents folding the filter. C sounds technical but `Table.FromRows` creates an in-memory table and also prevents folding. D is a common misunderstanding; adding an index is non-folding and at best further blocks folding; it does not help predicate pushdown.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You import a CSV with UK-style dates and accept the default `Changed Type` step. Sample rows:\n\n```csv\nOrderID,OrderDate,Amount\n101,05/03/2026,120.50\n102,13/03/2026,89.99\n```\nPower Query uses the `en-US` locale by default. After the type change to Date, what will happen to the two `OrderDate` values?",
+          "options": [
+            "Both remain text because Power Query refuses to change type without an explicit locale.",
+            "`05/03/2026` becomes May 3, 2026; `13/03/2026` becomes an error.",
+            "`05/03/2026` becomes 5 March 2026; `13/03/2026` becomes 13 March 2026 (both correct).",
+            "Both become errors because the slash-delimited format is ambiguous."
+          ],
+          "correct_option": "B",
+          "explanation": "Under the default `en-US` locale, `05/03/2026` is interpreted as MM/DD/YYYY (May 3). `13/03/2026` is invalid as a month 13 and turns into an error. The fix is to use `Using Locale...` with an en-GB locale or parse via `Date.FromText` with a culture.",
+          "distractor_rationale": "A is what you'd get with en-GB, not en-US. C is plausible but Power Query will try to convert and only error on invalid rows. D is false; Power Query eagerly applies the default locale when changing types.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Profiling shows `City` has 4 distinct values, but business says all are \"NY\". Sample values show visually identical entries:\n\n```text\nNY\nNY \nNY \nny\n```\nWhich transformation sequence will correctly collapse these to a single value?",
+          "options": [
+            "Apply `Transform > Format > Lowercase` only.",
+            "Apply `Transform > Format > Trim` only.",
+            "Apply `Clean`, then `Trim`, then `Lowercase` on `City`. ",
+            "Apply `Transform > Format > Clean` only."
+          ],
+          "correct_option": "C",
+          "explanation": "Non-breaking spaces require `Clean` to remove non-printables; trailing spaces require `Trim`; and case variance requires `Lowercase`. The sequence yields a single canonical value.",
+          "distractor_rationale": "A trims regular spaces but not non-breaking spaces or case. B removes non-printables but leaves trailing spaces and case. C unifies case but leaves whitespace differences. Only the combined sequence resolves all three discrepancies.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Power Query"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You combine monthly CSV exports from a folder. Power Query auto-generates helper queries:\n\n```text\nQueries\n  Transform Sample File\n  Sample File\n  Sample File Parameter\n  Archived Sales (folder)\n  Archived Sales\n```\nAfter you add column type changes in `Archived Sales`, new files keep coming in with raw types. Where should you move the type-change steps so they apply to every file consistently?",
+          "options": [
+            "Edit `Sample File` to add type changes; that file is the template.",
+            "Keep type changes in `Archived Sales`; they propagate automatically.",
+            "Add a `Changed Type` step after `Expanded Table Column` in `Archived Sales (folder)`.",
+            "Move type changes into `Transform Sample File` so the function applies them per file during combine."
+          ],
+          "correct_option": "D",
+          "explanation": "The combine pattern uses `Transform Sample File` as a function applied to each file. Placing type and cleanup steps there ensures every file receives identical transformations at combine time.",
+          "distractor_rationale": "A is a common misconception; steps in the final query after expansion won't update how each file is transformed. C only affects the single sample file, not the function. D changes types after expansion but leaves per-file transforms inconsistent and brittle.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You must list customers with no orders in the last 30 days. Given:\n\n```csv\n-- Customers.csv --\nCustomerID,Name\n1,Ada Co\n2,Beta LLC\n3,Calix\n\n-- Orders.csv --\nOrderID,CustomerID,OrderDate\n10,1,2026-03-01\n11,1,2026-03-25\n12,2,2026-02-10\n```\nAssume today is 2026-03-31 and `Orders` is already filtered to last 30 days in a separate query. Which merge produces the required list?",
+          "options": [
+            "Left Outer join `Customers` to filtered `Orders`, then keep rows where `Orders.OrderID` is null.",
+            "Right Outer join filtered `Orders` to `Customers`, then keep rows where `Customers.CustomerID` is null.",
+            "Left Anti join `Customers` to filtered `Orders`.",
+            "Inner join `Customers` to filtered `Orders`, then de-duplicate customers."
+          ],
+          "correct_option": "C",
+          "explanation": "A Left Anti join directly returns rows from the left table (Customers) with no match on the right (filtered last-30-days Orders), which is the cleanest solution.",
+          "distractor_rationale": "A works but requires an extra filtering step and is error-prone if null checks are missed. B returns orders with no matching customers, the inverse of what you need. D yields only customers with orders, the opposite set.",
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A requirement states: \"The dashboard shows KPI 'Average Ticket Resolution Time' at an hourly grain, updated daily.\" Available fields from the source ticketing system extract are:\n\n```text\nTicketID\nCreatedAt (datetime)\nFirstResponseAt (datetime)\nClosedAt (datetime, can be null)\nAssignedAgent\nStatus\n```\nWhich computation in Power Query best aligns with the requirement while avoiding bias from still-open tickets?",
+          "options": [
+            "Compute `(ClosedAt - CreatedAt)` but filter to `Status = Closed` before averaging.",
+            "Use `(Now() - CreatedAt)` for open tickets and `(ClosedAt - CreatedAt)` for closed tickets, then average together.",
+            "Compute `(ClosedAt - CreatedAt)` for all rows; nulls will be ignored in the average automatically.",
+            "Compute `(FirstResponseAt - CreatedAt)` for all rows to avoid nulls."
+          ],
+          "correct_option": "A",
+          "explanation": "Averaging only fully resolved tickets aligns with \"Resolution Time\" and avoids skew from open items. Including open tickets with null `ClosedAt` either errors or is dropped inconsistently. Filtering to closed tickets is explicit and defensible in the spec.",
+          "distractor_rationale": "A assumes nulls are harmless; they either error or get dropped without documentation. C measures response, not resolution, changing the KPI definition. D mixes durations of different semantics and inflates averages as long-open tickets accumulate.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "track key performance indicators",
+            "Business Intelligence"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Your `Sales` query shows the gear icon \"Source\" step:\n\n```powerquery\nSource = Csv.Document(File.Contents(\"C:\\\\Users\\\\Analyst\\\\Downloads\\\\Sales_2026_03.csv\"),[Delimiter=\",\", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None])\n```\nThe team shares the PBIX and others cannot refresh. Without introducing Power BI Service, which edit makes this query portable across analysts' machines?",
+          "options": [
+            "Switch to the Web connector and host the CSV on any public URL.",
+            "Replace the absolute path with a parameterized folder path and build the file path from it.",
+            "Keep the absolute path and instruct others to copy the file to the same location.",
+            "Use `Data Source Settings` to \"Ignore privacy levels\" so everyone can refresh."
+          ],
+          "correct_option": "B",
+          "explanation": "Parameterizing the root folder and constructing the file path from it removes machine-specific absolute paths. Peers can point the parameter to their local or network location.",
+          "distractor_rationale": "B introduces a different source and governance issues not in scope. C is brittle and not a proper requirement-level solution. D addresses privacy isolation, not portability; it does not fix the hard-coded path.",
+          "skills_covered": [
+            "Power Query",
+            "Requirement Gathering",
+            "Power BI"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You need a monthly KPI that compares actuals to targets. Data:\n\n```csv\n-- Actuals.csv (daily) --\nOrderDate,Amount\n2026-03-01,120\n2026-03-02,80\n\n-- Targets.csv (monthly) --\nMonth,TargetAmount\n2026-03,6000\n```\nA colleague proposes merging on formatted month name:\n\n```powerquery\nActuals = Table.AddColumn(Actuals, \"MonthName\", each Date.ToText([OrderDate], \"MMMM\")),\nTargets = Table.TransformColumns(Targets, {{\"Month\", each Date.MonthName(Date.FromText(_ & \"-01\"))}}),\nMerged = Table.NestedJoin(Actuals, {\"MonthName\"}, Targets, {\"Month\"}, \"T\", JoinKind.LeftOuter)\n```\nWhy will this fail when more months are added, and what is the correct join key approach?",
+          "options": [
+            "Different years share the same month name; use a start-of-month Date key on both tables and join on that.",
+            "It won't fail; month names are stable. Keep as is.",
+            "`Date.FromText(_ & \"-01\")` is invalid. Use `Date.From` instead and keep joining on names.",
+            "Join on `Date.Year([OrderDate])` only; targets are annual by nature."
+          ],
+          "correct_option": "A",
+          "explanation": "Joining on month names conflates months across years. Create a proper start-of-month Date (e.g., `Date.StartOfMonth([OrderDate])` and `Date.FromText(Month & \"-01\")`) and join on that key to keep year and month together.",
+          "distractor_rationale": "A ignores the year dimension and will misjoin. C focuses on a parsing function but preserves the flawed key. D throws away month granularity entirely.",
+          "skills_covered": [
+            "Power Query",
+            "track key performance indicators",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You have a staging/cleaning pattern:\n\n```powerquery\nSource_Sales  // loads raw\nClean_Sales = let\n  Source = Source_Sales,\n  Trimmed = Table.TransformColumns(Source, {{\"Customer\", Text.Trim}}),\n  Typed = Table.TransformColumnTypes(Trimmed, {{\"OrderDate\", type date}})\nin\n  Typed\n```\nYou disable load on `Source_Sales` and only load `Clean_Sales`. What is the effect on the model and refresh?",
+          "options": [
+            "No change to `Clean_Sales`; disabling load only hides `Source_Sales` from the model but it still refreshes as a dependency.",
+            "`Clean_Sales` will refresh but `Source_Sales` will not refresh, risking stale data.",
+            "Refresh stops entirely; at least one loaded query must read the source.",
+            "`Clean_Sales` will error because `Source_Sales` is disabled for load."
+          ],
+          "correct_option": "A",
+          "explanation": "Disabling load affects visibility in the model, not dependency execution. `Source_Sales` still refreshes behind the scenes because `Clean_Sales` depends on it.",
+          "distractor_rationale": "A confuses load with availability; references still work. C is false; dependencies can be all connection-only except for the final loaded query. D misunderstands dependency refresh; dependencies refresh with their dependents.",
+          "skills_covered": [
+            "Power Query",
+            "Power BI"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Stakeholder note in the draft spec:\n\n```text\nKPI: Revenue Growth >= 10%.\nNotes: Use \"Net Sales\" from ERP export (excludes returns). Multi-currency present. Refresh: monthly, at month close.\n```\nWhich missing decision must be nailed down in requirements to make this KPI computable in your preparation workflow without rework later?",
+          "options": [
+            "Commit to a specific dashboard layout for KPI placement so users can find it.",
+            "Define the comparison basis (e.g., vs prior month or prior year) and the exact period alignment for month close.",
+            "Choose a color palette for positive/negative growth to ensure stakeholder buy-in.",
+            "Decide whether to publish to Power BI Service or share PBIX by email."
+          ],
+          "correct_option": "B",
+          "explanation": "Without a clearly defined comparison basis and period alignment, the growth calculation is ambiguous. The prep workflow must aggregate to the correct period and produce the right keyed periods to compare.",
+          "distractor_rationale": "B and C are presentation concerns, not blockers for computability. D is about distribution; it does not resolve the KPI’s definitional ambiguity.",
+          "skills_covered": [
+            "Requirement Gathering",
+            "track key performance indicators",
+            "Business Intelligence"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are scoping a first-release operations dashboard. Stakeholders propose these KPIs and constraints:\n\n```text\nScope: Customer Support function\nStakeholders: Head of Support, QA Lead\nRefresh: Daily at 07:00 from the ticketing database dump (CSV), appended daily\nFields available in dump: TicketID, CreatedAt, FirstResponseAt, ClosedAt (nullable), Status, Priority, Channel, AssignedAgent\nConstraints: No changes to source system. Time zone alignment must be UTC. Weekends should be excluded from \"Backlog Age\" metrics.\nProposed KPIs:\nK1. Average Resolution Time (hours)\nK2. % Tickets Breached SLA (first response > 4 business hours)\nK3. Backlog Age (median days open of all open tickets)\nK4. Tickets per Agent per Day\n```\nThere is no semantic model yet; you can only rely on Power Query transformations and well-defined aggregates.",
+          "task": "Decide which KPIs are safe to include in v1 given the data and constraints. For each included KPI, specify the exact computable definition, data filters, time handling, and any exclusions. For any KPI you exclude from v1, state the blocker and what would unblock it. Justify your choices briefly, pointing to the available fields and constraints.",
+          "expected_answer": "A strong answer includes K1, K2, and K3 with defensible, computable definitions and defers K4 or qualifies it. Example: include K1 as average of (ClosedAt - CreatedAt) in hours, filter Status = Closed, compute in UTC, exclude weekends only if specifically required; since K1 is wall-clock, weekend exclusion not applied unless requested. Include K2 as percentage of tickets where (FirstResponseAt - CreatedAt) > 4 business hours; define business hours rule or state blocker: without business-hours calendar, approximate by excluding weekends using a custom function or defer until calendar is available; acceptable answer either formalizes a reasonable business-hours approximation in PQ or explicitly defers K2 noting the missing calendar. Include K3 as median of (Now or day-end - CreatedAt) for Status != Closed; explicitly exclude weekends in age calculation per requirement using a documented approximation or argue for deferral until a business-day function is approved. For K4, flag blocker: lacks per-day staffing or shifts; raw fields do not include Agent working time, so \"per Day\" must be clarified (by CreatedAt date? closed date?), and double counting across days must be addressed. Each decision ties to fields present and constraints like UTC and CSV appends.",
+          "rubric": [
+            {
+              "criterion": "Correctly identify v1-feasible KPIs versus those needing additional data or rules, with justification tied to available fields",
+              "marks": 3
+            },
+            {
+              "criterion": "For each included KPI, provide an explicit, computable definition (aggregation, filters, time basis, units)",
+              "marks": 2
+            },
+            {
+              "criterion": "Address time handling (UTC, weekend exclusion) consistently and realistically (approximation or deferral stated)",
+              "marks": 2
+            },
+            {
+              "criterion": "State clear blockers and concrete unblockers for any deferred KPI(s)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "track key performance indicators",
+            "Business Intelligence",
+            "Power Query"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "ETL draft for Sales uses SQL plus CSV targets. Current M steps (simplified):\n\n```powerquery\nlet\n  SQL = Sql.Database(\"bi\", \"Sales\"),\n  Fact = SQL{[Schema=\"dbo\", Item=\"FactSales\"]}[Data],\n  Filtered = Table.SelectRows(Fact, each [OrderDate] >= #date(2026,1,1)),\n  Merged = Table.NestedJoin(Filtered, {\"ProductID\"}, Products, {\"ProductID\"}, \"P\", JoinKind.LeftOuter),\n  Expanded = Table.ExpandTableColumn(Merged, \"P\", {\"Category\"}, {\"Category\"}),\n  AddedIndex = Table.AddIndexColumn(Expanded, \"Idx\", 1, 1, Int64.Type),\n  Grouped = Table.Group(AddedIndex, {\"Category\"}, {{\"Sales\", each List.Sum([Amount]), type number}})\nin\n  Grouped\n```\nPerformance is poor and DBA reports heavy data pulled from SQL. Products is an Excel query already cleaned. You must preserve folding for SQL-side filtering and joining where possible.",
+          "task": "Propose a revised step sequence that maximizes folding and minimizes data pulled from SQL. Explain which steps fold and why, and where to place any non-folding steps. Consider whether to pre-stage `Products` into SQL semantics (e.g., via staging table) or how to handle an Excel dimension in a way that avoids exploding rows on the server. Provide the revised M outline and rationale.",
+          "expected_answer": "Expected: Push filters and supported joins before any non-folding transforms. Since joining a SQL table to an Excel table in PQ prevents server-side join, propose either: 1) stage Products in SQL (outside PQ) and then join in-fold; or 2) pre-aggregate/filter Fact in-fold first (e.g., project needed columns, filter date), then materialize (first non-folding step), then merge with Excel locally. Move `Table.AddIndexColumn` and `Table.Group` after folding boundary. Suggested M: Filter Fact; select needed columns; optionally summarize in SQL by Category if a SQL view exists; otherwise keep row-level until after merge; if Excel merge must be local, ensure the SQL query is minimized (date filter and projection) before materialization. Explanation should name `AddIndex` and `Group` as non-folding, and explain that cross-source joins cannot fold to SQL.",
+          "rubric": [
+            {
+              "criterion": "Revised step order that preserves folding for filters/projections and defers non-folding steps",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct reasoning about why cross-source joins block folding and how to mitigate",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete M outline reflecting the proposal",
+              "marks": 2
+            },
+            {
+              "criterion": "Awareness of trade-offs (staging dimension vs local merge) and data volume control",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Power Query",
+            "Power BI",
+            "Data Cleaning"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "Data profiling flags no nulls in `CustomerEmail`, yet complaints persist about undeliverable emails. Sample issues found during spot-checks:\n\n```text\n\" alice@example.com \"\n\"bob@@example.com\"\n\"—\"\n\"N/A\"\n\"carol@Example.Com\"\n\"dave@example\"\n\"eve@example.com \"\n\"\\tfrank@example.com\"\n```\nYou must harden the cleaning rules in Power Query to produce a reliable contactable email list for a KPI on campaign reachability.",
+          "task": "Propose a robust, order-specific transformation and validation plan that: (1) normalizes whitespace and case; (2) flags quasi-null placeholders; (3) validates basic email shape without regex; (4) splits the output into two tables or columns: valid emails and reasons for invalidation. Explain how you will document the steps and expose data quality metrics (e.g., % invalid) for the dashboard spec.",
+          "expected_answer": "Answer should include: apply `Clean` then `Trim`, lowercase the email, replace known placeholders (\"N/A\", \"—\", empty) with null, remove non-breaking spaces and tabs. For validation without regex, propose a set of checks: contains exactly one `@`, has at least one `.` after `@`, domain and local parts non-empty. Implement with custom columns yielding validity boolean and reason text, then filter/split accordingly. Provide a plan to compute and expose counts or percentages of invalids as a small quality table/query. Steps should be named and commented for traceability.",
+          "rubric": [
+            {
+              "criterion": "Clear, correct sequence of normalization and placeholder handling",
+              "marks": 2
+            },
+            {
+              "criterion": "Practical validity checks implementable in Power Query and reasoning for them",
+              "marks": 2
+            },
+            {
+              "criterion": "Design for separating/flagging invalid rows and surfacing quality metrics",
+              "marks": 2
+            },
+            {
+              "criterion": "Documentation/step naming plan that supports auditability",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Cleaning",
+            "Power Query",
+            "Requirement Gathering"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Two systems report \"Active Users\" differently:\n\n```text\nProduct DB (daily snapshot): UserID, LastLoginAt\nCRM (license file): UserID, LicenseStatus (Active/Inactive), LicenseExpiry\nRequirement draft: \"Active Users (Monthly)\" should be one KPI used by Finance and Product.\nConflicts: Some users logged in after license expiry (grace period), some have active licenses but never logged in this month.\n```\nYou must define a single KPI for v1 that both teams will accept, using only Power Query and monthly refresh at period close.",
+          "task": "Choose a defensible definition for \"Active Users (Monthly)\" given the two sources. Specify the join rules, period alignment, edge-case handling (grace period, never-logged-in but licensed), and which table is authoritative for each judgement. Justify how your definition supports consistent month-over-month comparisons and call out any caveats you will document in the dashboard specification.",
+          "expected_answer": "Good answers define a month-close snapshot KPI like: users counted as active if LicenseStatus = Active as of month end AND LastLoginAt within the month (intersection) to satisfy both Finance (entitlement) and Product (usage). Explain start-of-month and end-of-month keys using `Date.StartOfMonth/EndOfMonth` to align periods. Describe a Left Outer join from CRM to Product DB on UserID; apply filters: license active as of month end (expiry >= EOM), and last login >= SOM and <= EOM. Treat grace period explicitly: either extend expiry by grace days (documented) or exclude such users and note the caveat. For licensed-but-not-logged-in, exclude from KPI but include a secondary metric. Document in spec: period definition, grace assumption, and data lag risks.",
+          "rubric": [
+            {
+              "criterion": "Clear, defensible KPI definition tying to both entitlement and usage, with period alignment",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct join/filter logic and treatment of edge cases (grace period, never-logged-in)",
+              "marks": 2
+            },
+            {
+              "criterion": "Justification that addresses stakeholder needs and comparability over time",
+              "marks": 1
+            },
+            {
+              "criterion": "Stated caveats/assumptions to include in the specification",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "track key performance indicators",
+            "Business Intelligence",
+            "Power Query"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Draft a v1 Dashboard Specification for a Sales + Customer Support starter",
+          "brief": "Using only the capabilities covered so far, produce a dashboard specification document for a combined Sales and Support v1. Assume these inputs are available as flat files refreshed daily: Sales (Orders with OrderID, OrderDate, CustomerID, ProductID, Amount), Customers (CustomerID, Region), Support Tickets (TicketID, CreatedAt, FirstResponseAt, ClosedAt, Status, Priority, AssignedAgent). You must not design visuals; focus on workflow, requirements, and KPIs.\n\nYour spec must define 3–5 KPIs with exact computable definitions and filters; data sources and ownership; refresh cadence and time zone; data preparation notes (what will be cleaned or derived in Power Query); acceptance criteria for each KPI; and basic role-based consumption notes (who uses which KPI and why). Include constraints and open questions you’d take back to stakeholders.",
+          "deliverable": "A single document (PDF or Markdown) titled \"v1 Dashboard Specification\" containing: scope, stakeholders, data sources, KPI definitions, refresh plan, preparation notes, acceptance criteria, constraints, and open questions.",
+          "acceptance_criteria": [
+            "Includes a section listing all data sources with file names/locations and owners.",
+            "Defines at least 3 KPIs with unambiguous formulas, filters, units, and period alignment.",
+            "States refresh frequency, time zone, and refresh window; documents any expected data latency.",
+            "Lists specific Power Query preparation steps per source (e.g., locale for dates, trimming rules, joins to be performed).",
+            "Provides acceptance tests per KPI (example calculation with sample numbers).",
+            "Identifies constraints/risks and at least 3 open questions to resolve with stakeholders."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness of scope, stakeholders, and sources (clear ownership and locations)",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality and computability of KPI definitions (clarity, filters, period alignment)",
+              "marks": 6
+            },
+            {
+              "criterion": "Refresh plan and preparation workflow detail appropriate to v1 (time zones, steps)",
+              "marks": 4
+            },
+            {
+              "criterion": "Acceptance criteria with example numbers that an assessor can verify",
+              "marks": 4
+            },
+            {
+              "criterion": "Identification of realistic constraints/risks and actionable open questions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Requirement Gathering",
+            "track key performance indicators",
+            "Business Intelligence",
+            "Power BI",
+            "Power Query"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a Prepared Query Set from sample flat files",
+          "brief": "Create a Power BI Desktop PBIX that prepares a clean dataset from the following sample files. Save each CSV below as a file and use them as sources. Do not create measures or a data model; focus on Power Query prep only.\n\n```csv\n-- Customers.csv --\nCustomerID,Name,Region\n1,Ada Co,North\n2,Beta LLC,West\n3,Calix,North\n4,Delta Inc,South\n\n-- Orders_2026_02.csv --\nOrderID,CustomerID,OrderDate,Amount\n10,1,02/15/2026,120.50\n11,1,02/28/2026,89.99\n12,2,02/10/2026,200\n\n-- Orders_2026_03.csv --\nOrderID,CustomerID,OrderDate,Amount\n13,2,03/01/2026,75\n14,3,03/13/2026,140.25\n15,3,03/31/2026,50\n\n-- Targets.csv --\nMonth,TargetAmount\n2026-02,5000\n2026-03,6000\n```\nRequirements:\n- Combine monthly Orders files from a folder into one `Orders` query using the combine-files pattern. Parse dates correctly assuming US locale for Orders, and create `OrderMonthStart = Date.StartOfMonth(OrderDate)`.\n- Clean `Customers.Name` by removing non-printable characters, trimming, and lowercasing to a canonical form `Name_clean` while keeping original `Name`.\n- Merge `Orders` with `Customers` to bring `Region` and with `Targets` to bring monthly `TargetAmount` using a proper month key (not month name strings). Create a column `DeltaToTarget` at the monthly grain via a grouped table or a separate aggregated query.\n- Parameterize the root folder path so the file location can be changed without editing steps. Disable load for any staging/helper queries.\n- Name and annotate steps clearly.",
+          "deliverable": "One PBIX containing the prepared query set and an export of all M code (via Copy All) pasted into a text file named MCode.txt.",
+          "acceptance_criteria": [
+            "`Orders` combines both Orders CSVs via a folder connector; no duplicate/omitted rows.",
+            "`OrderDate` parsed as Date using en-US; `OrderMonthStart` exists and is correct for all rows.",
+            "`Customers` has `Name_clean` computed by Clean -> Trim -> Lowercase sequence.",
+            "A merge brings `Region` onto `Orders`; another merge (or equivalent) brings `TargetAmount` by joining on a proper month start key.",
+            "A query or step computes monthly actual totals and `DeltaToTarget = Actual - Target` for Feb and Mar 2026; values are correct from the provided data.",
+            "A parameter controls the Orders folder path; staging/helper queries are connection-only (load disabled).",
+            "Steps are clearly named; MCode.txt contains the full M code of all queries."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct file combine and date parsing with `OrderMonthStart` derivation",
+              "marks": 6
+            },
+            {
+              "criterion": "Customer name cleaning produces canonical `Name_clean` while preserving original",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct merges and proper month key usage to attach `Region` and `TargetAmount`",
+              "marks": 5
+            },
+            {
+              "criterion": "Accurate monthly aggregation and `DeltaToTarget` computation from sample data",
+              "marks": 3
+            },
+            {
+              "criterion": "Parameterization and load settings implemented; clear step naming and M export provided",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Power Query",
+            "Data Cleaning",
+            "Power BI",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-005-S02",
+      "skills_assessed": [
+        "Power BI",
+        "DAX",
+        "Data Modeling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You have this model:\n\n```text\nDimDate[Date] --(active 1:* on FactSales[OrderDate])--> FactSales\nDimDate[Date] --(inactive 1:* on FactSales[ShipDate])--> FactSales\n```\n\nBase measure:\n\n```dax\nSales := SUM(FactSales[SalesAmount])\n```\n\nYou need a measure that respects slicers on `DimDate` but totals by `ShipDate`. Which definition works correctly on any date-filtered visual?\n",
+          "options": [
+            "```dax\nShip Sales := CALCULATE(SUM(FactSales[SalesAmount]), FILTER(FactSales, RELATED(DimDate[Date]) = FactSales[ShipDate]))\n```",
+            "```dax\nShip Sales := SUMX(FactSales, CALCULATE(FactSales[SalesAmount], DimDate[Date] = FactSales[ShipDate]))\n```",
+            "```dax\nShip Sales := CALCULATE([Sales], CROSSFILTER(DimDate[Date], FactSales[ShipDate], BOTH))\n```",
+            "```dax\nShip Sales := CALCULATE([Sales], USERELATIONSHIP(DimDate[Date], FactSales[ShipDate]))\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "USERELATIONSHIP activates the inactive relationship between `DimDate[Date]` and `FactSales[ShipDate]` inside CALCULATE, so slicers on DimDate flow through ShipDate for that evaluation.",
+          "distractor_rationale": "B: CROSSFILTER changes direction but does not activate an inactive relationship. C: Comparing a column to another column inside CALCULATE like this does not create a relationship-aware filter and ignores existing DimDate slicers. D: RELATED cannot pull a value from DimDate in the FactSales row context without a relationship active to DimDate, and the FILTER expression won’t bind to the slicer-driven filter tree properly.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "`FactBudget` is monthly product-level budget with no physical relationship to your model:\n\n```text\nFactBudget[Date] (YYYY-MM-01), FactBudget[ProductID], FactBudget[BudgetAmount]\n```\n\nYou must make Budget respond to slicers on `DimDate` and `DimProduct` without adding relationships that cause ambiguity. Which measure definition correctly maps current filters into `FactBudget`?\n",
+          "options": [
+            "```dax\nBudget :=\nCALCULATE(\n    SUM(FactBudget[BudgetAmount]),\n    CROSSFILTER(DimDate[Date], FactBudget[Date], BOTH),\n    CROSSFILTER(DimProduct[ProductID], FactBudget[ProductID], BOTH)\n)\n```",
+            "```dax\nBudget :=\nCALCULATE(\n    SUM(FactBudget[BudgetAmount]),\n    TREATAS(VALUES(DimDate[Date]), FactBudget[Date]),\n    TREATAS(VALUES(DimProduct[ProductID]), FactBudget[ProductID])\n)\n```",
+            "```dax\nBudget :=\nCALCULATE(\n    SUM(FactBudget[BudgetAmount]),\n    USERELATIONSHIP(DimDate[Date], FactBudget[Date])\n)\n```",
+            "```dax\nBudget :=\nSUMX(\n    VALUES(DimProduct[ProductID]),\n    RELATEDTABLE(FactBudget)[BudgetAmount]\n)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "TREATAS projects the current filter values of `DimDate[Date]` and `DimProduct[ProductID]` onto the homonymous columns in `FactBudget`, making the virtual relationship for that evaluation only.",
+          "distractor_rationale": "B: CROSSFILTER only works on existing relationships. C: RELATEDTABLE requires a relationship to exist; it won’t bind here. D: USERELATIONSHIP can only activate an existing inactive relationship; there is none.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Model:\n\n```text\nDimCity (1) ──> (∞) DimCustomer (1) ──> (∞) FactSales\n-- all relationships single-direction, from left to right\n```\n\nYou need “Customers With Sales” to respect slicers on Region from `DimCity` and on Date from `DimDate`. Which measure correctly counts the number of customers who actually have sales in the current context?\n",
+          "options": [
+            "```dax\nCustomers With Sales := DISTINCTCOUNT(DimCustomer[CustomerID])\n```",
+            "```dax\nCustomers With Sales := CALCULATE(DISTINCTCOUNT(DimCustomer[CustomerID]), CROSSFILTER(DimCustomer[CustomerID], FactSales[CustomerID], BOTH))\n```",
+            "```dax\nCustomers With Sales := DISTINCTCOUNT(FactSales[CustomerID])\n```",
+            "```dax\nCustomers With Sales := COUNTROWS(VALUES(DimCustomer[CustomerID]))\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Distinct-counting `CustomerID` in the fact counts only customers present in sales rows that survive all current filters, including Region and Date.",
+          "distractor_rationale": "B: Counts customers in the region regardless of whether they bought anything. C: CROSSFILTER is unnecessary and risks unexpected paths; base propagation already filters facts. D: COUNTROWS of VALUES over the dimension may include customers with no sales in the current period.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You create this measure and put it on a card next to `[Sales]` while filtering by `DimProduct[Category] = \"Accessories\"`.\n\n```dax\nSales Per Product (wrong) := SUMX(DimProduct, [Sales])\n```\n\nWhat happens to the value of this measure relative to `[Sales]`?\n",
+          "options": [
+            "It errors because `[Sales]` cannot be evaluated inside an iterator.",
+            "It typically equals `[Sales]` multiplied by the number of visible products in the category.",
+            "It equals `[Sales]` exactly, because iterating a dimension does not change context for a measure.",
+            "It equals the sum of per-product `[Sales]`, which is still `[Sales]`, so no change."
+          ],
+          "correct_option": "B",
+          "explanation": "Inside SUMX over a dimension, `[Sales]` is evaluated without context transition, so it returns the same total for each row. The iterator sums that total once per visible product, inflating the result.",
+          "distractor_rationale": "B: Measures don’t automatically context-transition inside iterators. C: Measures are valid inside iterators. D: It would only hold if each row filtered the measure; here it does not.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You need “Average List Price per Unit Sold” using `DimProduct[ListPrice]` and sales quantities in `FactSales[Quantity]`. Which definition is correct across all filters?\n",
+          "options": [
+            "```dax\nAvg List Price per Unit :=\nDIVIDE(\n    SUMX(FactSales, RELATED(DimProduct[ListPrice]) * FactSales[Quantity]),\n    SUM(FactSales[Quantity])\n)\n```",
+            "```dax\nAvg List Price per Unit := AVERAGE(DimProduct[ListPrice])\n```",
+            "```dax\nAvg List Price per Unit :=\nDIVIDE(\n    SUMX(VALUES(DimProduct[ProductID]), DimProduct[ListPrice]),\n    DISTINCTCOUNT(FactSales[ProductID])\n)\n```",
+            "```dax\nAvg List Price per Unit := AVERAGEX(FactSales, RELATED(DimProduct[ListPrice]))\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "A weights list price by the actual quantity sold, then divides by total units, producing a true per-unit average under any filter.",
+          "distractor_rationale": "B: Averages by transaction, not by units, skewing results when quantities vary. C: Ignores sales entirely. D: Averages per distinct product, not accounting for different volumes.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Your model has two relationships between `DimDate` and `FactSales`:\n\n```text\nActive:   DimDate[Date] 1:* FactSales[OrderDate]\nInactive: DimDate[Date] 1:* FactSales[ShipDate]\n```\n\nYou place `DimDate[Month]` on rows of a matrix and the base `[Sales]` measure on values. Which date does `[Sales]` align to?\n",
+          "options": [
+            "OrderDate, because it is on the active relationship.",
+            "ShipDate, because it is the more recent event.",
+            "Whichever date column appears first in model alphabetical order.",
+            "Both dates are blended by default to avoid data loss."
+          ],
+          "correct_option": "A",
+          "explanation": "By default, measures use the active relationship. Inactive relationships have no effect unless explicitly activated, e.g., with USERELATIONSHIP.",
+          "distractor_rationale": "B: Recency is irrelevant. C: There is no blending without explicit logic. D: Model metadata, not name order, controls behavior.",
+          "skills_covered": [
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You need “Category Share %” = product/category’s sales divided by its category total, respecting all non-product filters (e.g., Date, Region). Which measure is correct?\n",
+          "options": [
+            "```dax\nCategory Share % :=\nDIVIDE(\n    [Sales],\n    CALCULATE([Sales], REMOVEFILTERS())\n)\n```",
+            "```dax\nCategory Share % :=\nDIVIDE(\n    [Sales],\n    CALCULATE([Sales], ALLSELECTED(DimProduct[Category]))\n)\n```",
+            "```dax\nCategory Share % :=\nDIVIDE(\n    [Sales],\n    CALCULATE([Sales], ALLEXCEPT(DimProduct, DimProduct[Category]))\n)\n```",
+            "```dax\nCategory Share % :=\nDIVIDE(\n    [Sales],\n    CALCULATE([Sales], ALL(DimProduct))\n)\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "ALLEXCEPT removes product-level filters but preserves the category filter, so the denominator is the category total under all other report filters.",
+          "distractor_rationale": "B: ALL(DimProduct) removes category too, giving share of the grand total. C: REMOVEFILTERS with no columns removes all filters, again a grand total. D: ALLSELECTED over just Category returns the set selected by the user, not the entire category under slicers; this can produce inconsistent denominators within a matrix.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Consider the measure:\n\n```dax\nHigh Margin Sales :=\nCALCULATE(\n    [Sales],\n    KEEPFILTERS(DimProduct[Margin Band] = \"High\")\n)\n```\n\nWhat happens if a report slicer sets `DimProduct[Margin Band] = \"Medium\"`?\n",
+          "options": [
+            "The measure errors due to conflicting filters.",
+            "The slicer is overridden and High is used, returning High-margin sales.",
+            "Both High and Medium are applied by OR, returning their combined sales.",
+            "The measure returns 0/blank because the filter becomes the intersection of High and Medium."
+          ],
+          "correct_option": "D",
+          "explanation": "KEEPFILTERS adds a filter without removing existing ones, so High ∩ Medium is empty, yielding BLANK/0.",
+          "distractor_rationale": "B: That would require overwriting the existing filter, not keeping it. C: Filters are ANDed, not ORed, unless explicitly constructed. D: Conflicting filters yield empty results, not errors.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You need a measure that counts products with no sales in the current context. Which works reliably?\n",
+          "options": [
+            "```dax\nUnsold Products :=\nCOUNTROWS(\n    EXCEPT(\n        VALUES(DimProduct[ProductID]),\n        DISTINCT(FactSales[ProductID])\n    )\n)\n```",
+            "```dax\nUnsold Products :=\nCOUNTROWS(\n    INTERSECT(\n        VALUES(DimProduct[ProductID]),\n        VALUES(FactSales[ProductID])\n    )\n)\n```",
+            "```dax\nUnsold Products :=\nCALCULATE(\n    DISTINCTCOUNT(DimProduct[ProductID]),\n    NOT FactSales[SalesAmount]\n)\n```",
+            "```dax\nUnsold Products :=\nCALCULATE(\n    COUNTROWS(DimProduct),\n    FILTER(DimProduct, ISBLANK([Sales]))\n)\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "EXCEPT over the visible products minus the distinct products present in current fact rows returns the anti-set, which you count.",
+          "distractor_rationale": "B: INTERSECT returns sold products, not unsold. C: `NOT FactSales[SalesAmount]` is invalid DAX and the intent is not a valid filter. D: This tries to use a measure in a row filter over a dimension without context transition; it will evaluate but be inefficient and can misbehave with unrelated filters.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Given:\n\n```dax\nPromo Sales :=\nCALCULATE(\n    [Sales],\n    DimProduct[Category] = \"Accessories\",\n    REMOVEFILTERS(DimProduct[Subcategory])\n)\n```\n\nHow do slicers on `Category` and `Subcategory` interact with this measure?\n",
+          "options": [
+            "Slicers on Category intersect with Accessories; Subcategory is intersected as well because filters always AND.",
+            "Category is forced to Accessories regardless of slicers; Subcategory slicers are ignored for products, but all other filters still apply.",
+            "Subcategory from slicers still limits the result; REMOVEFILTERS has no effect inside CALCULATE.",
+            "Both Category and Subcategory slicers are overridden; the measure ignores all product-level filters."
+          ],
+          "correct_option": "B",
+          "explanation": "CALCULATE applies the explicit Category filter and removes Subcategory filters; other non-product filters remain in effect.",
+          "distractor_rationale": "B: Only Subcategory is removed, not all product filters. C: REMOVEFILTERS explicitly clears Subcategory. D: Subcategory is not intersected here; it is cleared.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are modeling a sales dataset where orders are placed in one month but often ship the next. Tables provided:\n\n```text\nFactSales: OrderID, OrderDate, ShipDate, CustomerID, ProductID, Quantity, UnitPrice, SalesAmount\nDimDate: Date, Year, Month, Quarter\nDimCustomer: CustomerID, CustomerName, Segment\nDimProduct: ProductID, ProductName, Category, Subcategory\n```\n\nStakeholders need to switch a page between “Order Date” metrics and “Ship Date” metrics using the same `DimDate` slicers and visuals (no duplicate date table in the field list).",
+          "task": "Propose a semantic model and DAX pattern that enables toggling between OrderDate-based and ShipDate-based metrics on the same visuals. Describe the relationships you will create, how slicers should be wired, and show DAX for at least two measures (e.g., `[Sales (Order)]` and `[Sales (Ship)]`). Explain how your approach avoids ambiguous filters and what happens if a user forgets to use the toggle.",
+          "expected_answer": "- Keep a single `DimDate` table. Create two relationships from `DimDate[Date]` to `FactSales`: one active 1:* on `FactSales[OrderDate]`, one inactive 1:* on `FactSales[ShipDate]`.\n- Wire page/date slicers using `DimDate`; the active relationship means base measures default to OrderDate.\n- Provide two explicit measures:\n\n```dax\nSales (Order) := [Sales]  -- base uses active OrderDate relationship\n\nSales (Ship) :=\nCALCULATE([Sales], USERELATIONSHIP(DimDate[Date], FactSales[ShipDate]))\n```\n\n- Add a small disconnected parameter table `Date View` with values {\"Order Date\",\"Ship Date\"} and a measure that switches based on it:\n\n```dax\nSelected Date View := SELECTEDVALUE('Date View'[Label], \"Order Date\")\n\nSales (Selected) :=\nSWITCH(\n    [Selected Date View],\n    \"Ship Date\", [Sales (Ship)],\n    [Sales (Order)]\n)\n```\n\n- Visuals use `Sales (Selected)`. The slicers remain on `DimDate` and drive both measures through the appropriate relationship. No bidirectional filters are needed; both relationships are single-direction from `DimDate`.\n- If the user doesn’t use the toggle, base measures remain OrderDate by design, preventing silent ambiguity.",
+          "rubric": [
+            {
+              "criterion": "Defines a single DimDate with one active (OrderDate) and one inactive (ShipDate) relationship, correct cardinality and direction",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct DAX for Order vs Ship using USERELATIONSHIP within CALCULATE",
+              "marks": 2
+            },
+            {
+              "criterion": "Introduces a safe toggle mechanism (parameter table + SWITCH) and explains slicer wiring",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why this avoids ambiguity/bidirectional pitfalls and what the default behavior is without toggle",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "DAX",
+            "Power BI"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Budgets are delivered at Month x Product level in `FactBudget(Date, ProductID, BudgetAmount)` and are not related to your star schema. You must show a \"Sales vs Budget\" variance that respects existing slicers on `DimDate`, `DimProduct`, and `DimCustomer` without creating physical relationships that introduce cycles with `FactSales`.",
+          "task": "Design the semantic approach and write the `Budget` and `Variance` measures. Justify why your approach will not double-count or create ambiguous filter paths when both Date and Product slicers are used. Mention any model requirements (e.g., Date table status).",
+          "expected_answer": "- Keep `FactBudget` disconnected to avoid cycles. Ensure `DimDate` is a marked date table so time intelligence works on the sales side.\n- Use TREATAS to map current filters for Date and Product into `FactBudget` within a measure:\n\n```dax\nBudget :=\nCALCULATE(\n    SUM(FactBudget[BudgetAmount]),\n    TREATAS(VALUES(DimDate[Date]), FactBudget[Date]),\n    TREATAS(VALUES(DimProduct[ProductID]), FactBudget[ProductID])\n)\n\nVariance := [Sales] - [Budget]\nVariance % := DIVIDE([Variance], [Budget])\n```\n\n- This virtual relationship approach means only the rows of `FactBudget` matching the currently selected dates/products are considered. No bidirectional filters or physical links are added, so there is no ambiguity, and budgets are not duplicated across multiple products or dates.",
+          "rubric": [
+            {
+              "criterion": "Keeps FactBudget disconnected and explains why (avoid cycles/ambiguity)",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct Budget measure using TREATAS for Date and Product",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines Variance/Variance% correctly",
+              "marks": 1
+            },
+            {
+              "criterion": "States necessary model assumptions (marked date table) and why the approach respects slicers without double-counting",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "DAX"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Product tagging introduces a many-to-many classification. Tables:\n\n```text\nDimProduct(ProductID, ProductName, Category)\nBridgeProductTag(ProductID, Tag)\nDimTag(Tag)\nFactSales(ProductID, ...)\n```\n\nBusiness needs a matrix of `DimTag[Tag]` by `Sales` and a KPI for distinct products sold under the selected Tag(s). Initial attempts enabled bidirectional filters on both relationships from `DimTag` to the bridge and from `DimProduct` to `FactSales`, causing unstable totals.",
+          "task": "Propose a model filter-flow configuration and write two measures: `[Sales]` that responds to Tag correctly, and `Products Sold (by Tag)` that counts distinct products actually sold under the Tag filter. Explain how double-counting is avoided.",
+          "expected_answer": "- Model: Single-direction filters from `DimTag (1)` → `BridgeProductTag (∞)` and from `DimProduct (1)` → `FactSales (∞)`. Also single-direction from `DimProduct (1)` ← `BridgeProductTag (∞)` so that Tag filters reach Product via the bridge. Do not enable bidirectional filters on facts.\n- With that, selecting a Tag filters the bridge, which filters products, which then filters sales.\n- Measures:\n\n```dax\nSales := SUM(FactSales[SalesAmount])\n\nProducts Sold (by Tag) := DISTINCTCOUNT(FactSales[ProductID])\n```\n\n- Because the count is taken from facts, it only includes products that actually have sales in the current context, preventing double-counting that could arise from counting products on the dimension side when multiple Tags apply to the same product.",
+          "rubric": [
+            {
+              "criterion": "Correct filter-flow design using a bridge table with single-direction filters and no bidirectional facts",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides a Sales measure that responds to Tag via the bridge",
+              "marks": 1
+            },
+            {
+              "criterion": "Provides a distinct products sold measure based on facts (not dimensions)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why this avoids double counting with multi-tag products",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "DAX",
+            "Power BI"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Analysts created the measure below to report Average Selling Price (ASP) but numbers disagree with finance in periods with mixed quantities per transaction.\n\n```dax\nASP (wrong) := AVERAGEX(FactSales, FactSales[UnitPrice])\n```\n\nThey expect ASP to be “total sales / total units” under any filters, and also want a product-level ASP that respects a Ship Date slicer using the inactive ShipDate relationship.",
+          "task": "Identify the issue and provide two corrected measures: (1) global ASP and (2) ASP by Ship Date using the inactive relationship. Explain why the first attempt fails conceptually and how your fixes work under filter context.",
+          "expected_answer": "- Issue: `AVERAGEX(FactSales, UnitPrice)` averages per row, not per unit; it ignores varying quantities. ASP should be weighted by units.\n- Correct measures:\n\n```dax\nASP := DIVIDE(SUM(FactSales[SalesAmount]), SUM(FactSales[Quantity]))\n\nASP (Ship Date) :=\nCALCULATE(\n    [ASP],\n    USERELATIONSHIP(DimDate[Date], FactSales[ShipDate])\n)\n```\n\n- The first measure uses totals so it is always unit-weighted. The second re-evaluates ASP under the ShipDate filter context by activating the inactive relationship.",
+          "rubric": [
+            {
+              "criterion": "Correctly diagnoses row-averaging vs unit-weighted average issue",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides correct global ASP measure using totals",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides Ship Date ASP using USERELATIONSHIP",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains filter-context behavior for both measures",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build and validate a star-schema semantic model",
+          "brief": "Using the provided sales dataset, construct a clean star schema around FactSales and validate relationship behavior required for OrderDate vs ShipDate analysis and Tag-based slicing. Do not perform Power Query transformations beyond simple data types; focus on the model and relationships. Include a simple Model Validation page to evidence behavior.",
+          "deliverable": "A PBIX containing: (1) Model view with DimDate, DimProduct, DimCustomer, DimTag, BridgeProductTag, FactSales arranged as a star; (2) relationships configured and named; (3) a one-page Validation report with visuals described in acceptance criteria; and (4) a short validation checklist (text box in the report or a separate TXT) confirming each check.",
+          "acceptance_criteria": [
+            "Model uses one DimDate with two relationships to FactSales: active on OrderDate and inactive on ShipDate (both single-direction 1:*).",
+            "DimProduct, DimCustomer, DimTag are dimensions (1-side); FactSales is a fact (many-side). BridgeProductTag relates many-to-many between DimTag and DimProduct with single-direction filters from DimTag to Bridge and from Bridge to DimProduct.",
+            "All fact foreign keys are hidden; only business attributes remain visible in dimensions. Surrogate keys (if present) are hidden.",
+            "DimDate is marked as a Date table; there are no direct relationships from FactSales to any columns other than the declared keys (OrderDate, ShipDate, CustomerID, ProductID).",
+            "No ambiguous or bidirectional relationships exist on paths that would create filter cycles (the model diagram shows no warning icons).",
+            "Validation page contains: (a) a matrix with DimDate[Month] and [Sales] showing totals by OrderDate; (b) the measure `[Sales (Ship)]` on the same matrix using USERELATIONSHIP showing different month allocations for shipments; (c) a slicer on DimTag[Tag] that changes [Sales] via the BridgeProductTag → DimProduct path; (d) a card [Customers With Sales] that drops to 0 when filtering to a date range with no sales."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct star-schema layout and relationship cardinalities/directions as specified",
+              "marks": 6
+            },
+            {
+              "criterion": "Date table marked and role-playing (active/inactive) relationships configured correctly",
+              "marks": 4
+            },
+            {
+              "criterion": "Bridge for Tag classification configured correctly without bidirectional facts",
+              "marks": 4
+            },
+            {
+              "criterion": "Field visibility hygiene (keys hidden, business fields exposed)",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation page demonstrates required behaviors (Order vs Ship, Tag filter, zero when no sales)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "Data Modeling",
+            "Power BI",
+            "DAX"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Author a robust DAX measure library",
+          "brief": "Create a curated foldered measure library implementing core analytical logic over your model. Include descriptions and appropriate format strings. Provide a Test page with visuals that make correctness observable under filter context.",
+          "deliverable": "PBIX (may be same as Task 1) containing a Measures folder structure and the following measures with exactly these names: Sales; Quantity; Distinct Customers; Sales YTD; Sales PY; YoY %; Category Share %; Budget; Variance; Variance %; ASP; ASP (Ship Date); Ship Sales; Products Sold (by Tag). Include a Test report page described below.",
+          "acceptance_criteria": [
+            "Each listed measure exists under organized display folders (e.g., Sales, Time Intelligence, Budgeting, Customer, Product).",
+            "Measures use correct patterns: Sales = SUM(FactSales[SalesAmount]); Quantity = SUM(FactSales[Quantity]); Distinct Customers = DISTINCTCOUNT(FactSales[CustomerID]); Sales YTD uses TOTALYTD over [Sales] and DimDate[Date]; Sales PY uses SAMEPERIODLASTYEAR or DATEADD; YoY % = DIVIDE([Sales]-[Sales PY],[Sales PY]); Category Share % as in MCQ7; Budget uses TREATAS for Date and Product; Variance = [Sales]-[Budget]; Variance % = DIVIDE([Variance],[Budget]); ASP = DIVIDE(SUM(FactSales[SalesAmount]),SUM(FactSales[Quantity])); ASP (Ship Date) uses USERELATIONSHIP; Ship Sales uses USERELATIONSHIP; Products Sold (by Tag) = DISTINCTCOUNT(FactSales[ProductID]).",
+            "Every measure has a non-empty Description and an appropriate Format string (Currency for currency, Percentage for ratios).",
+            "Test page includes: (a) matrix by Category → Subcategory with [Sales] and [Category Share %], where Category subtotal shows 100%; (b) card visuals for [Sales], [Budget], [Variance], [Variance %]; (c) a date slicer and a Tag slicer proving [Ship Sales] and [ASP (Ship Date)] change when toggling months vs tags; (d) a table listing [Products Sold (by Tag)] that changes with Tag slicer.",
+            "No measure uses bidirectional relationships or SUMMARIZECOLUMNS in a way that introduces context loss; all rely on model relationships, CALCULATE, USERELATIONSHIP, or TREATAS as specified."
+          ],
+          "rubric": [
+            {
+              "criterion": "Presence of all required measures with correct DAX patterns",
+              "marks": 8
+            },
+            {
+              "criterion": "Correct use of CALCULATE/USERELATIONSHIP/TREATAS and time-intelligence functions referencing the marked date table",
+              "marks": 5
+            },
+            {
+              "criterion": "Documentation and formatting (Descriptions and Format strings)",
+              "marks": 3
+            },
+            {
+              "criterion": "Test page demonstrates logical invariants (Category subtotal ~100% share, Ship-date measures respond as expected)",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Power BI",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-005-S03",
+      "skills_assessed": [
+        "Power BI",
+        "DAX",
+        "Data Modeling",
+        "Dashboard Design",
+        "Data Visualization",
+        "Web Accessibility",
+        "track key performance indicators"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You inherit this measure, then place it in a matrix with 'Date'[Year] on rows and see values for 2023, 2024, 2025:\n\n```dax\nSales := SUM ( Sales[Amount] )\n\nSales LY (var bug) :=\nVAR Base = [Sales]\nRETURN\n    CALCULATE ( Base, DATEADD ( 'Date'[Date], -1, YEAR ) )\n```\nAssume 'Date' is a proper marked Date table with an active relationship to Sales on OrderDate. What does [Sales LY (var bug)] return per year row?",
+          "options": [
+            "It correctly shows last year’s sales for each year row.",
+            "It shows the same values as [Sales] for each year, not last year’s values.",
+            "It is blank for the earliest year and correct for other years.",
+            "It errors because CALCULATE requires a column, not a measure, as its first argument."
+          ],
+          "correct_option": "B",
+          "explanation": "Variables store values in the current filter context at evaluation time. Passing the VAR to CALCULATE does not re-evaluate [Sales] under the shifted date context; CALCULATE applies filters, but the expression is already a scalar value captured in the original context. The measure therefore mirrors [Sales].",
+          "distractor_rationale": "B is tempting because DATEADD(-1 YEAR) looks right, but the VAR captures the current-context value. C is a common assumption about time intelligence, but the issue here is not boundary rows; it’s the misuse of VAR. D misunderstands CALCULATE: it accepts any scalar expression including measures; no error is raised.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You must compute YTD sales by ShipDate. The model has 'Sales'[OrderDate] active to 'Date'[Date] and an inactive relationship from 'Sales'[ShipDate] to 'Date'[Date]. Which measure returns ShipDate-based YTD correctly?",
+          "options": [
+            "```dax\nYTD Ship Sales :=\nCALCULATE ( TOTALYTD ( [Sales], 'Date'[Date] ), USERELATIONSHIP ( Sales[ShipDate], 'Date'[Date] ) )\n```",
+            "```dax\nYTD Ship Sales :=\nTOTALYTD ( [Sales], 'Date'[Date], \"12/31\", USERELATIONSHIP ( Sales[ShipDate], 'Date'[Date] ) )\n```",
+            "```dax\nYTD Ship Sales :=\nTOTALYTD ( CALCULATE ( [Sales], USERELATIONSHIP ( Sales[ShipDate], 'Date'[Date] ) ), Sales[ShipDate] )\n```",
+            "```dax\nYTD Ship Sales :=\nTOTALYTD ( [Sales], Sales[ShipDate] )\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "USERELATIONSHIP can be used only as a filter modifier in CALCULATE. Wrapping TOTALYTD inside CALCULATE with USERELATIONSHIP activates the ShipDate path while the inner TOTALYTD supplies the correct YTD date window.",
+          "distractor_rationale": "A is wrong because TOTALYTD’s optional argument is a filter table, not a relationship modifier; USERELATIONSHIP there has no effect. C uses Sales[ShipDate] as the dates parameter, which must be a contiguous Date column from a Date table. D passes a non-Date table column to TOTALYTD; it won’t compute a valid YTD window.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A measure computes daily average sales that excludes zero-sale days:\n\n```dax\nSales := SUM ( Sales[Amount] )\n\nDaily Avg Sales :=\nVAR DaysWithSales =\n    COUNTROWS ( FILTER ( VALUES ( 'Date'[Date] ), [Sales] <> 0 ) )\nRETURN\n    DIVIDE ( [Sales], DaysWithSales )\n```\nIn a matrix with Year-Month on rows, what does the Grand Total row for [Daily Avg Sales] display?",
+          "options": [
+            "Total sales across the visible period divided by the count of distinct days with sales across the visible period.",
+            "The simple arithmetic average of the monthly averages shown above it.",
+            "The sum of the daily averages (which will typically exceed any single month’s value).",
+            "Blank, because the measure cannot aggregate at total level without a Date on rows."
+          ],
+          "correct_option": "A",
+          "explanation": "The calculation uses measure branching at the current filter context. At Grand Total, [Sales] is total over the period and DaysWithSales is the count of days with sales over the entire period, so the result is a weighted average, not an average of monthly averages.",
+          "distractor_rationale": "B confuses row-level AVERAGEX with the current pattern; no iteration over months occurs. C is plausible if you expect DIVIDE to return blank, but the denominator is non-zero. D misunderstands DIVIDE; it does not sum row-level results here.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Your report has a column chart by Region and a card showing [YTD Sales]. Business wants the card to stay fixed when a Region bar is clicked, but still respond to all page slicers including a Region slicer. What achieves this?",
+          "options": [
+            "Use Edit Interactions to set the column chart’s effect on the card to None; no DAX change needed.",
+            "Wrap the card measure in CALCULATE([YTD Sales], ALLSELECTED('Region')).",
+            "Use Sync Slicers to link Region slicers across pages.",
+            "Wrap the card measure in CALCULATE([YTD Sales], ALL('Region'))."
+          ],
+          "correct_option": "A",
+          "explanation": "Ignoring only a specific visual’s click while honoring slicers is a report-level concern. Edit Interactions lets you block the chart’s influence on the card without changing slicer behavior. DAX approaches like ALL/ALLSELECTED cannot distinguish clicks from slicers.",
+          "distractor_rationale": "B clears Region filters from everywhere, including slicers, violating the requirement. C seems right but ALLSELECTED preserves selections coming from visuals as well as slicers, so the card would still change. D is unrelated to per-visual interactions.",
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Consider this YoY% measure used in a stacked column chart by Category:\n\n```dax\nLYTD Sales := CALCULATE ( [YTD Sales], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )\nYoY % := DIVIDE ( [YTD Sales] - [LYTD Sales], [LYTD Sales] )\n```\nFor a Category where [LYTD Sales] = 0, what is shown for [YoY %]?",
+          "options": [
+            "100%",
+            "Infinity (∞)",
+            "An error",
+            "Blank"
+          ],
+          "correct_option": "D",
+          "explanation": "DIVIDE returns BLANK when the denominator is zero and no alternate result is provided. The visual shows blank for that category.",
+          "distractor_rationale": "B assumes a convention that growth from 0 is 100%, but DIVIDE does not encode that. C is how some systems display division by zero, but DIVIDE prevents it. D is wrong because DIVIDE guards errors.",
+          "skills_covered": [
+            "DAX"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A page has a slicer built from 'Sales'[ShipDate]. The model has an inactive relationship from 'Sales'[ShipDate] to 'Date'[Date]; the active relationship is 'Sales'[OrderDate] to 'Date'[Date]. The card uses:\n\n```dax\nYTD Ship Sales (naive) := TOTALYTD ( [Sales], 'Date'[Date] )\n```\nWhat happens to the card when the ShipDate slicer is used?",
+          "options": [
+            "It throws an error due to the inactive relationship.",
+            "It ignores the slicer; values remain driven by OrderDate via the active relationship.",
+            "It shows doubled values because both dates apply.",
+            "It cross-filters via bi-directional flow from the slicer and changes accordingly."
+          ],
+          "correct_option": "B",
+          "explanation": "The slicer on an un-related (inactive) path does not affect the Date table or the measure unless USERELATIONSHIP is used in the measure. The card continues to aggregate by OrderDate.",
+          "distractor_rationale": "B is tempting but inactive relationships don’t cause errors; they just don’t filter. C would require bi-directional relationships or a different model wiring. D is incorrect; only one active path exists and no double-counting occurs.",
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Which conversion rate measure yields correct totals in a matrix with Month rows and a Grand Total? Data has one row per transaction with columns Sales[Leads] and Sales[Conversions].",
+          "options": [
+            "```dax\nConversion % :=\nAVERAGEX ( VALUES ( 'Date'[Month] ), DIVIDE ( SUM ( Sales[Conversions] ), SUM ( Sales[Leads] ) ) )\n```",
+            "```dax\nConversion % :=\nDIVIDE ( SUM ( Sales[Conversions] ), SUM ( Sales[Leads] ) )\n```",
+            "```dax\nConversion % :=\nSUMX ( VALUES ( 'Date'[Month] ), [Monthly Conversion %] ) / COUNTROWS ( VALUES ( 'Date'[Month] ) )\n```",
+            "```dax\nMonthly Conversion % := AVERAGE ( [Conversion %] )\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Non-additive ratios should be computed from aggregated numerators and denominators. Summing conversions and leads, then dividing, yields a correct overall total. Averaging month-level rates biases the total.",
+          "distractor_rationale": "A and D average month-level rates, which skews totals if months have different volumes. C does the same with AVERAGEX over months; still wrong at the total.",
+          "skills_covered": [
+            "DAX",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Your theme defines a red/green categorical palette:\n\n```json\n{\n  \"dataColors\": [\"#22AA22\", \"#DD2222\", \"#AAAAAA\"]\n}\n```\nA clustered column chart uses only color to distinguish two series. Without adding labels or changing layout, which single change most improves accessibility for users with red–green color blindness?",
+          "options": [
+            "Switch to a diverging gradient for each series.",
+            "Increase saturation of the red and green to 100%.",
+            "Replace with a colorblind-safe pair (e.g., blue and orange).",
+            "Add Alt Text to the chart describing the colors."
+          ],
+          "correct_option": "C",
+          "explanation": "Colorblind-safe categorical palettes (e.g., blue/orange) improve distinguishability when color is the sole encoding. Alt text helps screen reader users but doesn’t help viewers who can’t differentiate the hues used. Saturation and gradients don’t solve the hue-confusion problem.",
+          "distractor_rationale": "B addresses screen readers, not hue discrimination for sighted users. C makes indistinguishable hues more intense, not more distinct. D changes scale type, not category distinguishability.",
+          "skills_covered": [
+            "Web Accessibility",
+            "Dashboard Design",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You write a percent-of-selection measure:\n\n```dax\n% of Selection by Product :=\nDIVIDE ( [Sales], CALCULATE ( [Sales], ALLSELECTED ( Product[Product] ) ) )\n```\nIn a matrix with Product on rows and a Year slicer, selecting Year = 2025, what does the Grand Total cell show?",
+          "options": [
+            "Blank",
+            "The percent of 2025 vs all years in the model",
+            "100%",
+            "A sum of row percents that may exceed 100%"
+          ],
+          "correct_option": "C",
+          "explanation": "ALLSELECTED removes only the Product row context while preserving the current selection (Year = 2025 and any other slicers). The denominator is the total Sales for the current selection, so the Grand Total is 100%.",
+          "distractor_rationale": "B ignores that ALLSELECTED preserves slicers (2025), so the base is not all years. C would occur only if denominator were zero. D misunderstands that the measure recomputes at total, yielding exactly 100%.",
+          "skills_covered": [
+            "DAX",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You style lines by category using this color measure and small multiples by Category:\n\n```dax\nColor := IF ( ISFILTERED ( 'Product'[Category] ), \"#A6CEE3\", \"#1F78B4\" )\n```\nEach small multiple shows a single Category’s series. What color will the series use inside each small multiple?",
+          "options": [
+            "A random selection from the theme palette.",
+            "\"#1F78B4\" because small multiples render without applying filters.",
+            "Alternating colors across small multiples based on index.",
+            "\"#A6CEE3\" because each small multiple applies a filter to Category."
+          ],
+          "correct_option": "D",
+          "explanation": "Small multiples apply a filter for the small multiple field, so ISFILTERED('Product'[Category]) is true. The measure selects the first color.",
+          "distractor_rationale": "B is a common misconception; small multiples create independent filter contexts. C/D describe behaviors Power BI does not apply to measure-driven formatting here.",
+          "skills_covered": [
+            "DAX",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A retailer runs on a fiscal year ending March 31. The model has a proper 'Date' table marked as a date table and related to 'Sales' by OrderDate. Executives want KPIs: YTD Sales, LY YTD Sales, and YoY % that respect fiscal boundaries and work at any grain (month, quarter, year). They also want the KPIs to show Blank where comparisons are undefined (e.g., first fiscal year for LY).",
+          "task": "Propose the DAX measures (names and definitions) and any model requirements to make them work correctly. Explain how your formulas behave under different filters (e.g., a Quarter slicer) and why they are robust to different fiscal grains.",
+          "expected_answer": "Model: Ensure 'Date' is contiguous, covers the full data range, is marked as a Date table, and is related (active) to Sales[OrderDate]. Use the same 'Date'[Date] column in visuals and slicers. Measures:\n\n```dax\nTotal Sales := SUM ( Sales[Amount] )\n\nYTD Sales :=\nTOTALYTD ( [Total Sales], 'Date'[Date], \"3/31\" )\n\nLY YTD Sales :=\nCALCULATE ( [YTD Sales], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )\n\nYoY % :=\nDIVIDE ( [YTD Sales] - [LY YTD Sales], [LY YTD Sales] )\n```\nBehavior: TOTALYTD respects the fiscal boundary via \"3/31\" and is context-aware for slicers (Year, Quarter, Month) because it computes over the dates visible in context. LY YTD uses the comparison period defined by SAMEPERIODLASTYEAR over the same fiscal ranges (e.g., if Q2 FY2025 is selected, it compares to Q2 FY2024). DIVIDE shows Blank when LY is zero or missing (e.g., the first fiscal year). Robustness: Using the marked Date table and date-derived filters ensures functions like TOTALYTD and SAMEPERIODLASTYEAR operate correctly at any level of time grain without extra code. Avoid variables capturing pre-CALCULATE values for time shifts; always shift the date context in CALCULATE/TOTALYTD.",
+          "rubric": [
+            {
+              "criterion": "Defines a correct YTD measure using TOTALYTD with the correct fiscal year-end parameter",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines LY YTD using CALCULATE with SAMEPERIODLASTYEAR (or an equivalent DATEADD pattern) applied to the Date table",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines YoY % using DIVIDE and explains Blank behavior for undefined comparisons",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains model requirements (marked Date table, active relationship, using the same Date column in visuals/slicers) and context-awareness across grains",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A summary page shows: (1) a card [YTD Sales], (2) a bar chart of Sales by Region, and (3) a line chart of YTD Sales by Month. Users complain that clicking a Region bar changes the YTD card, which they want to remain constant, but they still need all slicers (including a Region slicer) to affect the card. The current card measure is simply [YTD Sales].",
+          "task": "Diagnose why the card changes and propose a concrete fix that achieves the requirement with minimal side effects. Justify why your approach is correct and what you would avoid doing in DAX.",
+          "expected_answer": "Diagnosis: The bar chart interaction filters the card by the selected Region. Since the card measure is context-sensitive, it changes on bar clicks. Fix: Use Edit Interactions to set the bar chart’s effect on the card to None, leaving slicers intact. Do not rewrite the card measure with ALL/REMOVEFILTERS over Region because that would also ignore Region slicers. Justification: Per-visual interactions separate ad-hoc selections from slicers. DAX cannot distinguish slicer vs. visual-origin filters; ALL/REMOVEFILTERS would remove both. This preserves the intended cross-filtering between the bar and the line chart, while the card remains driven only by page/report filters.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies visual interaction as the cause of the card changing",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes Edit Interactions (set bar’s effect on the card to None) as the primary fix",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why NOT to use ALL/REMOVEFILTERS to solve this (would also ignore slicers)",
+              "marks": 2
+            },
+            {
+              "criterion": "Discusses side effects and confirms other visuals (e.g., line chart) can retain interaction as needed",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Power BI",
+            "Dashboard Design",
+            "Data Visualization"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A slow-running running-total measure was written as:\n\n```dax\nCumulative Sales (slow) :=\nVAR LastDate = MAX ( 'Date'[Date] )\nRETURN\n    SUMX (\n        FILTER ( ALL ( 'Sales' ), Sales[OrderDate] <= LastDate ),\n        Sales[Amount]\n    )\n```\nIt works but is sluggish on a large fact table. The report needs a running total that respects slicers on Date and dimension attributes and aggregates quickly at Month/Quarter/Year.",
+          "task": "Rewrite the measure using standard time-intelligence patterns and variables to minimize row iteration. Explain why your version performs and aggregates better, and any prerequisites.",
+          "expected_answer": "Use date intelligence to avoid iterating the fact table and push work to the Date table:\n\n```dax\nTotal Sales := SUM ( Sales[Amount] )\n\nCumulative Sales :=\nVAR _endDate = MAX ( 'Date'[Date] )\nRETURN\n    CALCULATE ( [Total Sales], DATESYTD ( 'Date'[Date] ) )\n```\nor, for a custom window:\n\n```dax\nCumulative Sales :=\nCALCULATE ( [Total Sales], FILTER ( ALLSELECTED ( 'Date'[Date] ), 'Date'[Date] <= MAX ( 'Date'[Date] ) ) )\n```\nExplanation: DATESYTD shifts the date context using the small Date table rather than scanning the large Sales table. CALCULATE preserves other slicers (Product, Region) and aggregates correctly at any grain because the date set is computed from the current filter context. Prerequisites: a contiguous, marked Date table with an active relationship to Sales.",
+          "rubric": [
+            {
+              "criterion": "Provides a correct running total using CALCULATE with DATESYTD (or an equivalent Date-table based pattern)",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why moving iteration from the fact table to the Date table improves performance",
+              "marks": 2
+            },
+            {
+              "criterion": "Shows correct context-preservation with CALCULATE and mentions behavior at different grains",
+              "marks": 1
+            },
+            {
+              "criterion": "States prerequisites (marked Date table, active relationship)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "An accessibility review flags your executive report: low-contrast KPI card text on colored backgrounds, red–green categorical palette in clustered bars, unlabeled slicers, and unpredictable keyboard tab order. The layout must remain one page with the same visuals.",
+          "task": "Specify concrete, Power BI–native fixes you will apply to meet accessibility best practices without changing the set of visuals. Include color, labeling, alternatives to color-only encoding, and keyboard navigation. Justify each change briefly.",
+          "expected_answer": "Color/contrast: Apply a theme with at least WCAG AA contrast for text (e.g., dark text on light backgrounds) and switch categorical palette to a colorblind-safe set (e.g., blue/orange). Encoding: Enable data labels or pattern fills for bars so categories are distinguishable without relying on color alone. Labels: Add Titles and Name properties to slicers, enable Show “Select all” where helpful, and add descriptive Alt Text to each visual. Navigation: Define a logical tab order in the Selection pane, group related visuals, and ensure Focus mode/tooltips don’t trap focus. Verification: Run the Accessibility Checker and manually test with keyboard-only navigation.",
+          "rubric": [
+            {
+              "criterion": "Proposes a contrast-compliant theme and addresses text/background contrast on cards",
+              "marks": 2
+            },
+            {
+              "criterion": "Replaces red–green palette with a colorblind-safe categorical set and/or pattern fills to avoid color-only encoding",
+              "marks": 2
+            },
+            {
+              "criterion": "Adds explicit labels/titles to slicers and descriptive Alt Text to visuals",
+              "marks": 2
+            },
+            {
+              "criterion": "Defines an intentional tab order and explains keyboard navigation considerations; mentions using the Accessibility Checker",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Web Accessibility",
+            "Dashboard Design",
+            "Data Visualization",
+            "Power BI"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a Business KPI model with robust time intelligence",
+          "brief": "Create a model that exposes core business KPIs using advanced DAX: YTD, LY YTD, YoY %, MoM %, a 90-day rolling sum, and a correct total-level Conversion %. Include a ShipDate-based YTD using an inactive relationship. Organize measures cleanly and ensure behaviors are correct at different grains.",
+          "deliverable": "A .pbix file containing the data model and measures. Within it, include one validation page with a matrix (Year > Month) and cards showing the KPIs, and a Model view screenshot exported via Performance analyzer or File > Export > Report (embedded as an Image visual on the validation page).",
+          "acceptance_criteria": [
+            "A marked 'Date' table exists, contiguous, covering the fact range, related actively to Sales[OrderDate].",
+            "Measures exist with these exact names and non-empty DAX definitions: [Total Sales], [YTD Sales], [LY YTD Sales], [YoY %], [MoM %], [Rolling 90D Sales], [Conversion %], [YTD Ship Sales].",
+            "[YTD Sales] uses TOTALYTD over 'Date'[Date] (with a year-end parameter if fiscal) or an equivalent DATESYTD pattern; [LY YTD Sales] uses CALCULATE with SAMEPERIODLASTYEAR or DATEADD(-1 YEAR).",
+            "[MoM %] is implemented using DATEADD(-1, MONTH) or PARALLELPERIOD and returns Blank for the first month in the visible context.",
+            "[Rolling 90D Sales] uses DATESINPERIOD (or equivalent) and changes when the visible end date changes.",
+            "[Conversion %] is implemented as DIVIDE(SUM(Conversions), SUM(Leads)) and yields a mathematically correct Grand Total in a Year>Month matrix.",
+            "A measure [YTD Ship Sales] activates the inactive ShipDate relationship using USERELATIONSHIP within CALCULATE.",
+            "At least two measures use VAR to avoid repeated evaluation and are formatted with proper display units/percentages; all measures are placed in a dedicated display folder (e.g., \"KPIs\").",
+            "Validation page shows: (a) a matrix with Year>Month and columns for [YTD Sales], [LY YTD Sales], [YoY %], [MoM %], [Rolling 90D Sales], [Conversion %]; (b) cards for [YTD Sales] and [LY YTD Sales]. On this page: first visible Year shows Blank for [LY YTD Sales] and [MoM %] for the first month is Blank.",
+            "No errors in the DAX expressions; the model diagram shows exactly one active relationship between Sales and Date (on OrderDate), and a dashed inactive ShipDate relationship."
+          ],
+          "rubric": [
+            {
+              "criterion": "Date table marked and correctly related (active OrderDate, inactive ShipDate shown)",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct implementation of YTD/LY YTD/YoY % measures with appropriate time-intelligence functions",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct MoM % and 90-day rolling sum behaviors verified on validation page",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct Conversion % total logic and formatting (percent)",
+              "marks": 3
+            },
+            {
+              "criterion": "Presence of ShipDate-based YTD using USERELATIONSHIP and working",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of VAR and organization (display folder, formatting)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "DAX",
+            "Data Modeling",
+            "track key performance indicators",
+            "Power BI"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Design an interactive, accessible KPI report",
+          "brief": "Build a one-page executive report using the KPIs from Task 1. Include intentional visual interactions, helpful tooltips/drillthrough, and accessibility features that stand up to inspection.",
+          "deliverable": "A .pbix with a page named \"Executive KPIs\" and (a) at least three visuals (KPI cards, a line chart YTD vs LY by Month, a bar/column chart by a category), (b) a tooltip page and a drillthrough page, and (c) an Accessibility checklist text box describing what you implemented.",
+          "acceptance_criteria": [
+            "Executive KPIs page contains: (1) a card [YTD Sales], (2) a line chart with [YTD Sales] and [LY YTD Sales] by MonthName or MonthNumber, (3) a bar/column chart by a categorical dimension (e.g., Region or Product).",
+            "A Region (or equivalent) bar/column chart does not affect the [YTD Sales] card when clicked (Edit Interactions set to None for the card), but both visuals still respond to slicers.",
+            "A Year slicer and at least one categorical slicer exist; slicers are synced across relevant pages (Executive, Drillthrough) and their current selection appears in a dynamic title using SELECTEDVALUE (with a fallback).",
+            "A tooltip page exists and is assigned to at least one chart. Hovering a data point shows a tooltip with at least two additional fields (e.g., Conversion %, Rolling 90D Sales).",
+            "A drillthrough page exists with a Drillthrough field (e.g., Customer or Product). Right-clicking a bar/point enables drillthrough and filters the page appropriately.",
+            "Accessibility: (a) a colorblind-safe palette or pattern fills used for categories; (b) Alt Text filled for all visuals; (c) Tab order explicitly set in the Selection pane to a logical sequence; (d) text and background colors pass contrast (visually check with the Accessibility checker).",
+            "No visual produces an error; KPI cards use proper display units and percent formatting where relevant."
+          ],
+          "rubric": [
+            {
+              "criterion": "Interactive behavior: card insulated from bar clicks via Edit Interactions, slicers still affect all",
+              "marks": 5
+            },
+            {
+              "criterion": "Time-series clarity: dual-series line chart (YTD vs LY) correctly configured and readable",
+              "marks": 3
+            },
+            {
+              "criterion": "Tooltip page implemented and informative (at least two additional fields)",
+              "marks": 3
+            },
+            {
+              "criterion": "Drillthrough page implemented and correctly filtered via right-click",
+              "marks": 3
+            },
+            {
+              "criterion": "Slicer sync and dynamic titles using SELECTEDVALUE with fallback",
+              "marks": 3
+            },
+            {
+              "criterion": "Accessibility: palette/patterns, Alt Text on visuals, logical tab order, acceptable contrast",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Dashboard Design",
+            "Data Visualization",
+            "Web Accessibility",
+            "Power BI",
+            "track key performance indicators"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-005-S04",
+      "skills_assessed": [
+        "Power BI",
+        "Power BI Service",
+        "Row-Level Security (RLS)",
+        "Performance Optimization",
+        "Data Governance",
+        "DAX",
+        "Data Modeling"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You publish a report whose dataset connects to an on‑prem SQL Server. In the Service, the dataset settings show:\n\n```text\nGateway connection: Not configured\nData source credentials: Configured (Windows)\nScheduled refresh: On (08:00 daily)\nLast refresh: Never\n```\nAt 08:00 the next morning, what happens and why?",
+          "options": [
+            "Refresh succeeds because the Service uses the stored Windows credentials without a gateway for SQL Server.",
+            "Refresh fails with a gateway error because no on‑premises data gateway is mapped to the data source.",
+            "Fact tables refresh but dimension tables do not; mixed success is expected without a gateway.",
+            "Refresh succeeds only if the publisher’s machine is online, because Desktop runs the refresh on behalf of the Service."
+          ],
+          "correct_option": "B",
+          "explanation": "On‑prem sources require an on‑premises data gateway (standard or personal) mapped to the dataset’s data source for scheduled refresh. Without it, the Service cannot reach SQL Server and the refresh fails.",
+          "distractor_rationale": "B is tempting if you think credentials alone are enough; they are not without a gateway for on‑prem. C confuses Desktop Refresh with Service refresh; Service never delegates to your PC. D suggests partial refresh; the Service cannot reach any on‑prem tables without a gateway.",
+          "skills_covered": [
+            "Power BI Service",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A new experience workspace has these assignments:\n\n```yaml\nWorkspace: Finance Prod\nRoles:\n  - Alice: Member\n  - Bob: Contributor\n  - Carol: Viewer\nApp:\n  - Current publisher: Alice\n  - Audience: Finance-Consumers (no Build permission)\n```\nA new report is added to the workspace. Who can update the app to include it, without any role changes?",
+          "options": [
+            "Alice only",
+            "Bob only",
+            "Alice and Bob",
+            "Alice, Bob, and Carol"
+          ],
+          "correct_option": "A",
+          "explanation": "Only Admins and Members can publish or update the app. Contributors cannot update the app; Viewers cannot either.",
+          "distractor_rationale": "B is tempting because Contributors can edit content, but app publishing is restricted. C assumes any workspace user can update the app, which is false. D overestimates Contributor permissions.",
+          "skills_covered": [
+            "Power BI Service",
+            "Power BI",
+            "Data Governance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You configure Incremental Refresh on table `FactSales` and use parameters in Power Query:\n\n```powerquery\nlet\n  Source = Sql.Database(\"SVR\",\"SalesDW\"),\n  Fact = Source{[Schema=\"dbo\", Item=\"FactSales\"]}[Data],\n  // Non-folding step\n  #\"Added Custom\" = Table.AddColumn(Fact, \"YearMonth\", each Date.ToText([OrderDate], \"yyyy-MM\")),\n  // Range filters applied AFTER a non-folding step\n  #\"Filtered Rows\" = Table.SelectRows(#\"Added Custom\", each [OrderDate] >= RangeStart and [OrderDate] < RangeEnd)\nin\n  #\"Filtered Rows\"\n```\nAfter publishing, scheduled refresh runs. What is the likely outcome?",
+          "options": [
+            "Refresh processes the full table every time because the Range filters are not foldable to SQL after a non‑folding step.",
+            "The first refresh is full; subsequent ones are incremental even if the filter isn’t foldable.",
+            "Refresh fails at validation because RangeStart/RangeEnd cannot be used after any computed column.",
+            "Only the last N days are pulled from SQL because Power BI always pushes Range filters down regardless of earlier steps."
+          ],
+          "correct_option": "A",
+          "explanation": "A non‑folding step before the Range filters prevents query folding, so the Service cannot push partition filters to the source. Incremental partitions may exist, but each refresh must scan all rows to filter in memory.",
+          "distractor_rationale": "B ignores folding rules; filters are only pushed down when foldable. C overstates validation; the model can publish and run, just inefficiently. D misstates behavior; lack of folding prevents true incremental scans on every run.",
+          "skills_covered": [
+            "Power BI Service",
+            "Performance Optimization",
+            "Power BI",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "An RLS role uses:\n\n```dax\n[Sales Region] = LOOKUPVALUE(\n    'UserMap'[Region],\n    'UserMap'[UPN], USERPRINCIPALNAME()\n)\n```\nThe `UserMap[UPN]` holds values like `alice@contoso.com`. A B2B guest `john@gmail.com` signs in; his UPN in your tenant resolves as `john_gmail.com#EXT#@contoso.onmicrosoft.com`. What will he see in a report connected to this dataset?",
+          "options": [
+            "All regions, because the role lookup fails open for unmatched users.",
+            "Only the default region defined in the model, because USERPRINCIPALNAME() falls back to a tenant default.",
+            "Intermittent results depending on browser, because guest UPN normalization varies per session.",
+            "No data (blank visuals), because the lookup returns BLANK and the filter denies all rows."
+          ],
+          "correct_option": "D",
+          "explanation": "With no matching `UserMap[UPN]`, the role filter evaluates to BLANK and filters out all rows, yielding blank visuals for the guest user.",
+          "distractor_rationale": "A assumes a permissive failure; RLS is deny‑by‑default. C invents a model default not implied here. D suggests instability not related to RLS evaluation.",
+          "skills_covered": [
+            "Row-Level Security (RLS)",
+            "DAX",
+            "Data Modeling",
+            "Power BI Service"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Given measure `[Sales] = SUM('FactSales'[Amount])`. You need a “last 90 days” measure that respects slicers on `Date` and `Product` and performs well. Which rewrite is both semantically correct and typically faster than iterating the fact table?\n",
+          "options": [
+            "```dax\nSales 90d := \nCALCULATE(\n  [Sales],\n  KEEPFILTERS(DATEADD('Date'[Date], -90, DAY))\n)\n```",
+            "```dax\nSales 90d := \nCALCULATE(\n  [Sales],\n  DATESINPERIOD('Date'[Date], MAX('Date'[Date]), -90, DAY)\n)\n```",
+            "```dax\nSales 90d := \nCALCULATE(\n  [Sales],\n  FILTER(ALL('Date'), 'Date'[Date] > MAX('Date'[Date]) - 90)\n)\n```",
+            "```dax\nSales 90d := \nSUMX(\n  FILTER('FactSales', 'FactSales'[OrderDate] > MAX('Date'[Date]) - 90),\n  'FactSales'[Amount]\n)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Using the Date dimension with DATESINPERIOD pushes filters via relationships, preserves existing slicers, and avoids row‑by‑row iteration over the fact, improving performance.",
+          "distractor_rationale": "A iterates the fact and can be slow. C uses ALL('Date'), which ignores existing Date filters, changing semantics. D shifts the entire context by 90 days rather than accumulating a 90‑day window.",
+          "skills_covered": [
+            "DAX",
+            "Performance Optimization",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Permissions for dataset `CorpSales`:\n\n```text\nWorkspace: Retail Prod\n- Dana: Viewer\nApp: Retail App (Allow users to build content = Off)\nDataset permissions (direct): Dana = Read (no Build)\n```\nIn Desktop, can Dana connect to `CorpSales` via Get data -> Power BI datasets and publish a new report to the same workspace?",
+          "options": [
+            "Yes, she can connect but cannot publish because she is only a Viewer.",
+            "Yes, she can duplicate an existing report even without Build permission.",
+            "No. Without Build permission, she cannot connect to create a report from the dataset.",
+            "Yes, she can connect and publish; app settings don’t affect Desktop."
+          ],
+          "correct_option": "C",
+          "explanation": "Creating new reports against a shared dataset requires Build permission. Viewer + Read without Build blocks connecting from Desktop for authoring.",
+          "distractor_rationale": "A misunderstands Build vs Viewer; connecting to author requires Build. C ignores that app audience settings and dataset Build govern creation. D conflates duplicating with building; duplication also needs Build on the dataset.",
+          "skills_covered": [
+            "Power BI Service",
+            "Data Governance",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "A dataflow (A) feeds a dataset (B). Schedules:\n\n```text\nDataflow A: 07:00 start, typical duration 12 minutes\nDataset B: 07:05 daily, \"Refresh this dataset when dataflow refresh completes\" = Off\nGateway concurrency: 1\n```\nOn a typical day, what does B load at 07:05 and what is the staleness until the next scheduled run?",
+          "options": [
+            "B waits for A to finish, then loads fresh 07:12 output; staleness near zero.",
+            "B starts at 07:05, loads A’s previous successful output, and stays stale until the next B schedule.",
+            "B triggers again automatically when A completes, because Power BI chains them even if the setting is Off.",
+            "B fails because A holds the gateway slot; with concurrency 1, B cannot start."
+          ],
+          "correct_option": "B",
+          "explanation": "With chaining disabled, B runs at 07:05 against the last completed dataflow refresh, not the in‑progress one. It won’t auto‑trigger at 07:12.",
+          "distractor_rationale": "A assumes implicit chaining; it must be enabled. C overstates gateway contention; B queues/starts but still reads prior snapshot. D invents implicit triggers not provided when chaining is Off.",
+          "skills_covered": [
+            "Power BI Service",
+            "Performance Optimization",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Deployment pipeline rules:\n\n```text\nStage mapping\n- Server: Dev->Test->Prod (mapped)\n- DbName: (no rule; remains 'SalesDev')\nDataset uses: Sql.Database(Server, DbName)\n```\nAfter deploying to Prod, what happens on the next dataset refresh?",
+          "options": [
+            "Only the app URL is wrong; the dataset always uses the workspace’s environment.",
+            "The Service auto-detects DbName and switches to the Prod database, so no issue occurs.",
+            "Refresh succeeds but still queries the Dev database name on the Prod server, so Prod shows Dev data if accessible.",
+            "Deployment is blocked until all parameters are mapped."
+          ],
+          "correct_option": "C",
+          "explanation": "Without a rule, `DbName` remains ‘SalesDev’. The connection points at Prod server + Dev DB, which may succeed and show the wrong data.",
+          "distractor_rationale": "B overstates validation; pipelines don’t block for unmapped parameters. C assumes smart inference that doesn’t exist. D confuses UI with data connections.",
+          "skills_covered": [
+            "Power BI Service",
+            "Data Governance",
+            "Power BI"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You reduce an Incremental Refresh policy from \"Archive 5 years\" to \"Archive 2 years\" and republish the dataset. No refresh has run yet in the Service after this change. What is true about storage and partitions right now?",
+          "options": [
+            "Only the newest partition is kept; everything else is dropped and rebuilt at query time.",
+            "A full reload is triggered automatically on publish for partition pruning.",
+            "Historical partitions beyond 2 years are immediately dropped on publish, shrinking storage at once.",
+            "Nothing changes until the next refresh; old partitions remain and will be pruned during refresh."
+          ],
+          "correct_option": "D",
+          "explanation": "Policy changes take effect during the next refresh. Until then, existing partitions remain and storage is unchanged.",
+          "distractor_rationale": "A and C assume immediate or auto refresh behavior; pruning occurs during refresh. D describes behavior Power BI does not implement.",
+          "skills_covered": [
+            "Power BI Service",
+            "Performance Optimization"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A dataset and its app are labeled with a sensitivity label that enforces:\n\n```text\nLabel: Confidential \\ External sharing blocked\nPolicy: Prevent sharing with guests outside the organization\n```\nYou try to share the app with a B2B guest user. What happens?",
+          "options": [
+            "The share action is blocked by the label policy; the guest cannot be granted access.",
+            "Share succeeds; the label only affects export and download, not app sharing.",
+            "Share succeeds, but the guest sees empty content due to label stripping data.",
+            "Share fails only if the dataset has RLS; otherwise sharing is allowed."
+          ],
+          "correct_option": "A",
+          "explanation": "Sensitivity labels with policies that block external sharing prevent granting access to external users. The share action is blocked.",
+          "distractor_rationale": "A and C understate the policy’s enforcement on sharing. D incorrectly links enforcement to RLS presence.",
+          "skills_covered": [
+            "Data Governance",
+            "Power BI Service"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Your team must productionize a report that combines an on‑prem SQL Server fact table with SharePoint Online reference lists. The business needs 8 daily refreshes, a single \"Finance Prod\" app for read‑only consumers, and auditable control over who can republish the app. The SQL source often throttles under load. Current state: authors publish from their laptops to a shared workspace; no dataflows; no gateway cluster; mixed privacy levels; refreshes often fail during month‑end.",
+          "task": "Propose a Service architecture and step‑by‑step configuration that meets the requirements with minimal operational risk. Include gateway choices, workspace/app roles, refresh and dataflow design, privacy settings, and any optimization that reduces SQL load.",
+          "expected_answer": "Use a new experience workspace per environment (Dev/Test/Prod) and deployment pipelines. Install and register an enterprise on‑premises data gateway (standard) on a server managed by IT; create a gateway cluster for HA. Configure a single SQL data source on the gateway and map the dataset to it. Do not use personal gateways. Move SharePoint Online ingestion to a dataflow in the workspace (no gateway needed) and have the dataset reference that dataflow. Configure Incremental Refresh on the large SQL fact (archive months/years, refresh last N days) and ensure folding. Align privacy levels (Organizational) for both sources to avoid mashup privacy errors; set them identically both in Desktop and the Service. Set scheduled refresh up to 8/day (Pro) off‑peak and after the dataflow completes; enable dataset refresh on dataflow completion to chain them. Lock down the workspace: Admins (BI Ops), Members (limited publishers), Contributors (devs), Viewers (none for Prod); only Admins/Members can update the app. Grant consumers access via the app only; disable reshare and export if governance requires. Use a certified dataset pattern so downstream self‑service reports get Build permission explicitly. Use query folding preservation and potentially pre‑aggregations or views on SQL to reduce source load; consider incremental + detect data changes column. Monitor refresh history and Gateway performance counters; set retry policies.",
+          "rubric": [
+            {
+              "criterion": "Chooses enterprise (standard) gateway with cluster and maps SQL source; avoids personal gateways",
+              "marks": 2
+            },
+            {
+              "criterion": "Designs Dev/Test/Prod workspaces with deployment pipeline and app for consumers; restricts app publishing to Admin/Member",
+              "marks": 2
+            },
+            {
+              "criterion": "Implements dataflow for SharePoint Online and chains dataset refresh after dataflow completion",
+              "marks": 1
+            },
+            {
+              "criterion": "Sets and justifies privacy levels and avoids mashup privacy errors",
+              "marks": 1
+            },
+            {
+              "criterion": "Applies Incremental Refresh with folding preserved to reduce SQL load; mentions schedule count constraints",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses governance (Build permission, certified dataset, export controls, auditing/monitoring)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Power BI Service",
+            "Data Governance",
+            "Performance Optimization",
+            "Power BI",
+            "Data Modeling"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "Model overview: 'FactSales' relates to 'Customer' (many‑to‑one) and to a 'RegionBridge' table that resolves many‑to‑many between Customers and Sales Regions. Consumers must only see sales for regions assigned to them, including customers that map to multiple regions. The dataset will be shared with internal staff and a few B2B guests. Current attempt uses a role filter on 'SalesRegion[RegionName] = USERPRINCIPALNAME()' and bi‑directional relationships all around, causing ambiguous paths and slow queries.",
+          "task": "Redesign RLS to be correct and performant. Specify the role DAX, the filter path through the bridge, relationship directions, how to store and match user identifiers (guests included), and how to validate.",
+          "expected_answer": "Stop using region names as user identifiers. Create a 'UserRegion' mapping with columns [UPN] and [RegionKey]. Store UPNs exactly as USERPRINCIPALNAME() returns for both internal and guest users (guests appear as name_domain#EXT#@tenant). Keep relationships single‑direction: 'Customer' -> 'FactSales' (one‑to‑many), 'RegionBridge' -> 'Customer' (one‑to‑many), and 'SalesRegion' -> 'RegionBridge' (one‑to‑many). The role uses a filter on 'UserRegion' and propagates via relationships:\n\n```dax\n-- Role table filter (on UserRegion)\nUserRegion[UPN] = USERPRINCIPALNAME()\n```\n\nand then either rely on relationships or, if needed on Fact directly:\n\n```dax\n-- Alternative role that avoids ambiguous paths\nTREATAS(VALUES(UserRegion[RegionKey]), 'RegionBridge'[RegionKey])\n```\n\nDo not set bi‑directional on everything; if needed, set bi‑directional only on 'RegionBridge' -> 'Customer' to propagate to Fact, or use CROSSFILTER in the role to force direction without changing model defaults. Validate with \"View as\" for multiple test UPNs (including a guest) and confirm row counts and regions. Add a default‑deny behavior by ensuring no match returns no rows.",
+          "rubric": [
+            {
+              "criterion": "Correct identifier strategy using USERPRINCIPALNAME() and a UserRegion mapping that supports guests",
+              "marks": 2
+            },
+            {
+              "criterion": "Relationship design avoiding unnecessary bi‑directional ambiguity; uses bridge appropriately",
+              "marks": 2
+            },
+            {
+              "criterion": "Accurate role filter logic (table filter or TREATAS) that propagates as intended",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation approach (View as roles, test UPNs) and deny‑by‑default behavior",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Row-Level Security (RLS)",
+            "DAX",
+            "Data Modeling",
+            "Power BI Service"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A published report has 6 visuals on a page. Performance Analyzer in the Service shows, for the slowest visual:\n\n```text\nDAX query: 2100 ms\nVisual display: 120 ms\nOther: 80 ms\nRow count returned: ~18k\n```\nVertiPaq Analyzer indicates a very high‑cardinality 'ProductCode' column used on slicers and as a grouping in one visual. Auto date/time is enabled. The fact table has 36 months of data and a daily refresh. Users filter by product and month.",
+          "task": "Recommend specific, implementable changes that will materially reduce DAX query time without changing business results. Prioritize model/query changes over hardware/capacity.",
+          "expected_answer": "Reduce cardinality and filter cost: replace 'ProductCode' slicers with a surrogate 'Product' dimension column optimized for search (e.g., short code + search box) and avoid grouping by the raw high‑cardinality code; hide raw code if not needed for grouping. Disable Auto date/time and use a proper Date dimension with relationships; rewrite time‑intelligence measures to use the Date table. Pre‑aggregate where appropriate: create aggregated tables by Month x Product Category for heavy visuals and define aggregations mapping to the detailed fact. Ensure measures use filter propagation (e.g., CALCULATE with DATESINPERIOD) instead of iterators over Fact. Remove unneeded columns and reduce dictionary sizes (summarize, encode). Consider composite model with DirectQuery on rarely used detail while keeping aggregates in Import. Validate improvements by re‑running Performance Analyzer and comparing query durations.",
+          "rubric": [
+            {
+              "criterion": "Addresses cardinality (dimension refactor or avoiding raw high‑cardinality grouping)",
+              "marks": 2
+            },
+            {
+              "criterion": "Uses a proper Date dimension and disables Auto date/time with correct time‑intelligence rewrites",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes aggregations or summarized tables and maps measures to use them",
+              "marks": 1
+            },
+            {
+              "criterion": "Optimizes DAX patterns to avoid iterators and leverage filter propagation",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines a way to validate improvements via Performance Analyzer before/after",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Performance Optimization",
+            "DAX",
+            "Data Modeling",
+            "Power BI"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Governance gap: In the Prod workspace, Contributors can edit reports and accidentally included an internal‑only page in the consumer app. Some datasets are certified; others are not. A sensitivity label policy requires that Confidential data must not be shared externally. Audit logs show frequent reshares of the app link among internal users. There’s no change control; authors publish directly to Prod.",
+          "task": "Design a governance control set using Service features to prevent repeat incidents while keeping productivity. Specify workspace roles, app audience strategy, endorsement, dataset permissions (Build), sensitivity, and release control.",
+          "expected_answer": "Restrict Prod workspace roles: only Admins and selected Members can publish/update the app; Contributors should exist only in Dev/Test. Use deployment pipelines with stage gates; enforce app updates from Prod Admins/Members only. Adopt a single certified, shared dataset per domain; require Build permission via security groups; prevent ad‑hoc Build via app unless explicitly enabled. Apply mandatory sensitivity labels with policies on confidential datasets; block external sharing for those labels. Use separate app audiences (e.g., Internal, Leadership) and audience‑scoped navigation so internal‑only pages are not exposed. Disable reshare for the app/datasets; turn off Export data unless justified. Require approvals (or change log) for app updates; enable workspace contact list and set up activity alerts. Periodically review endorsements and sensitivity via admin reports; automate checks with the Admin API.",
+          "rubric": [
+            {
+              "criterion": "Clear separation of duties via workspace roles and deployment pipeline usage",
+              "marks": 2
+            },
+            {
+              "criterion": "App audience design that prevents accidental exposure; reshare/export controls",
+              "marks": 2
+            },
+            {
+              "criterion": "Endorsement and shared dataset strategy with Build permission governance",
+              "marks": 1
+            },
+            {
+              "criterion": "Sensitivity label application aligned to policy and external sharing block",
+              "marks": 1
+            },
+            {
+              "criterion": "Monitoring/audit or approval process for changes",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Governance",
+            "Power BI Service",
+            "Power BI"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Publish a governed, refreshable report to the Power BI Service",
+          "brief": "Take a PBIX of your choice (or provided sample), and productionize it in the Service. Use an enterprise gateway if needed, set up scheduled refresh, and publish an app to a consumer audience with appropriate permissions. Avoid personal gateways. Make your configuration auditable and robust.",
+          "deliverable": "A zip containing: (1) the PBIX, (2) screenshots of Service settings showing workspace name, dataset settings (gateway mapping, data source credentials, scheduled refresh with times), refresh history with at least one success, app audiences and app update confirmation, and workspace access list with roles; (3) a one‑page text file listing data sources and their privacy levels; (4) if applicable, a screenshot of the dataflow and its schedule with dataset chaining enabled.",
+          "acceptance_criteria": [
+            "Dataset is published to a new experience workspace and visible in the screenshots.",
+            "If an on‑prem source exists, the dataset is mapped to an enterprise gateway data source (screenshot shows the mapping).",
+            "Scheduled refresh is On with at least one successful run in refresh history.",
+            "An app is published; screenshots show audience(s) and that the new report is included.",
+            "Workspace access shows Admin/Member/Contributor/Viewer assignments consistent with governed publishing (only Admin/Member allowed to update app).",
+            "If a dataflow is used, its schedule precedes the dataset and dataset is set to refresh on completion.",
+            "A short text file states privacy levels applied per source."
+          ],
+          "rubric": [
+            {
+              "criterion": "Dataset published and visible in workspace; correct workspace type (new experience)",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct gateway configuration and mapping for any on‑prem sources (no personal gateway)",
+              "marks": 5
+            },
+            {
+              "criterion": "Scheduled refresh configured and demonstrated with a successful run",
+              "marks": 4
+            },
+            {
+              "criterion": "App published with clear audience configuration; report included",
+              "marks": 4
+            },
+            {
+              "criterion": "Workspace role configuration aligns to governed publishing (app updates restricted)",
+              "marks": 2
+            },
+            {
+              "criterion": "Privacy levels and (if present) dataflow chaining documented and shown",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Power BI Service",
+            "Power BI",
+            "Data Governance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a secure, optimized dashboard with RLS and performance evidence",
+          "brief": "Create a dashboard backed by a model that enforces Row‑Level Security and demonstrates performance optimization. Implement at least two roles, tune at least one heavy measure, and, if applicable, configure Incremental Refresh on a large fact. Validate role views and show measured performance improvement.",
+          "deliverable": "A zip containing: (1) the PBIX, (2) a text file with the DAX for the optimized measure(s) and the role filter DAX, (3) screenshots of \"View as\" for two different roles showing different results, (4) a Performance Analyzer before/after screenshot (or timings) for the optimized visual, (5) if Incremental Refresh is used, a screenshot of the policy in Desktop and the Service refresh history indicating incremental refresh, (6) a short note explaining any model changes (relationships, aggregations).",
+          "acceptance_criteria": [
+            "At least two RLS roles are defined and use USERPRINCIPALNAME() or equivalent mapping; role DAX is included in the text file.",
+            "\"View as\" screenshots clearly show different results per role on the same visual/page.",
+            "At least one measure is rewritten for performance (e.g., iterator to filter‑based time intelligence); DAX provided.",
+            "Performance Analyzer evidence shows a reduction in DAX query time for the targeted visual after the change.",
+            "If dataset size warrants, Incremental Refresh is configured with valid RangeStart/RangeEnd and folding preserved; refresh history shows incremental behavior.",
+            "Any relationship or aggregation changes that support performance are described."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct RLS implementation with appropriate identifier mapping and role DAX provided",
+              "marks": 5
+            },
+            {
+              "criterion": "Validation of RLS via \"View as\" with clear differing outputs",
+              "marks": 3
+            },
+            {
+              "criterion": "Measure optimization: sound DAX rewrite and justification; code supplied",
+              "marks": 5
+            },
+            {
+              "criterion": "Performance evidence: before/after timings or analyzer screenshots show improvement",
+              "marks": 4
+            },
+            {
+              "criterion": "Incremental Refresh correctly configured and evidenced (or justified omission)",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Row-Level Security (RLS)",
+            "DAX",
+            "Performance Optimization",
+            "Data Modeling",
+            "Power BI Service"
+          ],
+          "modules_covered": [
+            8,
+            7
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

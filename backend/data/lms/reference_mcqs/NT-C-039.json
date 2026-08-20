@@ -1,0 +1,248 @@
+{
+  "course_code": "NT-C-039",
+  "course_name": "SAP FICO",
+  "sources": [
+    {
+      "name": "SAP Education sample items, C_TFIN52_66 (SAP Certified Application Associate - Financial Accounting)",
+      "url": "https://cdn.training.sap.com/uploads/C_TFIN52_66_sample_items.pdf",
+      "note": "SAP's own published self-evaluation sample items. Used as concept source only; scenarios and options rewritten rather than reproduced."
+    },
+    {
+      "name": "ERPPrep - Free SAP FI Certification Sample Questions and Answers Set 2 (C_TS4FI)",
+      "url": "https://www.erpprep.com/article/sap-fi-certification-sample-questions-and-answers-set-2",
+      "note": "Third-party practice set, publicly readable. Concepts reused, wording not copied."
+    },
+    {
+      "name": "Pass4Success - SAP C_TS4FI_2023 free sample questions",
+      "url": "https://www.pass4success.com/sap/exam/c-ts4fi-2023",
+      "note": "Third-party practice set, publicly readable. Used to calibrate current C_TS4FI question style; no wording copied."
+    },
+    {
+      "name": "SAP FI Certification Sample Questions and Answers Set (Basis and others blog)",
+      "url": "https://project-support-basis.blogspot.com/2020/02/sap-fi-certification-sample-questions.html",
+      "note": "Publicly posted practice set. Concepts reused, scenarios rewritten."
+    },
+    {
+      "name": "ShapeMySkills - SAP FICO Multiple Choice Questions and Answers",
+      "url": "https://shapemyskills.in/sap-fico-multiple-choice-questions-and-answers/",
+      "note": "Publicly posted MCQ set at glossary difficulty; used only as a concept pointer, rewritten upward into configuration-consequence form."
+    },
+    {
+      "name": "SAP Help Portal - Document Splitting",
+      "url": "https://help.sap.com/docs/SAP_S4HANA_CLOUD/0fa84c9d9c634132b7c4abb9ffdd8f06/4911c9cc2a934a18e10000000a42189b.html",
+      "note": "SAP product documentation. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAP Help Portal - Foreign Currency Revaluation",
+      "url": "https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/26c2d5e366bc44c1a98f2a9212a0c49d/f934d2fc42724d1fb73b051acd3ddd1e.html",
+      "note": "SAP product documentation. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAP Help Portal - Period control introduction (AFAMP), depreciation key setting",
+      "url": "https://help.sap.com/docs/SUPPORT_CONTENT/fiaccounting/3361878713.html",
+      "note": "SAP product documentation. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAP Learning - Defining Dunning Procedures and Define Levels",
+      "url": "https://learning.sap.com/courses/detailing-the-dunning-run-ko/defining-dunning-procedures-and-define-levels",
+      "note": "SAP training content. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAP Learning - Maintaining Special General Ledger Transactions",
+      "url": "https://learning.sap.com/courses/configuring-additional-settings-in-financial-accounting-in-sap-s-4hana/maintaining-special-general-ledger-transactions",
+      "note": "SAP training content. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAP Community - Field status group at GL and field status group at posting keys",
+      "url": "https://community.sap.com/t5/enterprise-resource-planning-q-a/field-status-group-at-gl-and-field-status-group-at-posting-keys/qaq-p/5344597",
+      "note": "Community Q&A thread. Mechanism reference; question authored against it."
+    },
+    {
+      "name": "SAPinsider - SAP Cost Distribution and Assessment: A Simplified Example",
+      "url": "https://sapinsiders.org/posts/sap-cost-distribution-and-assessment-a-simplified-example",
+      "note": "Publicly readable article. Mechanism reference; question authored against it."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "Controlling area 1000 already contains company code 1000, which uses operating chart of accounts INT and fiscal year variant K4. Finance now wants company code 2000 - operating chart of accounts CAUS, fiscal year variant K4 - assigned to the same controlling area so that the two entities can share cost centres. What happens when you attempt the assignment, and why?",
+      "options": [
+        "The assignment is rejected: every company code in one controlling area must use the same operating chart of accounts, because cost elements are the G/L accounts of that chart.",
+        "The assignment succeeds; the system builds a mapping between CAUS and INT through the group chart of accounts, so cost elements resolve automatically.",
+        "The assignment succeeds, but company code 2000 can then only generate statistical CO postings - real cost postings from it are blocked.",
+        "The assignment is rejected because the two company codes also use different company code currencies, which the controlling area currency cannot reconcile."
+      ],
+      "correct_option": "A",
+      "explanation": "Cross-company-code cost accounting requires the assigned company codes to share the operating chart of accounts and a compatible fiscal year variant. Cost elements in CO are G/L accounts of the operating chart, so a second operating chart would make the same cost element mean two different things inside one controlling area. Fiscal year variant K4 matches here, so the chart of accounts is the blocker.",
+      "distractor_rationale": "B is the classic half-learned belief that the group chart of accounts or the alternative account number field bridges two operating charts - it serves consolidation reporting, not CO cost element identity. C sounds plausible to someone who has met statistical postings and assumes SAP degrades gracefully instead of refusing the assignment. D confuses currency setup, which the controlling area currency type genuinely can accommodate, with the chart of accounts rule, which it cannot.",
+      "skills_covered": ["Company code", "chart of accounts", "SAP CO"],
+      "difficulty": "hard",
+      "source_name": "SAP FI Certification Sample Questions and Answers Set (Basis and others blog)",
+      "source_url": "https://project-support-basis.blogspot.com/2020/02/sap-fi-certification-sample-questions.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "G/L account 476000 belongs to operating chart of accounts INT and is used by company codes 1000 and 2000. To stop users leaving the cost centre blank, you change the field status group on account 476000 in company code 1000 from G001 to G004. What is the effect in company code 2000?",
+      "options": [
+        "None. The field status group sits in the company code segment, so company code 2000 keeps its own setting; only chart of accounts data such as the account number and name is shared.",
+        "Company code 2000 picks up G004 at once, because field status groups are stored once per chart of accounts and apply to every company code using it.",
+        "Company code 2000 picks up G004 only after the account is re-extended to it, since chart of accounts data is copied into the company code segment at extension time.",
+        "Postings in company code 2000 fail with a consistency error until the same change is made there, because an account must be configured identically in every company code using the chart of accounts."
+      ],
+      "correct_option": "A",
+      "explanation": "A G/L master record has a chart of accounts segment (number, name, account group, P&L or balance sheet indicator) and a company code segment (currency, tax category, open item management, field status group, sort key). Field status group is company code data, so the change is local to company code 1000 and company code 2000 continues to allow a blank cost centre.",
+      "distractor_rationale": "B is the standard misconception behind the exam chestnut that sharing a chart of accounts makes accounts identical everywhere - true for number and name, false for control data. C invents a copy-on-extension behaviour that feels reasonable to anyone who has used the copy function while extending accounts. D appeals to the belief that SAP enforces cross-company-code consistency at posting time, which is precisely what the two-segment design avoids.",
+      "skills_covered": ["chart of accounts", "Master data", "Company code", "General ledger"],
+      "difficulty": "hard",
+      "source_name": "ShapeMySkills - SAP FICO Multiple Choice Questions and Answers",
+      "source_url": "https://shapemyskills.in/sap-fico-multiple-choice-questions-and-answers/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "AR clerks keep overwriting the reconciliation account on existing customer master records, so receivables land on the wrong G/L account and the sub-ledger stops tying to the balance sheet. You need the field to stay ready for input when a customer is created, but to become display-only when an existing customer is changed. Which field status do you configure?",
+      "options": [
+        "The field status of the activity - the create / change / display transaction variants for customer master data.",
+        "The field status of the customer account group.",
+        "The field status group assigned to the reconciliation account in its company code segment.",
+        "The field status of the posting keys used for customer line items."
+      ],
+      "correct_option": "A",
+      "explanation": "Customer and vendor master field status is determined by three independent sources - account group, company code, and activity - linked so the most restrictive wins. Only the activity-based field status distinguishes create from change, which is exactly the requirement: input-ready on create, display-only on change.",
+      "distractor_rationale": "B is the lever most learners reach for first, and it does control the reconciliation account field - but it applies the same status to every activity, so setting it to display would also block entry at creation. C confuses master data field status with document entry field status; the field status group on a G/L account governs line item fields when posting, not master record maintenance. D is the same confusion from the posting key side, and posting keys have no bearing on master data at all.",
+      "skills_covered": ["Master data", "Accounts receivable", "General ledger"],
+      "difficulty": "hard",
+      "source_name": "SAP Education sample items, C_TFIN52_66",
+      "source_url": "https://cdn.training.sap.com/uploads/C_TFIN52_66_sample_items.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "For G/L account 400000 the assigned field status group sets the Text field to Suppressed. Posting key 40 sets the Text field to Required entry. A user posts a document to account 400000 using posting key 40. What does the system do?",
+      "options": [
+        "It issues an error and refuses the posting - suppressed combined with required entry is a combination the linkage rules cannot resolve.",
+        "It hides the field and posts the document, because the G/L account field status group always takes precedence over the posting key.",
+        "It shows the field as a required entry and posts once text is supplied, because the posting key always takes precedence over the field status group.",
+        "It shows the field as optional and posts, because the system falls back to optional whenever the two settings disagree."
+      ],
+      "correct_option": "A",
+      "explanation": "The field status of the posting key and the field status group of the account are linked, with the more restrictive setting winning in the ordinary pairings. Suppressed and required entry are mutually exclusive - one forbids the field, the other demands it - so SAP raises an error at posting time instead of picking a side. The configuration must be corrected on one of the two.",
+      "distractor_rationale": "B and C are the two halves of the widespread but wrong belief that one side has blanket priority; each is held confidently by different learners, and both survive casual testing because most field status pairs do resolve silently. D imagines a permissive fallback, which would be the sensible design and is not the one SAP chose.",
+      "skills_covered": ["General ledger", "SAP FI"],
+      "difficulty": "hard",
+      "source_name": "SAP Community - Field status group at GL and field status group at posting keys",
+      "source_url": "https://community.sap.com/t5/enterprise-resource-planning-q-a/field-status-group-at-gl-and-field-status-group-at-posting-keys/qaq-p/5344597",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "Document splitting is active with profit centre as a splitting characteristic and the zero balance indicator set for it. A vendor invoice is entered with two expense lines - 6,000 to profit centre P100 and 4,000 to profit centre P200 - and one payable line of 10,000 with no profit centre entered. What does the posted document contain?",
+      "options": [
+        "The payable line is split 6,000 to P100 and 4,000 to P200, each profit centre nets to zero, and no zero balance clearing line is created.",
+        "The payable line is split 6,000 / 4,000 and two additional zero balance clearing lines are created, because every split document posts to the clearing account.",
+        "The payable line stays a single 10,000 item carrying the profit centre of the first expense line, and a zero balance clearing line offsets the imbalance on P200.",
+        "The invoice is rejected, because with zero balance active a payable line cannot be posted without an explicitly entered profit centre."
+      ],
+      "correct_option": "A",
+      "explanation": "This is a passive split: the payable line inherits its profit centre assignment from the expense lines in proportion to their amounts. Because both P100 and P200 then balance to zero within the document, the zero balance clearing account is not touched. That account is posted only when a characteristic remains unbalanced after splitting - typically a cross-profit-centre payment or clearing.",
+      "distractor_rationale": "B is the belief that the zero balance clearing account is the mechanism of splitting rather than its fallback, common in people who have seen the account in configuration but never traced a balanced document. C is the pre-document-splitting mental model, where a payable simply carries a default assignment and gets corrected afterwards. D reflects the reasonable-sounding assumption that a mandatory characteristic must be entered by the user, which defeats the entire purpose of automatic splitting.",
+      "skills_covered": ["General ledger", "profit centres", "SAP FI"],
+      "difficulty": "hard",
+      "source_name": "SAP Help Portal - Document Splitting",
+      "source_url": "https://help.sap.com/docs/SAP_S4HANA_CLOUD/0fa84c9d9c634132b7c4abb9ffdd8f06/4911c9cc2a934a18e10000000a42189b.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A 50,000 down payment is posted to vendor 100200 with special G/L indicator A. At month end the AP ageing built on the vendor reconciliation account 160000 does not show the 50,000, yet the trial balance shows a 50,000 debit on a different balance sheet account, and the vendor line item display does show the item. What accounts for this?",
+      "options": [
+        "Special G/L indicator A is configured with an alternative reconciliation account, so the general ledger side of the posting goes to the down payments made account rather than to 160000, while the sub-ledger still carries the item on the vendor.",
+        "A down payment posted with a special G/L indicator is a noted item only; it updates no G/L account until the vendor invoice arrives.",
+        "The item did post to 160000 but is excluded from the ageing because a special G/L item carries no baseline date for payment.",
+        "The reconciliation account in the vendor master was overwritten before the down payment was entered, so subsequent invoices for this vendor will also post to the wrong account."
+      ],
+      "correct_option": "A",
+      "explanation": "Special G/L transactions are exactly the mechanism for showing a sub-ledger item separately in the general ledger. The indicator carries an alternative reconciliation account, configured per chart of accounts, so a down payment made appears as an asset on its own account instead of netting against trade payables - which is what the balance sheet requires - while remaining visible on the vendor account.",
+      "distractor_rationale": "B confuses indicator A (an actual down payment) with indicator F (a down payment request), which genuinely is a noted item with no G/L effect - a distinction many learners never make. C invents a reporting explanation for what is really a posting-path explanation, and is attractive because special G/L items do behave differently in payment selection. D is the first thing a support person suspects, and it is a real failure mode - just not this one, since the trial balance shows a purposeful account rather than a random one.",
+      "skills_covered": ["Accounts payable", "General ledger", "Master data"],
+      "difficulty": "hard",
+      "source_name": "SAP Learning - Maintaining Special General Ledger Transactions",
+      "source_url": "https://learning.sap.com/courses/configuring-additional-settings-in-financial-accounting-in-sap-s-4hana/maintaining-special-general-ledger-transactions",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "Customer 4711 is assigned a dunning procedure with four levels, reached at 10, 20, 30 and 45 days in arrears respectively. The customer was last dunned at level 1 six weeks ago. It now has one open item that is 60 days in arrears, and the account is not blocked for dunning. The next dunning run includes the account. Which dunning level does the notice carry?",
+      "options": [
+        "Level 2 - a dunning run raises the dunning level by one step, so levels cannot be skipped even when the arrears warrant a higher one.",
+        "Level 4 - the level is derived solely from days in arrears at the time of the run, independently of dunning history.",
+        "Level 1 - the level is only raised when a new item has fallen overdue since the previous run; the same item is re-dunned at its existing level.",
+        "No notice is issued - once an item has been dunned, it must be cleared or the dunning data reset manually before the account can be dunned again."
+      ],
+      "correct_option": "A",
+      "explanation": "The dunning level stored on the item and account can only be raised one step per dunning run. Days in arrears determine the level an item is entitled to, but the run will not jump from level 1 to level 4; it issues level 2 and the account walks up the ladder one run at a time. This is why a customer who has been dunned late still receives several notices before the highest escalation.",
+      "distractor_rationale": "B is the natural reading of the configuration table, where levels are defined by days in arrears - it ignores that dunning history is stored per item. C is a defensible-sounding rule that would prevent repeat escalation, and matches the behaviour some learners assume from the dunning interval setting. D is the belief that dunning is a one-shot event per item, encouraged by having seen dunning blocks used to stop repeat notices.",
+      "skills_covered": ["dunning concepts", "Accounts receivable"],
+      "difficulty": "hard",
+      "source_name": "SAP Learning - Defining Dunning Procedures and Define Levels",
+      "source_url": "https://learning.sap.com/courses/detailing-the-dunning-run-ko/defining-dunning-procedures-and-define-levels",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "An asset acquisition is posted on 20 July - period 7 of a calendar fiscal year - with an asset value date of 3 April, which falls in period 4. The depreciation key's period control for acquisitions is pro rata from the period start date. Periods 4, 5 and 6 have already had their depreciation runs. What does the period 7 depreciation run post for this asset?",
+      "options": [
+        "Depreciation calculated from period 4, with the amounts for periods 4 to 6 caught up in the period 7 run.",
+        "Depreciation from period 7 only, because the depreciation start is derived from the posting date of the acquisition document.",
+        "Depreciation from period 8 onwards, because depreciation begins in the period after the asset is capitalised.",
+        "Nothing for this asset this year, because the asset value date falls in a period whose depreciation run is already closed; the start date must be corrected manually."
+      ],
+      "correct_option": "A",
+      "explanation": "The depreciation start date comes from the asset value date corrected by the period control in the depreciation key - not from the document posting date, which only decides which period the acquisition document itself lands in. Because the asset value date is in period 4, depreciation is owed from period 4, and the first depreciation run after capitalisation posts the accumulated catch-up along with the current period's charge.",
+      "distractor_rationale": "B is the most common misreading: posting date is what the user consciously chose, so it feels like the driver, and the two dates coincide in most textbook examples. C generalises a real convention from some period control variants (next month) into a universal rule. D projects the strictness of FI posting period control onto asset accounting, where the catch-up mechanism exists precisely so that a backdated asset value date does not need a reopened period.",
+      "skills_covered": ["Asset accounting", "SAP FI", "Period close"],
+      "difficulty": "hard",
+      "source_name": "SAP Help Portal - Period control introduction (AFAMP), depreciation key setting",
+      "source_url": "https://help.sap.com/docs/SUPPORT_CONTENT/fiaccounting/3361878713.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A EUR company code holds USD open items. Foreign currency valuation was run and posted for period 8. At the end of period 9 the accountant finds the period 8 valuation still standing on the balance sheet with the period 9 valuation posted on top of it, so the unrealised gain is overstated. The exchange rates in the system are correct. What is the configuration cause?",
+      "options": [
+        "The valuation was posted without the automatic reversal on the first day of the following period, and the valuation method is not set up for delta posting logic, so the period 8 adjustment was never backed out.",
+        "The valuation method applies the lowest value principle, which by design accumulates unrealised results across periods rather than restating them.",
+        "The valuation method points at the average exchange rate type instead of the closing rate type, so each run values a different base.",
+        "The valuated items sit on a reconciliation account, and valuation postings on reconciliation accounts cannot be reversed automatically."
+      ],
+      "correct_option": "A",
+      "explanation": "Open item valuation is a point-in-time restatement, so the posting must either be reversed on the first day of the next period or be made under delta logic, where each run posts only the difference from the previously valuated amount. With neither in place, every period's adjustment stays on the books and the next one is added to it.",
+      "distractor_rationale": "B misuses a real setting: the lowest value principle governs which differences are recognised, not whether they are reversed. C is a genuine misconfiguration that produces wrong amounts, so it is a believable answer to any 'valuation looks wrong' question - but it would not leave last period's posting standing. D invents a restriction that sounds like the familiar rule that reconciliation accounts cannot be posted to directly.",
+      "skills_covered": ["Period close", "General ledger", "SAP FI"],
+      "difficulty": "hard",
+      "source_name": "SAP Help Portal - Foreign Currency Revaluation",
+      "source_url": "https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/26c2d5e366bc44c1a98f2a9212a0c49d/f934d2fc42724d1fb73b051acd3ddd1e.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "Service cost centre 4200 collects 120,000 in a period on primary cost elements for rent, electricity and maintenance, and allocates the total to five production cost centres at period close. The plant controller then wants to see, on each receiving cost centre, how much of the allocated amount was electricity. Which periodic allocation preserves that, and what is given up by choosing the other?",
+      "options": [
+        "Distribution preserves it - it credits and debits the original primary cost elements, so electricity remains identifiable on the receivers; assessment would post the whole amount under one secondary allocation cost element and lose the breakdown.",
+        "Assessment preserves it - it carries the sender's primary cost elements through to the receivers; distribution collapses everything onto a single secondary cost element.",
+        "Either works - both post under the original primary cost elements, and the only real difference is that assessment can use statistical key figures as the tracing factor.",
+        "Neither works - all periodic cost centre allocation posts under a secondary cost element, so only a manual repost of line items by cost element keeps the primary detail."
+      ],
+      "correct_option": "A",
+      "explanation": "Distribution retains the original primary cost elements on both the credit and the debit side, so the receiving cost centre reports rent, electricity and maintenance separately. Assessment posts under a single secondary cost element of the assessment category, which makes reporting simpler and hides the original cost element detail - the trade-off is transparency for volume of line items.",
+      "distractor_rationale": "B is simply the two methods swapped, and it is the most frequent confusion in this topic because assessment is the more sophisticated-sounding word. C is attractive because statistical key figures really are available as a tracing factor, but they are available to both methods, and the cost element behaviour genuinely differs. D correctly recalls that a manual repost preserves the cost element, which makes it feel informed, while over-generalising the secondary cost element rule to distribution as well.",
+      "skills_covered": ["Cost centres", "SAP CO", "Period close"],
+      "difficulty": "hard",
+      "source_name": "SAPinsider - SAP Cost Distribution and Assessment: A Simplified Example",
+      "source_url": "https://sapinsiders.org/posts/sap-cost-distribution-and-assessment-a-simplified-example",
+      "provenance": "adapted"
+    }
+  ]
+}

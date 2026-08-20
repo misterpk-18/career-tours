@@ -1,0 +1,263 @@
+{
+  "course_code": "NT-C-028",
+  "course_name": "Cloud Computing",
+  "sources": [
+    {
+      "name": "TechTarget",
+      "url": "https://www.techtarget.com/searchcloudcomputing/feature/The-cloud-shared-responsibility-model-for-IaaS-PaaS-and-SaaS",
+      "note": "Editorial article, publicly readable. Concept reused, wording rewritten; no text copied."
+    },
+    {
+      "name": "Wiz Academy",
+      "url": "https://www.wiz.io/academy/container-security/containerization-vs-virtualization",
+      "note": "Public vendor-education article. Concept reused (shared-kernel isolation boundary), wording rewritten."
+    },
+    {
+      "name": "Pinggy Blog",
+      "url": "https://pinggy.io/blog/dns_load_balancing/",
+      "note": "Public blog on DNS load balancing and TTL caching. Concept reused, scenario written fresh."
+    },
+    {
+      "name": "Jayendra's Cloud Certification Blog",
+      "url": "https://jayendrapatil.com/aws-vpc-security-group-vs-nacls/",
+      "note": "Public certification-study notes with practice items. Stateful/stateless concept reused; scenario and options rewritten vendor-neutrally."
+    },
+    {
+      "name": "Jayendra's Cloud Certification Blog",
+      "url": "https://jayendrapatil.com/envelope-encryption/",
+      "note": "Public certification-study notes carrying a practice-question table. Key-rotation item adapted; stem and all four options rewritten."
+    },
+    {
+      "name": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/object-storage-vs-block-storage-in-cloud/",
+      "note": "Public tutorial. Concept reused (whole-object replacement vs block-level random write), scenario written fresh."
+    },
+    {
+      "name": "AWS IAM Documentation",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+      "note": "Vendor documentation of the deny-first evaluation order. Used as the authority for the mechanism; question written fresh and kept vendor-neutral in wording."
+    },
+    {
+      "name": "SingleStore",
+      "url": "https://www.singlestore.com/blog/cloud-database-disaster-recovery-rpo-rto/",
+      "note": "Public blog defining RPO/RTO for cloud databases. Concept reused, scenario written fresh."
+    },
+    {
+      "name": "Cogent Infotech",
+      "url": "https://cogentinfo.com/resources/full-stack-observability-for-scalable-systems-logs-metrics-traces-explained",
+      "note": "Public article on metrics/logs/traces and latency percentiles. Concept reused, scenario written fresh."
+    },
+    {
+      "name": "DigitalOcean Resources",
+      "url": "https://www.digitalocean.com/resources/articles/spot-instances-vs-reserved-instances-cost-tradeoffs",
+      "note": "Public article on spot vs reserved cost trade-offs. Concept reused, workload scenario written fresh."
+    },
+    {
+      "name": "DataFlair",
+      "url": "https://data-flair.training/blogs/cloud-computing-mcq/",
+      "note": "Candidate pool only (15 items reviewed). All rejected as glossary-level or 'point out the correct statement' form; nothing selected."
+    },
+    {
+      "name": "StackHowTo",
+      "url": "https://stackhowto.com/cloud-computing-mcq-questions-and-answers-part-3/",
+      "note": "Candidate pool only (10 items reviewed). Rejected as recall-level and largely duplicating DataFlair; nothing selected."
+    },
+    {
+      "name": "ExamRadar",
+      "url": "https://examradar.com/basic-principles-of-data-backup-and-recovery-mcqs/",
+      "note": "Candidate pool only (8 items reviewed). Rejected: definitional form, and the page's stated RPO/RTO answers are transposed. Not selected; the RPO/RTO item was instead grounded on SingleStore."
+    },
+    {
+      "name": "NPTEL Cloud Computing assignment compilations",
+      "url": "https://gist.github.com/adi-ray/4d55e4fecb61397c393077daab54f877",
+      "note": "Candidate pool only (11 items reviewed). Mostly fill-in-the-blank recall (e.g. 'VMM is also known as ___'); nothing met the hardness bar."
+    },
+    {
+      "name": "NPTEL Cloud Computing Week 2 assignment (BEU Bihar mirror)",
+      "url": "https://www.beubihar.org.in/2024/07/nptel-cloud-computing-week-2-assignment.html",
+      "note": "Candidate pool only (10 items reviewed). Heavily SOA/XML/SOAP-weighted, outside this course's modules; nothing selected."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "An organisation runs its customer portal on a managed PaaS runtime. After a breach review, auditors establish two facts: the attacker authenticated with a valid application account whose role granted read access to every tenant's records, and the runtime's underlying operating system was fully patched throughout. Under the shared responsibility model, how should this control failure be assigned?",
+      "options": [
+        "To the provider, because the provider operates the runtime and is therefore accountable for any access that occurs through it.",
+        "To the customer, because in PaaS the provider's boundary ends at the platform, and application-level authorisation and data classification stay on the customer's side of the line.",
+        "To neither party, because responsibility in PaaS is jointly held and a single control failure cannot be attributed to one party.",
+        "To the provider, because the absence of an OS patch gap shows the failure originated above the customer's control boundary."
+      ],
+      "correct_option": "B",
+      "explanation": "In PaaS the provider takes on the hardware, hypervisor, operating system and runtime, but the customer still defines application roles, entitlements and how data is classified and segregated between tenants. A role granting cross-tenant read access is a customer-authored authorisation decision made inside the platform, not a defect of the platform.",
+      "distractor_rationale": "A is the widespread 'they run it, so they own it' error, which conflates operating a layer with owning the authorisation decisions made within it. C mistakes 'shared' for 'undivided' — the model divides responsibility cleanly by layer rather than blurring it, and an unassignable finding would make the model useless for audit. D reverses the inference: a patched OS demonstrates the provider met its obligation, which narrows the fault to the customer side rather than widening it to the provider.",
+      "skills_covered": ["cloud security and compliance", "Cloud Architecture"],
+      "difficulty": "hard",
+      "source_name": "TechTarget",
+      "source_url": "https://www.techtarget.com/searchcloudcomputing/feature/The-cloud-shared-responsibility-model-for-IaaS-PaaS-and-SaaS",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "A platform team consolidates two workloads that previously ran in separate hypervisor-based virtual machines onto one container host, one container each, with CPU and memory ceilings applied through cgroups and separate namespaces per container. A security reviewer objects that the isolation is now weaker. Which statement identifies the actual reduction in the isolation boundary?",
+      "options": [
+        "Containers cannot enforce CPU or memory ceilings, so either workload can starve the other in a way the virtual machines prevented.",
+        "Both containers execute against the same host kernel, so one kernel-level flaw becomes a single escape path affecting both, whereas each virtual machine previously ran its own kernel behind the hypervisor.",
+        "Namespaces are advisory labels that the kernel does not enforce, so either container can read the other's filesystem by default.",
+        "Containers share one network stack with no way to give each workload its own interfaces and ports."
+      ],
+      "correct_option": "B",
+      "explanation": "cgroups genuinely enforce resource ceilings and namespaces genuinely partition the kernel's views of processes, mounts and networking. What actually changed is the boundary underneath: the two workloads no longer sit behind separate guest kernels and a hypervisor, so a single kernel vulnerability now reaches both. That is the isolation the hypervisor was providing and the container host is not.",
+      "distractor_rationale": "A is held by learners who know cgroups exist but assume they are best-effort accounting; bounding CPU and memory is precisely what cgroups do. C misreads namespaces as a naming convention rather than a kernel-enforced view partition — mount namespaces do separate filesystem views. D is a half-memory of 'containers share the host network' picked up from host-network or default-bridge setups; network namespaces give each container its own stack.",
+      "skills_covered": ["manage ICT virtualisation environments", "cloud security and compliance"],
+      "difficulty": "hard",
+      "source_name": "Wiz Academy",
+      "source_url": "https://www.wiz.io/academy/container-security/containerization-vs-virtualization",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "The A record for api.example.com has carried a TTL of 86400 for months. At 01:55 a team lowers the TTL to 60, and at 02:00 they repoint the record to a new load balancer. Traffic keeps arriving at the old endpoint from a large share of clients well into the following day, while newly built test machines reach the new endpoint immediately. What accounts for this?",
+      "options": [
+        "TTL changes take effect only once the zone's SOA serial is incremented and secondaries complete a transfer, which cannot occur on the same day as the edit.",
+        "Lowering a TTL forces resolvers to re-query at once, so the real cause must be that the address change never published to the authoritative servers.",
+        "Recursive resolvers ignore any TTL below 300 seconds, so the record continued to be served under a provider-imposed default instead.",
+        "Resolvers that had already cached the record continue serving it for the remainder of the 86400-second lifetime they cached it under; the shorter TTL governs only lookups made after that cached entry expires."
+      ],
+      "correct_option": "D",
+      "explanation": "A cached record carries the TTL that was in force at the moment it was cached, and a resolver honours that value for the full period. Cutting the TTL five minutes before a cutover only affects resolvers that fetch the record after their existing copy expires — which, for a day-long TTL, can be up to a day away. The TTL must be lowered at least one old-TTL period ahead of the change, which is exactly why fresh test machines with no cached entry see the new address at once.",
+      "distractor_rationale": "A attaches a real mechanism, zone transfer and SOA serials, to the wrong effect: the stale answers come from resolver-side caching, not from authoritative propagation. B is the very common 'propagation' misconception, that lowering a TTL retroactively invalidates caches already holding the record. C invents a floor — some resolvers do clamp very low TTLs, but clamping cannot produce a day of stale answers and is not what is happening here.",
+      "skills_covered": ["DNS", "Cloud Architecture"],
+      "difficulty": "hard",
+      "source_name": "Pinggy Blog",
+      "source_url": "https://pinggy.io/blog/dns_load_balancing/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "A subnet-level stateless ACL permits inbound TCP 443 from the internet and outbound TCP 443 to the internet. The instance-level stateful firewall on the web server permits inbound TCP 443 from anywhere and has no outbound rules configured. Clients complete the TLS handshake but never receive response data. What is the most likely cause?",
+      "options": [
+        "The stateless ACL has no outbound rule covering the high-numbered ephemeral ports the server's replies are addressed to, so return packets are dropped despite the inbound rule having matched.",
+        "The stateful firewall requires a matching outbound rule on 443 before it will emit responses to an admitted connection.",
+        "The ACL's outbound 443 rule shadows its inbound rule, because stateless rules are evaluated in both directions against the same port number.",
+        "TLS requires the ACL to permit inbound traffic on the ephemeral port range, which the current inbound rule does not cover."
+      ],
+      "correct_option": "A",
+      "explanation": "A stateless ACL evaluates each packet on its own with no memory of the connection. The server's replies leave from port 443 addressed to the client's ephemeral source port, so the egress rule must permit that ephemeral destination range — an outbound rule for 443 does not match them. The instance-level stateful firewall needs no outbound rule at all, because it automatically permits the return leg of a connection it already admitted, which is why the ACL is the only thing at fault.",
+      "distractor_rationale": "B over-applies stateless reasoning to a stateful device; automatically permitting the return leg is the defining property of statefulness. C invents cross-direction shadowing that stateless ACLs do not perform — inbound and outbound rule sets are evaluated independently. D has the right port range but the wrong direction: it is the outbound ACL rule, not the inbound one, that must cover the ephemeral range.",
+      "skills_covered": ["Firewall", "cloud security and compliance"],
+      "difficulty": "hard",
+      "source_name": "Jayendra's Cloud Certification Blog",
+      "source_url": "https://jayendrapatil.com/aws-vpc-security-group-vs-nacls/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "To cut storage cost, a team relocates a transactional relational database's data and log files from network-attached block volumes onto an object store, keeping the same database engine and instance size. Write throughput collapses, and after an unclean shutdown the engine reports inconsistent files. Which property of object storage accounts for both symptoms?",
+      "options": [
+        "Object stores impose a total capacity ceiling far below that of block volumes, so the database exhausted its allocation.",
+        "Objects are replaced as a whole rather than modified in place, and are reached through a request-based API that offers no block-level random write or write-ordering guarantee that the engine's write-ahead log depends on.",
+        "Object stores encrypt every object by default, and the per-read decryption overhead is what stalls the engine.",
+        "An object store cannot be attached to more than one host at a time, so the engine lost the lock file it uses to serialise writes."
+      ],
+      "correct_option": "B",
+      "explanation": "Block storage presents addressable fixed-size blocks and supports random in-place writes with the ordering guarantees a write-ahead log relies on for crash recovery. An object store's unit of change is the entire object over an HTTP-style API, so updating a single database page means rewriting the whole object — hence the throughput collapse — and there is no block-level durability ordering across those writes, so an unclean shutdown can leave the data and log files mutually inconsistent.",
+      "distractor_rationale": "A inverts the truth: object storage is the more elastically capacious of the two tiers and is rarely the one you outgrow. C is superficially plausible because default encryption at rest is genuinely common, but symmetric encryption is cheap and is not what collapses throughput. D is a half-memory of the single-attach restriction that applies to block volumes, applied to the tier that is in fact reachable concurrently by many clients.",
+      "skills_covered": ["manage cloud data and storage", "Cloud Architecture"],
+      "difficulty": "hard",
+      "source_name": "GeeksforGeeks",
+      "source_url": "https://www.geeksforgeeks.org/object-storage-vs-block-storage-in-cloud/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A user inherits an identity policy from a group that allows read on all objects in a storage service, and has a second identity policy attached directly that allows read on one specific bucket. A permission boundary on the user allows read across the whole service. The bucket's own resource policy contains an explicit deny for that read action for every principal in the account. What is the outcome of the user's read request against that bucket, and why?",
+      "options": [
+        "Allowed, because two identity policies grant the action and a resource policy cannot override an identity-based grant.",
+        "Allowed, because the permission boundary and the two identity policies form a union of permissions that outweighs the single deny.",
+        "Denied, because an explicit deny in any applicable policy is applied ahead of the allows and cannot be overridden by any number of grants.",
+        "Denied, because the resource policy targets one specific bucket and is therefore more specific than the identity policies, and the most specific policy wins."
+      ],
+      "correct_option": "C",
+      "explanation": "Evaluation begins from an implicit deny, then collects explicit denies across every applicable policy type — identity, resource, boundary, and organisational controls. A single explicit deny anywhere terminates the decision. Allows are combined as a union, but that union is only consulted once no explicit deny has matched, so neither the number of allows nor the presence of a permitting boundary changes the result.",
+      "distractor_rationale": "A assumes a precedence hierarchy in which identity policies outrank resource policies; in reality either type can carry a decisive deny. B treats evaluation as a tally or scoring exercise across policies rather than a deny-first short circuit, and additionally misreads a permission boundary as a grant when it only ever caps permissions. D imports longest-prefix or most-specific-match reasoning from routing tables and firewall rule lists, a model IAM evaluation does not use.",
+      "skills_covered": ["cloud security and compliance", "Cloud Architecture"],
+      "difficulty": "hard",
+      "source_name": "AWS IAM Documentation",
+      "source_url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "An archive of several hundred thousand objects is protected with envelope encryption: every object has its own data key, and each data key is wrapped by a single key-management-service key. Compliance now requires that KMS key's cryptographic material be rotated annually. After the first rotation, what must the team do to keep the existing archive readable, and what has rotation actually changed?",
+      "options": [
+        "Nothing: the service retains the prior key material to unwrap data keys that were wrapped under it, and the new material is used only for data keys generated from now on.",
+        "Download, decrypt and re-encrypt every object under the new material, because the previous material is destroyed at rotation.",
+        "Unwrap and re-wrap every stored data key under the new material, although the bulk objects themselves need not be re-encrypted.",
+        "Nothing, because rotating the KMS key also transparently re-encrypts every object server-side as a background operation."
+      ],
+      "correct_option": "A",
+      "explanation": "Rotation adds new cryptographic material under the same key identifier and retains the previous versions specifically so existing ciphertext stays decryptable. Each stored wrapped data key records which version wrapped it, so old objects unwrap exactly as before with no action, and only newly generated data keys are wrapped under the new material.",
+      "distractor_rationale": "B is the belief that rotation invalidates old material — the assumption that makes teams avoid rotating at all, since it would imply rewriting the whole archive each year. C is a more sophisticated form of the same error: it correctly grasps that the bulk data need not be re-encrypted, but still assumes the wrapping layer must be rewritten, which the retained key versions make unnecessary. D over-credits the platform with a bulk re-encryption it does not perform, and would undercut the very cost argument that motivates envelope encryption.",
+      "skills_covered": ["Encryption", "cloud security and compliance"],
+      "difficulty": "hard",
+      "source_name": "Jayendra's Cloud Certification Blog",
+      "source_url": "https://jayendrapatil.com/envelope-encryption/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "A service takes one full backup nightly at 01:00 and replicates it to a second region, where the documented restore procedure takes six hours end to end. Management restates the requirement as \"we can afford to lose at most one hour of data, and we must be serving again within four hours.\" Which change set actually satisfies both figures?",
+      "options": [
+        "Raise the backup frequency to hourly and leave the restore procedure unchanged, since more frequent backups shorten both recovery objectives together.",
+        "Move to hourly incrementals or continuous replication to bound the data-loss figure, and separately stand up a pre-provisioned warm standby so recovery no longer depends on the six-hour restore.",
+        "Keep the nightly backup but retain many more copies, since the four-hour figure is governed by retention depth rather than by backup interval.",
+        "Move the backups to a faster storage tier, since the four-hour figure is the binding constraint and the one-hour figure follows from meeting it."
+      ],
+      "correct_option": "B",
+      "explanation": "The one-hour figure is a recovery point objective, bounded by how often a recoverable copy is created; the four-hour figure is a recovery time objective, bounded by how long it takes to bring the service back. They are independent constraints with independent remedies, so backup frequency addresses only the first and a warm standby that removes the restore from the critical path addresses only the second.",
+      "distractor_rationale": "A is the most common conflation of the two objectives: hourly backups do fix the RPO but leave the six-hour restore untouched, so the RTO is still missed by two hours. C confuses retention, which is how far back in time you can recover, with RPO, which is how much recent data is at risk. D assumes the two objectives are causally linked and that faster media alone both collapses a six-hour restore under four hours and eliminates up to 24 hours of data loss.",
+      "skills_covered": ["Backup and Recovery", "manage disaster recovery plans"],
+      "difficulty": "hard",
+      "source_name": "SingleStore",
+      "source_url": "https://www.singlestore.com/blog/cloud-database-disaster-recovery-rpo-rto/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A fleet behind a load balancer scales on five-minute average CPU across all instances. Dashboards show mean response time steady near 120 ms and fleet CPU around 45%, the autoscaler never triggers, and the load balancer marks every target healthy — yet a steady stream of users report multi-second waits. Which explanation best fits all of this evidence?",
+      "options": [
+        "Both the mean latency and the fleet-wide CPU average conceal a tail: a minority of requests, likely concentrated on a minority of instances, are far slower, and averaging across instances and over five minutes erases exactly the signal users are experiencing.",
+        "The health checks must be misconfigured, because a load balancer reporting healthy targets cannot be forwarding traffic to slow ones.",
+        "The reported latency figure must be faulty, because a mean of 120 ms is arithmetically incompatible with any request taking several seconds.",
+        "CPU sitting at 45% proves the fleet is over-provisioned, so the waits must originate in client-side network conditions rather than in the service."
+      ],
+      "correct_option": "A",
+      "explanation": "A mean is dominated by the bulk of fast requests, a fleet-wide CPU average is dominated by the idle majority of instances, and a five-minute window smooths away bursts. High-percentile latency measured per instance is the statistic that tracks what users feel, and it is precisely the statistic neither the dashboard nor the scaling policy is watching.",
+      "distractor_rationale": "B assumes a health check measures latency; a typical check only confirms reachability and an expected status code, so a slow-but-responding target stays in rotation indefinitely. C is a genuine arithmetic misconception — a small fraction of multi-second requests shifts a mean built from tens of thousands of fast ones by only a few milliseconds. D reads average CPU as proof of headroom while ignoring that the average is the very statistic under suspicion, and jumps to an external cause the evidence does not support.",
+      "skills_covered": ["Monitoring and Observability", "Load Balancing"],
+      "difficulty": "hard",
+      "source_name": "Cogent Infotech",
+      "source_url": "https://cogentinfo.com/resources/full-stack-observability-for-scalable-systems-logs-metrics-traces-explained",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "A workload has three distinct components: a steady 24/7 serving baseline of 20 instances, a predictable weekday peak adding 15 instances for eight hours a day, and a nightly batch job that is fully restartable and has no deadline before morning. Which allocation across committed/reserved, on-demand and spot capacity is sound, and on what reasoning?",
+      "options": [
+        "Committed capacity for the full 35 instances including the peak, with on-demand for the batch, because committing to the maximum guarantees capacity at the lowest unit price.",
+        "Spot for all 35 serving instances and committed capacity for the batch, because the batch is the only component whose demand is genuinely predictable.",
+        "Committed capacity for the 20-instance baseline, on-demand for the weekday peak, and spot for the restartable batch, matching each purchase model to how continuously the component runs and how tolerant it is of interruption.",
+        "On-demand for all three components, because mixing purchase models forfeits the discount conditions of each and makes capacity planning unmanageable."
+      ],
+      "correct_option": "C",
+      "explanation": "Committed pricing bills for the reserved capacity whether or not it is used, so it only pays off against the always-on baseline. The peak runs eight hours on weekdays, roughly a quarter of the week's hours, so a full-time commitment for it typically costs more than paying on-demand for the hours actually consumed. Spot capacity is reclaimable at very short notice, which is acceptable precisely for restartable work with no deadline — and unacceptable for user-facing serving capacity.",
+      "distractor_rationale": "A is the 'commit to the peak so you never run short' instinct, which buys a full-time commitment for 15 instances used about a quarter of the time, usually wiping out the discount. B inverts the interruptibility test in both directions at once: it puts user-facing serving capacity on instances that can be reclaimed mid-request, and locks the one genuinely interruption-tolerant component into the most rigid commitment. D is the risk-averse position that treats the purchase models as mutually exclusive alternatives, when they are layered per workload component and that layering is standard practice.",
+      "skills_covered": ["Cloud Architecture", "deploy cloud resource"],
+      "difficulty": "hard",
+      "source_name": "DigitalOcean Resources",
+      "source_url": "https://www.digitalocean.com/resources/articles/spot-instances-vs-reserved-instances-cost-tradeoffs",
+      "provenance": "adapted"
+    }
+  ]
+}

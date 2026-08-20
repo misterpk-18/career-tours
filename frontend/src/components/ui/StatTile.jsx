@@ -1,4 +1,5 @@
 import React from 'react';
+import CountUp from '../motion/CountUp';
 import { cn } from '../../lib/cn';
 
 /**
@@ -20,7 +21,9 @@ export const StatTile = ({ value, label, sublabel, className }) => (
         'bg-brand-subtle text-brand-subtle-fg'
       )}
     >
-      {value}
+      {/* Counts up when the value is a number, prints it when it is not — some
+          callers pass a string, and animating "4 of 8" is not meaningful. */}
+      {typeof value === 'number' ? <CountUp value={value} duration={700} /> : value}
     </div>
     <div className="min-w-0">
       <div className="text-2xs font-semibold text-fg-muted uppercase">{label}</div>

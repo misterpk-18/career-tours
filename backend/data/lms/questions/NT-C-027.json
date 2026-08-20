@@ -1,0 +1,1893 @@
+{
+  "course_code": "NT-C-027",
+  "course_name": "Azure Cloud",
+  "sections": [
+    {
+      "section_code": "NT-C-027-S01",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Microsoft Entra ID",
+        "RBAC",
+        "Least Privilege",
+        "implement cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You are troubleshooting a delete failure. The user's assignments and the resource group's lock are:\n\n```json\n[\n  {\n    \"principalName\": \"alex@nipunacorp.com\",\n    \"roleDefinitionName\": \"Contributor\",\n    \"scope\": \"/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/rg-prod\"\n  },\n  {\n    \"principalName\": \"alex@nipunacorp.com\",\n    \"roleDefinitionName\": \"Reader\",\n    \"scope\": \"/subscriptions/11111111-2222-3333-4444-555555555555\"\n  }\n]\n```\n\n```json\n[\n  {\n    \"name\": \"rg-prod-ro\",\n    \"type\": \"Microsoft.Authorization/locks\",\n    \"level\": \"ReadOnly\",\n    \"scope\": \"/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/rg-prod\"\n  }\n]\n```\n\nAlex runs:\n\n```bash\naz resource delete --ids \\\n  /subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/rg-prod/providers/Microsoft.KeyVault/vaults/kv1\n```\n\nWhat happens and why?",
+          "options": [
+            "The delete fails with a 409 ScopeLocked error until the lock is removed (or updated) because resource locks block writes regardless of RBAC.",
+            "The delete succeeds because Contributor at the resource group allows deletions and overrides the subscription-level Reader.",
+            "The delete fails with 403 because the Reader role at subscription denies deletes, which takes precedence over the resource-group Contributor.",
+            "It will eventually succeed after RBAC propagation (within ~10–30 minutes) because the Contributor grant hasn’t taken effect yet."
+          ],
+          "correct_option": "A",
+          "explanation": "Resource locks enforce a write/delete block that applies to all principals, regardless of RBAC role. A ReadOnly lock at the resource group prevents modifications or deletions of resources in that group. The correct behavior is a 409 ScopeLocked until the lock is removed or changed.",
+          "distractor_rationale": "A: Tempting because scope-specific roles override broader ones in RBAC, but locks sit outside RBAC and still block. B: Misunderstands RBAC evaluation order; broader-scope Reader doesn’t negate a narrower-scope Contributor. D: Propagation delay affects new RBAC assignments, not lock enforcement; the Contributor is already in effect but blocked by the lock.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "RBAC",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A management group has an assignment of the built-in policy \"Allowed locations\" with effect Deny and parameters:\n\n```json\n{\n  \"policyDefinitionId\": \"/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c\",\n  \"parameters\": {\n    \"listOfAllowedLocations\": { \"value\": [\"northeurope\",\"westeurope\"] }\n  },\n  \"scope\": \"/providers/Microsoft.Management/managementGroups/mg-prod\"\n}\n```\n\nA team attempts a group deployment:\n\n```bash\naz deployment group create \\\n  -g app-rg \\\n  -f storage.bicep \\\n  -p location=eastus2\n```\n\nWhat is the expected outcome?",
+          "options": [
+            "The deployment is blocked during preflight with RequestDisallowedByPolicy (Deny) because the storage account location is eastus2.",
+            "The deployment fails in the Portal but succeeds via CLI because client-side validation differs.",
+            "The resource is created and then marked non-compliant; remediation moves it to an allowed region.",
+            "The deployment succeeds because policy checks only the resource group’s location, not the resource’s location."
+          ],
+          "correct_option": "A",
+          "explanation": "A Deny policy on allowed locations prevents create/update requests for resources targeting disallowed regions. Azure Resource Manager evaluates policy during request validation, returning RequestDisallowedByPolicy before resource creation.",
+          "distractor_rationale": "B: Confuses Audit/DeployIfNotExists with Deny; Deny blocks creation. C: Allowed locations apply to the resource’s location property, not the resource group’s. D: Policy evaluation is server-side in ARM and is consistent across clients.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You enforce a tag via an Append policy:\n\n```json\n{\n  \"if\": {\n    \"field\": \"tags['CostCenter']\",\n    \"exists\": false\n  },\n  \"then\": {\n    \"effect\": \"append\",\n    \"details\": {\n      \"field\": \"tags['CostCenter']\",\n      \"value\": \"FIN-001\"\n    }\n  }\n}\n```\n\nTwo creates happen:\n- Create A: resource without any tags.\n- Create B: resource with tag `CostCenter=ENG-123`.\n\nAfter policy evaluation, what tags do the resources have?",
+          "options": [
+            "Both creates are denied; you must use Deny to enforce tags.",
+            "Create A gets CostCenter=FIN-001. Create B is overwritten to FIN-001 because policy enforces a single value.",
+            "Create A gets CostCenter=FIN-001. Create B keeps ENG-123 because Append adds only when the tag is missing.",
+            "Create A has no CostCenter because Append doesn’t apply to this resource type by default."
+          ],
+          "correct_option": "C",
+          "explanation": "Append adds fields when missing. If a user supplies a value, Append doesn’t overwrite it. Deny would be needed to block conflicting values.",
+          "distractor_rationale": "A: Overwrites would need Modify or Deny with a condition, not Append. B: Append evaluates on the condition; no exemption by type is shown. D: Deny is not required to add a missing tag; Append suffices.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "At management group `mg-sec`, you assign a Deny policy restricting locations to `northeurope,westeurope`. At subscription `sub-A`, there is an exemption named `StorageAccounts` scoped to the subscription with category `Waiver` and target resource types `Microsoft.Storage/storageAccounts` only.\n\nAn engineer runs:\n\n```bash\naz keyvault create \\\n  -g rg-app \\\n  -n kv-eus2-01 \\\n  -l eastus2\n```\n\nWhat happens?",
+          "options": [
+            "Creation is allowed but flagged non-compliant until a remediation task fixes the region.",
+            "Creation succeeds because the subscription-level exemption always overrides the management group policy.",
+            "Creation succeeds only if the resource group had an explicit exemption; subscription-level is not enough.",
+            "Creation is denied by the management group policy because the exemption applies only to Storage Accounts, not Key Vaults."
+          ],
+          "correct_option": "D",
+          "explanation": "Exemptions are precise. The mg-level Deny still blocks creation for resource types not covered by the exemption. Since the exemption targets only storage accounts, a Key Vault in eastus2 is denied.",
+          "distractor_rationale": "A: Exemptions don’t blanket-override; they’re scoped and typed. B: Sub-level is a valid scope for exemptions. D: Deny doesn’t allow creation then remediate; it blocks the request.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A dynamic user group has this rule:\n\n```text\n(user.department -eq \"Finance\") -and \n(user.accountEnabled -eq true) -and \n(user.jobTitle -contains \"Analyst\")\n```\n\nUser object:\n\n```json\n{\n  \"userPrincipalName\": \"sam@nifunacorp.com\",\n  \"department\": \"Finance\",\n  \"accountEnabled\": true,\n  \"jobTitle\": \"Senior Data Analyst\",\n  \"companyName\": \"Nipuna\"\n}\n```\n\nWhat is the membership outcome after evaluation?",
+          "options": [
+            "Sam is excluded because the user’s companyName isn’t checked against the rule and must be present.",
+            "Sam is excluded because -contains is case-sensitive and doesn’t match \"Analyst\" inside \"Senior Data Analyst\".",
+            "Sam is included only if the admin also assigns the user manually; dynamic rules can’t add members, only remove.",
+            "Sam is included because all rule conditions evaluate to true."
+          ],
+          "correct_option": "D",
+          "explanation": "All three conditions are satisfied: department equals Finance, account is enabled, and jobTitle contains the substring \"Analyst\". Dynamic membership adds the user automatically after evaluation.",
+          "distractor_rationale": "B: The -contains operator for strings is not case-sensitive and matches substrings. C: companyName isn’t in the rule; it’s irrelevant. D: Dynamic rules add and remove members; manual assignment isn’t required.",
+          "skills_covered": [
+            "Microsoft Entra ID"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A custom role is assigned to a user at subscription scope:\n\n```json\n{\n  \"Actions\": [\n    \"Microsoft.Resources/subscriptions/resourceGroups/*\",\n    \"*/read\"\n  ],\n  \"NotActions\": [\n    \"Microsoft.Authorization/*/read\"\n  ],\n  \"AssignableScopes\": [\n    \"/subscriptions/11111111-2222-3333-4444-555555555555\"\n  ]\n}\n```\n\nWhich command will fail due to NotActions?",
+          "options": [
+            "```bash\naz group list --subscription 11111111-2222-3333-4444-555555555555\n```",
+            "```bash\naz role assignment list --scope \\\n/subscriptions/11111111-2222-3333-4444-555555555555\n```",
+            "```bash\naz resource show -g rg1 -n dep01 \\\n  --resource-type Microsoft.Resources/deployments\n```",
+            "```bash\naz monitor metrics list \\\n  --resource \\\n  \"/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/rg1/providers/Microsoft.KeyVault/vaults/kv1\"\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "The role allows all reads except under Microsoft.Authorization. Listing role assignments requires Microsoft.Authorization/roleAssignments/read, which is explicitly excluded. The other commands are reads outside Microsoft.Authorization or covered by resourceGroups actions.",
+          "distractor_rationale": "B/C/D: All are reads outside Microsoft.Authorization and thus allowed by \"*/read\". Many learners assume \"*/read\" includes authorization metadata reads, but NotActions removes that ability.",
+          "skills_covered": [
+            "RBAC",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "Portal extract for user Priya shows:\n\n```text\nDirectory roles: Global Reader\nAzure role assignments (subscriptions): None\n```\n\nPriya runs:\n\n```bash\naz group list\n```\n\nWhat is true about Priya’s access?",
+          "options": [
+            "Priya can view all Azure resource groups but cannot modify them until given Contributor.",
+            "Priya can browse Entra ID configuration in the portal but cannot enumerate subscriptions/resources; `az group list` returns authorization errors.",
+            "Priya can elevate to Owner automatically from Global Reader using the Elevate Access blade.",
+            "Priya can manage users in Entra ID and is Owner on all subscriptions via Global Reader."
+          ],
+          "correct_option": "B",
+          "explanation": "Entra ID directory roles (like Global Reader) don’t grant Azure RBAC over subscriptions/resources. Priya can view Entra ID settings but cannot list Azure resource groups without a Reader (or higher) RBAC role at a scope.",
+          "distractor_rationale": "A/D: Directory roles don’t grant RBAC; Elevate Access requires Global Administrator and explicit action, not Global Reader. B: Viewing resource groups still requires Azure RBAC Reader or broader at scope.",
+          "skills_covered": [
+            "Microsoft Entra ID",
+            "RBAC"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Group nesting and RBAC assignment:\n\n```text\nGroupB (role: Owner at scope /subscriptions/.../resourceGroups/rg-ops)\n  ↳ members: GroupA\n      ↳ members: user: lee@nipuracorp.com\n```\n\nNo other assignments exist for Lee. What effective access does Lee have to `rg-ops`?",
+          "options": [
+            "No access, because Azure RBAC does not evaluate nested Entra ID group membership for role assignments.",
+            "Owner, because group nesting is expanded during RBAC evaluation.",
+            "Contributor, because Owner is reduced one level for nested groups.",
+            "Reader, because nested group members are reduced to the lowest common denominator."
+          ],
+          "correct_option": "A",
+          "explanation": "Azure RBAC does not honor nested group membership for role assignments; only direct group membership (or direct user/service principal assignment) is evaluated. Therefore, Lee gets no access from GroupB’s assignment.",
+          "distractor_rationale": "A/B/D: Common misconceptions that nesting is expanded or roles are somehow downgraded. In reality, nested groups don’t grant access in RBAC evaluation.",
+          "skills_covered": [
+            "RBAC",
+            "Microsoft Entra ID"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You just created a role assignment:\n\n```bash\naz role assignment create \\\n  --assignee pat@nipuracorp.com \\\n  --role \"Tag Contributor\" \\\n  --scope /subscriptions/1111/resourceGroups/rg-app\n```\n\nPat immediately runs:\n\n```bash\naz tag update --resource-id \\\n  /subscriptions/1111/resourceGroups/rg-app/providers/Microsoft.KeyVault/vaults/kv1 \\\n  --operation merge --tags Owner=Ops\n# => AuthorizationFailed (403)\n```\n\nPat refreshes tokens (`az account clear && az login`) and still sees 403 for a few minutes; after ~10 minutes, the same command succeeds. What best explains this?",
+          "options": [
+            "The role must be assigned at management group scope to be effective on resource groups.",
+            "A Deny policy blocked the request; after policy evaluation cycles, it allowed the change.",
+            "RBAC propagation delay; new role assignments can take several minutes to become effective, even after token refresh.",
+            "Pat needs a directory role like Application Administrator to update tags on Azure resources."
+          ],
+          "correct_option": "C",
+          "explanation": "RBAC assignments can take time to propagate across the control plane. Token refresh helps, but there can still be a back-end delay (often a few minutes) before authorization succeeds.",
+          "distractor_rationale": "B: Policy wouldn’t spontaneously switch from Deny to Allow. C: Directory roles don’t grant ARM permissions. D: Scope at the resource group is valid for affecting resources within it.",
+          "skills_covered": [
+            "RBAC",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A FinOps analyst must add and update tags on resources in a single resource group but must not create, delete, or modify the resources themselves. What is the least-privilege built-in role to assign at that resource group scope?",
+          "options": [
+            "Resource Policy Contributor",
+            "Tag Contributor",
+            "Contributor",
+            "Reader + User Access Administrator"
+          ],
+          "correct_option": "B",
+          "explanation": "Tag Contributor allows managing tags on resources and resource groups without broader modification rights. That fits the least-privilege requirement.",
+          "distractor_rationale": "B: Too broad; can modify and delete resources. C: Manages policy, not resource tags. D: Reader can’t change tags; User Access Administrator manages assignments, not resource data.",
+          "skills_covered": [
+            "Least Privilege",
+            "RBAC"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Contoso EU runs two subscriptions: Prod and NonProd. Legal requires all production data-at-rest to remain within the EU (North/West Europe). NonProd can deploy globally. Platform Engineering wants consistent tags (CostCenter, Environment, DataClass), and ReadOnly locks on shared networking resource groups. Meanwhile, a support team in India needs to read logs in Prod and manage only tags on app resource groups, with no ability to change resources. The tenant currently has no management group hierarchy.",
+          "task": "Propose a governance design that satisfies these constraints. Specify: management group structure, where to assign which policies (allowed locations, tag governance, lock usage), and how to grant the support team the minimum access they need. Justify your scoping decisions and how they reduce blast radius.",
+          "expected_answer": "A reasonable solution: create a management group tree such as Tenant Root -> Corp (baseline) -> EU (for EU-only workloads) and -> Global (for non-EU). Place Prod subscription under EU and NonProd under Global. At Corp, assign a policy initiative for common governance: required tags (Append/Modify + optional Deny for missing), resource naming rules (Audit/Modify), and deny public IP on certain resource types if relevant. At EU mg, assign AllowedLocations (Deny) with parameters [northeurope, westeurope]. Leave Global without location restriction or with a broader allow list. Apply ReadOnly locks only on shared infra resource groups in Prod (e.g., rg-hub-net), not tenant-wide, to avoid blocking app teams; document a change process to remove/reapply locks during planned changes. For access, create Entra ID groups: \"Prod-Log-Readers\" with Reader on prod subscriptions’ monitoring RGs or at subscription with DataActions if needed to read logs/metrics, and \"Prod-Tag-Contributors\" with Tag Contributor on each app RG where tags must be managed. Do not grant Contributor. Ensure group-based RBAC, not direct user assignments. Optionally, add User Access Administrator to a small platform group at subscription for controlled delegation. This design localizes strict policies to the EU mg, keeps common baselines at Corp, uses RG-scoped locks only where warranted, and delivers least privilege to the support team.",
+          "rubric": [
+            {
+              "criterion": "Management group hierarchy defined and mapped to subscriptions with clear EU vs Global separation",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct policy placement and effects (AllowedLocations at EU mg for Prod; tag governance as initiative at Corp; rationale for Audit/Append/Modify vs Deny)",
+              "marks": 2
+            },
+            {
+              "criterion": "Lock strategy placed at RGs with justification, including safe-change process to avoid blocking deployments",
+              "marks": 2
+            },
+            {
+              "criterion": "Least-privilege RBAC plan for support team (group-based, correct roles/scopes) with blast-radius justification",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "RBAC",
+            "Least Privilege"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must onboard a contractor for 14 days. They need: 1) read access to resource groups rg-app and rg-data in the Prod subscription; 2) ability to update tags only in rg-data. The organization forbids assigning broad roles directly to users and wants to ensure access is removed on day 14 without depending on memory.",
+          "task": "Design an access approach using Entra ID groups and Azure RBAC that enforces least privilege and auto-expiry. Include the exact roles, scopes, how you ensure time-bounded access, and how you verify and document it.",
+          "expected_answer": "Create two Entra ID groups: Prod-Readers (scope: read on both RGs) and Data-TagEditors (scope: tag updates on rg-data). Assign Azure RBAC as follows: Reader to Prod-Readers at scopes /subscriptions/.../resourceGroups/rg-app and /.../rg-data; Tag Contributor to Data-TagEditors at /.../rg-data. Add the contractor to both groups. For time-bounded access, use group membership expiration (via Access Packages/Entitlement Management or group rules with Expiration policy if licensed); otherwise, implement a scheduled removal (automation runbook or ticket with due date) and an Access Review targeting both groups to ensure removal. Verification: capture `az role assignment list --assignee <groupObjectId>` showing scoped assignments; as the contractor, show `az group list` (works) and `az tag update` in rg-data (works) while `az tag update` in rg-app or any delete fails (403). Document start/end date in the ticket and include evidence (command output) in the change record. This gives only Reader where needed and Tag Contributor limited to rg-data, and ensures removal at day 14.",
+          "rubric": [
+            {
+              "criterion": "Correct separation into two groups and correct RBAC roles (Reader on both RGs; Tag Contributor only on rg-data)",
+              "marks": 2
+            },
+            {
+              "criterion": "Scopes are precise (resource-group level) and avoid overly broad subscription assignments",
+              "marks": 2
+            },
+            {
+              "criterion": "Time-bounded access mechanism described (expiration via Entitlement Management/Access Review or automated removal)",
+              "marks": 2
+            },
+            {
+              "criterion": "Verification steps include concrete commands/evidence proving allowed and denied actions",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "RBAC",
+            "Least Privilege",
+            "Microsoft Entra ID"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "A CI deployment to rg-platform fails. The pipeline log shows:\n\n```text\nStatus: 409 (ScopeLocked)\nCode: ScopeLocked\nMessage: The scope '/subscriptions/1111/resourceGroups/rg-platform' cannot perform write operation because of a ReadOnly lock.\n```\n\nThe platform team insists they have Owner on the resource group.",
+          "task": "Diagnose the cause and propose a safe remediation plan that preserves governance but allows the deployment to proceed. Be explicit about steps and guardrails.",
+          "expected_answer": "Owner does not override resource locks; a ReadOnly lock blocks all write operations. Root cause: a lock applied at rg-platform. Remediation: 1) During a planned change window, a user with authorization to modify locks (typically Owner) removes or updates the lock; 2) run the deployment; 3) reapply the lock. Guardrails: require change approval, verify scope (RG vs specific resources) to minimize blast radius, and consider narrowing the lock to only the critical shared resources instead of the entire RG to reduce future friction. Also add a pre-deployment check (scripted `az lock list`) to fail fast when locks are present and notify the platform team.",
+          "rubric": [
+            {
+              "criterion": "Correct identification that the ReadOnly lock (not RBAC) is the blocker and why Owner doesn’t help",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, ordered remediation steps that include temporary lock removal/change and reapplication",
+              "marks": 2
+            },
+            {
+              "criterion": "Risk controls/guardrails (change window, approvals, verifying scope, minimizing lock scope)",
+              "marks": 2
+            },
+            {
+              "criterion": "Operational improvement such as automated pre-checks for locks in pipelines",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "RBAC"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A policy at the Corp management group denies non-EU locations. A team still created resources in East US within subscription sub-legacy. The Corp policy assignment JSON shows a `notScopes` entry that excludes `/subscriptions/abcd-.../resourceGroups/rg-legacy`. The team’s pipeline targets `rg-legacy`.",
+          "task": "Explain precisely why the deployment bypassed the policy and propose a remediation that restores enforcement but still lets the team deploy what they need legitimately. Provide the scope and mechanism you would use.",
+          "expected_answer": "The mg-level Deny assignment includes `notScopes` excluding rg-legacy, so any request within that RG skips the Corp assignment, allowing the create. Remediation: remove the RG from `notScopes` and instead create a narrowly scoped exemption at the subscription for specific resource types or a limited-time waiver with justification, or move the exclude to a subscription-level assignment with parameters (e.g., allow only required resource types or locations) and an expiry. If the team truly needs a carve-out, use a subscription-level assignment of AllowedLocations with a parameter set that includes only their justified regions, and record an exemption with expiration and owner. This restores enforcement broadly while permitting only the minimal exception.",
+          "rubric": [
+            {
+              "criterion": "Accurate explanation of `notScopes` behavior and its effect on policy evaluation",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed remediation removes broad `notScopes` and replaces it with a narrower exemption or scoped assignment",
+              "marks": 2
+            },
+            {
+              "criterion": "Least-privilege/least-exception justification and inclusion of expiry/ownership for the exception",
+              "marks": 2
+            },
+            {
+              "criterion": "Correct scoping (mg vs subscription vs RG) in the proposed fix",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "implement cloud security and compliance",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design and submit a Governance Resource Plan",
+          "brief": "Produce a resource plan for a fresh Azure tenant landing zone that will host a production workload in EU regions and a non-production workload globally. The plan must define subscriptions, regions, resource groups, naming, tags, management groups, policies, and RBAC aligned to least privilege. Base it on the section’s topics: subscriptions, regions, resource groups, governance; Entra ID groups; RBAC; least privilege.",
+          "deliverable": "Resource plan (PDF or Markdown) with diagrams or ASCII trees as needed.",
+          "acceptance_criteria": [
+            "Includes a management group hierarchy diagram/tree mapping each subscription.",
+            "Lists each subscription’s purpose and allowed regions, with justification.",
+            "Defines resource group layout (per app, per layer) with naming convention examples.",
+            "Specifies tag taxonomy (at least CostCenter, Environment, Owner, DataClass) and how tags will be enforced (policy definition/effects).",
+            "Provides a policy initiative (list) with effects and parameters for: allowed locations, required tags, and one additional control (e.g., deny public IP on specified types).",
+            "Describes lock usage (where ReadOnly/CanNotDelete will be applied) and the change process to remove/reapply.",
+            "Supplies an RBAC matrix: groups, roles, scopes (e.g., Reader at sub, Tag Contributor at RG), avoiding direct user assignments.",
+            "Explains least-privilege rationale (why each role/scope is minimal) and how blast radius is contained."
+          ],
+          "rubric": [
+            {
+              "criterion": "Management group hierarchy and subscription mapping, with rationale",
+              "marks": 3
+            },
+            {
+              "criterion": "Subscription and region strategy tied to requirements (EU for Prod, global for NonProd)",
+              "marks": 3
+            },
+            {
+              "criterion": "Resource group schema and naming conventions, clearly documented",
+              "marks": 4
+            },
+            {
+              "criterion": "Tag taxonomy and enforcement plan (policy effects chosen appropriately)",
+              "marks": 3
+            },
+            {
+              "criterion": "Governance policy set (initiative) with effects/parameters correctly scoped",
+              "marks": 4
+            },
+            {
+              "criterion": "RBAC model using groups and least privilege, with clear scope mapping and justification",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "RBAC",
+            "Least Privilege",
+            "Microsoft Entra ID"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Access Lab: Group-based least-privilege RBAC and verification",
+          "brief": "Create an Entra ID group and use it to grant the minimum access needed to update tags on resources in a specific resource group, then verify allowed and denied actions from the member’s perspective. Use Azure CLI or PowerShell; do not assign roles directly to the user.",
+          "deliverable": "Access lab report (Markdown or PDF) containing: commands used, key outputs (sanitized), and brief notes explaining each step and result.",
+          "acceptance_criteria": [
+            "Creates an Entra ID security group named as per a clear convention (e.g., RG-<name>-TagEditors) and adds a test user.",
+            "Assigns the built-in role Tag Contributor to the group at exactly one resource group scope (not subscription).",
+            "Shows evidence from the member account that tagging operations in that RG succeed (e.g., `az tag update` or Set-AzTag output).",
+            "Shows evidence that disallowed actions fail (e.g., resource delete, role assignment read), including error codes.",
+            "Demonstrates that the assignment is group-based (show `az role assignment list --assignee <groupObjectId>`) and that the user has no direct assignment.",
+            "Includes cleanup steps (remove role assignment and group membership)."
+          ],
+          "rubric": [
+            {
+              "criterion": "Group creation and membership correct and documented with commands/IDs",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct role and exact RG scope assigned to the group (no over-scoping)",
+              "marks": 4
+            },
+            {
+              "criterion": "Proof of allowed tag operation success and a denied non-tag operation with error evidence",
+              "marks": 6
+            },
+            {
+              "criterion": "Group-based, not direct, assignment clearly evidenced and least-privilege reasoning stated",
+              "marks": 3
+            },
+            {
+              "criterion": "Cleanup steps completed and evidenced",
+              "marks": 2
+            },
+            {
+              "criterion": "Clarity and reproducibility of commands (placeholders, sanitized IDs)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "RBAC",
+            "Least Privilege",
+            "Microsoft Entra ID",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-027-S02",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Azure Virtual Machines",
+        "Azure App Service",
+        "Azure Blob Storage",
+        "RBAC",
+        "Least Privilege",
+        "Backup and Recovery",
+        "implement cloud security and compliance",
+        "Monitoring and Observability"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You configure autoscale for an App Service plan as follows:\n\n```json\n{\n  \"profiles\": [\n    {\n      \"name\": \"workhours\",\n      \"capacity\": {\"minimum\": \"2\", \"maximum\": \"6\", \"default\": \"2\"},\n      \"rules\": [\n        {\n          \"metricTrigger\": {\n            \"metricName\": \"Percentage CPU\",\n            \"timeGrain\": \"PT1M\",\n            \"statistic\": \"Average\",\n            \"timeWindow\": \"PT5M\",\n            \"timeAggregation\": \"Average\",\n            \"operator\": \"GreaterThan\",\n            \"threshold\": 70\n          },\n          \"scaleAction\": {\"type\": \"ChangeCount\", \"value\": \"2\", \"cooldown\": \"PT5M\"}\n        },\n        {\n          \"metricTrigger\": {\n            \"metricName\": \"Percentage CPU\",\n            \"timeGrain\": \"PT1M\",\n            \"statistic\": \"Average\",\n            \"timeWindow\": \"PT10M\",\n            \"timeAggregation\": \"Average\",\n            \"operator\": \"LessThan\",\n            \"threshold\": 30\n          },\n          \"scaleAction\": {\"type\": \"ChangeCount\", \"value\": \"-1\", \"cooldown\": \"PT5M\"}\n        }\n      ]\n    }\n  ]\n}\n```\n\nObserved average CPU timeline (after deployment at t=0). Values are the plan's averaged CPU at each minute:\n\n```text\nMinutes:  0  1  2  3  4  5  6  7  8  9 | 10 11 12 13 14 15 16 17 18 19 | 20 21 22 23 24 25\nCPU (%): 82 84 83 85 86 45 48 50 52 51 | 28 27 26 24 22 25 23 19 18 17 | 25 24 23 22 21 29\n```\nAssume the scale-out happens immediately when the 5-minute condition is first satisfied, and cooldowns are enforced exactly as configured. How many instances are running at minute 25?",
+          "options": [
+            "5",
+            "4",
+            "2",
+            "3"
+          ],
+          "correct_option": "D",
+          "explanation": "Minutes 0–4 meet the >70% for 5 minutes condition. At minute 5, scale-out by +2 takes the plan from 2 to 4 instances and starts a 5-minute cooldown (until minute 10). From minutes 5–9, average CPU is below 70%, so no new scale-out. From minutes 10–19, average CPU is <30% for a continuous 10 minutes, so at minute 20 a scale-in of -1 occurs, taking the count from 4 to 3 and starting a 5-minute cooldown. Minutes 20–25 remain <30%, but the cooldown prevents another scale-in until after minute 25. Therefore at minute 25 there are 3 instances.",
+          "distractor_rationale": "A: 2 is tempting if you miss the initial scale-out trigger at minute 5 or assume immediate scale-in before cooldown expires. C: 4 fits if you see the first scale-out but forget the 10-minute <30% window that triggers a later scale-in. D: 5 might seem right if you think multiple scale-outs happen during the first high-CPU burst despite cooldown, but only one occurs before CPU drops.",
+          "skills_covered": [
+            "Azure App Service",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "You configured a lifecycle policy on a GPv2 storage account:\n\n```json\n{\n  \"rules\": [\n    {\n      \"name\": \"logs-tiering\",\n      \"enabled\": true,\n      \"type\": \"Lifecycle\",\n      \"definition\": {\n        \"filters\": {\"prefixMatch\": [\"logs/\"]},\n        \"actions\": {\n          \"baseBlob\": {\n            \"tierToCool\": {\"daysAfterModificationGreaterThan\": 7},\n            \"tierToArchive\": {\"daysAfterModificationGreaterThan\": 60},\n            \"delete\": {\"daysAfterModificationGreaterThan\": 365}\n          }\n        }\n      }\n    }\n  ]\n}\n```\n\nCurrent blobs:\n\n```text\nName                               LastModifiedAge  CurrentTier\nlogs/2026-06-01/a.json             61d              Cool\nlogs/2026-06-30/b.json             50d              Hot\nimages/promo.png                   120d             Hot\nlogs/2026-04-15/c.parquet          75d              Cool\nlogs/2026-07-20/d.csv              30d              Hot\n```\nLifecycle runs nightly at 00:30 UTC. At the next run, which set of blobs will be moved to Archive?",
+          "options": [
+            "images/promo.png and logs/2026-04-15/c.parquet",
+            "logs/2026-06-01/a.json and logs/2026-06-30/b.json",
+            "logs/2026-06-01/a.json and logs/2026-04-15/c.parquet",
+            "logs/2026-06-01/a.json only"
+          ],
+          "correct_option": "C",
+          "explanation": "The rule applies only to blobs with the logs/ prefix. It moves blobs to Archive when days since last modification ≥ 60. That is true for a.json (61d) and c.parquet (75d). b.json (50d) and d.csv (30d) are not yet eligible. images/promo.png is excluded by the prefix filter.",
+          "distractor_rationale": "A: Misses that c.parquet is also ≥60 days. B: Includes b.json (50d), which does not meet the 60-day archive threshold. D: Includes images/promo.png, but the rule filters to logs/ only.",
+          "skills_covered": [
+            "Azure Blob Storage"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "On a Linux VM, you add this line to /etc/fstab to mount an Azure Files share at boot:\n\n```text\n//acctsmb.file.core.windows.net/share1  /mnt/share1  cifs  vers=2.1,credentials=/etc/smbcreds,serverino,dir_mode=0770,file_mode=0660  0  0\n```\nThe VM runs kernel 5.15.0 and the storage account enforces secure transfer. What happens on reboot?",
+          "options": [
+            "Mount fails unless you add the storage account to Microsoft Entra ID and grant the VM's managed identity SMB permissions.",
+            "Mount succeeds but the directory is read-only until you enable Azure AD authentication for Azure Files.",
+            "Mount fails with \"Operation not supported\" because SMB 2.1 is used; change to vers=3.0 and reconnect.",
+            "Mount succeeds, but throughput will be throttled until you remove serverino and add mfsymlinks."
+          ],
+          "correct_option": "C",
+          "explanation": "Azure Files over SMB requires SMB 3.0 for secure transfer and modern kernels enforce this. Using vers=2.1 typically fails with mount error(95): Operation not supported. Set vers=3.0 (and appropriate options) to mount successfully.",
+          "distractor_rationale": "B: Azure AD DS/Entra ID is optional; using the storage key with SMB works and does not cause read-only mounts. C: serverino/mfsymlinks do not gate mount success; the protocol version does. D: Managed identity is not used for SMB; Azure Files SMB auth is via storage key or AD-integrated credentials, not VM MSI.",
+          "skills_covered": [
+            "Azure Virtual Machines",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You synchronize static assets from a VM to Blob Storage using AzCopy:\n\n```bash\n# Source (Linux VM): /data/site\n# Destination: https://acct.blob.core.windows.net/web?SAS\nazcopy sync \\\n  \"/data/site\" \\\n  \"https://acct.blob.core.windows.net/web?sv=...&sig=...\" \\\n  --delete-destination=true \\\n  --exclude-path \"tmp\"\n```\nSource and destination contain:\n\n```text\nSOURCE /data/site\n├─ index.html\n├─ img/logo.png\n├─ tmp/cache.dat\n└─ about/team.html\n\nDESTINATION web container\n├─ index.html\n├─ img/logo.png\n├─ img/old.png\n├─ tmp/old.tmp\n└─ blog/post1.html\n```\nAfter the sync completes, which destination blobs have been deleted?",
+          "options": [
+            "img/old.png only",
+            "img/old.png and blog/post1.html",
+            "tmp/old.tmp and blog/post1.html",
+            "blog/post1.html only"
+          ],
+          "correct_option": "B",
+          "explanation": "With --delete-destination=true, AzCopy deletes destination items that do not exist at the source, except those under excluded paths. The excluded path tmp prevents any deletion under tmp. Therefore img/old.png and blog/post1.html are deleted; tmp/old.tmp remains.",
+          "distractor_rationale": "A: Misses that blog/post1.html also doesn't exist at source and will be deleted. C: Incorrect because tmp is excluded. D: Misses deletion of img/old.png, which is not excluded and absent at source.",
+          "skills_covered": [
+            "Azure Blob Storage",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "You inspect a storage account before a regional disaster exercise:\n\n```json\n{\n  \"name\": \"acctprod\",\n  \"primaryEndpoints\": {\"blob\": \"https://acctprod.blob.core.windows.net/\"},\n  \"secondaryEndpoints\": {\"blob\": \"https://acctprod-secondary.blob.core.windows.net/\"},\n  \"sku\": {\"name\": \"Standard_GZRS\"},\n  \"kind\": \"StorageV2\",\n  \"allowBlobPublicAccess\": false\n}\n```\nDuring a simulated complete outage of the primary region, the application tries to read blobs using the existing URLs. What is the correct expectation?",
+          "options": [
+            "Reads fail until you reconfigure the app to use the -secondary endpoint; GZRS replicates data but does not allow automatic read from secondary.",
+            "Reads and writes automatically fail over to the secondary and then back once the primary returns.",
+            "Reads succeed from the secondary only if you enable blob public access.",
+            "Reads continue without changes because GZRS automatically serves traffic from the secondary endpoint using the same URL."
+          ],
+          "correct_option": "A",
+          "explanation": "GZRS provides geo-zone redundancy but does not expose read access to the secondary endpoint unless you use RA-GZRS (read-access). During a primary outage, reads to the primary URL fail; you would need either RA-GZRS and switch to the -secondary endpoint, or perform an account failover (with downtime).",
+          "distractor_rationale": "B: Only RA-GZRS offers read access to the secondary; GZRS alone doesn’t auto-serve content. C: Automatic write failover is not supported; account failover is manual and disruptive. D: Public access is unrelated; access control does not affect endpoint failover behavior.",
+          "skills_covered": [
+            "Azure Blob Storage",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A VM hosts a database. The transaction log is on a dedicated Premium SSD data disk. Current disk settings:\n\n```json\n{\n  \"dataDisks\": [\n    {\n      \"lun\": 0,\n      \"name\": \"db-log-disk\",\n      \"caching\": \"ReadOnly\",\n      \"managedDisk\": {\"storageAccountType\": \"Premium_LRS\"}\n    }\n  ]\n}\n```\nWrites show high latency during checkpoints. What immediate change is most appropriate?",
+          "options": [
+            "Set host caching to None on the log disk",
+            "Move the log to an ephemeral OS disk",
+            "Enable ReadWrite caching on the log disk",
+            "Increase VM size to get more vCPUs"
+          ],
+          "correct_option": "A",
+          "explanation": "Write-heavy, sequential log volumes should not use ReadOnly host caching, which can add latency on writes. Setting caching to None is the recommended fix. ReadWrite host caching is not available for data disks and is unsafe for logs. Ephemeral OS disks are not for database logs. Upsizing may mask symptoms but doesn’t address the misconfiguration.",
+          "distractor_rationale": "B: ReadWrite caching isn’t supported on data disks and would endanger durability even if it were. C: Ephemeral OS disks are stateless and unsuitable for DB logs. D: More vCPUs won’t resolve write-cache-induced latency on the data path.",
+          "skills_covered": [
+            "Azure Virtual Machines"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You deploy a Linux App Service with run-from-package configured:\n\n```json\n{\n  \"appSettings\": [\n    {\"name\": \"WEBSITE_RUN_FROM_PACKAGE\", \"value\": \"https://acctpkgs.blob.core.windows.net/site/site.zip?sv=...&sp=rl&sig=...\"}\n  ]\n}\n```\nThe storage account `acctpkgs` has public network access disabled and no private endpoint. The App Service has no VNet integration. What happens on app start?",
+          "options": [
+            "Startup succeeds after a warmup delay; App Service retries until storage temporarily allows access.",
+            "Startup fails because the package cannot be downloaded; the app lacks network path to the private storage endpoint.",
+            "Startup succeeds because the SAS grants read access regardless of network rules.",
+            "Startup fails unless the app is scaled to PremiumV3."
+          ],
+          "correct_option": "B",
+          "explanation": "With storage public network access disabled and no private endpoint, only traffic from within an allowed network can reach the blobs. The App Service, without VNet integration to a private endpoint, cannot access the package, so the app fails to start.",
+          "distractor_rationale": "B: SAS governs authorization, not network reachability; network rules still block the request. C: There is no automatic temporary exception; retries won’t bypass network restrictions. D: The tier doesn’t change reachability; VNet integration/private endpoints are required.",
+          "skills_covered": [
+            "Azure App Service",
+            "Azure Blob Storage",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A container has a time-based immutability policy:\n\n```json\n{\n  \"immutabilityPolicy\": {\n    \"immutabilityPeriodSinceCreationInDays\": 7,\n    \"policyMode\": \"Unlocked\",\n    \"allowProtectedAppendWritesAll\": true\n  }\n}\n```\nYou have an append blob `audit.log`. Which operation succeeds during the retention window?",
+          "options": [
+            "Append a block to audit.log",
+            "Set metadata on audit.log",
+            "Overwrite audit.log with a block blob of the same name",
+            "Delete audit.log and recreate it"
+          ],
+          "correct_option": "A",
+          "explanation": "With allowProtectedAppendWritesAll on, append operations are allowed for append blobs during the immutability period. Metadata updates, overwrites, and deletions are blocked by WORM until the period ends (or policy is modified, if unlocked and permitted).",
+          "distractor_rationale": "B: Metadata changes are disallowed under immutability. C: Overwrites are blocked by WORM. D: Deletions are blocked during the retention window.",
+          "skills_covered": [
+            "Azure Blob Storage",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "On a VM with a system-assigned managed identity and role `Storage Blob Data Reader` at the storage account scope, you run:\n\n```bash\nTOKEN=$(curl -s -H \"Metadata:true\" \\\n  \"http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/\" \\\n  | jq -r .access_token)\n\ncurl -s -D - -H \"Authorization: Bearer $TOKEN\" \\\n  \"https://acctdata.blob.core.windows.net/reports/summary.csv\"\n```\nWhat is the outcome?",
+          "options": [
+            "The request returns 404 because listing is not allowed by the role.",
+            "The request fails with an authentication error because the token audience is for Azure Resource Manager, not Storage.",
+            "The request fails only if the blob is in Cool tier; change to Hot to allow MSI tokens.",
+            "The request succeeds because RBAC is granted; the audience value is ignored by Storage."
+          ],
+          "correct_option": "B",
+          "explanation": "The managed identity token must be requested for the Storage resource (resource=https://storage.azure.com/). A token for management.azure.com has the wrong audience and will be rejected by Azure Storage with an auth error regardless of RBAC.",
+          "distractor_rationale": "B: Storage enforces token audience; RBAC alone is insufficient. C: Access tier does not affect authorization. D: Even with correct RBAC, the wrong audience causes auth failure; 404 would require the request to be authorized first.",
+          "skills_covered": [
+            "Azure Virtual Machines",
+            "Azure Blob Storage",
+            "RBAC",
+            "Least Privilege"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A VM Scale Set behind a Standard Load Balancer shows 0 healthy instances. Probe and app settings:\n\n```json\n{\n  \"probe\": {\"protocol\": \"Http\", \"port\": 80, \"requestPath\": \"/health\"},\n  \"app\": {\"protocol\": \"Https\", \"port\": 443, \"healthPath\": \"/healthz\"}\n}\n```\nWhat operational symptom do you observe until this is fixed?",
+          "options": [
+            "Instances flap between Healthy/Unhealthy but continue serving due to TCP fallback probes.",
+            "Intermittent 5xx responses because the probe occasionally follows redirects from 80 to 443.",
+            "Traffic is fine because the load balancer ignores HTTP probes for HTTPS apps.",
+            "All instances remain Unhealthy and receive no traffic; scale events won’t help until the probe matches the app."
+          ],
+          "correct_option": "D",
+          "explanation": "The HTTP probe on port 80 and path /health does not match the app’s HTTPS/443 /healthz endpoint. The probe fails, marking all instances Unhealthy, and the load balancer stops routing to them regardless of scale. Fix the probe or app endpoint to restore health.",
+          "distractor_rationale": "B: The probe does not auto-follow redirects and will continue to fail. C: There is no TCP fallback when an HTTP probe is configured. D: The load balancer requires healthy probe responses; it does not ignore probe mismatches.",
+          "skills_covered": [
+            "Azure Virtual Machines",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "A retail startup serves a Node.js API and static images. Traffic is spiky: calm most of the day, bursts to 10× during flash sales. Requirements: minimal ops overhead, rapid scale out/in, HTTPS everywhere, zero public access to object storage, and the API must read/write user-uploaded images. Developers currently push a ZIP of the app to storage; a CI pipeline can update that ZIP. Images are accessed over HTTPS via a CDN edge. The team has no Kubernetes skills.",
+          "task": "Propose a concrete Azure architecture that meets the needs. Specify the hosting choice and scale strategy for the API, how the package is deployed, how images are stored and exposed, what network controls are necessary, and how identities/permissions are assigned. Justify the trade-offs versus running the API on VMSS.",
+          "expected_answer": "A strong answer chooses Azure App Service for the API to minimize ops, with autoscale on CPU/HTTP queue length and a max limit to control cost. Use run-from-package from a Storage account, but since public network access to storage must be disabled, add a private endpoint for the storage account in a delegated subnet and enable App Service VNet integration so the app can fetch the package. Alternatively, use App Service deployment slots with ZIP push via build provider to avoid storage egress. Store images in Blob Storage (hot tier) with a private endpoint; use a CDN with an origin private endpoint and origin private access (using signed origin pulls). For app-to-blob access, assign a system-assigned managed identity to the app and grant it Storage Blob Data Contributor on the container scope (least privilege). Disable blob public access at the account and container levels. For scale, configure autoscale rules and health checks; consider sticky sessions off if stateless. Explain that VMSS would offer more control but higher ops overhead (patching, load balancer, image management).",
+          "rubric": [
+            {
+              "criterion": "Selects App Service (not VMSS) with a clear autoscale strategy tied to relevant metrics and limits",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains secure package deployment (private endpoint + VNet integration for run-from-package, or an alternative secure deployment that avoids public storage)",
+              "marks": 2
+            },
+            {
+              "criterion": "Designs private Blob Storage with CDN origin protection; no public blob/container access",
+              "marks": 2
+            },
+            {
+              "criterion": "Assigns managed identity with correct RBAC (container-scope, least privilege) and justifies network controls (private endpoints/VNet integration)",
+              "marks": 1
+            },
+            {
+              "criterion": "Compares against VMSS and justifies trade-offs (ops overhead, control, cost)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Azure App Service",
+            "Azure Blob Storage",
+            "RBAC",
+            "Least Privilege",
+            "implement cloud security and compliance",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A nightly analytics job runs on a single VM from 01:00–05:00 UTC, ingesting 10 TB of parquet files, transforming them, and writing 2 TB of results to Blob Storage. Current issues: long write latency on temporary spill files and occasional throttling when uploading to Blob near completion. The VM’s OS disk is Standard SSD; two Premium SSD (P30) data disks are striped (RAID0) for temp and spill. Blob uploads use AzCopy with default concurrency. Storage account is Hot tier, LRS.",
+          "task": "Recommend changes to VM disk configuration, caching, and the blob upload approach to reduce spill write latency and smooth final uploads. Include any lifecycle tiering or account-level settings that help control cost for the 2 TB output that is read heavily for 7 days then rarely.",
+          "expected_answer": "Switch the temp/spill volume to Premium SSD v2 (if region supports) or larger Premium SSDs to raise throughput/IOPS, keeping RAID0. Ensure host caching is None for the spill/log-like writes (do not use ReadOnly caching). Consider a compute-optimized or storage-optimized VM SKU that matches disk throughput caps. For uploads, use AzCopy with tuned concurrency (–-concurrency-value) and –-from-to=LocalBlob, plus –-cap-mbps if hitting egress caps. Use block size adjustments (–-block-size-mb) appropriate to file sizes to minimize commits at the end. Enable network acceleration on the VM NIC. On the storage side, ensure a GPv2 account with sufficient request units; consider multiple containers/prefixes to parallelize. Add a lifecycle policy: keep results in Hot for 7 days, then move to Cool, and delete after retention (e.g., 180 days). Avoid Archive if occasional reads occur. Keep LRS unless durability/SLA needs require ZRS/GZRS, to avoid extra cost during hot week. Optionally enable change feed for audit.",
+          "rubric": [
+            {
+              "criterion": "Correctly disables inappropriate caching for write-heavy spill and proposes higher-throughput disks (Premium SSD v2 or scaled Premium SSD) with rationale",
+              "marks": 2
+            },
+            {
+              "criterion": "Tunes AzCopy (concurrency, block size, caps) and explains how it affects end-of-transfer spikes",
+              "marks": 2
+            },
+            {
+              "criterion": "Accounts for VM/network throughput limits (SKU choice, accelerated networking) and storage-side parallelism (prefix/container)",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes lifecycle tiering (Hot→Cool→Delete) aligned to access pattern and justifies redundancy choice (LRS/ZRS/GZRS)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Virtual Machines",
+            "Azure Blob Storage",
+            "Monitoring and Observability",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Your compliance team mandates WORM retention for all audit logs for 30 days, with the ability to read logs during a regional outage. Security also requires that no one can delete or overwrite audit blobs during the retention. Current state: a GPv2 account in West Europe, containers per app, no immutability set, GZRS replication.",
+          "task": "Design the storage configuration to meet requirements, including redundancy, immutability, and access patterns during an outage. Describe any operational procedures needed for failover. Call out side effects and costs.",
+          "expected_answer": "Use a dedicated container for audit logs with time-based immutability (set policy to 30 days). Lock the immutability policy after validation to prevent tampering; use allowProtectedAppendWritesAll only if append blobs are needed. Keep GZRS for resilience, but to read during primary-region outages, switch to RA-GZRS so reads are possible from the -secondary endpoint. Document that applications must be coded to read from the -secondary endpoint when primary is unavailable, and that writes are not possible to the secondary. Alternatively, plan for manual account failover (with downtime/data loss window) if writes during outage are mandatory. Ensure soft delete and versioning are on for defense-in-depth; disable public access. Recognize added cost of RA-GZRS and immutable storage, and that delete/overwrite are blocked during retention by design.",
+          "rubric": [
+            {
+              "criterion": "Configures time-based immutability correctly (duration, lock state, append behavior if needed) and disables public access",
+              "marks": 2
+            },
+            {
+              "criterion": "Selects RA-GZRS and explains read behavior via -secondary endpoint during outages (and write limitations)",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes operational procedures for regional outage (endpoint switching and/or account failover)",
+              "marks": 1
+            },
+            {
+              "criterion": "Calls out cost and behavior side effects (no deletes, retention enforcement, RA-GZRS pricing)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Blob Storage",
+            "implement cloud security and compliance",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A legacy .NET app expects a shared SMB path for user content. Two IIS servers will be lifted-and-shifted to Azure VMs. The team also wants a staging copy of the website on Azure App Service that reads the same content share. Availability target is 99.9% in-region; cross-region read is not required. Security forbids storage keys in code or Git. DNS and network are already in a hub-spoke with private endpoints allowed.",
+          "task": "Propose how to provide the SMB share and connect both the VMs and the App Service to it securely. Include redundancy choice, identity/auth method, and any limitations the team should expect. Explain backup/recovery of the share.",
+          "expected_answer": "Use Azure Files (Premium tier if IOPS/latency require) in a StorageV2 account with ZRS for in-region resiliency (99.9% target). Expose the share over SMB with a private endpoint in the spoke; disable public network access. For the VMs, mount via SMB 3.0 using either storage key or AD authentication; prefer Azure AD DS/Entra ID Kerberos for SMB to avoid keys. For App Service, use the built-in Azure Storage mounting feature with the storage account key stored in App Settings (Key Vault reference) because App Service mounting does not support Entra ID SMB auth; document this limitation. Enable Azure Files share snapshots and configure Azure Backup for file shares for recovery. Assign least-privilege RBAC to ops for storage account management and use Key Vault to reference secrets in App Service. Note that Azure Files does not support read-access geo-replication for SMB; cross-region read would require different patterns.",
+          "rubric": [
+            {
+              "criterion": "Selects Azure Files with appropriate redundancy (ZRS) and private endpoint; disables public access",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains VM mount (SMB 3.0) with identity preference (AD/Kerberos) vs key usage and justifies choice",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains App Service mount using storage key via Key Vault reference and calls out the identity limitation",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes backup/recovery (snapshots/Azure Backup for file shares) and least-privilege RBAC for management",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Azure Virtual Machines",
+            "Azure App Service",
+            "Azure Blob Storage",
+            "RBAC",
+            "Least Privilege",
+            "Backup and Recovery",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Deploy a secure, autoscaling hosted workload that reads from private Blob Storage",
+          "brief": "Build an Azure App Service (Linux) that serves a simple HTTP endpoint and reads a text file from a private Blob container at request time. The app must scale based on load and must not use storage keys or SAS in code/app settings. Use a system-assigned managed identity, RBAC on the container, and network controls so the app can reach the storage account privately.",
+          "deliverable": "Hosted workload",
+          "acceptance_criteria": [
+            "A script or template (Bicep/ARM/Terraform or az CLI) that creates: a Linux App Service plan and app, a StorageV2 account, a private endpoint for blob, and VNet integration for the app",
+            "App has a system-assigned managed identity and a role assignment of Storage Blob Data Reader (or finer) at the container scope; exported via `az role assignment list` JSON",
+            "Autoscale profile exists on the App Service plan; exported via `az monitor autoscale show` JSON including min/max and at least one metric rule",
+            "HTTP GET to the app’s public URL returns 200 and includes the contents of a blob file; provide `curl` output with a unique blob string",
+            "Storage account has public network access disabled and blob public access disabled; verified via `az storage account show` JSON",
+            "No storage keys or SAS appear in app settings; provide `az webapp config appsettings list` JSON showing only identity-based configuration"
+          ],
+          "rubric": [
+            {
+              "criterion": "IaC/automation correctly provisions App Service, Storage, networking (private endpoint + VNet integration)",
+              "marks": 5
+            },
+            {
+              "criterion": "Managed identity and least-privilege RBAC correctly set at container scope; evidence provided",
+              "marks": 4
+            },
+            {
+              "criterion": "Autoscale configured with sensible thresholds; evidence via exported autoscale JSON",
+              "marks": 4
+            },
+            {
+              "criterion": "End-to-end functional proof (curl shows blob content served by the app)",
+              "marks": 4
+            },
+            {
+              "criterion": "Security posture: storage public access disabled; no secrets/SAS in app settings",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Azure App Service",
+            "Azure Blob Storage",
+            "RBAC",
+            "Least Privilege",
+            "implement cloud security and compliance",
+            "Monitoring and Observability",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Storage lab: protection, lifecycle, and recovery on Blob Storage",
+          "brief": "Create a StorageV2 account and configure blob data protection and lifecycle. Demonstrate soft delete, versioning, immutability, and lifecycle tiering on sample blobs. Show least-privilege RBAC for a reader identity and verify denied operations when over-privileged actions are attempted.",
+          "deliverable": "Storage lab",
+          "acceptance_criteria": [
+            "`az storage account show` JSON proves: kind=StorageV2; blob soft delete enabled with a retention period; versioning enabled; public access disabled",
+            "A container with a time-based immutability policy (≥7 days); export the container’s immutability policy JSON; show an attempted delete/overwrite failure (HTTP status and error)",
+            "Lifecycle policy JSON that moves blobs from Hot→Cool after N days (e.g., 7) and deletes after a longer period; include a blob list before/after applying a manual rule evaluation (or timestamps proving eligibility)",
+            "Demonstrate versioning: upload v1 and v2 of a blob, list versions, delete the current blob, then restore the previous version; include CLI outputs (`az storage blob list --include v`) and the restored file contents",
+            "Create a user-assigned managed identity or service principal with Storage Blob Data Reader on the container; show that downloading works but upload/delete fails (HTTP status codes)",
+            "All commands/scripts used are included in a single reproducible script or README with exact CLI calls"
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct account setup and data protection features enabled (soft delete, versioning, public access off) with evidence",
+              "marks": 4
+            },
+            {
+              "criterion": "Immutability policy correctly configured and enforced; failed delete/overwrite attempt captured",
+              "marks": 5
+            },
+            {
+              "criterion": "Lifecycle policy is valid and targets the right prefix/timing; evidence of eligibility or state change provided",
+              "marks": 4
+            },
+            {
+              "criterion": "Versioning workflow demonstrated end-to-end, including restore",
+              "marks": 4
+            },
+            {
+              "criterion": "Least-privilege RBAC demonstrated with both allowed and denied operations; evidence includes status codes",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Azure Blob Storage",
+            "RBAC",
+            "Least Privilege",
+            "Backup and Recovery",
+            "implement cloud security and compliance",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-027-S03",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Subnetting",
+        "DNS",
+        "SQL",
+        "implement cloud security and compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You created a Private Endpoint for `mydb` and a Private DNS zone link only to the hub VNet.\n\n```bash\naz network private-dns link vnet list -g net-rg -z privatelink.database.windows.net -o table\n```\n\n```text\nName       RegistrationEnabled  VirtualNetwork\n---------  -------------------  ---------------------------\nlink-hub   False                /subscriptions/.../vnets/hub-vnet\n```\n\nA VM in Spoke1 uses Azure-provided DNS (168.63.129.16). What will this return on that VM?\n\n```bash\nnslookup mydb.database.windows.net\n```",
+          "options": [
+            "```text\nNon-authoritative answer:\nName:    mydb.database.windows.net\nAddress: 20.45.12.8\n```",
+            "```text\n** server can't find mydb.database.windows.net: NXDOMAIN\n```",
+            "```text\nNon-authoritative answer:\nmydb.database.windows.net   canonical name = mydb.privatelink.database.windows.net\nName:    mydb.privatelink.database.windows.net\nAddress: 10.20.4.5\n```",
+            "```text\nDNS request timed out.\n    timeout was 2 seconds.\n*** Can't find server name for address 168.63.129.16: Timed out\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "Private DNS zones only affect VNets linked to the zone. Spoke1 is not linked, so resolution falls back to public DNS and returns the public IP for the Azure SQL gateway.",
+          "distractor_rationale": "B is tempting because a Private Endpoint exists, but without a VNet link the VM cannot see the private zone and thus won’t resolve to the private IP. C might seem plausible if you think private endpoints hide public DNS, but the public name always exists. D suggests transient DNS issues; not the deterministic outcome of missing VNet link.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "DNS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A subnet hosts an app VM. A Private Endpoint for `mydb` exists and the Private DNS zone is linked to that subnet. The subnet's NSG outbound rules are:\n\n```json\n[\n  {\n    \"name\": \"Allow-Sql-ServiceTag\",\n    \"priority\": 100,\n    \"direction\": \"Outbound\",\n    \"access\": \"Allow\",\n    \"protocol\": \"Tcp\",\n    \"sourcePortRange\": \"*\",\n    \"destinationPortRange\": \"1433\",\n    \"sourceAddressPrefix\": \"*\",\n    \"destinationAddressPrefix\": \"Sql\"\n  },\n  {\n    \"name\": \"Deny-All-Out\",\n    \"priority\": 200,\n    \"direction\": \"Outbound\",\n    \"access\": \"Deny\",\n    \"protocol\": \"*\",\n    \"sourcePortRange\": \"*\",\n    \"destinationPortRange\": \"*\",\n    \"sourceAddressPrefix\": \"*\",\n    \"destinationAddressPrefix\": \"*\"\n  }\n]\n```\n\nThe app connects using `mydb.database.windows.net`. What happens?",
+          "options": [
+            "Connection succeeds only if an additional Allow rule for `VirtualNetwork` is added, but public endpoint traffic would then be blocked.",
+            "Connection fails because the destination is the Private Endpoint’s 10.x IP, which doesn’t match the `Sql` service tag, and the deny-all blocks it.",
+            "Connection succeeds because the `Sql` service tag always includes Private Endpoint addresses.",
+            "Connection succeeds if the app uses port 443 instead of 1433."
+          ],
+          "correct_option": "B",
+          "explanation": "With a Private Endpoint and private DNS, the destination is the PE’s private IP. NSG service tag `Sql` matches public Azure SQL addresses, not a 10.x address. The deny-all then blocks traffic. Allow the specific PE IP (or `VirtualNetwork` with appropriate scoping) to enable it.",
+          "distractor_rationale": "B confuses public service-tag matching with private IP endpoints. C mistakes port usage; SQL uses 1433 and PE doesn’t change that. D mixes a partial truth (allowing VNet or the PE IP would help) with an incorrect claim about blocking public traffic specifically by that rule; policy outcome depends on other rules, not inherently on allowing VNet.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "DNS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A VM in Spoke1 has this route table associated:\n\n```text\nRoute table: app-rt\n- 0.0.0.0/0     -> 10.0.0.4 (VirtualAppliance)\n- 10.0.0.0/8    -> 10.0.0.4 (VirtualAppliance)\n```\n\nA Private Endpoint for Azure SQL has IP 10.20.4.5. Effective routes on the VM show:\n\n```text\nAddress Prefix    Next Hop Type\n10.20.4.5/32      InterfaceEndpoint\n```\n\nWhat path will packets to 10.20.4.5 take and what is the outcome?",
+          "options": [
+            "Packets follow the UDR to 10.0.0.4; connection fails unless the NVA hairpins Private Link traffic.",
+            "Packets follow the InterfaceEndpoint /32 route, bypass the NVA, and the connection succeeds.",
+            "Traffic is SNATed to the VM’s public IP before reaching the Private Endpoint.",
+            "Packets are dropped because user-defined routes override system routes."
+          ],
+          "correct_option": "B",
+          "explanation": "Azure applies longest-prefix routing. The injected /32 InterfaceEndpoint route for the Private Endpoint is more specific than 10.0.0.0/8 or 0.0.0.0/0, so traffic goes directly to the Private Endpoint and succeeds.",
+          "distractor_rationale": "A reflects a common assumption that UDRs always win; they don’t when a more-specific route exists. C misstates precedence; UDRs don’t override a longer-prefix system route. D confuses Private Endpoint (private RFC1918 path, no SNAT) with public endpoint egress.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "You run this on a PaaS database:\n\n```sql\nEXEC msdb.dbo.sp_add_job @job_name = N'NightlyIndexRebuild';\n```\n\nWhat actually happens?",
+          "options": [
+            "It fails everywhere in Azure because `msdb` is blocked on all managed offerings.",
+            "It executes successfully only on Azure SQL Managed Instance, not on Azure SQL Database.",
+            "It succeeds on Azure SQL Database if you enable Elastic Jobs on the server.",
+            "It executes on Azure SQL Database if both databases are in the same logical server."
+          ],
+          "correct_option": "B",
+          "explanation": "Azure SQL Database does not expose `msdb` or SQL Server Agent. Azure SQL Managed Instance supports SQL Agent and `msdb`, so the call works there.",
+          "distractor_rationale": "B confuses logical server scoping with feature availability; `msdb` and Agent are still unavailable on Azure SQL Database. C overgeneralizes; Managed Instance does support `msdb`. D mixes Elastic Jobs (a different service) with in-engine SQL Agent procedures; Elastic Jobs do not make `msdb` or `sp_add_job` work in Azure SQL Database.",
+          "skills_covered": [
+            "SQL",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Your Private DNS zone links:\n\n```bash\naz network private-dns link vnet list -g net-rg -z privatelink.database.windows.net -o table\n```\n\n```text\nName         RegistrationEnabled  VirtualNetwork\n-----------  -------------------  ---------------------------\nlink-hub     False                .../vnets/hub-vnet\nlink-spoke1  False                .../vnets/spoke1-vnet\n```\n\nNo link exists for Spoke2. From a VM in Spoke2 using Azure-provided DNS, what destination will a connection to `mydb.database.windows.net` target?",
+          "options": [
+            "The Private Endpoint IP (10.20.4.5).",
+            "No resolution (NXDOMAIN).",
+            "The public Azure SQL gateway IP (20.x.x.x).",
+            "An arbitrary VNet-local IP chosen by Azure."
+          ],
+          "correct_option": "C",
+          "explanation": "Without a VNet link to the private zone, Spoke2 resolves the public name to the public Azure SQL gateway address.",
+          "distractor_rationale": "B would require the VNet link to the private zone. C misunderstands: the public record always exists. D is invented; Azure DNS doesn’t synthesize arbitrary VNet-local IPs for public names.",
+          "skills_covered": [
+            "DNS",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Subnet `spoke1-app` has a Service Endpoint enabled for `Microsoft.Sql`:\n\n```bash\naz network vnet subnet show -g net-rg --vnet-name spoke1-vnet -n app --query \"serviceEndpoints\"\n```\n\n```json\n[\n  { \"service\": \"Microsoft.Sql\", \"locations\": [\"westeurope\"] }\n]\n```\n\nIts NSG outbound rules are:\n\n```json\n[\n  {\n    \"name\": \"Allow-Storage\",\n    \"priority\": 100,\n    \"direction\": \"Outbound\",\n    \"access\": \"Allow\",\n    \"protocol\": \"Tcp\",\n    \"destinationAddressPrefix\": \"Storage\",\n    \"destinationPortRange\": \"443\"\n  },\n  { \"name\": \"Deny-All-Out\", \"priority\": 200, \"direction\": \"Outbound\", \"access\": \"Deny\", \"protocol\": \"*\",\n    \"destinationAddressPrefix\": \"*\", \"destinationPortRange\": \"*\" }\n]\n```\n\nThe app connects to Azure SQL using the public FQDN. What happens?",
+          "options": [
+            "Succeeds if the driver switches to port 443 automatically for Azure SQL.",
+            "Blocked only if PublicNetworkAccess is disabled on the server; otherwise Service Endpoints ignore NSGs.",
+            "Blocked by NSG; allowing `Microsoft.Sql` in the NSG is required even with a Service Endpoint.",
+            "Succeeds because Service Endpoints bypass NSGs on the subnet."
+          ],
+          "correct_option": "C",
+          "explanation": "Service Endpoints don’t bypass NSGs. You must allow traffic to the `Sql` service tag (or specific SQL endpoints) in the NSG. Allowing only `Storage` doesn’t help SQL.",
+          "distractor_rationale": "B is a common misconception; NSGs still apply. C confuses ports; Azure SQL uses 1433. D mixes server-level firewall/public access with NSG behavior; NSGs still block regardless of server setting.",
+          "skills_covered": [
+            "implement cloud security and compliance",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "From a VM in the VNet, you attempt to connect directly to a Private Endpoint IP:\n\n```bash\nsqlcmd -S 10.20.4.5 -N -C -U appuser -P \"P@ssw0rd!\"\n```\n\nWhat is the likely result?",
+          "options": [
+            "TLS handshake fails due to certificate name mismatch when connecting by IP.",
+            "Connection succeeds because Private Endpoints don’t validate certificates.",
+            "Connection succeeds only if inbound 1433 is opened on the VM’s NSG.",
+            "Connection fails because Azure SQL blocks connections to private IPs directly."
+          ],
+          "correct_option": "A",
+          "explanation": "Azure SQL requires TLS with a certificate for `*.database.windows.net`. Connecting by IP doesn’t match the certificate’s subject/host, causing validation failure unless trusting the certificate explicitly or using the FQDN.",
+          "distractor_rationale": "B is false; Private Endpoints still require TLS validation. C is incorrect; Azure SQL via Private Endpoint is reachable at a private IP, but you should use the FQDN so TLS validation passes. D is irrelevant; NSGs on the client don’t need inbound 1433 for an outbound connection (NSGs are stateful).",
+          "skills_covered": [
+            "SQL",
+            "implement cloud security and compliance",
+            "DNS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Server settings and firewall:\n\n```json\n{\n  \"name\": \"acme-sql\",\n  \"publicNetworkAccess\": \"Disabled\",\n  \"minimalTlsVersion\": \"1.2\"\n}\n```\n\n```text\nFirewall rules:\nRule: Allow-Office-IP  StartIP:203.0.113.10  EndIP:203.0.113.10\n```\n\nFrom 203.0.113.10, a client attempts to connect to `acme-sql.database.windows.net`. What happens?",
+          "options": [
+            "Connection is rejected because Public Network Access is disabled, regardless of firewall rules.",
+            "Connection succeeds only if the client uses TLS 1.2.",
+            "Connection succeeds due to the explicit firewall allow.",
+            "Connection intermittently succeeds because DNS can resolve to private or public endpoints."
+          ],
+          "correct_option": "A",
+          "explanation": "Disabling Public Network Access blocks all public endpoint traffic. Firewall rules are ignored in that state; use Private Endpoints or allow public access.",
+          "distractor_rationale": "B overestimates firewall precedence. C is a red herring; TLS version doesn’t override Public Network Access. D invents DNS flapping between private and public without a private link and DNS plan on that client.",
+          "skills_covered": [
+            "implement cloud security and compliance",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "A VMSS in Spoke1 opens thousands of concurrent connections to Azure SQL public endpoint. NAT Gateway metrics show:\n\n```text\nSNAT Utilization: 1024/1024 per public IP\nDropped Connections to 20.54.1.10: increasing\n```\n\nWhat change eliminates SNAT port pressure for SQL connections from that subnet?",
+          "options": [
+            "Enable Service Endpoints for Microsoft.Sql on the subnet to bypass SNAT.",
+            "Scale up the VM instances; more vCPUs increase available SNAT ports per instance.",
+            "Attach a second NAT Gateway to the same subnet to double SNAT capacity.",
+            "Create a Private Endpoint for the database and use the FQDN so it resolves to the private IP."
+          ],
+          "correct_option": "D",
+          "explanation": "Private Endpoint keeps traffic on RFC1918 within the VNet and avoids SNAT entirely. Other options don’t remove NAT involvement (and you can’t attach two NAT Gateways to one subnet).",
+          "distractor_rationale": "B isn’t supported; one NAT Gateway per subnet. C doesn’t change SNAT limits of the NAT Gateway. D still uses public Azure service IPs, so SNAT is still consumed.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "DNS"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You enabled a Service Endpoint for `Microsoft.Sql` on subnet `spoke1-app`. A UDR on that subnet forces all traffic to an NVA:\n\n```text\n0.0.0.0/0  -> 10.0.0.4 (VirtualAppliance)\n```\n\nNo exception routes exist. The NVA is not configured to egress to Azure SQL. What happens when the app attempts to connect to `mydb.database.windows.net`?",
+          "options": [
+            "Service Endpoint overrides the UDR for SQL traffic so it reaches Azure SQL directly.",
+            "The connection diverts to the Private Endpoint automatically if one exists in any peered VNet.",
+            "DNS resolution fails because Service Endpoints require private DNS zones.",
+            "Traffic still follows the UDR to the NVA and is likely blocked there; Service Endpoints do not override your routes."
+          ],
+          "correct_option": "D",
+          "explanation": "Service Endpoints don’t change routing; UDRs still apply. With forced tunneling to an NVA that doesn’t forward to Azure SQL, the connection will fail. Use Private Endpoints or add specific route exceptions.",
+          "distractor_rationale": "B is a common misconception; endpoints don’t rewrite routes. C confuses Service Endpoints with Private Endpoints; there is no automatic diversion across VNets. D mixes DNS with Service Endpoints; they work with public DNS and don’t require private zones.",
+          "skills_covered": [
+            "Microsoft Azure",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are designing connectivity for a payments API in Spoke1 that must reach Azure SQL in the same region. Constraints and artefacts:\n\n- Forced tunneling: subnet `spoke1-app` has `0.0.0.0/0 -> Azure Firewall` UDR.\n- Outbound policy: NSG on `spoke1-app` denies all outbound except explicit allows.\n- Compliance: no public egress may be required for database access.\n- Current trial config:\n\n```text\nTrial A: Service Endpoint (Microsoft.Sql) enabled on subnet, no DNS changes.\nTrial B: Private Endpoint for DB in hub `pe-sql` (10.20.4.5); Private DNS zone exists but only linked to hub.\n```\n\nInitial tests: Trial A fails when the firewall denies unknown egress; Trial B fails from Spoke1 because `nslookup mydb.database.windows.net` resolves to public IP on the VM.",
+          "task": "Choose one design, list the exact control-plane changes to make it work end-to-end under the stated constraints, and justify why the alternative fails here. Include NSG and route considerations, and the DNS changes needed. Be specific about resources, names, rules, and why packets take the path you say.",
+          "expected_answer": "Select Trial B (Private Endpoint). Changes: link the Private DNS zone `privatelink.database.windows.net` to Spoke1 VNet; ensure NSG on `spoke1-app` allows outbound TCP 1433 to 10.20.4.5 (PE IP) or to `VirtualNetwork` with higher priority than the deny-all; keep the 0.0.0.0/0 UDR as-is because the injected /32 InterfaceEndpoint route for 10.20.4.5 will win by longest-prefix match, so traffic bypasses the firewall. Disable Public Network Access on the SQL server to enforce private-only access. Justification: Service Endpoints do not override UDRs; with forced tunneling the SQL traffic still routes to the firewall/NVA and is denied, and even if allowed, you still consume SNAT and have broader exposure. Private Endpoint gives RFC1918 path, no SNAT, and meets \"no public egress required\". Provide the exact NSG rule entries and show a test plan: `nslookup` returns 10.20.4.5, `Test-NetConnection -Port 1433` succeeds, and SQL connection works.",
+          "rubric": [
+            {
+              "criterion": "Chooses Private Endpoint and correctly rejects Service Endpoint under forced tunneling, with justification tied to route precedence and endpoint behavior",
+              "marks": 3
+            },
+            {
+              "criterion": "Specifies DNS changes precisely (link zone to Spoke1; verify FQDN -> 10.x) and test steps (`nslookup`/`Resolve-DnsName`)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specifies NSG rules that allow PE traffic yet keep deny-all posture (ports, scope, priority)",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains routing outcome (InterfaceEndpoint /32 wins over 0/0 UDR) and mentions disabling Public Network Access on server",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "DNS",
+            "implement cloud security and compliance",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A vendor app being migrated requires:\n\n- SQL Server Agent jobs and `msdb` use\n- cross-database transactions\n- no public Internet exposure for database\n- minimal ops overhead (PaaS preferred)\n\nNetworking: hub-spoke VNets with ExpressRoute to on-prem; NSGs enforce deny-by-default. You can dedicate a subnet if needed.",
+          "task": "Recommend the managed database platform and the network access pattern that satisfies all requirements. Identify one non-obvious limitation you must plan for, and state exactly what subnet/NSG/route resources are required to land it securely.",
+          "expected_answer": "Choose Azure SQL Managed Instance (MI). It provides SQL Agent/`msdb` and cross-database transactions with near full SQL Server compatibility, while remaining PaaS. Access pattern: private VNet-only endpoints; no public exposure. Land MI in a dedicated delegated subnet that meets MI requirements; attach an NSG allowing required management and data ports from trusted sources only; keep deny-by-default otherwise. No need for Private Endpoint to reach MI (it is already VNet-native), but use Private DNS (or custom DNS) entries for MI hostnames if needed. Ensure UDRs don’t blackhole MI management traffic; if forced tunneling is used, add route exceptions per Microsoft guidance for MI management endpoints. Non-obvious limitation: MI subnet size and address stability requirements (e.g., minimum /27 and no overlapping or frequent route table/NVA changes can disrupt management).",
+          "rubric": [
+            {
+              "criterion": "Correctly selects Azure SQL Managed Instance and justifies against Azure SQL Database and IaaS VMs in terms of required features and ops overhead",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes VNet/subnet landing pattern (dedicated subnet, delegation/requirements) and NSG posture with specific ports or source scopes",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains routing considerations (forced tunneling exceptions for MI management) and why PE is not needed for MI",
+              "marks": 2
+            },
+            {
+              "criterion": "Names a real MI limitation to plan for (e.g., subnet sizing, management traffic needs)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "Microsoft Azure",
+            "implement cloud security and compliance",
+            "Subnetting"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 3,
+          "scenario": "An Azure App Service (Linux) integrates with VNet Spoke1 via Regional VNet Integration (subnet `spoke1-appsvc-int`). The Azure SQL Private Endpoint for `mydb` is in the hub VNet. Peering exists (hub <-> spoke1). The Private DNS zone for `privatelink.database.windows.net` is linked only to the hub VNet.\n\nFrom the App Service Kudu console:\n\n```bash\nnslookup mydb.database.windows.net\n```\n\n```text\nName:    mydb.database.windows.net\nAddress: 20.45.12.8\n```\n\nOutbound NSG on `spoke1-appsvc-int` allows 0.0.0.0/0 temporarily for testing, but connections still prefer public IP.",
+          "task": "Propose the smallest-change fix to make the App Service resolve and connect via the Private Endpoint. Explain why your change works and how you would validate it without widening NSG rules further.",
+          "expected_answer": "Link the Private DNS zone to the Spoke1 VNet (the integration subnet’s VNet) so that resolution in the App Service context returns the `privatelink` CNAME and the PE’s private A record. Keep peering as-is; no route changes are needed because Private Endpoint connectivity uses the VNet and peering. Validate with `nslookup` from Kudu showing the `privatelink` chain and a 10.x result and then connect via `sqlcmd`/app retry. After validation, tighten NSG to allow only 1433 to the PE IP or to `VirtualNetwork` with appropriate priorities.",
+          "rubric": [
+            {
+              "criterion": "Identifies DNS scope as the issue and proposes linking the private zone to the Spoke1 VNet as the minimal fix",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why routing is already sufficient via peering and no UDR tweaks are required",
+              "marks": 1
+            },
+            {
+              "criterion": "Outlines clear validation steps (`nslookup` shows privatelink; connection succeeds)",
+              "marks": 2
+            },
+            {
+              "criterion": "Closes the loop on NSG hardening post-fix (specific allow to PE IP/VirtualNetwork and removing broad 0.0.0.0/0)",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "Public network access is disabled on your Azure SQL server. On-prem clients must connect over ExpressRoute. Current symptoms:\n\n- On-prem `nslookup mydb.database.windows.net` returns a public IP.\n- Connection attempts time out.\n- ExpressRoute private peering to the hub VNet is up; there is no VPN.\n- A Private Endpoint for the DB exists in the hub VNet (10.20.4.5).",
+          "task": "Design a DNS plan that makes on-prem clients resolve to the Private Endpoint without changing the clients’ local resolver settings individually. Include concrete records, resolvers, and links, and the steps to verify resolution end-to-end.",
+          "expected_answer": "Deploy Azure DNS Private Resolver in the hub with an inbound endpoint (two IPs in a dedicated subnet). Configure the on-prem DNS servers with a conditional forwarder for `privatelink.database.windows.net` pointing to the resolver inbound endpoint IPs over ExpressRoute. Ensure the Private DNS zone `privatelink.database.windows.net` exists with the `mydb` A record (10.20.4.5) and is already linked to the hub VNet. Validation: from on-prem DNS server, `nslookup mydb.database.windows.net <resolver-inbound-IP>` returns 10.20.4.5; from an on-prem client, plain `nslookup` returns 10.20.4.5. Then connect using the FQDN and confirm success. No per-client changes needed; the forwarder change is centralized.",
+          "rubric": [
+            {
+              "criterion": "Proposes a concrete, centralized DNS forwarding solution (Azure DNS Private Resolver inbound endpoint) and correct forwarder configuration on on-prem DNS",
+              "marks": 3
+            },
+            {
+              "criterion": "Ensures the private zone and A record are present and properly linked to the hub VNet",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes end-to-end verification steps from on-prem resolver and client",
+              "marks": 1
+            },
+            {
+              "criterion": "Aligns with the constraint that public network is disabled and avoids public paths",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "DNS",
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Design a hub-spoke network for private Azure SQL access",
+          "brief": "Produce a complete network design that enables Spoke app subnets to access Azure SQL privately while maintaining deny-by-default egress. Include addressing, subnets, NSGs, UDRs, peering, and DNS for Private Endpoints. Assume: one hub VNet (10.20.0.0/16), two spokes (10.10.0.0/16 and 10.11.0.0/16), ExpressRoute to on-prem, Azure Firewall in the hub. Choose Service Endpoint or Private Endpoint and design accordingly.",
+          "deliverable": "Network design",
+          "acceptance_criteria": [
+            "IP addressing plan lists all VNets and subnets with CIDRs, including a dedicated Private Endpoint subnet and any resolver subnets if used",
+            "NSG definitions per subnet include explicit rule tables with name, priority, direction, protocol, source/destination, and rationale; deny-by-default posture is evident",
+            "UDR definitions per subnet list prefixes and next hops, and explain how Private Endpoint traffic is routed (include why a /32 InterfaceEndpoint route wins, if applicable)",
+            "DNS plan shows zones, records, and VNet links; if using Azure DNS Private Resolver, include inbound/outbound endpoints and forwarding rulesets",
+            "Clear traffic flow diagrams or sequence explanations for app-to-DB, on-prem-to-DB, and Internet egress (if any)",
+            "Security hardening choices are called out (e.g., Public Network Access disabled, minimal open ports), with justification tied to requirements"
+          ],
+          "rubric": [
+            {
+              "criterion": "Addressing and subnet design completeness and correctness (no overlaps; appropriate PE/resolver subnets)",
+              "marks": 4
+            },
+            {
+              "criterion": "NSG policy correctness and least-privilege implementation, with accurate rule specifics",
+              "marks": 5
+            },
+            {
+              "criterion": "Routing correctness including UDR specifics and explanation of Private Endpoint path selection",
+              "marks": 4
+            },
+            {
+              "criterion": "DNS plan correctness (zones, links, records, resolvers/forwarders as applicable) and how it enables private resolution from all required networks",
+              "marks": 5
+            },
+            {
+              "criterion": "Clarity of traffic flows and security justifications aligned to requirements",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Microsoft Azure",
+            "Subnetting",
+            "DNS",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Azure SQL private connectivity lab",
+          "brief": "Stand up an Azure SQL Database and prove private-only connectivity from a VM in a spoke VNet. Do not expose the database publicly at any point.",
+          "deliverable": "Database lab",
+          "acceptance_criteria": [
+            "Includes commands used to provision: resource group, logical server, database, Private Endpoint in a chosen subnet, and Private DNS zone with VNet link(s) (Azure CLI/PowerShell/ARM/Bicep all acceptable)",
+            "Shows server property `publicNetworkAccess` set to `Disabled` (command output or portal export)",
+            "Demonstrates DNS resolution from the test VM: `nslookup mydb.database.windows.net` returns the Private Endpoint IP and shows the privatelink CNAME chain",
+            "Proves connectivity from the VM using FQDN with TLS (e.g., `sqlcmd` output of `SELECT @@SERVERNAME, @@VERSION`) and a simple DDL/DML script with results",
+            "Shows that connecting by IP with TLS validation fails (certificate mismatch) or succeeds only when explicitly bypassing trust, with the exact command/output",
+            "Documents at least one failed connection attempt from outside the VNet (e.g., local machine) while public access is disabled, including error/output"
+          ],
+          "rubric": [
+            {
+              "criterion": "Provisioning correctness and reproducibility (resources created with auditable commands/templates)",
+              "marks": 4
+            },
+            {
+              "criterion": "Private-only enforcement (evidence of Public Network Access disabled and no public firewall dependencies)",
+              "marks": 4
+            },
+            {
+              "criterion": "DNS evidence (privatelink CNAME and private A record resolution from the VM)",
+              "marks": 4
+            },
+            {
+              "criterion": "Successful SQL connectivity over private path with query evidence and secure TLS usage via FQDN",
+              "marks": 4
+            },
+            {
+              "criterion": "Negative test evidence (IP-based TLS failure or external client failure) and clear explanation",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "SQL",
+            "DNS",
+            "Microsoft Azure",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            6,
+            5
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-027-S04",
+      "skills_assessed": [
+        "Microsoft Azure",
+        "Backup and Recovery",
+        "manage disaster recovery plans",
+        "Monitoring and Observability",
+        "implement cloud security and compliance",
+        "RBAC",
+        "Least Privilege"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You investigate why a VM isn't appearing in the Heartbeat table. The VM shows live CPU in Metrics and \"Agent connected\" in VM Insights. Its Data Collection Rule (DCR) is:\n```json\n{\n  \"properties\": {\n    \"dataSources\": {\n      \"performanceCounters\": [\n        {\"streams\": [\"Microsoft-Perf\"], \"samplingFrequencyInSeconds\": 15}\n      ],\n      \"windowsEventLogs\": [],\n      \"syslog\": []\n    },\n    \"destinations\": {\"logAnalytics\": [{\"workspaceResourceId\": \"/subscriptions/xxx/resourceGroups/ops-rg/providers/Microsoft.OperationalInsights/workspaces/prod-law\",\"name\": \"law1\"}]},\n    \"dataFlows\": [\n      {\"streams\": [\"Microsoft-Perf\",\"Microsoft-InsightsMetrics\"], \"destinations\": [\"law1\"]}\n    ]\n  }\n}\n```\nThe following KQL returns no rows:\n```text\nHeartbeat\n| where Computer == \"vm-prod-01\"\n| where TimeGenerated > ago(1h)\n```\nWhat explains the empty Heartbeat table, and what fixes it?",
+          "options": [
+            "The Azure Monitor agent isn't sending Heartbeat because it's superseded by Metrics; switch to legacy MMA to restore Heartbeat.",
+            "The VM isn't linked to the workspace; re-onboard the VM to the correct Log Analytics workspace.",
+            "The Log Analytics workspace retention is too short; increase workspace retention to at least 30 days.",
+            "The DCR doesn't route the Heartbeat stream; add the \"Microsoft-Heartbeat\" stream to the DCR's dataFlows and publish it."
+          ],
+          "correct_option": "D",
+          "explanation": "The DCR routes Performance and InsightsMetrics streams but not Heartbeat. Azure Monitor agent emits Heartbeat only if the DCR includes the Microsoft-Heartbeat stream. Adding that stream and applying the DCR will populate Heartbeat for the VM.",
+          "distractor_rationale": "A: Retention affects historical data, not live ingestion. The query is for the last hour. B: AMA does support Heartbeat; it's controlled by DCR streams. D: VM Insights shows the workspace link is fine; missing is the specific Heartbeat stream routing.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "A VM backup job finished with the following report:\n```text\nJob Type: Azure VM Backup\nVM: sql-prod-01\nApp-consistent snapshot: Failed (VSS Writer SQLServerWriter timed out)\nCrash-consistent snapshot: Completed\nRestore point: 2026-06-18T02:00:12Z (Crash-consistent)\n```\nYou restore to a new VM and start SQL Server. Which outcome should you expect, and why?",
+          "options": [
+            "SQL Agent jobs and system databases are restored but user databases are skipped because the snapshot wasn't app-consistent.",
+            "The restore will succeed; SQL will roll back/forward to the last checkpoint, yielding a transactionally consistent database as of that checkpoint but potentially losing the most recent in-flight transactions.",
+            "The restore will fail because Azure Backup requires an app-consistent snapshot for any database workload.",
+            "The database will have torn pages requiring forced recovery and manual DBCC; crash-consistent snapshots are unusable for SQL Server."
+          ],
+          "correct_option": "B",
+          "explanation": "Crash-consistent VM backups capture a file-system–consistent point. On startup, SQL Server recovery replays/rolls back to the last checkpoint, resulting in a consistent state as of that checkpoint. You may lose data since the most recent checkpoint, but the restore doesn't inherently fail.",
+          "distractor_rationale": "B: App-consistency is preferred but not required; crash-consistent restores are supported. C: Torn pages are not expected as a rule; SQL recovery protects against this in most cases. D: VM-level backup doesn't selectively skip user DB files based on VSS outcome; it captured the disks.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "Your Recovery Services vault shows these settings:\n```json\n{\n  \"name\": \"rvault-eastus\",\n  \"location\": \"eastus\",\n  \"properties\": {\n    \"storageModelType\": \"LocallyRedundant\",\n    \"crossRegionRestoreFlag\": \"Disabled\"\n  }\n}\n```\nYou attempt a cross-region restore to the paired region and receive \"FeatureNotEnabledForVault\". What is the minimum change required to enable cross-region restore for VM backups?",
+          "options": [
+            "Create a new vault in the paired region and copy existing backup items into it.",
+            "Enable Cross Region Restore on the vault and switch storageModelType to GeoRedundant.",
+            "Enable ZoneRedundant storage and leave Cross Region Restore disabled.",
+            "Move the existing vault to the paired region, then restore from there."
+          ],
+          "correct_option": "B",
+          "explanation": "Cross-region restore requires vault storage redundancy to be GRS and the CRR feature enabled. LRS cannot restore to the paired region.",
+          "distractor_rationale": "B: ZRS doesn't support cross-region restore. C: You cannot move a Recovery Services vault across regions. D: You cannot copy backup items between vaults; restore requires GRS with CRR.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "An Azure Site Recovery failover plan is configured as follows:\n```json\n{\n  \"failoverType\": \"Unplanned\",\n  \"groups\": [\n    {\n      \"name\": \"DB-and-Infra\",\n      \"machines\": [\"dc-01\", \"sql-01\"],\n      \"startGroupActions\": [\n        {\"type\": \"ManualAction\", \"name\": \"Bring up shared storage\"}\n      ],\n      \"replicationGroup\": \"cg-prod-sql\"\n    },\n    {\n      \"name\": \"App-Tier\",\n      \"machines\": [\"app-01\", \"app-02\"],\n      \"replicationGroup\": null\n    }\n  ]\n}\n```\nDuring an unplanned failover, which behavior is correct?",
+          "options": [
+            "The manual action executes automatically during unplanned failover to speed up recovery.",
+            "All machines start simultaneously because unplanned failovers ignore group order.",
+            "dc-01 and sql-01 start first; ASR waits for the DB-and-Infra group to complete before starting app-01 and app-02.",
+            "app-01 and app-02 are included in the same multi-VM consistency snapshot as sql-01 due to the replicationGroup setting."
+          ],
+          "correct_option": "C",
+          "explanation": "Failover plan groups are executed sequentially. Group-level manual actions require operator confirmation; they don't auto-run. Only sql-01 is in a multi-VM consistency group (with others in that group), not the app VMs.",
+          "distractor_rationale": "B: Manual actions are prompts; they don't run themselves. C: Group order is honored in unplanned failover. D: Only VMs in the same replicationGroup share a crash-consistent snapshot; app VMs aren't included.",
+          "skills_covered": [
+            "manage disaster recovery plans",
+            "Backup and Recovery"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "An Alert Processing Rule is deployed to suppress low-severity noise overnight:\n```json\n{\n  \"name\": \"suppress-low-sev-nightly\",\n  \"properties\": {\n    \"enabled\": true,\n    \"scopes\": [\"/subscriptions/1111-2222-3333-4444/resourceGroups/prod-rg\"],\n    \"conditions\": {\"severities\": [\"Sev3\", \"Sev4\"]},\n    \"schedule\": {\n      \"recurrence\": \"Daily\",\n      \"startDate\": \"2026-01-01\",\n      \"startTime\": \"01:00:00\",\n      \"endTime\": \"03:00:00\",\n      \"timeZone\": \"UTC\"\n    }\n  }\n}\n```\nAn alert with severity Sev3 fires at 02:10 UTC in prod-rg. What happens?",
+          "options": [
+            "It is suppressed by the processing rule; no action groups fire and the alert is marked as suppressed.",
+            "It is not suppressed because Alert Processing Rules don't apply to Sev3; only Sev4 is suppressed.",
+            "It is suppressed only if the alert rule was created after the processing rule; older rules are unaffected.",
+            "It fires action groups but is hidden in the Alerts blade until 03:00 UTC."
+          ],
+          "correct_option": "A",
+          "explanation": "The rule targets Sev3 and Sev4 within the specified time window at the resource group scope. The alert is suppressed and action groups do not execute.",
+          "distractor_rationale": "B: Suppression blocks notifications; the alert still appears with a suppressed state, not hidden until a time. C: Processing rules apply regardless of alert rule creation time. D: The rule explicitly includes Sev3.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "A policy assignment enforces VM backup using deployIfNotExists:\n```json\n{\n  \"policyRule\": {\n    \"if\": {\n      \"allOf\": [\n        {\"field\": \"type\", \"equals\": \"Microsoft.Compute/virtualMachines\"}\n      ]\n    },\n    \"then\": {\n      \"effect\": \"deployIfNotExists\",\n      \"details\": {\n        \"type\": \"Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems\",\n        \"existenceCondition\": {\n          \"field\": \"Microsoft.RecoveryServices/vaults/backup.../policyName\",\n          \"equals\": \"DailyPolicy\"\n        },\n        \"roleDefinitionIds\": [\n          \"/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c\"  \n        ]\n      }\n    }\n  }\n}\n```\nAfter assigning the policy at the subscription, what happens to VMs that existed before the assignment?",
+          "options": [
+            "They are marked non-compliant; backup isn't enabled until a remediation task runs with a managed identity to deploy the fix.",
+            "They are immediately protected by backup; deployIfNotExists auto-deploys on existing resources without extra steps.",
+            "They are denied start/stop operations until backup is enabled because the policy blocks the control plane for non-compliant VMs.",
+            "They are ignored; deployIfNotExists only applies to resources created after the assignment time."
+          ],
+          "correct_option": "A",
+          "explanation": "deployIfNotExists evaluates compliance but requires a remediation task to perform the deployment on already-existing resources. Without remediation, they remain non-compliant and unprotected.",
+          "distractor_rationale": "A: No auto-deployment occurs on existing resources without remediation. C: Policy evaluates both existing and new resources. D: There's no deny effect here; start/stop isn't blocked by deployIfNotExists.",
+          "skills_covered": [
+            "implement cloud security and compliance",
+            "Backup and Recovery",
+            "RBAC"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You run this KQL to detect storage latency issues:\n```text\nPerf\n| where ObjectName == \"LogicalDisk\" and CounterName == \"Avg. Disk sec/Write\"\n| where InstanceName !in (\"_Total\", \"HarddiskVolumeShadowCopy*\")\n| summarize p95 = percentile(CounterValue, 95) by Computer, bin(TimeGenerated, 15m)\n| where p95 > 0.02\n```\nWhich statement best describes what it flags?",
+          "options": [
+            "15-minute windows where the 95th percentile write latency exceeded 20 ms on any logical disk per computer.",
+            "5-minute windows where the 95th percentile read latency exceeded 20 ms on all disks.",
+            "15-minute windows where the average write throughput exceeded 20 MB/s on any disk.",
+            "Any single sample exceeding 20 ms latency, regardless of windowing."
+          ],
+          "correct_option": "A",
+          "explanation": "CounterName is Avg. Disk sec/Write (write latency). The query bins data into 15-minute windows and filters where the 95th percentile exceeds 0.02 seconds (20 ms).",
+          "distractor_rationale": "B: It's latency in seconds, not throughput. C: It's write latency, not read, and the bin is 15 minutes. D: The filter is on the 95th percentile over the window, not single samples.",
+          "skills_covered": [
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "A resource has two Diagnostic Settings both sending the same category to the same workspace:\n```json\n[\n  {\n    \"name\": \"diag-01\",\n    \"properties\": {\n      \"logs\": [{\"category\": \"VMGuestMetrics\", \"enabled\": true}],\n      \"workspaceId\": \"/subscriptions/xxx/resourceGroups/ops-rg/providers/Microsoft.OperationalInsights/workspaces/law-prod\"\n    }\n  },\n  {\n    \"name\": \"diag-02\",\n    \"properties\": {\n      \"logs\": [{\"category\": \"VMGuestMetrics\", \"enabled\": true}],\n      \"workspaceId\": \"/subscriptions/xxx/resourceGroups/ops-rg/providers/Microsoft.OperationalInsights/workspaces/law-prod\"\n    }\n  }\n]\n```\nWhat is the impact?",
+          "options": [
+            "Logs are dropped because sending the same category twice violates diagnostic settings limits.",
+            "Duplicate logs are ingested for VMGuestMetrics, inflating cost and potentially confusing queries.",
+            "Azure Monitor deduplicates identical categories to the same workspace, so there is no impact.",
+            "Only the newest diagnostic setting is honored; the older is auto-disabled."
+          ],
+          "correct_option": "B",
+          "explanation": "Multiple diagnostic settings can send the same category to the same destination, and Azure Monitor does not deduplicate; duplicates are ingested and billed.",
+          "distractor_rationale": "B: There is no deduplication across diagnostic settings. C: Azure doesn't auto-disable older settings. D: It's supported; logs aren't dropped for duplication.",
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Microsoft Azure"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Role assignments for a user are:\n```text\nUser: ops.alex@contoso.com\n- Subscription \"Prod-Sub\": Monitoring Reader\n- Resource group \"rg-app\": Reader\n- Log Analytics workspace \"law-prod\": Log Analytics Reader\n```\nWhich action will be blocked for this user?",
+          "options": [
+            "Query the Heartbeat table in law-prod.",
+            "View an existing metric alert rule in rg-app.",
+            "Create a new Action Group in rg-app for on-call notifications.",
+            "Pin the existing Alerts workbook to the Azure Portal dashboard."
+          ],
+          "correct_option": "C",
+          "explanation": "Creating or updating Action Groups requires Monitoring Contributor at the scope. Monitoring Reader permits viewing but not creating. Log Analytics Reader permits querying the workspace.",
+          "distractor_rationale": "B: Monitoring Reader allows viewing alert rules. C: Log Analytics Reader allows querying tables. D: Pinning existing workbooks is allowed with read permissions.",
+          "skills_covered": [
+            "RBAC",
+            "Least Privilege",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "A VM backup policy is configured as:\n```json\n{\n  \"schedulePolicy\": {\"scheduleRunFrequency\": \"Daily\", \"scheduleRunTimes\": [\"02:00\"]},\n  \"retentionPolicy\": {\n    \"dailySchedule\": {\"retentionDuration\": {\"count\": 30, \"durationType\": \"Days\"}},\n    \"weeklySchedule\": {\"daysOfTheWeek\": [\"Sunday\"], \"retentionDuration\": {\"count\": 12, \"durationType\": \"Weeks\"}},\n    \"monthlySchedule\": {\n      \"retentionScheduleFormatType\": \"Last\",\n      \"retentionScheduleWeekly\": {\"daysOfTheWeek\": [\"Sunday\"]},\n      \"retentionDuration\": {\"count\": 12, \"durationType\": \"Months\"}\n    }\n  }\n}\n```\nOn Monday 2026-06-29, you attempt to restore specifically to Friday 2026-05-29 02:00. What should you expect?",
+          "options": [
+            "A synthetic point is created from the nearest Sunday; you can restore to 2026-05-31 and Azure will roll forward to 05-29.",
+            "The weekly retention keeps every Friday for 12 weeks, so the point is available.",
+            "The monthly retention keeps all days in May for 12 months, so the point is available.",
+            "No restore point for 2026-05-29; the daily point expired after 30 days and it's neither a weekly Sunday nor a last Sunday of the month."
+          ],
+          "correct_option": "D",
+          "explanation": "Daily retention of 30 days has expired by 2026-06-29. Weekly retention keeps only Sundays; monthly keeps only the last Sunday. Friday 2026-05-29 matches none of these.",
+          "distractor_rationale": "B: Weekly retention targets Sunday backups only. C: Monthly retention targets the last Sunday only, not all days. D: Azure Backup doesn't synthesize intermediate days from weekly/monthly points.",
+          "skills_covered": [
+            "Backup and Recovery",
+            "manage disaster recovery plans"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "Contoso runs a 3-tier payment app in East US: two App Service instances behind Azure Front Door, two Windows VMs for APIs (app-01, app-02), and a SQL Server VM (sql-01) with disks in a Premium SSD zone-redundant configuration. Key Vault holds connection strings. Private endpoints are used for Key Vault and Storage. Azure Backup protects app and DB VMs with the policy in the prod Recovery Services vault (GRS + Cross Region Restore enabled). Azure Site Recovery (ASR) replicates app-01/app-02 and sql-01 to Central US; a failover plan groups sql-01 first, then app VMs. DNS is in Azure DNS. Log Analytics collects Heartbeat, Perf, and SQL ErrorLog via AMA with alerts on Heartbeat missing and SQL severity >= 20. Compliance requires RTO <= 2 hours, RPO <= 15 minutes for the database.\n",
+          "task": "Design the end-to-end disaster recovery sequence for a region-wide outage of East US. Specify the exact failover steps, how you will handle private endpoints/DNS, how to re-establish Key Vault access, and how you will validate data freshness against the RPO. Include how you would fail back when East US returns. Justify your choices for each step with respect to the stated RTO/RPO and monitoring signals.",
+          "expected_answer": "A strong answer sequences: 1) Declare disaster and freeze changes; 2) Validate last replicated point for sql-01 (check ASR latest recovery point timestamp and SQL error log in Log Analytics) meets 15-min RPO; 3) Execute ASR unplanned failover with plan order: sql-01 group then app-01/app-02; confirm boot success; 4) Update or preconfigure network mappings in ASR to Central US VNets; 5) Recreate private endpoints in Central US for Key Vault/Storage or switch to globally reachable endpoints with proper firewall rules, ensuring Key Vault access policies/managed identities are valid in target subscription/region; 6) Update DNS records or Front Door origin to point to Central US endpoints; set low TTLs in advance; 7) Validate application by running synthetic probes, KQL queries confirming Heartbeat present for all components and no new SQL severity >=20 since failover; 8) Communicate recovery complete within 2 hours. For failback: enable reverse replication from Central US to East US, run planned failover back after catching up, reverse DNS/Front Door changes, and decommission temporary private endpoints; document and test backups created during the outage are cataloged; ensure Key Vault references and managed identities work post-failback. Justify that ASR provides near-15-minute RPO for the VMs and that SQL recovery to latest recovery point plus transaction log integrity checks meet the requirement. Emphasize pre-created runbooks, automation for DNS/Front Door switch, and alert thresholds to detect any drift beyond RPO before executing.",
+          "rubric": [
+            {
+              "criterion": "Sequenced failover steps aligned to plan order (DB first, then app) and use of ASR constructs",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear handling of private endpoints/Key Vault access (recreate or route, firewall, identity)",
+              "marks": 2
+            },
+            {
+              "criterion": "DNS/Front Door cutover approach with TTL strategy and rollback plan",
+              "marks": 1
+            },
+            {
+              "criterion": "RPO/RTO validation using ASR recovery point timestamps and monitoring signals (KQL/alerts)",
+              "marks": 1
+            },
+            {
+              "criterion": "Failback plan including reverse replication and config rollback",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "manage disaster recovery plans",
+            "Backup and Recovery",
+            "Monitoring and Observability",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You inherited a noisy monitoring setup. VM guest metrics, Azure Activity Logs, and SQL diagnostics from 60 resources are all sent to a single workspace with 90-day retention. Engineers miss real issues due to alert floods. The monthly Log Analytics ingestion bill spiked 60% after enabling SQL diagnostics at Verbose. Some teams need detailed Perf/Logs; others just need availability SLOs.",
+          "task": "Propose a monitoring redesign that reduces alert noise and cost while preserving detection for real incidents. Specify: data collection rules and their scopes (which streams go where), table-level retention or archive for high-volume categories, alerting patterns (log vs metric alerts, dynamic thresholds), use of action groups and alert processing rules to route/suppress, and a plan to test changes without losing coverage.",
+          "expected_answer": "A strong answer partitions ingestion by need. Examples: create two DCRs — \"platform-baseline\" to collect Heartbeat + minimal Perf to a central workspace for all prod scopes; and \"deep-dive-sql\" to collect SQL ErrorLog, waits, and perf counters only for tagged SQL resources. Set table-level retention (e.g., Perf 30 days, SQL telemetry 14 days, archive high-volume verbose tables) and disable Verbose categories not used. Use metric alerts for CPU, memory (VM Insights) with dynamic thresholds and log alerts for rare errors (SQL severity >=20, Heartbeat missing). Introduce per-team Action Groups and route with alert processing rules; suppress Sev3/Sev4 during maintenance windows by schedule/tag. Validate in a staging workspace first, enabling workspace transformations to drop fields and sampling as appropriate; run parallel alerts and compare missed-incident rate over two weeks before cutover.",
+          "rubric": [
+            {
+              "criterion": "Clear DCR design separating baseline vs deep-dive streams with scoping/tags",
+              "marks": 2
+            },
+            {
+              "criterion": "Retention/archiving strategy at table/category level tied to cost impact",
+              "marks": 2
+            },
+            {
+              "criterion": "Alerting design using the right signal type and dynamic thresholds to reduce noise",
+              "marks": 2
+            },
+            {
+              "criterion": "Routing/suppression with action groups and processing rules, plus a safe testing/migration plan",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Microsoft Azure",
+            "Least Privilege"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "Finance requires 7-year retention for backups of two databases on sql-01. Other workloads may use 30-day backups. Currently, all VMs are protected by a single Daily+Weekly+Monthly policy in one Recovery Services vault. Soft delete is enabled. There is no immutable vault lock and no separation of duties; the same ops team both administers backups and manages the VMs.",
+          "task": "Design a compliant backup architecture and process that meets the 7-year requirement only for finance DBs while keeping other workloads on short retention. Include: vault/policy structure, use of item-level retention/policy assignment, immutable vault or MUA protections, key management/encryption, and test-restore practices to prove recoverability over long retention. Explain how you will prevent accidental or malicious deletion of long-retained backups.",
+          "expected_answer": "Expected: Split policies by retention. Either keep one vault with multiple policies (Finance-7y and Default-30d) or use a dedicated vault for finance with immutable protection (Enable Immutable vault + soft delete + MUA). Protect sql-01 with Azure VM backup for OS/disks and use workload-aware backup (SQL in Azure VM) for finance DBs with 7-year retention and GFS schedule; other VMs/databases stay on 30-day VM-level backups. Enable vault immutability and possibly multi-user authorization for critical operations; enforce Azure Policy to require assignment to correct policy for tagged finance resources; separate roles so backup admins cannot delete protected items (least privilege). Use customer-managed keys (if required) and document key rotation. Perform quarterly test restores of finance DB backups into an isolated subscription, logging evidence of restore times and data integrity checks. Ensure soft delete cannot be disabled without security approval.",
+          "rubric": [
+            {
+              "criterion": "Correct policy/vault design to isolate 7-year retention from 30-day workloads",
+              "marks": 2
+            },
+            {
+              "criterion": "Controls for immutability/soft delete/MUA and RBAC separation of duties",
+              "marks": 2
+            },
+            {
+              "criterion": "Use of SQL workload backup vs VM backup and justification for finance DBs",
+              "marks": 1
+            },
+            {
+              "criterion": "Test-restore cadence and evidence collection for compliance",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Backup and Recovery",
+            "implement cloud security and compliance",
+            "Least Privilege",
+            "RBAC"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "During a DR drill, you failed over app-01/app-02 and sql-01 to Central US. Synthetic probes pass, but users report intermittent 401 errors. Logs show Managed Identity token acquisition failures from app-01 when calling Key Vault. In DR, you recreated private endpoints in Central US and updated DNS. Key Vault firewall is set to selected networks, allowing only East US subnets. Alerts on Heartbeat and CPU show healthy; no errors in SQL.",
+          "task": "Diagnose the likely root cause and propose the minimal, secure fix. Include how to validate the fix in monitoring and how to bake this into the recovery plan so it doesn’t recur.",
+          "expected_answer": "Root cause: Key Vault firewall/network ACLs allow only East US subnets; DR VMs in Central US cannot reach Key Vault via new private endpoint or are blocked by firewall. Minimal secure fix: update Key Vault network rules to include Central US subnets used in DR (prefer pre-provisioning with disabled private endpoints and pre-approved subnets), or use a Key Vault private endpoint in Central US with proper DNS zone links. Validate by KQL querying app logs for token acquisition success and Key Vault diagnostics for successful Authorize/SecretGet events, and watching the 401 rate drop; add a health probe that checks a dummy secret read. Update DR plan to include step to switch DNS for the Key Vault private endpoint and confirm Key Vault firewall entries for DR subnets, with an approval checkpoint.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of Key Vault network ACL/private endpoint scope as the cause",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposed minimal and secure remediation (network rules/DR private endpoint plus DNS)",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation steps using monitoring signals/logs to confirm recovery",
+              "marks": 2
+            },
+            {
+              "criterion": "Change to the recovery plan/runbook to prevent recurrence",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "manage disaster recovery plans",
+            "implement cloud security and compliance",
+            "Monitoring and Observability"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Produce a tested Disaster Recovery plan for a multi-tier workload",
+          "brief": "Create a recovery plan document for a representative 3-tier app hosted in Azure that you can access (your sandbox or provided lab). The plan must be executable by another engineer and include validation and rollback. Use Azure-native services only (Azure Backup and/or ASR). Run at least one tabletop or lab drill and incorporate evidence.",
+          "deliverable": "Recovery plan",
+          "acceptance_criteria": [
+            "Architecture section with diagram or inventory listing components, regions, VNets/subnets, private endpoints, and dependencies (Key Vault, Storage, DNS).",
+            "Documented RTO/RPO targets and mapping to chosen protections (backup policies, ASR replication settings).",
+            "Step-by-step failover runbook covering order of operations (DB first, app next), DNS/Front Door or Traffic Manager changes, private endpoint/DNS zone steps, identity/Key Vault access checks, and validation probes.",
+            "Explicit rollback/failback steps, including reverse replication, data reconciliation approach, and DNS reversal.",
+            "Monitoring and verification section with at least two KQL queries (e.g., Heartbeat freshness, SQL error severity) and screenshots of successful checks post-failover.",
+            "Evidence of a drill: screenshots or logs from a test restore or ASR test failover, including timestamps that demonstrate whether the plan met RTO/RPO.",
+            "Controls and compliance: how soft delete/immutability is set, and RBAC assignments showing separation of duties for backup/DR."
+          ],
+          "rubric": [
+            {
+              "criterion": "Completeness and clarity of architecture and dependency mapping",
+              "marks": 4
+            },
+            {
+              "criterion": "RTO/RPO mapping to controls (backup/ASR) and justification",
+              "marks": 4
+            },
+            {
+              "criterion": "Runbook correctness and sequencing including DNS/private endpoints/Key Vault",
+              "marks": 5
+            },
+            {
+              "criterion": "Monitoring validation (quality of KQL, evidence that checks run and pass)",
+              "marks": 3
+            },
+            {
+              "criterion": "Failback/rollback path and drill evidence demonstrating feasibility",
+              "marks": 4
+            }
+          ],
+          "skills_covered": [
+            "manage disaster recovery plans",
+            "Backup and Recovery",
+            "Monitoring and Observability",
+            "implement cloud security and compliance"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Build a monitored Azure environment with actionable alerts and a dashboard",
+          "brief": "Configure Azure Monitor for a small environment you control (at minimum: 1 VM and 1 PaaS resource such as Key Vault, Storage, or App Service). Use the Azure Monitor agent and Data Collection Rules. Route resource diagnostics appropriately. Create alert rules, action groups, a suppression rule, and at least one Workbook. Prove it works by triggering a benign alert.",
+          "deliverable": "Monitored Azure environment",
+          "acceptance_criteria": [
+            "One Log Analytics workspace with at least one Data Collection Rule collecting Heartbeat and a small set of Perf counters for the VM.",
+            "At least one resource diagnostic setting sending logs to the workspace (e.g., Key Vault AuditEvent or AppServiceHTTPLogs).",
+            "At least three alert rules: one metric (e.g., VM CPU), one log-based (e.g., Heartbeat missing), and one service log (e.g., Key Vault SecretGet failures), all targeting an Action Group.",
+            "An Alert Processing Rule that suppresses low-severity alerts during a defined maintenance window for your resource group.",
+            "A Workbook or Dashboard summarizing VM availability (Heartbeat) and one resource-specific metric/log, with a screenshot.",
+            "Evidence the system works: a screenshot of a fired alert and corresponding notification (email/webhook), plus a KQL query returning the underlying signal.",
+            "Exported ARM/Bicep/JSON templates of the DCR, diagnostic settings, alert rules, action group, and processing rule."
+          ],
+          "rubric": [
+            {
+              "criterion": "Workspace, DCR, and diagnostic settings correctly configured and scoped",
+              "marks": 5
+            },
+            {
+              "criterion": "Quality and diversity of alert rules with proper routing to action groups",
+              "marks": 6
+            },
+            {
+              "criterion": "Effective suppression rule and demonstration that it applies as intended",
+              "marks": 3
+            },
+            {
+              "criterion": "Useful workbook/dashboard presenting availability and a resource-specific insight",
+              "marks": 3
+            },
+            {
+              "criterion": "Working evidence (fired alert + query) and exported IaC artifacts",
+              "marks": 3
+            }
+          ],
+          "skills_covered": [
+            "Monitoring and Observability",
+            "Microsoft Azure",
+            "Least Privilege"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "course_code": "NT-C-030",
+  "course_name": "Hardware & Networking",
+  "sources": [
+    {
+      "name": "CompTIA A+ 220-1201 (Core 1) Certification Exam Objectives v3.0",
+      "url": "https://assets.ctfassets.net/82ripq7fjls2/1oSdlyujpaX3GrM0rir6Ge/91afb2be72785281e8fb4c0d9a70c6f4/CompTIA-A-220-1201-Exam-Objectives-3.0.pdf",
+      "note": "Official CompTIA objectives PDF, published free by CompTIA for candidate preparation. Used as a topic/scope authority only; no CompTIA exam item was copied. CompTIA's Authorized Materials Use Policy prohibits use of unauthorized third-party 'brain dump' content, which this file does not contain."
+    },
+    {
+      "name": "CompTIA Network+ N10-009 Certification Exam Objectives v4.0",
+      "url": "https://assets.ctfassets.net/82ripq7fjls2/113XqW3JHT7AlIU33M63I0/af42da2af7383a38f318bad10aa9afbd/Network_Plus_N10-009_Exam_Objectives.pdf",
+      "note": "Official CompTIA objectives PDF, free to download. Used to confirm scope for OSI/TTL/addressing topics. No exam items reproduced."
+    },
+    {
+      "name": "Professor Messer - Understanding Electrostatic Discharge (N10-006 5.6)",
+      "url": "https://www.professormesser.com/network-plus/n10-006/understanding-electrostatic-discharge/",
+      "note": "Free public training transcript. Concept borrowed (equipotential bonding, humidity, antistatic mats); scenario and options are original."
+    },
+    {
+      "name": "Professor Messer - Troubleshooting Hardware (A+ 220-1201 5.1)",
+      "url": "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/troubleshooting-hardware-220-1201/",
+      "note": "Free public training transcript. Concept borrowed (POST beeps precede video init, beep codes are vendor-specific); scenario and options are original."
+    },
+    {
+      "name": "Professor Messer - Managing Backups (A+ 220-1102 4.3)",
+      "url": "https://www.professormesser.com/free-a-plus-training/220-1102/220-1102-video/managing-backups-220-1102/",
+      "note": "Free public training transcript. Concept borrowed (full/incremental/differential restore chains, GFS, 3-2-1); scenario and options are original."
+    },
+    {
+      "name": "IndiaBIX - Networking / Subnetting",
+      "url": "https://www.indiabix.com/networking/subnetting/",
+      "note": "Publicly readable Q&A bank. Items are adapted, not reproduced: the subnet arithmetic pattern is reused with fresh addresses, a rewritten scenario and original options."
+    },
+    {
+      "name": "IndiaBIX - Networking / TCP/IP",
+      "url": "https://www.indiabix.com/networking/tcp-ip/",
+      "note": "Publicly readable Q&A bank. Concept borrowed (DHCPDISCOVER is a layer-2 broadcast carried over UDP); scenario and options are original."
+    },
+    {
+      "name": "Cisco Meraki Documentation - Channel Planning Best Practices",
+      "url": "https://documentation.meraki.com/Wireless/Design_and_Configure/Architecture_and_Best_Practices/Channel_Planning_Best_Practices",
+      "note": "Public vendor documentation. Concept borrowed (2.4 GHz 20 MHz channel spacing, 1/6/11 non-overlap, co-channel contention); scenario and options are original."
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "stem": "A technician replaces a graphics card in a workstation standing on carpet in a dry, air-conditioned office. She clips the crocodile clip of her antistatic wrist strap to the painted outer panel of the case, leaves the PSU unplugged, and rests the replacement card in its box on the carpet beside her while she works. The card she removed still tests good; the replacement fails intermittently within a week. Which change to her procedure would have removed the discharge path that most likely damaged the new card?",
+      "options": [
+        "Clip the strap to bare unpainted metal inside the chassis and stand the card on an antistatic mat bonded to that same point, so technician, chassis and card all sit at one potential",
+        "Cut out the 1 MOhm resistor moulded into the strap's lead so any accumulated charge drains to the chassis far faster",
+        "Leave the power supply plugged into the wall socket but switched off, so the chassis stays earthed through the mains ground pin for the whole job",
+        "Handle the replacement card only by its heatsink and metal backplate, so any discharge travels through metal instead of through the PCB"
+      ],
+      "correct_option": "A",
+      "explanation": "ESD damage comes from a potential difference between two objects, so the countermeasure is bonding everything you touch to a common potential, not 'grounding' in the abstract. Paint is an insulator: the clip on the painted panel never bonded her to the chassis at all, and the card sitting on carpet in an unbonded box was free to sit at a different potential from both of them. Clipping to bare chassis metal and bonding the mat to the same point puts technician, case and card at one potential, so there is nothing to discharge when she picks the card up. The dry, air-conditioned room matters because low humidity lets far larger charges accumulate, and boards can be damaged well below the roughly 3,500 V a person can feel.",
+      "distractor_rationale": "B is the 'a better ground drains charge faster' belief: the resistor is a deliberate current limiter for the technician's safety and removing it does nothing for bonding. C is the once-standard advice for AT-era supplies and is still repeated; on a modern ATX board the +5 V standby rail stays live, so it is unsafe, and it still leaves the card in its unbonded box. D is a mishearing of 'handle the board by its edges' - heatsinks and backplates are electrically tied to board planes, so this routes a discharge straight into the card.",
+      "skills_covered": ["ESD safety", "Computer Assembly"],
+      "difficulty": "hard",
+      "source_name": "Professor Messer - Understanding Electrostatic Discharge (N10-006 5.6)",
+      "source_url": "https://www.professormesser.com/network-plus/n10-006/understanding-electrostatic-discharge/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 2,
+      "stem": "A technician builds a desktop from a boxed motherboard and a current-generation CPU on the same socket family. On first power-on the case and CPU fans spin, no POST beep sounds, the screen stays blank, and the board's CPU status LED stays lit. The board vendor's support page lists this CPU as supported from BIOS version F12; the sticker on the board's rear I/O panel reads F6. No older CPU for this socket is available anywhere on site. What is the correct next step?",
+      "options": [
+        "Write the F12 image to a FAT32 USB stick and use the board's USB BIOS Flashback port, which the onboard controller drives with only the PSU connected - no CPU, RAM or GPU needed",
+        "Clear CMOS with the onboard jumper and reseat the CPU, so that resetting NVRAM makes the board re-enumerate the CPU against its microcode table",
+        "Fit a discrete graphics card so POST output becomes visible, then enter firmware setup and run the update from the built-in flash utility",
+        "Install the OS on another machine, apply the vendor's chipset and CPU microcode driver package, then move the drive across so the loaded microcode lets the CPU complete POST"
+      ],
+      "correct_option": "A",
+      "explanation": "The board cannot initialise a CPU whose microcode and identification data are absent from the firmware image it is running, so it halts before video, before RAM training and before it can play a beep sequence - which is exactly the state described (fans and CPU LED, no beep, no display). Microcode lives in the SPI flash image, so the only way out is to write a newer image. USB BIOS Flashback exists precisely for this: a small onboard controller reads the image from a USB stick and programs the flash chip with standby power alone, so no working CPU is required.",
+      "distractor_rationale": "B is the universal reflex for 'it will not POST'. Clearing CMOS does reset NVRAM settings, but microcode is part of the flash image, not NVRAM, so the board still cannot identify the CPU. C reads a blank screen as a video problem and assumes the machine can reach setup; it cannot get far enough to enumerate a PCIe slot. D is the subtlest: OS-loaded microcode revisions are a real mechanism on Windows and Linux, but they are applied after firmware has already initialised the CPU, so they can never rescue a pre-POST failure.",
+      "skills_covered": ["upgrade firmware", "Computer Assembly", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "CompTIA A+ 220-1201 (Core 1) Certification Exam Objectives v3.0",
+      "source_url": "https://assets.ctfassets.net/82ripq7fjls2/1oSdlyujpaX3GrM0rir6Ge/91afb2be72785281e8fb4c0d9a70c6f4/CompTIA-A-220-1201-Exam-Objectives-3.0.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 3,
+      "stem": "A technician boots Windows installation media on a new laptop that has a single NVMe SSD and no other storage. At the 'Where do you want to install Windows?' step the list is completely empty - not a greyed-out disk, no disk at all. Backing out into the firmware setup utility, the storage page shows the SSD with its correct model string and capacity. Which explanation fits both observations, and what resolves it?",
+      "options": [
+        "The firmware's storage controller is set to Intel RST (RAID) mode rather than AHCI/NVMe, so Windows setup has no in-box driver for it; load the vendor's RST driver at the 'Load driver' prompt, or switch the controller to AHCI before installing",
+        "The SSD is partitioned MBR while the firmware boots UEFI-only, so setup hides it; converting the disk to GPT from the installer's command prompt will expose it",
+        "Secure Boot is rejecting the SSD's unsigned device firmware, so the drive has to be added to the Secure Boot allowed-device list before setup can see it",
+        "The drive has already failed its S.M.A.R.T. self-test; firmware still reports the device identity, but Windows setup filters out disks reporting a pre-failure state"
+      ],
+      "correct_option": "A",
+      "explanation": "The two observations have to be reconciled: firmware sees the device, Windows setup does not. That gap is a driver gap, not a disk-health or partition problem. Firmware talks to the controller with its own code, so RST/RAID mode is invisible to it as a problem; Windows setup, by contrast, ships in-box drivers for standard AHCI and NVMe controllers but not for a vendor RAID controller, so the disk simply never appears in the list. Loading the driver, or switching the controller to a standard mode, closes the gap.",
+      "distractor_rationale": "B is the most-believed wrong answer because MBR-vs-GPT genuinely blocks installs - but it blocks them with an explicit message against a disk that is listed, which contradicts an empty list. C conflates Secure Boot, which validates boot loaders and drivers by signature, with device authorisation, which it does not do. D takes the firmware's ability to read the model string as proof of health and invents a Windows setup behaviour that does not exist; a S.M.A.R.T. pre-failure disk is still offered for installation.",
+      "skills_covered": ["install operating system", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "CompTIA A+ 220-1201 (Core 1) Certification Exam Objectives v3.0",
+      "source_url": "https://assets.ctfassets.net/82ripq7fjls2/1oSdlyujpaX3GrM0rir6Ge/91afb2be72785281e8fb4c0d9a70c6f4/CompTIA-A-220-1201-Exam-Objectives-3.0.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 4,
+      "stem": "A desktop that worked yesterday now behaves like this at power-on: case and CPU fans spin up and stay running, the drive activity LED flashes once and goes dark, the internal speaker emits one long beep followed by two short beeps and then stops, and the monitor never leaves power-save. The technician confirms the same monitor and cable display correctly on a second machine, and the suspect machine's boot drive mounts and reads cleanly in an external enclosure. Which conclusion does the evidence best support?",
+      "options": [
+        "POST halted before it could initialise the display and is reporting through the speaker because it has no other output channel; the fault lies in the video subsystem - the graphics card, its slot or its power connector",
+        "The boot drive is not being detected: one long and two short beeps is the standard bootable-device-not-found code, so the SATA data cable should be replaced first",
+        "The power supply cannot hold the 12 V rail under load; the fans spin on residual current while the rest of the board browns out before completing POST",
+        "The CMOS battery has failed, so firmware lost its boot order and stopped at the first missing device before ever enumerating the display adapter"
+      ],
+      "correct_option": "A",
+      "explanation": "Beep codes exist because POST runs before the display path is usable, so a fault detected in or before video initialisation can only be reported audibly. The evidence has already been narrowed: the monitor and cable are known good on another machine, and the boot drive reads cleanly in an enclosure, so neither is the fault. That leaves the video subsystem in this chassis. Note that the reasoning is the sequence and the elimination, not the code itself - beep code meanings are vendor-specific and must be read from that board's own documentation.",
+      "distractor_rationale": "B asserts a universal meaning for a beep pattern, which is exactly the trap: patterns differ between firmware vendors, and it also contradicts the drive reading fine externally. C is the reflex 'the PSU is dying' answer, but a board browning out under load would reset or hang, not run POST far enough to complete a deliberate coded beep sequence. D is the most plausible wrong answer because a dead CMOS battery really does cause lost boot order and a wrong clock - but the machine would still initialise video and put a setup warning on screen, which is precisely what is not happening here.",
+      "skills_covered": ["Troubleshooting", "Computer Assembly"],
+      "difficulty": "hard",
+      "source_name": "Professor Messer - Troubleshooting Hardware (A+ 220-1201 5.1)",
+      "source_url": "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/troubleshooting-hardware-220-1201/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 5,
+      "stem": "A 40 m Cat 6 run between a patch panel and a wall outlet links up and passes traffic, but a large file copy sustains only about 11 MB/s. Both the switch port and the PC NIC are gigabit-capable, and both report the link as 100 Mbps full duplex. A wiremap test on the run shows pins 1, 2, 3 and 6 correct end to end, and pins 4, 5, 7 and 8 open. Which statement explains the observed speed?",
+      "options": [
+        "1000BASE-T transmits on all four pairs at once, so with two pairs open the link can only autonegotiate down to 100BASE-TX, which uses pins 1/2 and 3/6 alone; the run has to be re-terminated on all eight conductors",
+        "The run was terminated T568A at one end and T568B at the other, making it a crossover, and a crossover caps a gigabit link at 100 Mbps unless Auto-MDIX is disabled on the switch port",
+        "At 40 m the run exceeds the 1000BASE-T distance budget, so both ends fall back to 100 Mbps; a repeater or a switch closer to the outlet is required",
+        "Cat 6 cable only reaches 1 Gbps when terminated into Cat 6A-rated keystones; the Cat 5e jacks fitted in the patch panel force the link down to the slower rate"
+      ],
+      "correct_option": "A",
+      "explanation": "100BASE-TX uses one transmit pair and one receive pair, on pins 1/2 and 3/6. 1000BASE-T uses all four pairs simultaneously, each carrying data in both directions at once. A wiremap showing 4, 5, 7 and 8 open means only two pairs are terminated, so gigabit cannot be negotiated at all and both ends settle on the fastest mode the wiring physically supports. About 11 MB/s is the expected throughput of a 100 Mbps link, which corroborates it. The fix is re-termination, not a faster switch.",
+      "distractor_rationale": "B is the strongest distractor because the A-at-one-end/B-at-the-other crossover is real and widely half-remembered. But a crossover changes which pairs transmit, not how many, gigabit crossovers run at gigabit, and a crossover shows as swapped pairs on a wiremap rather than open ones. C inverts the 100 m copper limit - 40 m is comfortably inside it. D is the 'component category must match' belief: a lower-rated jack degrades signal margin, it does not hard-limit negotiation to exactly 100 Mbps, and it would not open two pairs.",
+      "skills_covered": ["cabling", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "CompTIA A+ 220-1201 (Core 1) Certification Exam Objectives v3.0",
+      "source_url": "https://assets.ctfassets.net/82ripq7fjls2/1oSdlyujpaX3GrM0rir6Ge/91afb2be72785281e8fb4c0d9a70c6f4/CompTIA-A-220-1201-Exam-Objectives-3.0.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 6,
+      "stem": "A workstation is configured by hand with address 10.20.5.130, subnet mask 255.255.255.192, default gateway 10.20.5.126 and DNS server 10.20.1.10. It pings 10.20.5.140, a printer on the same switch, without loss. Every ping to an address outside the range 10.20.5.128 to 10.20.5.191 fails immediately with 'Destination host unreachable', and the reply comes from the workstation's own address rather than from any router. What is wrong?",
+      "options": [
+        "With a /26 mask the host's subnet is 10.20.5.128-10.20.5.191, and 10.20.5.126 falls in the previous /26 block, so the workstation has no on-link route to its configured gateway and can never forward off-subnet traffic",
+        "10.20.5.130 is the first usable address in the 10.20.5.128 subnet and is reserved for the router, so the workstation must be renumbered to 10.20.5.131 or higher",
+        "255.255.255.192 is not a valid mask for a 10.x.x.x address, which is Class A and must use a mask that ends on an octet boundary such as 255.0.0.0 or 255.255.255.0",
+        "The DNS server 10.20.1.10 sits on a different network, so name resolution fails first and the IP stack refuses to route any off-subnet packet until it succeeds"
+      ],
+      "correct_option": "A",
+      "explanation": "A /26 gives a block size of 64, so the subnets of 10.20.5.0 are .0-.63, .64-.127, .128-.191 and .192-.255. The host at .130 is in the .128-.191 subnet, where .129-.190 are usable. The gateway .126 lies in the .64-.127 subnet, which this host regards as a remote network. A host only sends to a gateway it can reach directly on-link, so with no on-link route to .126 the stack drops off-subnet traffic locally and generates the unreachable message itself. That the error comes from the workstation rather than a router is the giveaway, and local pings still working confirms the NIC and cabling are fine.",
+      "distractor_rationale": "B mixes a site convention with a protocol rule: reserving the first usable address for the router is common practice but never mandatory, and .130 is not the first usable address anyway (.129 is), so this option fails its own arithmetic. C is classful thinking, still widely taught and widely believed - CIDR masks are perfectly legal inside a 10.0.0.0/8 space. D conflates name resolution with routing: pinging a literal address consults no DNS, and the failure is being generated locally before any packet leaves the host.",
+      "skills_covered": ["Subnetting", "TCP/IP", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "IndiaBIX - Networking / Subnetting",
+      "source_url": "https://www.indiabix.com/networking/subnetting/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 7,
+      "stem": "A small office has three access points on one floor. All three radios are on 2.4 GHz, all are set to channel 6 with a 40 MHz channel width, and all are at maximum transmit power. Users report that throughput collapses when the office is busy, and that sessions drop when they walk between desks. A site survey shows every AP hearing the other two at strong signal across the whole floor. Which change set addresses the cause?",
+      "options": [
+        "Set all three radios to 20 MHz width, assign channels 1, 6 and 11, and reduce transmit power so that adjacent cells overlap only at their edges",
+        "Keep the 40 MHz width for the extra throughput but move the three APs to channels 1, 6 and 11, which are the non-overlapping channels and so will not interfere at any width",
+        "Raise transmit power further on all three APs so each client locks hard onto the nearest AP and stops trying to roam mid-session",
+        "Set all three APs to channel 11, the highest channel permitted in this region, so they share one clean channel well away from the crowded low end of the band"
+      ],
+      "correct_option": "A",
+      "explanation": "2.4 GHz channel centres are 5 MHz apart while a 20 MHz channel actually occupies about 22 MHz, which is why only 1, 6 and 11 are non-overlapping. A 40 MHz channel swallows roughly half the usable band, so a three-AP plan at 40 MHz cannot be made non-overlapping at all. Meanwhile three APs on one channel form a single contention domain: they and all their clients defer to one another, so aggregate throughput falls as load rises - exactly the reported symptom. Maximum power in every cell compounds both problems by enlarging the area in which the APs hear each other and by keeping clients associated to a distant AP instead of roaming.",
+      "distractor_rationale": "B picks the right channel set for the wrong width and is the answer a candidate gives if they memorised '1, 6 and 11' without knowing why: the non-overlap only holds at 20 MHz, and at 40 MHz those channels re-overlap. C treats roaming as a signal-strength shortfall, which is the standard intuition and the standard mistake - more power widens co-channel interference and makes sticky clients worse, not better. D mistakes co-channel interference for adjacent-channel interference and simply recreates the original single-channel problem on a different number.",
+      "skills_covered": ["Wi-Fi", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "Cisco Meraki Documentation - Channel Planning Best Practices",
+      "source_url": "https://documentation.meraki.com/Wireless/Design_and_Configure/Architecture_and_Best_Practices/Channel_Planning_Best_Practices",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 8,
+      "stem": "An office consolidates DHCP onto a single server sitting in VLAN 10. After the change, clients in VLAN 10 lease addresses normally, but every client in VLAN 20 and VLAN 30 ends up with a 169.254.x.x address. All three VLANs are routed by the same layer-3 switch. To test, the technician temporarily gives one VLAN 20 workstation a static address and gateway; from there it pings the DHCP server in VLAN 10 successfully and can reach its file shares. Which explanation and fix are correct?",
+      "options": [
+        "A DHCPDISCOVER is a layer-2 broadcast to FF:FF:FF:FF:FF:FF, which a router does not forward between subnets; the VLAN 20 and VLAN 30 interfaces need a DHCP relay (ip helper-address) pointing at the server, and the server needs a scope for each of those subnets",
+        "The server's scope has no exclusion ranges defined for VLAN 20 and VLAN 30, so it silently declines their requests; adding the exclusions will let those clients lease",
+        "The clients' APIPA addresses carry no default gateway, so their DHCPDISCOVER cannot be routed to VLAN 10; each VLAN needs a static gateway assigned to its clients first, after which DHCP will complete",
+        "The layer-3 switch filters UDP ports 67 and 68 between VLANs by default; an ACL permitting those ports on the inter-VLAN interfaces will restore leasing"
+      ],
+      "correct_option": "A",
+      "explanation": "A client with no address cannot unicast, so it starts DHCP as a layer-2 broadcast carried over UDP. Routers do not forward broadcasts, so the discover never leaves the client's own VLAN and the client eventually self-assigns a 169.254.x.x link-local address. A relay agent on the client-side VLAN interface is the designed answer: it receives the broadcast, records the receiving interface's address in the giaddr field so the server knows which scope to draw from, and forwards it as unicast to the server. The successful static-address test is the key evidence - it proves routing, cabling and the server itself are all healthy, which isolates the failure to the broadcast that never crosses the router.",
+      "distractor_rationale": "B inverts what exclusions do: they carve addresses out of a scope that already exists, so they cannot create service for a subnet that has no scope at all. C is circular but very tempting because its first clause is true - an APIPA client really does have no gateway - and it then reasons backwards to a chicken-and-egg fix; DHCP is designed to work at layer 2 precisely so that no prior configuration is needed. D assumes a filtering default that layer-3 switches do not have, and the successful ping and file-share access already demonstrate that inter-VLAN forwarding is not being filtered.",
+      "skills_covered": ["DHCP", "Routing", "Switching", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "IndiaBIX - Networking / TCP/IP",
+      "source_url": "https://www.indiabix.com/networking/tcp-ip/",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 9,
+      "stem": "A company moves its intranet site to a new server and changes the A record for intranet.example.local from 10.40.2.15 to 10.40.2.60. Twenty minutes later, head-office staff still land on the old server while branch-office staff reach the new one. On a head-office PC, 'ping intranet.example.local' replies from 10.40.2.15, but 'ping 10.40.2.60' replies normally. Querying the branch's DNS server for the name returns 10.40.2.60, and the head-office DNS server's own zone file has been confirmed to contain 10.40.2.60. Which account fits all of this?",
+      "options": [
+        "Cached copies of the previous answer are still being served - by the head-office resolver and by the client's own resolver cache - and will be until the record's TTL expires; clearing those caches resolves it immediately",
+        "The old A record has to be deleted and replaced with a CNAME pointing at the new host, because DNS cannot hold two different addresses for one name during a migration",
+        "The head-office clients have a stale entry in their local hosts file, which DNS cannot override, so the record change has no effect until that file is edited",
+        "The head-office DNS server's MX record is still pointing at 10.40.2.15, and MX is what determines which internal server a name resolves to for intranet traffic"
+      ],
+      "correct_option": "A",
+      "explanation": "The authoritative data is already correct - the zone file holds 10.40.2.60 and another resolver returns it - so the wrong answer is being served from somewhere that keeps copies. That is caching, at the resolver and again on the client. A cached record is held for the TTL that was attached when it was handed out, which is the TTL in force before the change, so the old value persists for that long regardless of how fast the zone was edited. Flushing the resolver cache and the client cache short-circuits the wait. That 10.40.2.60 pings fine confirms the new server and the routing to it are healthy, which narrows the fault to name resolution alone.",
+      "distractor_rationale": "B misdescribes both operations: an A record is simply edited in place, and a CNAME aliases one name to another name rather than fixing propagation. C is a genuinely real cause of a stale name and a favourite answer, but it cannot explain a whole office behaving identically while another office does not, and it would not be affected by which DNS server is queried. D confuses MX, which directs mail for a domain, with A, which maps a host name to an address.",
+      "skills_covered": ["DNS", "TCP/IP", "Troubleshooting"],
+      "difficulty": "medium",
+      "source_name": "CompTIA A+ 220-1201 (Core 1) Certification Exam Objectives v3.0",
+      "source_url": "https://assets.ctfassets.net/82ripq7fjls2/1oSdlyujpaX3GrM0rir6Ge/91afb2be72785281e8fb4c0d9a70c6f4/CompTIA-A-220-1201-Exam-Objectives-3.0.pdf",
+      "provenance": "adapted"
+    },
+    {
+      "question_number": 10,
+      "stem": "A site backs up its file server with a full backup every Sunday at 22:00 and an incremental backup every other night at 22:00. The server's four-disk RAID 5 array loses two disks within minutes of each other on Thursday at 14:00 and the volume is unrecoverable. Which statement about the recovery is correct?",
+      "options": [
+        "The restore needs the Sunday full plus the Monday, Tuesday and Wednesday incrementals applied in order - four sets - and everything written between Wednesday 22:00 and Thursday 14:00 is gone; the RAID level was never protecting against this",
+        "The restore needs only the Sunday full plus Wednesday's incremental, because each incremental contains every change made since the last full backup",
+        "No restore is needed: once the two failed disks are replaced, RAID 5 rebuilds the missing data from parity and the array returns with its contents intact",
+        "The restore needs the Sunday full plus all six incrementals from the week, because an incremental chain has to be applied as a complete rotation cycle regardless of when the failure fell"
+      ],
+      "correct_option": "A",
+      "explanation": "An incremental captures only what changed since the previous backup of any kind, so the chain has to be replayed in order from the last full: Sunday full, then Monday, Tuesday and Wednesday. Thursday's incremental was never taken - the failure was at 14:00 and the job runs at 22:00 - so roughly sixteen hours of work is lost, which is the recovery point objective this schedule actually delivers. RAID 5 is single-disk redundancy and an availability measure, not a backup: two simultaneous losses exceed what one parity stripe can reconstruct, and it would never have protected against deletion or corruption either.",
+      "distractor_rationale": "B is the single most common confusion in this area: it describes a differential chain, where each set is measured from the last full and only two sets are needed to restore. C treats RAID as a backup and simultaneously overstates its tolerance - RAID 5 survives one disk, not two, and parity cannot reconstruct two unknowns in a stripe. D has the chain concept right but assumes a fixed rotation must be replayed whole, ignoring that Thursday's set does not exist and Friday's and Saturday's belong to a week that never happened.",
+      "skills_covered": ["Backup and Recovery", "Troubleshooting"],
+      "difficulty": "hard",
+      "source_name": "Professor Messer - Managing Backups (A+ 220-1102 4.3)",
+      "source_url": "https://www.professormesser.com/free-a-plus-training/220-1102/220-1102-video/managing-backups-220-1102/",
+      "provenance": "adapted"
+    }
+  ]
+}

@@ -1,0 +1,1917 @@
+{
+  "course_code": "NT-C-024",
+  "course_name": "AI & Machine Learning",
+  "sections": [
+    {
+      "section_code": "NT-C-024-S01",
+      "skills_assessed": [
+        "Python",
+        "NumPy",
+        "Pandas",
+        "Statistics"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You run the following NumPy code and inspect the result:\n```python\nimport numpy as np\na = np.arange(1, 4).reshape(3, 1)   # [[1],[2],[3]]\nb = np.array([10, 20, 30])\nc = a + b\nc\n```\nWhat does `c` evaluate to?",
+          "options": [
+            "```python\narray([[11, 21, 31],\n       [12, 22, 32],\n       [13, 23, 33]])\n```",
+            "ValueError: operands could not be broadcast together with shapes (3,1) (3,)",
+            "```python\narray([[11, 22, 33]])\n```",
+            "```python\narray([[11],\n       [22],\n       [33]])\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`a` has shape (3,1). `b` has shape (3,), which broadcasts as (1,3) across columns. The result is a (3,3) matrix where each row of `a` is added to `b`.",
+          "distractor_rationale": "B assumes elementwise addition treating `b` as a (3,1) column, which is not how NumPy broadcasts a 1-D array. C is a common misconception: (3,1) and (3,) do broadcast to (3,3). D collapses dimensions as if a reduction happened; addition does not reduce dimensions.",
+          "skills_covered": [
+            "NumPy",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Consider views vs copies in NumPy:\n```python\nimport numpy as np\narr = np.arange(6)                 # array([0, 1, 2, 3, 4, 5])\nb = arr.reshape(2, 3)[:, :2]\nb[:] = 99\narr\n```\nWhat is the final value of `arr`?",
+          "options": [
+            "```python\narray([0, 1, 2, 3, 4, 5])\n```",
+            "```python\narray([99, 99,  2, 99, 99,  5])\n```",
+            "```python\narray([ 0,  1, 99,  3,  4, 99])\n```",
+            "```python\narray([99, 99, 99, 99, 99, 99])\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "`reshape` and slicing produce a view, so writing through `b` mutates `arr` at positions corresponding to the first two columns: indices 0,1,3,4 are set to 99. Indices 2 and 5 remain unchanged.",
+          "distractor_rationale": "B assumes `b` is a copy. C assumes the slice covered the entire array; it only covered 4 elements. D imagines changes only in the last column of each row, which is the opposite of what `[:, :2]` selects.",
+          "skills_covered": [
+            "NumPy",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "You demean a column within each group using pandas:\n```python\nimport pandas as pd\n\ndf = pd.DataFrame({\n    'g': ['A','A','B','B','B'],\n    'x': [10, 14, 2, 6, 10]\n})\n\ndf['y'] = df['x'] - df.groupby('g')['x'].transform('mean')\nlist(df['y'])\n```\nWhat is the resulting list?",
+          "options": [
+            "```python\n[-0.8, 0.8, -1.6, 0.0, 0.8]\n```",
+            "```python\n[-2.0, 2.0, -4.0, 0.0, 4.0]\n```",
+            "Raises ValueError: transform produced wrong length",
+            "```python\n[-1.2, 2.8, -3.2, 0.8, 4.8]\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Group means are A: 12, B: 6. Demeaning gives A: [10-12, 14-12] = [-2, 2], B: [2-6, 6-6, 10-6] = [-4, 0, 4]. `transform` preserves the original shape, aligning results by index.",
+          "distractor_rationale": "B uses the global mean rather than group means. C mixes up per-group means with the overall mean or wrong group composition. D confuses `apply` (which may reduce) with `transform` (which broadcasts back to original length).",
+          "skills_covered": [
+            "Pandas",
+            "Statistics"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "Index alignment during concatenation:\n```python\nimport pandas as pd\ns1 = pd.Series([1,2,3], index=['u','v','w'])\ns2 = pd.Series([10,20], index=['v','x'])\ndf = pd.concat([s1, s2], axis=1)\ndf.fillna(0, inplace=True)\nrow_v = df.loc['v'].tolist()\nshape = df.shape\nrow_v, shape\n```\nWhat are `row_v` and `shape`?",
+          "options": [
+            "```python\n([2.0, 20.0], (4, 2))\n```",
+            "```python\n([22.0], (3, 1))\n```",
+            "```python\n([1.0, 10.0], (4, 2))\n```",
+            "```python\n([2.0, 20.0], (3, 2))\n```"
+          ],
+          "correct_option": "A",
+          "explanation": "`concat` with `axis=1` aligns on index and takes the union {'u','v','w','x'} giving shape (4,2). At 'v', `s1` has 2 and `s2` has 20, hence [2.0, 20.0].",
+          "distractor_rationale": "B forgets the union introduces index 'x'. C assumes concatenation sums values or stacks them into one column. D confuses positions, reading 'u' and 'v' values as if they were aligned by position rather than index labels.",
+          "skills_covered": [
+            "Pandas",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "Advanced indexing vs slicing side-effects:\n```python\nimport numpy as np\narr = np.array([0, 1, 2, 3, 4], dtype=int)\nsub = arr[[0, 2, 4]]  # fancy indexing -> copy\nsub[:] = -1\narr[1:4] = arr[1:4] + 10\narr\n```\nWhat is the final value of `arr`?",
+          "options": [
+            "```python\narray([10, 11, 12, 13, 14])\n```",
+            "```python\narray([ 0, 11, 12, 13,  4])\n```",
+            "```python\narray([-1, 11, -1, 13, -1])\n```",
+            "```python\narray([-1,  1, -1,  3, -1])\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "Fancy indexing returns a copy, so writing to `sub` has no effect on `arr`. The slice assignment adds 10 to indices 1,2,3, producing [0,11,12,13,4].",
+          "distractor_rationale": "B assumes fancy indexing makes a view, so it wrongly propagates -1s to arr before the slice-add. C assumes only the fancy-index assignment happened. D assumes broadcasting added 10 to every element, but the slice was `1:4` only.",
+          "skills_covered": [
+            "NumPy",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "Understand `axis` in reductions:\n```python\nimport numpy as np\nA = np.array([[1,2,3],\n              [4,5,6]])\ncol_sums = np.sum(A, axis=0).tolist()\nrow_sums = np.sum(A, axis=1).tolist()\ncol_sums, row_sums\n```\nWhat are the two lists?",
+          "options": [
+            "```python\n([6, 15], [5, 7, 9])\n```",
+            "```python\n([6, 6, 6], [1, 2, 3])\n```",
+            "```python\n([5, 7, 9], [6, 15])\n```",
+            "```python\n([5, 7, 9], [5, 7, 9])\n```"
+          ],
+          "correct_option": "C",
+          "explanation": "Summing over `axis=0` reduces rows to column totals [1+4, 2+5, 3+6] = [5,7,9]. Summing over `axis=1` reduces columns to row totals [1+2+3, 4+5+6] = [6,15].",
+          "distractor_rationale": "B swaps axes. C assumes the same result for both axes. D imagines `axis=0` sums each row independently and `axis=1` returns the first row, which is incorrect.",
+          "skills_covered": [
+            "NumPy",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "From the following 2x2 frequency table of 100 observations, compute P(A^c ∪ B):\n```text\nA  B  count\n1  1    30\n1  0    30\n0  1    20\n0  0    20\n```\nWhat is the probability?",
+          "options": [
+            "0.60",
+            "0.50",
+            "0.80",
+            "0.70"
+          ],
+          "correct_option": "D",
+          "explanation": "A^c ∪ B = 1 − (A ∩ B^c). The count for A=1 and B=0 is 30, so P(A ∩ B^c)=0.30. Therefore P(A^c ∪ B)=1−0.30=0.70.",
+          "distractor_rationale": "B is P(B) only. C is P(A^c) + P(B) double-counting the overlap. D is P(A ∪ B) computed as 0.6+0.5−0.3=0.8 then mistakenly halved.",
+          "skills_covered": [
+            "Statistics"
+          ],
+          "modules_covered": [
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "Cosine similarities after L2-normalizing row vectors:\n```python\nimport numpy as np\nX = np.array([[3., 0.],\n              [0., 4.]])\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nG = Xn @ Xn.T\nG\n```\nWhat does `G` evaluate to?",
+          "options": [
+            "```python\narray([[1., 1.],\n       [1., 1.]])\n```",
+            "```python\narray([[0.6, 0.8],\n       [0.8, 0.6]])\n```",
+            "```python\narray([[9., 0.],\n       [0., 16.]])\n```",
+            "```python\narray([[1., 0.],\n       [0., 1.]])\n```"
+          ],
+          "correct_option": "D",
+          "explanation": "Row-normalizing makes each vector unit length: [1,0] and [0,1]. Their Gram matrix is the cosine similarity matrix, which is the identity when rows are orthonormal.",
+          "distractor_rationale": "B confuses dot products before normalization (squared norms) with cosines. C confuses normalized components with pairwise cosines. D assumes all unit vectors have cosine 1 with each other; only identical directions do.",
+          "skills_covered": [
+            "NumPy",
+            "Statistics"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "You read a small CSV with a missing integer value:\n```python\nimport pandas as pd\nfrom io import StringIO\ncsv = \"\"\"id,val\n1,10\n2,\n3,30\n\"\"\"\ndf = pd.read_csv(StringIO(csv))\ndf['val'].dtype\n```\nWithout specifying any `dtype`, what is the dtype of `val`?",
+          "options": [
+            "object",
+            "int64",
+            "float64",
+            "Int64"
+          ],
+          "correct_option": "C",
+          "explanation": "Presence of a missing value (`NaN`) in a numeric column forces pandas to upcast to a floating dtype by default, hence `float64`.",
+          "distractor_rationale": "Int64 is the nullable integer dtype but is not used unless explicitly requested. `object` would occur if values were mixed non-numeric strings. `int64` cannot represent NaN.",
+          "skills_covered": [
+            "Pandas",
+            "Python"
+          ],
+          "modules_covered": [
+            1
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "You draw samples with known variance and ask about the sampling distribution of the mean:\n```python\nimport numpy as np\nn = 100\nx = np.random.normal(loc=0.0, scale=5.0, size=n)  # population sd = 5\n# Over many repeats, what is the standard deviation of the sample mean?\n```\nChoose the closest value.",
+          "options": [
+            "0.5",
+            "0.05",
+            "1.0",
+            "5.0"
+          ],
+          "correct_option": "A",
+          "explanation": "For iid samples with population standard deviation σ=5 and size n=100, the standard deviation of the sample mean is σ/√n = 5/10 = 0.5.",
+          "distractor_rationale": "5.0 is the population standard deviation, not that of the mean. 0.05 divides by n instead of √n. 1.0 is arbitrary (perhaps confusing variance with sd or n=25).",
+          "skills_covered": [
+            "Statistics",
+            "NumPy"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You have two datasets in a notebook. Transactions include timestamps down to seconds; FX rates are recorded daily at 16:00 UTC.\n```python\nimport pandas as pd\nfrom datetime import datetime\n\ntransactions = pd.DataFrame({\n    'tx_id':[1,2,3,4],\n    'ts': [\n        pd.Timestamp('2024-03-01 09:15:00Z'),\n        pd.Timestamp('2024-03-01 18:30:00Z'),\n        pd.Timestamp('2024-03-02 07:00:00Z'),\n        pd.Timestamp('2024-03-03 01:00:00Z')\n    ],\n    'amount_local':[100, 200, 150, 50]\n})\n\nrates = pd.DataFrame({\n    'rate_ts': [\n        pd.Timestamp('2024-03-01 16:00:00Z'),\n        pd.Timestamp('2024-03-02 16:00:00Z'),\n        pd.Timestamp('2024-03-03 16:00:00Z')\n    ],\n    'rate':[1.10, 1.11, 1.08]\n})\n```\nA teammate did `transactions.merge(rates, left_on='ts', right_on='rate_ts')` and got zero matches, then tried merging on the date floor and got duplicated rows for some days in a larger sample.",
+          "task": "Propose an exact, robust merge that assigns each transaction the last known rate at or before its timestamp. Include code, explain why the naive approaches fail, and name at least one check you would add to prove no unintended duplication or leakage. Mention any edge cases (e.g., early-morning trades before first rate).",
+          "expected_answer": "Use a time-aware as-of merge with validation and a tolerance. Example:\n```python\ntrx = transactions.sort_values('ts')\nfx  = rates.sort_values('rate_ts')\nmerged = pd.merge_asof(\n    trx, fx,\n    left_on='ts', right_on='rate_ts',\n    direction='backward',  # last known rate at or before ts\n    tolerance=pd.Timedelta('3D')  # guard against missing long gaps\n)\n\n# Sanity checks\nassert len(merged) == len(trx)  # no row explosion\n# if rates should be many-to-one by day: ensure at most one rate per day\nassert fx['rate_ts'].dt.floor('D').value_counts().max() == 1\n# Check for leaks where a transaction predates the earliest rate\nassert merged['rate'].notna().all()  # or count and handle exceptions explicitly\n\nmerged['amount_usd'] = merged['amount_local'] * merged['rate']\n```\nExplanation: Joining on exact timestamps fails because `ts` rarely equals the 16:00 `rate_ts`. Flooring to date can be wrong for trades after 16:00 (they should still use that day's 16:00) and can duplicate if the larger sample has multiple rate rows per day or if you join on dates with one-to-many. `merge_asof` aligns on time without duplication, using the last known rate. Add `validate='many_to_one'` when day-level uniqueness can be guaranteed; otherwise validate as shown and assert row counts and null-free rates. Edge cases include transactions before the first available rate (decide policy: drop, flag, or carry forward from prior business day) and timezone consistency.",
+          "rubric": [
+            {
+              "criterion": "Chooses a correct time-aware method (merge_asof/backward) and justifies why it fits the requirement (last known rate).",
+              "marks": 3
+            },
+            {
+              "criterion": "Provides working, ordered code including sorting, tolerance and correct key columns; computes derived USD amount.",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies failure modes of exact-timestamp and date-floor merges (mismatched times, one-to-many duplication).",
+              "marks": 1
+            },
+            {
+              "criterion": "Includes at least one explicit, automatable check to detect duplication or leakage (row-count equality, validate, null-rate guard).",
+              "marks": 1
+            },
+            {
+              "criterion": "Mentions at least one edge case (e.g., pre-first-rate trades, timezones) and a policy to handle it.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Pandas",
+            "Python",
+            "Statistics"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "A notebook computes a cosine similarity matrix for item embeddings. Some rows are all zeros (items with no signal). Current code sometimes returns NaNs and is slow:\n```python\nimport numpy as np\nX = ...  # shape (n_items, d)\n# buggy\nXn = X / np.linalg.norm(X, axis=1, keepdims=True)\nS = Xn @ Xn.T\n```\nYou need a numerically safe, vectorized solution with a clear treatment for zero vectors.",
+          "task": "Write vectorized code that avoids NaNs and explain your design choices. State the mathematical convention you adopt for zero vectors (e.g., define cosine with a zero vector as 0), and why. Briefly justify the time/memory complexity and any trade-offs.",
+          "expected_answer": "A robust pattern masks or clamps zero norms before division, then zeroes undefined similarities:\n```python\n# Compute row norms (n, 1)\nnorms = np.linalg.norm(X, axis=1, keepdims=True)\nmask_zero = norms == 0\nsafe_norms = norms.copy()\nsafe_norms[mask_zero] = 1.0  # avoid divide-by-zero\n\nXn = X / safe_norms\nS = Xn @ Xn.T                 # in [-1,1], but rows from zeros are all 0\n# Enforce convention: cosine(0, v) = 0 for all v\nS[mask_zero[:,0], :] = 0.0\nS[:, mask_zero[:,0]] = 0.0\n```\nRationale: Cosine is undefined for zero vectors; setting it to 0 encodes “no directional similarity,” which is practical for ranking. This keeps computation fully vectorized (O(n d) for normalization, O(n^2 d) for the Gram product). If n is large, consider block multiplication or approximate methods to manage O(n^2) memory/time. Avoids NaNs by never dividing by zero and explicitly zeroing rows/cols tied to zero vectors.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies the NaN source (division by zero on zero-norm rows) and states a clear convention for zero vectors.",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides fully vectorized, correct code that avoids NaNs and enforces the convention symmetrically in S.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains the mathematical rationale for the chosen convention and its implications for ranking/similarity.",
+              "marks": 1
+            },
+            {
+              "criterion": "Addresses computational complexity/memory and mentions mitigation for large n (e.g., blocking/approximation).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "NumPy",
+            "Statistics",
+            "Python"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You ingest a CSV of 1,000 Bernoulli trials (1=success, 0=failure). A quick summary shows 20 successes and 980 failures. A teammate reports a 95% confidence interval for p using the normal approximation and gets [0.011, 0.029].",
+          "task": "Compute p̂ and propose a more appropriate 95% interval method for this rare-event rate. Provide the interval (to 3 d.p.) and explain why it’s preferable here. Outline how you would compute it in a notebook without specialized libraries.",
+          "expected_answer": "p̂ = 20/1000 = 0.020.\nPrefer Wilson or exact Clopper–Pearson over the Wald (normal) interval because p is near 0 and Wald is asymmetric/coverage-poor. Wilson 95% interval:\n```python\nimport numpy as np\nn, x = 1000, 20\nphat = x/n\nz = 1.96\nden = 1 + z**2/n\ncenter = (phat + z**2/(2*n)) / den\nhalf = (z * np.sqrt(phat*(1-phat)/n + z**2/(4*n**2))) / den\nlo, hi = center - half, center + half\n(lo, hi)\n# ≈ (0.012, 0.031) to 3 d.p.\n```\nWilson is better-behaved near boundaries and for small counts, with closer-to-nominal coverage. If exact is required, compute Clopper–Pearson via Beta quantiles; without SciPy, precompute or implement a small bisection for the binomial CDF.",
+          "rubric": [
+            {
+              "criterion": "Correctly computes p̂ = 0.020.",
+              "marks": 1
+            },
+            {
+              "criterion": "Selects Wilson or Clopper–Pearson over Wald and justifies why (rare events, asymmetry/coverage).",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides a correct formula/code outline to compute the chosen interval.",
+              "marks": 2
+            },
+            {
+              "criterion": "Reports a numerically reasonable 95% CI to 3 d.p. consistent with the method.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Python"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "An A/B test notebook has a DataFrame with per-user outcomes:\n```python\nimport pandas as pd\nusers = pd.DataFrame({\n    'group': ['A']*1200 + ['B']*800,\n    'converted': [0]*1100 + [1]*100 + [0]*720 + [1]*80\n})\n```\nYou need to compare conversion rates and compute a z-test for the difference in proportions.",
+          "task": "Compute conversion rates for A and B, then derive and implement the correct pooled standard error for unequal sample sizes. Provide vectorized pandas/NumPy code to compute the z-statistic and two-sided p-value, and explain the assumptions that justify a normal approximation here.",
+          "expected_answer": "Rates: nA=1200, xA=100 → pA=100/1200≈0.0833; nB=800, xB=80 → pB=0.10.\nPooled proportion p = (xA+xB)/(nA+nB) = 180/2000 = 0.09.\nSE = sqrt(p(1−p)(1/nA + 1/nB)). z = (pB−pA)/SE.\n```python\nimport numpy as np\nnA, xA = 1200, 100\nnB, xB = 800, 80\npA, pB = xA/nA, xB/nB\np_pool = (xA+xB)/(nA+nB)\nse = np.sqrt(p_pool*(1-p_pool)*(1/nA + 1/nB))\nz = (pB - pA) / se\nfrom math import erf, sqrt\np_two = 2*(1 - 0.5*(1+erf(abs(z)/sqrt(2))))  # 2*(1-Phi(|z|)) via erf\n```\nAssumptions: independent Bernoulli trials, sufficiently large n with np and n(1−p) both >5 in each group (holds here), and no interference. The pooled SE is appropriate under H0: pA=pB.",
+          "rubric": [
+            {
+              "criterion": "Correctly computes group rates and identifies sample sizes and successes.",
+              "marks": 2
+            },
+            {
+              "criterion": "Writes the correct pooled SE formula for two-proportion z-test with unequal n and applies it.",
+              "marks": 2
+            },
+            {
+              "criterion": "Provides vectorized/standard-library code to compute z and a two-sided p-value.",
+              "marks": 2
+            },
+            {
+              "criterion": "States the normal-approximation assumptions and checks (np, n(1−p) thresholds; independence).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "Pandas",
+            "Python"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Notebook data exercises: vectorization, alignment, grouping, and time-aware joins",
+          "brief": "Create a Jupyter notebook named data_exercises.ipynb that demonstrates mastery of NumPy vectorization/broadcasting and pandas alignment/grouping/time-aware joins. Use only in-notebook generated data or inline CSV strings so the notebook is self-contained and deterministic. Include asserts that print 'OK' when each section passes.",
+          "deliverable": "Data exercises",
+          "acceptance_criteria": [
+            "A NumPy broadcasting cell that constructs a=(np.arange(1,4).reshape(3,1)) and b=np.array([10,20,30]), computes c=a+b and asserts np.array_equal(c, [[11,21,31],[12,22,32],[13,23,33]]) -> prints 'OK'.",
+            "A NumPy view/copy cell that sets arr=np.arange(6); b=arr.reshape(2,3)[:,:2]; b[:]=99 and asserts np.array_equal(arr, np.array([99,99,2,99,99,5])) -> prints 'OK'.",
+            "A pandas grouping cell that builds df={'g':['A','A','B','B','B'],'x':[10,14,2,6,10]}, computes y=x - group_mean via transform, and asserts list(df['y']) == [-2.0, 2.0, -4.0, 0.0, 4.0] -> prints 'OK'.",
+            "A time-aware FX join using the provided sample transactions/rates from the assessment, implemented with pd.merge_asof(direction='backward'), with asserts: len(merged)==len(transactions); merged['rate'].notna().all(); and merged has a computed 'amount_usd' column. All asserts must pass and print 'OK'.",
+            "Notebook shows seeds where randomness is used (np.random.seed(...)) and runs top-to-bottom without errors. A final cell prints 'ALL OK' if every section’s asserts passed."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct implementation of broadcasting example with exact expected output and assertion.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct demonstration of view vs copy side-effects with exact expected output and assertion.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct groupby-transform demean with exact expected output and assertion.",
+              "marks": 4
+            },
+            {
+              "criterion": "Correct time-aware merge_asof with required validations and derived amount_usd; all asserts pass.",
+              "marks": 6
+            }
+          ],
+          "skills_covered": [
+            "Python",
+            "NumPy",
+            "Pandas",
+            "Statistics"
+          ],
+          "modules_covered": [
+            1,
+            2
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Concept workbook: probability, vectors, distributions and metrics",
+          "brief": "Produce a clear, self-contained concept workbook (PDF or notebook) answering the following. Show steps and final numeric answers rounded to 3 d.p.\n1) Bayes: In a population, disease prevalence is 1%. Test sensitivity 95%, specificity 98%. If a person tests positive, what is P(disease | +)?\n2) Vectors/metrics: Given x=[3,−1,0], y=[6,−2,0], compute ||x||2, ||y||2, cosine similarity cos(x,y), and Euclidean distance d(x,y).\n3) Linear combination moments: For independent X~N(10, 9) and Y~N(2, 4), find mean and variance of Z=3X−2Y.\n4) Sampling distribution: Draw 100 iid samples from a distribution with σ=12. What is the standard error of the sample mean? Provide the formula and the numeric value.",
+          "deliverable": "Concept workbook",
+          "acceptance_criteria": [
+            "Answers include explicit formulas used and intermediate substitutions for each part.",
+            "Final numeric answers (to 3 d.p.) match: (1) 0.325; (2) ||x||=3.162, ||y||=6.325, cos=1.000, d=3.000; (3) E[Z]=26, Var[Z]=(3^2)*9 + (−2)^2*4 = 81 + 16 = 97; (4) SE = σ/√n = 12/10 = 1.200.",
+            "All computations are legible, and any code (if a notebook) reproduces the numbers when run.",
+            "Each question is clearly labeled; rounding policy (3 d.p.) is stated and followed consistently."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct Bayes computation with clear prior/likelihood/posterior structure and correct numeric posterior.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct vector and metric computations, including norms, cosine similarity, and Euclidean distance with correct rounding.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct derivation of mean and variance for the linear combination with independence used appropriately.",
+              "marks": 5
+            },
+            {
+              "criterion": "Correct sampling distribution reasoning and SE computation, with formula and numeric value.",
+              "marks": 5
+            }
+          ],
+          "skills_covered": [
+            "Statistics",
+            "NumPy",
+            "Python"
+          ],
+          "modules_covered": [
+            2,
+            1
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-024-S02",
+      "skills_assessed": [
+        "Python",
+        "NumPy",
+        "Pandas",
+        "Scikit-learn",
+        "Statistics",
+        "Data Cleaning",
+        "Feature Engineering",
+        "Model Evaluation",
+        "Data Pipeline Development"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "```python\nimport pandas as pd\nimport numpy as np\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\n\nX_train = pd.DataFrame({\"color\": [\"red\",\"blue\",\"red\"], \"w\": [1.0, 5.0, 2.0]})\ny_train = [0,1,0]\nX_test = pd.DataFrame({\"color\": [\"green\",\"red\"], \"w\":[3.0, 4.0]})\n\nct = ColumnTransformer([\n    (\"num\", StandardScaler(), [\"w\"]),\n    (\"cat\", OneHotEncoder(handle_unknown=\"ignore\"), [\"color\"])\n])\n\npipe = Pipeline([(\"prep\", ct), (\"clf\", LogisticRegression(max_iter=1000))])\npipe.fit(X_train, y_train)\npred = pipe.predict_proba(X_test)[:,1]\nprint(np.round(pred,3))\n```\nWhen the unseen category 'green' appears in `X_test`, what happens during prediction and why?",
+          "options": [
+            "It runs without error; 'green' gets an all-zero one-hot vector from `OneHotEncoder(handle_unknown=\"ignore\")`, so predictions are computed normally.",
+            "Feature counts differ between train and test so the estimator receives mismatched shapes and fails.",
+            "'green' is treated as `NaN` and imputed to the most frequent seen category before encoding.",
+            "A `ValueError` is raised during transform because `OneHotEncoder` cannot handle unseen categories."
+          ],
+          "correct_option": "A",
+          "explanation": "With handle_unknown=\"ignore\", OneHotEncoder drops unseen categories by producing an all-zero encoded row for that column block. ColumnTransformer ensures consistent feature ordering and counts, so the downstream model receives the same number of features and predicts normally.",
+          "distractor_rationale": "B is tempting if you have used encoders without `handle_unknown` (default is to error), but here it is explicitly set to \"ignore\". C feels plausible if you have manually dummied columns; ColumnTransformer prevents that mismatch. D mixes up encoding and imputation; OHE does not cast unseen categories to NaN nor does it impute them.",
+          "skills_covered": [
+            "Scikit-learn",
+            "Data Pipeline Development",
+            "Feature Engineering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "```python\nfrom sklearn.model_selection import train_test_split\nimport numpy as np\n\ny = np.r_[np.zeros(980), np.ones(20)]  # 2% positives\nX = np.random.randn(1000, 5)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=0  # no stratify\n)\nprint(y_train.mean(), y_test.mean())\n# Later: fit LogisticRegression() and report accuracy at threshold 0.5\n```\nWhat outcome is most likely when you evaluate accuracy on this split?",
+          "options": [
+            "scikit-learn will warn and automatically adjust the decision threshold to the class prior.",
+            "Accuracy will be systematically low due to imbalance; lack of stratification cannot inflate it.",
+            "Accuracy on the test set can appear very high even for a useless model, because without stratification the test set may contain very few (or even zero) positives.",
+            "Only recall is affected by the lack of stratification; accuracy is unaffected."
+          ],
+          "correct_option": "C",
+          "explanation": "Without stratify, the minority class can be underrepresented in test by chance. If nearly all labels in test are the majority class, predicting the majority class yields deceptively high accuracy.",
+          "distractor_rationale": "B confuses directionality; accuracy can inflate when the test set is even more imbalanced. C is false: sklearn does not auto-tune thresholds for you. D is wrong because accuracy depends on the label distribution too.",
+          "skills_covered": [
+            "Statistics",
+            "Model Evaluation",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\n\n# X, y already loaded\nscaler = StandardScaler().fit(X)   # mistakenly fit on full data\nX_scaled = scaler.transform(X)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X_scaled, y, test_size=0.2, random_state=42\n)\nclf = LogisticRegression(max_iter=1000).fit(X_train, y_train)\nprint(clf.score(X_test, y_test))\n```\nWhich statement best explains the likely bias in the reported score?",
+          "options": [
+            "Scaling does not affect LogisticRegression, so the score is unbiased.",
+            "The score is optimistic due to leakage: scaling used information from the full dataset, including the test portion.",
+            "Each set is transformed with its own statistics here, so there is no leakage.",
+            "Only tree-based models are sensitive to leakage from scaling; linear models are not."
+          ],
+          "correct_option": "B",
+          "explanation": "Fitting the scaler on the full dataset leaks test-distribution information into the training process and typically inflates the measured performance. The right approach is to put the scaler inside a Pipeline so it is fit only on the training folds/portion.",
+          "distractor_rationale": "B is false: scaling affects both optimization and leakage for linear models. C misreads the code; the scaler was fit before the split. D is incorrect; leakage can affect any model family.",
+          "skills_covered": [
+            "Data Pipeline Development",
+            "Model Evaluation",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "```python\nfrom sklearn.preprocessing import OrdinalEncoder\nfrom sklearn.model_selection import cross_val_score, KFold\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"city\": [\"A\",\"B\",\"C\",\"A\",\"B\",\"C\",\"D\"],\n    \"age\": [20,30,40,25,35,45,50],\n    \"y\":   [0,1,0,0,1,0,1]\n})\n\nct = ColumnTransformer([\n    (\"ord\", OrdinalEncoder(), [\"city\"]),\n    (\"num\", \"passthrough\", [\"age\"])\n])\n\npipe = Pipeline([(\"prep\", ct), (\"clf\", LogisticRegression(max_iter=1000))])\n\nscores = cross_val_score(pipe, df[[\"city\",\"age\"]], df[\"y\"], cv=KFold(n_splits=3, shuffle=False))\nprint(scores)\n```\nWhat is most likely to happen during cross-validation and why?",
+          "options": [
+            "A `ValueError` is raised on some folds because `OrdinalEncoder` by default errors on unseen categories that appear in the validation split.",
+            "It works fine; `OrdinalEncoder` silently maps unseen categories to -1 by default.",
+            "The numeric feature causes leakage that drowns out the effect of categorical encoding.",
+            "Results are unbiased because `OrdinalEncoder` is fit inside the pipeline; unseen categories cannot occur across folds."
+          ],
+          "correct_option": "A",
+          "explanation": "When a fold's training split lacks a category (e.g., 'D') that appears in its validation split, `OrdinalEncoder` with default settings raises an error. You must set `handle_unknown='use_encoded_value'` and `unknown_value=...` or use one-hot with `handle_unknown='ignore'`.",
+          "distractor_rationale": "B echoes behavior from some other encoders but is not OrdinalEncoder's default. C overstates what pipelines guarantee; they fit on the training fold only, so unseen categories can still appear in validation. D is unrelated to the failure mode here.",
+          "skills_covered": [
+            "Scikit-learn",
+            "Data Pipeline Development",
+            "Feature Engineering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "```python\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import cross_val_score\nimport numpy as np\n\nrng = np.random.RandomState(0)\nX = np.c_[rng.normal(0, 1, (200,1)), rng.normal(0, 50, (200,1))]  # second feature huge scale\ny = (X[:,0] + rng.normal(0,1,200) > 0).astype(int)\n\npipe_raw = Pipeline([(\"knn\", KNeighborsClassifier(n_neighbors=5))])\npipe_scaled = Pipeline([(\"scaler\", StandardScaler()), (\"knn\", KNeighborsClassifier(n_neighbors=5))])\n\nprint(np.mean(cross_val_score(pipe_raw, X, y, cv=5)))\nprint(np.mean(cross_val_score(pipe_scaled, X, y, cv=5)))\n```\nWhich outcome is most likely and why?",
+          "options": [
+            "The raw pipeline will crash due to distance overflow on the large-scale feature.",
+            "Both pipelines perform similarly because k-NN is scale-invariant.",
+            "The raw pipeline scores higher because scaling destroys class separability in the informative feature.",
+            "The scaled pipeline scores higher because, without scaling, distances are dominated by the large-scale (mostly uninformative) feature."
+          ],
+          "correct_option": "D",
+          "explanation": "k-NN relies on distances; features with larger scales dominate. Standardizing restores balance so the informative feature contributes, improving CV scores.",
+          "distractor_rationale": "B confuses normalization with information loss; scaling is monotonic and preserves separability. C is false: k-NN is not scale-invariant. D is unrealistic given the scale; no overflow occurs here.",
+          "skills_covered": [
+            "Scikit-learn",
+            "Model Evaluation",
+            "Feature Engineering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "```python\nimport pandas as pd\nfrom sklearn.model_selection import cross_val_score\nfrom sklearn.linear_model import Ridge\n\ndf = pd.read_csv(\"sales.csv\")  # 'product_id', other features, and target 'units_sold'\n\n# target encoding BEFORE CV (leakage)\nte = df.groupby(\"product_id\")[\"units_sold\"].mean().rename(\"prod_te\")\ndf = df.merge(te, on=\"product_id\", how=\"left\")\n\nX = df.drop(columns=[\"units_sold\"])\ny = df[\"units_sold\"]\n\nprint(cross_val_score(Ridge(), X, y, cv=5, scoring=\"r2\"))\n```\nWhat is the likely effect on the printed cross-validation scores?",
+          "options": [
+            "Using a mean as a feature is harmless for linear models; only tree ensembles would be affected.",
+            "They are unbiased because Ridge is refit within each CV fold, so leakage cannot occur.",
+            "Leakage only happens if a `product_id` repeats within a fold, which KFold prevents by construction.",
+            "They are overly optimistic because the mean-by-category feature used target information computed on the full dataset (leakage)."
+          ],
+          "correct_option": "D",
+          "explanation": "Computing target-derived statistics before CV leaks validation targets into training features. Scores are biased upward. Target encoding must be fit within each training fold (e.g., via a custom transformer) or avoided.",
+          "distractor_rationale": "B ignores that features already contain leaked info before refitting. C is wrong: KFold does not prevent repeats of the same ID across folds. D misunderstands leakage: any model can be misled by leaked features.",
+          "skills_covered": [
+            "Pandas",
+            "Model Evaluation",
+            "Data Pipeline Development",
+            "Feature Engineering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "```python\nfrom sklearn.model_selection import train_test_split\nimport numpy as np\n\ny = np.r_[np.zeros(95), np.ones(5)]  # 5% positives\nX = np.random.randn(100, 2)\n\nX_tr, X_te, y_tr, y_te = train_test_split(\n    X, y, test_size=0.2, random_state=0, stratify=y\n)\nprint(y_tr.mean(), y_te.mean())\n```\nWhat will the printed class proportions most likely be?",
+          "options": [
+            "0 in test because the minority class may be dropped.",
+            "Approximately 0.05 in both train and test.",
+            "Higher in train than in test due to random variation.",
+            "Unpredictable; stratification does not control class balance."
+          ],
+          "correct_option": "B",
+          "explanation": "Stratification preserves label proportions across splits as closely as possible. With 5 positives overall, you get 4/80 and 1/20, both 0.05.",
+          "distractor_rationale": "B is what happens without stratification. C is the failure mode stratification avoids here. D is incorrect; stratify is precisely for balancing label distributions.",
+          "skills_covered": [
+            "Statistics",
+            "Scikit-learn",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "```python\nfrom sklearn.preprocessing import StandardScaler, RobustScaler\nfrom sklearn.linear_model import Lasso\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import cross_val_score\nimport numpy as np\n\nrng = np.random.RandomState(0)\nX = rng.normal(0,1,(200,3))\nX[:5,0] += 50  # heavy outliers in feature 0\ny = X[:,1]*3 + rng.normal(0,1,200)\n\npipe_std = Pipeline([(\"scaler\", StandardScaler()), (\"lasso\", Lasso(alpha=0.1, max_iter=10000))])\npipe_rob = Pipeline([(\"scaler\", RobustScaler()),   (\"lasso\", Lasso(alpha=0.1, max_iter=10000))])\n\ncv_std = np.mean(cross_val_score(pipe_std, X, y, cv=5, scoring=\"r2\"))\ncv_rob = np.mean(cross_val_score(pipe_rob, X, y, cv=5, scoring=\"r2\"))\nprint(cv_std, cv_rob)\n```\nWhich relationship is most likely and why?",
+          "options": [
+            "`cv_rob` > `cv_std` because RobustScaler reduces the influence of outliers on scaling, improving L1-regularized regression.",
+            "`cv_std` > `cv_rob` because StandardScaler emphasizes variance that Lasso can exploit better.",
+            "`cv_std` ≈ `cv_rob`; Lasso is scale-invariant so the choice of scaler rarely matters.",
+            "`cv_std` and `cv_rob` are not comparable because cross_val_score is invalid for Lasso."
+          ],
+          "correct_option": "A",
+          "explanation": "With heavy-tailed features, RobustScaler yields more stable scale estimates (median/IQR), which typically improves regularized linear models compared to StandardScaler that is sensitive to outliers.",
+          "distractor_rationale": "B is false; Lasso is not scale-invariant and regularization depends on scaling. C may happen in clean data, but with clear outliers the robust approach tends to help. D is incorrect; cross_val_score is appropriate for Lasso.",
+          "skills_covered": [
+            "Statistics",
+            "Scikit-learn",
+            "Feature Engineering",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "```python\nfrom sklearn.dummy import DummyClassifier\nfrom sklearn.model_selection import cross_val_score\nimport numpy as np\n\ny = np.r_[np.zeros(990), np.ones(10)]\nX = np.random.randn(1000, 5)\n\nbase = DummyClassifier(strategy=\"most_frequent\")\nacc = cross_val_score(base, X, y, cv=5, scoring=\"accuracy\").mean()\nprint(round(acc, 3))\n```\nWhat number is this most likely to print?",
+          "options": [
+            "About 0.01, the minority prevalence.",
+            "About 0.99, because always predicting the majority class matches 99% of labels.",
+            "It cannot be computed because DummyClassifier requires stratification.",
+            "About 0.50, because random guessing averages to chance level."
+          ],
+          "correct_option": "B",
+          "explanation": "`most_frequent` always predicts the majority class. With 99% zeros, accuracy is ~0.99. This is why accuracy is a poor metric on imbalanced data.",
+          "distractor_rationale": "B confuses `most_frequent` with `stratified` or random. C swaps accuracy with positive rate. D is false; no special splitter is required.",
+          "skills_covered": [
+            "Model Evaluation",
+            "Statistics",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            4
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "```python\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.linear_model import LinearRegression\n\nnum_cols = [\"age\", \"income\"]\ncat_cols = [\"city\", \"segment\"]\n\n# WRONG: scaling before imputing on numeric columns\nct = ColumnTransformer([\n    (\"num\", Pipeline([(\"sc\", StandardScaler()), (\"imp\", SimpleImputer(strategy=\"median\"))]), num_cols),\n    (\"cat\", OneHotEncoder(handle_unknown=\"ignore\"), cat_cols)\n])\n\npipe = Pipeline([(\"prep\", ct), (\"reg\", LinearRegression())])\n```\nWhat is the most likely runtime behavior when fitting this pipeline on data containing NaNs in `num_cols`?",
+          "options": [
+            "It works; StandardScaler ignores NaNs by design and passes them to the imputer.",
+            "Numeric NaNs get one-hot encoded into an extra category instead.",
+            "A failure complaining about NaNs in StandardScaler, because scaling precedes imputation.",
+            "It fits but silently fills numeric NaNs with zeros inside StandardScaler."
+          ],
+          "correct_option": "C",
+          "explanation": "StandardScaler expects finite numbers; placing it before imputation causes a failure when NaNs are present. Impute first, then scale: `[('imp', SimpleImputer(...)), ('sc', StandardScaler())]`.",
+          "distractor_rationale": "B describes behavior of some estimators, not StandardScaler in this context. C confuses numeric and categorical pipelines. D is incorrect; StandardScaler does not silently zero-fill missing values.",
+          "skills_covered": [
+            "Data Cleaning",
+            "Scikit-learn",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You receive a retail churn classification dataset with 200k rows and 45 columns. Types: 8 numeric spend/frequency features with heavy right-skew and occasional extreme outliers; 10 categorical features, several with rare levels (some appear < 20 times); 5 date stamps (to be converted to recency/age deltas); and a few suspicious columns like `total_spend_last_month` and `target_label_leaked` that look derived from the outcome. The positive class is ~6%. The business will ship the model and score truly new customers monthly.",
+          "task": "Design the preprocessing and modeling approach as a single scikit-learn pipeline that avoids leakage and will be safe at inference. Specify (a) how you will split the data, (b) how you will treat numeric vs categorical features (imputation, encoding, scaling), including rare categories and unseen levels at inference, (c) how you will create any date-derived features without leaking future information, and (d) how you will set and justify a baseline and evaluation metrics for this imbalance. Justify each choice in one paragraph each.",
+          "expected_answer": "- Split: Use stratified train/validation/test split by customer with fixed `random_state`. If customers recur across months, group by customer to avoid leakage; otherwise `StratifiedKFold` for CV. No transformations before splitting. Optionally time-based split if temporal drift is relevant (train on older months, validate on newer) to mimic deployment.\n- Numeric: Pipeline of `SimpleImputer(strategy='median')` then `RobustScaler()` due to skew/outliers. Dates: transform to relative features (e.g., days since last purchase) computed from the record's own timestamp only. Do these inside a custom transformer within the pipeline to be fit on train folds only.\n- Categorical: `OneHotEncoder(handle_unknown='ignore', min_frequency=20)` (or custom rare-category grouper) after `SimpleImputer(strategy='most_frequent')`. This mitigates high cardinality and ensures unseen levels at inference map to safe all-zero columns.\n- Suspicious/leaky columns: Drop any feature computed using the target window (e.g., `target_label_leaked`) and any post-outcome aggregations; keep only features available at prediction time.\n- Model: Start with baseline `DummyClassifier(strategy='most_frequent')` and `strategy='prior'` to set reference metrics. Compare `LogisticRegression(class_weight='balanced', max_iter=1000)` and `RandomForestClassifier(class_weight='balanced_subsample')`, both wrapped after the `ColumnTransformer` in a `Pipeline`.\n- Metrics: Report ROC AUC and PR AUC; select threshold using the PR curve or cost-weighted utility because positives are 6%. Also report recall at a precision target the business can accept (e.g., P>=0.3) and use stratified CV to estimate variability.",
+          "rubric": [
+            {
+              "criterion": "Correctly specifies a no-leak split strategy appropriate to class imbalance (stratified and/or time-aware) and states no preprocessing occurs before the split/CV.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes numeric pipeline with imputation before scaling and justifies use of RobustScaler (or similar) for skew/outliers.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes categorical pipeline that handles rare and unseen categories safely (e.g., OHE with handle_unknown and frequency threshold) and includes imputation.",
+              "marks": 2
+            },
+            {
+              "criterion": "Identifies and excludes leaky/target-derived features; date features engineered without peeking into the future; all transformations inside a Pipeline/ColumnTransformer.",
+              "marks": 1
+            },
+            {
+              "criterion": "Defines a baseline and appropriate imbalance-aware metrics with justification (ROC AUC + PR AUC and thresholding strategy).",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Pipeline Development",
+            "Scikit-learn",
+            "Data Cleaning",
+            "Feature Engineering",
+            "Model Evaluation",
+            "Statistics"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You build three regressors for weekly demand forecasting with the same preprocessing: (i) `DummyRegressor(strategy='mean')`, (ii) `Ridge(alpha=1.0)` inside a pipeline with `StandardScaler`, and (iii) `RandomForestRegressor(n_estimators=300, random_state=0)`. You use 5-fold cross-validation and also hold out the last 8 weeks as a final test. Results:\n```text\nModel                      CV_R2   CV_RMSE   Test_R2   Test_RMSE\nDummy (mean)               -0.03   112.0     -0.05     118.0\nRidge + StandardScaler      0.41    83.0     -0.10     125.0\nRandomForest                0.58    71.0      0.20      98.0\n```\nThe product team reports there was a price policy change 10 weeks ago that altered purchasing patterns.",
+          "task": "Interpret the table, diagnose what is happening for each model with respect to bias/variance and distribution shift, and propose concrete changes to the validation and preprocessing/modeling setup to get a more reliable estimate and better test performance. Be specific about split strategy and any model or feature adjustments.",
+          "expected_answer": "- Dummy negative R2 confirms features carry some signal; it's the floor.\n- Ridge: Good CV but worse-than-dummy on the most recent test suggests temporal distribution shift; standard KFold mixes pre- and post-policy periods, inflating CV. Linear inductive bias may also be too rigid for the new regime.\n- RandomForest: CV > Ridge and positive Test R2 shows some robustness but still degraded vs CV, again consistent with shift.\nActions:\n- Use time-series split: `TimeSeriesSplit` or an expanding-window CV that preserves order, and keep the last 8 weeks as untouched test. Optionally gap between train/val to avoid leakage by temporal proximity.\n- Refit scalers and models within the pipeline per fold only (already implied) and check for features that leak future info (e.g., rolling stats must be strictly causal windows at prediction time).\n- Add recent-regime features (e.g., indicator for post-policy, interaction terms, shorter rolling windows) computed causally; consider `RobustScaler` if numeric covariates now heavy-tailed.\n- Prefer models that capture nonlinearity and interactions (e.g., GradientBoosting/RandomForest/XGB) and tune with the new CV. For Ridge, re-tune alpha; for any model, recalibrate with data post-change or perform weighted training emphasizing recent weeks.\n- Re-evaluate against baselines that use last-value or naive seasonal methods to ensure the model beats realistic baselines, not just mean.",
+          "rubric": [
+            {
+              "criterion": "Correct diagnosis that standard KFold inflated CV due to temporal mixing; recommends time-aware CV and explains why.",
+              "marks": 3
+            },
+            {
+              "criterion": "Interprets each model’s CV vs test behavior (bias/variance and robustness) correctly.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes concrete preprocessing changes to ensure causality (e.g., causal rolling features, no future leakage) and appropriate scaling choices.",
+              "marks": 1
+            },
+            {
+              "criterion": "Suggests model/feature strategies to adapt to new regime and realistic time-series baselines.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Statistics",
+            "Data Pipeline Development",
+            "Scikit-learn",
+            "Feature Engineering"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A fraud detection classifier has 1.5% positives. You compare two pipelines (both use the same `ColumnTransformer` with proper imputation and OHE):\n```python\npipe_lr = Pipeline([('prep', ct), ('clf', LogisticRegression(max_iter=2000, random_state=0))])\npipe_rf = Pipeline([('prep', ct), ('clf', RandomForestClassifier(n_estimators=400, random_state=0))])\n```\nYou evaluate with 5-fold StratifiedKFold. Results on validation folds:\n```text\nMetric             pipe_lr    pipe_rf\nROC AUC            0.86       0.89\nPR AUC             0.18       0.23\nAccuracy           0.985      0.987\nRecall@P>=0.20     0.42       0.58\n```\nThe business requires at least 0.20 precision and wants to maximize recall under that constraint.",
+          "task": "Choose which model you would deploy and describe, in detail, how you would set the decision threshold and monitor it. Include any class-weighting, calibration, or rebalancing you would add to the pipeline to improve Recall@P>=0.20 without leaking information. Also justify why accuracy is not the deciding metric here.",
+          "expected_answer": "- Prefer `pipe_rf` because it has better PR AUC and higher Recall at the target precision. Accuracy is dominated by the 98.5% negatives and is not informative.\n- Thresholding: Use validation PR curves per fold to find the probability threshold achieving P>=0.20 that maximizes recall, average thresholds across folds or pick by maximizing expected utility, then refit on full train and apply that threshold. Alternatively, tune threshold per batch using a calibration set.\n- Improve recall: set `class_weight='balanced'` (or focal loss in other libraries), tune RF depth/min_samples to reduce overfitting on negatives, or try `LogisticRegression(class_weight='balanced')`. Consider probability calibration (`CalibratedClassifierCV` within CV) to make precision at threshold more stable. Avoid SMOTE/oversampling inside the CV leakage window by fitting any resampler inside each training fold only.\n- Monitoring: Track drift in PR AUC and Precision/Recall at the fixed operating point; re-estimate threshold periodically with a labeled calibration set.\n- All changes are inside the pipeline/CV to avoid leakage; no peeking at validation labels when fitting transforms.",
+          "rubric": [
+            {
+              "criterion": "Selects `pipe_rf` with correct justification using PR AUC and Recall@P>=0.20; dismisses accuracy appropriately for imbalance.",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes a leak-free threshold selection method using PR curves on validation folds and how to apply it.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes appropriate imbalance-handling options (class_weight, calibration, or resampling correctly placed inside CV).",
+              "marks": 2
+            },
+            {
+              "criterion": "Outlines monitoring of operating point and drift post-deployment.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Statistics",
+            "Scikit-learn",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A teammate shares this code for a housing price model and claims the cross-validation R2≈0.90 proves the pipeline is solid:\n```python\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import ElasticNet\nfrom sklearn.model_selection import cross_val_score\nimport pandas as pd\n\nX = pd.read_csv('train.csv')\ny = X.pop('SalePrice')\nnum_cols = X.select_dtypes(include='number').columns\ncat_cols = X.select_dtypes(exclude='number').columns\n\n# Incorrect: global preprocessing before CV\nX[num_cols] = SimpleImputer(strategy='median').fit_transform(X[num_cols])\nX[cat_cols] = SimpleImputer(strategy='most_frequent').fit_transform(X[cat_cols])\nX[num_cols] = StandardScaler().fit_transform(X[num_cols])\nX = pd.get_dummies(X, columns=cat_cols)  # on full data\n\nmodel = ElasticNet(alpha=0.01, l1_ratio=0.5, random_state=0)\nprint(cross_val_score(model, X, y, cv=5, scoring='r2').mean())\n```\nDownstream, the model performs poorly on a held-out neighborhood never seen in training.",
+          "task": "Identify every source of leakage or validation bias in this code and rewrite, in prose or pseudocode, the corrected approach using a single scikit-learn Pipeline/ColumnTransformer that is safe under cross-validation and at inference (including how to handle unseen categories). Explain why the teammate’s R2≈0.90 was inflated and what you expect after fixing it.",
+          "expected_answer": "Leakage/bias sources: (1) Imputers and scaler are fit on the whole dataset before CV, leaking validation statistics. (2) `pd.get_dummies` on full data fixes category levels using all rows; per-fold, validation categories influence the train design matrix. (3) No mechanism for unseen categories at inference; dummies will misalign on new data.\nFix: Build `ct = ColumnTransformer([('num', Pipeline([('imp', SimpleImputer('median')), ('sc', StandardScaler())]), num_cols), ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)])` and wrap as `pipe = Pipeline([('prep', ct), ('reg', ElasticNet(...))])`. Evaluate with `cross_val_score(pipe, X_raw, y, cv=KFold(...))`. This way, each fold’s statistics and one-hot vocabulary are learned only from its training split, and unknown categories in new neighborhoods map to zeros instead of errors or misalignment. Expect lower, more realistic CV R2 than 0.90, but better agreement with held-out performance.",
+          "rubric": [
+            {
+              "criterion": "Enumerates all leakage/bias sources in the original (global impute/scale and global one-hot on full data).",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes a correct ColumnTransformer+Pipeline ordering (impute→scale for numeric; OHE with handle_unknown for categoricals).",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains why prior CV score was inflated and sets realistic expectations post-fix.",
+              "marks": 2
+            },
+            {
+              "criterion": "Addresses inference safety for unseen categories and column alignment.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Data Pipeline Development",
+            "Scikit-learn",
+            "Data Cleaning",
+            "Feature Engineering",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Build a leak-free preprocessing pipeline and persist it",
+          "brief": "Create a scikit-learn preprocessing pipeline for mixed-type tabular data that performs cleaning, encoding, and scaling, and is safe for future inference. The pipeline must be trained only on the training subset and persisted for reuse.",
+          "deliverable": "A repository folder containing: (1) script or notebook `prepare_pipeline.py` (or `.ipynb`) that reads a CSV `data.csv` with a target column `target`, builds and fits a `Pipeline` with a `ColumnTransformer`, performs a single `train_test_split` (use `random_state=42`), fits on train only, and saves the fitted pipeline to `model_pipeline.joblib`; (2) a short `REPORT.md` printing the selected numeric/categorical columns, imputation strategies, and scaler used; (3) the code prints the train/test size and confirms `handle_unknown` behavior for categoricals.",
+          "acceptance_criteria": [
+            "Uses `train_test_split(test_size=..., random_state=42)`; if classification, uses `stratify=y` (auto-detect via `y.nunique()==2` or a CLI flag).",
+            "`ColumnTransformer` present with two sub-pipelines: numeric uses `SimpleImputer(strategy='median')` then `StandardScaler` or `RobustScaler`; categorical uses `SimpleImputer(strategy='most_frequent')` then `OneHotEncoder(handle_unknown='ignore')`.",
+            "No global preprocessing before the split; all transforms live inside the pipeline. Reviewer can search for any `.fit(` calls on raw full data and find none except `pipeline.fit(X_train, y_train)`.",
+            "Successfully saves `model_pipeline.joblib` and loading it allows `pipeline.predict(X_test)` to run without errors.",
+            "`REPORT.md` includes: lists of numeric and categorical columns, imputation choices, scaler choice and reason (one sentence), and the random_state used."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct split with fixed random_state and stratification when classification is detected.",
+              "marks": 4
+            },
+            {
+              "criterion": "Proper ColumnTransformer structure and ordering (impute before scale; OHE with handle_unknown) implemented.",
+              "marks": 6
+            },
+            {
+              "criterion": "No evidence of leakage (no pre-fit transforms on full data).",
+              "marks": 4
+            },
+            {
+              "criterion": "Successful persistence and reload of the fitted pipeline; predictions run on X_test.",
+              "marks": 4
+            },
+            {
+              "criterion": "REPORT.md accurately documents columns, strategies, scaler choice, and reproducibility details.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Pipeline Development",
+            "Scikit-learn",
+            "Data Cleaning",
+            "Feature Engineering",
+            "Python",
+            "Pandas"
+          ],
+          "modules_covered": [
+            3
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Compare supervised models with proper baselines and metrics",
+          "brief": "Using the pipeline from Task 1, compare at least three models on the same preprocessing: a baseline (`DummyClassifier` or `DummyRegressor` depending on target type) and two real models (e.g., `LogisticRegression` and `RandomForestClassifier` for classification; `Ridge` and `RandomForestRegressor` for regression). Evaluate with cross-validation and report metrics suitable for the task, then select and justify the best model.",
+          "deliverable": "A script or notebook `compare_models.py` (or `.ipynb`) that: (1) loads `data.csv`, (2) builds a single shared `ColumnTransformer` as in Task 1, (3) evaluates three pipelines via `cross_val_score` or `cross_validate` with `cv=5` (use `StratifiedKFold` for classification), (4) writes a CSV `model_comparison.csv` with columns: `model`, `metric`, `mean`, `std`, and (5) prints a short rationale selecting the winner. For classification, include ROC AUC and PR AUC; for regression, include R2 and RMSE. Set all random seeds to 42/0 as appropriate.",
+          "acceptance_criteria": [
+            "All models are wrapped in Pipelines that share the same `ColumnTransformer`; no preprocessing is performed outside pipelines.",
+            "Includes a Dummy baseline appropriate to the task: `most_frequent/prior` for classification, `mean/median` for regression.",
+            "Uses `cv=5` with `StratifiedKFold(shuffle=True, random_state=42)` for classification or `KFold(shuffle=True, random_state=42)` for regression.",
+            "Metrics: classification reports ROC AUC and PR AUC; regression reports R2 and RMSE (or neg_root_mean_squared_error). Means and standard deviations are saved to `model_comparison.csv`.",
+            "Random seeds are fixed for reproducibility, and the printed rationale references both the baseline and variability (std) when selecting the winner.",
+            "No target leakage: no target-derived features computed before CV; any custom transformers are fit within the CV folds via the Pipeline."
+          ],
+          "rubric": [
+            {
+              "criterion": "Pipelines correctly wrap all models with the shared ColumnTransformer; no external preprocessing.",
+              "marks": 5
+            },
+            {
+              "criterion": "Appropriate baseline included and correctly evaluated.",
+              "marks": 3
+            },
+            {
+              "criterion": "Correct CV splitter and metrics for the problem type; seeds fixed for reproducibility.",
+              "marks": 5
+            },
+            {
+              "criterion": "Outputs `model_comparison.csv` with required schema and values; rationale appropriately references baseline and variability.",
+              "marks": 5
+            },
+            {
+              "criterion": "No leakage from target-derived preprocessing; any custom transformations are inside the pipeline/CV.",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Scikit-learn",
+            "Data Pipeline Development",
+            "Statistics",
+            "Python",
+            "Pandas",
+            "NumPy"
+          ],
+          "modules_covered": [
+            3,
+            4
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-024-S03",
+      "skills_assessed": [
+        "Python",
+        "NumPy",
+        "Pandas",
+        "Scikit-learn",
+        "Statistics",
+        "Feature Engineering",
+        "Model Evaluation",
+        "perform dimensionality reduction"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "```python\nimport numpy as np\nfrom sklearn.cluster import KMeans\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import silhouette_score\n\n# Feature 0: income in [0, 1000]; Feature 1: score in [0, 1]\nX = np.c_[np.random.rand(1000,1)*1000, np.random.rand(1000,1)]\n\nkm1 = KMeans(n_clusters=3, random_state=0).fit(X)\nkm2 = KMeans(n_clusters=3, random_state=0).fit(StandardScaler().fit_transform(X))\n\ns1 = silhouette_score(X, km1.labels_)\ns2 = silhouette_score(StandardScaler().fit_transform(X), km2.labels_)\n```\nWhich relation between s1 and s2 is most likely, and why?",
+          "options": [
+            "s1 < s2 because scaling prevents the high-variance 'income' feature from dominating distances, revealing structure along both axes.",
+            "s1 > s2 because scaling shrinks an informative feature and adds noise to distances.",
+            "s1 ≈ s2 because KMeans is invariant to monotonic rescaling of features.",
+            "s1 == s2 because both models share the same random_state and n_init."
+          ],
+          "correct_option": "A",
+          "explanation": "Without scaling, the large-variance feature dominates Euclidean distances, skewing cluster assignments. Standardizing balances features, which typically improves compactness/separation and thus silhouette in mixed-scale data.",
+          "distractor_rationale": "B is tempting if one confuses KMeans' invariance to rotation/translation with scale invariance; it is not scale-invariant. C feels plausible if one assumes 'income' is the only signal, but the unscaled second feature is effectively ignored; scaling often helps. D conflates randomness with geometry; random_state does not force identical silhouettes across different input scales.",
+          "skills_covered": [
+            "Scikit-learn",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "```python\nimport numpy as np\nfrom sklearn.decomposition import PCA\n\n# X is already standardized\n# Shown are the first 10 explained-variance ratios from PCA on X\nratios = np.array([0.35, 0.25, 0.10, 0.08, 0.05, 0.04, 0.03, 0.03, 0.03, 0.02])\nprint('cumulative to 7 comps =', ratios[:7].sum())\n\n# Fitting with a variance target\n# pca = PCA(n_components=0.90, svd_solver='full').fit(X)\n# What will pca.n_components_ be?\n```\nAssume the tail beyond the 10th component contributes only small mass and does not change the first time the 0.90 threshold is crossed.",
+          "options": [
+            "7",
+            "6",
+            "8",
+            "10"
+          ],
+          "correct_option": "A",
+          "explanation": "The cumulative sum crosses 0.90 for the first time at 7 components: 0.35+0.25+0.10+0.08+0.05+0.04+0.03 = 0.90. PCA with n_components=0.90 selects the minimum number of components that reach at least the target variance.",
+          "distractor_rationale": "6 is the last point below the threshold (0.87). 8 is beyond the first crossing and would over-retain. 10 is a common misread that you must exceed the target substantially or keep a round number; not true.",
+          "skills_covered": [
+            "perform dimensionality reduction",
+            "Scikit-learn",
+            "Statistics"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "```python\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.cluster import KMeans\nfrom sklearn.model_selection import cross_val_score, KFold\n\npre = ColumnTransformer([\n    ('num', StandardScaler(), [0,1,2]),\n    ('cat', OneHotEncoder(), [3])\n])\npipe = Pipeline([('pre', pre), ('kmeans', KMeans(n_clusters=4, random_state=0))])\n\n# Fit-only CV just to test the preprocessing in each fold\nscores = cross_val_score(\n    pipe, X, y=None,\n    cv=KFold(5, shuffle=True, random_state=0),\n    scoring=lambda est, X_, y_: 0.0\n)\n```\nOn fold 3, the test split contains a category value 'VIP' in column 3 that is absent from that fold’s training split. What happens?",
+          "options": [
+            "Pipeline auto-extends the encoder with a new column for 'VIP' during transform, so CV succeeds with a wider matrix in that fold.",
+            "KMeans drops the 'VIP' rows as outliers, so fold 3 completes with fewer samples.",
+            "OneHotEncoder maps 'VIP' to an all-zero vector without warning, so fold 3 completes but distances are biased.",
+            "cross_val_score raises an error on fold 3 when transforming the test split because OneHotEncoder's default is to error on unknown categories."
+          ],
+          "correct_option": "D",
+          "explanation": "By default, OneHotEncoder(handle_unknown='error'). In CV, the encoder is fit on the training fold only; encountering an unseen category in the test fold raises a ValueError during transform.",
+          "distractor_rationale": "B describes fit-time behavior; the encoder does not add categories at transform time. C confuses preprocessing with clustering; KMeans receives whatever features are produced and does not drop rows. D matches another encoder's behavior; OneHotEncoder only emits all-zeros with handle_unknown='ignore'.",
+          "skills_covered": [
+            "Scikit-learn",
+            "Feature Engineering",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "```python\nfrom sklearn.datasets import make_classification\nfrom sklearn.model_selection import cross_val_score, StratifiedKFold\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom imblearn.pipeline import Pipeline as ImbPipeline\nfrom imblearn.over_sampling import SMOTE\n\nX, y = make_classification(weights=[0.98, 0.02], n_samples=5000, random_state=0)\n\n# Version A: resample once on the full data, then CV\nX_sm, y_sm = SMOTE(random_state=0).fit_resample(X, y)\nscores_A = cross_val_score(\n    Pipeline([('sc', StandardScaler()), ('lr', LogisticRegression(max_iter=1000))]),\n    X_sm, y_sm, cv=StratifiedKFold(5, shuffle=True, random_state=0), scoring='average_precision')\n\n# Version B: resample inside each training fold via an imbalanced-learn pipeline\nscores_B = cross_val_score(\n    ImbPipeline([('sc', StandardScaler()), ('sm', SMOTE(random_state=0)), ('lr', LogisticRegression(max_iter=1000))]),\n    X, y, cv=StratifiedKFold(5, shuffle=True, random_state=0), scoring='average_precision')\n```\nWhich statement is correct about bias in the estimated performance?",
+          "options": [
+            "A and B are equivalent if random_state is fixed for SMOTE and CV.",
+            "Both are invalid because SMOTE cannot be evaluated with cross-validation.",
+            "B is less biased because SMOTE is applied only to the training portion of each fold, preventing information bleed into validation splits.",
+            "A is less biased because balancing the entire dataset avoids sampling noise across folds."
+          ],
+          "correct_option": "C",
+          "explanation": "Resampling must be inside the training loop. Applying SMOTE before CV lets synthetic samples derived from a point appear in the validation fold, causing optimistic leakage. The imblearn pipeline confines SMOTE to training folds.",
+          "distractor_rationale": "B ignores leakage. C assumes determinism cancels leakage; it does not. D is false; SMOTE is routinely and validly used within CV via pipelines.",
+          "skills_covered": [
+            "Model Evaluation",
+            "Feature Engineering",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "```python\nfrom sklearn.decomposition import PCA\nfrom sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score\nfrom sklearn.preprocessing import StandardScaler\n\nZ = StandardScaler().fit_transform(X)\ns_raw = silhouette_score(Z, KMeans(5, random_state=0).fit_predict(Z))\n\nP = PCA(n_components=10, random_state=0).fit(Z)\nZp = P.transform(Z)\ns_pca = silhouette_score(Zp, KMeans(5, random_state=0).fit_predict(Zp))\n\nprint('explained_variance_ratio_.sum() =', P.explained_variance_ratio_.sum())\nprint('silhouette raw, pca =', round(s_raw,3), round(s_pca,3))\n```\nSuppose you see:\n```text\nexplained_variance_ratio_.sum() = 0.62\nsilhouette raw, pca = 0.21 0.34\n```\nWhat is the sound conclusion for model choice?",
+          "options": [
+            "Increase k until s_raw matches 0.34; the higher k will align both silhouettes.",
+            "Discard PCA because 62% variance is insufficient for any valid clustering conclusions.",
+            "Always cluster in the original space; silhouette is defined only on raw distances.",
+            "Prefer PCA+KMeans here but verify cluster stability across resamples, because PCA may be denoising distances even if only 62% variance is retained."
+          ],
+          "correct_option": "D",
+          "explanation": "Dimensionality reduction can improve cluster geometry by removing noise or correlated dimensions, legitimately improving silhouette. But the gain should be stress-tested for stability and interpretability before committing.",
+          "distractor_rationale": "B overinterprets the variance percentage; retained variance is not a validity threshold. C is incorrect; silhouette is defined for any metric space and applies after transformations. D forces k to fit a target silhouette without justification.",
+          "skills_covered": [
+            "perform dimensionality reduction",
+            "Model Evaluation",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "```python\nfrom sklearn.cluster import DBSCAN\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import NearestNeighbors\nimport numpy as np\n\nZ = StandardScaler().fit_transform(X)\nd, idx = NearestNeighbors(n_neighbors=4).fit(Z).kneighbors(Z)\nkdist = np.sort(d[:, -1])\nprint(list(np.round(kdist[::len(kdist)//5],3))[:6])\n```\nSuppose the sampled 4-NN distances printed are:\n```text\n[0.05, 0.07, 0.09, 0.12, 0.30, 0.95]\n```\nA colleague sets eps=0.8 and min_samples=4 for DBSCAN on Z. What outcome is most likely?",
+          "options": [
+            "Cluster identities will be stable but label indices may permute between runs.",
+            "Most points will be connected into one giant cluster with few/no noise points because eps far exceeds the k-distance elbow.",
+            "DBSCAN will approximate KMeans with k equal to the intrinsic cluster count.",
+            "Most points will be labeled noise because eps is too small relative to the elbow near 0.12–0.30."
+          ],
+          "correct_option": "B",
+          "explanation": "The elbow suggests a neighborhood radius on the order of 0.12–0.30. Setting eps to 0.8 bridges gaps across densities, merging many regions into a single connected component.",
+          "distractor_rationale": "B flips the direction; 0.8 is too large, not too small. C label permutation is a KMeans issue under multiple initializations, not DBSCAN’s effect here. D confuses fundamentally different objectives; DBSCAN is not equivalent to KMeans.",
+          "skills_covered": [
+            "perform dimensionality reduction",
+            "Model Evaluation",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import StratifiedKFold, cross_val_score\nfrom sklearn.linear_model import LogisticRegression\n\n# Scaling done on the full dataset before CV\nZ = StandardScaler().fit_transform(X)\nclf = LogisticRegression(max_iter=1000)\nscores = cross_val_score(clf, Z, y,\n                         cv=StratifiedKFold(5, shuffle=True, random_state=0),\n                         scoring='roc_auc')\n```\nWhat bias should you expect in the reported ROC-AUC scores?",
+          "options": [
+            "No bias, because StratifiedKFold corrects preprocessing leakage.",
+            "No bias, because scaling is unsupervised and does not use labels.",
+            "Optimistic bias, because scaling was fit using statistics from all samples, including those in validation folds.",
+            "Pessimistic bias, because scaling shrinks signal and reduces separability."
+          ],
+          "correct_option": "C",
+          "explanation": "Fitting the scaler on the full dataset leaks distribution information from the validation folds into the training step, inflating performance estimates.",
+          "distractor_rationale": "B mistakes the effect of scaling for bias; the issue is leakage, not signal shrinkage. C ignores that even label-free transforms must be inside CV. D KFold preserves class proportions but does not prevent preprocessing leakage.",
+          "skills_covered": [
+            "Model Evaluation",
+            "Scikit-learn",
+            "Statistics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "```python\nfrom sklearn.decomposition import PCA\nfrom sklearn.metrics import mean_squared_error\nfrom sklearn.model_selection import cross_val_score, StratifiedKFold\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nimport numpy as np\n\nZ = StandardScaler().fit_transform(X)\n\ndef best_k(Z, ks=range(2,51)):\n    errs = []\n    for k in ks:\n        P = PCA(k, random_state=0).fit(Z)\n        Zk = P.inverse_transform(P.transform(Z))\n        errs.append(mean_squared_error(Z, Zk))\n    return ks[int(np.argmin(errs))]\n\nk = best_k(Z)\npipe = Pipeline([('pca', PCA(k, random_state=0)), ('lr', LogisticRegression(max_iter=1000))])\nscores = cross_val_score(pipe, Z, y,\n                         cv=StratifiedKFold(5, shuffle=True, random_state=0),\n                         scoring='average_precision')\n```\nWhat is the strongest concern with this setup?",
+          "options": [
+            "Underfitting: reconstruction error systematically prefers too small k.",
+            "Data leakage: choosing k on the full dataset before CV can inflate the downstream CV scores.",
+            "Instability: the PCA random_state makes k vary wildly between runs.",
+            "Overfitting: reconstruction error will always pick k equal to the number of features."
+          ],
+          "correct_option": "B",
+          "explanation": "Selecting hyperparameters (even via unsupervised criteria) on the full dataset bakes test-fold information into the choice. Proper selection of k should occur within each training fold (e.g., via a nested CV or GridSearchCV in the pipeline).",
+          "distractor_rationale": "B and C are not inherent properties of reconstruction-error selection; neither extreme is guaranteed. D misunderstands: with fixed data and random_state, argmin is stable; instability is not the primary issue here.",
+          "skills_covered": [
+            "Model Evaluation",
+            "perform dimensionality reduction",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "```python\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.preprocessing import OneHotEncoder, StandardScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.cluster import KMeans\nfrom sklearn.pipeline import Pipeline\n\npre = ColumnTransformer([\n    ('num', StandardScaler(), num_cols),\n    ('cat', OneHotEncoder(sparse_output=True), cat_cols)\n])\npipe = Pipeline([\n    ('pre', pre),\n    ('pca', PCA(n_components=30, random_state=0)),\n    ('kmeans', KMeans(10, random_state=0))\n])\n\npipe.fit(X)  # Raises: PCA does not support sparse input ...\n```\nWhich change preserves correctness and memory efficiency for high-cardinality categoricals?",
+          "options": [
+            "```text\nset OneHotEncoder(sparse_output=False)\n```",
+            "```text\nreplace ('pca', PCA(...)) with ('svd', TruncatedSVD(n_components=30, random_state=0))\n```",
+            "```text\ncall .toarray() on the transformer output before PCA\n```",
+            "```text\nset StandardScaler(with_mean=False)\n```"
+          ],
+          "correct_option": "B",
+          "explanation": "TruncatedSVD operates directly on sparse matrices and provides a linear dimensionality reduction analogous to PCA on dense data, retaining efficiency and avoiding densification.",
+          "distractor_rationale": "B densifies the matrix, which is memory-inefficient on high-cardinality features. C avoids centering for sparse numeric blocks but does not make PCA accept sparse input. D forces densification, causing potential memory blow-ups and is unnecessary.",
+          "skills_covered": [
+            "perform dimensionality reduction",
+            "Feature Engineering",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "```python\nfrom sklearn.metrics import roc_auc_score, average_precision_score\nfrom sklearn.model_selection import StratifiedKFold, cross_val_predict\nfrom sklearn.ensemble import RandomForestClassifier\n\ncv = StratifiedKFold(5, shuffle=True, random_state=0)\nproba = cross_val_predict(RandomForestClassifier(random_state=0), X, y, cv=cv, method='predict_proba')[:,1]\nroc = roc_auc_score(y, proba)\nap = average_precision_score(y, proba)\nprint('ROC-AUC=', round(roc,3), 'AP=', round(ap,3), 'positive rate=', y.mean())\n```\nSuppose the output is:\n```text\nROC-AUC=0.960 AP=0.120 positive rate=0.030\n```\nWhat change to validation best aligns with the goal of catching rare positives?",
+          "options": [
+            "Report precision-recall curves and Average Precision, and tune a decision threshold for an F-beta score (beta>1) via cross-validation.",
+            "Switch to accuracy with a 0.5 threshold to avoid over-tuning the threshold.",
+            "Undersample negatives only during evaluation to boost AP without changing training.",
+            "Increase the number of trees until AP approaches ROC-AUC; the gap indicates underfitting."
+          ],
+          "correct_option": "A",
+          "explanation": "Under heavy imbalance, PR curves and AP better reflect performance on the positive class. Thresholds should be tuned under CV to optimize a business-weighted objective like F-beta.",
+          "distractor_rationale": "B treats metric discrepancy as a capacity issue; ROC and PR capture different aspects under imbalance. C accuracy at 0.5 is misleading with rare positives. D manipulating evaluation sampling biases the metric and breaks comparability.",
+          "skills_covered": [
+            "Model Evaluation",
+            "Statistics",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "You are segmenting 10,000 retail customers with 40 features: 8 spend/amount features (scales up to 10,000), 12 frequency/ratio features (0–1), and 20 sparse binary indicators. Initial checks show:\n- Standardized data (z-score) in full space, KMeans: elbow suggests k in [4,6]; average silhouette peaks at k=2 (0.19) and declines for k>4.\n- PCA on standardized numeric features only (exclude binaries), retaining 90% variance yields 18 components; KMeans on these 18 PCs: silhouette at k=5 is 0.28, at k=6 is 0.26.\n- Bootstrapped stability (resample 80% rows, 50 runs) shows NMI across runs: raw space k=5 median 0.62; PCA space k=5 median 0.75.\n- Cluster profiles after PCA k=5 are interpretable: “High value & frequent”, “Low value & infrequent”, etc.",
+          "task": "Decide whether to use PCA before KMeans and pick k. Justify the choice with reference to the diagnostics and describe two further checks you would run before finalizing the segmentation for the business report.",
+          "expected_answer": "Recommend PCA before KMeans with k=5. Evidence: higher silhouette in PCA space at k=5 than raw space and better bootstrapped stability (NMI 0.75 vs 0.62). The PCA step likely denoises correlated spend features and balances scale across blocks, improving cluster geometry and interpretability, while excluding binaries from PCA preserves their sparsity and avoids distortion. Further checks: (1) Validate stability across alternative random seeds and subsample rates; (2) External validity via holdout or temporal stability if applicable; (3) Sensitivity analysis to different k around 5 with business interpretability; (4) Evaluate separation on untouched features (not used in clustering) to guard against overfitting preprocessing; (5) Compare with a density-based method (e.g., HDBSCAN/DBSCAN) to ensure structure is not an artifact of spherical assumption. Include cluster profiling with confidence intervals and size constraints to avoid tiny, brittle clusters.",
+          "rubric": [
+            {
+              "criterion": "States a clear recommendation on PCA usage and k (both required).",
+              "marks": 2
+            },
+            {
+              "criterion": "Justifies PCA+KMeans using the provided quantitative diagnostics (silhouette and stability) rather than generic claims.",
+              "marks": 3
+            },
+            {
+              "criterion": "Explains why excluding binaries from PCA (and then concatenating) improves geometry/interpretability or avoids distortions.",
+              "marks": 1
+            },
+            {
+              "criterion": "Proposes at least two concrete additional validation checks tied to leakage/stability/business interpretability (e.g., seed/subsample robustness, temporal holdout, alternative k, unused-feature separation).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "perform dimensionality reduction",
+            "Model Evaluation",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "You must build a churn classifier with 2% positive rate. A teammate reports 5-fold CV ROC-AUC=0.93 using a GradientBoostingClassifier on StandardScaler.fit_transform(X) performed once prior to CV, with a default 0.5 threshold and accuracy=0.97. No resampling or class weights were used.",
+          "task": "Propose a validation and tuning plan that addresses imbalance and preprocessing leakage. Specify metrics, CV design, thresholding, and where to apply any resampling or class weighting. Explain how you will report results for decisioning.",
+          "expected_answer": "Use a pipeline that includes scaling and the estimator to avoid preprocessing leakage, evaluated with StratifiedKFold. Address imbalance via class_weight='balanced' or SMOTE placed inside the CV using an imblearn pipeline (resampling applied only to training folds). Optimize hyperparameters and, separately, the decision threshold using cross-validated predictions to maximize an F-beta score (beta>1) or optimize expected cost given business weights. Primary metrics: Average Precision (PR-AUC) and recall at a chosen precision level; report ROC-AUC as a secondary diagnostic. Provide calibrated probabilities (e.g., CalibratedClassifierCV within CV) if decisions depend on scores. Report the chosen threshold, cross-validated PR curve, confusion matrix at that threshold, and confidence intervals via repeated CV or bootstrapping. Ensure a final locked model is evaluated on a holdout if available.",
+          "rubric": [
+            {
+              "criterion": "Places preprocessing (scaling/encoding) and resampling correctly inside the CV loop (pipeline) to prevent leakage.",
+              "marks": 2
+            },
+            {
+              "criterion": "Selects metrics appropriate for heavy imbalance (AP/PR curves, recall at precision) and de-emphasizes accuracy.",
+              "marks": 2
+            },
+            {
+              "criterion": "Describes threshold tuning using CV predictions aligned to business costs (e.g., F-beta > 1 or cost-based).",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers hyperparameter tuning design (e.g., grid/random search with stratified CV) and calibrated probabilities or final holdout evaluation.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Feature Engineering",
+            "Scikit-learn",
+            "Statistics"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "A production KMeans segmentation pipeline breaks when a new categorical value appears. Current code uses a ColumnTransformer with OneHotEncoder (default params) on categoricals, StandardScaler on numerics, PCA(0.9) on numerics only, and then KMeans. CV uses cross_val_score on the Pipeline. In logs, the error occurs during transform on a validation fold and in production when an unseen category appears.",
+          "task": "Diagnose the cause and propose a robust fix that preserves CV integrity and deployment robustness. Include any parameter changes and pipeline structure adjustments. Explain trade-offs.",
+          "expected_answer": "Cause: OneHotEncoder's default handle_unknown='error' fails when a category present in validation or live traffic was not seen during fit on the training split, causing both CV and production errors. Fix: set OneHotEncoder(handle_unknown='ignore', drop=None) within the ColumnTransformer. Keep all preprocessing (encoding, scaling, PCA) inside a single Pipeline so that transformers are fit only on training folds in CV and on all available data before deployment. If PCA is variance-targeted, select its n_components via GridSearchCV within the pipeline (to avoid leakage) and, optionally, use TruncatedSVD if categoricals remain sparse after the transformer to avoid densification. Trade-offs: ignoring unknowns maps them to all-zero columns which may reduce separability; consider adding an explicit 'other' bucket upstream if frequent. Monitor feature drift and maintain encoder categories if a stable schema is required.",
+          "rubric": [
+            {
+              "criterion": "Correctly identifies OneHotEncoder handle_unknown='error' as the proximate cause in CV and production.",
+              "marks": 2
+            },
+            {
+              "criterion": "Proposes handle_unknown='ignore' (or equivalent robust handling) and keeps all preprocessing inside a Pipeline used in CV and deployment.",
+              "marks": 3
+            },
+            {
+              "criterion": "Addresses dimensionality reduction interaction with sparse data (e.g., TruncatedSVD vs PCA) or numeric-only PCA design.",
+              "marks": 1
+            },
+            {
+              "criterion": "Discusses trade-offs or monitoring for unseen categories and schema stability.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Feature Engineering",
+            "Scikit-learn",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "You have 2D location features (longitude, latitude) plus two behavioral scores. Visual inspection shows clusters of customers with varying densities and some elongated shapes. KMeans(k=6) yields low silhouette (0.12) and unstable centers across seeds; DBSCAN with eps determined from the 4-NN distance elbow around 0.25 and min_samples=10 yields 7 clusters with 8% noise, silhouette 0.26. Business wants stable geospatial segments and the ability to identify outliers.",
+          "task": "Choose an algorithm and parameter-tuning approach. Explain how you will validate the choice, including how distance scaling will be handled and how you will communicate outliers and segment stability to stakeholders.",
+          "expected_answer": "Prefer DBSCAN (or HDBSCAN if available) with parameter tuning guided by the k-distance plot (eps≈0.25) and min_samples tied to expected neighborhood size (≈10) after proper feature scaling that respects geospatial distances (e.g., project lon/lat to meters or use haversine distance with StandardScaler on behavioral scores, combining via a pipeline or separate distance weighting). Validation: stability checks across resamples and small eps/min_samples perturbations; report cluster persistence; compare internal metrics (silhouette, Davies–Bouldin) and ensure that KMeans’ poor performance is not due to scaling. Communicate outliers explicitly as the DBSCAN noise label, quantify their rate (≈8%), profile them, and justify their exclusion from centroid summaries. Provide maps and per-segment behavioral distributions; document parameter sensitivity and rationale for chosen eps/min_samples.",
+          "rubric": [
+            {
+              "criterion": "Selects DBSCAN (or density-based) with rationale tied to variable density/shape and KMeans instability.",
+              "marks": 3
+            },
+            {
+              "criterion": "Describes parameter tuning using k-distance/elbow and an argument for min_samples, not arbitrary guessing.",
+              "marks": 2
+            },
+            {
+              "criterion": "Explains appropriate scaling/distance handling for geo features and behavioral scores (projection or haversine + weighting).",
+              "marks": 2
+            },
+            {
+              "criterion": "Covers validation and stakeholder communication of outliers and stability results.",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "perform dimensionality reduction",
+            "Scikit-learn"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Customer Segmentation Study",
+          "brief": "Produce a rigorous segmentation study on a provided tabular customer dataset with mixed numeric and categorical features. Compare clustering in standardized feature space versus after dimensionality reduction, justify the final number of segments, and profile each segment for business consumption.",
+          "deliverable": "A self-contained notebook (or script + HTML report) titled segmentation_study with: code, narrative, and outputs; plus two artifacts saved to disk: cluster_assignments.csv (customer_id, cluster) and model_pipeline.pkl (fitted preprocessing+clustering pipeline).",
+          "acceptance_criteria": [
+            "Preprocessing is implemented via a scikit-learn Pipeline/ColumnTransformer; no data transformation is fit outside CV or final fit.",
+            "At least two clustering approaches are compared (e.g., KMeans in raw standardized space vs KMeans after PCA or TruncatedSVD); the chosen approach is justified with internal metrics (e.g., silhouette) and stability analysis (e.g., bootstrap NMI or Jaccard).",
+            "Clear selection of k (or density parameters) with evidence (elbow/Gap/silhouette plots) and sensitivity analysis around the choice.",
+            "Segment profiles include central tendencies and distributions for key features (and categorical prevalences) with readable labels and a one-page executive summary of each segment.",
+            "Artifacts: cluster_assignments.csv present with exactly two columns (customer_id, cluster); model_pipeline.pkl loads with joblib and can transform/predict cluster labels on raw input of the same schema.",
+            "Reproducibility: a random_state is fixed; the notebook runs top-to-bottom without errors on fresh kernel."
+          ],
+          "rubric": [
+            {
+              "criterion": "Correct, leak-free preprocessing in a Pipeline/ColumnTransformer; transformations fit only within CV and on final full-data fit.",
+              "marks": 5
+            },
+            {
+              "criterion": "Comparison of at least two clustering strategies including one with dimensionality reduction; appropriate metrics and visualizations provided.",
+              "marks": 5
+            },
+            {
+              "criterion": "Justified selection of k/parameters with stability analysis and sensitivity checks.",
+              "marks": 4
+            },
+            {
+              "criterion": "Quality of segment profiling and executive summary (clarity, completeness, business relevance).",
+              "marks": 4
+            },
+            {
+              "criterion": "Deliverables present and functional (cluster_assignments.csv schema and model_pipeline.pkl loads).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Scikit-learn",
+            "Model Evaluation",
+            "perform dimensionality reduction",
+            "Feature Engineering",
+            "Pandas",
+            "Python"
+          ],
+          "modules_covered": [
+            5,
+            6
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Validated Imbalanced Classifier",
+          "brief": "Build and validate a classification model on an imbalanced dataset (provided) that predicts a rare positive outcome. Handle features, tuning, validation, and class imbalance correctly, and produce a concise validation report suitable for sign-off.",
+          "deliverable": "A notebook (or script + HTML report) titled validated_model with: an imblearn/scikit-learn Pipeline for preprocessing and modeling; cross-validated metrics emphasizing PR; tuned hyperparameters; and saved artifacts best_model.pkl and cv_metrics.json. Include a confusion matrix and chosen decision threshold.",
+          "acceptance_criteria": [
+            "All preprocessing and any resampling (e.g., SMOTE or class_weight) occur inside the Pipeline evaluated by StratifiedKFold; no transform is fit on the full dataset prior to CV.",
+            "Primary metrics include Average Precision and PR curves; ROC-AUC may appear as secondary. The chosen operating threshold is tuned using cross-validated predictions to optimize an F-beta (beta>1) or stated cost function.",
+            "Hyperparameter tuning performed via GridSearchCV/RandomizedSearchCV with nested or properly separated CV; best params and variability across folds are reported.",
+            "Model calibration is assessed (e.g., calibration curve or Brier score) and, if needed, a calibrated model is provided.",
+            "Artifacts: best_model.pkl loads and can produce predict_proba and predict at the reported threshold; cv_metrics.json contains fold-level and aggregate metrics, including AP and ROC-AUC.",
+            "Reproducibility: fixed random_state; notebook runs cleanly end-to-end."
+          ],
+          "rubric": [
+            {
+              "criterion": "Leak-free validation design with preprocessing and resampling inside the CV pipeline.",
+              "marks": 6
+            },
+            {
+              "criterion": "Appropriate imbalance-aware metrics and cross-validated threshold selection; clear reporting of PR curves/AP.",
+              "marks": 5
+            },
+            {
+              "criterion": "Sound hyperparameter tuning setup and reporting (search space, CV design, best params).",
+              "marks": 4
+            },
+            {
+              "criterion": "Calibration assessment and, if necessary, calibrated model provided.",
+              "marks": 3
+            },
+            {
+              "criterion": "Deliverables present and functional (best_model.pkl API and cv_metrics.json contents).",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Scikit-learn",
+            "Feature Engineering",
+            "Statistics",
+            "Python",
+            "Pandas"
+          ],
+          "modules_covered": [
+            6
+          ],
+          "marks": 20
+        }
+      ]
+    },
+    {
+      "section_code": "NT-C-024-S04",
+      "skills_assessed": [
+        "Natural Language Processing",
+        "Computer Vision",
+        "Data Pipeline Development",
+        "Model Deployment",
+        "Model Evaluation",
+        "Data Privacy and Compliance"
+      ],
+      "concept_mcqs": [
+        {
+          "question_number": 1,
+          "stem": "You trained and persisted a TF‑IDF + logistic regression text classifier:\n\n```python\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nimport joblib\n\npipe = Pipeline([\n    ('tfidf', TfidfVectorizer(lowercase=True, tokenizer=None)),\n    ('lr', LogisticRegression(max_iter=1000, n_jobs=None))\n])\n\npipe.fit(train_texts, y)\njoblib.dump(pipe, 'model.joblib')\n```\n\nAt serving time, a change lemmatizes inputs only in the API layer:\n\n```python\n# FastAPI handler (serving)\nfrom fastapi import FastAPI\nimport spacy, joblib\n\napp = FastAPI()\npipe = joblib.load('model.joblib')\nnlp = spacy.load('en_core_web_sm')\n\n@app.post('/predict')\ndef predict(text: str):\n    # new: lemmatize to \"improve\" generalization\n    doc = nlp(text)\n    lemmas = ' '.join([t.lemma_ for t in doc if not t.is_punct])\n    return pipe.predict_proba([lemmas])[0].tolist()\n```\n\nOnline precision drops sharply; most requests return probabilities close to the class prior. What most likely explains this pattern?",
+          "options": [
+            "Lowercasing twice halves token counts, shrinking TF‑IDF magnitudes and reducing recall.",
+            "Lemmatization increases OOV so much that `TfidfVectorizer.transform` raises a shape mismatch exception.",
+            "spaCy changes whitespace tokenization in a way that shifts IDF values, making the offline model overfit.",
+            "TF‑IDF’s vocabulary was built on non‑lemmatized tokens; lemmatizing only at inference maps many tokens to unseen forms. Those OOV terms become zeros in the sparse vector so predictions regress toward the intercept/priors."
+          ],
+          "correct_option": "D",
+          "explanation": "The vectorizer’s fixed vocabulary was learned on non‑lemmatized tokens. At inference, many lemmas are OOV and drop out, yielding near‑zero vectors. The linear model then outputs scores close to its bias (class prior), hurting precision online while offline metrics (evaluated without lemmatization) remain unchanged.",
+          "distractor_rationale": "B: Double lowercasing doesn’t halve counts; lowercasing is idempotent, so this doesn’t explain collapse to priors. C: `transform` never errors on OOV; it silently ignores them. D: IDF values are fixed after training and do not change at inference; spaCy tokenization isn’t applied during training here.",
+          "skills_covered": [
+            "Natural Language Processing",
+            "Data Pipeline Development",
+            "Model Deployment",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 2,
+          "stem": "Training used torchvision preprocessing:\n\n```python\nimport torchvision.transforms as T\n\ntransform = T.Compose([\n    T.Resize(256),\n    T.CenterCrop(224),\n    T.ToTensor(),          # expects RGB PIL -> [0,1]\n    T.Normalize(mean=[0.485,0.456,0.406],\n                std=[0.229,0.224,0.225]),\n])\n```\n\nServing uses OpenCV/Numpy:\n\n```python\nimport cv2, numpy as np\nimg = cv2.imread(path)           # BGR uint8\nimg = cv2.resize(img, (224,224))\nx = img.astype('float32')/255.0\n# no channel reorder\nx = (x - [0.485,0.456,0.406]) / [0.229,0.224,0.225]\nx = np.transpose(x, (2,0,1))[None, ...]\n```\n\nPredictions degrade in production. What is the minimal change to make serving preprocessing match training?",
+          "options": [
+            "Remove the division by 255.0 to keep original scale.",
+            "Use `cv2.resize` with `interpolation=cv2.INTER_AREA` to reduce aliasing.",
+            "Add a color conversion after `cv2.imread`:\n```python\nimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)\n```\n",
+            "Swap the order of `mean` and `std` arrays during normalization."
+          ],
+          "correct_option": "C",
+          "explanation": "Training normalized RGB tensors. Serving passed BGR into RGB stats. Converting BGR→RGB aligns channel order with training; the rest of the pipeline then matches.",
+          "distractor_rationale": "B: Interpolation tweaks have subtle effects but won’t fix a consistent channel‑order mismatch. C: Removing scaling breaks normalization entirely. D: Swapping mean/std doesn’t address the core issue of channel order.",
+          "skills_covered": [
+            "Computer Vision",
+            "Model Deployment",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 3,
+          "stem": "A global tokenizer is mutated at request time:\n\n```python\nfrom transformers import AutoTokenizer, AutoModelForSequenceClassification\nfrom fastapi import FastAPI\nimport torch\n\napp = FastAPI()\ntok = AutoTokenizer.from_pretrained('distilbert-base-uncased')\nmodel = AutoModelForSequenceClassification.from_pretrained('my-finetuned')\n\n@app.post('/predict')\ndef predict(item: dict):\n    if item.get('add_token'):\n        tok.add_tokens([item['add_token']])  # hot-patching vocab\n    enc = tok(item['text'], return_tensors='pt', truncation=True)\n    with torch.no_grad():\n        out = model(**enc).logits.softmax(-1)\n    return out.tolist()\n```\n\nUnder concurrent load, identical texts sometimes flip labels when other requests include `add_token`. Why?",
+          "options": [
+            "JSON key order changes between requests, altering tokenization.",
+            "`add_tokens` updates model weights to handle new tokens, which causes catastrophic forgetting intermittently.",
+            "Mutating the shared tokenizer’s vocabulary at request time is not thread‑safe; token‑to‑id mappings can change between calls, causing inconsistent encodings.",
+            "The Python GIL serializes execution so tokenization is effectively single‑threaded and consistent."
+          ],
+          "correct_option": "C",
+          "explanation": "The tokenizer is a shared mutable object. Adding tokens at runtime changes its internal mapping; concurrent requests can see different vocab states, resulting in non‑deterministic encodings and label flips.",
+          "distractor_rationale": "B: Multiple workers/threads and async can interleave; GIL doesn’t guarantee request‑level serialization or immutability. C: Adding tokens does not update model weights; it changes tokenizer metadata. D: JSON key order does not affect the string content being tokenized.",
+          "skills_covered": [
+            "Natural Language Processing",
+            "Model Deployment",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 4,
+          "stem": "A deployed scikit‑learn pipeline re‑fits its scaler per request:\n\n```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import SGDClassifier\nfrom sklearn.pipeline import Pipeline\nimport joblib, numpy as np\n\npipe = Pipeline([\n    ('scaler', StandardScaler()),\n    ('clf', SGDClassifier(loss='log_loss', random_state=0))\n])\n\npipe.fit(X_train, y_train)\njoblib.dump(pipe, 'model.joblib')\n\n# service\npipe = joblib.load('model.joblib')\n\ndef predict_payload(X_json):\n    X = np.array(X_json['features'])\n    # BUG: re-fitting on live batch\n    pipe.named_steps['scaler'].fit(X)\n    Z = pipe.transform(X)\n    return pipe.named_steps['clf'].predict_proba(Z).tolist()\n```\n\nAcross replicas, probabilities drift apart over the day. What best explains this?",
+          "options": [
+            "`StandardScaler.transform` is idempotent, so repeated calls cannot change outputs.",
+            "Data leakage: each instance re‑fits the scaler on its own request stream, so scale/center drift per‑replica and outputs diverge.",
+            "Joblib deserialization randomizes the classifier coefficients at load time.",
+            "`SGDClassifier` silently continues training during `transform`."
+          ],
+          "correct_option": "B",
+          "explanation": "Re‑fitting the scaler on live data changes feature scales and leaks production data into the preprocessing state. Different replicas see different data slices, so their predictions diverge.",
+          "distractor_rationale": "B: The code calls `fit`, not just `transform`; that changes state. C: `transform` never trains the classifier. D: Joblib loads deterministic parameters; no randomization happens there.",
+          "skills_covered": [
+            "Data Pipeline Development",
+            "Model Deployment",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 5,
+          "stem": "A binary classifier service thresholds logits directly:\n\n```python\nlogits = model(x)            # shape [N, 2]\np = logits[:, 1]            # BUG: not probabilities\npred = (p > 0.5).astype(int)\n```\n\nShadow evaluation shows a positive rate ~1% online vs ~10% when using the validated probability threshold of 0.5 offline. Why the discrepancy?",
+          "options": [
+            "Shadow traffic is more imbalanced; the threshold should be 0.05 instead of 0.5.",
+            "Softmax is linear, so removing it only scales values; a 0.5 threshold is unaffected.",
+            "`astype(int)` floors probabilities to 0, eliminating positives.",
+            "Thresholding raw logits at 0.5 yields far fewer positives because logits are unbounded; 0.5 in logit space corresponds to a much higher probability than 0.5."
+          ],
+          "correct_option": "D",
+          "explanation": "A logit of 0.5 maps to a probability of ~0.62 after softmax/sigmoid, not 0.5. Comparing raw logits to 0.5 imposes a stricter threshold, shrinking the positive rate.",
+          "distractor_rationale": "B: Softmax/sigmoid are nonlinear; thresholds do not carry over. C: Class imbalance doesn’t explain misusing logits. D: Casting happens after thresholding; the issue is using logits, not casting.",
+          "skills_covered": [
+            "Model Deployment",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 6,
+          "stem": "An ONNX image classifier expects NCHW float32 input `[1, 3, 224, 224]`. The client sends NHWC:\n\n```python\nimport cv2, numpy as np\nx = cv2.imread('cat.jpg')           # HWC, BGR\nx = cv2.resize(x, (224,224))\nx = x.astype('float32')/255.0\ninp = x[None, ...]                  # [1, 224, 224, 3]\nsess.run(None, {'input': inp})\n```\n\nPredictions look wrong but no error is thrown. What client change fixes this without retraining?",
+          "options": [
+            "Normalize by `(x-127.5)/127.5` to center inputs.",
+            "Reorder channels and axes before sending:\n```python\nx = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)\ninp = np.transpose(x, (2,0,1))[None, ...]\n```\n",
+            "Cast to `uint8` before sending to match training files.",
+            "Expand dims differently:\n```python\ninp = x[:, :, :, None]\n```\n"
+          ],
+          "correct_option": "B",
+          "explanation": "The ONNX model expects NCHW with RGB. Converting BGR→RGB and transposing HWC→CHW aligns input layout and channels; the other options don’t address the mismatch.",
+          "distractor_rationale": "B: Adds a spurious channel, still NHWC. C: Type alone doesn’t fix layout/channel issues. D: Centering doesn’t correct the wrong axis order.",
+          "skills_covered": [
+            "Computer Vision",
+            "Model Deployment",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 7,
+          "stem": "You intend to redact PII from request bodies in logs using structlog, but emails still appear. Current config:\n\n```python\nimport structlog, re\n\ndef redact_pii(event_dict):\n    if 'body' in event_dict:\n        body = event_dict['body']\n        body = re.sub(r'\\b\\d{16}\\b', '[CARD]', body)\n        body = re.sub(r'(?i)\\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\\.[A-Z]{2,})\\b', '[EMAIL]', body)\n        event_dict['body'] = body\n    return event_dict\n\nstructlog.configure(\n    processors=[\n        structlog.processors.JSONRenderer(),\n        redact_pii,\n    ]\n)\n```\n\nWhich change ensures redaction happens?",
+          "options": [
+            "Place `redact_pii` before `JSONRenderer` so strings are redacted before final serialization.",
+            "Convert the request body to a dict before logging.",
+            "Increase uvicorn access log level to INFO so structlog can filter it.",
+            "Add a regex for phone numbers as well as cards and emails."
+          ],
+          "correct_option": "A",
+          "explanation": "Processors run in order; `JSONRenderer` should be last. Otherwise, redaction tries to run on a rendered JSON string or after emission, and PII slips through.",
+          "distractor_rationale": "B: Log level doesn’t change processor order. C: Adding more patterns doesn’t fix incorrect processor sequencing. D: Redaction can operate on strings; the issue is placement, not type.",
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Model Deployment",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 8,
+          "stem": "You want to move from a fixed‑vocab TF‑IDF to hashed features without downtime. Proposal in service:\n\n```python\nX_tfidf = tfidf.transform([text])\nX_hash  = hasher.transform([text])\nproba   = clf.predict_proba(X_tfidf)\nlogger.info('hash_nnz=%d', X_hash.nnz)\n```\n\nWhat is the correct next step to progress safely toward hashed features?",
+          "options": [
+            "Hot‑swap `TfidfVectorizer` to `HashingVectorizer` in the service; the classifier adapts to the new input space.",
+            "Ship shadow computation/logging of hashed features alongside current inputs, retrain a new model offline to consume the hashed representation, then A/B test before switching traffic.",
+            "Increase `min_df` on `TfidfVectorizer` to reduce OOV at serving; no need for hashing.",
+            "Concatenate hashed features to `X_tfidf` at runtime and feed the existing classifier; extra columns are ignored by the model."
+          ],
+          "correct_option": "B",
+          "explanation": "You cannot change the feature space the classifier expects without retraining. Shadow compute/log the hashed features, train a new model on them offline, then validate via A/B or canary before switching.",
+          "distractor_rationale": "B: A linear model has fixed dimensionality; adding columns at runtime will break shapes. C: Hot‑swapping feature extractors breaks the model contract. D: `min_df` only prunes rare terms in training; it doesn’t solve OOV at inference for unseen tokens.",
+          "skills_covered": [
+            "Natural Language Processing",
+            "Data Pipeline Development",
+            "Model Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 9,
+          "stem": "Your Prometheus counters show:\n\n```text\ntrue_positives_total  1200\nfalse_positives_total 600\nfalse_negatives_total 800\npredictions_total{label='pos'}  1800\npredictions_total{label='neg'}  8200\n```\n\nSLA: absolute precision drop must be ≤ 0.05 compared to training precision 0.72. What is the current precision and SLA status?",
+          "options": [
+            "Precision ≈ 0.667; SLA breached because drop is ≈ 0.053 (> 0.05).",
+            "Precision cannot be computed without ground truth totals.",
+            "Precision ≈ 0.600; SLA breached.",
+            "Precision ≈ 0.667; SLA not breached because relative drop is < 5%."
+          ],
+          "correct_option": "A",
+          "explanation": "Precision = TP/(TP+FP) = 1200/1800 ≈ 0.667. Absolute drop from 0.72 is about 0.053, exceeding the 0.05 cap, so it breaches the SLA.",
+          "distractor_rationale": "B: Miscomputes precision. C: The SLA is defined as absolute drop, not relative percentage. D: Ground truth totals aren’t needed for precision; TP and FP suffice.",
+          "skills_covered": [
+            "Model Evaluation",
+            "Model Deployment",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 3
+        },
+        {
+          "question_number": 10,
+          "stem": "Serving applies a different Unicode normalization than training:\n\n```python\n# serving normalization\nimport re, unicodedata\n\ndef normalize(s: str) -> str:\n    s = s.lower()\n    s = unicodedata.normalize('NFD', s)\n    s = re.sub(r'[^\\w\\s]', '', s)\n    return s\n```\n\nTraining used NFKC and retained punctuation. After deploy, performance drops mostly on accented languages. What mainly causes this?",
+          "options": [
+            "NFD decomposes accented characters; combined with the regex, diacritics are stripped differently than in training, creating OOVs and losing distinctions critical for accented languages.",
+            "Removing punctuation always improves performance; the issue must be elsewhere.",
+            "Unicode normalization has no effect beyond ASCII, so this is unrelated.",
+            "Lowercasing twice halves token counts, reducing recall."
+          ],
+          "correct_option": "A",
+          "explanation": "NFD breaks characters into base + combining marks; the regex then removes combining marks. This changes tokens relative to the NFKC+punctuation‑retaining training pipeline, increasing OOV and harming languages with diacritics.",
+          "distractor_rationale": "B: Lowercasing is idempotent. C: Unicode normalization strongly affects non‑ASCII text. D: Punctuation removal is not universally beneficial and is inconsistent with training here.",
+          "skills_covered": [
+            "Natural Language Processing",
+            "Data Pipeline Development",
+            "Model Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 3
+        }
+      ],
+      "scenario_questions": [
+        {
+          "question_number": 1,
+          "scenario": "An email‑intent classifier was deployed yesterday. A commit added spaCy lemmatization in the FastAPI layer only. Within two hours, precision on shadow‑labeled traffic dropped from 0.78 to 0.66; probabilities cluster near class priors. Canary logs show no spikes in latency or 5xx. Diff:\n\n```diff\n- return pipe.predict_proba([text])[0].tolist()\n+ doc = nlp(text)\n+ lemmas = ' '.join(t.lemma_ for t in doc if not t.is_punct)\n+ return pipe.predict_proba([lemmas])[0].tolist()\n```\n\nA blue/green switch allows instantaneous rollback. The team asks whether to rollback or hot‑patch, and how to prevent recurrence.",
+          "task": "State your decision (rollback vs hot‑patch in place) and justify it. Then propose a concrete, low‑risk remediation and hardening plan: exact code/config changes to align preprocessing, tests to enforce train/serve contract, and monitoring checks to catch similar regressions.",
+          "expected_answer": "Rollback immediately because the change violates the model’s feature contract: TF‑IDF vocabulary was learned on non‑lemmatized tokens so inference lemmatization zeros many features and collapses scores to priors. After rollback, ship a remediation plan: (1) align preprocessing by applying identical steps in both training and serving (either remove lemmatization at serve or retrain a new model with lemmatization end‑to‑end); (2) version the preprocessing and persist it inside the pipeline artifact (e.g., include spaCy/normalizer in a `sklearn` `FunctionTransformer` within the persisted pipeline, or package a Hugging Face `TextClassificationPipeline`); (3) add a contract test that `train_transform(text) == serve_transform(text)` on a golden set, run in CI and in a startup self‑check; (4) shadow test the patched service on a held‑out validation set in production containers before flipping traffic; (5) monitoring: alert on calibration shift (Brier score), distribution drift of n‑grams/token lengths, and sudden entropy collapse of predicted probabilities; (6) gate rollout with canary + SLOs (precision proxy via delayed labels, p50/p95 latency, error rate).",
+          "rubric": [
+            {
+              "criterion": "Clear decision to rollback now with justification tied to train/serve feature contract violation",
+              "marks": 2
+            },
+            {
+              "criterion": "Concrete remediation aligning preprocessing across train and serve (e.g., embedding transform in persisted pipeline or full retrain)",
+              "marks": 2
+            },
+            {
+              "criterion": "Specific tests to enforce the contract (golden texts, CI check, startup self‑check)",
+              "marks": 2
+            },
+            {
+              "criterion": "Monitoring signals that would catch the regression (e.g., prob. entropy, calibration/Brier, drift on token stats) and safe rollout (canary/A‑B)",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Natural Language Processing",
+            "Data Pipeline Development",
+            "Model Deployment",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        },
+        {
+          "question_number": 2,
+          "scenario": "An image classifier trained with RGB normalization is misbehaving on edge devices. Preprocessing on device uses OpenCV without explicit color conversion. A sample:\n\n```python\n# device code\nimg = cv2.imread(p)                # BGR\nimg = cv2.resize(img, (224,224))\nx = img.astype('float32')/255.0\nx = (x - [0.485,0.456,0.406]) / [0.229,0.224,0.225]\nx = np.transpose(x, (2,0,1))[None]\n```\n\nGolden images exist on the device. There’s limited bandwidth to OTA updates and you must minimize user‑visible risk.",
+          "task": "Propose a precise fix, where to inject it in the pipeline, and a canary plan to validate on‑device. Explain how you will decide success/failure using measurable criteria from the golden set and live traffic.",
+          "expected_answer": "Inject a `cv2.cvtColor(img, cv2.COLOR_BGR2RGB)` immediately after `imread` (before any normalization). Ship this as a minimal OTA patch behind a feature flag. Validate via on‑device canary: run predictions on the golden set both before and after the patch, expecting top‑1 accuracy to return to the lab baseline (± tolerance). For live traffic, monitor a small canary cohort for (a) output distribution similarity to baseline (KL/JS on logits), (b) drop in error reports, and (c) unchanged latency and memory. Success criteria: golden top‑1 within 1% of lab baseline; no regression in p95 latency; JS divergence < threshold on logits. Rollback the flag if criteria fail.",
+          "rubric": [
+            {
+              "criterion": "Correct identification of BGR→RGB mismatch and exact placement of fix pre‑normalization",
+              "marks": 2
+            },
+            {
+              "criterion": "Feasible canary plan on device with use of the golden set",
+              "marks": 2
+            },
+            {
+              "criterion": "Measurable success criteria (accuracy restoration, latency, distribution similarity)",
+              "marks": 2
+            },
+            {
+              "criterion": "Rollback/feature‑flag strategy to minimize risk",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Computer Vision",
+            "Model Deployment",
+            "Data Pipeline Development",
+            "Model Evaluation"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 3,
+          "scenario": "You are adding a near‑real‑time moderation service for user‑submitted text. Events arrive as JSON over HTTPS and are persisted for review. Current event example:\n\n```text\n{user_id: 'u-19a3', text: 'My card 4242424242424242 was stolen. Email me: jane.doe@example.com', ts: '2026-07-09T10:12:57Z'}\n```\n\nCompliance requires: (a) do not persist raw PII, (b) all logs must be redacted, (c) retention ≤ 30 days, (d) ability to audit redaction, and (e) support data subject deletion requests.",
+          "task": "Design the ingestion/deployment changes to meet these requirements. Specify where redaction happens, how identifiers are handled, what gets stored/logged, retention controls, and how you will validate the redaction path. Justify any hashing/salting choices.",
+          "expected_answer": "Perform redaction at ingress before persistence and before logging. Put a middleware that (1) detects PII (emails, 16‑digit cards, phone numbers) with tested regexes and locale‑aware rules, (2) replaces matches with tokens (e.g., [EMAIL], [CARD]) and separately stores a salted, keyed hash of `user_id` (HMAC with service‑managed key) to allow joinability without exposing raw IDs. Persist only redacted `text`, HMAC(user_id), and timestamp; never store raw PII. All application logs run through a structlog processor that redacts PII before JSON rendering. Enforce a 30‑day TTL at the storage layer (table TTL or lifecycle policy) plus a periodic job to hard‑delete expired rows. Data subject deletion is implemented by deleting all rows with matching HMAC(user_id) derived from the provided ID using the same key. Validation: unit tests with a golden set of PII cases, integration test that asserts raw PII never reaches the DB/log sinks (tap tests), and audit logs that record redaction outcomes and counts without storing PII. Keys are rotated regularly; HMAC provides deterministic, keyed hashing to prevent rainbow‑table attacks while supporting joins.",
+          "rubric": [
+            {
+              "criterion": "Correct placement of redaction before both persistence and logging; storage of only redacted text",
+              "marks": 2
+            },
+            {
+              "criterion": "Appropriate handling of identifiers (salted/keyed hash) with rationale",
+              "marks": 1
+            },
+            {
+              "criterion": "Clear retention controls (TTL/lifecycle) and deletion request handling via hashed key",
+              "marks": 2
+            },
+            {
+              "criterion": "Validation/audit approach ensuring redaction efficacy without leaking PII",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Data Privacy and Compliance",
+            "Data Pipeline Development",
+            "Model Deployment"
+          ],
+          "modules_covered": [
+            8
+          ],
+          "marks": 7
+        },
+        {
+          "question_number": 4,
+          "scenario": "A week after launch, monitoring shows degradation: AUC fell from 0.90 (baseline) to 0.86 on delayed labels; PSI for `token_length` is 0.22 (>0.1 alert); the class prior shifted from 0.30 to 0.48. Precision at the offline threshold 0.5 dropped; ROC curve on the last 10k labeled events indicates the optimal threshold moved to 0.63. Capacity is tight; a full retrain takes 2 days, while recalibration can ship in hours.",
+          "task": "Decide whether to immediately adjust the decision threshold, retrain, both, or neither. Justify using the provided metrics and outline the rollout plan and safeguards. Include what to monitor post‑change and triggers for escalation.",
+          "expected_answer": "Do both in a staged plan. Short term: adjust the threshold to ~0.63 using the recent 10k labeled events to restore the precision/recall trade‑off (since AUC is only moderately down and prior shifted, threshold drift is expected). Gate the change with canary and evaluate on a holdout of the recent labels; if precision/recall and calibration (Brier/expected calibration error) recover and latency/error budgets hold, roll out. Long term: schedule a retrain with updated data reflecting the new prior and shifted `token_length` distribution, optionally add features to stabilize against this drift. Post‑change monitoring: (a) precision/recall on delayed labels, (b) calibration, (c) drift metrics (PSI/KS), (d) error/latency SLOs. Escalate/rollback if AUC continues to drop or drift persists above thresholds after threshold adjustment, or if calibration remains poor, indicating model capacity/feature mismatch requiring retraining.",
+          "rubric": [
+            {
+              "criterion": "Sound decision to immediately recalibrate threshold with justification tied to prior shift and moderate AUC drop",
+              "marks": 3
+            },
+            {
+              "criterion": "Commitment to a scheduled retrain to address distribution drift longer‑term",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear rollout plan (canary, validation on recent labels) and success criteria",
+              "marks": 2
+            },
+            {
+              "criterion": "Post‑change monitoring and explicit rollback/escalation triggers",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Evaluation",
+            "Natural Language Processing",
+            "Data Pipeline Development",
+            "Model Deployment"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 8
+        }
+      ],
+      "practical_tasks": [
+        {
+          "task_number": 1,
+          "title": "Applied mini project: train and evaluate an NLP or CV classifier with a reproducible pipeline",
+          "brief": "Build a small applied model demonstrating Module 7 foundations. Choose ONE: (A) NLP text classification (e.g., sentiment on a public dataset) or (B) image classification (e.g., a two‑class subset of a public image dataset). Implement a reproducible training pipeline with preprocessing consistent between training and inference. Report evaluation metrics and ship a simple inference script that loads the saved pipeline and predicts on new inputs.",
+          "deliverable": "Applied mini project",
+          "acceptance_criteria": [
+            "Repository contains: `README.md`, `requirements.txt` (or `environment.yml`), `src/`, `data/` (or download script), `models/`, `reports/`.",
+            "Training entry point `python src/train.py` runs end‑to‑end on CPU in ≤10 minutes, saving the model/pipeline to `models/model.bin` (or `.joblib`/`.pt`) and metrics to `reports/metrics.json`.",
+            "Preprocessing is identical between training and inference. A unit test `tests/test_preproc_equivalence.py` asserts equality on a golden batch (e.g., compare tensors or sparse matrices) between `train_transform` and `serve_transform`.",
+            "Evaluation prints and saves at least accuracy and one other metric appropriate to the task (e.g., F1 or ROC‑AUC for NLP; top‑k accuracy for CV). Confusion matrix saved to `reports/confusion_matrix.png` or `.csv`.",
+            "An inference CLI `python src/predict.py --input sample_input.*` produces a `predictions.csv` with top‑1 label and score for at least 10 examples (provided in `data/sample/`).",
+            "Random seeds set for reproducibility (documented in README).",
+            "README includes setup, commands to train/evaluate/predict, dataset source, and expected runtime; all commands succeed on a clean machine.",
+            "No notebooks or large data blobs checked into `models/` or `data/raw/` beyond small samples; scripts download or generate data as needed."
+          ],
+          "rubric": [
+            {
+              "criterion": "End‑to‑end training runs and persists model and metrics as specified",
+              "marks": 4
+            },
+            {
+              "criterion": "Strict train/serve preprocessing equivalence demonstrated by an automated test",
+              "marks": 4
+            },
+            {
+              "criterion": "Appropriate evaluation with saved metrics and confusion matrix",
+              "marks": 4
+            },
+            {
+              "criterion": "Usable inference script producing the specified CSV on sample inputs",
+              "marks": 3
+            },
+            {
+              "criterion": "Reproducibility (seeds, documented environment) and clean repo structure",
+              "marks": 3
+            },
+            {
+              "criterion": "Clear, complete README with correct commands and expected outputs",
+              "marks": 2
+            }
+          ],
+          "skills_covered": [
+            "Natural Language Processing",
+            "Computer Vision",
+            "Model Evaluation",
+            "Data Pipeline Development"
+          ],
+          "modules_covered": [
+            7
+          ],
+          "marks": 20
+        },
+        {
+          "task_number": 2,
+          "title": "Capstone solution: package and deploy a model API with monitoring and responsible use",
+          "brief": "Take your mini‑project model and expose it as a local service with deployment basics, monitoring, and responsible‑use safeguards from Module 8. Containerize the service, add Prometheus metrics, implement basic drift detection offline, and ensure PII is redacted in logs.",
+          "deliverable": "Capstone solution",
+          "acceptance_criteria": [
+            "Service implemented with FastAPI (or Flask) exposing `POST /predict` that accepts either a JSON body `{text: ...}` for NLP or an image file for CV, returning JSON with label and score.",
+            "Preprocessing in the service matches training exactly. A test `tests/test_service_preproc_contract.py` loads the saved training transform and asserts feature equivalence on a golden input vs the service’s preprocessing function.",
+            "Prometheus `/metrics` endpoint exports counters and histograms: `predictions_total{label=...}`, `request_latency_seconds_bucket`, and an error counter.",
+            "A drift script `python jobs/drift_check.py --baseline data/baseline.parquet --current data/current.parquet` computes PSI (or KS) for at least one feature and prints `ALERT` if threshold exceeded (e.g., PSI>0.1), otherwise `OK`.",
+            "Structured logs include request IDs and are redacted for PII (emails, 16‑digit cards). Provide a sample log file `logs/sample.log` demonstrating redaction (no raw PII present).",
+            "Containerization: `Dockerfile` builds and runs the service; `Makefile` with `make build`, `make serve`, `make smoke` (invokes a curl against `/predict` and checks for a JSON field `label`).",
+            "A minimal canary script `scripts/canary_eval.py` hits `/predict` on a golden set and prints summary metrics and p95 latency; README states acceptance thresholds.",
+            "README documents architecture, commands, ports, and how to run drift check and view metrics. All commands succeed locally."
+          ],
+          "rubric": [
+            {
+              "criterion": "Working API with correct input/output and matching train/serve preprocessing (validated by automated test)",
+              "marks": 5
+            },
+            {
+              "criterion": "Operational metrics exposed on `/metrics` with required counters/histograms",
+              "marks": 3
+            },
+            {
+              "criterion": "Functional drift check with clear ALERT/OK behavior at a documented threshold",
+              "marks": 3
+            },
+            {
+              "criterion": "Effective PII redaction demonstrated in logs; no raw PII present",
+              "marks": 3
+            },
+            {
+              "criterion": "Containerization and Makefile targets work as specified, including smoke test",
+              "marks": 3
+            },
+            {
+              "criterion": "Canary script and documented acceptance thresholds for rollout",
+              "marks": 2
+            },
+            {
+              "criterion": "Clear, complete README covering runbook and architecture",
+              "marks": 1
+            }
+          ],
+          "skills_covered": [
+            "Model Deployment",
+            "Data Pipeline Development",
+            "Model Evaluation",
+            "Data Privacy and Compliance",
+            "Natural Language Processing",
+            "Computer Vision"
+          ],
+          "modules_covered": [
+            7,
+            8
+          ],
+          "marks": 20
+        }
+      ]
+    }
+  ]
+}

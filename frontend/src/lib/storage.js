@@ -14,12 +14,8 @@ export const KEYS = {
   token: 'career_tours_token',
   // Session identity returned alongside the token.
   student: 'career_tours_student',
-  // DEVICE PREFERENCE — deliberately exempt from the rule above. It originates
-  // on this device, has no server-side record, cannot go stale against any API,
-  // is never sent to the API, and survives logout by design.
-  theme: 'career_tours_theme',
-  // DEVICE PREFERENCE, same exemption as `theme`: whether the nav rail is
-  // collapsed to icons. A layout choice made with the mouse on this screen —
+  // DEVICE PREFERENCE — deliberately exempt from the no-server-data rule above:
+  // whether the nav rail is collapsed to icons. A layout choice made with the mouse on this screen —
   // re-expanding it on every navigation would make the control useless.
   sidebar: 'career_tours_sidebar',
 };
@@ -72,35 +68,10 @@ export const setSession = (token, student) => {
 };
 
 /** Clears ONLY the auth keys. Never use localStorage.clear() — it would also
- *  wipe the theme preference, which should outlive a logout. */
+ *  wipe device preferences that should outlive a logout. */
 export const clearSession = () => {
   safeRemove(KEYS.token);
   safeRemove(KEYS.student);
-};
-
-/* --------------------------------------------------------------- theme ---- */
-
-// Keep this list in sync with the pre-paint script in index.html, which cannot
-// import from here because it must run before any module loads.
-export const THEME_PREFERENCES = ['light', 'dark', 'system'];
-
-/** Returns 'light' | 'dark' | null. `null` means "no stored preference", which
- *  callers should treat as 'system'. */
-export const getThemePreference = () => {
-  const value = safeGet(KEYS.theme);
-  return value === 'light' || value === 'dark' ? value : null;
-};
-
-export const setThemePreference = (preference) => {
-  if (!THEME_PREFERENCES.includes(preference)) return;
-  // 'system' removes the key rather than storing the string: the absence of a
-  // key is the honest representation of "I have no preference", and it keeps the
-  // no-stored-value path the one that is exercised by default.
-  if (preference === 'system') {
-    safeRemove(KEYS.theme);
-    return;
-  }
-  safeSet(KEYS.theme, preference);
 };
 
 /* ------------------------------------------------------------- sidebar ---- */
